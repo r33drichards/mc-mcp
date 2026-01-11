@@ -128,15 +128,51 @@ async function safeDigBlock(pos) {
   } catch (e) { return false; }
 }
 
-// PATCHED: Wrap pathfinder.goto in try-catch to handle timeouts gracefully
-async function safeGoto(goal) {
-  try {
-    await bot.pathfinder.goto(goal);
-    return true;
-  } catch (e) {
-    console.log('Pathfinding failed, skipping to next position');
-    return false;
+// PATCHED: Recursive pathfinding with intermediate waypoints
+// When direct path fails, recursively try closer subgoals
+async function safeGoto(goalPos, maxDepth = 4) {
+  const pos = bot.entity.position;
+  const targetVec = new Vec3(goalPos.x, goalPos.y, goalPos.z);
+
+  async function tryPath(target, depth) {
+    if (depth <= 0) return false;
+
+    try {
+      await bot.pathfinder.goto(new goals.GoalBlock(target.x, target.y, target.z));
+      return true;
+    } catch (e) {
+      // Path failed - try intermediate waypoint
+      const currentPos = bot.entity.position;
+      const midpoint = new Vec3(
+        Math.round((currentPos.x + target.x) / 2),
+        Math.round((currentPos.y + target.y) / 2),
+        Math.round((currentPos.z + target.z) / 2)
+      );
+
+      // Don't try if midpoint is too close to current position
+      if (currentPos.distanceTo(midpoint) < 3) {
+        console.log(`Can't find path, too close to try subgoal`);
+        return false;
+      }
+
+      console.log(`Path failed, trying intermediate waypoint at ${midpoint} (depth ${depth})`);
+
+      // Try to reach midpoint first
+      const reachedMid = await tryPath(midpoint, depth - 1);
+      if (reachedMid) {
+        // Now try to reach final target from midpoint
+        return await tryPath(target, depth - 1);
+      }
+      return false;
+    }
   }
+
+  return await tryPath(targetVec, maxDepth);
+}
+
+// Helper to create goal from position
+function goalAt(pos) {
+  return new goals.GoalBlock(pos.x, pos.y, pos.z);
 }
 
 // PATCHED: Scan for and mine valuable ores nearby
@@ -170,7 +206,7 @@ async function scanAndMineOres() {
 async function dropoffItems() {
   const chestBlock = bot.blockAt(dropoffChest);
   if (!chestBlock || !chestBlock.name.includes('chest')) return;
-  if (!await safeGoto(new goals.GoalBlock(dropoffChest.x, dropoffChest.y, dropoffChest.z))) return;
+  if (!await safeGoto(dropoffChest)) return;
   const chest = await bot.openContainer(chestBlock);
   const itemsToKeep = ['pickaxe', 'cooked', 'bread', 'steak', 'porkchop'];
   for (const item of bot.inventory.items()) {
@@ -200,14 +236,14 @@ for (let t = 0; t < 30; t++) {
   const openSlots = 36 - bot.inventory.items().length;
   if (openSlots <= 5) {
     await dropoffItems();
-    await safeGoto(new goals.GoalBlock(startPos.x, startPos.y, startPos.z - t * 3));
+    await safeGoto(startPos.offset(0, 0, -t * 3));
   }
 
   const hostileMobs = Object.values(bot.entities).filter(e =>
     e.type === 'hostile' && e.position.distanceTo(bot.entity.position) < 10
   );
   if (hostileMobs.length > 0) {
-    await safeGoto(new goals.GoalBlock(startPos.x, startPos.y, startPos.z));
+    await safeGoto(startPos);
     await new Promise(r => setTimeout(r, 5000));
   }
 
@@ -222,8 +258,8 @@ for (let t = 0; t < 30; t++) {
     const lower = new Vec3(x, tunnelStart.y, tunnelZ);
     const upper = new Vec3(x, tunnelStart.y + 1, tunnelZ);
 
-    // PATCHED: Use safeGoto instead of raw pathfinder.goto
-    if (!await safeGoto(new goals.GoalBlock(lower.x, lower.y, lower.z))) continue;
+    // PATCHED: Use recursive safeGoto with intermediate waypoints
+    if (!await safeGoto(lower)) continue;
     // PATCHED: Scan for valuable ores before mining tunnel blocks
     await scanAndMineOres();
     await safeDigBlock(lower);
@@ -297,3 +333,12 @@ return 'Stopped';
 ### 2026-01-11: Ore Prioritization
 **Issue:** Bot walks past valuable ores without mining them.
 **Fix:** Added `scanAndMineOres()` function that checks nearby blocks for valuable ores (diamond, gold, emerald, lapis, redstone, coal, iron, copper) and mines them before continuing.
+
+### 2026-01-11: Recursive Pathfinding with Intermediate Waypoints
+**Issue:** Pathfinder times out on long distances or complex terrain, causing bot to skip destinations.
+**Fix:** Replaced simple `safeGoto()` with recursive version that:
+1. Tries direct path first
+2. On failure, calculates midpoint between current pos and target
+3. Recursively tries to reach midpoint, then continues to target
+4. Max depth of 4 levels prevents infinite recursion
+5. Gives up if midpoint is < 3 blocks away (can't subdivide further)
