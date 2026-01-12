@@ -1,3 +1,12 @@
+// Browser API polyfills for Three.js in Node.js environment
+// Must be set before importing Three.js
+(global as any).requestAnimationFrame = (callback: FrameRequestCallback): number => {
+  return setTimeout(callback, 16) as unknown as number;
+};
+(global as any).cancelAnimationFrame = (id: number): void => {
+  clearTimeout(id);
+};
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -10,7 +19,8 @@ const { pathfinder, Movements, goals } = mineflayerPathfinder;
 
 // Screenshot dependencies
 // @ts-ignore - no types available
-import { Viewer, WorldView, getBufferFromStream } from "prismarine-viewer/viewer/lib/index.js";
+import prismarineViewer from "prismarine-viewer/viewer/index.js";
+const { Viewer, WorldView, getBufferFromStream } = prismarineViewer;
 // @ts-ignore - no types available
 import { createCanvas } from "node-canvas-webgl/lib/index.js";
 import * as THREE from "three";
@@ -18,12 +28,17 @@ import { Worker } from "worker_threads";
 // Set global Worker for prismarine-viewer
 (global as any).Worker = Worker;
 
+// Web viewer for live view
+// @ts-ignore - no types available
+import { mineflayer as mineflayerViewer } from "prismarine-viewer";
+
 // Configuration from environment
 const MC_HOST = process.env.MC_HOST || "localhost";
 const MC_PORT = parseInt(process.env.MC_PORT || "25565");
 const MC_USERNAME = process.env.MC_USERNAME || "mcp-bot";
 const MC_PASSWORD = process.env.MC_PASSWORD;
 const MC_AUTH = process.env.MC_AUTH || "microsoft"; // "offline" for cracked servers
+const VIEWER_PORT = parseInt(process.env.VIEWER_PORT || "3000");
 
 // Bot state
 let bot: Bot | null = null;
@@ -99,12 +114,20 @@ server.tool(
           await bot!.waitForChunksToLoad();
           console.error("[mineflayer-mcp] Chunks loaded, bot ready");
 
+          // Start web viewer (firstPerson: false for third-party view with freelook)
+          try {
+            mineflayerViewer(bot!, { port: VIEWER_PORT, firstPerson: false });
+            console.error(`[mineflayer-mcp] Web viewer started on port ${VIEWER_PORT} (third-party view)`);
+          } catch (viewerErr: any) {
+            console.error("[mineflayer-mcp] Web viewer failed to start:", viewerErr.message);
+          }
+
           botReady = true;
           resolve({
             content: [
               {
                 type: "text",
-                text: `Connected to ${connectHost}:${connectPort} as ${connectUsername}. Bot is ready.`,
+                text: `Connected to ${connectHost}:${connectPort} as ${connectUsername}. Bot is ready. Viewer on port ${VIEWER_PORT}.`,
               },
             ],
           });
@@ -538,8 +561,12 @@ server.tool(
       });
       const buf = await getBufferFromStream(imageStream);
 
-      // Cleanup
-      renderer.dispose();
+      // Cleanup - wrap in try-catch as Three.js dispose may have browser-specific code
+      try {
+        renderer.dispose();
+      } catch (disposeErr) {
+        console.error("[mineflayer-mcp] Renderer dispose warning:", disposeErr);
+      }
 
       if (output_path) {
         // Save to file
