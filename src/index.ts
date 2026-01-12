@@ -1,12 +1,36 @@
+// Browser API polyfills for Three.js in Node.js environment
+// Must be set before importing Three.js
+(global as any).requestAnimationFrame = (callback: FrameRequestCallback): number => {
+  return setTimeout(callback, 16) as unknown as number;
+};
+(global as any).cancelAnimationFrame = (id: number): void => {
+  clearTimeout(id);
+};
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import mineflayer, { Bot } from "mineflayer";
 import mineflayerPathfinder from "mineflayer-pathfinder";
-import { readFile } from "fs/promises";
+import { readFile, writeFile, mkdir, stat } from "fs/promises";
 import minecraftData from "minecraft-data";
 import { Vec3 } from "vec3";
 const { pathfinder, Movements, goals } = mineflayerPathfinder;
+
+// Screenshot dependencies
+// @ts-ignore - no types available
+import prismarineViewer from "prismarine-viewer/viewer/index.js";
+const { Viewer, WorldView, getBufferFromStream } = prismarineViewer;
+// @ts-ignore - no types available
+import { createCanvas } from "node-canvas-webgl/lib/index.js";
+import * as THREE from "three";
+import { Worker } from "worker_threads";
+// Set global Worker for prismarine-viewer
+(global as any).Worker = Worker;
+
+// Web viewer for live view
+// @ts-ignore - no types available
+import { mineflayer as mineflayerViewer } from "prismarine-viewer";
 
 // Configuration from environment
 const MC_HOST = process.env.MC_HOST || "localhost";
@@ -14,6 +38,7 @@ const MC_PORT = parseInt(process.env.MC_PORT || "25565");
 const MC_USERNAME = process.env.MC_USERNAME || "mcp-bot";
 const MC_PASSWORD = process.env.MC_PASSWORD;
 const MC_AUTH = process.env.MC_AUTH || "microsoft"; // "offline" for cracked servers
+const VIEWER_PORT = parseInt(process.env.VIEWER_PORT || "3000");
 
 // Bot state
 let bot: Bot | null = null;
@@ -89,12 +114,20 @@ server.tool(
           await bot!.waitForChunksToLoad();
           console.error("[mineflayer-mcp] Chunks loaded, bot ready");
 
+          // Start web viewer (firstPerson: false for third-party view with freelook)
+          try {
+            mineflayerViewer(bot!, { port: VIEWER_PORT, firstPerson: false });
+            console.error(`[mineflayer-mcp] Web viewer started on port ${VIEWER_PORT} (third-party view)`);
+          } catch (viewerErr: any) {
+            console.error("[mineflayer-mcp] Web viewer failed to start:", viewerErr.message);
+          }
+
           botReady = true;
           resolve({
             content: [
               {
                 type: "text",
-                text: `Connected to ${connectHost}:${connectPort} as ${connectUsername}. Bot is ready.`,
+                text: `Connected to ${connectHost}:${connectPort} as ${connectUsername}. Bot is ready. Viewer on port ${VIEWER_PORT}.`,
               },
             ],
           });
@@ -450,6 +483,125 @@ server.tool(
       const error = err as Error;
       return {
         content: [{ type: "text", text: `Eval error in ${file_path}: ${error.message}\n${error.stack}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Screenshot tool - takes a screenshot of the bot's view
+server.tool(
+  "screenshot",
+  "Take a screenshot of the bot's view in Minecraft. Returns the image as base64 JPEG or saves to a file.",
+  {
+    output_path: z.string().optional().describe("Optional file path to save the screenshot (e.g., '/tmp/screenshot.jpg'). If not provided, returns base64 image data."),
+    width: z.number().optional().describe("Image width in pixels (default: 512)"),
+    height: z.number().optional().describe("Image height in pixels (default: 512)"),
+    direction: z.object({
+      x: z.number(),
+      y: z.number(),
+      z: z.number(),
+    }).optional().describe("Direction to look (relative to bot position). Default: { x: 1, y: -0.2, z: 0 }"),
+    view_distance: z.number().optional().describe("View distance in chunks (default: 4)"),
+  },
+  async ({ output_path, width, height, direction, view_distance }) => {
+    if (!bot || !botReady) {
+      return {
+        content: [{ type: "text", text: "Bot is not connected. Use connect tool first." }],
+        isError: true,
+      };
+    }
+
+    const imgWidth = width || 512;
+    const imgHeight = height || 512;
+    const viewDist = view_distance || 4;
+    const dir = direction || { x: 1, y: -0.2, z: 0 };
+
+    try {
+      console.error("[mineflayer-mcp] Taking screenshot...");
+
+      // Create canvas and renderer
+      const canvas = createCanvas(imgWidth, imgHeight);
+      const renderer = new THREE.WebGLRenderer({ canvas });
+      const viewer = new Viewer(renderer);
+
+      // Get bot position
+      const botPos = bot.entity.position;
+      const center = new Vec3(botPos.x, botPos.y + 1.6, botPos.z); // Eye height
+
+      // Set version and create world view
+      viewer.setVersion(bot.version);
+      const worldView = new WorldView(bot.world, viewDist, center);
+      viewer.listen(worldView);
+
+      // Position camera at bot's eye position
+      viewer.camera.position.set(center.x, center.y, center.z);
+
+      // Initialize world view
+      await worldView.init(center);
+
+      // Set camera direction
+      const cameraPos = new Vec3(viewer.camera.position.x, viewer.camera.position.y, viewer.camera.position.z);
+      const lookDir = new Vec3(dir.x, dir.y, dir.z);
+      const point = cameraPos.add(lookDir);
+      viewer.camera.lookAt(point.x, point.y, point.z);
+
+      // Wait for world to load
+      console.error("[mineflayer-mcp] Waiting for world chunks to render...");
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Render the scene
+      renderer.render(viewer.scene, viewer.camera);
+
+      // Create JPEG stream
+      const imageStream = canvas.createJPEGStream({
+        bufsize: 4096,
+        quality: 95,
+        progressive: false,
+      });
+      const buf = await getBufferFromStream(imageStream);
+
+      // Cleanup - wrap in try-catch as Three.js dispose may have browser-specific code
+      try {
+        renderer.dispose();
+      } catch (disposeErr) {
+        console.error("[mineflayer-mcp] Renderer dispose warning:", disposeErr);
+      }
+
+      if (output_path) {
+        // Save to file
+        const dir = output_path.substring(0, output_path.lastIndexOf('/'));
+        if (dir) {
+          try {
+            await stat(dir);
+          } catch {
+            await mkdir(dir, { recursive: true });
+          }
+        }
+        await writeFile(output_path, buf);
+        console.error(`[mineflayer-mcp] Screenshot saved to ${output_path}`);
+        return {
+          content: [{ type: "text", text: `Screenshot saved to ${output_path}` }],
+        };
+      } else {
+        // Return as base64
+        const base64 = buf.toString("base64");
+        console.error("[mineflayer-mcp] Screenshot captured, returning as base64");
+        return {
+          content: [
+            {
+              type: "image",
+              data: base64,
+              mimeType: "image/jpeg",
+            },
+          ],
+        };
+      }
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.error("[mineflayer-mcp] Screenshot error:", error);
+      return {
+        content: [{ type: "text", text: `Screenshot error: ${error.message}\n${error.stack}` }],
         isError: true,
       };
     }
