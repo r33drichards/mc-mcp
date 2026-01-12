@@ -19,6 +19,85 @@ Do NOT ask for confirmation - just connect and start mining.
 
 ---
 
+## Consciousness Architecture
+
+The bot operates on two levels:
+
+### Subconscious (Background Control Loops)
+Automatic reactive systems running as setInterval on the bot:
+- **Defense Loop (300ms):** Auto-attack hostiles within 5 blocks
+- **Food Loop (2s):** Auto-eat when food < 14
+- **Follow Loop (1s):** Maintain follow goal on player
+
+These handle immediate survival without conscious thought.
+
+### Consciousness (Agent OODA Loop)
+The Claude agent runs high-level monitoring every 30-60 seconds:
+- Strategic decisions (where to mine, when to return)
+- Resource management (pickaxe supply, inventory space)
+- Threat assessment (should we flee this area?)
+- Memory updates (record learnings to routine.md)
+
+**Key principle:** Subconscious keeps bot alive, consciousness makes decisions.
+
+### Activating Control Loops
+```javascript
+// Clear existing intervals
+if (bot._defenseInterval) clearInterval(bot._defenseInterval);
+if (bot._foodInterval) clearInterval(bot._foodInterval);
+if (bot._followInterval) clearInterval(bot._followInterval);
+
+const hostileTypes = ['zombie', 'skeleton', 'spider', 'creeper', 'enderman', 'witch',
+  'phantom', 'drowned', 'husk', 'stray', 'pillager', 'vindicator', 'ravager', 'warden',
+  'zombie_villager', 'cave_spider', 'silverfish', 'slime', 'magma_cube', 'blaze', 'ghast'];
+
+// Defense Loop (300ms)
+let inCombat = false;
+bot._defenseInterval = setInterval(async () => {
+  if (inCombat) return;
+  const nearbyHostiles = Object.values(bot.entities).filter(e => {
+    if (!e.name || !e.position) return false;
+    return hostileTypes.some(h => e.name.includes(h)) && e.position.distanceTo(bot.entity.position) < 5;
+  });
+  if (nearbyHostiles.length > 0) {
+    inCombat = true;
+    try {
+      const pick = bot.inventory.items().find(i => i.name.includes('pickaxe'));
+      if (pick) await bot.equip(pick, 'hand');
+      await bot.attack(nearbyHostiles[0]);
+    } catch (e) {}
+    inCombat = false;
+  }
+}, 300);
+
+// Food Loop (2s)
+let eating = false;
+bot._foodInterval = setInterval(async () => {
+  if (eating || bot.food >= 14) return;
+  eating = true;
+  try {
+    const food = bot.inventory.items().find(i => i.name.includes('cod') || i.name.includes('cooked') || i.name === 'bread');
+    if (food) {
+      await bot.equip(food, 'hand');
+      await bot.consume();
+    }
+  } catch (e) {}
+  eating = false;
+}, 2000);
+
+// Follow Loop (1s)
+bot._followInterval = setInterval(() => {
+  const player = bot.players['lmoik'];
+  if (player?.entity && !bot.pathfinder.goal) {
+    bot.pathfinder.setGoal(new goals.GoalFollow(player.entity, 2), true);
+  }
+}, 1000);
+
+return 'Control loops active';
+```
+
+---
+
 ## OODA Loop Monitoring
 
 Run this loop continuously while the bot is active:
@@ -56,6 +135,72 @@ Execute decision, then loop back to Observe.
 - **Location:** Mining at Y=-59 (deepslate level) near z=-76440
 - **Start Position:** Around (11440, -59, -76450)
 - **Dropoff Chest:** (11415, -59, -76351)
+
+---
+
+## Pre-Mining Survey
+
+**Always survey before mining to find unmined areas.**
+
+```javascript
+// Survey function - find unmined area by checking for solid blocks
+async function surveyForUnminedArea() {
+  const pos = bot.entity.position;
+  const Vec3 = pos.constructor;
+  const surveyRadius = 50;
+  const directions = [
+    { dx: 1, dz: 0, name: '+X' },
+    { dx: -1, dz: 0, name: '-X' },
+    { dx: 0, dz: 1, name: '+Z' },
+    { dx: 0, dz: -1, name: '-Z' }
+  ];
+
+  const results = [];
+
+  for (const dir of directions) {
+    let solidCount = 0;
+    let airCount = 0;
+
+    // Check blocks along this direction
+    for (let dist = 5; dist <= surveyRadius; dist += 5) {
+      const checkPos = pos.offset(dir.dx * dist, 0, dir.dz * dist);
+      const block = bot.blockAt(checkPos);
+      if (block) {
+        if (block.name.includes('deepslate') || block.name.includes('stone')) {
+          solidCount++;
+        } else if (block.name === 'air' || block.name === 'cave_air') {
+          airCount++;
+        }
+      }
+    }
+
+    results.push({
+      direction: dir.name,
+      dx: dir.dx,
+      dz: dir.dz,
+      solidCount,
+      airCount,
+      score: solidCount - airCount // Higher = more unmined
+    });
+  }
+
+  // Sort by score (most solid = least mined)
+  results.sort((a, b) => b.score - a.score);
+  return results;
+}
+
+// Usage: Survey and travel to best direction
+const survey = await surveyForUnminedArea();
+const best = survey[0];
+console.log(`Best mining direction: ${best.direction} (score: ${best.score})`);
+
+// Travel 30 blocks in best direction before starting
+const travelDist = 30;
+const newStart = bot.entity.position.offset(best.dx * travelDist, 0, best.dz * travelDist);
+await bot.pathfinder.goto(new goals.GoalBlock(newStart.x, newStart.y, newStart.z));
+```
+
+---
 
 ## Goals
 1. Strip mine at deepslate level (Y=-59) to find diamonds and other ores
@@ -313,6 +458,60 @@ if (player && player.entity) {
 }
 ```
 
+### Self-Defense Routine
+```javascript
+// Auto-attack hostile mobs within 5 blocks
+const hostileTypes = ['zombie', 'skeleton', 'spider', 'creeper', 'enderman', 'witch',
+  'phantom', 'drowned', 'husk', 'stray', 'pillager', 'vindicator', 'ravager', 'warden',
+  'zombie_villager', 'cave_spider', 'silverfish', 'slime', 'magma_cube', 'blaze', 'ghast'];
+
+let defending = false;
+
+async function defendSelf() {
+  if (defending) return;
+
+  const nearbyHostiles = Object.values(bot.entities).filter(e => {
+    if (!e.type || !e.position) return false;
+    const dist = e.position.distanceTo(bot.entity.position);
+    return dist < 5 && hostileTypes.some(h => e.name?.includes(h));
+  });
+
+  if (nearbyHostiles.length > 0) {
+    defending = true;
+    const target = nearbyHostiles[0];
+
+    try {
+      // Equip sword if available, otherwise use pickaxe
+      const sword = bot.inventory.items().find(i => i.name.includes('sword'));
+      const pick = bot.inventory.items().find(i => i.name.includes('pickaxe'));
+      if (sword) await bot.equip(sword, 'hand');
+      else if (pick) await bot.equip(pick, 'hand');
+
+      // Attack the mob
+      await bot.attack(target);
+    } catch (e) {}
+
+    defending = false;
+  }
+}
+
+// Run defense check every 250ms
+const defenseInterval = setInterval(defendSelf, 250);
+bot._defenseInterval = defenseInterval;
+
+return 'Self-defense routine active';
+```
+
+### Stop Self-Defense
+```javascript
+if (bot._defenseInterval) {
+  clearInterval(bot._defenseInterval);
+  bot._defenseInterval = null;
+  return 'Self-defense stopped';
+}
+return 'No defense routine running';
+```
+
 ### Stop Current Task
 ```javascript
 bot.pathfinder.setGoal(null);
@@ -342,3 +541,24 @@ return 'Stopped';
 3. Recursively tries to reach midpoint, then continues to target
 4. Max depth of 4 levels prevents infinite recursion
 5. Gives up if midpoint is < 3 blocks away (can't subdivide further)
+
+### 2026-01-11: Self-Defense Routine
+**Feature:** Added automatic self-defense against hostile mobs.
+**Implementation:**
+- Detects hostile mobs within 5 blocks (zombies, skeletons, spiders, creepers, etc.)
+- Auto-equips sword if available, otherwise uses pickaxe
+- Attacks threats automatically every 250ms
+- Can be stopped with the "Stop Self-Defense" command
+- Stored on `bot._defenseInterval` for cleanup
+
+### 2026-01-11: Death by Creeper - Defense Loop Critical
+**Bug:** Bot died to creeper while starting mining routine.
+**Cause:** Agent disabled defense loop to prevent pathfinder conflicts, leaving bot unprotected.
+**Lesson:** NEVER disable defense loop. It must run continuously.
+**Fix:** Mining script must coexist with defense loop. If pathfinder conflicts occur, handle them in the mining script rather than disabling protection.
+
+### 2026-01-11: Second Death - Defense Loop MUST Be First
+**Bug:** Bot died again while trying to collect dropped items.
+**Cause:** Agent forgot to start defense loop before moving the bot.
+**Lesson:** ABSOLUTE RULE - The FIRST command after ANY respawn/teleport MUST be activating the defense loop. Before movement, before item collection, before ANYTHING.
+**Mantra:** "Defense first, then act."
