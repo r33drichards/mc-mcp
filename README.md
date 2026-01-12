@@ -8,9 +8,7 @@ An MCP (Model Context Protocol) server that provides tools for controlling a Min
 - **disconnect** - Disconnect from server
 - **eval** - Execute arbitrary JavaScript with bot in scope
 - **screenshot** - Capture screenshots from bot's perspective
-- **status** - Get bot status (position, health, food, etc.)
-- **chat** - Send chat messages
-- **move_to** - Look at/move toward coordinates
+
 
 ## Installation
 
