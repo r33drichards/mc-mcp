@@ -110,13 +110,17 @@ server.tool(
           console.error("[mineflayer-mcp] Pathfinder loaded, loading minecraft-data...");
           mcData = minecraftData(bot!.version);
           console.error(`[mineflayer-mcp] Loaded minecraft-data for version ${bot!.version}`);
-          console.error("[mineflayer-mcp] Waiting for chunks...");
-          await bot!.waitForChunksToLoad();
-          console.error("[mineflayer-mcp] Chunks loaded, bot ready");
+          console.error("[mineflayer-mcp] Waiting for chunks (max 10s)...");
+          // Wait for chunks with timeout - don't block forever
+          await Promise.race([
+            bot!.waitForChunksToLoad(),
+            new Promise(resolve => setTimeout(resolve, 10000))
+          ]);
+          console.error("[mineflayer-mcp] Proceeding (chunks may still be loading)");
 
           // Start web viewer (firstPerson: false for third-party view with freelook)
           try {
-            mineflayerViewer(bot!, { port: VIEWER_PORT, firstPerson: false });
+            mineflayerViewer(bot!, { port: VIEWER_PORT, firstPerson: true });
             console.error(`[mineflayer-mcp] Web viewer started on port ${VIEWER_PORT} (third-party view)`);
           } catch (viewerErr: any) {
             console.error("[mineflayer-mcp] Web viewer failed to start:", viewerErr.message);
