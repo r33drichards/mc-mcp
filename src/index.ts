@@ -15,6 +15,17 @@ import { z } from "zod";
 import mineflayer, { Bot } from "mineflayer";
 import mineflayerPathfinder from "mineflayer-pathfinder";
 import { readFile, writeFile, mkdir, stat } from "fs/promises";
+import {
+  initKnowledge,
+  searchFullText,
+  searchSemantic,
+  searchHybrid,
+  getDocument,
+  getStats,
+  listByCategory,
+  indexSkills,
+  type SearchResult,
+} from "./knowledge.js";
 import minecraftData from "minecraft-data";
 import { Vec3 } from "vec3";
 const { pathfinder, Movements, goals } = mineflayerPathfinder;
@@ -131,7 +142,7 @@ server.tool(
 
           // Start web viewer (firstPerson: false for third-party view with freelook)
           try {
-            mineflayerViewer(bot!, { port: VIEWER_PORT, firstPerson: true });
+            mineflayerViewer(bot! as any, { port: VIEWER_PORT, firstPerson: true });
             console.error(`[mineflayer-mcp] Web viewer started on port ${VIEWER_PORT} (third-party view)`);
           } catch (viewerErr: any) {
             console.error("[mineflayer-mcp] Web viewer failed to start:", viewerErr.message);
@@ -557,6 +568,9 @@ server.tool(
       const worldView = new WorldView(bot.world, viewDist, center);
       viewer.listen(worldView);
 
+      // Listen to bot events to sync world data
+      worldView.listenToBot(bot);
+
       // Position camera at bot's eye position
       viewer.camera.position.set(center.x, center.y, center.z);
 
@@ -569,9 +583,9 @@ server.tool(
       const point = cameraPos.add(lookDir);
       viewer.camera.lookAt(point.x, point.y, point.z);
 
-      // Wait for world to load
+      // Wait for chunks to actually render (not just a timeout)
       console.error("[mineflayer-mcp] Waiting for world chunks to render...");
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await viewer.world.waitForChunksToRender();
 
       // Render the scene
       renderer.render(viewer.scene, viewer.camera);
@@ -625,6 +639,238 @@ server.tool(
       console.error("[mineflayer-mcp] Screenshot error:", error);
       return {
         content: [{ type: "text", text: `Screenshot error: ${error.message}\n${error.stack}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+// ============================================================
+// Minecraft Wiki Knowledge Base Tools
+// ============================================================
+
+// Initialize knowledge base on startup
+initKnowledge().catch((err) => {
+  console.error("[mineflayer-mcp] Knowledge base init error:", err.message);
+});
+
+// Tool: Search wiki using full-text search (FTS5)
+server.tool(
+  "wiki_search",
+  "Search Minecraft wiki using full-text search. Good for finding specific terms, item names, mob names, etc.",
+  {
+    query: z.string().describe("Search query (e.g., 'zombie spawn conditions', 'diamond sword damage')"),
+    limit: z.number().optional().describe("Maximum number of results (default: 5)"),
+  },
+  async ({ query, limit }) => {
+    try {
+      const results = await searchFullText(query, limit || 5);
+
+      if (results.length === 0) {
+        return {
+          content: [{ type: "text", text: `No results found for: ${query}` }],
+        };
+      }
+
+      const output = results.map((r, i) =>
+        `${i + 1}. **${r.title}** (${r.category})\n   ${r.snippet.replace(/>>>/g, "**").replace(/<<</g, "**")}`
+      ).join("\n\n");
+
+      return {
+        content: [{ type: "text", text: `Found ${results.length} results for "${query}":\n\n${output}` }],
+      };
+    } catch (err: any) {
+      return {
+        content: [{ type: "text", text: `Search error: ${err.message}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Tool: Semantic search using embeddings
+server.tool(
+  "wiki_semantic_search",
+  "Search Minecraft wiki using semantic/meaning-based search. Good for conceptual questions like 'how to survive at night' or 'best armor for the nether'.",
+  {
+    query: z.string().describe("Natural language query describing what you're looking for"),
+    limit: z.number().optional().describe("Maximum number of results (default: 5)"),
+  },
+  async ({ query, limit }) => {
+    try {
+      const results = await searchSemantic(query, limit || 5);
+
+      if (results.length === 0) {
+        return {
+          content: [{ type: "text", text: `No results found for: ${query}` }],
+        };
+      }
+
+      const output = results.map((r, i) =>
+        `${i + 1}. **${r.title}** (${r.category}) [score: ${r.score.toFixed(3)}]\n   ${r.snippet}`
+      ).join("\n\n");
+
+      return {
+        content: [{ type: "text", text: `Found ${results.length} semantically similar results for "${query}":\n\n${output}` }],
+      };
+    } catch (err: any) {
+      return {
+        content: [{ type: "text", text: `Semantic search error: ${err.message}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Tool: Hybrid search (combines FTS and semantic)
+server.tool(
+  "wiki_hybrid_search",
+  "Search Minecraft wiki using both full-text and semantic search. Best for general queries when you want comprehensive results.",
+  {
+    query: z.string().describe("Search query - can be keywords or natural language"),
+    limit: z.number().optional().describe("Maximum number of results (default: 5)"),
+  },
+  async ({ query, limit }) => {
+    try {
+      const results = await searchHybrid(query, limit || 5);
+
+      if (results.length === 0) {
+        return {
+          content: [{ type: "text", text: `No results found for: ${query}` }],
+        };
+      }
+
+      const output = results.map((r, i) =>
+        `${i + 1}. **${r.title}** (${r.category})\n   ${r.snippet.replace(/>>>/g, "**").replace(/<<</g, "**")}`
+      ).join("\n\n");
+
+      return {
+        content: [{ type: "text", text: `Found ${results.length} results for "${query}":\n\n${output}` }],
+      };
+    } catch (err: any) {
+      return {
+        content: [{ type: "text", text: `Hybrid search error: ${err.message}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Tool: Get full wiki article
+server.tool(
+  "wiki_get",
+  "Get the full content of a specific Minecraft wiki article by title.",
+  {
+    title: z.string().describe("Article title (e.g., 'Zombie', 'Diamond Sword', 'Crafting')"),
+  },
+  async ({ title }) => {
+    try {
+      const doc = await getDocument(title);
+
+      if (!doc) {
+        // Try fuzzy search
+        const results = await searchFullText(title, 3);
+        if (results.length > 0) {
+          return {
+            content: [{
+              type: "text",
+              text: `Article "${title}" not found. Did you mean:\n` +
+                results.map(r => `- ${r.title}`).join("\n"),
+            }],
+          };
+        }
+        return {
+          content: [{ type: "text", text: `Article not found: ${title}` }],
+          isError: true,
+        };
+      }
+
+      return {
+        content: [{
+          type: "text",
+          text: `# ${doc.title}\n**Category:** ${doc.category}\n\n${doc.content}`,
+        }],
+      };
+    } catch (err: any) {
+      return {
+        content: [{ type: "text", text: `Error getting article: ${err.message}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Tool: List articles by category
+server.tool(
+  "wiki_list",
+  "List all wiki articles in a category.",
+  {
+    category: z.string().optional().describe("Category name (mobs, items, blocks, mechanics, food, materials, enchantments, potions, structures, dimensions). If not specified, shows all categories."),
+  },
+  async ({ category }) => {
+    try {
+      const stats = await getStats();
+
+      if (!category) {
+        // List all categories
+        const output = Object.entries(stats.categories)
+          .sort((a, b) => b[1] - a[1])
+          .map(([cat, count]) => `- **${cat}**: ${count} articles`)
+          .join("\n");
+
+        return {
+          content: [{
+            type: "text",
+            text: `Wiki Categories (${stats.totalDocuments} total articles):\n\n${output}\n\nUse wiki_list with a category name to see articles.`,
+          }],
+        };
+      }
+
+      const articles = await listByCategory(category);
+
+      if (articles.length === 0) {
+        return {
+          content: [{ type: "text", text: `No articles found in category: ${category}` }],
+        };
+      }
+
+      return {
+        content: [{
+          type: "text",
+          text: `Articles in **${category}** (${articles.length}):\n\n` +
+            articles.map(a => `- ${a.title}`).join("\n"),
+        }],
+      };
+    } catch (err: any) {
+      return {
+        content: [{ type: "text", text: `Error listing articles: ${err.message}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+// Tool: Index/re-index the knowledge base
+server.tool(
+  "wiki_index",
+  "Index or re-index the Minecraft wiki knowledge base. Use this if new wiki files have been added.",
+  {
+    force: z.boolean().optional().describe("Force re-index all documents (default: false, only indexes new files)"),
+  },
+  async ({ force }) => {
+    try {
+      const result = await indexSkills(force || false);
+      const stats = await getStats();
+
+      return {
+        content: [{
+          type: "text",
+          text: `Indexing complete!\n- Indexed: ${result.indexed}\n- Skipped: ${result.skipped}\n- Total documents: ${stats.totalDocuments}\n- With embeddings: ${stats.hasEmbeddings}`,
+        }],
+      };
+    } catch (err: any) {
+      return {
+        content: [{ type: "text", text: `Indexing error: ${err.message}` }],
         isError: true,
       };
     }

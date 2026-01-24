@@ -14,10 +14,25 @@ services:
       - MCP_TRANSPORT=http
       - MCP_PORT=3001
     volumes:
-      - ./state:/usr/src/app/state
-      # mineflayer and minecraft.wiki files
       - ./mineflayer:/usr/src/app/mineflayer
       - ./minecraft.wiki:/usr/src/app/minecraft.wiki
+      - ./prismarine-viewer:/usr/src/app/prismarine-viewer
+      - ./screenshots:/usr/src/app/screenshots
+
+  copilotkit-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: mc-mcp-frontend
+    container_name: copilotkit-frontend
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - MCP_SERVER_URL=http://localhost:3001/mcp
+      - COPILOTKIT_PORT=3003
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - mineflayer-mcp
   mc:
     image: itzg/minecraft-server:latest
     pull_policy: daily
