@@ -1,0 +1,1350 @@
+{{For|the data pack customization {{in|je}}|Custom world generation}}
+
+[[File:Overworld_1.18.png|thumb|''Minecraft'' worlds like this one are all generated algorithmically.]]
+
+'''World generation''' (sometimes abbreviated as '''worldgen''') is the {{w|procedural generation}} process ''[[Minecraft]]'' uses to algorithmically generate [[terrain]], [[biome]]s, [[feature]]s, and thus ultimately decides which [[block]]s are placed where. ''Minecraft'' worlds are made of 16&times;16 blocks wide [[chunk]]s stretching the full height of the [[dimension]]. Because there are more than 18 quintillion (18&times;10<sup>18</sup>, or {{abbr|2<sup>64</sup>|18&nbsp;446 744&nbsp;073&nbsp;709&nbsp;551&nbsp;616}}) possible worlds, the game generates them using randomness, algorithms, and some manually built decorations. The benefits of procedural world generation include smaller game file size and practically infinite possibilities of gameplay.
+
+== Randomness ==
+In order to generate a different world every time, the game uses random numbers generated from a [[World seed|'''seed''']]. However, pure randomness makes terrain and biomes too chaotic with no continuity.<ref>{{YouTube link|CSa5O6knuwI|Minecraft terrain generation in a nutshell|Henrik Kniberg|Feb 6, 2022}}</ref> 
+
+To solve this problem, the game makes use of gradient noise algorithms, like {{W|Perlin noise|newtab=1}}.<ref>{{citation|url=https://www.cs.umd.edu/class/spring2018/cmsc425/Lects/lect13-2d-perlin.pdf |title=2D Perlin Noise; lecture notes for CMSC 425 (Game Programming) |date=Spring 2018 |author=Dave Mount and Roger Eastman}}</ref> This makes sure blocks and chunks fit with their neighbors and gives the world both continuity and randomness. 
+
+Even though noise looks random and continuous, using it to generate terrain still lacks variation like hills and valleys that stand out and have a large height difference. To solve this, multiple noise functions are generated with different frequencies and amplitudes and then added up, which gives a more natural result. These noise functions are called octaves.
+
+<gallery mode="packed">
+RandomBitmap.png|Pure randomness (also known as white noise) is too chaotic.
+Perlin_noise_one_octave.png|Perlin noise makes it random and continuous.
+Perlin noise.png|Multiple octaves are combined to create variation.
+</gallery>
+
+== Steps ==
+[[File:Chunk colormap.gif|thumb|[[Loading world screen|Chunk colormap]] {{in|Java}}, which is a square that visualizes the status of 43&times;43 [[chunk]]s.]]
+
+World generation happens in multiple steps. The game may freeze some chunks that are far from players at an early generation step for better performance, as shown on the graph. As the player approaches these chunks, the chunks advance through the generation steps again until they finish generating. Incomplete chunks that are temporarily frozen at a step are called proto-chunks, while chunks that are ready and accessible to players are called level chunks. {{IN|JE}}, the steps of world generation are sorted into:
+
+* {{color|#545454|}}'''empty''': The chunk is not yet loaded or generated.
+* {{color|#999999|}}[[#Structures|'''structures_starts''']]: This step calculates the starting points for structure pieces. For structures that start in this chunk, the position of all pieces are generated and stored.
+* {{color|#5F6191|}}[[#Structures|'''structures_references''']]: A reference to nearby chunks that have a structures' starting point are stored.
+* {{color|#80B252|}}[[#Biomes|'''biomes''']]: Biomes are determined and stored. No terrain is generated at this stage.
+* {{color|#D1D1D1|}}[[#Terrain|'''noise''']]: The base terrain shape and liquid bodies are placed.
+* {{color|#726809|}}[[#Surface|'''surface''']]: The surface of the terrain is replaced with biome-dependent blocks.
+* {{color|#303572|}}[[#Carvers|'''carvers''']]: Carvers carve certain parts of the terrain and replace solid blocks with air.
+* {{color|#21C600|}}[[#Features|'''features''']]: Features and structure pieces are placed and heightmaps are generated.
+* {{color|#CCCCCC|}}'''[[World generation#Lighting|initialize_light]]''': The lighting engine is initialized and light sources are identified.
+* {{color|#FFE0A0|}}'''[[World generation#Lighting|light]]''': The lighting engine calculates the light level for blocks.
+* {{color|#F26060|}}[[#Mob spawning|'''spawn''']]: Mobs are spawned.
+* {{color|#FFFFFF|}}'''full''': Generation is done and a chunk can now be loaded. The proto-chunk is now converted to a level chunk and all [[block updates]] deferred in the above steps are executed.
+
+== Biomes ==
+[[File:Minecraft Density Functions.png|thumb|Top-down maps of biomes/terrain height and density functions.]]
+[[File:World_generation_debug_info_explanation.png|thumb|{{IN|je}}, the climate parameters can be found in the [[debug screen]].]]
+{{For|an overview of biomes|Biome}}
+
+=== Overworld ===
+[[Biome]] generation in the [[Overworld]] is based on 6 parameters: '''temperature''', '''humidity''' (aka. vegetation), '''continentalness''' (aka. continents), '''erosion''', '''weirdness''' (aka. ridges), and '''depth'''. Except for "depth", the other 5 parameters are based only on horizontal coordinates.
+
+They can be thought of as a six-dimensional (6D) space, where multiple intervals are defined for each biome, as described below. If the 6 parameters at a location fall outside all the defined biome intervals, the game uses the closest biome interval in the 6D space.
+
+'''Temperature''' is a noise parameter used only in biome generation and does not affect terrain generation. Temperature values are divided into 5 levels. The corresponding ranges from level 0 to level 4 are: -1.0~-0.45, -0.45~-0.15, -0.15~0.2, 0.2~0.55, 0.55~1.0.
+
+Note that the temperature parameter is not the same as the [[Biome#Temperature|temperature]] property of a biome, but they roughly correspond each other, e.g. if a location's temperature parameter is level 0, the base temperature of the biome here is usually low enough or the terrain is high enough, that the surface is covered in snow and ice.
+
+'''Humidity''' (also known as '''vegetation''') is a noise parameter used only in biome generation and does not affect terrain generation. Humidity values are also divided into 5 levels. The corresponding ranges from level 0 to level 4 are: -1.0~-0.35, -0.35~-0.1, -0.1~0.1, 0.1~0.3, 0.3~1.0.
+
+'''Continentalness''' (also known as '''continents''') is used to decide between ocean/beach/land biomes. Higher values correspond to more inland biomes.
+* If -1.2~-1.05: Mushroom fields
+* If -1.05~-0.455: Deep ocean
+* If -0.455~-0.19: Ocean
+* If -0.19~-0.11: Coast
+* If -0.11~0.03: Near-inland
+* If 0.03~0.3: Mid-inland
+* If 0.3~1.0: Far-inland
+
+'''Erosion''' is mainly used to decide between flat and mountainous biomes. When erosion is high the landscape is generally flat. Erosion values are divided into 7 levels. The corresponding ranges from level 0 to level 6 are: -1.0~-0.78, -0.78~-0.375, -0.375~-0.2225, -0.2225~0.05, 0.05~0.45, 0.45~0.55, 0.55~1.0.
+
+'''Weirdness''' (also known as '''ridges''') affects whether to generate a biome variant or not. If the weirdness value is greater than 0, the generated biome becomes weirder. For example, using the variant of the [[Jungle]] biome — [[Bamboo Jungle]]. Additionally, weirdness also affects where peaks and valleys generate. Because of this, a biome and its variant often do not appear on the same bank of a river.
+
+[[File:Ridges folded diagram.png|200px|thumb|A diagram of peaks and valleys (Y-axis) calculated from weirdness (X-axis).]]
+
+The '''PV''' ('''peaks and valleys''', aka. '''ridges folded''') value is calculated through the formula <math>1-\vert (3 \vert weirdness \vert) - 2 \vert</math>.
+* If -1.0~-0.85: Valleys
+* If -0.85~-0.2: Low
+* If -0.2~0.2: Mid
+* If 0.2~0.7: High
+* If 0.7~1.0: Peaks
+
+'''Depth''' is a parameter not based directly on noise, instead it corresponds approximately to the terrain height. It is roughly 0 at the surface and increases by {{frac|1|128}} (0.0078125) for every 1 block down. The depth parameter affects whether a surface biome or a cave biome is placed.
+
+The table below lists the defined depth values for Overworld biomes, and any additional noise values required for cave biomes to generate. Any other values result in the closest biome interval being used instead. Note that regions of lush caves and dripstone caves overlap.<ref>{{bug|MC-262252||The generation of lush caves and dripstone caves is poorly defined}}</ref>
+
+{| class="wikitable mw-collapsible mw-collapsed" style="text-align:center"
+|-
+!Depth
+!Additional requirement
+!Biomes
+|-
+|D=0.0
+|N/A
+|Surface biomes
+|-
+|D=0.2~0.9
+|Continentalness=0.8~1.0
+|{{BiomeLink|Dripstone Caves}}
+|-
+|D=0.2~0.9
+|Humidity=0.7~1.0
+|{{BiomeLink|Lush Caves}}
+|-
+|D=1.0
+|N/A
+|Surface biomes
+|-
+|D=1.1
+|Erosion=-1.0~-0.375
+|{{BiomeLink|Deep Dark}}
+|-
+|}
+
+The generation of '''non-inland biomes''' is not based on humidity, erosion and weirdness. The following table lists the relation between non-inland surface biomes and continentalness and temperature. 
+
+{| class="wikitable mw-collapsible mw-collapsed" style="text-align:center"
+|-
+!Temperature
+!{{Tooltip|Oceans|C{{=}}-0.455~-0.19}}
+!{{Tooltip|Deep oceans|C{{=}}-1.05~-0.455}}
+!{{Tooltip|Mushroom fields|C{{=}}-1.2~-1.05}}
+|-
+|{{Tooltip|T{{=}}0|T{{=}}-1.0~0.45}}
+|{{BiomeLink|Frozen Ocean}}
+|{{BiomeLink|Deep Frozen Ocean}}
+| rowspan="5" | {{BiomeLink|Mushroom Fields}}
+|-
+|{{Tooltip|T{{=}}1|T{{=}}-0.45~-0.15}}
+|{{BiomeLink|Cold Ocean}}
+|{{BiomeLink|Deep Cold Ocean}}
+|-
+|{{Tooltip|T{{=}}2|T{{=}}-0.15~0.2}}
+|{{BiomeLink|Ocean}}
+|{{BiomeLink|Deep Ocean}}
+|-
+|{{Tooltip|T{{=}}3|T{{=}}0.2~0.55}}
+|{{BiomeLink|Lukewarm Ocean}}
+|{{BiomeLink|Deep Lukewarm Ocean}}
+|-
+|{{Tooltip|T{{=}}4|T{{=}}0.55~1.0}}
+| colspan="2" |{{BiomeLink|Warm Ocean}}
+|}
+
+The following table lists the relation between '''inland surface biomes''' and continentalness, erosion and PV.
+
+{| class="wikitable stikitable mw-collapsible mw-collapsed" style="text-align:center"
+|-
+!PV
+!Erosion
+!Coast
+!Near-inland
+!Mid-inland
+!Far-inland
+|-
+| rowspan="3" |Valleys
+|E=0~1
+| rowspan="3" |{{BiomeLink|Frozen River}}（T=0）<br>{{BiomeLink|River}}（T>0)<!--The shore generation is defined incorrectly in code-->
+| rowspan="2" |{{BiomeLink|Frozen River}}（T=0）<br>{{BiomeLink|River}}（T>0）
+| colspan="2" |Middle biomes<ref group="bo" name="always-w-gt-0">Always generates as if W>0</ref>（T<4）<br>Badland biomes<ref group="bo" name="always-w-gt-0" />（T=4）
+|-
+|E=2~5
+| colspan="2" |{{BiomeLink|Frozen River}}（T=0）<br>{{BiomeLink|River}}（T>0）
+|-
+|E=6
+| colspan="3" |{{BiomeLink|Frozen River}}（T=0）<br>{{BiomeLink|Swamp}}（T=1,2）<br>{{BiomeLink|Mangrove Swamp}}（T=3,4）
+|-
+| rowspan="6" |Low
+|E=0~1
+| rowspan="2" |{{BiomeLink|Stony Shore}}
+|Middle biomes（T<4）<br>Badland biomes（T=4）
+| colspan="2" |{{BiomeLink|Snowy Slopes}}（T=0; H=0,1）<br>{{BiomeLink|Grove}}（T=0; H=2,3,4）<br>Middle biomes（0<T<4）<br>Badland biomes（T=4）
+|-
+|E=2
+| rowspan="3" |Middle biomes
+| colspan="2" rowspan="2" |Middle biomes（T<4）<br>Badland biomes（T=4）
+|-
+|E=3
+| rowspan="2" |Beach biomes
+|-
+|E=4
+| colspan="2" rowspan="2" |Middle biomes
+|-
+|E=5
+|Beach biomes（W<0）<br>Middle biomes（W>0; T=0,1 OR H=4）<br>{{BiomeLink|Windswept Savanna}}（W>0; T=2,3,4; H=0,1,2,3）
+|Middle biomes（W<0 OR T=0,1 OR H=4）<br>{{BiomeLink|Windswept Savanna}}（W>0; T=2,3,4; H=0,1,2,3）
+|-
+|E=6
+|Beach biomes
+| colspan="3" |Middle biomes（T=0）<br>{{BiomeLink|Swamp}}（T=1,2）<br>{{BiomeLink|Mangrove Swamp}}（T=3,4）
+|-
+| rowspan="7" |Mid
+|E=0
+| rowspan="3" |{{BiomeLink|Stony Shore}}
+| colspan="3" |{{BiomeLink|Snowy Slopes}}（T<3; H=0,1）<br>{{BiomeLink|Grove}}（T<3; H=2,3,4）<br>Plateau biomes（T=3,4）
+|-
+|E=1
+| colspan="2" |{{BiomeLink|Snowy Slopes}}（T=0; H=0,1）<br>{{BiomeLink|Grove}}（T=0; H=2,3,4）<br>Middle biomes（0<T<4）<br>Badland biomes（T=4）
+|{{BiomeLink|Snowy Slopes}}（T=0; H=0,1）<br>{{BiomeLink|Grove}}（T=0; H=2,3,4）<br>Plateau biomes（T>0）
+|-
+|E=2
+| rowspan="3" |Middle biomes
+| rowspan="2" |Middle biomes（T<4）<br>Badland biomes（T=4）
+|Plateau biomes
+|-
+|E=3
+|Middle biomes
+|Middle biomes（T<4）<br>Badland biomes（T=4）
+|-
+|E=4
+|Beach biomes（W<0）<br>Middle biomes（W>0）
+| colspan="2" |Middle biomes
+|-
+|E=5
+|Beach biomes（W<0）<br>Middle biomes（W>0; T=0,1 OR H=4）<br>{{BiomeLink|Windswept Savanna}}（W>0; T=2,3,4; H=0,1,2,3）
+|Middle biomes（W<0 OR T=0,1 OR H=4）<br>{{BiomeLink|Windswept Savanna}}（W>0; T=2,3,4; H=0,1,2,3）
+| colspan="2" |Shattered biomes
+|-
+|E=6
+|Beach biomes（W<0）<br>Middle biomes（W>0）
+| colspan="3" |Middle biomes（T=0）<br>{{BiomeLink|Swamp}}（T=1,2）<br>{{BiomeLink|Mangrove Swamp}}（T=3,4）
+|-
+| rowspan="7" |High
+|E=0
+| rowspan="5" |Middle biomes
+|{{BiomeLink|Snowy Slopes}}（T<3; H=0,1）<br>{{BiomeLink|Grove}}（T<3; H=2,3,4）<br>Plateau biomes（T=3,4）
+| colspan="2" |{{BiomeLink|Jagged Peaks}}（T=0,1,2; W<0）<br>{{BiomeLink|Frozen Peaks}}（T=0,1,2; W>0）<br>{{BiomeLink|Stony Peaks}}（T=3）<br>Badland biomes（T=4）
+|-
+|E=1
+|{{BiomeLink|Snowy Slopes}}（T=0; H=0,1）<br>{{BiomeLink|Grove}}（T=0; H=2,3,4）<br>Middle biomes（0<T<4）<br>Badland biomes（T=4）
+| colspan="2" |{{BiomeLink|Snowy Slopes}}（T<3; H=0,1）<br>{{BiomeLink|Grove}}（T<3; H=2,3,4）<br>Plateau biomes（T=3,4）
+|-
+|E=2
+| rowspan="3" |Middle biomes
+|Plateau biomes
+| rowspan="2" |Plateau biomes
+|-
+|E=3
+|Middle biomes（T<4）<br>Badland biomes（T=4）
+|-
+|E=4
+| colspan="2" |Middle biomes
+|-
+|E=5
+| colspan="2" |Middle biomes（W<0 OR T=0,1 OR H=4）<br>{{BiomeLink|Windswept Savanna}}（W>0; T=2,3,4; H=0,1,2,3）
+| colspan="2" |Shattered biomes
+|-
+|E=6
+| colspan="4" |Middle biomes
+|-
+| rowspan="7" |Peaks
+|E=0
+| colspan="2" |{{BiomeLink|Jagged Peaks}}（T=0,1,2; W<0）<br>{{BiomeLink|Frozen Peaks}}（T=0,1,2; W>0）<br>{{BiomeLink|Stony Peaks}}（T=3）<br>Badland biomes（T=4）
+| colspan="2" rowspan="2" |{{BiomeLink|Jagged Peaks}}（T=0,1,2; W<0）<br>{{BiomeLink|Frozen Peaks}}（T=0,1,2; W>0）<br>{{BiomeLink|Stony Peaks}}（T=3）<br>Badland biomes（T=4）
+|-
+|E=1
+| colspan="2" |{{BiomeLink|Snowy Slopes}}（T=0; H=0,1）<br>{{BiomeLink|Grove}}（T=0; H=2,3,4）<br>Middle biomes（0<T<4）<br>Badland biomes（T=4）
+|-
+|E=2
+| colspan="2" rowspan="3" |Middle biomes
+|Plateau biomes
+| rowspan="2" |Plateau biomes
+|-
+|E=3
+|Middle biomes（T<4）<br>Badland biomes（T=4）
+|-
+|E=4
+| colspan="2" |Middle biomes
+|-
+|E=5
+| colspan="2" |Shattered biomes（W<0 OR T=0,1 OR H=4）<br>{{BiomeLink|Windswept Savanna}}（W>0; T=2,3,4; H=0,1,2,3）
+| colspan="2" |Shattered biomes
+|-
+|E=6
+| colspan="4" |Middle biomes
+|}
+
+In which, the specific biome generation of beach biomes, badland biomes, middle biomes, plateau biomes, and shattered biomes is determined by the temperature, humidity, and weirdness values.
+
+'''Beach biomes''' generate in low lying terrain along the coast, and the specific biome generation is related only to the temperature value.
+
+{| class="wikitable mw-collapsible mw-collapsed" style="text-align:center"
+|-
+!Temperature
+!Biomes
+|-
+|T=0
+|{{BiomeLink|Snowy Beach}}
+|-
+|T=1,2,3
+|{{BiomeLink|Beach}}
+|-
+|T=4
+|{{BiomeLink|Desert}}
+|}
+
+'''Badland biomes''' usually generate inland with low erosion value, and can also generate along the coast with high terrain and low erosion. The specific biome generation is related to humidity and weirdness.
+
+{| class="wikitable mw-collapsible mw-collapsed" style="text-align:center"
+|-
+!Humidity
+!Biomes
+|-
+|H=0,1
+|{{BiomeLink|Badlands}}（W<0）<br>{{BiomeLink|Eroded Badlands}}（W>0）
+|-
+|H=2
+|{{BiomeLink|Badlands}}
+|-
+|H=3,4 
+|{{BiomeLink|Wooded Badlands}}
+|}
+
+'''Middle biomes''' are the most extensive biomes inland. The specific biome generation depends on temperature, humidity, and weirdness.
+
+{| class="wikitable mw-collapsible mw-collapsed" style="text-align:center"
+|-
+!{{Diagonal split header|Humidity|Temperature}}
+!T=0
+!T=1
+!T=2
+!T=3
+!T=4
+|-
+|H=0
+|{{BiomeLink|Snowy Plains}}（W<0）<br>{{BiomeLink|Ice Spikes}}（W>0）
+| rowspan="2" |{{BiomeLink|Plains}}
+|{{BiomeLink|Flower Forest}}（W<0）<br>{{BiomeLink|Sunflower Plains}}（W>0）
+| rowspan="2" |{{BiomeLink|Savanna}}
+| rowspan="5" |{{BiomeLink|Desert}}
+|-
+|H=1
+|{{BiomeLink|Snowy Plains}}
+|{{BiomeLink|Plains}}
+|-
+|H=2
+|{{BiomeLink|Snowy Plains}}（W<0）<br>{{BiomeLink|Snowy Taiga}}（W>0）
+| colspan="2" |{{BiomeLink|Forest}}
+|{{BiomeLink|Forest}}（W<0）<br>{{BiomeLink|Plains}}（W>0）
+|-
+|H=3 
+|{{BiomeLink|Snowy Taiga}}
+|{{BiomeLink|Taiga}}
+|{{BiomeLink|Birch Forest}}（W<0）<br>{{BiomeLink|Old Growth Birch Forest}}（W>0）
+|{{BiomeLink|Jungle}}（W<0）<br>{{BiomeLink|Sparse Jungle}}（W>0）
+|-
+|H=4
+|{{BiomeLink|Taiga}}
+|{{BiomeLink|Old Growth Spruce Taiga}}（W<0）<br>{{BiomeLink|Old Growth Pine Taiga}}（W>0）
+|{{BiomeLink|Dark Forest}}
+|{{BiomeLink|Jungle}}（W<0）<br>{{BiomeLink|Bamboo Jungle}}（W>0）
+|}
+
+'''Plateau biomes''' generate at inland high terrain with moderate erosion, which results in biomes like [[meadow]]s and [[savanna plateau]]s. The specific biome generation depends on temperature, humidity, and weirdness.
+
+{| class="wikitable mw-collapsible mw-collapsed" style="text-align:center"
+|-
+!{{Diagonal split header|Humidity|Temperature}}
+!T=0
+!T=1
+!T=2
+!T=3
+!T=4
+|-
+|H=0
+|{{BiomeLink|Snowy Plains}}（W<0）<br>{{BiomeLink|Ice Spikes}}（W>0）
+|{{BiomeLink|Meadow}}（W<0）<br>{{BiomeLink|Cherry Grove}}（W>0）
+| rowspan="2" |{{BiomeLink|Meadow}}（W<0）<br>{{BiomeLink|Cherry Grove}}（W>0）
+| rowspan="2" |{{BiomeLink|Savanna Plateau}}
+| rowspan="2" |{{BiomeLink|Badlands}}（W<0）<br>{{BiomeLink|Eroded Badlands}}（W>0）
+|-
+|H=1
+| rowspan="2" |{{BiomeLink|Snowy Plains}}
+|{{BiomeLink|Meadow}}
+|-
+|H=2
+|{{BiomeLink|Forest}}（W<0）<br>{{BiomeLink|Meadow}}（W>0）
+|{{BiomeLink|Meadow}}（W<0）<br>{{BiomeLink|Forest}}（W>0）
+| rowspan="2" |{{BiomeLink|Forest}}
+|{{BiomeLink|Badlands}}
+|-
+|H=3
+| rowspan="2" |{{BiomeLink|Snowy Taiga}}
+|{{BiomeLink|Taiga}}（W<0）<br>{{BiomeLink|Meadow}}（W>0）
+|{{BiomeLink|Meadow}}（W<0）<br>{{BiomeLink|Birch Forest}}（W>0）
+| rowspan="2" |{{BiomeLink|Wooded Badlands}}
+|-
+|H=4
+|{{BiomeLink|Old Growth Spruce Taiga}}（W<0）<br>{{BiomeLink|Old Growth Pine Taiga}}（W>0）
+|{{BiomeLink|Pale Garden}}
+|{{BiomeLink|Jungle}}
+|}
+
+'''Shattered biomes''' are generated at inland places with high erosion. The specific biome generation depends on temperature, humidity, and weirdness.
+
+{| class="wikitable mw-collapsible mw-collapsed" style="text-align:center"
+|-
+!{{Diagonal split header|Humidity|Temperature}}
+!T=0~1
+!T=2
+!T=3
+!T=4
+|-
+|H=0~1
+|{{BiomeLink|Windswept Gravelly Hills}}
+| rowspan="2" |{{BiomeLink|Windswept Hills}}
+|{{BiomeLink|Savanna}}
+| rowspan="4" |{{BiomeLink|Desert}}
+|-
+|H=2
+|{{BiomeLink|Windswept Hills}}
+|{{BiomeLink|Forest}}（W<0）<br>{{BiomeLink|Plains}}（W>0）
+|-
+|H=3
+| colspan="2" rowspan="2" |{{BiomeLink|Windswept Forest}}
+|{{BiomeLink|Jungle}}（W<0）<br>{{BiomeLink|Sparse Jungle}}（W>0）
+|-
+|H=4
+|{{BiomeLink|Jungle}}（W<0）<br>{{BiomeLink|Bamboo Jungle}}（W>0）
+|}
+
+{{reflist|group=bo}}
+
+===The Nether===
+
+[[The Nether]] uses 3 parameters to generate biomes: temperature, humidity and offset. Unlike the Overworld, the Nether specifies biomes with a single point.
+
+The '''offset''' parameter is not based off of noise, it is always 0 at any location in a world. This means that the parameter point of a location is always in the temperature-humidity-plane. The closer the offset (of a biome point) is to 0, the closer the point is to the T-H-plane and the greater the advantage it has during biome generation.
+
+{| class="wikitable sortable" style="text-align:center"
+|-
+!Biomes
+!Temperature
+!Humidity
+!Offset
+|-
+|{{BiomeLink|Basalt Deltas}}
+| -0.5
+|0
+|0.175
+|-
+|{{BiomeLink|Crimson Forest}}
+|0.4
+|0
+|0
+|-
+|{{BiomeLink|Nether Wastes}}
+|0
+|0
+|0
+|-
+|{{BiomeLink|Soul Sand Valley}}
+|0
+| -0.5
+|0
+|-
+|{{BiomeLink|Warped Forest}}
+|0
+| 0.5
+|0.375
+|}
+
+=== The End ===
+[[File:EnderIslandsRender.jpg|thumb|The End islands contain multiple biomes {{in|JE}}. {{IN|BE}}, there is always a single biome on all the islands.]]
+
+{{IN|je}}, [[the End]] uses only one noise parameter: erosion. If the horizontal distance from the chunk origin of a chunk to the world origin is less than 1024, the blocks in the chunk are in the End. Otherwise, the biome is determined by erosion.
+
+{| class="wikitable sortable" style="text-align:center"
+|-
+!Biome
+!Erosion
+!Distance
+|-
+|{{BiomeLink|Small End Islands}}
+| -1~-0.21875
+| rowspan="4" |>1024
+|-
+|
+{{BiomeLink|End Barrens}}
+| -0.21875~-0.0625
+|-
+|{{BiomeLink|End Midlands}}
+| -0.0625~0.25
+|-
+|{{BiomeLink|End Highlands}}
+|0.25~1 
+|-
+|{{BiomeLink|The End}}
+|N/A
+|<1024
+|}
+
+{{IN|be}}, the End has only one biome: [[The End (biome)|The End]].
+
+== Terrain ==
+[[File:World generation noise.jpg|thumb|The Overworld after the "noise" step, which generates the base terrain.]]
+
+{{For|an overview of terrain features|Terrain features}}
+{{For|the terrain customization {{in|JE}}|noise settings}}
+
+Terrain shaping determines which blocks should be solid and which blocks should be filled with air.
+
+=== 3D noise ===
+{{For|customization of density functions {{in|JE}}|Density function}}
+If the noise is in two dimensions, it controls only surface height and it is impossible to add terrain above the surface. To add overhangs and 3D shapes, the game uses 3D Perlin noise function that gives an output called '''density''' for every single block. A density > 0 means it is filled with solid block, otherwise it is filled with air.
+
+Density is then given a height bias and a base height. Height bias "squeezes" the blocks. Base height is the base of the squeezing process where the density is left unchanged. Changing base height moves the ground up and down.
+* In the Overworld, there is a single pair of height bias and base height, meaning the higher the block is, the less density it has and vice versa. Height bias and base height are both configured by a couple of different noises. Notably, [[amplified]] worlds are generated by tuning height bias to be lower than default, so that terrain stretch in the vertical direction more.
+* In the Nether, there are two pairs of base heights that create the thick, solid ceiling and ground, and the hollow space between them.
+* In the End, these parameters are configured to squeeze the map into a big island located relatively at the bottom of the dimension.
+
+<gallery mode="packed">
+Noise router diagram simple noise.png|The side view of a world using a single noise
+Noise router diagram simple noise (overhangs).png|The side view of a world using 3D noise, creating overhangs
+</gallery>
+
+=== Splines ===
+To give the world some dramatic terrain shapes like cliffs, fjords and plateaus, the game uses three 2D noise maps. These noises are mapped using splines to calculate the height '''offset''' and a vertical stretch '''factor'''. The same noises are also used in [[#Biome|biome generation]], which creates a soft link between biome and terrain. For example, a mountainous area generates mountainous biome and plains biomes are generally flatter.
+
+The larger the '''continentalness''', the higher the average terrain height. Continentalness is used mainly for differentiating ocean and land.
+
+The '''erosion''' parameter affects inland terrain during terrain generation. Erosion is mainly used to create large areas of flat ground. The higher the erosion at a location, the lower the terrain height and the flatter the terrain.
+
+The '''peaks and valleys''' (PV) value is calculated from weirdness. As the name suggests, it is mainly used for generating better peaks and valleys. The higher the PV value, the higher the terrain. Usually, at places with low continentalness or high erosion, when the PV level is "Valleys", the terrain is low enough to generate rivers. At high terrain, negative weirdness values lead to taller and more jagged and point peaks. When the erosion level is approximately 5, positive weirdness values result in weird inland terrain that is shattered and extremely precipitous and craggy.
+
+<gallery mode="packed">
+File:Beach.png|Continentalness creates distinction between land and ocean
+File:Plains.png|Large area of flat plains is created by high erosion.
+File:Fjord 2.png|PV creates peaks and valleys like this fjord.
+</gallery>
+
+=== Noise caves ===
+{{main|Cave#Noise caves}}
+
+[[File:Noise cave mechanism.jpg|thumb|The mechanics of noise cave generation.<ref>{{tweet|henrikkniberg|1364265702861987841|I get a lot of questions about how the new Minecraft noise caves work, and why we call them silly things like Cheese caves and Spaghetti caves. Here's an attempt to summarize it in a picture, hope it makes some kind of sense :)}}</ref>]]
+
+Noise caves are part of the base terrain generation and are generated using 3D Perlin noises. They come in the form of cheese caves, spaghetti caves, and noodle caves. Three noise maps, frequency, hollowness, and thickness, are parameters that control this process. Frequency controls the frequency of the cave generation.
+
+* Cheese caves are pocket areas of the underground that come in various sizes. They are generated by taking the white area in a Perlin noise map. Hollowness controls the size of cheese caves.
+* Spaghetti caves are long, narrow caves that wind their way through the underground. When generating, the edge of black and white part of noise image becomes air, making it look like long and wide spaghetti. Thickness controls the thickness of spaghetti caves.
+* Noodle caves are a thinner and squigglier variant of spaghetti caves. They consist of tunnels usually 1 to 5 blocks in width. Its generating mechanism is similar to that of spaghetti caves. Thickness controls the thickness of noodle caves.
+
+Additionally, noise pillars generate inside big cheese cave chambers. Frequency controls the frequency of the pillar generation while thickness control the thickness of them.
+
+<gallery>
+Cheese Cave.png|Inside of a cheese cave.
+Spaghetti Cave.png|Inside of a spaghetti cave.
+Noodle Cave.png|Inside of a noodle cave.
+</gallery>
+
+=== Aquifers ===
+[[File:Aquifer_Cross_Section.jpg|thumb|A cross section showing caves and aquifers.]]
+
+Aquifers are liquid systems used in the [[Overworld]] to determine the fluid in all empty areas. Without aquifers all empty areas between sea-level and y=-54 would be filled with [[water]]. Areas below y=-55 are always filled with [[lava]]. To avoid all caves being flooded, aquifers are used to determine the fluid state of each position instead. Aquifers don't change the lava below y=-55. An aquifer can be in 3 different states, with a state selected for each position:
+* Empty: Always filled with air
+* Flooded: As if aquifers didn't exist: filled with air above the sea-level and a fluid below.
+* Local fluid level: Picks a local liquid level and fills areas below with a liquid and areas above with air.
+
+For positions above the preliminary surface, the aquifer state is "Flooded". In areas of the deep dark (Erosion < -0.22 and Depth > 0.9) the state is always "Empty". Otherwise the state is determined bases on a noise. Values below 0.4 are "Empty", values above 0.8 are "Flooded", otherwise a local fluid level is used. 
+
+In positions near areas where the preliminary surface is below the sea-level the area of the "Flooded" aquifer state reaches slightly below the preliminary surface. In these areas the cutoff values for the noise are linearly decreased from 64 blocks below the preliminary surface upward. At the surface they are below -0.8 for "Empty" and above -0.3 for "Flooded". This causes the "Flooded" state to be much more common directly below rivers and oceans.
+
+The local water level is determined in cells of size 16x40x16 blocks using a different noise. Whether to place water or lava is determined in cells of 64x40x64 blocks based on a third noise. Areas above y=-10 always use water.
+
+Barriers are used to separate areas of different liquids and to separate liquids from air. The height of the barriers is dependent on a fourth noise, causing water or lava to sometimes spill over the barrier.
+
+=== Ore veins ===
+[[File:Excavated_Copper_Vein.png|thumb|right|A fully exposed copper ore vein]]
+
+[[Ore veins]] generate only in the Overworld. Three noises are used for vein generation: toggle, ridge, and gap.
+
+Toggle is always 0 outside Y=-60 to Y=51 and can be negative or positive inside the range. The game attempts to generate an iron or a copper vein depending on whether toggle is < 0 or > 0. The attempts might fail because veins have a configured generating height.
+
+Ridge is always -0.08 if Y level is outside the range. If ridge is > 0, the game skips the block.
+
+Gap determines the ratio of ore-to-filler material, between 10% and 30% for any given vein. For non-filler blocks, 98% generate as normal ore blocks, while 2% are generated as raw ore blocks ([[Block of Raw Copper]] and [[Block of Raw Iron]], respectively).
+
+The blocks used in vein generation are {{w|Hard_coding|hardcoded}}, though their size can be changed with datapacks.
+
+== Surface ==
+{{For|customization of surface {{in|JE}}|Surface rule}}
+[[File:World generation surface.jpg|thumb|The Overworld after the "surface" step.]]
+
+After the base terrain is generated, the game replaces some blocks with grass blocks, sand, dirt, etc., depending on the biome and other conditions.
+
+=== Overworld ===
+{| class="wikitable mw-collapsible mw-collapsed"
+|-
+! colspan=5 | Conditions
+! Result block
+|-
+| colspan=5 | Gradient Y=-64 &rarr; Y=-59
+| {{BlockLink|Bedrock}}
+|-
+| rowspan="90" | Surface<ref group="s">Above preliminary surface (aka. not in noise caves)</ref>
+| rowspan=5 | Floor<ref group="s" name="floor-0">Only the top layer of the floor surface</ref>
+| rowspan=3 | {{BiomeLink|Wooded Badlands}}
+| rowspan=3 | Above Y=97
+| Noise<ref group="s" name="surface-noise-1">Surface noise within -0.909~-0.5454, -0.1818~0.1818, or 0.5454~0.909</ref>
+| {{BlockLink|Coarse Dirt}}
+|-
+| No water above
+| {{BlockLink|Grass Block}}
+|-
+| Otherwise
+| {{BlockLink|Dirt}}
+|-
+| {{BiomeLink|Swamp}}
+| At Y=63
+| rowspan=2 | Noise<ref group="s">Swamp surface noise &ge; 0</ref>
+| rowspan=2 | {{BlockLink|Water}}
+|-
+| {{BiomeLink|Mangrove Swamp}}
+| Between Y=61 and Y=63
+|-
+| rowspan=12 | {{BiomeLink|Badlands}}<br>{{BiomeLink|Eroded Badlands}}<br>{{BiomeLink|Wooded Badlands}}
+| rowspan=9 | Floor<ref group="s" name="floor-0" />
+| colspan=2 | Above Y=256
+| {{BlockLink|Orange Terracotta}}
+|-
+| rowspan=2 | Above Y=74
+| Noise<ref group="s" name="surface-noise-1" />
+| {{BlockLink|Terracotta}}
+|-
+| Otherwise
+| {{EnvLink|Hoodoo}}<ref group="s" name="hoodoo">Special hardcoded rule that places the bands of terracotta</ref>
+|-
+| rowspan=2 | Water no deeper than 1
+| Ceiling<ref group="s" name="ceiling-0">Only the top layer of the ceiling surface</ref>
+| {{BlockLink|Red Sandstone}}
+|-
+| Otherwise
+| {{BlockLink|Red Sand}}
+|-
+| colspan=2 | Erosion<ref group="s" name="hole">A hole in the terrain, where the surface noise is 0</ref>
+| {{BlockLink|Orange Terracotta}}
+|-
+| colspan=2 | Water{{Info needed}}
+| {{BlockLink|White Terracotta}}
+|-
+| colspan=2 | Ceiling<ref group="s" name="ceiling-0" />
+| {{BlockLink|Stone}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Gravel}}
+|-
+| rowspan=2 | Surface is above Y=63
+| colspan=2 | Above Y=63 and surface is below Y=74
+| {{BlockLink|Orange Terracotta}}
+|-
+| colspan=2 | Otherwise
+| {{EnvLink|Hoodoo}}<ref group="s" name="hoodoo" />
+|-
+| Floor<ref group="s" name="floor-0" />
+| colspan=2 | Water no deeper than 6 blocks
+| {{BlockLink|White Terracotta}}
+|-
+| rowspan=38 | Floor<ref group="s" name="floor-0" /> and water<br>no deeper than 1
+| rowspan=3 | {{BiomeLink|Frozen Ocean}}<br>{{BiomeLink|Deep Frozen Ocean}}
+| rowspan=3 | Erosion<ref group="s" name="hole" />
+| No water above
+| {{BlockLink|Air}}
+|-
+| Cold<ref group="s">Whether it is cold enough to snow here</ref>
+| {{BlockLink|Ice}}
+|-
+| Otherwise
+| {{BlockLink|Water}}
+|-
+| rowspan=3 | {{BiomeLink|Frozen Peaks}}
+| colspan=2 | Steep face<ref group="s" name="steep">The vertical gradient of the north and south side is greater than 2</ref> or noise<ref group="s">Packed ice noise within 0~0.2</ref>
+| {{BlockLink|Packed Ice}}
+|-
+| colspan=2 | Ice noise within 0~0.025
+| {{BlockLink|Ice}}
+|-
+| colspan=2 | No water above
+| {{BlockLink|Snow Block}}
+|-
+| rowspan=3 | {{BiomeLink|Snowy Slopes}}
+| colspan=2 | Steep face<ref group="s" name="steep" />
+| {{BlockLink|Stone}}
+|-
+| Noise<ref group="s" name="powder-snow-noise">Powder snow noise within 0.35~0.6</ref>
+| No water above
+| {{BlockLink|Powder Snow}}
+|-
+| colspan=2 | No water above
+| {{BlockLink|Snow Block}}
+|-
+| rowspan=2 | {{BiomeLink|Jagged Peaks}}
+| colspan=2 | Steep face<ref group="s" name="steep" />
+| {{BlockLink|Stone}}
+|-
+| colspan=2 | No water above
+| {{BlockLink|Snow Block}}
+|-
+| rowspan=2 | {{BiomeLink|Grove}}
+| Noise<ref group="s" name="powder-snow-noise" />
+| No water above
+| {{BlockLink|Powder Snow}}
+|-
+| colspan=2 | No water above
+| {{BlockLink|Snow Block}}
+|-
+| rowspan=2 | {{BiomeLink|Stony Peaks}}
+| colspan=2 | Calcite noise within -0.0125~0.0125
+| {{BlockLink|Calcite}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Stone}}
+|-
+| rowspan=3 | {{BiomeLink|Stony Shore}}
+| rowspan=2 | Noise<ref group="s" name="gravel-noise">Gravel noise within -0.05~0.05</ref>
+| Ceiling<ref group="s" name="ceiling-0" />
+| {{BlockLink|Stone}}
+|-
+| Otherwise
+| {{BlockLink|Gravel}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Stone}}
+|-
+| {{BiomeLink|Windswept Hills}}
+| colspan=2 | Surface noise &ge; 4/33
+| {{BlockLink|Stone}}
+|-
+| rowspan=2 | {{BiomeLink|Warm Ocean}}<br>{{BiomeLink|Beach}}<br>{{BiomeLink|Snowy Beach}}<br>{{BiomeLink|Desert}}
+| colspan=2 | Ceiling<ref group="s" name="ceiling-0" />
+| {{BlockLink|Sandstone}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Sand}}
+|-
+| colspan=3 | {{BiomeLink|Dripstone Caves}}
+| {{BlockLink|Stone}}
+|-
+| rowspan=2 | {{BiomeLink|Windswept Savanna}}
+| colspan=2 | Surface noise &ge; 7/33
+| {{BlockLink|Stone}}
+|-
+| colspan=2 | Surface noise &ge; -2/33
+| {{BlockLink|Coarse Dirt}}
+|-
+| rowspan=7 | {{BiomeLink|Windswept Gravelly Hills}}
+| rowspan=2 | Surface noise &ge; 8/33
+| Ceiling
+| {{BlockLink|Stone}}
+|-
+| Otherwise
+| {{BlockLink|Gravel}}
+|-
+| colspan=2 | Surface noise &ge; 4/33
+| {{BlockLink|Stone}}
+|-
+| rowspan=2 | Surface noise &ge; -4/33
+| No water above
+| {{BlockLink|Grass Block}}
+|-
+| Otherwise
+| {{BlockLink|Dirt}}
+|-
+| colspan=2 | Ceiling
+| {{BlockLink|Stone}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Gravel}}
+|-
+| rowspan=2 | {{BiomeLink|Old Growth Pine Taiga}}<br>{{BiomeLink|Old Growth Spruce Taiga}}
+| colspan=2 | Surface noise &ge; 7/33
+| {{BlockLink|Coarse Dirt}}
+|-
+| colspan=2 | Surface noise &ge; 19/165
+| {{BlockLink|Podzol}}
+|-
+| {{BiomeLink|Ice Spikes}}
+| colspan=2 | No water above
+| {{BlockLink|Snow Block}}
+|-
+| colspan=3 | {{BiomeLink|Mangrove Swamp}}
+| {{BlockLink|Mud}}
+|-
+| colspan=3 | {{BiomeLink|Mushroom Fields}}
+| {{BlockLink|Mycelium}}
+|-
+| colspan=3 | No water above
+| {{BlockLink|Grass Block}}
+|-
+| colspan=3 | Otherwise
+| {{BlockLink|Dirt}}
+|-
+| Floor<ref group="s" name="floor-0" /> and<br>water no deeper than 6
+| {{BiomeLink|Frozen Ocean}}<br>{{BiomeLink|Deep Frozen Ocean}}
+| colspan=2 | Erosion<ref group="s" name="hole" />
+| {{BlockLink|Water}}
+|-
+| rowspan=27 | Floor with depth<ref group="s" name="floor-depth">The top few layers of the floor surface</ref> and<br>water no deeper than 6
+| rowspan=3 | {{BiomeLink|Frozen Peaks}}
+| colspan=2 | Steep face<ref group="s" name="steep" /> or noise<ref group="s">Packed ice noise within -0.5~0.2</ref>
+| {{BlockLink|Packed ice}}
+|-
+| colspan=2 | Ice noise within -0.0625~0.025
+| {{BlockLink|Ice}}
+|-
+| colspan=2 | No water above
+| {{BlockLink|Snow Block}}
+|-
+| rowspan=3 | {{BiomeLink|Snowy Slopes}}
+| colspan=2 | Steep face<ref group="s" name="steep" />
+| {{BlockLink|Stone}}
+|-
+| Noise<ref group="s" name="powder-snow-noise-2">Powder snow noise within 0.45~0.58</ref>
+| No water above
+| {{BlockLink|Powder Snow}}
+|-
+| colspan=2 | No water above
+| {{BlockLink|Snow Block}}
+|-
+| colspan=3 | {{BiomeLink|Jagged Peaks}}
+| {{BlockLink|Stone}}
+|-
+| rowspan=2 | {{BiomeLink|Grove}}
+| Noise<ref group="s" name="powder-snow-noise-2" />
+| Above water
+| {{BlockLink|Powder Snow}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Dirt}}
+|-
+| rowspan=2 | {{BiomeLink|Stony Peaks}}
+| colspan=2 | Calcite noise within -0.0125~0.0125
+| {{BlockLink|Calcite}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Stone}}
+|-
+| rowspan=3 | {{BiomeLink|Stony Shore}}
+| rowspan=2 | Noise<ref group="s" name="gravel-noise">Gravel noise within -0.05~0.05</ref>
+| Ceiling<ref group="s" name="ceiling-0" />
+| {{BlockLink|Stone}}
+|-
+| Otherwise
+| {{BlockLink|Gravel}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Stone}}
+|-
+| {{BiomeLink|Windswept Hills}}
+| colspan=2 | Surface noise &ge; 4/33
+| {{BlockLink|Stone}}
+|-
+| rowspan=2 | {{BiomeLink|Warm Ocean}}<br>{{BiomeLink|Beach}}<br>{{BiomeLink|Snowy Beach}}<br>{{BiomeLink|Desert}}
+| colspan=2 | Ceiling<ref group="s" name="ceiling-0" />
+| {{BlockLink|Sandstone}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Sand}}
+|-
+| colspan=3 | {{BiomeLink|Dripstone Caves}}
+| {{BlockLink|Stone}}
+|-
+| {{BiomeLink|Windswept Savanna}}
+| colspan=2 | Surface noise &ge; 7/33
+| {{BlockLink|Stone}}
+|-
+| rowspan=6 | {{BiomeLink|Windswept Gravelly Hills}}
+| rowspan=2 | Surface noise &ge; 8/33
+| Ceiling
+| {{BlockLink|Stone}}
+|-
+| Otherwise
+| {{BlockLink|Gravel}}
+|-
+| colspan=2 | Surface noise &ge; 4/33
+| {{BlockLink|Stone}}
+|-
+| colspan=2 | Surface noise &ge; -4/33
+| {{BlockLink|Dirt}}
+|-
+| colspan=2 | Ceiling
+| {{BlockLink|Stone}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Gravel}}
+|-
+| colspan=3 | {{BiomeLink|Mangrove Swamp}}
+| {{BlockLink|Mud}}
+|-
+| colspan=3 | Otherwise
+| {{BlockLink|Dirt}}
+|-
+| {{BiomeLink|Warm Ocean}}<br>{{BiomeLink|Beach}}<br>{{BiomeLink|Snowy Beach}}
+| colspan=3 | Floor with depth and secondary depth 6
+| rowspan=2 | {{BlockLink|Sandstone}}
+|-
+| {{BiomeLink|Desert}}
+| colspan=3 | Floor with depth and secondary depth 30
+|-
+| rowspan=5 | Floor<ref name="floor-0" group="s" />
+| colspan=3 | {{BiomeLink|Frozen Peaks}}<br>{{BiomeLink|Jagged Peaks}}
+|{{BlockLink|Stone}}
+|-
+| rowspan=2 | {{BiomeLink|Warm Ocean}}<br>{{BiomeLink|Lukewarm Ocean}}<br>{{BiomeLink|Deep Lukewarm Ocean}}
+| colspan=2 | Ceiling
+|{{BlockLink|Sandstone}}
+|-
+| colspan=2 | Otherwise
+|{{BlockLink|Sand}}
+|-
+| colspan=3 | Ceiling
+|{{BlockLink|Stone}}
+|-
+| colspan=3 | Otherwise
+|{{BlockLink|Gravel}}
+|-
+| colspan=5 | Below Y=0 and gradient Y=0 &rarr; Y=8
+| {{BlockLink|Deepslate}}
+|-
+| colspan=5 | Otherwise
+| {{BlockLink|Stone}}
+|}
+
+=== The Nether ===
+
+{| class="wikitable mw-collapsible mw-collapsed"
+|-
+! colspan=5 | Conditions
+! Result block
+|-
+| colspan=5 | Gradient Y=0 &rarr; Y=5
+| rowspan=2 | {{BlockLink|Bedrock}}
+|-
+| colspan=5 | Gradient Y=127 &rarr; Y=122
+|-
+| colspan=5 | Above Y=122
+| {{BlockLink|Netherrack}}
+|-
+| rowspan=4 | {{BiomeLink|Basalt Deltas}}
+| colspan=4 | Ceiling<ref group="s" name="ceiling-0" />
+| {{BlockLink|Basalt}}
+|-
+| rowspan=2 | Floor<ref group="s" name="floor-0" />
+| Patch noise &ge; -0.012
+| colspan=2 | Surface between Y=30 and Y=35
+| rowspan=2 | {{BlockLink|Gravel}}
+|-
+| colspan=3 | Nether noise &ge; 0
+|-
+| colspan=4 | Otherwise
+| {{BlockLink|Blackstone}}
+|-
+| rowspan=5 | {{BiomeLink|Soul Sand Valley}}
+| rowspan=2 | Ceiling<ref group="s" name="ceiling-0" />
+| colspan=3 | Nether noise &ge; 0
+| {{BlockLink|Soul Sand}}
+|-
+| colspan=3 | Otherwise
+| {{BlockLink|Soul Soil}}
+|-
+| rowspan=3 | Floor<ref group="s" name="floor-0" />
+| Patch noise &ge; -0.012
+| colspan=2 | Surface between Y=30 and Y=35
+| {{BlockLink|Soul Sand}}
+|-
+| colspan=3 | Nether noise &ge; 0
+| {{BlockLink|Soul Sand}}
+|-
+| colspan=3 | Otherwise
+| {{BlockLink|Soul Soil}}
+|-
+| rowspan=5 | Floor<ref group="s" name="floor-0" />
+| Below Y=33
+| colspan=3 | Erosion<ref group="s" name="hole" />
+| {{BlockLink|Lava}}
+|-
+| rowspan=2 | {{BiomeLink|Warped Forest}}
+| rowspan=2 | Netherack noise &ge; 0.54
+| rowspan=2 | Above Y=31
+| Nether wart noise &ge; 1.17
+| {{BlockLink|Warped Wart Block}}
+|-
+| Otherwise
+| {{BlockLink|Warped Nylium}}
+|-
+| rowspan=2 | {{BiomeLink|Crimson Forest}}
+| rowspan=2 | Netherack noise &ge; 0.54
+| rowspan=2 | Above Y=31
+| Nether wart noise &ge; 1.17
+| {{BlockLink|Nether Wart Block}}
+|-
+| Otherwise
+| {{BlockLink|Crimson Nylium}}
+|-
+| rowspan=4 | {{BiomeLink|Nether Wastes}}
+| rowspan=2 | Floor with depth<ref group="s" name="floor-depth" />
+| rowspan=2 | Soul sand noise &ge; -0.012
+| Not erosion<ref group="s" name="hole" />
+| Surface between Y=30 and Y=35
+| {{BlockLink|Soul Sand}}
+|-
+| colspan=2 | Otherwise
+| {{BlockLink|Netherrack}}
+|-
+| rowspan=2 | Floor<ref group="s" name="floor-0" />
+| rowspan=2 | Above Y=31 and<br>surface below Y=35
+| rowspan=2 | Gravel layer noise &ge; -0.012
+| Above Y=32
+| rowspan=2 | {{BlockLink|Gravel}}
+|-
+| Not erosion<ref group="s" name="hole" />
+|-
+| colspan=5 | Otherwise
+| {{BlockLink|Netherrack}}
+|}
+
+=== The End ===
+
+{| class="wikitable"
+|-
+! colspan=5 | Conditions
+! Result block
+|-
+| colspan=5 | Always
+| {{BlockLink|End Stone}}
+|}
+
+{{reflist|group=s}}
+
+== Carvers ==
+{{For|customization of carvers {{in|JE}}|carver definition}}
+[[File:World generation carvers.jpg|thumb|The Overworld after the "carvers" step.]]
+
+Carvers include carver [[Cave#Carver caves|caves]] and carver [[canyon]]s. As the name suggest, they "carve" through the ground.
+
+Carver caves and carver canyons are configured to have different probability to be generated in each chunk. If the carver generates, it carves through the ground in random directions starting at the configured start Y level:
+* Carver caves generate from Y=-56 to Y=180. The probability of cave generation is higher at Y=-56 to Y=47. Carver caves sometimes include a main room and can have branches.
+** Nether carver caves generate Y=0 to Y=126.
+* Canyons can start at levels 10 to 72.
+
+<gallery>
+Carver cave with room.png|A carver cave in the Overworld with a main room.
+ATB soul-sand 1.jpg|{{BiomeLink|Soul Sand Valley}} with a Nether carver cave.
+Canyon.png|A canyon in the Overworld.
+</gallery>
+
+== Structures ==
+{{Main|Structure}}
+{{For|the customization of structures {{in|JE}}|Structure/JSON format|Structure set|Template pool|Processor list}}
+
+Structures are grouped into structure sets. A structure set determines the placement positions of the structures and places a structure at these positions based on the biome. If no structure matches the biome, then no structure is placed at a given position. The structure positions are usually calculated based on the '''spacing''', '''separation''', and '''frequency''' parameters of the structure set. '''Spacing''' determines the average distance between structure placement position in chunks, and '''separation''' determines the minimum distance. '''Frequency''' controls the probability that a determined position is used. If the biome at the placement attempt does not match the requirement, the structure is not placed. An exception are [[stronghold]]s {{in|JE}}, which are placed as concentric rings, see [[Stronghold#Generation]]. 
+
+In the '''structures_starts''' generation step, the game determines if the chunk is suitable for a structure. If a structure is selected, the starting point of the structure and layout of the pieces is determined. In the '''structures_references''' generation step, every chunk near a chunk with a structure start stores a reference to that chunk. This allows finding the structure pieces that are inside each chunk. When a chunk is generating its decoration in the '''features''' step, the chunk is checked for a structure reference. If a structure reference is found, the stored pieces are placed in the world. (see [[#Features]]). 
+
+The following table gives the placement parameters for each structure set, as they are {{in|JE}}.
+{| class="wikitable mw-collapsible mw-collapsed"
+|-
+! Structure Set
+! Spacing
+! Separation
+! Frequency
+! Structure
+! Weight
+! Required Biomes
+|-
+| Ancient Cities
+| 24
+| 8
+| 100%
+| {{EnvLink|Ancient City}}
+| 1
+| {{BiomeLink|Deep dark}}
+|-
+| Buried Treasures
+| 1
+| 0
+| 1%
+| {{EnvLink|Buried Treasure}}
+| 1
+| {{BiomeLink|Beach}}, {{BiomeLink|Snowy Beach}}
+|-
+| Desert Pyramids
+| 32
+| 8
+| 100%
+| {{EnvLink|Desert Pyramid}}
+| 1
+| {{BiomeLink|Desert}}
+|-
+| End Cities
+| 20
+| 11
+| 100%
+| {{EnvLink|End City}}
+| 1
+| {{BiomeLink|End Midlands}}, {{BiomeLink|End Highlands}}
+|-
+| Igloos
+| 32
+| 8
+| 100%
+| {{EnvLink|Igloo}}
+| 1
+| {{BiomeLink|Snowy Taiga}}, {{BiomeLink|Snowy Plains}}, {{BiomeLink|Snowy Slopes}}
+|-
+| Jungle Temples
+| 32
+| 8
+| 100%
+| {{EnvLink|Jungle Pyramid}}
+| 1
+| {{BiomeLink|Jungle}}, {{BiomeLink|Bamboo Jungle}}
+|-
+| rowspan="2" | Mineshafts
+| rowspan="2" | 1
+| rowspan="2" | 0
+| rowspan="2" | 0.4%
+| {{EnvLink|Mineshaft}}
+| 1
+| many biomes (see {{tag link|biome|has_structure/mineshaft}})
+|-
+| {{EnvLink|id=badlands-mineshaft|Mineshaft|Badlands Mineshaft}}
+| 1
+| {{BiomeLink|Badlands}}, {{BiomeLink|Eroded Badlands}}, {{BiomeLink|Wooded Badlands}}
+|-
+| rowspan="2" | Nether Complexes
+| rowspan="2" | 27 
+| rowspan="2" | 4 
+| rowspan="2" | 100%
+| {{EnvLink|Nether Fortress}}
+| 2
+| Any [[Nether]] biome
+|-
+| {{EnvLink|Bastion Remnant}}
+| 3
+| {{BiomeLink|Crimson Forest}}, {{BiomeLink|Nether Wastes}}, {{BiomeLink|Soul Sand Valley}}, {{BiomeLink|Warped Forest}}
+|-
+| Nether Fossils
+| 2
+| 1
+| 100%
+| {{EnvLink|Nether Fossil}}
+| 1
+| {{BiomeLink|Soul Sand Valley}}
+|-
+| Ocean Monuments
+| 32
+| 5
+| 100%
+| {{EnvLink|Ocean Monument}}
+| 1
+| Deep Oceans <ref group="st">Also requires surrounding to be river and ocean biomes only.</ref>
+|-
+| rowspan="2" | Ocean Ruins
+| rowspan="2" | 20 
+| rowspan="2" | 8 
+| rowspan="2" | 100%
+| {{EnvLink|id=ocean-ruins|Cold Ocean Ruins}}
+| 1
+| {{BiomeLink|Frozen Ocean}}, {{BiomeLink|Frozen Ocean}}, {{BiomeLink|Cold Ocean}}, {{BiomeLink|Ocean}}, {{BiomeLink|Deep Frozen Ocean}}, {{BiomeLink|Deep Cold Ocean}}, {{BiomeLink|Deep Ocean}}
+|-
+| {{EnvLink|id=ocean-ruins|Warm Ocean Ruins}}
+| 1
+| {{BiomeLink|Lukewarm Ocean}}, {{BiomeLink|Warm Ocean}}, {{BiomeLink|Deep Lukewarm Ocean}}
+|-
+| Pillager Outposts
+| 32
+| 8
+| 20% <ref group="st">Can't be placed within 10 chunks of any placement position of the "Villages" structure set.</ref>
+| {{EnvLink|Pillager Outpost}}
+| 1
+| {{BiomeLink|Desert}}, {{BiomeLink|Plains}}, {{BiomeLink|Savanna}}, {{BiomeLink|Snowy Plains}}, {{BiomeLink|Taiga}}, {{BiomeLink|Grove}}, {{BiomeLink|Meadow}}, {{BiomeLink|Frozen Peaks}}, {{BiomeLink|Jagged Peaks}}, {{BiomeLink|Stony Peaks}}, {{BiomeLink|Snowy Slopes}}, {{BiomeLink|Cherry Grove}}
+|-
+| rowspan="7" | Ruined Portals
+| rowspan="7" | 40 
+| rowspan="7" | 15 
+| rowspan="7" | 100%
+| {{EnvLink|id=overworld-ruined-portal|link=Ruined Portal|Ruined Portal}}
+| 1
+| rowspan="6" | See [[Ruined Portal#Generation]]<br/>Together: All [[Overworld]] biomes
+|-
+| {{EnvLink|id=overworld-ruined-portal|link=Ruined Portal|Desert Ruined Portal}}
+| 1
+|-
+| {{EnvLink|id=overworld-ruined-portal|link=Ruined Portal|Jungle Ruined Portal}}
+| 1
+|-
+| {{EnvLink|id=overworld-ruined-portal|link=Ruined Portal|Swamp Ruined Portal}}
+| 1
+|-
+| {{EnvLink|id=overworld-ruined-portal|link=Ruined Portal|Mountain Ruined Portal}}
+| 1
+|-
+| {{EnvLink|id=overworld-ruined-portal|link=Ruined Portal|Ocean Ruined Portal}}
+| 1
+|-
+| {{EnvLink|id=the-nether-ruined-portal|link=Ruined Portal|Nether Ruined Portal}}
+| 1
+| All [[Nether]] biomes
+|-
+| rowspan="2" | Shipwrecks
+| rowspan="2" | 24 
+| rowspan="2" | 4
+| rowspan="2" | 100%
+| {{EnvLink|id=shipwreck|Shipwreck}}
+| 1
+| Any ocean
+|-
+| {{EnvLink|id=shipwreck|link=Shipwreck|Beached Shipwreck}}
+| 1
+| {{BiomeLink|Beach}}, {{BiomeLink|Snowy Beach}}
+|-
+| Strongholds
+| colspan="2" style="text-align: center" | N/A <ref group="st">Strongholds are placed using concentric rings, see [[Stronghold#Generation]].</ref>
+| 100%
+| {{EnvLink|Stronghold}}
+| 1
+| All [[Overworld]] biomes <ref group="st">The placement position is biased toward most land biomes, away from river and ocean biomes.</ref>
+|-
+| Swamp Huts
+| 32
+| 8
+| 100%
+| {{EnvLink|Swamp Hut}}
+| 1
+| {{BiomeLink|Swamp}}
+|-
+| Trail Ruins
+| 34
+| 8
+| 100%
+| {{EnvLink|Trail Ruins}}
+| 1
+| {{BiomeLink|Taiga}}, {{BiomeLink|Snowy Taiga}}, {{BiomeLink|Old Growth Pine Taiga}}, {{BiomeLink|Old Growth Spruce Taiga}}, {{BiomeLink|Old Growth Birch Forest}}, {{BiomeLink|Jungle}}
+|-
+| Trial Chambers
+| 34
+| 12
+| 100%
+| {{EnvLink|Trial Chambers}}
+| 1
+| many biomes (see {{tag link|biome|has_structure/trial_chambers}})
+|-
+| rowspan="5" | Villages
+| rowspan="5" | 34 
+| rowspan="5" | 8
+| rowspan="5" | 100%
+| {{EnvLink|link=Village|Plains Village}}
+| 1
+| {{BiomeLink|Plains}}, {{BiomeLink|Meadow}}
+|-
+| {{EnvLink|link=Village|Desert Village}}
+| 1
+| {{BiomeLink|Desert}}
+|-
+| {{EnvLink|link=Village|Savanna Village}}
+| 1
+| {{BiomeLink|Savanna}}
+|-
+| {{EnvLink|link=Village|Snowy Village}}
+| 1
+| {{BiomeLink|Snowy Plains}}
+|-
+| {{EnvLink|link=Village|Taiga Village}}
+| 1
+| {{BiomeLink|Taiga}}
+|-
+| Woodland Mansions
+| 80
+| 20
+| 100%
+| {{EnvLink|Woodland Mansion}}
+| 1
+| {{BiomeLink|Dark Forest}},{{BiomeLink|Pale Garden}}
+|}
+
+{{reflist|group=st}}
+
+== Features ==
+[[File:World generation features.jpg|thumb|The Overworld after the "features" step.]]
+
+{{Main|Feature}}
+{{For|the customization of features {{in|JE}}|Configured feature|Placed feature}}
+
+The generation of features and placement of structure pieces (see [[#Structures]]) happens in the same step and are called '''decorations''' collectively. Each biome has a list of allowed features and structures that are possible to generate in them.
+
+=== Decoration steps ===
+Features and structures generate in 11 steps after each other called '''decoration steps'''.
+
+# {{cd|raw_generation}}: [[Small island|Small end islands]]
+# {{cd|lakes}}: [[Lava lake]]s
+# {{cd|local_modifications}}: [[Amethyst geode]]s and [[iceberg]]s
+# {{cd|underground_structures}}: Trial chambers, buried treasure, mineshafts, trail ruins, [[monster room]]s and [[fossil]]s
+# {{cd|surface_structures}}: All other structures, [[desert well]]s and [[Blue Ice (feature)|blue ice patches]]
+# {{cd|strongholds}}: Unused, strongholds use the {{cd|surface_structures}} step
+# {{cd|underground_ores}}: [[Ore (feature)|Ore blobs]] and sand/gravel/clay [[disk]]s
+# {{cd|underground_decoration}}: Infested block blobs, nether gravel and blackstone blobs, and all nether ore blobs
+# {{cd|fluid_springs}}: Water and lava [[spring]]s
+# {{cd|vegetal_decoration}}: [[Tree]]s, [[Bamboo (feature)|bamboo]], cacti, [[Kelp (feature)|kelp]], and other ground and ocean vegetation
+# {{cd|top_layer_modification}}: [[Freeze top layer]] feature
+
+=== Generation ===
+[[File:Cherry_Blossom_Grove.jpg|thumb|Trees and villages are a type of [[feature]] and [[structure]] respectively.]]
+
+To generate features in a chunk, the game first determines a list of [[biome]]s that appear in that chunk or the 8 surrounding chunks. Using that biome list the game constructs a list of features that are possible to generate in those biomes. For each decoration step, first the matching structure pieces are placed, followed by the features. When a structure piece crosses a chunk border, only the part in the current chunk is placed. Each feature has its own placement rules including the number of placement attempts and where in the chunk should the feature try to be placed. The game follows the rules to select a block in the chunk then checks if the biome, block and its surroundings at the current position allows that feature to spawn, and if so places the feature. Features can place block outside the current chunk's boundaries but are limited in the nearby 3&times;3 area.
+
+When features are generated, they can spill over into neighboring chunks that have already had their features generated. Thus, the feature order specified above is not always adhered to. It is therefore also possible for two worlds generated with the same [[World seed|seed]], from the same version of ''Minecraft'', to differ slightly depending on the players' travel routes, because the chunk generation order may determine which of two conflicting features overwrite or suppress the other.<ref>{{bug|MC-55596||Some chunks in the same world seed seem to have different versions}}</ref>
+
+== Lighting ==
+{{Main|Light}}
+
+As one of the last steps of chunk generation, the light levels for each block are calculated. Before this step, no block placement updates light, and light updates are instead deferred to this step.
+
+== Mob spawning ==
+[[File:Flockofsheep.png|thumb|These [[sheep]] spawn upon world generation {{in|JE}}.]]
+
+{{Main|Mob spawning#Mob spawning on chunk generation}}
+
+{{IN|Java}} many animals generate upon initial chunk creation. One in ten newly-generated [[chunk]]s attempts to generate animal [[mob]]s, usually in packs of up to 4 of the same species.
+
+{{IN|Bedrock}} animals do not spawn during chunk generation, but they continually attempt to spawn as part of the environmental spawning algorithm.
+
+Notably, mobs that spawn with a structure (e.g. [[elder guardian]] in [[ocean monument]]s) are immediately spawned when the structure is placed and are not spawned in this step.
+
+== Heightmaps ==
+{{main|Heightmap}}
+
+{{IN|JE}}, heightmaps are technically calculated at every step of world generation. Before features are placed, there are only 2 heightmaps – <code>OCEAN_FLOOR_WG</code> and <code>WORLD_SURFACE_WG</code>. After feature placement, <code>OCEAN_FLOOR</code>, <code>WORLD_SURFACE</code>, <code>MOTION_BLOCKING</code> and <code>MOTION_BLOCKING_NO_LEAVES</code> are calculated.
+
+== Videos ==
+Videos by [[Henrik Kniberg]]: 
+{{yt|CSa5O6knuwI}}
+{{yt|ob3VwY4JyzE}}
+
+== History ==
+{{main|World generation/History}}
+
+A world generation algorithm has been included in the game since its very inception. World generation was often changed significantly before the release of ''Java Edition''. Notably, after its release, world generation has changed greatly in [[Java Edition 1.7.2]] and [[Java Edition 1.18]]. For ''[[Bedrock Edition]]'', significant changes were made in [[Pocket Edition v0.9.0 alpha]] and [[Bedrock Edition 1.18.0]].
+
+==Issues==
+{{Issue list}}
+
+== References ==
+{{reflist}}
+
+== External links ==
+* [https://prng.di.unimi.it/ More information on xoroshiro128++], the PRNG algorithm ''Minecraft'' uses for Overworld generation by University of Milan
+* [https://rtouti.github.io/graphics/perlin-noise-algorithm More information on Perlin noise] by Raouf Touti
+
+== Navigation ==
+{{Navbox environment}}
+
+[[de:Weltgenerierung]]
+[[fr:Génération du monde]]
+[[pt:Geração de mundo]]
+[[ru:Генерация мира]]
+[[uk:Генерація світу]]
+[[zh:世界生成]]

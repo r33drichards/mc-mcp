@@ -1,0 +1,154 @@
+{{Infobox version
+| image = Bedrock 1.19.70.22 PatchNotes.jpg
+| image2 = Bedrock 1.19.70.22.png
+| edition = Bedrock
+| type = Preview
+| versioncode = '''Android''':<br>
+951907022 (armeabi-v7a, 31)<br>
+961907022 (x86, 31)<br>
+971907022 (arm64-v8a, 31)<br>
+981907022 (x86_64, 31)<br>
+| date = '''Windows, iOS, iPadOS, Xbox''' - February 8, 2023<br>'''Android''' - February 11, 2023
+| internal = '''Windows''': 1.19.7022.0<br>'''Xbox''': 1.19.7022.70<br>'''Android, iOS, iPadOS''': 1.19.70.22
+| serverdl = '''Server'''<br>
+[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.19.70.22.zip Windows]
+[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.19.70.22.zip Linux]
+| parent = 1.19.70
+| prevparent = 1.19.63
+| prev = Preview 1.19.70.21
+| next = Preview 1.19.70.23
+| nextparent = 1.19.71
+}}<onlyinclude>
+'''Beta 1.19.70.22''' (Android) or '''Preview 1.19.70.22''' (Windows, iOS, iPadOS, Xbox) is the third beta/''Preview'' version for [[Bedrock Edition 1.19.70]], released on February 8-11, 2023,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/12940778804877|title=Minecraft Beta & Preview - 1.19.70.22|website=Minecraft Feedback|date=February 8, 2023}}</ref> which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Vines]]'''
+* Now drop nothing when mined with [[Silk Touch]] enchanted tools except shears.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Next Major Update" and "Beta APIs" experimental toggle.
+=== Changes ===
+==== Blocks ====
+'''[[Bamboo Fence]]s and [[Bamboo Fence Gate]]s'''
+* Removed black lines along the edges of Bamboo Fences and Bamboo Fence Gates. ({{bug|MCPE-163360}})
+
+'''[[Bamboo Hanging Sign]] and [[Mangrove Hanging Sign]] '''
+* Mangrove and Bamboo Hanging Signs are now placed correctly in the Creative Inventory. ({{bug|MCPE-163340}})
+
+==== Mobs ====
+'''[[Camel]]s'''
+* Camels can once again overcome obstacles as high as one block and a half. ({{bug|MCPE-166452}})
+
+==== Technical ====
+'''API'''
+* Replaced general {{cd|setVelocity}} call with methods to apply impulses to entities:
+** Added function {{cd|clearVelocity(): void}} - Sets the current velocity of the Entity to zero.
+** Added function {{cd|applyImpulse(vector: Vector3): void}} - Applies impulse vector to the current velocity of the Entity.
+** Added function {{cd|applyKnockback(directionX: number, directionZ: number, horizontalStrength: number, verticalStrength: number): void}} - Applies ** knockback to the Entity in specified direction based on vertical and horizontal strength.
+** Removed function {{cd|setVelocity}}.
+* BeforeExplosionEvent
+** Added function {{cd|getImpactedBlocks(): Vector3[]}} - Gets the blocks locations that are impacted by the explosion.
+** Added function {{cd|setImpactedBlocks(blocks: Vector3[]): void}} - Sets the blocks locations that are impacted by the explosion.
+** Removed property {{cd|impactedBlocks}}.
+* BeforeItemUseOnEvent
+** Added function {{cd|getBlockLocation(): Vector3}} - Gets the location of the block being impacted.
+** Removed property {{cd|blockLocation}}.
+* BlockInventoryComponent
+** Removed property {{cd|location}}.
+* BlockLavaContainerComponent
+** Removed property {{cd|location}}.
+* BlockPistonComponent
+** Added function {{cd|getAttachedBlocks(): Vector3[]}} - Gets the blocks locations that are impacted by the activation of this piston.
+** Removed property {{cd|attachedBlocks}}.
+** Removed property {{cd|location}}.
+* BlockPotionContainerComponent
+** Removed property {{cd|location}}.
+* BlockRecordPlayerComponent
+** Removed property {{cd|location}}.
+* BlockSignComponent
+** Removed property {{cd|location}}.
+* BlockSnowContainerComponent
+** Removed property {{cd|location}}.
+* BlockWaterContainerComponent
+** Removed property {{cd|location}}.
+** Added function {{cd|getHeadLocation(): Vector3}} - Gets the head location of the Entity.
+** Removed property {{cd|headLocation}}.
+* ExplosionEvent
+** Added function {{cd|getImpactedBlocks(): Vector3[]}} - Gets the blocks locations that are impacted by the explosion.
+** Removed property {{cd|impactedBlocks}}.
+* ItemStartUseOnEvent
+** Added function {{cd|getBlockLocation(): Vector3}} - Gets the location of the block being impacted.
+** Added function {{cd|getBuildBlockLocation(): Vector3}} - Gets the location of the resulting build block.
+** Removed property {{cd|blockLocation}}.
+** Removed property {{cd|buildBlockLocation}}.
+* ItemStopUseOnEvent
+** Added function {{cd|getBlockLocation(): Vector3}} - Gets the location of the block being impacted.
+** Removed property {{cd|blockLocation}}.
+* ItemUseOnEvent
+** Added function {{cd|getBlockLocation(): Vector3}} - Gets the location of the block being impacted.
+** Removed property {{cd|blockLocation}}.
+* NavigationResult
+** Added function {{cd|getPath(): Vector3[]}} - Gets the locations of the blocks that comprise the navigation route.
+** Removed property {{cd|path}}.
+* Player
+** Added function {{cd|getHeadLocation(): Vector3}} - Gets the head location of the Player.
+** Removed property {{cd|headLocation}}.
+* ItemStack
+** Added read-only property {{cd|getMaxAmount: number}} - Returns the maximum stack size for the item.
+** Added read-only property {{cd|isStackable: bool}} - Returns whether the item is stackable.
+** Added function {{cd|isStackableWith(itemStack: ItemStack): bool}} - Returns whether the item can be stacked with the given item.
+** Added read-only property {{cd|type: ItemType}} - Returns the type of the item.
+** Added function {{cd|clone(): ItemStack}} - Returns a copy of the item stack.
+** Added property {{cd|keepOnDeath: bool}} - Sets whether the item is kept on death.
+** Added property {{cd|lockMode: ItemLockMode}} - Sets whether the item can be moved or dropped.
+** Added function {{cd|setCanPlaceOn(blockIdentifiers?: string[])}} - Sets which blocks the item can be placed on.
+** Added function {{cd|setCanDestroy(blockIdentifiers?: string[])}} - Sets which blocks this item can destroy.
+
+== Fixes ==
+'''Vanilla Parity'''
+* Impact sounds of projectiles on Amethyst blocks and clusters are now audible.
+* Dead Bush will now drop Sticks when broken with any tool except Shears, even those with the Silk Touch enchantment. Vines will drop nothing in the same situation. ({{bug|MCPE-163246}})
+* Bells no longer break when a block is placed underneath or above them. ({{bug|MCPE-166742}})
+
+'''Spectator Mode'''
+* Phasing through blocks in third person view no longer makes the camera zoom in and out towards the player’s head. ({{bug|MCPE-160467}})
+* End Gateways can no longer be used in Spectator Mode. ({{bug|MCPE-165689}})
+
+'''Gameplay'''
+* Redstone source can now power a single block from different sides at the same time. ({{bug|MCPE-163651}})
+* Players are no longer able to begin flying if they have no space to stand up. ({{bug|MCPE-166413}})
+* Players can now fall off of an edge while sneaking if not holding the sneak button.
+
+'''Blocks'''
+* Composter now always consumes an item when becoming full. ({{bug|MCPE-162020}})
+
+'''Mobs'''
+* Witches will drink a Fire Resistance Potion when standing on a Campfire.
+
+'''Items'''
+* Crossbow now shakes while charging arrows. ({{bug|MCPE-152952}})
+* Loot table conditions are no longer ignored in-game when used inside functions. ({{bug|MCPE-164582}})
+* Spawn eggs for Snow Golem, Wither, and Trader Llama now appear correctly in the inventory and hotbar.
+
+'''Marketplace'''
+* Added a new 'Marketplace' icon to the Marketplace screen sidebar.
+
+'''User Interface'''
+* Carrots now display the proper name in item tooltips when used in can_place_on and can_destroy item components. ({{bug|MCPE-160838}})
+* Tweaked the keyboard interaction on Android devices for text input fields.
+
+'''Commands'''
+* The {{cmd|summon}} command no longer causes some entities to be spawned in at an angle.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[Category:Bedrock Edition 1.19.70 betas]]
+[[de:Bedrock Edition beta 1.19.70.22]]
+[[es:Bedrock Edition beta 1.19.70.22]]
+[[pt:Edição Bedrock Preview 1.19.70.22]]
+[[zh:基岩版1.19.70.22]]

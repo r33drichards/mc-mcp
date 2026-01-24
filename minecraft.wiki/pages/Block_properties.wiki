@@ -1,0 +1,1089 @@
+{{No navbox}}
+{{about|properties common to all block types|properties of individual blocks|Block states}}
+
+'''Block properties''' control how different [[block]] types interact with various gameplay [[mechanics]]. While some block behaviors are specific to individual block types, such as the ability to open a [[chest]] or activate a [[lever]], block properties specify how blocks behave in response to interactions that can occur with ''any'' block. For example, [[fire]] may attempt to spread to any nearby block, in which case the [[flammable]] block property is used to determine if the spread succeeds. Similarly, a [[piston]] may attempt to push any block, and the [[push reaction]] block property is used to determine if the push succeeds, fails, or destroys the block.
+
+For the most part, block properties are really properties of block ''types'', not properties of individual blocks. For example, if a given block is [[flammable]], all blocks of the same type will be as well. However, the values of some block properties can vary depending on the given [[block state]]—for example, [[fence gates]] are [[collidable]] when closed, but not when open.
+
+== List of properties ==
+{{incomplete section|[[opacity]], [[luminance]], and blast resistance}}
+
+=== Solid ===
+{{Main|Block properties/Solid (legacy)}}
+
+The ''legacy solid'' block property, usually just called ''solid'', determines if a block is considered "solid" for a number of game mechanics. It is distinct from many other notions of solidity, such as whether the block is [[opaque]], [[conductive]], [[collidable]], is a [[full block]], or allows [[mob spawning]]. A slight variant of the legacy solid property is known as ''blocks motion'' for historical reasons, though it is also unrelated to whether or not a block is collidable.
+
+Many gameplay mechanics are affected by the legacy solid property, including support for certain attached blocks like [[candles]], conversion of [[farmland]] to [[dirt]], destruction of [[cactus]], summoning of [[iron golem]]s, and [[pathfinding]]. Additionally, the blocks motion property influences random [[teleportation]] and certain [[fluid]] mechanics.
+
+=== Collidable ===
+{{Main|Solid block}}
+{{See also|Hitbox#Block collision}}
+
+The ''collidable'' block property determines whether or not a given [[block]] has a [[collision box]] that [[players]], [[mobs]], or other [[entities]] cannot move through. It is distinct from whether or not the block is considered [[legacy solid|solid]] or [[movement-blocking]] for certain other gameplay mechanics. Most blocks are collidable, but the following blocks are not:<ref>https://joakimthorsen.github.io/MCPropertyEncyclopedia/?selection=has_collision&filter=(has_collision:Yes)</ref>
+
+{{columns-list|
+*{{BlockLink|Activator Rail}}
+*{{BlockLink|Air}}
+*{{BlockLink|Bamboo Shoot}}
+*{{BlockLink|Banners}}
+*{{BlockLink|Big Dripleaf}}, when fully tilted
+*{{BlockLink|Big Dripleaf Stem}}
+*{{BlockLink|Buttons}}
+*{{BlockLink|Cave Vines}}
+*{{BlockLink|Cobweb}}
+*{{BlockLink|Coral}}
+*{{BlockLink|Coral Fans}}
+*{{BlockSprite|Beetroots}}{{BlockSprite|Carrots}}{{BlockSprite|Potatoes}}{{BlockSprite|Wheat}} [[Crops]]
+*{{BlockLink|Dead Bush}}
+*{{BlockLink|Detector Rail}}
+*{{BlockLink|End Gateway}}
+*{{BlockLink|End Portal}}
+*{{BlockLink|Fence Gates}}, when open
+*{{BlockLink|Fern}}
+*{{BlockLink|Fire}}
+*{{BlockLink|Flowers}}
+*{{BlockLink|Frogspawn}}
+*{{BlockLink|Glow Lichen}}
+*{{BlockLink|Hanging Roots}}
+*{{BlockLink|Kelp}}
+*{{BlockLink|Lava}}
+*{{BlockLink|Lever}}
+*{{BlockLink|Light Block}}
+*{{BlockLink|Mangrove Propagule}}
+*{{BlockLink|Mushrooms}}
+*{{BlockLink|Nether Fungi}}
+*{{BlockLink|Nether Portal}}
+*{{BlockLink|Nether Sprouts}}
+*{{BlockLink|Nether Wart}}
+*{{BlockLink|Pale Hanging Moss}}
+*{{BlockLink|Pink Petals}}
+*{{BlockLink|Pitcher Plant}}
+*{{BlockLink|Powder Snow}}
+*{{BlockLink|Powered Rail}}
+*{{BlockLink|Pressure Plates}}
+*{{BlockLink|Rail}}
+*{{BlockLink|Redstone Dust}}
+*{{BlockLink|Redstone Torch}}
+*{{BlockLink|Resin Clump}}
+*{{BlockLink|Roots}}
+*{{BlockLink|Saplings}}
+*{{BlockLink|Sculk Vein}}
+*{{BlockLink|Seagrass}}
+*{{BlockLink|Short Grass}}
+*{{BlockLink|Signs}}
+*{{BlockLink|Small Dripleaf}}
+*{{BlockLink|Snow}}, when 1 layer tall
+*{{BlockLink|Spore Blossom}}
+*{{BlockLink|Structure Void}}
+*{{BlockLink|Sugar Cane}}
+*{{BlockLink|Sweet Berry Bush}}
+*{{BlockLink|Tall Grass}}
+*{{BlockLink|Torch}}
+*{{BlockLink|Torchflower}}
+*{{BlockLink|Torchflower Crop}}
+*{{BlockLink|Tripwire}}
+*{{BlockLink|Tripwire Hook}}
+*{{BlockLink|Twisting Vines}}
+*{{BlockLink|Vines}}
+*{{BlockLink|Water}}
+*{{BlockLink|Weeping Vines}}
+}}
+
+=== Conductive ===
+{{Main|Conductivity}}
+
+The ''conductive'' block property determines whether a given [[block]] can conduct [[redstone signal]]s when [[powered]] by [[redstone component]]s. For historical reasons, conductive blocks are often called ''solid'' or ''opaque'' and non-conductive blocks are often called ''transparent'', but conductivity is separate from whether a block is considered [[legacy solid|solid]], [[collidable]], or [[opaque]].
+
+As a rule of thumb, [[opaque]] [[full block]]s (like [[stone]]) tend to be conductive while partial blocks (like [[slabs]]) or [[transparent]] blocks (like [[glass]]) tend to be non-conductive. However, there are numerous exceptions. For example, [[glowstone]] and [[observer]]s are not conductive despite being opaque [[full block]]s, while [[mud]] and [[soul sand]] are conductive despite not being full blocks.
+
+=== Valid spawn ===
+{{See also|Mob spawning}}
+
+The ''valid spawn'' block property determines whether ordinary [[mobs]] can [[mob spawning|spawn]] on top of a given [[block]] (assuming their other spawn conditions are met).
+
+As a rule of thumb, blocks with a full, solid top face ''tend'' to allow mob spawning while other blocks tend not to. For example most [[full blocks]] allow mob spawning, as do upside-down [[stairs]] and [[azalea]]s, as their top face is solid and spans the entire block. However, there are ''numerous'' exceptions. For example, mobs cannot spawn on [[glass]] or [[bedrock]] even though they are full blocks, and mobs can spawn on [[soul sand]] even though it is not. A full list is given below.
+
+{{Collapse|title='''List of valid spawn blocks'''|head=1}}
+{|class="sortable wikitable"
+!Block
+!Valid spawn?<ref>https://joakimthorsen.github.io/MCPropertyEncyclopedia/?selection=spawnable</ref>
+|-
+|{{BlockLink|Activator Rail}}
+|{{tc|no}}
+|-
+|{{BlockLink|Air}}
+|{{tc|no}}
+|-
+|{{BlockLink|Amethyst Cluster}}
+|{{tc|no}}
+|-
+|{{BlockLink|Ancient Debris}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Andesite}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Anvil}}
+|{{tc|no}}
+|-
+|{{BlockLink|Azalea}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bamboo}}
+|{{tc|no}}
+|-
+|{{BlockLink|Bamboo Mosaic}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Banners}}
+|{{tc|no}}
+|-
+|{{BlockLink|Barrel}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Barrier}}
+|{{tc|no}}
+|-
+|{{BlockLink|Basalt}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Beacon}}
+|{{tc|no}}
+|-
+|{{BlockLink|Bedrock}}
+|{{tc|no}}
+|-
+|{{BlockLink|Beds}}
+|{{tc|no}}
+|-
+|{{BlockLink|Bee Nest}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Beehive}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bell}}
+|{{tc|no}}
+|-
+|{{BlockLink|Big Dripleaf}}
+|{{tc|no}}
+|-
+|{{BlockLink|Blackstone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Blast Furnace}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Amethyst}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Bamboo}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Coal}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Copper}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Diamond}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Emerald}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Gold}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Iron}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Lapis Lazuli}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Netherite}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Quartz}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Raw Copper}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Raw Gold}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Raw Iron}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Redstone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Resin}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Stripped Bamboo}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Blue Ice}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bone Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bookshelf}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Brewing Stand}}
+|{{tc|no}}
+|-
+|{{BlockLink|Bricks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Budding Amethyst}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Buttons}}
+|{{tc|no}}
+|-
+|{{BlockLink|Cactus}}
+|{{tc|no}}
+|-
+|{{BlockLink|Cake}}
+|{{tc|no}}
+|-
+|{{BlockLink|Calcite}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Calibrated Sculk Sensor}}
+|{{tc|no}}
+|-
+|{{BlockLink|Campfire}}
+|{{tc|no}}
+|-
+|{{BlockLink|Candles}}
+|{{tc|no}}
+|-
+|{{BlockLink|Carpets}}
+|{{tc|no}}
+|-
+|{{BlockLink|Cartography Table}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cauldron}}
+|{{tc|no}}
+|-
+|{{BlockLink|Cave Vines}}
+|{{tc|no}}
+|-
+|{{BlockLink|Chain}}
+|{{tc|no}}
+|-
+|{{BlockLink|Chest}}
+|{{tc|no}}
+|-
+|{{BlockLink|Chiseled Bookshelf}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chiseled Copper}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chiseled Tuff}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chiseled Tuff Bricks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chorus Flower}}
+|{{tc|no}}
+|-
+|{{BlockLink|Chorus Plant}}
+|{{tc|no}}
+|-
+|{{BlockLink|Clay}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Coal Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Coarse Dirt}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cobbled Deepslate}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cobblestone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cobweb}}
+|{{tc|no}}
+|-
+|{{BlockLink|Cocoa}}
+|{{tc|no}}
+|-
+|{{BlockLink|Command Blocks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Composter}}
+|{{tc|no}}
+|-
+|{{BlockLink|Concrete}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Concrete Powder}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Conduit}}
+|{{tc|no}}
+|-
+|{{BlockLink|Copper Bulb}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Copper Grate}}
+|{{tc|no}}
+|-
+|{{BlockLink|Copper Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Coral}}
+|{{tc|no}}
+|-
+|{{BlockLink|Coral Blocks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Coral Fans}}
+|{{tc|no}}
+|-
+|{{BlockLink|Crafter}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Crafting Table}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Creaking Heart}}
+|{{tc|yes}}
+|-
+|{{BlockSprite|Beetroots}}{{BlockSprite|Carrots}}{{BlockSprite|Potatoes}}{{BlockSprite|Wheat}} [[Crops]]
+|{{tc|no}}
+|-
+|{{BlockLink|Crying Obsidian}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Daylight Detector}}
+|{{tc|no}}
+|-
+|{{BlockLink|Dead Bush}}
+|{{tc|no}}
+|-
+|{{BlockLink|Decorated Pot}}
+|{{tc|no}}
+|-
+|{{BlockLink|Deepslate}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Detector Rail}}
+|{{tc|no}}
+|-
+|{{BlockLink|Diamond Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Diorite}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dirt}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dirt Path}}
+|{{tc|no}}
+|-
+|{{BlockLink|Dispenser}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Doors}}
+|{{tc|no}}
+|-
+|{{BlockLink|Dragon Egg}}
+|{{tc|no}}
+|-
+|{{BlockLink|Dried Kelp Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dripstone Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dropper}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Emerald Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Enchanting Table}}
+|{{tc|no}}
+|-
+|{{BlockLink|End Gateway}}
+|{{tc|no}}
+|-
+|{{BlockLink|End Portal}}
+|{{tc|no}}
+|-
+|{{BlockLink|End Portal Frame}}
+|{{tc|no}}
+|-
+|{{BlockLink|End Rod}}
+|{{tc|no}}
+|-
+|{{BlockLink|End Stone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|End Stone Bricks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Ender Chest}}
+|{{tc|no}}
+|-
+|{{BlockLink|Farmland}}
+|{{tc|no}}
+|-
+|{{BlockLink|Fence Gates}}
+|{{tc|no}}
+|-
+|{{BlockLink|Fences}}
+|{{tc|no}}
+|-
+|{{BlockLink|Fern}}
+|{{tc|no}}
+|-
+|{{BlockLink|Fire}}
+|{{tc|no}}
+|-
+|{{BlockLink|Fletching Table}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Flower Pot}}
+|{{tc|no}}
+|-
+|{{BlockLink|Flowers}}
+|{{tc|no}}
+|-
+|{{BlockLink|Froglights}}
+|{{tc|no}}
+|-
+|{{BlockLink|Frogspawn}}
+|{{tc|no}}
+|-
+|{{BlockLink|Frosted Ice}}
+|{{tc|partial|Only [[polar bear]]s}}
+|-
+|{{BlockLink|Furnace}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Gilded Blackstone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Glass}}
+|{{tc|no}}
+|-
+|{{BlockLink|Glass Pane}}
+|{{tc|no}}
+|-
+|{{BlockLink|Glazed Terracotta}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Glow Lichen}}
+|{{tc|no}}
+|-
+|{{BlockLink|Glowstone}}
+|{{tc|no}}
+|-
+|{{BlockLink|Gold Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Granite}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Grass Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Gravel}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Grindstone}}
+|{{tc|no}}
+|-
+|{{BlockLink|Hanging Roots}}
+|{{tc|no}}
+|-
+|{{BlockLink|Hanging Signs}}
+|{{tc|no}}
+|-
+|{{BlockLink|Hay Bale}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Heads}}
+|{{tc|no}}
+|-
+|{{BlockLink|Heavy Core}}
+|{{tc|no}}
+|-
+|{{BlockLink|Honey Block}}
+|{{tc|no}}
+|-
+|{{BlockLink|Honeycomb Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Hopper}}
+|{{tc|no}}
+|-
+|{{BlockLink|Hyphae}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Ice}}
+|{{tc|partial|Only [[polar bear]]s}}
+|-
+|{{BlockLink|Iron Bars}}
+|{{tc|no}}
+|-
+|{{BlockLink|Iron Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Jack o'Lantern}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Jigsaw Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Jukebox}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Kelp}}
+|{{tc|no}}
+|-
+|{{BlockLink|Ladder}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lantern}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lapis Lazuli Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Lava}}
+|{{tc|no}}
+|-
+|{{BlockLink|Leaves}}
+|{{tc|partial|Only [[ocelot]]s and [[parrot]]s}}
+|-
+|{{BlockLink|Lectern}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lever}}
+|{{tc|no}}
+|-
+|{{BlockLink|Light Block}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lightning Rod}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lily Pad}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lodestone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Logs}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Loom}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Magma Block}}
+|{{tc|partial|Only mobs immune to [[fire damage|fire]]}}
+|-
+|{{BlockLink|Mangrove Propagule}}
+|{{tc|no}}
+|-
+|{{BlockLink|Mangrove Roots}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Melon}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Monster Spawner}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Moss Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Moss Carpet}}
+|{{tc|no}}
+|-
+|{{BlockLink|Moving Piston}}
+|{{tc|no}}
+|-
+|{{BlockLink|Mud}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Mud Bricks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Muddy Mangrove Roots}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Mushroom Blocks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Mushrooms}}
+|{{tc|no}}
+|-
+|{{BlockLink|Mycelium}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nether Bricks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nether Fungi}}
+|{{tc|no}}
+|-
+|{{BlockLink|Nether Gold Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nether Portal}}
+|{{tc|no}}
+|-
+|{{BlockLink|Nether Quartz Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nether Sprouts}}
+|{{tc|no}}
+|-
+|{{BlockLink|Nether Wart}}
+|{{tc|no}}
+|-
+|{{BlockLink|Nether Wart Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Netherrack}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Note Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nylium}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Observer}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Obsidian}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Packed Ice}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Packed Mud}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pale Hanging Moss}}
+|{{tc|no}}
+|-
+|{{BlockLink|Pale Moss Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pale Moss Carpet}}
+|{{tc|no}}
+|-
+|{{BlockLink|Pink Petals}}
+|{{tc|no}}
+|-
+|{{BlockLink|Piston Head}}
+|{{tc|partial|Only when facing up}}
+|-
+|{{BlockLink|Pistons}}
+|{{tc|partial|Only when facing down or not extended}}
+|-
+|{{BlockLink|Pitcher Crop}}
+|{{tc|no}}
+|-
+|{{BlockLink|Pitcher Plant}}
+|{{tc|no}}
+|-
+|{{BlockLink|Planks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Podzol}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pointed Dripstone}}
+|{{tc|no}}
+|-
+|{{BlockLink|Polished Tuff}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Powder Snow}}
+|{{tc|no}}
+|-
+|{{BlockLink|Powered Rail}}
+|{{tc|no}}
+|-
+|{{BlockLink|Pressure Plates}}
+|{{tc|no}}
+|-
+|{{BlockLink|Prismarine}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pumpkin}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Purpur Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Rail}}
+|{{tc|no}}
+|-
+|{{BlockLink|Red Sand}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Red Sandstone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Redstone Comparator}}
+|{{tc|no}}
+|-
+|{{BlockLink|Redstone Dust}}
+|{{tc|no}}
+|-
+|{{BlockLink|Redstone Lamp}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Redstone Ore}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Redstone Repeater}}
+|{{tc|no}}
+|-
+|{{BlockLink|Redstone Torch}}
+|{{tc|no}}
+|-
+|{{BlockLink|Reinforced Deepslate}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Resin Bricks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Resin Clump}}
+|{{tc|no}}
+|-
+|{{BlockLink|Respawn Anchor}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Roots}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sand}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sandstone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Saplings}}
+|{{tc|no}}
+|-
+|{{BlockLink|Scaffolding}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sculk}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sculk Catalyst}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sculk Sensor}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sculk Shrieker}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sculk Vein}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sea Lantern}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sea Pickle}}
+|{{tc|no}}
+|-
+|{{BlockLink|Seagrass}}
+|{{tc|no}}
+|-
+|{{BlockLink|Short Grass}}
+|{{tc|no}}
+|-
+|{{BlockLink|Shroomlight}}
+|{{tc|no}}
+|-
+|{{BlockLink|Shulker Box}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Signs}}
+|{{tc|no}}
+|-
+|{{BlockLink|Slabs}}
+|{{tc|partial|Only when top or double slabs}}
+|-
+|{{BlockLink|Slime Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Small Dripleaf}}
+|{{tc|no}}
+|-
+|{{BlockLink|Smithing Table}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Smoker}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sniffer Egg}}
+|{{tc|no}}
+|-
+|{{BlockLink|Snow}}
+|{{tc|partial|Only when 8 layers tall}}
+|-
+|{{BlockLink|Snow Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Soul Sand}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Soul Soil}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sponge}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Spore Blossom}}
+|{{tc|no}}
+|-
+|{{BlockLink|Stained Glass}}
+|{{tc|no}}
+|-
+|{{BlockLink|Stained Glass Panes}}
+|{{tc|no}}
+|-
+|{{BlockLink|Stairs}}
+|{{tc|partial|Only when upside-down}}
+|-
+|{{BlockLink|Stone}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Stone Bricks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Stonecutter}}
+|{{tc|no}}
+|-
+|{{BlockLink|Structure Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Structure Void}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sugar Cane}}
+|{{tc|no}}
+|-
+|{{BlockLink|Suspicious Gravel}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Suspicious Sand}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sweet Berry Bush}}
+|{{tc|no}}
+|-
+|{{BlockLink|TNT}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Tall Grass}}
+|{{tc|no}}
+|-
+|{{BlockLink|Target}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Terracotta}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Tinted Glass}}
+|{{tc|no}}
+|-
+|{{BlockLink|Torch}}
+|{{tc|no}}
+|-
+|{{BlockLink|Torchflower}}
+|{{tc|no}}
+|-
+|{{BlockLink|Torchflower Crop}}
+|{{tc|no}}
+|-
+|{{BlockLink|Trapdoors}}
+|{{tc|no}}
+|-
+|{{BlockLink|Trapped Chest}}
+|{{tc|no}}
+|-
+|{{BlockLink|Trial Spawner}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Tripwire}}
+|{{tc|no}}
+|-
+|{{BlockLink|Tripwire Hook}}
+|{{tc|no}}
+|-
+|{{BlockLink|Tuff}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Tuff Bricks}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Turtle Egg}}
+|{{tc|no}}
+|-
+|{{BlockLink|Twisting Vines}}
+|{{tc|no}}
+|-
+|{{BlockLink|Vault}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Vines}}
+|{{tc|no}}
+|-
+|{{BlockLink|Walls}}
+|{{tc|no}}
+|-
+|{{BlockLink|Warped Wart Block}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Water}}
+|{{tc|no}}
+|-
+|{{BlockLink|Weeping Vines}}
+|{{tc|no}}
+|-
+|{{BlockLink|Wood}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Wool}}
+|{{tc|yes}}
+|}
+{{Collapse|tail=1}}
+
+=== Flammability ===
+{{Main|Fire#Spread}}
+
+Three related block properties determine how [[fire]] spreads to and interacts with other [[block]]s:
+
+* The ''ignite odds'' property controls how quickly a block catches fire if nearby [[fire]] is available to spread there.
+
+* The ''burn odds'' property controls how quickly a block that is currently on fire burns away.
+
+* The ''ignited by lava'' property determines whether or not nearby [[lava]] can cause the block to catch fire.
+
+The word ''flammable'' is often used to describe blocks capable of burning away—that is, blocks that have ''burn odds'' greater than zero—but it is also sometimes used to describe blocks capable of catching fire at all.
+
+Some blocks can be ignited by fire but not by lava and vice versa. For example, [[hay bale]]s can be ignited by fire but not by lava, while [[mushroom blocks]] are ignited by lava but cannot be ignited by nearby fire. Blocks in the latter category never burn away, and they usually extinguish themselves quickly. The only exceptions are blocks that burn forever, such as [[netherrack]] and [[soul sand]].
+
+=== Replaceable ===
+{{info needed section|"replaceable" is also a [[block tag]]; discuss functional differences between that block tag and this block property}}
+If a [[block]] has the ''replaceable'' block property, blocks placed on, against, or in the same location as the replaceable block replace it rather than being placed on or against it. For example, placing a block on a block containing [[short grass]] replaces the grass with the block. Most blocks are not replaceable, but the following blocks are:<ref>https://joakimthorsen.github.io/MCPropertyEncyclopedia/?selection=replaceable</ref>
+
+{{columns-list|
+*{{BlockLink|Air}}
+*{{BlockLink|Dead Bush}}
+*{{BlockLink|Fern}}
+*{{BlockLink|Fire}}
+*{{BlockLink|Glow Lichen}}
+*{{BlockLink|Hanging Roots}}
+*{{BlockLink|Lava}}
+*{{BlockLink|Light Block}}
+*{{BlockLink|Nether Sprouts}}
+*{{BlockLink|Resin Clump}}
+*{{BlockLink|Roots}}
+*{{BlockLink|Seagrass}}
+*{{BlockLink|Short Grass}}
+*{{BlockLink|Snow}}, when 1 layer tall
+*{{BlockLink|Structure Void}}
+*{{BlockLink|Tall Grass}}
+*{{BlockLink|Vines}}
+*{{BlockLink|Water}}
+}}
+
+The replaceable block property is also used by a few other game mechanics:
+
+* [[Falling blocks]] that fall onto replaceable blocks replace them.
+* [[Huge fungi]] may replace replaceable blocks when generated or grown.
+* [[Nether portal]]s may replace replaceable blocks when [[Nether portal#Portal creation|generated]].
+* [[Cobwebs]] spawned by the [[weaving]] effect may replace replaceable blocks.
+
+=== Suffocates ===
+{{Main|Suffocation}}
+
+The ''suffocates'' block property determines whether an entity [[suffocate]]s if its head is inside a block.
+
+Usually, blocks are suffocating if and only if they are [[full blocks]] that also [[block motion]]. For example, [[stone]] suffocates mobs, but [[slabs]] do not (because they are not full blocks), and neither do [[chorus flower]]s (because they are not considered motion-blocking). However, there are some exceptions:
+
+* [[Copper grate]]s, [[glass]], [[stained glass]], [[tinted glass]], [[leaves]], and [[mangrove root]]s do not suffocate mobs despite being motion-blocking full blocks.
+
+* [[Dirt path]], [[farmland]], [[mud]], and [[soul sand]] suffocate mobs despite not being full blocks.
+
+=== Blocks vision ===
+
+The ''blocks vision'' block property determines whether the player can see while their head is inside a [[block]]. If a block is vision-blocking, the player's screen is obscured by a darkened version of the block's texture if their head is inside the block.
+
+Almost all blocks that are [[#suffocates|suffocating]] are also vision-blocking and vice versa. However, there are a few exceptions:
+
+* [[Snow]] blocks vision if it is 8 layers tall, but it never suffocates.
+
+* [[Trial spawner]]s and [[vault]]s do not block vision but do suffocate.
+
+=== Push reaction ===
+{{Main|Push reaction}}<!--
+Note: The name "push reaction" comes from the [[obfuscation map]], where PushReaction is an enum with five values. The fifth value is IGNORE, which is only used by entities, not blocks. It is something of a misnomer, since it also controls what happens when a block is pulled, not just pushed, but I don't think the discrepancy is too egregious. -->
+
+The ''push reaction'' block property determines what happens when a [[piston]] attempts to push or pull a [[block]]. It has four possible values:
+
+* <code>normal</code>: The block can be pushed and pulled by pistons.
+* <code>push_only</code>: The block can be pushed by pistons but cannot be pulled.
+* <code>destroy</code>: The block breaks when pushed and cannot be pulled.
+* <code>block</code>: The block cannot be pushed or pulled. If a piston must push the block to extend, the attempt to extend fails.
+
+If a block's push reaction is anything other than <code>normal</code>, the block also does not stick to [[slime blocks]] or [[honey blocks]].
+
+== Relationship between solid, opaque, and similar properties<span class="anchor" id="Solid properties"> </span>==
+{{See also|Solid (disambiguation)|Transparency}}
+
+There is no single property that determines if a [[block]] is a "solid block" for all gameplay mechanics. As such, the words ''solid'', ''opaque'', and ''transparent'' are colloquially applied to several different block properties, which can cause confusion. Much of this confusion stems from the fact that earlier versions of ''Minecraft'' used a single property to determine which blocks were [[opaque]], [[conductive]], caused [[suffocation]], or allowed [[mob spawning]], so the words ''solid'' and ''opaque'' were (and often still are) used synonymously to refer to all three.
+
+Further confusing matters, although contemporary versions of ''Minecraft'' use distinct block properties to control distinct behaviors, the behavior of many blocks added in earlier versions has been intentionally preserved. This can result in surprising inconsistencies and exceptions with no intuitive explanation. For example, mobs cannot spawn on or suffocate inside [[glass]] blocks even though they are [[full blocks]]. This can create the mistaken impression that mobs cannot spawn on any block that is not fully [[opaque]], but in fact mobs may spawn on top [[slabs]], upside-down [[stairs]], [[azaleas]], [[slime blocks]], and many other transparent blocks.
+
+Furthermore, even if explicit terms like ''opaque'', ''conductive'', and ''valid spawn'' are used instead of the catch-all term ''solid'', some game mechanics ''do'' depend on whether a block is considered "solid" in a more conventional sense, and several different mechanisms are used to make that determination even within that category:
+
+* Some mechanics, such as [[enderman]] teleportation, determine whether a block is solid using the [[legacy solid]] block property.
+
+* Other mechanics, such as [[iron golem]] summoning, determine whether a block is solid by checking if it a [[full block]], which is a property of its [[collision box]].
+
+* Still other mechanics, such as determining whether a block can have a [[torch]] or [[button]] attached to one of its faces, uses a separate system that checks geometric properties of the supporting block's "support box", which is usually the same as its collision box, but is different for certain blocks.
+
+As the word "solid" is sometimes used to refer to all of these things, the set of "solid blocks" can be difficult to precisely define without additional context to determine which notion of solidity is being discussed.
+
+== History ==
+{{info needed section|earlier history}}
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20|dev=23w17a|The [[materials]] system has been removed. Material properties have been converted to block properties.}}
+}}
+
+== See also ==
+* [[Block states]]
+
+== References ==
+{{reflist}}

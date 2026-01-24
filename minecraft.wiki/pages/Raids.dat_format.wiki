@@ -1,0 +1,65 @@
+{{exclusive|java}}
+The '''raids.dat''' file located in the data folder of every Minecraft level is used to store information about the [[raids]] in the level. It is stored as a [[w:gzip|gzip]] compressed NBT file.
+
+Additional file '''raids_end.dat''' is stored in the data folder of end dimension folders, allowing for raids in other dimensions for villages in those dimensions.
+
+== Folder structure ==
+{| data-description="List"
+|-
+|<div class="toccolours treeview">
+*''(world save directory)''
+**data
+***raids.dat
+**DIM-1
+***data
+****raids.dat
+**DIM1
+***data
+****raids_end.dat
+</div>
+|}
+
+== NBT structure ==
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|list|raids}}: List of compound tags including raid information.
+*** {{nbt|compound}}: A raid.
+**** {{nbt|int|id}}: The ID of the raid.
+**** {{nbt|byte|started}}: 1 or 0 (true/false). True if the raid has ever spawned a wave.
+**** {{nbt|byte|active}}: 1 or 0 (true/false). Whether the raid functionality is active.
+**** {{nbt|long|ticks_active}}: The timespan, in ticks, the raid has been going on for.
+**** {{nbt|int|raid_omen_level}}: The level of bad omen for the raid. Affects raider enchantments and the extra wave.
+**** {{nbt|int|groups_spawned}}: The number of waves that have spawned in the raid.
+**** {{nbt|int|cooldown_ticks}}: The timespan, in ticks, until the initial spawning of raiders.
+**** {{nbt|int|post_raid_ticks}}: The timespan, in ticks, after all the waves are cleared.
+**** {{nbt|float|total_health}}: The sum of maximum health of all the raiders in the current wave.
+**** {{nbt|int|group_count}}: The total number of waves in this raid.
+**** {{nbt|string|status}}: The {{tooltip|status|ongoing, victory, loss, stopped}} of the raid.
+**** {{nbt|int array|center}}: The position of the center of the raid, where raiders try to move to.
+**** {{nbt|list|heroes_of_the_village}}: A list of players who have killed raiders in the raid. Each of these players receives the [[Hero of the Village|hero of the village]] effect when the raid ends in a <code>victory</code> status.
+***** {{nbt|int array|}}: An array of four integers containing the [http://docs.oracle.com/javase/8/docs/api/java/util/UUID.html Universally Unique Identifier] of a player.
+** {{nbt|int|next_id}}: The ID for the next raid to occur.
+** {{nbt|int|tick}}: Internal clock.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.14|dev=18w47a|Added [[raid]] data for all dimensions.}}
+|{{HistoryLine|||dev=19w13a|Added <code>HeroesOfTheVillage</code> list.}}
+|{{HistoryLine||1.16|dev=1.16-pre3|The data file for the [[nether]], <code>raids_nether.dat</code> was renamed to <code>raids.dat</code>.}}
+|{{HistoryLine||1.21.5|dev=?|Renamed all data file fields to lowercase underscore format.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{lowercase title}}
+
+[[Category:Development]]
+
+[[de:Überfalldaten]]
+[[fr:Format raids.dat]]
+[[ja:Raids.datフォーマット]]
+[[lzh:存襲範式]]
+[[pt:Formato raids.dat]]
+[[zh:袭击存储格式]]

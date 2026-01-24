@@ -1,0 +1,138 @@
+{{Infobox version
+| title = Minecraft 1.21.2 Pre-Release 1
+| image = 1.21.2-pre1.jpg
+| image2 = Java Edition 1.21.2 Pre-Release 1.png
+| edition = Java
+| type = Pre-release
+| date = October 8, 2024
+| jsonhash = 8f4467762c2ad89ddc2f8058f19e884fe39bd89c
+| jsonfile = 1.21.2-pre1
+| clienthash = d34d3e0fd086462f47c3312e7ba68c78a4fe325e
+| clientmap = cb5f7c9571f714f862ccb4dc0b533629d2baae54
+| serverhash = 7e6e5da8bb024227ffa0d24cfa3181e6a772bb76
+| servermap = d897befa73bc09c7ab85d9927455a1c650e31666
+| parent = 1.21.2
+| prevparent = 1.21.1
+| prev = 24w40a
+| next = 1.21.2 Pre-Release 2
+| nextparent = 1.21.3
+}}<onlyinclude>
+
+'''1.21.2 Pre-Release 1''' (known as '''1.21.2-pre1''' in the [[launcher]]) is the first pre-release for [[Java Edition 1.21.2]], released on October 8, 2024,<ref name="mcnet">{{cite|url=https://www.minecraft.net/en-us/article/minecraft-1-21-2-pre-release-1|title=Minecraft 1.21.2 Pre-Release 1|date=October 8, 2024|website=Minecraft.net}}</ref> which fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Game rule]]'''
+* Added the <code>disablePlayerMovementCheck</code> game rule.
+** Controls the player movement speed restriction.
+** This behaves the same as the <code>disableElytraMovementCheck</code> rule, but applies irrespective of flying with elytra.
+** Default to <code>false</code>.
+
+== Changes ==
+=== Gameplay ===
+'''[[Damage#Drowning|Oxygen]] bar'''
+* Added an empty state for air bubbles ([[File:Empty Bubble (icon).png|class=pixel-image|18px]]) along with a wobble when the player is drowning.
+* Added a popping sound for when bubbles pop on the oxygen bar, increasing in pitch depending on the oxygen left.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>57</code>.
+
+'''[[Data component format|Item components]]'''
+* <code>minecraft:equippable</code>
+** Added field <code>camera_overlay</code> (optional): namespaced ID of the overlay texture to use when equipped.
+*** If not specified, no overlay is used.
+*** The ID addresses a texture under the textures/ folder and automatically assumed to be .png.
+**** For instance, {{samp|misc/pumpkinblur}} addresses {{samp|textures/misc/pumpkinblur.png}}.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>41</code>.
+* Added texture and sound for tweaked air bubble UI.
+** New texture added for empty air bubble.
+** Sound added for when air bubble pops.
+
+'''[[Particles]]'''
+* The format of color fields in particle options is now more standardized:
+** RGB fields can always be encoded either as a vector of floats (order: <code>[R,G,B]</code>) or as a single packed integer (order: <code>RGB</code>).
+** ARGB fields can always be encoded either as a vector of floats (order: <code>[R,G,B,A]</code> or as a single packed integer (order: <code>ARGB</code>).
+** Changed fields:
+*** <code>minecraft:trail.color</code> (previously accepted only integer).
+*** <code>minecraft:dust.color</code> (previously accepted only vector of floats).
+*** <code>minecraft:dust_color_transition.from_color</code> (previously accepted only vector of floats).
+*** <code>minecraft:dust_color_transition.to_color</code> (previously accepted only vector of floats).
+
+'''[[Enchanting]]'''
+* [[Carpet]]s and [[wolf armor]] now show the enchantment glint on [[llama]]s and [[wolves]].
+
+== Experimental ==
+The listed changes are only present when the "Winter Drop" [[experimental]] data pack is enabled.
+
+=== Changes ===
+==== Blocks ====
+'''[[Creaking heart]]'''
+* A [[comparator]] that is attached to the creaking heart block outputs a signal strength dependent on the distance to the connected creaking.
+
+==== Mobs ====
+'''[[Creaking]]'''
+* Doesn't activate or freeze around players in [[Creative]] mode.
+* Cannot be named with a [[name tag]] if summoned via a creaking heart.
+
+==== General ====
+'''[[Tag]]s'''
+* Added <code>pale_garden</code> to the <code>#is_overworld</code> biome tag.
+
+== Fixes ==
+{{fixes|fixedin=1.21.2 Pre-Release 1
+|;From released versions before 1.21
+|271961|Parity Issue: No empty bubbles on the oxygen bar and popping sound.
+|;From the 1.21.2 development versions
+|276360|Repeating command block data is often lost when moving it around in inventory.
+|276604|Horse Armor no longer has enchantment glint.
+|276815|Dyed bundles are missing the "{{cd|filled}}" predicate.
+|276965|Post shader {{cd|ColorModulate}} uniform not reset properly after spectating spiders.
+|276979|{{cd|Lock}} field on containers and {{cd|minecraft:lock}} data component do not get datafixed correctly when a \ is present.
+|277017|Flaming arrows no longer extinguish when water or powder snow is placed in its location.
+|277019|Execute command teleporting across dimensions does not use correct relative coordinates.
+|277027|Shapeless recipes accept anything if one of their ingredients is an empty tag.
+|277028|Bundles do not empty smoothly.
+|;prev
+|277067|The high contrast and programmer art resource packs are displayed as being incompatible.
+|277075|Pale hanging moss is all destroyed at the same time when its supporting block is removed.
+|277078|Trim advancements use recipe registry key.
+|277108|The "{{cd|below_name}}" scoreboard display mode renders with dark parts when custom colors are set.
+|277111|Wandering traders can sell pale oak saplings even when they're disabled.
+|277118|Creakings can spawn with {{cd|doMobSpawning}} set to false.
+|277131|Pale garden missing from {{cd|#minecraft:is_overworld}} biome tag.
+|277141|{{cmd|/rotate}} command is not restricted to permission level 2.
+|277143|Horse armor has damage-related components.
+|277144|Furnaces, blast furnaces, and smokers delete all of their contents inside them once reloaded after smelting items.
+|277148|Pack filters removing recipes that the player has unlocked causes data pack loading to fail.
+|277160|Pale hanging moss is often immediately destroyed when placed using the {{cmd|/fill}} command.
+|277163|Map color for pale oak saplings is incorrect.
+|277176|Team affixes have dark lines between them and the username in player name tags.
+|277215|The game crashes when attempting to accept or reject already accepted or rejected realm invitations.
+|277301|The enchantment glint isn't visible on thrown tridents that are enchanted or held in the hand in third person when using Fabulous graphics.
+|277302|The enchantment glint isn't visible on shields that are enchanted in third person when using Fabulous graphics.
+|277335|Pale moss carpet can be swapped without destroying the upper vine.
+|277371|Pale moss carpet is often immediately destroyed when placed using the {{cmd|/fill}} command.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|1=https://youtu.be/ZTGARj1xraM|2=https://youtu.be/zZQaH48MFkU}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[Category:Java Edition 1.21.2 pre-releases]]
+
+[[de:1.21.2-pre1]]
+[[es:Java Edition 1.21.2 Pre-Release 1]]
+[[fr:Édition Java 1.21.2 Pre-Release 1]]
+[[ja:Java Edition 1.21.2 Pre-Release 1]]
+[[pt:Edição Java 1.21.2 Pre-Release 1]]
+[[ru:1.21.2 Pre-Release 1 (Java Edition)]]
+[[uk:1.21.2 Pre-Release 1 (Java Edition)]]
+[[zh:Java版1.21.2-pre1]]

@@ -1,0 +1,39 @@
+{{DISPLAYTITLE:Legacy ''Minecraft'' authentication}}
+{{outdated|This authentication system was replaced by [[Yggdrasil]] and later [[Microsoft authentication]].|edition=java}}
+'''Legacy ''Minecraft'' authentication''' refers to the method of authenticating {{JE}} accounts prior to [[Java Edition 1.6.1]].
+== Login ==
+To log the player in, the official launcher sends an HTTPS POST (GET appears to suffice as well) request to:
+<syntaxhighlight lang=urlencoded>https://login.minecraft.net</syntaxhighlight>
+with the postdata:
+<syntaxhighlight lang=urlencoded>?user=<username>&password=<password>&version=<launcher version></syntaxhighlight>
+and an "application/x-www-form-urlencoded" Content-Type header.
+
+After migrating to Mojang accounts, the email address is used instead of a username, but the procedure stays the same.
+
+The current launcher version is "13" (for the new launcher it's "14"), sending a value lower than 12 will cause the server to return "Old version", however, you can send any large number and it will return as expected. If the login succeeds, it will return 5 ':' delimited values.
+<syntaxhighlight lang=text>1343825972000:deprecated:SirCmpwn:7ae9007b9909de05ea58e94199a33b30c310c69c:dba0c48e1c584963b9e93a038a66bb98</syntaxhighlight>
+#'''current version''' of the game files (not the launcher itself). This is a UNIX timestamp that the launcher compares to the ~/.minecraft/bin/version file.
+#Previously contained a '''download ticket''' for requesting new versions of minecraft.jar from the server. Now contains only "deprecated".
+#'''case-correct username'''. For mojang accounts, the user's actual username is returned here instead of the email used to log in.
+#'''sessionId''' - a unique ID for your current session.
+#'''UID''' - currently unused, introduced near August 8th, 2012. Grum says this is the unique ID for the user, potentially for changing Minecraft names in the future.
+
+If the request is missing a parameter, the server will return "Bad response". If the login information is incorrect, the server will return "Bad login". If the login information is correct but the account isn't premium, the server will return "User not premium". If your minecraft.net account has been migrated to a Mojang account but you're logging in with your minecraft.net username the server will return "Account migrated, use e-mail".
+
+== Keep-alive ==
+Every 6000 ticks, the client sends an HTTPS request to
+<syntaxhighlight lang=urlencoded>https://login.minecraft.net/session?name=<username>&session=<session id></syntaxhighlight>
+
+In the older versions of Minecraft the client simply discarded the answer.
+
+Later{{when|Need to figure out the version in which this happens}}, the client would check for the response code.
+If it is equal to 400 the client would consider the game as an unlicensed copy and display a message accordingly during gameplay.
+
+== Navigation ==
+
+{{Navbox Java Edition technical|general}}
+
+[[Category:Java Edition protocol]]
+{{license wiki.vg}}
+
+[[fr:Ancienne authentification Minecraft]]

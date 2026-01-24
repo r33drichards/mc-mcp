@@ -1,0 +1,209 @@
+{{Infobox version
+|title= Minecraft 1.21 Pre-Release 1
+|image= 1.21-pre1.jpg
+|image2= Java Edition 1.21 Pre-Release 1.png
+|edition= Java
+|type= Pre-release
+|date= May 29, 2024
+|jsonhash=48e33f4d3741f606819287d9c5ffcc240e1eebf4 |jsonfile=1.21-pre1
+|clienthash=6cb9ae7a7e5ec8143156644532d19f87b933e158
+|clientmap=af36d014fca743974f186422185396baa3c82780
+|serverhash=57e59ee5d8bc6ce664a7d76de45f8df9c110381f
+|servermap=2b9d7fcf2e9b48fe9a00a08dfcbdadfc50b76dda
+|parent= 1.21
+|prevparent= 1.20.6
+|prev= 24w21b
+|next= 1.21 Pre-Release 2
+|nextparent= 1.21.1
+}}<onlyinclude>
+
+'''1.21 Pre-Release 1''' (known as '''1.21-pre1''' in the [[launcher]]) is the first pre-release for [[Java Edition 1.21]], released on May 29, 2024,<ref name="mcnet">{{cite|url=https://www.minecraft.net/en-us/article/minecraft-1-21-pre-release-1|title=Minecraft 1.21 Pre-Release 1|date=May 29, 2024|website=Minecraft.net}}</ref> which fixes bugs and makes changes to portals.
+
+== Additions ==
+=== General ===
+'''[[Enchantments]]'''
+* <code>lookup</code>
+** A "Level-Based Value" type that maps a list of values to specific levels, and applies a fallback if the level is greater than the number of values supplied. 
+** Fields:
+*** <code>values</code>: A list of values indexed by level - 1 to apply, if present.
+*** <code>fallback</code>: A fallback level-based value to apply if the level is greater than the size of values.
+
+== Changes ==
+=== Blocks ===
+'''[[Ominous trial spawner]]'''
+* Mobs removed by a trial spawner converting to ominous state now drop any items they previously picked up from the ground.
+
+=== Items ===
+'''[[Mace]]'''
+* Attack speed has been changed to 0.6.
+
+=== Non-mob entities ===
+'''[[Boat]]s'''
+* Are now [[leash]]able.
+
+=== World generation ===
+[[File:Obsidian portal blocks broken item forms.png|thumb|Blocks are now broken as if mined by the player when the obsidian platform is regenerated.]]
+'''[[Obsidian platform]]'''
+* When re-generated when a new player enters the [[End portal]], instead of breaking all blocks 3 blocks above it the blocks are instead broken as if mined by a player, dropping the item and (if a container) all its contents.
+
+=== [[Enchantment]]s ===
+'''[[Wind Burst]]'''
+* Now bounces the player a further 7 blocks up per enchantment level, for 21 blocks at level 3.<ref>{{mcnet|minecraft-1-21-pre-release-3|Minecraft 1.21 Pre-Release 3|June 5, 2024}} "''Following changes were introduced in Pre-Release 1; The Wind Burst enchantment now bounces the player 7 blocks up per enchantment level''"</ref>
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>46</code>
+* Added new configurable fields to jigsaw structures and <code>single_pool_element</code> types.
+
+'''[[Debug]]'''
+* The game now stores reports from failed chunks' loads and saves in the debug directory.
+
+'''Effect conditions'''
+* Unlike with loot tables, all effect conditions now need to be inline objects and cannot be references.
+
+'''[[Loot tables]]'''
+* <code>random_chance_with_enchanted_bonus</code>
+** <code>chance</code> field has been removed.
+** <code>unenchanted_chance</code>: a new field for the chance for an unenchanted item.
+** <code>enchanted_chance</code>: a new field for the chance for an enchanted item; a level-based value.
+
+'''[[Portal]]s'''
+* [[Ender pearl]]s that are thrown through portals can now teleport players to a different dimension than the one they are currently in.
+* It is now possible to travel with rideable entities through portals.
+** When riding entities through portals, the delay before teleporting is not applied.
+
+'''Reporting'''
+* Report data generator now includes information about network packets.
+
+'''Server links'''
+* There are some generic-use link names, like "Support" or "Website", without any special functionality.{{Info needed|What does this mean?}}
+
+'''Structures'''
+* Added <code>liquid_settings</code> field to structures of type <code>minecraft:jigsaw</code>. 
+* Possible values:
+** <code>apply_waterlogging</code>: If any waterloggable block overlaps with existing water, it will become waterlogged.
+** <code>ignore_waterlogging</code>: Will not waterlog any waterloggable blocks that overlap existing water.
+*** Default value is <code>apply_waterlogging</code>.
+* Added optional field <code>override_liquid_settings</code> to <code>single_pool_element</code> element type.
+** Same possible values as the <code>liquid_settings</code> in jigsaw structures.
+** Overrides the inherited liquid settings from the parent jigsaw structure while generating this pool element.
+
+'''[[Tag]]s'''
+* The <code>fire_aspect_lightable</code> block tag was removed.
+
+== Removals ==
+=== General ===
+'''[[Enchantments]]'''
+* Removed the functionality of [[Fire Aspect]] being able to light blocks on fire.
+** Mojang has stated that this feature has been temporarily removed for refinement, and will be reintroduced in a later release.<ref name="mcnet"/>
+
+'''[[Gamerules]]'''
+* Removed the <code>entitiesWithPassengersCanUsePortals</code> [[gamerule]] that was introduced in [[24w21a]].
+** Entities with passengers being able to use portals is now the default behavior.
+
+'''[[Tag]]s'''
+* The <code>fire_aspect_lightable</code> block tag was removed.
+
+== Fixes ==
+{{fixes|fixedin=1.21 Pre-Release 1
+|;old
+|902|The End obsidian platform resets every time entities go through the End portal, which can cause blocks to be deleted.
+|8983|Primed TNT cannot travel through nether portals.
+|50612|Command blocks do not update when you place them near any source of power.
+|97087|Attributes won't work in main hand if they were in offhand.
+|114566|Can't teleport back to the central island with End gateway portal on outer End islands.
+|148741|Selection boxes in some screens are misaligned in comparison with their text.
+|160140|Shulker boxes on the obsidian platform are destroyed and do not drop when a player enters the End.
+|169698|Blocks within igloo basements can generate waterlogged when generating in close proximity to water.
+|170907|Network position deltas are processed relative to a wrong point.
+|172031|Throwing an ender pearl into a nether or End portal often has no effect.
+|191591|Saddles lose their NBT data when equipped on horses, zombie horses, skeleton horses, mules or donkeys via right-clicking.
+|225870|Breeding an axolotl in Creative replaces the bucket of tropical fish.
+|265583|Incorrect pluralization for skin customization strings for pants.
+|265818|The "{{cd|gamerule.doVinesSpread.description}}" string consists of grammatically incorrect word usage.
+|266140|The "Open link" button within the Realms menu is improperly capitalized.
+|266471|Trial chambers can intersect aquifers, causing some blocks inside the structure to be waterlogged.
+|267050|Chat disabled strings are missing verbs.
+|267071|The word "packs" within the "{{cd|download.pack.failed}}" string is always pluralized.
+|267474|Strings referencing the player's off hand are inconsistently spelled.
+|267954|World upgrade and downgrade Realms strings are improperly capitalized.
+|268023|The "{{cd|selectWorld.experimental.details.title}}" string displayed within the experimental features details menu is improperly capitalized.
+|268185|Copper grates in trial chambers are waterlogged.
+|269439|Some diacritics intersect the language box in the languages menu.
+|269617|When ender pearls teleport non-player entities, no teleportation sound is played upon impact.
+|269921|Wind charges can be thrown though corners.
+|270181|Wind charges go through an entity if it is close to a player.
+|270572|Programmer Art resource pack duplicates some GUI texture files.
+|270649|The width of challenge advancements header is calculated in relation to the slash formatting of progress counter, causing overlap in some languages.
+|270795|Mobs despawned by ominous trial spawners can delete picked up items.
+|270821|Regular trial spawners spawn the first mob with ominous trial equipment if they were last active as ominous.
+|270981|View Bobbing toggle is not available in Accessibility Settings.
+|271293|Wind charge, fireball and shulker bullet makes a "Burning" sound as it passes through the lava.
+|271446|Mace attack speed was lowered to a point where all Wind Burst smash attacks are performed on uncharged attacks.
+|271897|End portal makes items disappear.
+|272014|Ender Dragon death animation is broken since 20w22a (and broken again in 20w45a).
+|272073|Item displays with billboard and rotation values create major visual bug.
+|272079|Medium/small slimes and magma cube's attack reach is too short.
+|272198|Shulkers' models sometimes appear offset upon End city generation.
+|272253|The strength of the Riptide enchantment is increased when holding tridents enchanted with Riptide in both hands.
+|272267|"Changes the blurriness of menu background" lacks punctuation.
+|272279|Resource packs containing TrueType fonts fail to load on x64 macOS systems.
+|272308|Axolots can be attached to new leads when being already leashed.
+|272445|Command blocks made from {{key|Ctrl}} + Pick Block do not activate on first try.
+|272469|When the wind charge, fireball or shulker bullet is in the lava, it will continue to make a high-loudness noise.
+|272515|Component-modified saddles get their components wiped when dispensed onto a horse, mule, or camel.
+|;dev
+|271870|{{cd|random_chance_with_looting}} function base value is for enchantment level 1.
+|271929|Applying multiple layers of "{{cd|using_converts_to}}" will produce ghost items.
+|272038|The error "{{cd|Can't access registry ResourceKey[minecraft:root / minecraft:game_event]}}" is sometimes in the log file.
+|272053|The "{{cd|armor_effectiveness}}" effect does not work with projectiles or indirect damage.
+|272258|{{cd|block.portal.travel}} sound now plays when teleporting to a different dimension using commands.
+|272264|Narrator button in Accessibility Settings doesn't update upon pressing {{key|Ctrl}} + {{key|B}}.
+|272311|The enchantment glint sometimes doesn't render in interfaces and first person.
+|272313|The game crashes when attempting to open the Realms menu.
+|272315|Serial comma is missing from the {{cd|entitiesWithPassengersCanUsePortals}} game rule description.
+|272322|When the player is riding an entity through portals, the player and the entity may teleport to the wrong place.
+|272328|{{cd|entitiesWithPassengersCanUsePortals}} game rule description is missing the proper term capitalization.
+|272329|Riding an entity into portals may cause the game to softlock.
+|272355|Ellipsis text is stringified within NBT text formatter list truncation.
+|272424|Chunks occasionally have large dark areas in the sky.
+|272430|Breaking a carrot/warped fungus on a stick gives a damaged fishing rod.
+|;previous
+|272339|Holding crossbows in both hands stacks Quick Charge.
+|272342|Typo in mining fatigue attribute ID "{{cd|minecraft:effect.minining_fatigue}}".
+|272343|Ender pearls don't work when riding an entity.
+|272344|When teleported by an ender pearl, the "portal noise fades" sound is played.
+|272347|Upgrading from before 24w21a doesn't update structures saved by structure blocks.
+|272361|Minecarts and passengers offset from block when riding through portals.
+|272364|Players spawn one block above the obsidian platform when entering an End portal.
+|272365|Inventory images of all banners are completely white.
+|272369|The player can respawn in a solid block with default spawnpoint.
+|272374|24w21b will not upgrade {{cd|attribute_modifiers}} from previous versions.
+|272399|Primed TNT entities can't go through an End portal anymore.
+|272400|Shield in inventory with banner shows as white.
+|272403|Portal linking chunk loading changes.
+|272406|Crash when zombie tries to spawn second reinforcement.
+|272408|{{cd|set_attributes}} item modifier can add the same attribute modifier twice.
+|272427|Flame, Power, Punch, and Piercing enchantments no longer work on the last use of the item.
+|272438|End crystal entities can't go through an End portal anymore.
+|272442|Comparator output of jukebox no longer persists on music disc finish.
+|272490|{{cd|@n}} can select dying entities, unlike {{cd|@e}}.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|N2Vs_bC95c0|S0BaPsbgsps}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:1.21-pre1]]
+[[es:Java Edition 1.21 Pre-Release 1]]
+[[fr:Édition Java 1.21 Pre-Release 1]]
+[[ja:Java Edition 1.21 Pre-Release 1]]
+[[pt:Edição Java 1.21 Pre-Release 1]]
+[[ru:1.21 Pre-Release 1 (Java Edition)]]
+[[uk:1.21 Pre-Release 1 (Java Edition)]]
+[[zh:Java版1.21-pre1]]

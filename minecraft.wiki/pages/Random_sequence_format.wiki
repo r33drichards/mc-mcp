@@ -1,0 +1,57 @@
+{{exclusive|java}}
+'''Random sequences''' are random number sequence generators used by [[loot table]]s and the {{cmd|random (roll{{!}}value) ...}} command.
+
+== NBT structure ==
+Current random sequences in a world and the random sequence settings of the world are stored in the <samp>/data/random_sequences.dat</samp>, which is a GZip-ed [[NBT]] file.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|compound|data}}: Random sequence data.
+*** {{nbt|bool|include_sequence_id}}: Whether the hash of the namespaced IDs of random sequences affects their seeds. Defaults to <code>true</code>. Can be changed with {{cmd|/random reset * ...}} command.
+*** {{nbt|bool|include_world_seed}}: Whether the world seed affects seeds of random sequences. Defaults to <code>true</code>. Can be changed with {{cmd|/random reset * ...}} command.
+*** {{nbt|int|salt}}: The [[w:salt (cryptography)|salt]] used when creating a random sequence. Defaults to <code>0</code>. Can be changed with {{cmd|/random reset * ...}} command.
+*** {{nbt|compound|sequences}}: Current random sequences in the world.
+**** {{nbt|compound|<''[[resource location]]''>}}: A random sequence.
+***** {{nbt|long-array|source}}: The seed of this random sequence.
+****** {{nbt|long}}: The lower 64 bits.
+****** {{nbt|long}}: The higher 64 bits.
+** {{nbt|int|DataVersion}}: The [[data version]].
+</div>
+
+== Usage ==
+Random sequences are used by a loot table when [[Loot table#Usage|its seed]] is not specified. Loot tables in containers from the world generation are not affected by random sequences (but are directly affected by the [[Seed (world generation)|world seed]]).
+
+Random sequences use the [https://prng.di.unimi.it/xoroshiro128plusplus.c Xoroshiro128++] random number generator.
+
+When a random sequence is called for the first time, it is created with the seed:
+# From the {{nbt|int|salt}} value.
+# If {{nbt|bool|include_world_seed}} is <code>true</code>, XOR the {{nbt|int|salt}} with the world seed.
+# Expands it to 128 bits. The lower 64 bits are the XOR between the value and <code>0x6a09e667f3bcc909</code>; The higher 64 bits is the sum of the lower 64 bits and <code>0x9e3779b97f4a7c15</code>.
+# If {{nbt|bool|include_sequence_id}} is <code>true</code>, XOR it with the [[w:MD5|MD5]] of the namespaced ID of the creating random sequence.
+# The two long numbers calculated from the lower 64 bits and the higher 64 bits respectively as follows are the seed of the random sequence.
+
+<syntaxhighlight lang="java">
+public static long mixStafford13(long v) {
+	v = (v ^ v >>> 30) * 0xbf58476d1ce4e5b9L;
+	v = (v ^ v >>> 27) * 0x94d049bb133111ebL;
+	return v ^ v >>> 31;
+}
+</syntaxhighlight>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20|dev=pre1|Added random sequences.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Added the three random sequence settings of the world.|Changed the way to generating the seed when creating a random sequence.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[fr:Format de séquence aléatoire]]
+[[ja:乱数列フォーマット]]
+[[pt:Formato de sequência aleatória]]
+[[ru:Формат случайной последовательности]]
+[[zh:随机序列存储格式]]

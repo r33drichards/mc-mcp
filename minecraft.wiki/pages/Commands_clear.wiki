@@ -1,0 +1,119 @@
+{{Infobox command
+|name=clear
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Clears [[item]]s from player [[inventory]], including items being dragged by the [[player]]. Can also detect and query the amount of specified items.
+
+== Usage ==
+
+Items in the inventory and items from container (chest, crafting table, etc.) dragging over the cursor can be cleared.
+
+{{IN|bedrock}}, items dragging from the inventory can also be cleared, while {{in|java}} only if not in creative mode can these be cleared.
+
+{{IN|java}}, items in players' four crafting slots can also be cleared.
+
+== Syntax ==
+
+* '''Java Edition'''
+: <code>clear [<targets>] [<item>] [<maxCount>]</code>
+
+* '''Bedrock Edition'''
+: <code>clear [player: target] [itemName: Item] [data: int] [maxCount: int]</code>
+
+== Arguments ==
+{{argument|targets|entity|player: target|CommandSelector<Player>}}
+: Specifies the player(s) whose items are cleared. If not specified, defaults to the player who executes the command.
+: {{arg desc|je=entity|amount=multiple|type=players|be=player}}
+
+{{argument|item|item_predicate|itemName: Item|enum}}
+: Specifies the item to be cleared. If not specified, all items are cleared.
+: {{arg desc|je=item_predicate|be=CommandItem}}
+
+{{argument|be=1|data: int|int}}
+: Specifies the [[Bedrock Edition data values|data value]] of the item to be cleared. If not specified, or if <code>-1</code>, all items that match <code>itemName: Item</code> are cleared, regardless of their data. Values (bitwise AND 0xFFFF) that are invalid for the specified item id revert to 0.
+: {{arg desc|be=int}} Should be between -1 and 2,147,483,647 (inclusive, without commas).
+
+{{argument|maxCount|integer|maxCount: int|int}}
+: Specifies the maximum number of items to be cleared. If not specified, or if <code>-1</code>{{only|bedrock}}, all items that match <code>item</code>, or <code>itemName: Item</code> and <code>data: int</code> are cleared. If <code>0</code>, instead of clearing of items, detects and queries the amount of specified items.
+: {{arg desc|be=int|je=integer|min=0}} {{IN|bedrock}}, it should be between -1 and 2147483647 (inclusive).
+
+== Result ==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code><targets></code> or <code>player: target</code> is not specified when the command's executor is not a player.|fail|fail}}
+{{Result table|<code>player: target</code> is a target selector that is not in [[Target_selectors#Player_type_and_single_type|player type]].|N/A|}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more online players.|fail}}
+{{Result table|There are no specified items in any player's inventory.}}
+{{Result table|<code>data: int</code> is lower than -1.|N/A}}
+{{Result table|<code>maxCount: int</code> is lower than -1.}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of total items that are cleared or detected.}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|the number of players who have the specified items.}}
+{{Output table}}
+
+== Examples ==
+* To clear your entire inventory: <code>clear</code>
+* To clear all items from Alice's inventory: <code>clear Alice</code>
+* To clear all wool items from Alice's inventory: <code>clear Alice #minecraft:wool</code>{{only|Java}}
+* To clear all orange wool items from the inventory of all players: <code>clear @a minecraft:wool 1</code>{{only|Bedrock}} or <code> clear @a minecraft:orange_wool</code>
+* To clear all golden swords with the "Sharpness I" enchantment from the nearest player
+** <code>clear @p minecraft:golden_sword{Enchantments:[{id:"minecraft:sharpness",lvl:1s}]}</code>{{only|Java}}
+*To test if a random player has stone in their inventory: <code>clear @r minecraft:stone 0 0</code>{{only|Bedrock}} or <code> clear @r minecraft:stone 0</code>{{only|Java}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.4.2|dev=12w37a|Added {{cmd|clear|link=none}}.}}
+|{{HistoryLine|||dev=12w38a|Added {{cd|item}} argument to {{cmd|clear|link=none}}.}}
+|{{HistoryLine||1.8|dev=14w02a|Added {{cd|data}} argument to {{cmd|clear|link=none}}.}}
+|{{HistoryLine||1.9|dev=15w31b|{{cmd|clear|link=none}} now clears the offhand slot.}}
+|{{HistoryLine||1.13|dev=17w45a|The syntax of {{cmd|clear|link=none}} has changed from {{cmd|clear [<target>] [<item>] [<data>] [<count>] [<nbt>]}} to
+ {{cmd|clear [<target>] [<item>] [<count>]}}.}}
+|{{HistoryLine||1.16|dev=20w07a|{{cmd|clear|link=none}} now clears the items in the inventory crafting grid.}}
+|{{HistoryLine|||dev=20w22a|{{cmd|clear|link=none}} now works properly with the inventory crafting grid.}}
+|{{HistoryLine||1.20.5|dev=24w09a|Updated the syntax. Now uses [[item component]]s instead of [[NBT]] tags.|Now target items must have every component that is the same as the specified key-value pair, or the default value of the component if it is not specified.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket}}
+|{{HistoryLine||1.0.5|dev=alpha 1.0.5.0|Added {{cmd|clear|link=none}}.}}
+}}
+
+== See also ==
+* {{cmd|data}} — can change or remove items in block or entity inventories
+* {{cmd|give}} — give items to player
+* {{cmd|kill}} — can destroy item entities
+* {{cmd|item}}{{only|java}} — can manipulate items in block or entity inventories
+* {{cmd|replaceitem}}{{only|bedrock}} — can replace items in block or entity inventories
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/clear?view=minecraft-bedrock-stable|title=<code>/clear</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/clear]]
+[[es:Comandos/clear]]
+[[fr:Commandes/clear]]
+[[ja:コマンド/clear]]
+[[ko:명령어/clear]]
+[[pt:Comandos/clear]]
+[[ru:Команды консоли/clear]]
+[[th:คำสั่ง/clear]]
+[[uk:Команди консолі/clear]]
+[[zh:命令/clear]]

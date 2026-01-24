@@ -1,0 +1,215 @@
+{{Update|Need to add entities from PlayStation 4 Edition (Latest version is equivalent to [[Java Edition 1.14]]), including updating existing entities. The entities on this page come from Minecraft: Xbox One Edition (Latest version is equivalent to [[Java Edition 1.12]]).}}
+
+{{Expand section|eINSTANCEOF is an enum that consists of bitflags, with different flags combined to make up the entity ID, these flags should be reversed and the values updated accordingly to not have such cryptic entity IDs.
+
+The ID format seems to be based on the entity base class in addition to some unique groups that 4J has come up with.
+
+Example:
+<syntaxhighlight lang="c++" line>
+enum eINSTANCEOF {
+    /* ... */
+    eMinecart = 0x0A800000,
+    eMinecartRideable = 0x0A800001,
+    eMinecartFurnace = 0x0A800003,
+    eMinecartTNT = 0x0A800004,
+    eMinecraftCommandBlock = 0x0A800005,
+    eMinecartSpawner = 0x0A800006,
+    eMinecartChest = 0x0A840002,
+    eMinecartHopper = 0x0A840005,
+    /* ... */
+}
+</syntaxhighlight>
+Which is actually:
+<syntaxhighlight lang="c++" line>
+// Categories
+static constexpr unsigned int MINECART = 0x0A800000;
+static constexpr unsigned int MINECART_CONTAINER = 0x00040000;
+
+// Entities
+enum eINSTANCEOF {
+    /* ... */
+    eMinecart = MINECART | 0x00000000,
+    eMinecartRideable = MINECART | 0x00000001,
+    eMinecartChest = MINECART | MINECART_CONTAINER | 0x00000002,
+    eMinecartFurnace = MINECART | 0x00000003,
+    eMinecartTNT = MINECART | 0x00000004,
+    eMinecartHopper = MINECART | MINECART_CONTAINER | 0x00000005,
+    eMinecraftCommandBlock = MINECART | 0x00000005,
+    eMinecartSpawner = MINECART | 0x00000006,
+    /* ... */
+}
+</syntaxhighlight>
+}}
+
+{|class="wikitable stikitable sortable"data-description="Entity IDs"
+!Item!![[Resource location]]!!Numeric ID!!eINSTANCEOF
+|-
+|{{EntityLink|Item|link=Item (entity)}}||{{code|item}}||1||0x800000a
+|-
+|{{EntityLink|Experience Orb|XPOrb}}||{{code|xp_orb}}||2||0x8000003
+|-
+|{{EntityLink|Area Effect Cloud|AreaEffectCloud}}||{{code|area_effect_cloud}}||3||0x800000f
+|-
+|{{EntityLink|Elder Guardian|ElderGuardian}}||{{code|elder_guardian}}||4||0x5d544001
+|-
+|{{EntityLink|Wither Skeleton|WitherSkeleton}}||{{code|wither_skeleton}}||5||0x5d540402
+|-
+|{{EntityLink|Stray}}||{{code|stray}}||6||0x5d540403
+|-
+|{{EntityLink|Egg|ThrownEgg}}||{{code|egg}}||7||0x8a200002
+|-
+|{{EntityLink|Leash Knot|LeashKnot}}||{{code|leash_knot}}||8||0xa080003
+|-
+|{{EntityLink|Painting}}||{{code|painting}}||9||0xa080001
+|-
+|{{EntityLink|Arrow}}||{{code|arrow}}||10||0x8a020002
+|-
+|{{EntityLink|Snowball}}||{{code|snowball}}||11||0x8a200001
+|-
+|{{EntityLink|Fireball}}||{{code|fireball}}||12||0x8a400003
+|-
+|{{EntityLink|Small Fireball|SmallFireball}}||{{code|small_fireball}}||13||0x8a400004
+|-
+|{{EntityLink|Ender Pearl|ThrownEnderpearl}}||{{code|ender_pearl}}||14||0x8a200003
+|-
+|{{EntityLink|Eye of Ender|EyeOfEnderSignal}}||{{code|eye_of_ender_signal}}||15||0x88000004
+|-
+|{{EntityLink|Splash Potion|ThrownPotion}}||{{code|potion}}||16||0x8a200004
+|-
+|{{EntityLink|Experience Bottle|ThrownExpBottle}}||{{code|xp_bottle}}||17||0x8a200005
+|-
+|{{EntityLink|Item Frame|ItemFrame}}||{{code|item_frame}}||18||0xa080002
+|-
+|{{EntityLink|Wither Skull|WitherSkull}}||{{code|wither_skull}}||19||0x8a400002
+|-
+|{{EntityLink|Primed TNT|PrimedTnt}}||{{code|tnt}}||20||0x800000b
+|-
+|{{EntityLink|Falling block|FallingSand}}||{{code|falling_block}}||21||0x8000009
+|-
+|{{EntityLink|Firework Rocket|FireworksRocketEntity}}||{{code|fireworks_rocket}}||22||0x88000005
+|-
+|{{EntityLink|Husk}}||{{code|husk}}||23||0x5d550003
+|-
+|{{EntityLink|Spectral Arrow|SpectralArrow}}||{{code|spectral_arrow}}||24||0x8a020001
+|-
+|{{EntityLink|Shulker Bullet|ShulkerBullet}}||{{code|shulker_bullet}}||25||0x8000010
+|-
+|{{EntityLink|Dragon Fireball|DragonFireball}}||{{code|dragon_fireball}}||26||0x8a400001
+|-
+|{{EntityLink|Zombie Villager|ZombieVillager}}||{{code|zombie_villager}}||27||0x5d550002
+|-
+|{{EntityLink|Skeleton Horse|SkeletonHorse}}||{{code|skeleton_horse}}||28||0x2d690002
+|-
+|{{EntityLink|Zombie Horse|ZombieHorse}}||{{code|zombie_horse}}||29||0x2d690003
+|-
+|{{EntityLink|Armor Stand|ArmorStand}}||{{code|armor_stand}}||30||0xc000001
+|-
+|{{EntityLink|Donkey}}||{{code|donkey}}||31||0x2d698001
+|-
+|{{EntityLink|Mule|Mule}}||{{code|mule}}||32||0x2d698002
+|-
+|{{EntityLink|Evoker Fangs|EvocationFangs}}||{{code|evocation_fangs}}||33||0x8000011
+|-
+|{{EntityLink|Evoker|EvocationIllager}}||{{code|evocation_illager}}||34||0x5d541801
+|-
+|{{EntityLink|Vex}}||{{code|vex}}||35||0x5d540008
+|-
+|{{EntityLink|Vindicator|VindicationIllager}}||{{code|vindication_illager}}||36||0x5d541001
+|-
+|{{EntityLink|Illusioner|IllusionIllager}}||{{code|illusion_illager}}||37||0x5d541802
+|-
+|{{EntityLink|id=Oak Boat|Boat}}||{{code|boat}}||41||0x8000008
+|-
+|{{EntityLink|Minecart|MinecartRideable}}||{{code|minecart}}||42||0xa800001
+|-
+|{{EntityLink|Minecart with Chest|MinecartChest}}||{{code|chest_minecart}}||43||0xa840002
+|-
+|{{EntityLink|Minecart with Furnace|MinecartFurnace}}||{{code|furnace_minecart}}||44||0xa800003
+|-
+|{{EntityLink|Minecart with TNT|MinecartTNT}}||{{code|tnt_minecart}}||45||0xa800004
+|-
+|{{EntityLink|Minecart with Hopper|MinecartHopper}}||{{code|hopper_minecart}}||46||0xa840005
+|-
+|{{EntityLink|Minecart with Spawner|MinecartSpawner}}||{{code|spawner_minecart}}||47||0xa800006
+|-
+|{{EntityLink|Creeper}}||{{code|creeper}}||50||0x5d540001
+|-
+|{{EntityLink|Skeleton}}||{{code|skeleton}}||51||0x5d540401
+|-
+|{{EntityLink|Spider}}||{{code|spider}}||52||0x5d560000
+|-
+|{{EntityLink|Giant}}||{{code|giant}}||53||0x5d540002
+|-
+|{{EntityLink|Zombie}}||{{code|zombie}}||54||0x5d550000
+|-
+|{{EntityLink|Slime}}||{{code|slime}}||55||0x5d108000
+|-
+|{{EntityLink|Ghast}}||{{code|ghast}}||56||0x5d001001
+|-
+|{{EntityLink|Zombie Pigman|PigZombie}}||{{code|zombie_pigman}}||57||0x5d550001
+|-
+|{{EntityLink|Enderman|Endermen}}||{{code|enderman}}||58||0x5d540003
+|-
+|{{EntityLink|Cave Spider|CaveSpider}}||{{code|cave_spider}}||59||0x5d560001
+|-
+|{{EntityLink|Silverfish}}||{{code|silverfish}}||60||0x5d540004
+|-
+|{{EntityLink|Blaze}}||{{code|blaze}}||61||0x5d540005
+|-
+|{{EntityLink|Magma Cube|LavaSlime}}||{{code|magma_cube}}||62||0x5d108001
+|-
+|{{EntityLink|Ender Dragon|EnderDragon}}||{{code|ender_dragon}}||63||0xd000005
+|-
+|{{EntityLink|Wither|WitherBoss}}||{{code|wither}}||64||0x5d540007
+|-
+|{{EntityLink|Bat}}||{{code|bat}}||65||0x1d004001
+|-
+|{{EntityLink|Witch}}||{{code|witch}}||66||0x5d540006
+|-
+|{{EntityLink|Endermite}}||{{code|endermite}}||67||0x4d54000b
+|-
+|{{EntityLink|Guardian}}||{{code|guardian}}||68||0x5d544000
+|-
+|{{EntityLink|Shulker}}||{{code|shulker}}||69||0x4d580003
+|-
+|{{EntityLink|Pig}}||{{code|pig}}||90||0x2d680003
+|-
+|{{EntityLink|Sheep}}||{{code|sheep}}||91||0x2d680002
+|-
+|{{EntityLink|Cow}}||{{code|cow}}||92||0x2d6a0000
+|-
+|{{EntityLink|Chicken}}||{{code|chicken}}||93||0xd680004
+|-
+|{{EntityLink|Squid}}||{{code|squid}}||94||0xd102001
+|-
+|{{EntityLink|Wolf}}||{{code|wolf}}||95||0xd6c0002
+|-
+|{{EntityLink|Mooshroom|MushroomCow}}||{{code|mooshroom}}||96||0x2d6a0001
+|-
+|{{EntityLink|Snow Golem|SnowMan}}||{{code|snowman}}||97||0x2d580001
+|-
+|{{EntityLink|Ocelot|Ozelot}}||{{code|ocelot}}||98||0x2d6c0001
+|-
+|{{EntityLink|Iron Golem|VillagerGolem}}||{{code|villager_golem}}||99||0xd580002
+|-
+|{{EntityLink|Horse}}||{{code|horse}}||100||0x2d690001
+|-
+|{{EntityLink|Rabbit}}||{{code|rabbit}}||101||0x2d680005
+|-
+|{{EntityLink|Polar Bear|PolarBear}}||{{code|polar_bear}}||102||0x2d680006
+|-
+|{{EntityLink|Llama}}||{{code|llama}}||103||0x2d698003
+|-
+|{{EntityLink|Llama Spit|LlamaSpit}}||{{code|llama_spit}}||104||0x88000012
+|-
+|{{EntityLink|Parrot}}||{{code|parrot}}||105||0x2d6c0003
+|-
+|{{EntityLink|Villager}}||{{code|villager}}||120||0xd600001
+|-
+|{{EntityLink|Ender Crystal|EnderCrystal}}||{{code|ender_crystal}}||200||0x800000e
+|-
+|}
+
+[[Category:Legacy Console Edition]]
+[[Category:Legacy Console Edition technical]]
+[[Category:Development]]

@@ -1,0 +1,134 @@
+{{about|the system used by features and enchantments|the similar system used by advancements|predicate}}
+{{exclusive|java}}
+
+A '''block predicate''' is a test for the state of a block at a given position in the world. They are used by placement modifiers in [[placed feature]]s, numerous [[configured feature]]s, and [[enchantment definition|enchantments]].
+
+== JSON Format ==
+Block predicated are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}}: a block predicate<section begin="json format" />
+** {{nbt|string|type}}: The type of the block predicate. See {{slink|Block predicate|Types}} for options.
+** additional fields depending on {{nbt|string|type}}. See {{slink|Block predicate|Types}}.<section end="json format" />
+</div>
+
+== Types ==
+The following block predicate types exist:
+
+=== true ===
+Always matches, independent of the block.
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>true</code>
+</div>
+
+=== all_of ===
+Combined multiple block predicates. Matches if all specified block predicates match.
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>all_of</code>
+** {{nbt|list|predicates}}: (Can be empty) The child predicates.
+*** {{nbt|compound}}: A block predicate.
+</div>
+
+=== any_of ===
+Combined multiple block predicates. Matches if at least one of the specified block predicates matches.
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>any_of</code>
+** {{nbt|list|predicates}}: (Can be empty) The child predicates.
+*** {{nbt|compound}}: A block predicate.
+</div>
+
+=== not ===
+Inverts a given block predicate. Matches if the specified other block predicate ''does not'' match.
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>not</code>
+** {{nbt|compound|predicate}}: The block predicate to invert.
+</div>
+
+=== has_sturdy_face ===
+Checks if the block at the specified offset has a [[Hitbox|full block supporting surface]] in the specified direction.
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>has_sturdy_face</code>
+** {{nbt|list|offset}}: (optional, defaults to [0,0,0]) A list of 3 integers specifying an [X, Y, Z] block position offset to check.
+*** {{nbt|int}}: Value between -16 and 16 (inclusive).
+** {{nbt|string|direction}}: The direction of the block to check if it is sturdy.
+</div>
+
+=== inside_world_bounds ===
+Checks if the positions y-level (with specified offset) is within the height limits of the world.
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>inside_world_bounds</code>
+** {{nbt|list|offset}}: (optional, defaults to [0,0,0]) A list of 3 integers specifying an [X, Y, Z] block position offset to check.
+*** {{nbt|int}}: Value between -16 and 16 (inclusive).
+</div>
+
+=== matching_block_tag ===
+Checks if the block at the specified offset is in the given [[block_tag_(Java Edition)|block tag]].
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>matching_block_tag</code>
+** {{nbt|list|offset}}: (optional, defaults to [0,0,0]) A list of 3 integers specifying an [X, Y, Z] block position offset to check.
+** {{nbt|string|tag}}: The [[block_tag_(Java Edition)|block tag]] without <code>#</code> to check for.
+</div>
+
+=== matching_blocks ===
+Checks if the block at the specified offset is one of the specified blocks.
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>matching_blocks</code>
+** {{nbt|list|offset}}: (optional, defaults to [0,0,0]) A list of 3 integers specifying an [X, Y, Z] block position offset to check.
+** {{nbt|string}}{{nbt|list|blocks}}: {{json_ref|block|tag=1|tag_link=block tag (Java Edition)}} that will match.
+</div>
+
+=== matching_fluids ===
+Checks if the fluid at the specified offset is one of the specified fluid.
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>matching_fluids</code>
+** {{nbt|list|offset}}: (optional, defaults to [0,0,0]) A list of 3 integers specifying an [X, Y, Z] block position offset to check.
+** {{nbt|string}}{{nbt|list|fluids}}: {{json_ref|fluid|tag=1|tag_link=fluid tag (Java Edition)}} that will match.
+</div>
+
+=== replaceable ===
+Checks if the block at the specified offset can be replaced by placing blocks.
+
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>replaceable</code>
+** {{nbt|list|offset}}: (optional, defaults to [0,0,0]) A list of 3 integers specifying an [X, Y, Z] block position offset to check.
+*** {{nbt|int}}: Value between -16 and 16 (inclusive).
+</div>
+
+=== solid ===
+Checks if the block at the specified offset is [[Solid_block|solid]].
+
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>solid</code>
+** {{nbt|list|offset}}: (optional, defaults to [0,0,0]) A list of 3 integers specifying an [X, Y, Z] block position offset to check.
+*** {{nbt|int}}: Value between -16 and 16 (inclusive).
+</div>
+
+=== would_survive ===
+Checks if a specified [[block state]] is a valid placement at the given offset.
+
+<div class="treeview">
+* {{nbt|compound}}: a block predicate
+** {{nbt|string|type}}: <code>would_survive</code>
+** {{nbt|list|offset}}: (optional, defaults to [0,0,0]) A list of 3 integers specifying an [X, Y, Z] block position offset to check.
+*** {{nbt|int}}: Value between -16 and 16 (inclusive).
+** {{nbt|compound|state}}: The blockstate to test.
+*** {{nbt inherit/block_state}}
+</div>
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[fr:Génération du monde personnalisée/Prédicat de bloc]]
+[[ja:ワールド生成のカスタマイズ/block predicate]]
+[[pt:Geração de mundo personalizado/predicado de bloco]]
+[[zh:编码格式/Worldgen#方块谓词]]

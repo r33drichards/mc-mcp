@@ -1,0 +1,393 @@
+{{Infobox version
+|title=Minecraft 25w04a
+|image=25w04a.jpg
+|image2=Java Edition 25w04a.png
+|edition=Java
+|type=Snapshot
+|date=January 22, 2025
+|jsonhash=f8cca683be215f9eb1742fb563dd04ca1285508c
+|clienthash=6102118fc64fba5ac798225e1c3618c005e01a51
+|clientmap=e39dc5a7ec18957a257fc41a7d49423a1ac7c5c1
+|serverhash=28a9d30423b1c50da661b95e754be9d5f0c871d4
+|servermap=663d1da3dff475eb79543d40ad2f18e4cb2c7708
+|parent=1.21.5
+|prevparent=1.21.4
+|prev=25w03a
+|next=25w05a
+|nextparent=1.21.6
+}}<onlyinclude>
+
+'''25w04a''' is the third [[snapshot]] for [[Java Edition 1.21.5]], released on January 22, 2025,<ref>{{snap|25w04a|id=a|January 22, 2025}}</ref> which adds new [[Data component format|data components]] and fixes bugs.
+
+== Additions ==
+=== General ===
+''' [[Data component format]] '''
+* {{cd|blocks_attacks}} component
+** When present, this item can be used like a Shield to block attacks to the holding player.
+** Format: object with fields
+*** {{cd|block_delay_seconds}} 
+**** Non-negative float (default: {{cd|0}}).
+**** The number of seconds that right-click must be held before successfully blocking attacks.
+*** {{cd|disable_cooldown_scale}} 
+**** Non-negative float (default: {{cd|1}}).
+**** Multiplier applied to the number of seconds that the item will be on cooldown for when attacked by a disabling attack ({{cd|disable_blocking_for_seconds}} on the {{cd|weapon}} component).
+**** If {{cd|0}}, this item can never be disabled by attacks.
+*** {{cd|damage_reductions}}
+**** List of object with fields (optional)
+**** Controls how much damage should be blocked in a given attack.
+**** If not specified, all damage is blocked.
+**** Each entry in the list contributes an amount of damage to be blocked, optionally filtered by damage type.
+**** Each entry adds to blocked damage, determined by <code>clamp(base + factor * dealt_damage, 0, dealt_damage)</code>.
+**** The final damage applied in the attack to the entity is determined by <code>dealt_damage - clamp(blocked_damage, 0, dealt_damage)</code>
+**** Entry format:
+***** {{cd|type}} - damage type id, list of damage type ids, or hash-prefixed damage type tag (optional).
+****** This entry will only contribute to the blocked damage if the dealt damage type matches this field.
+****** If not specified, any damage type will be accepted.
+***** {{cd|base}} - float
+****** Constant amount of damage to be blocked.
+***** {{cd|factor}} - float
+****** Fraction of the dealt damage that should be blocked.
+*** {{cd|item_damage}}
+**** Object with fields (optional)
+**** Controls how much damage should be applied to the item from a given attack.
+**** If not specified, a point of durability is removed for every point of damage dealt.
+**** The final damage applied to the item is determined by: <math>floor(base + factor * dealt_damage)</math>.
+**** The final value may be negative, causing the item to be repaired.
+**** Format:
+***** {{cd|threshold}} - non-negative float
+****** The minimum amount of damage dealt by the attack before item damage is applied to the item.
+***** {{cd|base}} - float
+****** Constant amount of damage applied to the item, if threshold is passed.
+***** {{cd|factor}} - float
+****** Fraction of the dealt damage that should be applied to the item, if threshold is passed.
+*** {{cd|block_sound}}
+**** Sound event (optional).
+**** If specified, this sound will be played when an attack is successfully blocked.
+*** {{cd|disable_sound}}
+**** Sound event (optional).
+**** If specified, this sound will be played when the item goes on its disabled cooldown due to an attack.
+
+* {{cd|break_sound}} component
+** When present, this sound will be played when the item runs out of durability and breaks.
+** If not present, no sound will be played on break.
+** This component is present by default on every item type.
+** Format: sound event
+*** e.g. <code>break_sound='item.wolf_armor.break'</code>
+
+* {{cd|provides_banner_patterns}} component
+** When present, this item can be placed in the pattern slot of a Loom.
+** Format: hash-prefixed banner pattern tag.
+*** e.g. <code>provides_banner_patterns='#minecraft:pattern_item/globe'</code>
+
+* {{cd|provides_trim_material}} component
+** When present, this item will provide the specified trim material when used in a trimming recipe.
+*** Note that to be used in the built-in smithing recipes, the item must also be in the {{cd|#trim_material}} tag.
+*** As such, the trim material registry definition no longer specifies an item.
+** Format: trim material id
+*** e.g. <code>provides_trim_material='minecraft:iron'</code>
+
+* {{cd|tooltip_display}} component
+** This component allows the tooltips provided specifically by any given item component to be surpressed.
+** This replaces the previous {{cd|show_in_tooltip}} fields, {{cd|hide_additional_tooltip}} and {{cd|hide_tooltip}} components.
+** Format: object with fields:
+*** {{cd|hide_tooltip}} - boolean (default: {{cd|false}}).
+**** If true, the item will have no tooltip when hovered.
+*** {{cd|hidden_components}} - list of item component ids (default: {{cd|[]}}).
+**** The tooltips provided by any component in this list will be hidden.
+**** If that component provides no tooltip, it will have no effect.
+
+''' [[Language]] '''
+* Added support for [[w:Kyrgyz language|Kyrgyz]] language.
+
+''' [[Tag]]s '''
+* Added the {{cd|#can_wear_horse_armor}} entity tag.
+** Contains entity that can hold horse armor in their body slot.
+
+== Changes ==
+=== Items ===
+''' [[Crossbow]] '''
+* Will now show all charged projectiles in their tooltip instead of just the first
+
+=== Command format ===
+'''[[SNBT]] '''
+* SNBT (textual representation of NBT-like data) has been expanded to accept heterogenous lists, i.e. ones where elements are not of the same type.
+* NBT format is not changed
+** If SNBT command argument transforms value to NBT (like arguments of {{cmd|/data}} or {{cmd|/summon}}), lists might be transformed to bypass NBT constraints
+*** Example transform: {{cd|['a', {'b':3}]}} is stored as {{cd|[{'<nowiki/>':'a'},{'b':3}]}}
+** This transform is not reversed by {{cmd|/data}}
+
+=== General ===
+''' [[Advancement definition]] '''
+* The field {{cd|background}} no longer contains {{cd|textures/}} prefix and {{cd|.png}} suffix.
+
+''' [[Atlas]] '''
+* {{cd|minecraft:paletted_permutations}} sprite source
+** New field:
+*** {{cd|separator}}
+**** Optional string (default: {{cd|_}}).
+**** Value to be used when joining texture and permutation names to produce sprite name.
+
+''' [[Data component format]] '''
+*{{cd|hide_additional_tooltip}} component
+** Has been removed and replaced by use of the {{cd|tooltip_display}} component and {{cd|hidden_components}} field.
+*** The following components previously covered by the {{cd|hide_additional_tooltip}} component may need to be hidden:
+**** {{cd|minecraft:banner_patterns}}
+**** {{cd|minecraft:bees}}
+**** {{cd|minecraft:block_entity_data}}
+***** Specifically, Mob Spawner and Trial Spawner block entity data will display the configured mob.
+**** {{cd|minecraft:block_state}}
+***** Specifically, the {{cd|honey_level}} property will be displayed in the tooltip for any item with this specified.
+**** {{cd|minecraft:bundle_contents}}
+**** {{cd|minecraft:charged_projectiles}}
+**** {{cd|minecraft:container}}
+**** {{cd|minecraft:container_loot}}
+**** {{cd|minecraft:firework_explosion}}
+**** {{cd|minecraft:fireworks}}
+**** {{cd|minecraft:instrument}}
+**** {{cd|minecraft:map_id}}
+**** {{cd|minecraft:painting/variant}}
+**** {{cd|minecraft:pot_decorations}}
+**** {{cd|minecraft:potion_contents}}
+**** {{cd|minecraft:tropical_fish/pattern}}
+**** {{cd|minecraft:written_book_content}}
+*** This additionally means that tooltips from the above listed components are no longer restricted to specific item types.
+**** Note: for existing items in a world with the {{cd|hide_additional_tooltip}} component, any of the above listed components also present on the same item will be added to the list to hide in {{cd|tooltip_display}}.
+
+* {{cd|hide_tooltip}} component
+** Has been removed and replaced by use of the {{cd|tooltip_display}} component and {{cd|hide_tooltip}} field.
+
+* {{cd|attribute_modifiers}} component
+** Removed the {{cd|show_in_tooltip}} field, replaced by {{cd|tooltip_display}} component.
+** This component now always uses its simplified form, with the modifiers field inlined to top-level.
+*** e.g. <code>attribute_modifiers={modifiers:[...]}]</code> -> <code>attributes_modifiers=[...]</code>
+
+* {{cd|dyed_color}} component
+** Removed the {{cd|show_in_tooltip}} field, replaced by {{cd|tooltip_display}} component.
+** This component now always uses its simplified form, with the rgb field inlined to top-level.
+*** e.g. <code>dyed_color={rgb:12345}]</code> -> <code>dyed_color=12345]</code>
+** The specified color now supports the RGB array format.
+*** e.g. <code>dyed_color=[0.5, 1.0, 0.2]</code>
+
+* {{cd|can_place_on}} and {{cd|can_break}} components
+** Removed the {{cd|show_in_tooltip}} field, replaced by {{cd|tooltip_display}} component.
+** The predicates field has been inlined to top-level, and supports either a single element or list.
+*** e.g. <code>can_place_on={predicates:[{blocks:'stone'},{blocks:'dirt'}]}]</code> -> <code>can_place_on=[{blocks:'stone'},{blocks:'dirt'}]]</code>
+*** or: <code>can_place_on={predicates:[{blocks:'stone'}]}]</code> -> <code>can_place_on={blocks:'stone'}]</code>
+
+* {{cd|enchantments}} and {{cd|stored_enchantments}} components
+** Removed the {{cd|show_in_tooltip}} field, replaced by {{cd|tooltip_display}} component.
+** These components now always use their simplified form, with the levels field inlined to top-level.
+*** e.g. <code>enchantments={levels:{sharpness:2}}]</code> -> <code>enchantments={sharpness:2}]</code>
+
+* {{cd|jukebox_playable}} component
+** Removed the {{cd|show_in_tooltip}} field, replaced by {{cd|tooltip_display}} component.
+
+* {{cd|trim}} component
+** Removed the {{cd|show_in_tooltip}} field, replaced by {{cd|tooltip_display}} component.
+
+* {{cd|unbreakable}} component
+** Removed the {{cd|show_in_tooltip}} field, replaced by {{cd|tooltip_display}} component.
+
+* {{cd|weapon}} component
+** {{cd|can_disable_blocking}} field was replaced with {{cd|disable_blocking_for_seconds}}.
+** {{cd|disable_blocking_for_seconds}}
+*** Non-negative float (default: {{cd|0}})
+*** If non-zero, will disable a blocking Shield on successful attack for the specified amount of seconds.
+
+* Some existing components are now also transferred from spawning item to spawned entity:
+** {{cd|minecraft:custom_name}} - any entity.
+** {{cd|minecraft:potion_contents}} - Lingering Potion to Area Effect Cloud.
+** {{cd|minecraft:potion_duration_scale}} - Lingering Potion to Area Effect Cloud.
+
+''' [[Data pack]] '''
+* The [[pack format]] version is now {{cd|64}}.
+* Trim pattern and trim material items are no longer specified in the trim registries, but instead in the recipes and items respectively.
+* The {{cd|potion}} entity type has been split into {{cd|splash_potion}} and {{cd|lingering_potion}}
+* Filled Maps without any {{cd|map_id}} component no longer show an 'Unknown Map' tooltip (invalid IDs will still produce this tooltip)
+
+''' Entity variant components '''
+* Cat and Frog variants are now data-driven.
+* Added uniform way to define variant selection rules.
+
+''' [[Items model definition]] '''
+* Select Property
+** {{cd|minecraft:component}} 
+*** If the selected value comes from a registry and the current datapacks does not provide it, the entry will be silently ignored.
+**** In previous snapshot, unrecognized elements caused the whole item model to be ignored.
+
+* Boolean Property
+** {{cd|minecraft:component}}
+*** New conditional model property has been added to condition item model: {{cd|component}}
+*** Uses component predicates (like ones used in item predicates) to match item components.
+**** However, instead of encoding them as a map of {{cd|<predicate type>:<predicate value>}}, a single predicate is encoded in two fields.
+*** Fields:
+**** {{cd|predicate}} - type of component predicate (member of {{cd|minecraft:data_component_predicate_type}} registry)
+**** {{cd|value}} - predicate-specific value
+
+''' Loot Functions '''
+* {{cd|toggle_tooltips}}
+** Now supports any component id in the toggles map.
+** Any component specified will be toggled in the {{cd|tooltip_display}} component.
+
+''' [[Particle format]] '''
+* The particle type {{cd|tinted_leaves}} now has a parameter:
+** {{cd|color}}
+*** Tint color, specified either as packed int or list of 4 floats.
+
+''' [[Recipe]]s '''
+* {{cd|smithing_transform}} recipe type
+** The {{cd|base}} ingredient field is no longer optional
+*** Previously, if no base ingredient was given, the recipe would parse but never be usable.
+
+* {{cd|smithing_trim}} recipe type
+** The {{cd|base}}, {{cd|template}}, and {{cd|addition}} ingredient fields are no longer optional.
+*** Previously, if these ingredients were not given, the recipe would parse but never be usable.
+** Added new {{cd|pattern}} field, controlling which trim pattern will be applied in the recipe.
+*** As such, the trim pattern registry definition no longer specifies the item.
+*** Format: trim pattern id
+**** e.g. <code>"pattern": "minecraft:bolt"</code>
+
+''' [[Resource pack]] '''
+* The [[pack format]] version is now {{cd|49}}.
+
+''' Reversion of bug fixes '''
+{{quote|After consideration, we have decided to revert both fixed bugs. While we do want to revisit these mechanics in the future, it's clear that these recent fixes alone didn't quite hit the mark and caused too many negative side-effects for parkour, speedbridging, and movement in general.|Developer's Note}}
+The reverted bug fixes include:
+* {{bug|MC-152728||The player continues sprinting when performing actions that slow them down}}
+* {{bug|MC-271065||Diagonal movement is not normalized when crouching or using certain items}}
+
+''' [[Tags]] '''
+* Renamed {{cd|#bypasses_shield}} damage type tag to {{cd|#bypasses_blocking}}.
+* Removed {{cd|#default_spawns}} and {{cd|#full_moon_spawns}} cat variant tags.
+* Added {{cd|test_block}}, and {{cd|test_instance_block}} to the {{cd|#dragon_immune}}, and {{cd|#wither_immune}} block tags.
+
+''' Uniform variant selection '''
+* Variants that have spawn rules now use uniform approach for selecting.
+** Selection process:
+*** Every variant field {{cd|spawn_conditions}} that contain a list of entries.
+*** Every entry has a condition and an integer priority.
+*** Conditions for all variants for given entity type are evaluated for position where entity is being spawned.
+*** Entries with priority lower than maximum priority of remaining entries are removed.
+*** The game randomly picks one entry out of remaining ones.
+*** If no conditions are remaining, variant remains unchanged from default.
+** Entry format:
+*** {{cd|priority}} - integer
+*** {{cd|condition}} - optional structure
+**** Fields:
+***** {{cd|type}}
+***** Additional fields dependent on {{cd|type}}.
+**** If field is not present, condition is always true.
+
+* Spawn conditions
+** {{cd|minecraft:biome}}
+*** Checks if entity is spawning in specific biomes.
+*** Fields:
+**** {{cd|biomes}} - single entry, list or a tag describing biomes.
+** {{cd|minecraft:moon_brightness}}
+*** Checks if current moon brightness is within certain range.
+*** Fields:
+**** {{cd|range}} - floating point range (a single number or an object like {"min": 1, "max": 2}).
+** {{cd|minecraft:structure}}
+*** Checks if entity is spawning in specific structures.
+*** Fields:
+**** {{cd|structures}} - single entry, list or a tag describing structures.
+
+* Wolf Variants
+** The fields {{cd|angry_texture}}, {{cd|tame_texture}} and {{cd|wild_texture}} have been grouped in field {{cd|assets}} and renamed to {{cd|angry}}, {{cd|tame}} and {{cd|wild}}.
+** Added the field {{cd|spawn_conditions}}.
+
+* Pig Variants
+** {{cd|texture}} and {{cd|biome}} fields are replaced with {{cd|asset_id}} and {{cd|spawn_conditions}} respectively.
+** Fields in file:
+*** {{cd|asset_id}} - namespaced id for this variant asset, resolves to {{cd|assets/<namespace>/textures/<path>.png}}.
+*** {{cd|spawn_conditions}} - field described in uniform variant selection above
+
+* Cat variants
+** Cat variants can be data-driven by adding entries to {{cd|data/<namespace>/cat_variant/<id>.json}}.
+** This feature is experimental.
+** Fields in file:
+*** {{cd|asset_id}} - namespaced id for this variant asset, resolves to {{cd|assets/<namespace>/textures/<path>.png}}.
+*** {{cd|spawn_conditions}} - field described in uniform variant selection above
+
+* Frog variants
+** Frog variants can be data-driven by adding entries to {{cd|data/<namespace>/frog_variant/<id>.json}}.
+** This feature is experimental.
+** Fields in file:
+*** {{cd|asset_id}} - namespaced id for this variant asset, resolves to {{cd|assets/<namespace>/textures/<path>.png}}.
+*** {{cd|spawn_conditions}} - field described in uniform variant selection above
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w04a
+|;From released versions before 1.21
+|98271|The sound of blocking with a shield is only hearable by other players (not the person blocking).
+|101556|Nether Portal teleport range is too large (equivalent to a full block).
+|165421|Bubble columns have the opposite effect on wind charges.
+|165461|Crossbow loading animation stops after loading, even when still holding down right click.
+|176233|Crossbows no longer have a transition after loading.
+|200311|Advancement background texture referencing is inconsistent with models.
+|255756|When the shield is broken between players, the attacking side has no shield breaking sound.
+|279646|Toggling fullscreen with F11 does not visually update the fullscreen option in the video settings menu.
+|;From 1.21.1
+|276061|Decorated pot sherds don't visually update until relog when replacing with blank pot.
+|;From 1.21.3
+|278400|Arrows and tridents move after hitting a block in flowing lava.
+|;From 1.21.4
+|279653|Block Entity Data desynchronizes after subsequent setblock commands.
+|;dev
+|279217|Arrows and tridents constantly spin after hitting a block in flowing lava.
+|279218|The {{cd|minecraft:enchant.thorns.hit}} sound does not play when mobs or players are killed by the Thorns enchantment.
+|279225|Players jitter and land slightly too high up when landing on powder snow while wearing leather boots.
+|279232|SNBT text components prevent mixing text styles in lists.
+|279389|The {{cd|minecraft:entity.arrow.hit_player}} sound is played when player is hit by an arrow shot by himself.
+|279454|{{cd|hide_additional_tooltip}} no longer hides author and generation on written books.
+|;prev
+|279480|The "{{cd|test_instance_block.reset_success}}" string incorrectly spells the word "succeeded" as "succeded".
+|279481|Leaf litter no longer generates in forests or wooded badlands.
+|279482|Elements within the test block and test instance block menus are not selected in order when using the TAB key.
+|279483|Test blocks set to start mode show the "Message:" text despite no text field being present.
+|279485|Test block and test instance block menus have blurred backgrounds.
+|279486|Some strings displayed within the test instance block interface are untranslatable.
+|279487|The "Test Instance ID" and "Test Structure Size" text within the test instance block interface are positioned too far to the right.
+|279488|Leaf litter generates very sparsely in Dark Forests.
+|279489|An unexpected error occurs when attempting to create tests with large sizes.
+|279490|No command feedback messages are displayed when attempting to reset tests that don't exist.
+|279491|The "{{cd|commands.test.no_tests}}" raw translation key is displayed when using "{{cmd|/test run...}}" commands in situations where no tests exist.
+|279492|An unexpected error occurs when attempting to locate tests that don't exist.
+|279493|No command feedback messages are displayed when using the "{{cmd|/test create}}" command.
+|279498|Test blocks and test instance blocks aren't part of the "{{cd|#minecraft:dragon_immune}}" or "{{cd|#minecraft:wither_immune}}" tags.
+|279502|Axolotl variants are no longer saved when bucketing.
+|279504|"{{cd|minecraft:enchantments}}" component does not work on the select property of Item Models.
+|279505|Horse-esque mobs that disallow horse armor still show an non-interactive slot.
+|279511|Using "{{cd|minecraft:always_pass}}" while the player is inside the test zone breaks the world.
+|279518|Test environment accepts {{cd|minecraft:raining}} instead of {{cd|minecraft:weather}}.
+|279519|Some words within some test command strings are always pluralized.
+|279522|GameTest entrypoint doesn't load zip datapacks.
+|279527|GameTest entrypoint doesn't load custom tests from datapacks.
+|279538|The key name of the test instances field that represents the namespaced ID of the test environment is different from the changelog.
+|279539|Villager variant is not applied to spawned zombie villagers.
+|279553|Players using items no longer turn their body in the moving direction while moving diagonally.
+|279570|Some piston operations don't send neighbor updates.
+|279573|The "{{cd|test_instance_block.error.no_test}}" string is missing the word "no".
+|279588|Test instance field typo '{{cd|sky_accesss}}'.
+|279599|{{cmd|/test pos}} is offset by one on the y and z axis.
+|279601|"{{cd|test.error.expected_entity_at_pos}}" translation is missing.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|609GEn8kIP4|OcJ1rrUF4DU}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w04a]]
+[[es:Java Edition 25w04a]]
+[[fr:Édition Java 25w04a]]
+[[ja:Java Edition 25w04a]]
+[[lzh:二五週〇四甲]]
+[[pt:Edição Java 25w04a]]
+[[ru:25w04a (Java Edition)]]
+[[uk:25w04a (Java Edition)]]
+[[zh:Java版25w04a]]

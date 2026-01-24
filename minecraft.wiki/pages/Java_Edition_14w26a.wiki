@@ -1,0 +1,172 @@
+{{dangerous version|Block-corrupting problems existed in this snapshot. They were fixed in [[14w26c]]<ref name="mojang">{{cite|url=https://web.archive.org/web/20140624075744/https://mojang.com/2014/06/minecraft-snapshot-14w26a/|title=Minecraft snapshot 14w26c|date=June 25, 2014|website=Mojang.com|author=[[Dinnerbone]]}}</ref>. Corrupted worlds may be recovered via [[Programs and editors/Mapping#Map Editors|MCEdit]]<ref>http://www.reddit.com/r/Minecraft/comments/29551r/if_you_corrupted_a_large_project_or_lost_a_large/</ref>.|type=file-damage|version=development|edition=Java}}
+{{Infobox version
+|edition=Java
+|image=Java Edition 14w26a.png
+|type=Snapshot
+|date=June 25, 2014
+|parent=1.8
+|clienthash=20f0b48333cf446fe77317ab95012c595b65a8d0
+|jsonhash=140b76f6e82e853412d21cfea3c2f98334e852de
+|serverhash=9d167e0b009b99d637ad102a1cb4f5aeb1501e45
+|exehash=9cc0cde33407fc785f25093ceadcdac7ce209e80
+|prevparent=1.7.10
+|prev=14w25b
+|next=14w26b
+|nextparent=1.8.1
+}}<onlyinclude>
+
+'''14w26a''' is the twenty-ninth [[snapshot]] released for [[Java Edition 1.8|1.8]], released on June 25, 2014,<ref name="mojang">{{cite|url=https://web.archive.org/web/20140624075744/https://mojang.com/2014/06/minecraft-snapshot-14w26a/|title=Minecraft snapshot 14w26c|date=June 25, 2014|website=Mojang.com|author=[[Dinnerbone]]}}</ref> which adds the [[debug mode]] world type and the {{cmd|replaceitem}} command.
+
+It was strongly advised to make a backup of a world before using this snapshot, because of block-corrupting problems that were not corrected until [[14w26c]].<ref name="mojang"/>
+A potential means of recovering corrupted worlds using [[Programs and editors/Mapping#Map Editors|MCEdit]] is available.<ref>http://www.reddit.com/r/Minecraft/comments/29551r/if_you_corrupted_a_large_project_or_lost_a_large/</ref>
+
+This snapshot is the first after a decision to release snapshots on Wednesdays rather than on Thursdays.<ref name="mojang"/>
+
+== Additions ==
+=== World generation ===
+'''[[Debug mode]] world type'''
+* Useful for [[resource pack]] makers.
+* Hold {{key|shift}} and cycle through "World Type" to select it.
+* Spectator mode recommended to avoid crashes (Creative mode can also be used without any effect on some machines).
+* All possible blocks with all possible data values are generated. 
+** They are arranged in a grid across height Y=70, with a [[barrier]] floor at Y=60.
+* Blocks placed are deleted, and blocks destroyed are restored.
+** There is a special generator option preventing this. It is called "debug_all_block_states". If the player changes this to "flat" or "default" in NBTexplorer, they are able to interact with the world. (Only for a short period though, on most machines there is a lot of lag or the game crashes - not recommended to play Survival on)
+
+=== Command format ===
+'''{{cmd|replaceitem <entity&#124;block> ...}}'''
+* Can replace items in any inventory, including the inventories of mobs such as zombies.
+** Full syntax: 
+*** <code>/replaceitem entity <entity> <slot> <item> [amount] [data value]</code>.
+*** <code>/replaceitem block <x> <y> <z> <slot> <item> [amount] [data value]</code>.
+** Example: <code>/replaceitem entity @e[type=Zombie] slot.weapon minecraft:iron_sword 1 0</code> gives all the zombies iron swords.
+** Example: <code>/replaceitem entity @p slot.hotbar.0 minecraft:fish 4 2</code> puts 4 clownfish in the players first hotbar slot.
+** Example: <code>/replaceitem block ~ ~-1 ~ slot.container.5 minecraft:redstone_block 1 0</code> puts a redstone block in the 6th slot of a container 1 block beneath the player.
+
+'''[[Gamerule]]s'''
+* <code>sendCommandFeedback</code>
+** If set to false, player-run commands don't show a success message.
+
+== Changes ==
+=== Blocks ===
+'''General'''
+* Switched to only/mostly using blockstates in the code, though not all block combinations are blockstates yet.
+
+'''[[Command block]]s'''
+* X/O button next to "Last output" in command block to turn off the last output string.
+
+'''[[Furnace]]'''
+* Empty furnaces now only accept fuel and empty buckets in the fuel slot.
+
+'''[[Item frame]]s'''
+* The wood part of the frame now uses the oak texture rather than the birch texture.
+
+'''[[Melon stem]]s'''
+* Changed model from [[File:Attached Melon Stem (N) JE3.png|32px]][[File:Attached Melon Stem (E) JE3.png|32px]][[File:Attached Melon Stem (S) JE3.png|32px]][[File:Attached Melon Stem (W) JE3.png|32px]] to [[File:Attached Melon Stem (N) JE4.png|32px]][[File:Attached Melon Stem (E) JE4.png|32px]][[File:Attached Melon Stem (S) JE4.png|32px]][[File:Attached Melon Stem (W) JE4.png|32px]]
+
+'''[[Pumpkin stem]]s'''
+* Changed model from [[File:Attached Pumpkin Stem (N) JE3.png|32px]][[File:Attached Pumpkin Stem (E) JE3.png|32px]][[File:Attached Pumpkin Stem (S) JE3.png|32px]][[File:Attached Pumpkin Stem (W) JE3.png|32px]] to [[File:Attached Pumpkin Stem (N) JE4.png|32px]][[File:Attached Pumpkin Stem (E) JE4.png|32px]][[File:Attached Pumpkin Stem (S) JE4.png|32px]][[File:Attached Pumpkin Stem (W) JE4.png|32px]]
+
+=== World generation ===
+'''[[Old Customized|Customized]] world type'''
+* Has an [[ocean monument]] toggle.
+
+'''[[Swampland]]'''
+* Re-added marsh-like areas which were removed in [[13w38b]] after initially being introduced in [[13w36a]].<ref>https://web.archive.org/web/20221015041624/https://i.imgur.com/lQELvLX.jpg</ref>
+
+'''[[Witch hut]]s'''
+* No longer have a [[red mushroom]] inside the [[flower pot]].<ref>{{bug|MC-63820|||Fixed}}</ref>
+
+=== Command format ===
+'''{{cmd|execute}} '''
+* Now has a <code>detect</code> argument (sub-command, only works when used with execute).
+** Allows the <code>execute</code> command to run only if a block is detected at a specific location relative to the target.
+** Example: <code>/execute @a ~ ~ ~ detect ~ ~-1 ~ minecraft:grass 0 say You are standing on grass.</code>.
+'''{{cmd|fill}} '''
+* Block limit changed from 4096 to 32768 blocks.
+'''{{cmd|worldborder}}'''
+** Now has an <code>add</code> argument.
+*** Similar to the <code>set</code> argument, but can be used to add (or remove) a certain number of blocks to the world border distance.
+*** Negative numbers can be used to remove blocks.
+*** Example: <code>/worldborder add -75 </code> shrinks the world border width by 75 blocks.
+
+=== General ===
+'''[[Block models]]'''
+* Instead of specifying uvs, the [[player]] can now choose textures to be projected onto the [[model]].
+
+'''[[Resource pack|Resource]]s'''
+* Reworked 3D resources, adding the possibility of new blocks with multiple textures.
+
+* Items in [[first-person view]] no longer move up and down when switching between 2 identical items by changing the selected [[hotbar]] slot.
+
+== Fixes ==
+{{fixes|fixedin=14w26a|prefix=Minecraft
+|;old
+|5164|Strength and weakness potions do not work on aggressive wolves.
+|5525|Some sounds play at a low volume.
+|8987|Flame-enchanted bows don't activate TNT minecarts.
+|22586|{{cmd|spreadplayers}} command doesn't accept relative coords for <code>x</code> and <code>z</code> parameters.
+|35431|{{cmd|Tellraw}} commandblockoutput.
+|;dev
+|46244|Command block bug - new particle feature.
+|46851|Potion effect particles stay in spectator mode.
+|51788|{{cmd|Playsound}} doesn't work with relative coords.
+|55589|{{cmd|particle}} doesn't work with some entities.
+|55625|{{cmd|playsound}} relative to entity does not work.
+|56294|"Are you sure you want to open the following website?" buttons are offset.
+|56862|Guardian doesn't die on land and can swim in lava.
+|56877|Snow golem has a broken head.
+|56941|Floating torch bug.
+|57033|Game crashes when new chunks are loaded.
+|57117|Item frame backgrounds are black on server.
+|57188|Wearing Pumpkins on your head, pumpkins are huge and upside down.
+|57256|Placed anvil is rotated by 90°.
+|57966|Block icons in statistics and flatland GUI rendering wrong.
+|57670|The player no longer sinks into the first layer of stacked snow.
+|57685|Water dungeons cannot be turned off using world customization.
+|57854|Stained glass panes particles uncolored.
+|58130|Chunks only render in the direction player is facing.
+|58136|Pumpkin / melon stems rendering incorrectly.
+|58537|Supplemental selectors in {{cmd|scoreboard teams join}} & <code>leave</code> don't work with the <code>@e</code> selector.
+|58637|<code>FallingSand</code> - only top side of block has a texture.
+|;prev
+|57822|Cocoa beans have wrong orientation.
+|57829|Lever on slab is upside down.
+|57841|{{cmd|give}}'ing written book with JSON data will show "<code>Invalid Item</code>" when hovered on in chat.
+|57843|Written book with JSON data not formatting right.
+|57866|Written books with JSON don't get created correctly (no color and styles).
+|57868|Stained glass pane are dropping white glass pane.
+|57870|{{cmd|testforblocks}} broken.
+|57882|Empty line in creative inventory.
+|57883|The barrier blocks particles for being broken are purple and black checkered.
+|57916|Iron Golems don't require air blocks to be besides their head when placing the head block.
+|57917|Drying a wet sponge in furnace with a stack of buckets below will cause them to disappear and leave a singular water bucket.
+|57986|Stacked buckets bug.
+|58025|Losing buckets from sponge block.
+|58048|Acacia and dark oak logs mined with silk touch show the <code>MissingTexture</code>.
+|58060|Summoning <code>FallingSand</code> with <code>TileID</code> as chest, trapped chest, ender chest, lava, and water crashes game.
+|58066|Right-click with bow when no arrows in inventory.
+|58140|Repeater will show comparator texture when unpowered, <code>delay:4</code> and locked.
+|58191|Can walk through snow layer (block meta 7).
+|58196|Fishing rod and carrot on a stick rendering incorrectly in 3rd person.
+|58229|Scores in written books don't work properly when on a server.
+|58493|BUD creates double redstone drops when activated.
+}}</onlyinclude>
+
+== Trivia ==
+* 14w26a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:14w26a]]
+[[es:Java Edition 14w26a]]
+[[fr:Édition Java 14w26a]]
+[[it:Java Edition 14w26a]]
+[[ja:Java Edition 14w26a]]
+[[pt:Edição Java 14w26a]]
+[[ru:14w26a (Java Edition)]]
+[[zh:Java版14w26a]]

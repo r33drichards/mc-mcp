@@ -1,0 +1,28 @@
+<div class="treeview">
+* {{nbt|compound}}: Root object.
+** {{nbt|list|structures}}: (Required, but can be empty) The structures that may be placed. One configured structure feature shouldn't be included by two structure sets.
+*** {{nbt|compound}}: A structure to be placed.
+**** {{nbt|string}}{{nbt|compound|structure}}: {{json ref/structure}} &mdash; The structure to be placed.
+**** {{nbt|int|weight}}: Determines the chance of it being chosen over others. Must be a positive integer.
+**{{nbt|compound|placement}}: How the structures should be placed.
+*** {{nbt|int|salt}}: A number that assists in randomization; see {{w|salt (cryptography)}}. Must be a non-negative integer.
+*** {{nbt|float|frequency}}: (Optional, default to 1.0) Probability to try to generate if other conditions below are met. Values between 0.0 to 1.0 (inclusive). Setting it to a number does not mean one structure is generated this often, only that the game attempts to generate one; biomes or terrain could lead to the structure not being generated.
+*** {{nbt|string|frequency_reduction_method}}: (Optional, defaults to {{cd|default}}) Provides a random number generator algorithm for frequency. One of {{cd|default}} (the random number depends on the [[Seed (world generation)|seed]], position and {{nbt|int|salt}}), {{cd|legacy_type_1}} (the random number depends only on the seed and position, and randomness only occurs when the locations differ greatly), {{cd|legacy_type_2}} (same as {{cd|default}}, but with fixed salt: 10387320) and {{cd|legacy_type_3}} (the random number depends only on seed and position).
+*** {{nbt|compound|exclusion_zone}}: Specifies that it cannot be placed near certain structures.
+**** {{nbt|int|chunk_count}}: Value between 1 and 16 (inclusive).
+**** {{nbt|string|other_set}}: A structure set ID.
+*** {{nbt|list|locate_offset}}: (optional, defaults to [0,0,0]) The chunk coordinate offset given when using {{cmd|locate structure}}.
+**** {{nbt|int}}: X. Value between -16 and 16 (inclusive).
+**** {{nbt|int}}: Y. Value between -16 and 16 (inclusive).
+**** {{nbt|int}}: Z. Value between -16 and 16 (inclusive).
+*** {{nbt|string|type}}: One of {{cd|minecraft:concentric_rings}} or {{cd|minecraft:random_spread}}.
+*** Additional fields depending on value of {{nbt|string|type}}, see [[Structure set#Placement types|Placement types]].
+</div>
+<noinclude>
+[[Category:Java Edition]]
+[[Category:Data packs]]
+[[fr:Génération du monde personnalisée/Ensemble de structures]]
+[[ja:ワールド生成のカスタマイズ/structure set]]
+[[pt:Geração de mundo personalizado/conjunto de estrutura]]
+[[zh:自定义世界生成/structure set]]
+</noinclude>

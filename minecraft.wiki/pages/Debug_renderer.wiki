@@ -1,0 +1,117 @@
+{{wip}}
+'''Debug renderers''' are a set of graphical tools used for technical analysis of ''Minecraft''.
+
+== Renderers ==
+
+=== <samp>3d_crosshair</samp> ===
+{{info needed section|can someone look in the code to see the specific hex/RGB values used to define the three axis colours (and the outline colour), as well as if these have changed since its introduction?}}
+By default, this renderer is set to only appear if the debug overlay is enabled, replacing the normal crosshair. It can be configured like all other debug renderers.
+
+This replaces the crosshair with three edges of a cube, culminating at one vertex. The constituent lines point in the three positive directions, such that it appears "concave" to the all-positives direction, and "convex" to the all-negatives direction. The X-axis is represented by a red line, the Y-axis by a green line, and the Z-axis by a blue line.
+
+=== <samp>chunk_borders</samp> ===
+[[File:Chunk borders.png|thumb|right]]
+{{info needed section|can someone look in the code to see the specific hex/RGB values used to define all of the used colours, as well as if these have changed since its introduction?}}
+{{empty section}}
+
+=== <samp>chunk_section_octree</samp> ===
+{{empty section}}
+
+=== <samp>chunk_section_paths</samp> ===
+{{empty section}}
+
+=== <samp>chunk_section_visibility</samp> ===
+{{empty section}}
+
+=== <samp>entity_hitboxes</samp> ===
+{{info needed section|can someone look in the code to see the specific hex/RGB values used to define all of the used colours, as well as if these have changed since the introduction of each element?}}
+[[File:Hitboxes.png|thumb|right]]
+
+[[Hitbox]]es are shown on visible entities. 
+* White bounding box
+* A long blue tint for direction facing
+* Red outlines for the [[Hitbox#Eye height|eye height]] (if any)
+* Yellow outlines for the [[Hitbox#Passenger attachment point|passenger attachment point]] (if any)
+Note that the shown hitbox is just a visual box relative to the visual model, rather than the actual hitbox, which means that the shown hitbox and the actual hitbox could be desynchronized.
+
+=== <samp>visualize_block_light_levels</samp> ===
+{{empty section}}
+
+=== <samp>visualize_chunks_on_server</samp> ===
+Displays information about each chunk's [[Chunk#Level_and_load_type|load level]] and [[Loading_world_screen#Java_Edition|status]]. Renders the [[Loading_world_screen#Java_Edition|chunk colormap]] in the [[debug screen]].
+
+=== <samp>visualize_collision_boxes</samp> ===
+Outlines the [[collision box]]es of surrounding nearby blocks, which differs from the block selection outline generally seen in-game. All blocks six blocks away from the player in all directions in a square are rendered.
+
+=== <samp>visualize_entity_supporting_block</samp> ===
+Marks the blocks that entities are considered standing on (red for the player, green for everything else, light blue for blocks under thin blocks, like carpet).
+
+=== <samp>visualize_heightmap</samp> ===
+Displays the values of [[heightmap]]s:{{info needed|what are the actual hex/RGB colours for these four?}}
+* Dark Teal: <code>MOTION_BLOCKING</code>
+* Green: <code>WORLD_SURFACE</code>
+* Blue: <code>OCEAN_FLOOR</code>
+* Cyan: <code>MOTION_BLOCKING_NO_LEAVES</code>
+
+=== <samp>visualize_sky_light_levels</samp> ===
+Displays the light engine status for each [[chunk|chunk section]]. A {{cd|2}} means an empty section with no lighting data, a {{cd|1}} means a section with only lighting data, and a {{cd|0}} means a section with lighting data and block shape data.
+
+=== <samp>visualize_sky_light_sections</samp> ===
+Displays information about [[Light#Sky_light|sky light]] for every chunk section. No coloring means an empty section with no lighting data, brown means a section with only lighting data, and yellow means a section with lighting data and block shape data.
+
+=== <samp>visualize_solid_faces</samp> ===
+Highlights all solid, sturdy block faces (that a [[button]] can be placed on) in red.
+
+=== <samp>visualize_water_levels</samp> ===
+Indicates the fluid level of the water from an integer number ranging from eight (water source) to one (the farthest point that flowing water can flow before stopping).
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.4.4|dev=1.4.3|Added the {{cd|entity_hitboxes}} debug renderer, toggled via {{keys|F3+|B}}.
+|At this point, hitboxea are displayed as solid white, opaque cuboids.}}
+|{{HistoryLine||1.7.2|dev=1.7.1|{{cd|entity_hitboxes}} has been visually overhauled; instead of a solid cuboid, it now renders as a thin white outline.}}
+|{{HistoryLine||1.8|dev=14w04a|{{cd|3d_crosshair}} now exists and is active when the [[debug screen]] is open.
+|This displays 3 short colored lines to indicate the direction of each axis:
+* x → red
+* y → green
+* z → blue}}
+|{{HistoryLine|||dev=14w25b|{{cd|entity_hitboxes}} now shows which direction entities are looking using a blue line.}}
+|{{HistoryLine||1.9|dev=15w43a|{{cd|3d_crosshair}}'s constituent lines now change size relative to the GUI scale.}}
+|{{HistoryLine||1.10|dev=16w20a|Added the {{cd|chunk_borders}} debug renderer, toggled via {{keys|F3+|G}}.
+|{{cd|3d_crosshair}} now has a small black outline around its lines when looking at an area with bad contrast.}}
+|{{HistoryLine||?|{{cd|chunk_section_octree}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|chunk_section_paths}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|chunk_section_visibility}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_block_light_levels}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_chunks_on_server}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_collision_boxes}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_entity_supporting_block}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_heightmap}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_sky_light_levels}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_sky_light_sections}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_solid_faces}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||?|{{cd|visualize_water_levels}} now exists, but is inaccessible without game modifications.{{check the code}}}}
+|{{HistoryLine||1.20.2|dev=23w31a|{{cd|entity_hitboxes}} now shows the passenger's attachment point on the entity it is riding.}}
+|{{HistoryLine||1.21.9|dev=25w31a|Three more debug renderers are now available in-game through the newly-implemented Debug Options menu:
+* {{cd|chunk_section_octree}}
+* {{cd|chunk_section_paths}}
+* {{cd|chunk_section_visibility}}
+|The {{cd|3d_crosshair}}, {{cd|chunk_borders}} and {{cd|entity_hitboxes}} renderers can now be toggled from within the debug options menu, rather than only through keyboard controls (for the latter two) or only (and always) appearing in the debug menu (for the first).}}
+|{{HistoryLine|||dev=25w37a|With the addition of [[debug property]] settings, eight more debug renderers can be enabled without game modifications:
+* {{cd|WATER}} → {{cd|visualize_water_levels}}
+* {{cd|HEIGHTMAP}} → {{cd|visualize_heightmap}}
+* {{cd|COLLISION}} → {{cd|visualize_collision_boxes}}
+* {{cd|SUPPORT_BLOCKS}} → {{cd|visualize_entity_supporting_block}}
+* {{cd|LIGHT}} → {{cd|visualize_sky_light_levels}}
+* {{cd|SKY_LIGHT_SECTIONS}} → {{cd|visualize_sky_light_sections}}
+* {{cd|SOLID_FACE}} → {{cd|visualize_solid_faces}}
+* {{cd|CHUNKS}} → {{cd|visualize_chunks_on_server}}}}
+|{{HistoryLine||1.21.11|dev=25w41a|The {{cd|WATER}}, {{cd|HEIGHTMAP}}, {{cd|COLLISION}}, {{cd|SUPPORT_BLOCKS}}, {{cd|LIGHT}}, {{cd|SKY_LIGHT_SECTIONS}}, {{cd|SOLID_FACE}} and {{cd|CHUNKS}} debug property settings have been removed, and the associated debug renderers made actually toggleable from within the debug settings menu.
+|{{code|visualize_block_light_levels}}, which does not appear to have been tied to any such property setting, is now also available in the debug settings menu.
+|{{cd|entity_hitboxes}}'s blue facing direction line is now a large arrow, with four lines added to the end forming the apex of a square pyramid.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+[[Category:Analysis]]

@@ -1,0 +1,232 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.9026.0<br>'''Android''': 1.21.90.26
+| image = Bedrock 1.21.90.26.png
+| build = 33583199
+| editorver = 0.9.9.9
+| versioncode = '''Android''':<br />
+952109026 (armeabi-v7a, 34)<br />
+962109026 (x86, 34)<br />
+972109026 (arm64-v8a, 34)<br />
+982109026 (x86_64, 34)
+| date = May 20, 2025
+| server = 1.21.90.26
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.90.26.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.90.26.zip Linux]
+| parent = 1.21.90
+| prevparent = 1.21.84
+| prev = Preview 1.21.90.25
+| next = Preview 1.21.90.27
+| nextparent = 1.21.91
+}}
+<onlyinclude>
+
+'''Beta 1.21.90.26''' (ChromeOS, Android), or '''Preview 1.21.90.26''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fifth beta/''Preview'' version for [[Bedrock Edition 1.21.90]], released on May 20, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/36757734170125-Minecraft-Beta-Preview-1-21-90-26|title=Minecraft Beta & Preview - 1.21.90.26|website=Minecraft Feedback|date=May 20, 2025}}</ref> which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Beacon]]'''
+*Now render from any chunk loaded in worlds opened in at least 1.21.90.
+
+=== Command format ===
+*The camera {{cd|default}} command will now properly reset third person camera view offset values
+*The {{cmd|controlscheme}} command no longer requires the "Experimental Creator Camera" toggle.
+
+=== Gameplay ===
+'''[[Sound]]s'''
+*{{cd|the_end_light_flash}} sound effect now triggers when the light flashes in the End dimension in Vibrant Visuals.
+*Leashing, unleashing, collecting leashed mobs, and leashing mobs to other mobs now play custom sounds.
+*Removing saddles, horse armor, harnesses, and carpets using shears now plays custom sounds.
+
+'''The [[Overworld]]'''
+*Re-enabled Overworld chunk blending which was disabled in the last preview.
+
+'''Graphical'''
+*Customized atmospherics, color grading, fog and lighting for the End, the Nether, the Overworld dimensions and a variety of biomes in [[Vibrant Visuals]].
+**Some issues exist with atmospherics in End and Nether dimensions.
+*Recalibrated all emissive values in MERS textures in Vibrant Visuals.
+*Update shadow configurations for "Favors Performance" targets on all Xbox platforms in Vibrant Visuals mode.
+*Update Volumetric configs for "Prefers Performance" targets on Xbox One and Xbox One X in Vibrant Visuals mode.
+*Reduced the intensity and speed of the caustics animation in Vibrant Visuals.
+*Increased emissive intensity and adjusted tone mapping parameters in Vibrant Visuals.
+*Added {{cd|henyey_greenstein_g}} settings to the fog json files.
+**New section {{cd|henyey_greenstein_g}} allows specifying value for both {{cd|air}} and {{cd|water}}.
+**Example:
+<syntaxhighlight lang="c++">
+{
+    "format_version": "1.21.90",  
+    "minecraft:fog_settings": {
+        "description": {
+            "identifier": "minecraft:test_henyey_greenstein_g"
+        },
+        "volumetric": {
+            "henyey_greenstein_g": {
+                "air": {
+                    "henyey_greenstein_g": 0.5
+                }
+            }
+        }
+    }
+}
+</syntaxhighlight>
+*Updated the clouds texture.
+
+=== General ===
+'''[[Realms]]'''
+*Realm owners can now choose to require members to opt into the Timeline in order to play on the Realm.
+**To turn this feature on, go to Realms Stories --> Settings and enable "Require opt in to Timeline".
+***The feature can be turned on and off at will.
+**While the feature is on, Realm members who have not opted in will remain members of the Realm, but will not be able to play until they opt in.
+***If a Realm member who previously opted in chooses to opt out, they will not be able to play on the Realm until they opt in again.
+**Realm owners will be able to play on the Realm regardless of whether they have opted in.
+
+'''UI'''
+*The animated up and down arrows on the [[locator bar]] have been repositioned to be closer to the player dot.
+*Closing an anvil or an enchanting table now results in the experience bar being shown for 5 seconds instead of the locator bar.
+*While using the "Joystick & tap to interact" touch mode, the "Joystick Visibility Option" is now forced into "Visible Joystick" while using the {{cd|player_relative_strafe}} or {{cd|camera_relative_strafe}} control scheme.
+
+=== Mobs ===
+'''General'''
+*Mobs' and players' legs are now positioned more horizontally when riding, reducing clipping into the ridden entity.
+
+'''[[Boat]]'''
+*Boats are now able to be pulled out of water using a lead.
+
+'''[[Ghastling]]'''
+*The ghastling model is now slightly smaller than before and closer in size to its collision box, though the two still differ.
+*The model is intentionally smaller than the collision to prevent z-fighting.
+*This is intentionally not in parity with {{JE}}, which doesn't require this workaround.
+
+'''[[Happy Ghast]]'''
+*The visual size of the happy ghast has been slightly reduced to prevent z-fighting with water and other adjacent blocks.
+**This change is purely visual and does not affect the happy ghast's collision.
+*Happy ghast now immediately loses its ability to collide with entities upon death.
+
+'''[[Horse]], [[Donkey]], and [[Mule]]'''
+*They can now be fed carrots to heal, grow, and improve their temper.
+'''[[Zombified Piglin]]'''
+*Baby variants are once again equipped with [[golden sword]]s.
+**This change was not mentioned in the changelog
+
+=== Non-mob entities ===
+'''[[Projectile]]s'''
+*Projectiles now have a tolerance margin that changes over time.
+**Previously, all projectiles had a fixed 0.3 blocks tolerance margin added to the collision.
+**Now, all projectiles start with no margin for the first two ticks of their flight.
+**After that, the target margin will expand by 0.05 blocks per tick until it reaches the target margin of 0.3 blocks.
+**This allows for more precise collision on targets close to the shooting player or entity, while still allowing for some collision leeway for targets further away.
+
+=== Technical ===
+'''[[API]]'''
+:{{cd|@minecraft/server}}
+*Added {{cd|localizationKey}} read only property to {{cd|Dimension}}, which is the key for localization of a dimension's name used in language files.
+*Added {{cd|EntityHungerComponent}}, {{cd|EntitySaturationComponent}}, {{cd|EntityExhaustionComponent}} that allows read and write access to hunger, saturation, and exhaustion values on {{cd|player}} objects.
+*Added {{cd|totalArmor}} and {{cd|totalToughness}} read only properties to {{cd|EntityEquippableComponent}}.
+*{{cd|BlockMovableComponent}} APIs have been added to {{cd|beta}}.
+**{{cd|BlockMovableComponent::movementType}}
+**{{cd|BlockMovableComponent::stickyType}}
+*Renamed {{cd|CameraEaseOptions}} to just {{cd|EaseOptions}} to for {{cd|V2.0}} scripting.
+*Improved the naming used for the {{cd|name}} property of several custom error classes.
+*Block custom component event {{cd|beforeOnPlayerPlace}} is now called when an item using {{cd|replace_block_item}} is set to true for V2.0.0 and higher custom components.
+**In 2.0.0, when using {{cd|setCurrentValue}} of an {{cd|EntityAttributeComponent}}, the desired value is checked against the {{cd|effectiveMin}} and {{cd|effectiveMax}}. If the value is out of bounds, an error is thrown.
+*Enabled {{cd|Player.applyImpulse}} and {{cd|Player.clearVelocity}} in {{cd|beta}}, which no longer throw errors.
+
+:{{cd|@minecraft/server-admin}}
+*Updated {{cd|transferPlayer}} to support NetherNet transfers. It now takes either a hostname/port combination or a NetherNet ID.
+
+'''[[Dedicated Server]]'''
+*Exposed a new parameter for dedicated server to disallow usage of Vibrant Visuals while connected.
+
+'''[[Molang]]'''
+*Added the {{cd|query.is_riding_any_entity_of_type}} Molang query, which checks whether an entity is riding another entity of any specified type.
+
+'''UI'''
+*Added warning pop-up for some Android devices when switching to Vibrant Visuals graphics mode.
+*Added a toggle to video settings to enable in-game graphics mode switching. Enabling in-game graphics mode switching may impact texture quality.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Upcoming Creator Features" experimental toggle.
+
+=== Additions ===
+==== Technical ====
+'''[[Block]]s'''
+*Added {{cd|minecraft:movable}} component under the "Upcoming Creator Features" toggle. This allows for blocks to configure how they should react when moved by a piston.
+**{{cd|movement_type}} (Required): Specifies how the block should react when moved by a piston.
+***{{cd|push_pull}}: Will allow a block to be pushed by a piston/sticky piston and pulled by a sticky piston (e.g. grass).
+***{{cd|push}}: Will allow a block to be pushed by a piston/sticky piston (e.g. glazed terracotta).
+***{{cd|immovable}}: Will not allow a block to be pushed or pulled by a piston/sticky piston (e.g. bedrock).
+***{{cd|popped}}: Will pop a block when pushed by a piston/sticky piston (e.g. leaves).
+**{{cd|sticky}} (Optional): Specifies how the block should handle adjacent blocks when moved by a piston.
+***{{cd|none}}: Default. Will not add any additional behavior.
+***{{cd|same}}: Will move adjacent blocks along with it when moved by a piston. It will not move different blocks with {{cd|"sticky": "same"}} (e.g. a honey block can move another honey block but not a slime block).
+****NOTE: This field only works when used with:
+<syntaxhighlight lang="c++">
+"movement_type": "push_pull"
+"format_version": "1.21.90",
+"minecraft:movable": {
+"movement_type": "push_pull",
+"sticky": "same"
+</syntaxhighlight>
+
+=== Changes ===
+==== Technical ====
+'''World generation'''
+*Namespaces can now be used in template pool element location and jigsaw block identifiers.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.90.26 Preview
+|;old
+|21743|Punching a leash knot uses the generic punch sound
+|68841|A Little text error.
+|89549|No stray and wither jockeys
+|172657|A player sits in the boat too high (Java parity)
+|187962|Storage management UI does not allow access to all controls for mobile devices
+|188934|When playing splitscreen and second player looks up then down, the clouds for the first player disappear
+|190716|Arm detaches from body and shield in off-hand slot floats above shoulder when game is paused
+|201608|Happy Ghast takes Friendly Fire Damage from Players standing on top
+|201809|Vibrant Visuals: Night Vision effect is extremely dark instead of bright
+|201984|Vibrant Visuals: Standing near a lightsource illuminates the sky
+|203972|Vibrant Visuals: Screen appears black
+|204062|Vibrant Visuals: Water has blue fog trail following it
+|212932|Music immediately cuts off instead of fading out when exiting the world with pause feature disabled
+|217551|Player Locator Bar doesn't show player locations correctly in split screen multiplayer
+|218740|Happy ghast is not scaled down properly when harnessed
+|;previous
+|217634|Breeze and Blaze spawn eggs do not match Java Edition spawn eggs
+|218297|Ghast fireballs have a green glint like XP orbs
+|218652|Death Screen shows keyboard hints below
+|219598|Wandering Traders have leash connected to their feet after Leashing Updates.
+|otherissuescount=18}}
+'''Other'''
+*Fixed an issue with dried ghast block where replacing a dried ghast block in the same location would keep the random tick of the old, removed block, causing it to age faster than expected.
+*Fixed a bug where entities that should not be moving were moving slightly.
+*The back faces of transparent items held in hand, like stained glass, are no longer visible in Vibrant Visuals.
+*Clouds no longer have a pink or yellow tint, during sunrise and sunset respectively, in Vibrant Visuals.
+*Fixed inconsistent pixels on the pale oak boat and pale oak boat with chest items to match other boat items.
+*The green harness item no longer uses the gray harness texture when Vibrant Visuals is enabled.
+*Happy ghast and ghastlings no longer z-fight with adjacent blocks.
+*Ghastlings are no longer rotated sideways when riding boats or chest boats.
+*Happy ghast and ghast shadows are no longer cast on their tentacles when Fancy Graphics are enabled.
+*Ropes wrapping a happy ghast are now rendered when certain entities are attached to it and it is harnessed.
+*Cows and mooshrooms no longer render with four ropes when leashed to a happy ghast.
+*Ghasts can no longer spawn in areas that are too small, preventing suffocation on spawn.
+*Large entities attached by a leash to the happy ghast now properly render with four leashes when using simple graphics.
+*The player dot now correctly decreases to the smallest size for the stationary player when another player moves linearly away from them.
+*Fixed an issue where some on-screen UI elements would let the user interact with the world under them.
+*Fixed a bug where the {{cd|includeLiquidBlocks}} property on {{cd|BlockRaycastOptions}} would not correctly result in hits on flowing water. This affects the following API methods in all versions: {{cd|entity.getBlockFromViewDirection}}, {{cd|dimension.getBlockFromRay}}, {{cd|dimension.getBlockBelow}}, and {{cd|dimension.getBlockAbove}}.
+*Fixed a crash when adding or changing priority of resource packs in the create new world screen.
+*Terrain matching jigsaw template pools will no longer create floating islands.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.90 betas]]
+
+[[de:Bedrock Edition beta 1.21.90.26]]
+[[pt:Edição Bedrock Preview 1.21.90.26]]
+[[ru:Preview 1.21.90.26 (Bedrock Edition)]]
+[[uk:Preview 1.21.90.26 (Bedrock Edition)]]
+[[zh:基岩版1.21.90.26]]

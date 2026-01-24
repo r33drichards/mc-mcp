@@ -1,0 +1,285 @@
+{{about|raw models that directly define the visual look of items and blocks|files that link to raw item models and configure their rendering|Items model definition|entity equipment, formerly considered a type of model|Equipment}}
+{{See also|Tutorial:Models}}
+{{exclusive|java}}
+{{split|Model/Before 14w07a|Model/Before 14w25a|reason=These two iterations are quite different from the modern general format and should be covered accordingly (when they do get covered, that is)}}
+
+'''Models''' are three-dimensional shapes used in ''Minecraft'' that are used to display objects encountered in the game.
+
+The models pertaining to the vast majority of [[block]]s and [[item]]s can be configured, as well as those of a small selection of [[entities]]. Models are stored as [[JSON]] files in a [[resource pack]] in the <code>assets/''<namespace>''/models</code> folder.
+
+== Block models ==
+<div class="treeview">
+* {{nbt|compound}} The root tag
+** {{nbt|string|parent}}: Loads a different model from the given path, in form of a [[Tutorial:Models#File_path|resource location]]. If both <code>"parent"</code> and <code>"elements"</code> are set, the <code>"elements"</code> tag overrides the <code>"elements"</code> tag from the previous model.
+*** Can be set to <code>"builtin/generated"</code> to use a model that is created out of the specified icon. Only the first layer is supported, and rotation can be achieved only by using block states files.
+** {{nbt|bool|ambientocclusion}}: Whether to use {{wikipedia|ambient occlusion}} (<code>true</code> - default), or not (<code>false</code>).
+** {{nbt|compound|display}}: Holds the different places where item models are displayed.
+*** {{nbt|compound|''Position''}}: Named <code>thirdperson_righthand</code>, <code>thirdperson_lefthand</code>, <code>firstperson_righthand</code>, <code>firstperson_lefthand</code>, <code>gui</code>, <code>head</code>, <code>ground</code>, or <code>fixed</code>. Place where an item model is displayed. Holds its rotation, translation and scale for the specified situation. '''fixed''' refers to item frames, while the rest are as their name states. Translations are applied to the model before rotations.
+**** {{nbt|list|rotation}}: Specifies the rotation of the model according to the scheme <code>[x, y, z]</code>.
+**** {{nbt|list|translation}}: Specifies the position of the model according to the scheme <code>[x, y, z]</code>. The values are clamped between -80 and 80.
+**** {{nbt|list|scale}}: Specifies the scale of the model according to the scheme <code>[x, y, z]</code>. If the value is greater than 4, it is displayed as 4.
+** {{nbt|compound|textures}}: Holds the textures of the model, in form of a [[Tutorial:Models#File_path|resource location]] or can be another texture variable.
+*** {{nbt|string|particle}}: What texture to load particles from. This texture is also used as an overlay if you are in a [[nether portal]], and used for [[water]] and [[lava]]'s still textures.<ref>{{bug|MC-240042||Water and lava textures are defined through the model particle parameter}}</ref> This texture is also considered a texture variable that can be referenced as <code>"#particle"</code>. Note: All breaking particles from non-model blocks are hard-coded, such as for [[barrier]]s.{{verify|I remember changing this before and it worked just fine}}
+*** {{nbt|string|''Texture variable''}}: Defines a texture variable and assigns a texture.
+** {{nbt|list|elements}}: Contains all the elements of the model. They can have only cubic forms. If both <code>"parent"</code> and <code>"elements"</code> are set, the <code>"elements"</code> tag overrides the <code>"elements"</code> tag from the previous model.
+*** {{nbt|compound}} An element.
+**** {{nbt|list|from}}: Start point of a cuboid according to the scheme <code>[x, y, z]</code>. Values must be between -16 and 32.
+**** {{nbt|list|to}}: Stop point of a cuboid according to the scheme <code>[x, y, z]</code>. Values must be between -16 and 32.
+**** {{nbt|compound|rotation}}: Defines the rotation of an element.
+***** {{nbt|list|origin}}: Sets the center of the rotation according to the scheme <code>[x, y, z]</code>.
+***** {{nbt|float|x}}: Specifies the angle of rotation around the <code>x</code> axis. This value will be ignored if an <code>axis</code> and <code>angle</code> are specified.
+***** {{nbt|float|y}}: Specifies the angle of rotation around the <code>y</code> axis. This value will be ignored if an <code>axis</code> and <code>angle</code> are specified.
+***** {{nbt|float|z}}: Specifies the angle of rotation around the <code>z</code> axis. This value will be ignored if an <code>axis</code> and <code>angle</code> are specified.
+***** {{nbt|string|axis}}: Specifies the direction of rotation, can be <code>"x"</code>, <code>"y"</code> or <code>"z"</code>.
+***** {{nbt|float|angle}}: Specifies the angle of rotation.
+***** {{nbt|bool|rescale}}: Specifies whether or not to scale the faces across the whole block by scaling the non-rotated faces by  <code>1 / cos(angle)</code>. Can be true or false. Defaults to false.
+**** {{nbt|bool|shade}}: Defines if the faces of the element should be shaded according to their orientation (<code>true</code> - default) or not (<code>false</code>). This does not affect ambient occlusion or shading based on light level.
+**** {{nbt|int|light_emission}}: Defines the minimum light level that the element can receive. Can be 0-15, defaults to 0.
+**** {{nbt|compound|faces}}: Holds all the faces of the cuboid. If a face is left out, it does not render.
+***** {{nbt|compound|''Face''}}: Named <code>down</code>, <code>up</code>, <code>north</code>, <code>south</code>, <code>west</code> or <code>east</code>. Contains the properties of the specified face.
+****** {{nbt|list|uv}}: Defines the area of the texture to use according to the scheme <code>[x1, y1, x2, y2]</code>. The texture behavior is inconsistent if UV extends below 0 or above 16. If the numbers of <code>x1</code> and <code>x2</code> are swapped (e.g. from <code>0, 0, 16, 16</code> to <code>16, 0, 0, 16</code>), the texture flips. UV is optional, and if not supplied it automatically generates based on the element's position. 
+****** {{nbt|string|texture}}: Specifies the texture in form of the texture variable prepended with a <code>#</code>.
+****** {{nbt|string|cullface}}: Specifies whether a face does not need to be rendered when there is a block touching it in the specified position. The position can be: <code>down</code>, <code>up</code>, <code>north</code>, <code>south</code>, <code>west</code>, or <code>east</code>. It also determines the side of the block to use the light level from for lighting the face, and if unset, defaults to the side.
+****** {{nbt|int|rotation}}: Rotates the texture clockwise by the specified number of degrees (counterclockwise for the 'down' face). Can be 0, 90, 180, or 270. Defaults to 0. Rotation does not affect which part of the texture is used. Instead, it amounts to permutation of the selected texture vertexes (selected implicitly, or explicitly though <code>uv</code>).
+****** {{nbt|int|tintindex}}: Determines whether to tint the texture using a hardcoded tint index. The default value, -1, indicates not to use the tint. Any other number is provided to BlockColors to get the tint value corresponding to that index. However, most blocks do not have a tint value defined (in which case white is used). Furthermore, no vanilla block currently uses multiple tint values, and thus the tint index value is ignored (as long as it is set to something other than -1); it could be used for modded blocks that need multiple distinct tint values in the same block though.
+</div>
+
+== Item models ==
+<div class="treeview">
+* {{nbt|compound}}: The root tag
+**{{nbt|string|parent}}: Loads a different model from the given path, in form of a [[Tutorial:Models#File path|resource location]]. If both <code>"parent"</code> and <code>"elements"</code> are set, the <code>"elements"</code> tag overrides the <code>"elements"</code> tag from the previous model.
+*** Can be set to <code>"item/generated"</code> to use a model that is created out of the specified icon.
+*** Can be set to <code>"builtin/entity"</code> to load a model from an entity file. As you cannot specify the entity, this does not work for all items (only for [[chest]]s, [[ender chest]]s, [[mob head]]s, [[shield]]s, [[banner]]s and [[trident]]s).
+** {{nbt|compound|display}}: Holds the different places where item models are displayed.
+*** {{nbt|compound|''Position''}}: Named <code>thirdperson_righthand</code>, <code>thirdperson_lefthand</code>, <code>firstperson_righthand</code>, <code>firstperson_lefthand</code>, <code>gui</code>, <code>head</code>, <code>ground</code>, <code>fixed</code>, or <code>on_shelf</code>. Place where an item model is displayed. Holds its rotation, translation and scale for the specified situation. '''fixed''' refers to item frames, while the rest are as their name states. Translations are applied to the model before rotations. If this is specified but not all of translation, rotation and scale are in it, the others aren't inherited from the parent.
+**** {{nbt|list|rotation}}: Specifies the rotation of the model according to the scheme <code>[x, y, z]</code>.
+**** {{nbt|list|translation}}: Specifies the position of the model according to the scheme <code>[x, y, z]</code>. If the value is greater than 80, it is displayed as 80. If the value is less than -80, it is displayed as -80.
+**** {{nbt|list|scale}}: Specifies the scale of the model according to the scheme <code>[x, y, z]</code>. If the value is greater than 4, it is displayed as 4.
+** {{nbt|compound|textures}}: Holds the textures of the model, in form of a [[Tutorial:Models#File_path|resource location]] or can be another texture variable.
+*** {{nbt|string|layer''N''}}: Used only to specify the icon of the item used in the inventory. There can be more than just one layer (e.g. for [[leather armor]] and [[Smithing|trimmed armor]]), but the amount of possible layers is hardcoded for each item.{{verify|It seems like it is 4 (5 when including layer0) layers maximum for all items.}} Works only in combination with <code>"item/generated"</code>. 
+*** {{nbt|string|particle}}: What texture to load particles from. Used to determine the "crumb" particles generated by food items, as well as to determine the [[barrier]] particle (but it always uses <code>items/barrier.png</code> as blockbreaking particle), which otherwise uses "layer0".
+*** {{nbt|string|''Texture variable''}}: Defines a texture variable and assigns a texture.
+** {{nbt|string|gui_light}}: Can be <code>"front"</code> or <code>"side"</code>. If set to <code>"side"</code>, the model is rendered like a block. If set to <code>"front"</code>, model is shaded like a flat item. Defaults to <code>"side"</code>.
+** {{nbt|list|elements}}: Contains all the elements of the model. They can have only cubic forms. If both <code>"parent"</code> and <code>"elements"</code> are set, the <code>"elements"</code> list overrides the <code>"elements"</code> list from the parent model.
+*** {{nbt|compound}} An element.
+**** {{nbt|list|from}}: Start point of a cuboid according to the scheme <code>[x, y, z]</code>. Values must be between -16 and 32.
+**** {{nbt|list|to}}: Stop point of a cuboid according to the scheme <code>[x, y, z]</code>. Values must be between -16 and 32.
+**** {{nbt|compound|rotation}}: Defines the rotation of an element.
+***** {{nbt|list|origin}}: Sets the center of the rotation according to the scheme <code>[x, y, z]</code>.
+***** {{nbt|string|axis}}: Specifies the direction of rotation, can be <code>"x"</code>, <code>"y"</code> or <code>"z"</code>.
+***** {{nbt|float|angle}}: Specifies the angle of rotation. Can be 45 through -45 degrees.
+***** {{nbt|bool|rescale}}: Specifies whether or not to scale the faces across the whole block. Can be true or false. Defaults to false.
+**** {{nbt|bool|shade}}: Defines if the faces of the element should be shaded according to their orientation (<code>true</code> - default) or not (<code>false</code>). This does not affect ambient occlusion or shading based on light level.
+**** {{nbt|int|light_emission}}: Defines the minimum light level that the element can receive. Can be 0-15, defaults to 0.
+**** {{nbt|compound|faces}}: Holds all the faces of the cuboid. If a face is left out, it does not render.
+***** {{nbt|compound|''Face''}}: Named <code>down</code>, <code>up</code>, <code>north</code>, <code>south</code>, <code>west</code> or <code>east</code>. Contains the properties of the specified face.
+****** {{nbt|list|uv:}} Defines the area of the texture to use according to the scheme <code>[x1, y1, x2, y2]</code>. If unset, it defaults to values equal to xyz position of the element. The texture behavior is inconsistent if UV extends below 0 or above 16. If the numbers of <code>x1</code> and <code>x2</code> are swapped (e.g. from <code>0, 0, 16, 16</code> to <code>16, 0, 0, 16</code>), the texture flips. UV is optional, and if not supplied it automatically generates based on the element's position. 
+****** {{nbt|string|texture:}} Specifies the texture in form of the texture variable prepended with a <code>#</code>.
+****** {{nbt|string|cullface:}} Specifies whether a face does not need to be rendered when there is a block touching it in the specified position. The position can be: <code>down</code>, <code>up</code>, <code>north</code>, <code>south</code>, <code>west</code>, or <code>east</code>. It also determines the side of the block to use the light level from for lighting the face, and if unset, defaults to the side.
+****** {{nbt|int|rotation}}: Rotates the texture by the specified number of degrees. Can be 0, 90, 180, or 270. Defaults to 0. Rotation does not affect which part of the texture is used. Instead, it amounts to permutation of the selected texture vertexes (selected implicitly, or explicitly though <code>uv</code>).
+****** {{nbt|int|tintindex}}: Tints the texture on that face using a tint value referenced from the [[Items model definition#model|Items model definition]]. If no tint color (or the color white) is provided, the texture isn't tinted.
+** {{nbt|list|overrides}}: As of [[24w45a | 24w45a]]/[[1.21.4 | 1.21.4]]+, overrides have been removed & replaced with a new system. Documentation for it can be found [[Items_model_definition | here]].
+</div>
+
+== Fields used by Blockbench ==
+Some models contain fields used by Blockbench due to Mojang utilizing the software, these fields are only used by Blockbench and aren't used by ''Minecraft''.
+
+* {{nbt|string|name}}: Name of an element (found in element objects).
+* {{nbt|int array|texture_size}}: 2D Integer array defining the width and height of the texture(s) being used (found at the root object).
+
+== Uses of models ==
+{{info needed section|
+* mooshroom mushrooms
+* iron golem flowers
+* spyglasses in use
+* shelves
+* copper golems
+* campfires}}
+Non-hardcoded models are used in-game in the following contexts:
+{|class="wikitable"
+!Use case
+!Uses
+!Image
+!Respects {{code|shade{{=}}false}}?
+|-
+!colspan="4"|Blocks
+|-
+!Placed blocks
+|All blocks excluding those listed [[#Blocks and fluids|here]]
+|
+|{{tc|Yes}}
+|-
+![[Falling block]]s
+|All blocks excluding those listed [[#Blocks and fluids|here]]
+|
+|{{tc|Yes}}
+|-
+![[Moving Piston|Piston-moved blocks]]
+|All blocks excluding those listed [[#Blocks and fluids|here]]
+|
+|{{tc|Yes}}
+|-
+!Lit [[TNT]]
+|TNT
+|
+|{{tc|No}}
+|-
+!colspan="4"|Items
+|-
+!Items in the inventory
+|All items excluding air
+|
+|{{tc|No}}
+|-
+!Items in the player's hand (first person)
+|All items excluding air{{verify|Is it true for tridents?}}
+|
+|{{tc|No}}
+|-
+!Items in the player's hand (third person)<br>Items held by other players<br>Items held by mobs
+|All items excluding air{{verify|Is it true for tridents?}}
+|
+|{{tc|No}}
+|-
+!Items on the ground
+|All items excluding air
+|
+|{{tc|No}}
+|-
+!Items in item frames
+|All items excluding air
+|
+|{{tc|No}}
+|-
+![[Totem of undying]] animation
+|Any item with the "death protection" component
+|
+|{{tc|No}}{{verify}}
+|}
+
+Each of the item display types are used in the following situations:
+{|class="wikitable"
+!Use case
+!Display type
+|-
+|Inventory items
+|{{code|gui}}
+|-
+|Items equipped on the heads of certain mobs{{info needed|players and other humanoids, but what mobs exactly?}}
+|{{code|head}}
+|-
+|[[Item (entity)|Dropped items]]<br>Items held by [[dolphin]]s<ref>{{bug|MC-276803||Items held by dolphins use the "ground" display type|Invalid}}</ref><br>Items held by [[panda]]s<ref>{{bug|MC-276802||Items held by pandas unexpectedly use the "ground" display type|Invalid}}</ref><br>Items held by [[fox]]es<ref>{{bug|MC-276763||Item models held by foxes cannot be customized independently of dropped item models|Invalid}}</ref><br>Thrown projectiles<ref>{{bug|MC-276801||Projectiles which use item models use the "ground" display type and cannot be independently customized from it|Invalid}}</ref>{{info needed|snowballs, eggs, ender pearls, eye of enders and fire charges confirmed. are splash potions, lingering potions, experience bottles, firework rockets and ghast fireballs also subject to this, and are there any others?}}<br>Items held by villagers and wandering traders<br>Potions held by witches<br>Ominous item spawner
+|{{code|ground}}
+|-
+|Items in item frames<br>Totem of undying animation<br>Items being brushed out of suspicious sand and gravel
+|{{code|fixed}}
+|-
+|Items held in a humanoid's left hand
+|{{code|thirdperson_lefthand}}
+|-
+|Items held in a humanoid's right hand<br>Items held in a humanoid's left hand, if {{code|thirdperson_lefthand}} is left unspecified
+|{{code|thirdperson_righthand}}
+|-
+|Items held in the left hand in first person
+|{{code|firstperson_lefthand}}
+|-
+|Items held in the right hand in first person<br>Items held in the left hand in first person, if {{code|firstperson_lefthand}} is left unspecified
+|{{code|firstperson_righthand}}
+|-
+|Item display entities
+|Depends on what is specified
+|}
+
+== Limitations ==
+
+=== Objects that cannot be remodelled ===
+{{info needed section|Objects needing testing:
+* Trident
+* Is the shield model hardcoded and non-customizable, even if the shield item definition isn't required to point to it?}}
+While most blocks and items can have their model changed, there are a multitude of things that cannot.
+
+For example, no entities (with the exception of [[item frame]]s and [[glow item frame]]s) can have their model changed {{in|JE}} with resource packs alone. [[Bell]]s can have their attachment model changed but not the bell model itself.
+
+==== Blocks and fluids ====
+{{Non-remodellable blocks}}
+
+Even these blocks have particle textures defined in dedicated model files, however it still stands that actual visual models cannot be changed.
+
+Sub-elements of blocks, such as passively emitted particles and the book on top of the [[enchanting table]], cannot be modified, even though the base block can.
+
+== History ==
+{{needs updating|
+* When were "texture overlays" like those used for a grass block added and removed? Pretty sure is in 14w25a, since that version made the sides of grass blocks its own element
+* Nearly everything after 1.9 is missing
+* e.g. minimum_light
+* Document the early format more as well. Some things are omitted here, such as "inventoryRender3D"
+* When were item display types first implemented? They don't appear to exist in 14w25a}}
+{{HistoryTable
+|{{HistoryLine|java pre-classic}}
+|{{HistoryLine||Cave game tech test|Blocks exist, however their models are completely hardcoded, and as such cannot be configured outside of modding.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w06a|Added custom [[block]] models.}}
+|{{HistoryLine|||dev=14w07a|The model format has now been rewritten. Instead of having just "planes", it now has "planes" and "cubes". 
+|The rotation of objects are now limited to one directional rotation per object in increments of 22.5 degrees.}}
+|{{HistoryLine|||dev=14w11a|[[Light]]ing on solid [[block]] no longer makes inner sections completely black.}}
+|{{HistoryLine|||dev=14w11b|Generic blocks now load models instead of pre-defined shapes.}}
+|{{HistoryLine|||dev=April 12, 2014|slink={{reddit|22vu5w/upcoming_changes_to_the_block_model_system}}
+|[[Ryan Holtz|TheMogMiner]] posts about upcoming changes to the model format.}}
+|{{HistoryLine|||dev=14w17a|Converted most of the remaining static blocks to the model format.
+|Added <code>"rotateVariantTextures"</code> to preserve uv details through rotation.}}
+|{{HistoryLine|||dev=14w25a|The directional attribute from the uv definition has now been removed and replaced it with explicit texture references. <code>"textureFacing"</code> has been replaced with <code>"texture"</code> parameter, which is now prepended with the hash symbol (#).
+|"useAmbientOcclusion" has now been renamed to "ambientocclusion".
+|"rotateVariantTextures" has now been renamed to "UV lock".
+|"cull" has now been renamed to "cullface", specifies the opposite of which neighboring face causes culling to occur.
+|Rotation has now been made more verbose, it is now more clear that it can occur only on a single axis. Example, the rotation for one of the two faces of the <code>"cross"</code> model is now: <code>"rotation": { "origin": [ 8, 8, 8 ], "axis": "y", "angle": 45, "rescale": true },</code>.
+|The folder <code>models/blocks/meshes</code> has now been removed and model files are now stored in <code>models/block</code>.
+|The folder blockstates has now been added and stores the model selection files previously found in <code>models/block</code>.
+|The model format now supports custom [[item]] models.}}
+|{{HistoryLine|||dev=14w27a|[[Block]] state names have now been replaced with data that better reflects the internal data. This does not yet reflect all data for some blocks and switches to using the actual stored data in a future version when numerical data values are completely dropped in favor of block states.}}
+|{{HistoryLine|||dev=14w27b|The block state files now support an array of models allowing for random models.}}
+|{{HistoryLine|||dev=14w30a|Added the item model <code>"builtin/entity"</code>.}}
+|{{HistoryLine||1.8.2|dev=pre5|slink=1.8.2-pre5|The tag "translation" is now limited to the range of -24 to 24.
+|The tag "scale" is now limited to 4 or less.}}
+|{{HistoryLine||1.9|dev=15w31a|UV is now optional, and if not supplied it automatically generates based on the element's position. 
+|Added different models/textures for different [[damage]] values, [[item]] states, and whether the [[player]] is left handed. This works on [[compass]]es, [[clock]]s, and anything that can have a durability bar. It also contains additional tags for [[bow]]s and [[fishing rod]]s.
+|Models can now be put together based on block state attributes, such as [[fence]]s. As a result, the vanilla set of [[block]] models was reduced by almost 300 models.
+|Block model JSON is now strict, comments and quoteless identifiers are now not allowed.
+|"display" tag defaults have now been changed, and the <code>"thirdperson"</code> and <code>"firstperson"</code> tags have now been replaced with <code>"thirdperson_righthand"</code>, <code>"thirdperson_lefthand"</code>, <code>"firstperson_righthand"</code>, and <code>"firstperson_lefthand"</code>.
+|"parent" and "elements" tags can now coexist, though the top level elements tag overwrites all former ones.
+|The option to disable alternate [[block]] models has now been removed.
+|Multipart tag functionality added.
+|Default model offset/position and scale has changed.
+|Known bug in this version caused many/all items to be shifted down/positioned wrongly compared to prior versions. [https://bugs.mojang.com/browse/MC-82928 MC-82928]}}
+|{{HistoryLine|||dev=15w31c|Item positions have been fixed to match how they were prior to 15w31a. Although the fishing rod is still different and still is to this day.}}
+|{{HistoryLine||1.14|dev=18w43a|Added the item model property <code>"custom_model_data"</code>.}} 
+|{{HistoryLine||1.15.2|dev=Pre-Release 1|The gui_light parameter for item models has been added.}}
+|{{HistoryLine||1.21.2|dev=24w33a|The "light_emission" field for models has been added.}}
+|{{HistoryLine|||dev=24w36a|All item models can now use the <code>broken</code> property in model overrides that was previously limited to just [[elytra]].
+|The model of a item are selected based on the {{cd|minecraft:item_model}} component, following the format <code>/assets/<namespace>/models/item/<id></code>.}}
+|{{HistoryLine||1.21.4|dev=24w45a|New format has been introduced for describing item models. See [[Items model definition]].
+|The {{cd|minecraft:item_model}} component now reference a Items model definition.
+|{{cd|overrides}} section has been removed from existing block models.
+|There are no longer any hardcoded paths in {{cd|models}} directory - models will be now only used if referenced by definitions in {{cd|items}} or {{cd|blockstates}} directories.
+|Models in {{cd|models/item}} that only redirect to a block model have been removed.}}
+|{{HistoryLine||1.21.6|dev=25w16a|Block model rotations are no longer limited to multiples of {{cd|22.5}}.}}
+|{{HistoryLine||1.21.9|dev=25w33a|New item display transform <code>on_shelf</code>. It is ignored by [[shelf]] with the <code>align_items_to_bottom</code> block state.}}
+|{{HistoryLine||1.21.11|dev=25w46a|Block model elements can now be rotated around multiple axes.|Existing restriction for angle value limiting them to {{cd|[-45, 45]}} has been removed.}}
+}}
+
+== Issues ==
+{{issue list|Block model|Item model|projects=MC}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox resource packs}}
+{{Navbox Java Edition technical|resourcepack}}
+
+[[de:Modelldaten]]
+[[es:Modelo]]
+[[fr:Modèle]]
+[[ja:モデル]]
+[[pl:Modele bloków]]
+[[pt:Modelo]]
+[[zh:模型]]

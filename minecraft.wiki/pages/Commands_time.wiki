@@ -1,0 +1,154 @@
+{{Infobox command
+|name=time
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Changes or queries the [[world]]'s game [[time]] or the time of a [[world clock]]{{upcoming|je 26.1}}.
+
+== Usage ==
+There are four types of time involved in this command:
+* '''Gametime''' - The total number of [[game tick]]s that have elapsed in the world.
+* '''Daylight cycle time''' (aka. '''internal daytime''') - The total number of game ticks that have elapsed during the daylight cycle. It does not elapse when the [[game rule]] {{cd|doDaylightCycle}} is <code>false</code>.
+* '''Daytime''' - The number of game ticks that have elapsed since sunrise on current day. It is the result of dividing the daylight cycle time modulo 24,000.
+* '''Day''' - The number of days that have elapsed during the daylight cycle. It is the result of floor division by 24,000 of the daylight cycle time.
+{{IN|java}}, if the world is frozen by the {{cmd|tick}} command, the four times above do not elapse.
+* '''World clock time'''{{upcoming|je 26.1}} - the time the [[world clock]] is set to.
+
+<code>/time set ...</code> command {{in|java}} always directly sets the daylight cycle time to the specified number. But {{in|bedrock}}, when {{cd|time: TimeSpec}} is specified, it '''increases''' the daylight cycle time to meet the specified {{cd|time: TimeSpec}}.
+
+For example:
+:{{In|java}}, when executing <code>/time set day</code> or <code>/time set 1000</code>, the daylight cycle time is set to 1000, so the "day" value returns to 0.
+:{{IN|bedrock}}, when executing <code>/time set 1000</code>, the daylight cycle time is also set to 1000. But, for <code>/time set day</code>, if now the daylight cycle time is 25001 (1 day + 1001 ticks), after executing <code>/time set day</code>, it won't become 1000 or 25000, since '''it only increases the daylight cycle time''' when using {{cd|time: TimeSpec}}. In fact, it turns into 49000 (2 days + 1000 ticks), and the "day" value becomes 2. If now the daylight cycle time is 25000 (1 day + 1000 ticks), after executing <code>/time set day</code>, it remains unchanged.
+
+==Syntax==
+{{update|26.1 syntax (the Chinese wiki page seems to already have this info, so just translation is needed)|section=1}}
+* '''Java Edition'''{{until|je 26.1}}
+: <code>time add <<nowiki/>time></code>
+:: Adds <code><<nowiki/>time></code> to the in-game daytime.
+: <code>time query (daytime|gametime|day)</code>{{until|JE 26.1}}
+:: Queries current time.
+: <code>time set (day|night|noon|midnight)</code>{{until|JE 26.1}}
+: <code>time set <<nowiki/>time></code>
+:: Sets the daylight cycle time.
+
+* '''Java Edition'''{{upcoming|je 26.1}}
+: <code>time add <nowiki><time></nowiki></code>
+: <code>time<nowiki/> of <clock> add <ti<nowiki/>me></code>
+:: Adds <code><<nowiki/>time></code> to the specified [[world clock]]'s daylight cycle time.
+: <code>time pause</code>
+: <code>time of <clock> pause</code>
+:: Pauses the specified world clock.
+: <code>time query gametime</code>
+:: Queries the number of [[game tick]]s that have passed in the world.
+: <code>time query time</code>
+: <code>time of <clock> query time</code>
+:: Queries the number of game ticks that have passed in a <code><clock></code>.
+: <code>time query <tim<nowiki/>eline> repetition</code>
+: <code>time of <clock> query <tim<nowiki/>eline> repetition</code>
+:: Queries the number of repetitions that have passed using <code><clock></code>'s timeline <code><timelin<nowiki/>e></code>.
+: <code>time query <tim<nowiki/>eline></code>
+: <code>time of <clock> query <tim<nowiki/>eline></code>
+:: Queries the number of game ticks passed in this repetition of <code><clock></code>'s timeline <code><timelin<nowiki/>e></code>.
+: <code>time resume</code>
+: <code>time of <clock> resume</code>
+:: Resumes the specified world clock
+: <code>time set (<ti<nowiki/>me>|<timemarker>)</code>
+: <code>time of <clock> set (<ti<nowiki/>me>|<timemarker>)</code>
+:: Sets the specified world clock's daylight cycle time to the specified time or time marker ({{cd|(day{{!}}night{{!}}noon{{!}}midnight)}}.
+
+* '''Bedrock Edition'''
+: <code>time add <amount: int></code>
+:: Adds <code><<nowiki/>time></code> to the daylight cycle time.
+: <code>time query <daytime|gametime|day></code>
+:: Queries current time.
+: <code>time set <amount: int></code>
+: <code>time set <time: TimeSpec></code>
+:: Sets the daylight cycle time.
+
+==Arguments==
+{{argument|time|time|amount: int|int}}
+: Specifies the time to add or set.
+: {{arg desc|je=time|min=0|be=int}}
+
+{{code|daytime{{!}}gametime{{!}}day}}
+: Specifies the time to query. Must be <code>daytime</code>, <code>gametime</code> or <code>day</code>.
+
+{{el|je|short=1}}: {{code|day{{!}}night{{!}}noon{{!}}midnight}}<br>
+{{el|be|short=1}}: {{argument|be=1|time: TimeSpec|enum}}
+: Specifies the time to set.
+: Must be <code>day</code>, <code>night</code>, <code>noon</code>, <code>midnight</code>, <code>sunrise</code>{{only|bedrock}}, or <code>sunset</code>{{only|bedrock}}.
+:* <code>day</code> = 1,000
+:* <code>night</code> = 13,000
+:* <code>noon</code> = 6,000
+:* <code>midnight</code> = 18,000
+:* <code>sunrise</code> = 23,000{{only|bedrock}}
+:* <code>sunset</code> = 12,000{{only|bedrock}}
+
+{{argument|clock|resource}}
+: Specifies the [[world clock]] to operate on. If not specified ({{cmd|time|link=none}} instead of {{cmd|time of <clock>|link=none}}), defaults to the default world clock of the dimension of execution. Currently, only the [[Overworld]] has a default world clock, which is {{cd|minecraft:overworld}}.
+: Executing without specifying a world clock in a dimension without a default world clock raises an error.
+: Must be a namespaced [[identifier]] of a registry registered in the {{cd|minecraft:world_clock}} [[registry]].
+
+==Result==
+{{update|In 26.1, there are more errors regarding world clock, such as not specifying one in a dimension without a default world clock. Can someone knowing the difference between unparseable, error, and failed add this?}}
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|cmd=/time add ...<br>/time set ...|edition=je|On success|1|1|the daytime (the daylight cycle time modulo 24000) after execution}}
+{{Output table|cmd=/time query ...|On success|1|1|the obtained value}}
+{{Output table|cmd=|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+==Examples==
+
+* To set the daylight cycle time to 1,000: <code>time set 1000</code>
+* To add one [[day]] to the daylight cycle time: <code>time add 24000</code>
+* To change/reset in-game day count to desired number: <code>time set <desired day number*24000+time of day in ticks></code>; to change day count to day 472 at noon (6000): <code>time set 11334000</code>
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java beta}}
+|{{HistoryLine||1.3|Added {{cmd|time|link=none}}.  Both <code>add</code> and <code>set</code> can be used.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.3.1|dev=12w16a|{{cmd|time|link=none}} is now usable in singleplayer.
+|{{cmd|time set|link=none}} now accepts <code>day</code> (equivalent to 0) and <code>night</code> (equivalent to 12500).}}
+|{{HistoryLine||1.7.2|dev=13w36a|{{cmd|time set day|link=none}} now is equivalent to 1000, and {{cmd|time set night|link=none}} now is equivalent to 13000.}}
+|{{HistoryLine||1.8|dev=14w29a|Added {{cmd|time query|link=none}}, accepting <code>daytime</code> and <code>gametime</code>.}}
+|{{HistoryLine||1.9|dev=15w49b|{{cmd|time query|link=none}} now accepts {{cd|day}} as a value.}}
+|{{HistoryLine||1.13|dev=18w01a|Added the options {{cd|noon}} and {{cd|midnight}} to {{cmd|time set|link=none}}.}}
+|{{HistoryLine|java upcoming}}
+|{{HistoryLine||26.1|dev=snap3|The {{cmd|time}} command is now based on world clocks.|The return value (e.g. from {{cmd|execute store}}) from the {{cd|set}} and {{cd|add}} subcommands is now the total elapsed ticks of the clock instead of the current time of day.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|time|link=none}}.}} 
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.17.30|dev=beta 1.17.30.20|Now {{cd|/time set <amount: int>}} directly sets the daylight cycle time to the specified number, instead of incrementing the daylight cycle time to satisfy the specified daytime.}} 
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/time?view=minecraft-bedrock-stable|title=<code>/time</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/time]]
+[[es:Comandos/time]]
+[[ja:コマンド/time]]
+[[pt:Comandos/time]]
+[[ru:Команды консоли/time]]
+[[uk:Команди консолі/time]]
+[[zh:命令/time]]

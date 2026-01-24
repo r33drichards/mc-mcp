@@ -1,0 +1,269 @@
+{{lowercase}}
+
+'''<code>sounds.json</code>''' ('''<code>sound_definitions.json</code>''' {{in|be}}) is a file used by the sound system in [[resource pack]]s which tells the sound system what sound files to play when a sound event is triggered by one or more in-game events. This file is located in {{cd|assets/<namespace>}} in resource packs, and the default file is located in {{cd|[[.minecraft]]/assets/objects}} ({{cd|assets/resource_packs/vanilla/sounds}} on {{edition|be}}), and its hashed name can be found by looking it up in the file {{cd|.minecraft/assets/indexes/<''version''>.json}}.
+
+Since file {{cd|.minecraft/assets/objects}} is obfuscated, one can find in [[Tutorial:Sound directory]] some methods to extract the sound.json and the '''sound directory''', where all sounds and music are stored.
+
+== File structure ==
+=== ''Java Edition'' ===
+This file is stored in JSON format, but is represented here using NBT.<div class="treeview">
+*{{nbt|compound}} The root Object.
+**{{nbt|compound|''Sound Event''}}: A sound event. The name is usually separated in categories (such as {{cd|entity.enderman.stare}}). All default sound events are listed in the table below. (To get a different namespace than {{cd|minecraft}} the file must be under a different namespace; not defining it here.)
+***{{nbt|boolean|replace}}: true/false. Used only in resource packs. True if the sounds listed in '''sounds''' should replace the sounds listed in the default sounds.json for this sound event. False if the sounds listed should be added to the list of default sounds. Optional. If undefined, defaults to "false".
+***{{nbt|string|subtitle}}: Translation key for the [[subtitle]] of the sound. Accepts [[formatting codes]] and displays them properly in-game. Optional. If not specified, the sound event is not displayed in closed captions.
+***{{nbt|list|sounds}}: The sound files this sound event uses. One of the listed sounds is randomly selected to play when this sound event is triggered. Optional.
+****{{nbt|string}} The path to a sound file from the "''namespace''/sounds" folder (excluding the .ogg file extension). Uses forward slashes. The namespace defaults to {{cd|minecraft}} but it can be changed by prepending a namespace and separating it with a {{cd|:}}.
+****{{nbt|compound}} A sound file. This Object is used only when the sound requires additional Strings.
+*****{{nbt|string|name}}: The path to this sound file from the "''namespace''/sounds" folder (excluding the .ogg file extension). The namespace defaults to {{cd|minecraft}} but it can be changed by prepending a namespace and separating it with a {{cd|:}}. Uses forward slashes instead of backslashes. May instead be the name of another sound event (according to value of "type"). If the sound file has one channel (mono), it can be played locationally (sound volume decreases the farther you are from the source). If the file has two channels (stereo), the volume does not change (for example music, ambient sounds). Names are also not allowed to contain whitespace characters.<ref name="ignore">'''Failure to follow this guideline in at least one entry will result in the entire sounds.json being ignored, in favor of vanilla sounds.'''</ref>
+*****{{nbt|float|volume}}: The volume for playing this sound. Value is a decimal greater than 0.0.<ref name="ignore"/> If undefined, defaults to 1.0.
+*****{{nbt|float|pitch}}: Plays the pitch at the specified value. Value is a decimal greater than 0.0.<ref name="ignore"/> If undefined, defaults to 1.0, but higher and lower values can be chosen.
+*****{{nbt|int|weight}}: The chance that this sound is selected to play when this sound event is triggered. Defaults to 1. An example: putting 2 in for the value would be like placing in the name twice. Only accepts integers.
+*****{{nbt|boolean|stream}}: true/false. True if this sound should be streamed from its file. It is recommended that this is set to "true" for sounds that have a duration longer than a few seconds to avoid lag. Used for all sounds in the "music" and "record" categories (except Note Block sounds), as (almost) all the sounds that belong to those categories are over a minute long. Optional. If undefined, defaults to "false". Setting this to false allows many more instances of the sound to be ran at the same time while setting it to true only allows 4 instances (of that type) to be ran at the same time.
+*****{{nbt|integer|attenuation_distance}}: Modify sound reduction rate based on distance. Used by portals, pistons, beacons, and conduits. Defaults to 16.
+*****{{nbt|boolean|preload}}: true/false. True if this sound should be loaded when loading the pack instead of when the sound is played. Used by the underwater ambience. Defaults to "false".
+*****{{nbt|string|type}}: Two values are available: "file" and "event"; "file" causes the value of "name" to be interpreted as the name of a file, while "event" causes the value of "name" to be interpreted as the name of an already defined event. If undefined, defaults to "file".
+</div>
+
+An example of a pre-1.10 sounds.json can be found [http://pastebin.com/4U2bd2Sm here].<br>
+Dinnerbone's pre-1.10 specifications can be found [http://www.reddit.com/r/Minecraft/comments/1ont25/snapshot_13w42a_has_been_released/cctryvp here].
+
+=== ''Bedrock Edition'' ===
+{{Info needed section|descriptions and verification of some parameters}}
+{{verify}}
+; 1.14.0
+<div class="treeview">
+*{{nbt|compound}}: The root Object.
+**{{nbt|string|format_version}}: Always set to {{cd|1.14.0}} or {{cd|1.20.20}}.
+**{{nbt|compound|sound_definitions}}
+***{{nbt|compound|''Sound Event''}}: A sound event. The name is usually separated in categories (such as {{cd|mob.endermen.stare}} or {{cd|step.stone}}). All default sound events are listed in the table below.
+****{{nbt|string|category}}: What volume slider affects this sound event. Can be {{cd|d=or|ui|music|record|weather|hostile|neutral|player|block|ambient|voice|sound}}. Defaults to "sound".
+****{{nbt|int}}{{nbt|float|min_distance}}: The distance at which the sound's volume starts to attenuate (fade off)
+****{{nbt|int}}{{nbt|float|max_distance}}: The distance at which the sound can no longer be heard.
+****{{nbt|list|sounds}}: The sounds used by this sound event.
+*****{{nbt|string|name}}: The path to this sound file from the resource pack folder (excluding the file extension).
+*****{{nbt|compound}}
+******{{nbt|string|name}}: The path to this sound file from the resource pack folder (excluding the file extension).
+******{{nbt|boolean|stream}}: true/false. True if this sound should be streamed from its file. It is recommended that this is set to "true" for sounds that have a duration longer than a few seconds to avoid lag. Used for all sounds in the "music" and "record" categories (except Note Block sounds), as (almost) all the sounds that belong to those categories are over a minute long. Optional. If undefined, defaults to "false".
+******{{nbt|boolean|is3D}}: A boolean value, true or false, of unknown use.
+******{{nbt|float|volume}}: The volume for playing this sound. If undefined, defaults to 1.0.
+******{{nbt|float|pitch}}: The pitch for playing this sound. If undefined, defaults to 1.0.
+******{{nbt|int|weight}}: The chance that this sound is selected to play when this sound event is triggered. Defaults to 1. An example: putting 2 in for the value would be like placing in the name twice. Only accepts integers.
+******{{nbt|boolean|load_on_low_memory}}: Deprecated.
+****{{nbt|string|subtitle}}: ''Unused''{{until|1.21.130}}. Used to add translation keys or direct names to in-game subtitles, if omitted, the sound will never play in the game and will use generic subtitles.{{upcoming|26.0}}
+</div>
+
+; Old <!--Still present in game files-->
+<div class="treeview">
+*{{nbt|compound}} The root Object. Same as {{cd|sound_definitions}} from the tree above.
+</div>
+
+== Sound events ==
+A sound event is linked to one or more in-game events. Two sound events may share the same sound file, but correspond to different in-game events and/or belong to different sound categories. A few valid sound events aren't included in sounds.json, while others don't have an in-game event associated with them. Any sound event that lacks an in-game event can be played only with {{cmd|playsound}} or by using a [[note block]] below a [[player head]] with the {{Code|note_block_sound}} block entity tag set. All default sound events, the sounds they use, the category they belong to, the [[subtitle]] that plays at that event, and the in-game events they are triggered by are listed in the following table.
+
+{{LoadPage|Sounds.json/Java Edition values|Java Edition values|h3}}
+
+{{LoadPage|Sounds.json/Bedrock Edition values|Bedrock Edition values|h3}}
+
+=== Unused sound events ===
+
+<div class="mw-collapsible mw-collapsed">
+
+<!-- old article: Unused_sound_event -->
+
+{{cleanup
+|section=1}}An '''unused sound event''' is any sound embedded into [[Minecraft]] that does not have a trigger without plugins or mods. They do not have a defined frequency of amplification, or anything else a generic, used sound would use. Also, they do not have subtitles until they are used from a trigger in the vanilla game.<ref>{{bug|MC-177094|resolution=Won't Fix}}</ref> These do not usually have a corresponding translation key.
+
+<!-- old /playsound advice: In order to play an unused sound event, use the {{cmd|playsound}} command, followed by its respective parameters in that linked article. This must be done either in a singleplayer world with cheats enabled or a multiplayer server with operator permissions given to the player. -->
+
+==== List ====
+
+Below is a list of features along with audio sources for their unused sound events.
+
+;[[Fox]]
+{{Edition|Bedrock}}:
+{{SoundTable
+| type=bedrock
+| {{SoundLine
+|sound=Fox sniff1.ogg
+|sound2=Fox sniff2.ogg
+|sound3=Fox sniff3.ogg
+|sound4=Fox sniff4.ogg
+|source=neutral
+|description=''Unused sound event'' <ref group="sound" name="sounds">{{Bug|MCPE-127356}}</ref>
+|id=mob.fox.sniff
+|volume=0.6
+|pitch=0.8-1.2 (Baby: 1.3-1.7)}}
+| {{SoundLine
+|sound=Fox spit1.ogg
+|sound2=Fox spit2.ogg
+|sound3=Fox spit3.ogg
+|source=neutral
+|description=''Unused sound event'' <ref group="sound" name="sounds"/>
+|id=mob.fox.spit
+|volume=0.7
+|pitch=0.8-1.2 (Baby: 1.3-1.7)
+}}
+}}
+
+;[[Ghast]]
+{{Edition|Java}}:
+{{SoundTable
+| type=java
+| {{SoundLine
+|sound=Ghast affectionate scream.ogg
+|subtitle=MC-177079
+|source=none
+|description=''Unused sound event''<ref group="sound">{{bug|MC-185411}}</ref>
+|id=entity.ghast.scream
+|translationkey=-
+|volume=''None''
+|pitch=''None''
+| distance = ''None''
+}}
+}}
+
+{{Edition|Bedrock}}:
+{{SoundTable
+| type=bedrock
+| {{SoundLine
+|sound=Ghast affectionate scream.ogg
+|source=hostile
+|description=''Unused sound event''
+|id=mob.ghast.affectionate_scream
+|volume=2.5
+|pitch=0.8-1.2
+}}
+}}
+
+;[[Player]]
+{{Edition|Java}}:
+{{SoundTable|type=java
+| {{SoundLine
+|sound=Player breathe.ogg
+|subtitle=''None''<ref name="breath group" group="sound">No bug reports have been made for this case, however given the resolution of most others the lack of a subtitle is implied to be intentional</ref>
+|source=none
+|description=''Unused sound event''<ref group="sound">{{bug|MC-185414}}</ref>
+|id=entity.player.breath
+|translationkey=''None''<ref name="breath group" group="sound"/>
+|volume=''None''
+|pitch=''None''
+| distance = ''None''
+}}
+}}
+
+;[[Bat]]
+{{Edition|Java}}:
+{{SoundTable|type=java
+| {{SoundLine
+|sound=Bat loop.ogg
+|subtitle=MC-177087
+|source=none
+|description=''Unused sound event''<ref group="sound">{{bug|MC-185413}}</ref>
+|id=entity.bat.loop
+|translationkey=-
+|volume=''None''
+|pitch=''None''
+| distance = ''None''
+}}
+}}
+
+;[[Silverfish]]
+{{Edition|Java}}:
+{{SoundTable|type=java
+| {{SoundLine
+|sound=Silverfish step1.ogg
+|sound2=Silverfish step2.ogg
+|sound3=Silverfish step3.ogg
+|sound4=Silverfish step4.ogg
+|subtitle=Footsteps
+|source=hostile
+|description=''Unused sound event''<ref group=sound>{{bug|MC-117609}}</ref>
+|id=entity.silverfish.step
+|translationkey=subtitles.block.generic.footsteps
+|volume=0.15
+|pitch=1.0
+| distance = 16
+}}
+}}
+
+;[[Endermite]]
+{{Edition|Java}}:
+{{SoundTable|type=java
+| {{SoundLine
+|sound=Silverfish step1.ogg
+|sound2=Silverfish step2.ogg
+|sound3=Silverfish step3.ogg
+|sound4=Silverfish step4.ogg
+|subtitle=Footsteps
+|source=hostile
+|description=''Unused sound event''<ref group=sound>{{bug|MC-117609}}</ref>
+|id=entity.endermite.step
+|translationkey=subtitles.block.generic.footsteps
+|volume=0.15
+|pitch=1.0
+| distance = 16
+}}
+}}
+
+;[[Zombie]]
+{{Edition|Java}}:
+{{SoundTable|type=java
+| {{SoundLine
+|sound=Zombie hit metal1.ogg
+|sound2=Zombie hit metal2.ogg
+|sound3=Zombie hit metal3.ogg
+|subtitle=Block broken <ref group="sound" name=ironsubtitle>{{Bug|MC-226770}}</ref>
+|source=none
+|description=''Unused sound event''<ref group="sound">{{bug|MC-218122}}</ref>
+|id=entity.zombie.attack_iron_door
+|translationkey=subtitles.block.generic.break|translationkeynote=<ref group=sound name=ironsubtitle/>
+|volume=''None''
+|pitch=''None''
+| distance=''None''
+}}
+}}
+</div>
+<references group="sound"/>
+
+== Block sound categories ==
+{{Main|Block sound type}}
+A block sound type is a set of sounds that blocks use when they are broken, placed, hit, fallen on, stepped on, jumped from,{{Only|bedrock}} or landed on.{{Only|bedrock}}
+
+== History ==
+{{See also|Java Edition history of sound events|Bedrock Edition history of sound events}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.7.2|dev=13w42a|Added sounds.json.}}
+|{{HistoryLine||1.9|dev=15w43a|Changed the ID of most sounds.  The older IDs can be found at [[Sounds.json/Java Edition values before 1.9]].}}
+|{{HistoryLine|||dev=15w43b|Added "subtitle" field.}}
+|{{HistoryLine|||dev=16w02a|Added "voice" sound event category.}}
+|{{HistoryLine||1.10|dev=pre2|Removed "category" field.<ref>{{tweet|Dinnerbone|852212485855862784|Aha, I think that's decided by the thing playing the event now.}}</ref>}}
+|{{HistoryLine||1.13|dev=18w10a|Added "preload" field.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||0.12.1|dev=build 1|Added <samp>sounds.json</samp>.{{check version|The preceding version is not archived, so this cannot be confirmed.}}}}
+|{{HistoryLine|pocket}}
+|{{HistoryLine||1.0.4|dev=alpha 1.0.4.1|Renamed <samp>sounds.json</samp> to <samp>sound_definitions.json</samp>.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.0|dev=beta 1.16.0.63|Deprecated the "load_on_low_memory" field, as all audio can now play on low memory devices.}}
+}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox resource packs}}
+{{Navbox Java Edition technical|resourcepack}}
+{{Navbox Bedrock Edition}}
+
+[[de:Sounddaten]]
+[[ja:Sounds.json]]
+[[pt:Sounds.json]]
+[[ru:Sounds.json]]
+[[uk:Sounds.json]]
+[[zh:Sounds.json]]

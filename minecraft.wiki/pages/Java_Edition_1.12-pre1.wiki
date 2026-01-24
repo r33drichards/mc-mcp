@@ -1,0 +1,172 @@
+{{Infobox version
+|title=Minecraft 1.12-pre1
+|edition=Java
+|image=1.12-pre1.png
+|image2=Java Edition 1.12-pre1.png
+|type=Pre-release
+|date=May 10, 2017
+|parent=1.12
+|clienthash=451d983529e78b807c8f8479f7f542863b1b6ae0
+|jsonhash=51695897d818f3414ce5dbea33dea58682c6dc44
+|serverhash=ebcafa3e1a3312500893087bf4bfb6c6f335ef0e
+|prevparent=1.11.2
+|prev=17w18b
+|next=1.12-pre2
+|nextparent=1.12.1
+}}<onlyinclude>
+
+'''1.12-pre1'''<ref>{{Mcnet|minecraft-112-pre-release-2|Minecraft 1.12 Pre-Release 1}}</ref> is the first pre-release for [[Java Edition 1.12]], which adds four new advancements, optimizes the recipe book and fixes bugs. This is the first pre-release released in 2017.
+
+== Additions ==
+=== Mobs ===
+'''[[Parrot]]'''
+* Added new [[attribute]]: <code>generic.flyingSpeed</code>.
+=== Gameplay ===
+'''[[Gamerule]]'''
+* <code>gameLoopFunction <namespace:path/to/function/file></code>
+** Runs a function every [[tick]] through the server.
+
+=== Command format ===
+{{cmd|function <namespace:path/to/function/file>}}
+* Runs a function once through the [[entity]] or [[command block]] which ran the /function command.
+
+=== General ===
+'''[[Advancement]]s'''
+* Added 4 new advancements:
+{{AdvancementTable|Nether/Adventure}}
+{{AdvancementRow
+|title=A Furious Cocktail
+|bg=fancy
+|Milk Bucket
+|Have every potion effect applied at the same time
+|Local Brewery
+|{{Collapse
+|title=Have ''all'' of these 11 status [[effect]]s applied to the player at the same time:
+|content={{flatlist|class=searchaux|indent=1|
+* {{EffectLink|Fire Resistance}}
+* {{EffectLink|Invisibility}}
+* {{EffectLink|Jump Boost}}
+* {{EffectLink|Night Vision}}
+* {{EffectLink|Poison}}
+* {{EffectLink|Regeneration}}
+* {{EffectLink|Slowness}}
+* {{EffectLink|Speed}}
+* {{EffectLink|Strength}}
+* {{EffectLink|Water Breathing}}
+* {{EffectLink|Weakness}}
+}}
+|expanded=1}}
+The source of the effects is irrelevant for the purposes of this advancement. Other status effects may be applied to the player, but are ignored for this advancement.
+|nether/all_potions
+}}
+{{AdvancementRow
+|title=Subspace Bubble
+|bg=fancy
+|Empty Map
+|Use [[the Nether]] to travel 7km in the [[Overworld]]
+|Nether
+|Use the Nether to travel between 2 points in the Overworld with a minimum horizontal euclidean distance of 7000 blocks between each other, which is 875 blocks in the Nether.
+|nether/fast_travel
+}}
+{{AdvancementRow
+|title=Uneasy Alliance
+|bg=fancy
+|Ghast Tear
+|Rescue a [[ghast]] from the Nether, bring it safely home to the Overworld... and then kill it.
+|Return to Sender
+|Kill a ghast while being in the Overworld.
+|nether/uneasy_alliance
+}}
+{{AdvancementRow
+|title=Postmortal
+|bg=oval
+|Totem of Undying
+|Use a [[totem of undying]] to cheat death
+|Monster Hunter
+|Activate a totem of undying by taking fatal damage.
+|adventure/totem_of_undying
+}}
+{{AdvancementTable|foot}}
+
+* Added {{nbt|boolean|hidden}} field to advancement display info, defaults to false.
+* Added new <code>effects_changed</code>, <code>used_totem</code>, <code>nether_travel</code> advancements triggers.
+* Added {{nbt|string|function}} to advancement rewards.
+
+'''[[Function (Java Edition)|Function]]s'''
+* Added new function system, which are plaintext files in <code>world/data/functions/namespace/file.txt</code>.
+* Functions are a list of [[commands]], one line per command, with <code>//</code> or <code>#</code> comment support.
+
+'''[[NBT format]]'''
+* Added the {{nbt|compound|enteredNetherPosition}} tag for [[player]]s.
+
+== Changes ==
+'''[[Advancement]]s'''
+* Advancement trees are now centered in the UI.
+* [[Item]]s & [[entities]] in advancements have an extra <code>NBT</code> field (string NBT, like in commands).
+* Entities in advancements have an extra <code>effects</code> and <code>location</code> field.
+* Removed <code>commands</code> from advancement rewards.
+* Removed <code>arbitrary_player_tick</code> advancement trigger.
+
+'''[[Recipe book]]s'''
+* Optimized the recipe book.
+
+== Fixes ==
+{{fixes|fixedin=1.12 Pre-Release 1|prefix=Minecraft
+|;old
+|11240|Ignited TNT can be set on fire by a Flame Bow.
+|50166|Game states that "The block couldn't be placed" when using /setblock to place air in a space occupied by a tile entity, despite working
+|95367|Tamed [wolf], cat or parrot in a minecart teleports to a player (not visually)
+|100468|[Wolves], cats and parrots teleport to player despite being in a boat (yet not visually)
+|111699|Can't rename stacked items
+|111744|Anvil outputs only 1 item when renaming
+|;dev
+|113380|Concrete powder won't turn into concrete when replacing water
+|113434|The color of white wool sheep is light gray
+|114235|Concrete powder texture is not randomly rotated
+|114534|Beacon beam is darker than it should be
+|115070|Issue with crafting table UI on non-16:9 instances
+|115206|Parrots stare at bats over 30 blocks away, through the ground
+|115460|Recipe advancements for yellow dye have reversed unlock conditions
+|115813|Old (non-dyed) beds are invisible
+|116024|Pre-17w15a beds become red if in-world but white in chests
+|116459|Parrots suffocate when getting in a bed with a solid block behind it
+|116760|@a selector doesn't work with the /recipe command in multiplayer
+|116945|Knowledge book gives recipe before removing itself from inventory causing unexpected advancement behavior
+|116952|Can't read CPU info and shows <code>'CPU: <nowiki><unknown></nowiki>'</code> in the debug screen (F3)
+|116957|Advancement doesn't get revoked when /reload is quickly executed afterwards
+|116963|Changing dimension prints debug message in log
+|116964|Parrots sometimes run in circles instead of pathfinding normally.
+|117001|"Serious dedication" challenge is granted when breaking any tool
+|117007|milk_bucket can't trigger consume_item of advancements
+|117008|Vines under trapdoors block them
+|117015|Glass panes & iron bars no longer connect to glass
+|117019|Tripwire hooks break off of backs and sides of stairs upon receiving a block update
+|117036|17w18b Crafting book glitch
+|117063|Snow layers on barriers
+|117069|Door in Recipe Book when hold click shows the trapdoor recipe
+|117118|Levers / buttons placed on the trapdoor are dropped if pressed
+|117160|Parrots follow and watch invisible mobs
+|117161|Parrots imitate silent mobs
+|117167|Error message for player advancement data containing only "null" calls advancements "achievement"
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|DcFs4kwdr9M}}
+
+== Trivia ==
+* 1.12-pre1 was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:1.12-pre1]]
+[[es:Java Edition 1.12-pre1]]
+[[fr:Édition Java 1.12-pre1]]
+[[ja:Java Edition 1.12-pre1]]
+[[nl:1.12-pre1]]
+[[pt:Edição Java 1.12-pre1]]
+[[ru:1.12-pre1 (Java Edition)]]
+[[zh:Java版1.12-pre1]]

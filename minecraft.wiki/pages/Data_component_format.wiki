@@ -1,0 +1,1393 @@
+{{About|the format in {{JE}}|the legacy format|Item format/Before 1.20.5|the format in {{BE}}|Item components}}
+{{redirect|Component|the text format|Text component format}}{{exclusive|java}}
+
+'''Data components''', or simply '''components''', are structured data used to define and store various properties. They are used on [[item]]s, where they are referred as '''item components''' or '''item stack components''', and [[block entities]], partially replacing [[NBT format]].
+
+Data components are used in various places, including the [[Player.dat format|player's inventory]], container [[Block entity format|block entities]] and [[structure file]]s.
+
+Data components are [[Resource location|namespaced identifiers]], and can be of different data types, see {{slink||List of components}}.
+
+For properties of items that are defined by code and cannot be modified through components, see [[Java Edition hardcoded item properties]].
+
+{{TOC|none|limit=2}}
+
+== Usage ==
+
+=== Command format ===
+Data component can be used in the [[Argument types#minecraft:item_stack|item_stack]] and [[Argument types#minecraft:item_predicate|item_predicate]] argument types.
+
+In commands that take an item_stack argument, such as {{command|give}}, items are represented in the format <code>''item_id''[''component1''=''value'',''component2''=''value'']</code>, with ''component'' being the [[resource location]] of a component, and the ''value'' being the value of the component in [[NBT format#SNBT format|SNBT format]]. Components can be removed by prefixing them with an exclamation mark, like <code>item_id[!''component3'']</code>. If no components are specified, the square brackets can be removed, leaving just the item ID. See [[Argument types#minecraft:item_stack|item_stack]] for details.
+
+In commands that take an item_predicate argument, such as {{command|clear}}, items are represented in the format <code>''item_type''[''tests'']</code>, with ''tests'' can be tests of data components or an [[item sub-predicate]]. See [[Argument types#minecraft:item_predicate|item_predicate]] for details.
+
+=== Item format ===
+{{for|the legacy format before 1.20.5|Item format/Before 1.20.5}}
+
+Every item type (item ID) has a set of ''default'' data components. Item stacks must specify an item ID, which implicity sets these default components, but they may be overriden by that individual item stack. Default components are not saved on individual item stacks.
+
+When saved in the [[NBT format]], items are written as a compound with the following tags:
+<div class="treeview">
+* {{nbt|compound}} The root tag. <section begin="item format" /><section begin="item format nocount" />
+** {{nbt|string|id}}: The [[resource location]] of the item. Must not be <code>minecraft:air</code>.<section end="item format nocount" />
+** {{nbt|int|count}}: Number of [[item]]s stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Defaults to 1 if not specified.<section begin="item format nocount" />
+** {{nbt|compound|components}}: Optional map of additional (non-default) data components.
+*** See {{#ifeq:{{PAGENAME}}|Data component format|the [[#List of components|list of components below]]|[[Data component format]]}}.<section end="item format nocount" /><section end="item format" />
+</div>
+In containers that do not use the data component format (such as container blocks and entity inventories), an additional {{nbt|byte|Slot}} tag is used to specify the slot the item is in e.g. <code>{Slot:0b,id:"stone"}</code>. This is not a part of the item stack format so is not present anywhere else where individual items are stored (such as single-slot containers, unstructured lists of items, etc.). In the data component format, slot numbers and item stacks are stored as separate fields e.g. <code>{slot:0,item:{id:"stone"}}</code>.
+
+=== Block entity format ===
+{{Main|Block entity format}}
+Block entities are stored in the [[NBT format]]. While they still use NBT tags for their individual properties, any non-default data components that exist on the item used to place the block will be saved.
+
+Some NBT data on block entities are treated as data components when transfering data between items and blocks. For example, the <code>Items</code> field in a chest is interpreted as the <code>minecraft:container</code> component, despite being labeled and structured differently.
+
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+{{#lst:Block entity format|nbt format}}
+** Additional tags depending on the block entity ID. See [[Block entity format]].
+</div>
+
+For example, if a <code>chest</code> was given to a player with the components <code>minecraft:custom_data={foo:1}</code> and <code>minecraft:container=[{slot:0,item:{id:"stone"}}]]</code>, then placed the block on the ground, the block will be saved (omitting some fields) as:
+
+<code>{id:"minecraft:chest", Items:[{count:1,id:"minecraft:stone",Slot:0b}], components:{"minecraft:custom_data":{foo:1}}}</code>
+
+with <code>minecraft:container</code> saved as the <code>Items</code> tag, and <code>minecraft:custom_data</code> separated as it is not used by chest block entities.
+
+== List of components ==
+{{columns-list|colwidth=16em|
+* {{ItemLink|copper-spear|attack_range|link=#attack_range}}
+* {{BlockLink|chain-command-block|attribute_modifiers|link=#attribute_modifiers}}
+* {{BlockLink|white-banner|banner_patterns|link=#banner_patterns}}
+* {{ItemLink|shield|base_color|link=#base_color}}
+* {{BlockLink|bee-nest|bees|link=#bees}}
+* {{BlockLink|monster-spawner|block_entity_data|link=#block_entity_data}}
+* {{BlockLink|oak-stairs|block_state|link=#block_state}}
+* {{ItemLink|shield|blocks_attacks|link=#blocks_attacks}}
+* {{ItemLink|wooden-sword|break_sound|link=#break_sound}}
+* {{ItemLink|tropical-fish-bucket|bucket_entity_data|link=#bucket_entity_data}}
+* {{ItemLink|bundle|bundle_contents|link=#bundle_contents}}
+* {{ItemLink|stone-pickaxe|can_break|link=#can_break}}
+* {{BlockLink|cobblestone|can_place_on|link=#can_place_on}}
+* {{ItemLink|crossbow|charged_projectiles|link=#charged_projectiles}}
+* {{ItemLink|golden-apple|consumable|link=#consumable}}
+* {{BlockLink|shulker-box|container|link=#container}}
+* {{BlockLink|chest|container_loot|link=#container_loot}}
+* {{BlockLink|barrier|custom_data|link=#custom_data}}
+* {{ItemLink|diamond|custom_model_data|link=#custom_model_data}}
+* {{ItemLink|name-tag|custom_name|link=#custom_name}}
+* {{ItemLink|iron-axe|damage|link=#damage}}
+* {{ItemLink|netherite-ingot|damage_resistant|link=#damage_resistant}}
+* {{ItemLink|stone-sword|damage_type|link=#damage_type}}
+* {{ItemLink|totem-of-undying|death_protection|link=#death_protection}}
+* {{ItemLink|debug-stick|debug_stick_state|link=#debug_stick_state}}
+* {{ItemLink|leather-chestplate|dyed_color|link=#dyed_color}}
+* {{ItemLink|diamond-boots|enchantable|link=#enchantable}}
+* {{EntityLink|experience-bottle|enchantment_glint_override|link=#enchantment_glint_override}}
+* {{ItemLink|book|enchantments|link=#enchantments}}
+* {{ItemLink|armor-stand|entity_data|link=#entity_data}}
+* {{ItemLink|saddle|equippable|link=#equippable}}
+* {{ItemLink|firework-star|firework_explosion|link=#firework_explosion}}
+* {{ItemLink|firework-rocket|fireworks|link=#fireworks}}
+* {{ItemLink|cooked-beef|food|link=#food}}
+* {{ItemLink|elytra|glider|link=#glider}}
+* {{ItemLink|goat-horn|instrument|link=#instrument}}
+* {{ItemLink|arrow|intangible_projectile|link=#intangible_projectile}}
+* {{ItemLink|emerald|item_model|link=#item_model}}
+* {{ItemLink|name-tag|item_name|link=#item_name}}
+* {{ItemLink|music-disc-5|jukebox_playable|link=#jukebox_playable}}
+* {{ItemLink|iron-spear|kinetic_weapon|link=#kinetic_weapon}}
+* {{BlockLink|tripwire-hook|lock|link=#lock}}
+* {{ItemLink|lodestone-compass|lodestone_tracker|link=#lodestone_tracker}}
+* {{ItemLink|paper|lore|link=#lore}}
+* {{ItemLink|filled-map|map_color|link=#map_color}}
+* {{ItemLink|ocean-explorer-map|map_decorations|link=#map_decorations}}
+* {{ItemLink|filled-map|map_id|link=#map_id}}
+* {{ItemLink|diamond-axe|max_damage|link=#max_damage}}
+* {{ItemLink|egg|max_stack_size|link=#max_stack_size}}
+* {{ItemLink|stone-spear|minimum_attack_charge|link=#minimum_attack_charge}}
+* {{BlockLink|note-block|note_block_sound|link=#note_block_sound}}
+* {{ItemLink|ominous-bottle|ominous_bottle_amplifier|link=#ominous_bottle_amplifier}}
+* {{ItemLink|diamond-spear|piercing_weapon|link=#piercing_weapon}}
+* {{ItemLink|danger-pottery-sherd|pot_decorations|link=#pot_decorations}}
+* {{ItemLink|potion|potion_contents|link=#potion_contents}}
+* {{ItemLink|lingering-potion|potion_duration_scale|link=#potion_duration_scale}}
+* {{BlockLink|player-head|profile|link=#profile}}
+* {{ItemLink|creeper-charge-banner-pattern|provides_banner_patterns|link=#provides_banner_patterns}}
+* {{ItemLink|raiser-armor-trim-smithing-template|provides_trim_material|link=#provides_trim_material}}
+* {{ItemLink|nether-star|rarity|link=#rarity}}
+* {{ItemLink|knowledge-book|recipes|link=#recipes}}
+* {{EntityLink|experience-orb|repair_cost|link=#repair_cost}}
+* {{BlockLink|anvil|repairable|link=#repairable}}
+* {{ItemLink|enchanted-book|stored_enchantments|link=#stored_enchantments}}
+* {{ItemLink|suspicious-stew|suspicious_stew_effects|link=#suspicious_stew_effects}}
+* {{ItemLink|netherite-spear|swing_animation|link=#swing_animation}}
+* {{ItemLink|diamond-shovel|tool|link=#tool}}
+* {{ItemLink|item-frame|tooltip_display|link=#tooltip_display}}
+* {{ItemLink|painting|tooltip_style|link=#tooltip_style}}
+* {{ItemLink|spire-armor-trim|trim|link=#trim}}
+* {{BlockLink|bedrock|unbreakable|link=#unbreakable}}
+* {{ItemLink|ender-pearl|use_cooldown|link=#use_cooldown}}
+* {{ItemLink|golden-spear|use_effects|link=#use_effects}}
+* {{ItemLink|milk-bucket|use_remainder|link=#use_remainder}}
+* {{ItemLink|diamond-sword|weapon|link=#weapon}}
+* {{ItemLink|book-and-quill|writable_book_content|link=#writable_book_content}}
+* {{ItemLink|written-book|written_book_content|link=#written_book_content}}
+}}
+
+=== attack_range ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/attack_range}}
+</div>
+
+''Example:'' {{cmd|1=give @s diamond[attack_range={max_reach:5.0}]}}
+* Gives a diamond that has an attack range of 5 blocks.
+
+=== attribute_modifiers ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/attribute modifiers}}
+</div>
+''Example:'' {{command|give @s stick[attribute_modifiers{{=}}[{type:"minecraft:scale",slot:"hand",id:"example:grow",amount:4,operation:"add_multiplied_base"}]]}}
+* Gives a stick that causes the player to grow 4x when holding it.
+
+=== banner_patterns ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/banner patterns}}
+</div>
+''Example:'' {{command|/give @s black_banner[banner_patterns{{=}}[{pattern:"triangle_top",color:"red"},{pattern:"cross",color:"white"}]]}}
+* Gives a black banner with a red triangle and white cross pattern.
+
+=== base_color ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/base color}}
+</div>
+''Example:'' {{command|give @s shield[base_color{{=}}"lime"]}}
+* Gives a lime shield.
+
+=== bees ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/bees}}
+</div>
+''Example:'' {{command|give @s bee_nest[bees{{=}}[{entity_data:{id:"bee",CustomName:"Maya"},min_ticks_in_hive:60,ticks_in_hive:0}]]}}
+* Gives a bee nest containing a single bee named ''Maya'', which exits the bee nest in 3 seconds.
+
+=== block_entity_data ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/block entity data}}
+</div>
+''Example:'' {{command|give @s spawner[block_entity_data{{=}}{id:"mob_spawner",SpawnData:{entity:{id:"spider"<nowiki>}}</nowiki>}]}}
+* Gives a spider spawner. Placing this spawner requires the player to have [[Permission level|operator permissions]].
+
+=== block_state ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/block state}}
+</div>
+''Example:'' {{command|give @s bamboo_slab[block_state{{=}}{type:"top"}]}}
+* Gives a bamboo slab that is always placed in the top half of the block.
+
+=== blocks_attacks ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/blocks_attacks}}
+</div>
+''Example:'' {{command|give @s diamond_sword[blocks_attacks{{=}}{disable_cooldown_scale:0,damage_reductions:[{types:[mob_attack,arrow,explosion],base:0,factor:0.5}],block_sound:block.anvil.place}]}}
+* Gives a diamond sword that can block half of the damage from mob attacks, arrows, and explosions, cannot be disabled by a disabling attack, and plays the anvil place sound upon successful blocking.
+
+=== break_sound ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/break_sound}}
+</div>
+''Example:'' {{command|give @s diamond_sword[break_sound{{=}}"item.wolf_armor.break"]}}
+* Gives a diamond sword that when runs out of durability, it plays the wolf armor break sound.
+
+=== bucket_entity_data ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/bucket entity data}}
+</div>
+Other tags such as the entity's name or variant are stored as separate item components such as {{cd|minecraft:custom_name}} and {{cd|minecraft:tropical_fish/pattern}}.
+
+''Example:'' {{command|give @s axolotl_bucket[bucket_entity_data{{=}}{Health:3.0f},axolotl/variant{{=}}"wild",custom_name{{=}}"Bob"]}}
+* Gives a bucket of axolotl that has 3 health, the [[Axolotl#Colors|Wild]] type, and is named "Bob".
+
+=== bundle_contents ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/bundle contents}}
+</div>
+''Example:'' {{command|give @s bundle[bundle_contents{{=}}[{id:"diamond",count:2}]]}}
+* Gives a bundle containing exactly 2 diamonds.
+
+=== can_break ===
+
+When present, the player holding the item can break the specified blocks in [[Adventure]] mode.
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/can break}}
+</div>
+''Example:'' {{command|give @s netherite_pickaxe[can_break{{=}}{blocks:['black_concrete','coal_ore','iron_ore','gold_ore','diamond_ore','emerald_ore']}]}}
+* Gives a netherite pickaxe that can only mine some ores, as well as black concrete.
+
+=== can_place_on ===
+
+<div class="treeview">
+When present, the player holding the item can place the held block item on any sides of the specified blocks in [[Adventure]] mode.
+* {{nbt|compound|components}}: Parent tag.
+{{/can place on}}
+</div>
+''Example:'' {{command|give @s target[can_place_on{{=}}{blocks:'sandstone'}]}}
+* Gives a target block that can only be placed on sandstone.
+
+=== charged_projectiles ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/charged projectiles}}
+</div>
+''Example:'' {{command|give @s crossbow[charged_projectiles{{=}}[{id:"spectral_arrow"}]]}}
+* Gives a crossbow that is already charged with a spectral arrow.
+Note: Adding an invalid projectile or item id charges an arrow that, when collected, grants the wrong item. Ex: wind_charge causes it to fire an arrow that grants a wind charge when collected.
+
+=== consumable ===
+If present, the item can be consumed. Its options can also be modified. 
+* If the item already has an existing right-click functionality (like placing a block), it keeps that functionality. 
+* If the {{cd|[[Data component format#food|minecraft:food]]}}, {{cd|[[Data component format#potion_contents|minecraft:potion_contents]]}}, {{cd|[[Data component format#ominous_bottle_amplifier|minecraft:ominous_bottle_amplifier]]}} or {{cd|[[Data component format#suspicious_stew_effects|minecraft:suspicious_stew_effects]]}} components are also present on this item, consuming it applies the stats and effects of those components.
+<div class="treeview">
+
+* {{nbt|compound|components}}: Parent tag.
+{{/consumable}}</div>
+''Example:'' {{command|/give @s gold_ingot[consumable{{=}}{consume_seconds:3.0, animation:'eat', sound:'entity.generic.eat', has_consume_particles:true, on_consume_effects:[{type:'minecraft:clear_all_effects'}]}]}}
+* Gives a gold ingot that can be eaten in 3 seconds and upon consuming, clears all effects.
+
+=== container ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/container}}
+</div>
+''Example:'' {{command|give @s barrel[container{{=}}[{slot:0,item:{id:apple<nowiki>}}</nowiki>]]}}
+* Gives a barrel with an apple in the first slot.
+
+=== container_loot ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/container loot}}
+</div>
+''Example:'' {{command|give @s chest[container_loot{{=}}{loot_table:"chests/desert_pyramid"}]}}
+* Gives a chest that contains the desert pyramid loot when opened.
+
+=== custom_data ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/custom data}}
+</div>
+''Example:'' {{command|give @s iron_sword[custom_data{{=}}{foo:1}]}}
+* Gives an iron sword with custom data <code>{foo:1}</code>.
+
+=== custom_model_data ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/custom model data}}
+</div>
+''Example:'' 
+: {{command|give @s bone[custom_model_data{{=}}{floats:[4.0, 5.6, 99.1],strings:["foo:bar"],colors:[8323327, [0.5,0,1], 0x7F00FF]}]}}
+* Gives a bone with custom model data. The <code>colors</code> list shows three possible representations of the same violet color.
+
+=== custom_name ===
+
+Used to specify the item's custom name, like you can in an anvil. 
+This component:
+* has a higher priority over the {{cd|[[Data component format#item_name|minecraft:item_name]]}} component
+* can be renamed or removed using an anvil 
+* if unspecified otherwise, the item's name defaults to being italic.
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/custom name}}
+</div>
+''Example:'' 
+: {{command|give @s stick[custom_name{{=}}{text:"Magic Wand",color:"light_purple",italic:false}]}}
+* Gives a stick named "Magic Wand" in light purple non-italicized text.
+
+=== damage ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/damage}}
+</div>
+''Example:'' {{command|give @s diamond_axe[damage{{=}}500]}}
+* Gives a diamond axe with 500 points of damage.
+
+=== damage_resistant ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/damage_resistant}}
+</div>
+
+=== damage_type ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/damage type}}
+</div>
+''Example:'' {{command|give @s diamond_sword[damage_type{{=}}"minecraft:campfire"]}}
+* Gives a diamond sword that deals "campfire" type damage.
+
+=== death_protection ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/death_protection}}</div>
+''Example:'' {{command|/give @s nether_star[death_protection{{=}}{death_effects:[{type:'minecraft:clear_all_effects'}]}]}}
+* Gives a nether star that protects the holder from death and when did so, removes all status effects from the holder.
+
+=== debug_stick_state ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/debug stick state}}
+</div>
+''Example:'' {{command|give @s debug_stick[debug_stick_state{{=}}{"minecraft:oak_fence": "west", "minecraft:candle": "lit"}]}}
+* Gives a debug stick with the [[oak fence]] block state property set to <code>west</code> and the [[candle]] block state property set to <code>lit</code>.
+
+=== dyed_color ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/dyed color}}
+</div>
+''Example:'' {{command|give @s leather_helmet[dyed_color{{=}}8388403]}}
+
+''or:'' {{command|give @s leather_helmet[dyed_color{{=}}0x7FFF33]}}
+
+''or:'' {{command|give @s leather_helmet[dyed_color{{=}}[0.5, 1.0, 0.2]]}}
+* Gives a blueish-green leather helmet.
+
+{{Calculator|decimalColor}}
+
+=== enchantable ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/enchantable}}
+</div>
+''Example:'' {{command|/give @s elytra[enchantable{{=}}{value:15}]}}
+* Gives a pair of elytra that can be enchanted in an enchanting table with an enchantability of 15.
+
+=== enchantment_glint_override ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/enchantment glint override}}
+</div>
+''Example:'' {{command|give @s experience_bottle[enchantment_glint_override{{=}}false]}}
+* Gives an experience bottle without the visual enchantment glint, which is otherwise applied by default.
+
+=== enchantments === 
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/enchantments}}
+</div>
+''Example:'' {{command|give @s wooden_sword[enchantments{{=}}{sharpness:3,knockback:2}]}}
+* Gives a wooden sword with sharpness III and knockback II.
+''Note'': This component adds active enchantments and should not be confused with the [[Data component format#stored enchantments|{{cd|minecraft:stored_enchantments}}]] component, which is used to add inactive enchantments, such as with [[Enchanted Book|enchanted books]]. 
+
+To illustrate the difference, hitting an entity with an {{cd|enchanted_book[enchantments{{=}}{knockback:2}]}} would knock any entity hit per knockback II while hitting an entity with an {{cd|enchanted_book[stored_enchantments{{=}}{knockback:2}]}} would not. 
+
+Furthermore the latter would be able to add knockback II to an enchantable item in an anvil, while the former would not.
+
+=== entity_data ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/entity data}}
+</div>
+''Example:'' {{command|give @s armor_stand[entity_data{{=}}{id:"armor_stand",Small:1b}]}}
+* Gives an armor stand that is small when placed down.
+
+=== equippable ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/equippable}}
+</div>
+''Example 1:'' {{command|/give @s glass[equippable{{=}}{slot:"head",equip_sound:"block.glass.break",dispensable:true}]}}
+* Gives a glass block that can be equipped in the helmet slot.
+
+''Example 2:'' {{command|/give @s leather_leggings[equippable{{=}}{slot:legs,asset_id:"minecraft:diamond"}]}}
+* Gives a pair of leather pants that appear as diamond leggings when worn.
+
+=== firework_explosion ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/firework explosion}}
+</div>
+
+=== fireworks ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/fireworks}}
+</div>
+
+=== food ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/food}}
+</div>
+''Example 1:'' {{command|give @s melon_slice[food{{=}}{nutrition:3,saturation:1,can_always_eat:true}]}}
+* Gives a melon slice that can be eaten at any time and restores 3 food points and 1 saturation.
+''Example 2:'' {{command|give @s minecraft:sponge[consumable{{=}}{consume_seconds:2.4},food{{=}}{nutrition:5,saturation:5,can_always_eat:true}]}}
+* Gives a sponge that can be eaten at any time, takes 2.4 seconds to consume, and restores 5 food points and 5 saturation.
+
+=== glider ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/glider}}
+</div>
+''Example:'' {{command|/give @s nether_star[equippable{{=}}{slot:"head"},glider{{=}}{}]}}
+* Gives a nether star that can be equipped in the head slot and if on the head, allows the player to glide.
+
+=== instrument ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/instrument}}
+</div>
+''Example 1:'' {{command|give @s goat_horn[instrument{{=}}"feel_goat_horn"]}}
+* Gives a [[goat horn]] that uses the ''Feel'' instrument.
+
+''Example 2:'' {{command|1=/give @s goat_horn[instrument={description: "prank!", sound_event: "entity.creeper.primed", use_duration:2, range:30}]}}
+* Gives a goat horn that plays the ''entity.creeper.primed'' sound.
+
+=== intangible_projectile ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/intangible projectile}}
+</div>
+''Example:'' {{command|1=give @s arrow[intangible_projectile={}]}}
+* Gives an arrow that cannot be picked up by the player
+
+=== item_model ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/item_model}}
+</div>
+''Example:'' {{command|/give @s netherite_sword[item_model{{=}}"minecraft:diamond_sword"]}}
+* Gives a netherite sword that looks like a diamond sword.
+
+=== item_name ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/item name}}
+</div>
+
+=== jukebox_playable ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/jukebox_playable}}
+</div>
+''Example:'' {{command|1=give @s diamond[minecraft:jukebox_playable="pigstep"]}}
+* Gives a diamond that plays Pigstep when inserted into a jukebox
+
+=== kinetic_weapon ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/kinetic_weapon}}
+</div>
+''Example:'' {{command|/give @s amethyst_shard[kinetic_weapon{{=}}{forward_movement:0.0,delay_ticks:20,damage_conditions:{max_duration_ticks:60},knockback_conditions:{max_duration_ticks:40},dismount_conditions:{max_duration_ticks:20},hit_sound:"block.amethyst_cluster.step"}]}}
+* Gives an amethyst shard which can perform a charge attack after a 1-second delay. The attack can damage entities for 3 seconds, knock them back for the first 2 seconds and dismount them for the first second. Hitting a target with the attack plays an amethyst sound.
+
+=== lock ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/lock}}
+</div>
+''Example 1:'' {{command|give @p chest[minecraft:lock{{=}}{components:{"minecraft:item_model":"minecraft:diamond"<nowiki>}}]</nowiki>}}
+* Gives a chest that is locked, opening only if the player is holding an item with the same model as a Diamond.
+''Example 2:'' {{command|give @p furnace[minecraft:lock{{=}}{components:{"minecraft:custom_name":"Furnace Key"<nowiki>}}]</nowiki>}}
+* Gives a furnace that opens only if the player is holding an item with the custom name "Furnace Key".
+''Example 3:'' {{command|give @p barrel[minecraft:lock{{=}}{items:["minecraft:oak_planks","minecraft:diamond"],count:6,predicates:{custom_data:{bar:foo<nowiki>}}</nowiki>}]}}
+* Gives a barrel that opens only if the player is holding exactly 6 [[Planks#Oak|oak planks]] or 6 [[diamond]]s that has the custom data {{cd|bar:foo}}
+
+=== lodestone_tracker ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/lodestone tracker}}
+</div>
+''Example:'' {{command|1=give @s compass[minecraft:lodestone_tracker={target:{pos:[I;1,2,3],dimension:"overworld"<nowiki>}}</nowiki>]}}
+* Gives a compass that points toward a lodestone that is located in the Overworld at x=1,y=2,z=3
+
+=== lore ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/lore}}
+</div>
+''Example 1:'' {{command|give @p stick[lore{{=}}[{text:"This Stick is very sticky."}]]}}
+* Gives a stick with lore in its tooltip.
+''Example 2:'' {{command|give @p diamond[lore{{=}}[{text:"A shiny Diamond!",italic:false,color:"gold"}]]}}
+* Gives a diamond that has lore in its tooltip. The color of the lore is gold, and its italics have been removed.
+''Example 3:'' {{command|give @p emerald[lore{{=}}[{text:"A shiny Emerald!","italic":false,"color":"gold"}, {text:"Maybe share it with a friend?",italic:false,color:"yellow"}]]}}
+* Gives an emerald that has 2 lines of lore in its tooltip. The first line has a golden color, and the second has a yellow color. Both lines have had their italics removed.
+
+=== map_color ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/map color}}
+</div>
+''Example:'' {{command|give @s filled_map[map_color{{=}}16711680]}}
+* Gives a filled map with red markings on item texture.
+{{Calculator|decimalColor}}
+
+=== map_decorations ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/map decorations}}
+</div>
+
+=== map_id ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/map id}}
+</div>
+
+=== max_damage ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/max damage}}
+</div>
+''Example:'' {{command|give @s diamond_pickaxe[max_damage{{=}}4]}}
+* Gives a diamond pickaxe that can only be used 4 times before breaking.
+
+=== max_stack_size ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/max stack size}}
+</div>
+''Example:'' {{command|give @s acacia_boat[max_stack_size{{=}}64] 5}}
+* Gives a stack of 5 acacia boats all in a single slot.
+
+=== minimum_attack_charge ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/minimum attack charge}}
+</div>
+''Example:'' {{command|give @s diamond_sword[minimum_attack_charge{{=}}0.5] 1}}
+* Gives a diamond sword that can only attack once the attack indicator is at least half full.
+
+=== note_block_sound ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/note block sound}}
+</div>
+''Example:'' {{command|give @p minecraft:player_head[minecraft:profile{{=}}minecraftWiki,minecraft:note_block_sound{{=}}entity.item.pickup]}}
+* Gives a Player Head of the minecraftWiki. If placed on a Note Block, the Note Block plays the "Item Pickup" sound every time it's activated.
+
+=== ominous_bottle_amplifier ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/ominous bottle amplifier}}
+</div>
+
+=== piercing_weapon ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/piercing weapon}}
+</div>
+''Example:'' {{command|/give @s minecraft:blaze_rod[minecraft:piercing_weapon{{=}}{sound:"entity.blaze.hurt",hit_sound:"entity.lightning_bolt.impact"}]}}
+* Gives a blaze rod which whose melee attack pierces targets, dealing 1 damage to each, with fiery and explosive sounds accompanying the attacks.
+
+=== pot_decorations ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/pot decorations}}
+</div>
+''Example:'' {{command|1=give @s decorated_pot[pot_decorations=["skull_pottery_sherd","heart_pottery_sherd","blade_pottery_sherd","brick"]] }}
+* Gives a [[decorated pot]] with sherds: skull, heart and blade on its faces
+
+=== potion_contents ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/potion contents}}
+</div>
+
+{{Calculator|decimalColor}}
+
+=== potion_duration_scale ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/potion_duration_scale}}
+</div>
+''Example:'' {{command|/give @p potion[potion_contents{{=}}{potion:swiftness},potion_duration_scale{{=}}2]}}
+* Gives a Potion of Swiftness that has its default time doubled from 3 Minutes to 6 Minutes.
+
+=== profile ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/profile}}
+</div>
+''Example:'' {{command|give @p player_head[profile{{=}}MinecraftWiki]}}
+* Gives a player head of MinecraftWiki.
+{{Calculator|playerUuid}}
+
+=== provides_banner_patterns ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/provides_banner_patterns}}
+</div>
+''Example:'' {{command|give @p diamond[provides_banner_patterns{{=}}'#minecraft:pattern_item/globe']}}
+* Gives a diamond that can provide the globe banner pattern to a banner.
+
+=== provides_trim_material ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/provides_trim_material}}
+</div>
+
+=== rarity ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/rarity}}
+</div>
+''Example:'' {{command|give @p iron_sword[rarity{{=}}epic]}}
+* Gives an iron sword with a light purple name.
+
+=== recipes ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/recipes}}
+</div>
+''Example:'' {{command|give @p knowledge_book[recipes{{=}}["minecraft:end_crystal","minecraft:diamond","minecraft:stone_sword","minecraft:blast_furnace"]]}}
+* Gives a knowledge book that, when used, gives the player the recipes listed inside the component.
+
+=== repair_cost ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/repair cost}}
+</div>
+
+=== repairable ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/repairable}}
+</div>
+''Example:'' {{command|/give @p diamond_sword[repairable{{=}}{items:"stick"}]}}
+* Gives a diamond sword that can be repaired with sticks in an anvil.
+
+=== stored_enchantments ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/stored enchantments}}
+</div>
+
+=== suspicious_stew_effects ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/suspicious stew effects}}
+</div>
+
+=== swing_animation ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/swing_animation}}
+</div>
+
+=== tool ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/tool}}
+</div>
+''Example:'' {{command|give @p oak_fence[max_stack_size{{=}}1,max_damage{{=}}350,damage{{=}}0,tool{{=}}{default_mining_speed:1.5,damage_per_block:2,rules:[{blocks:"#mineable/pickaxe",speed:6,correct_for_drops:true}]}]}}
+* Gives an oak fence that has the properties of a pickaxe.
+
+=== tooltip_display ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/tooltip_display}}
+</div>
+''Example 1:'' {{command|give @p diamond_sword[tooltip_display{{=}}{hidden_components:["minecraft:enchantments"]},enchantments{{=}}{sharpness:1}]}}
+* Gives a diamond sword that is enchanted with Sharpness I, but doesn't show the enchantments in the tooltip.
+''Example 2:'' {{command|give @p diamond_sword[tooltip_display{{=}}{hide_tooltip:1b}]}}
+* Gives a diamond sword that when hovered, it shows no tooltip at all.
+
+=== tooltip_style ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/tooltip_style}}
+</div>
+
+=== trim ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/trim}}
+</div>
+''Example:'' {{command|give @p minecraft:leather_leggings[trim{{=}}{"pattern":"host","material":"emerald"}] 1}}
+* Gives [[leather pants]] with the "host" pattern made of emerald.
+
+=== unbreakable ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/unbreakable}}
+</div>
+
+=== use_cooldown ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/use_cooldown}}
+</div>
+''Example:'' {{command|/give @p ender_pearl[use_cooldown{{=}}{seconds:10,cooldown_group:"foo:bar"}]}}
+* Gives an ender pearl that has a 10 second cooldown after being used, and also applies that cooldown to ''any'' item that shares its <code>cooldown_group</code>.
+** If other items in the inventory share the same <code>cooldown_group</code>, but have different <code>seconds</code>, then using that item applies the <code>seconds</code> of ''itself'' to all other items in the inventory, rather than each item applying their own <code>seconds</code> to themselves.
+* Items can have their cooldowns disabled completely by removing the component with <code>[!use_cooldown]</code>.
+
+=== use_effects ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/use_effects}}
+</div>
+
+=== use_remainder ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/use_remainder}}
+</div>
+''Example 1:'' {{command|/give @p splash_potion[use_remainder{{=}}{id:"minecraft:gunpowder"}]}}
+* Gives a splash potion, which after being thrown, leaves gunpowder.
+''Example 2:'' {{command|/give @p cooked_chicken[use_remainder{{=}}{id:"minecraft:bone",components:{custom_name:{text:"Chicken Bone"<nowiki>}}</nowiki>,count:2}]}}
+* Gives a cooked chicken, which after being used, turns into 2 bones named "Chicken Bone".
+
+=== weapon ===
+If present, the item acts as a weapon. For attack damage see the {{cd|[[Data component format#attribute_modifiers|minecraft:attribute_modifiers]]}} component.
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/weapon}}
+</div>
+''Example 1:'' {{command|1=/give @p minecraft:stick[weapon={},max_damage=10,max_stack_size=1,damage=0]}}
+* Gives a Stick that has 10 durability, and loses 1 durability for each attack performed.
+''Example 2:'' {{command|/give @p iron_sword[minecraft:weapon{{=}}{disable_blocking_for_seconds:5,item_damage_per_attack:10}]}}
+* Gives an Iron Sword that disables Shields when used on them for 5 seconds, but loses 10 durability for each attack performed.
+
+=== writable_book_content ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/writable book content}}
+</div>
+
+=== written_book_content ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+{{/written book content}}
+</div>
+
+== Entity variant components ==
+{{work in progress|Add more information about entity variant components (in general)|section=1}}
+Entity variant components are a group of components that are present in items like spawn eggs, mob buckets, paintings, item frames, etc. These components modify some of the properties of the entity stored within those items.
+
+Here is a list of all entity variant components:
+
+{{columns-list|colwidth=16em|
+* {{EntityLink|axolotl|axolotl/variant|link=#axolotl/variant}}
+* {{EntityLink|cat|cat/collar|link=#cat/collar}}
+* {{EntityLink|cat|cat/variant|link=#cat/variant}}
+* {{EntityLink|chicken|chicken/variant|link=#chicken/variant}}
+* {{EntityLink|cow|cow/variant|link=#cow/variant}}
+* {{EntityLink|fox|fox/variant|link=#fox/variant}}
+* {{EntityLink|frog|frog/variant|link=#frog/variant}}
+* {{EntityLink|horse|horse/variant|link=#horse/variant}}
+* {{EntityLink|llama|llama/variant|link=#llama/variant}}
+* {{EntityLink|mooshroom|mooshroom/variant|link=#mooshroom/variant}}
+* {{EntityLink|painting|painting/variant|link=#painting/variant}}
+* {{EntityLink|parrot|parrot/variant|link=#parrot/variant}}
+* {{EntityLink|pig|pig/variant|link=#pig/variant}}
+* {{EntityLink|rabbit|rabbit/variant|link=#rabbit/variant}}
+* {{EntityLink|salmon|salmon/size|link=#salmon/size}}
+* {{EntityLink|sheep|sheep/color|link=#sheep/color}}
+* {{EntityLink|shulker|shulker/color|link=#shulker/color}}
+* {{EntityLink|tropical-fish|tropical_fish/base_color|link=#tropical_fish/base_color}}
+* {{EntityLink|tropical-fish|tropical_fish/pattern|link=#tropical_fish/pattern}}
+* {{EntityLink|tropical-fish|tropical_fish/pattern_color|link=#tropical_fish/pattern_color}}
+* {{EntityLink|villager|villager/variant|link=#villager/variant}}
+* {{EntityLink|wolf|wolf/collar|link=#wolf/collar}}
+* {{EntityLink|wolf|wolf/sound_variant|link=#wolf/sound_variant}}
+* {{EntityLink|wolf|wolf/variant|link=#wolf/variant}}
+}}
+
+=== axolotl/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/axolotl/variant}}
+</div>
+''Example:'' {{command|/give @s axolotl_spawn_egg[axolotl/variant{{=}}"blue"]}}
+* Gives a axolotl spawn egg that spawns a blue axolotl.
+
+=== cat/collar ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/cat/collar}}
+</div>
+''Example:'' {{command|/give @s cat_spawn_egg[cat/collar{{=}}"blue"]}}
+* Gives a cat spawn egg that spawns a cat with a blue collar (once tamed).
+
+=== cat/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/cat/variant}}
+</div>
+''Example:'' {{cmd|/give @s cat_spawn_egg[cat/variant{{=}}"jellie"]}}
+* Gives a cat spawn egg that spawns a Jellie (gray and white) cat.
+
+=== chicken/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/chicken/variant}}
+</div>
+''Example 1:'' {{cmd|/give @s chicken_spawn_egg[chicken/variant{{=}}"cold"]}}
+* Gives a chicken spawn egg that spawns a cold chicken.
+
+''Example 2:'' {{cmd|/give @s egg[chicken/variant{{=}}"cold"]}}
+* Gives an egg that has a chance to hatch a cold chicken.
+
+=== cow/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/cow/variant}}
+</div>
+''Example:'' {{cmd|/give @s cow_spawn_egg[cow/variant{{=}}"cold"]}}
+* Gives a cow spawn egg that spawns a cold cow.
+
+=== fox/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/fox/variant}}
+</div>
+''Example:'' {{cmd|/give @s fox_spawn_egg[fox/variant{{=}}"snow"]}}
+* Gives a fox spawn egg that spawns a snow fox.
+
+=== frog/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/frog/variant}}
+</div>
+''Example:'' {{cmd|/give @s frog_spawn_egg[frog/variant{{=}}"cold"]}}
+* Gives a frog spawn egg that spawns a cold frog.
+
+=== horse/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/horse/variant}}
+</div>
+''Example:'' {{cmd|/give @s horse_spawn_egg[horse/variant{{=}}"chestnut"]}}
+* Gives a horse spawn egg that spawns a chestnut horse.
+
+=== llama/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/llama/variant}}
+</div>
+''Example:'' {{cmd|/give @s llama_spawn_egg[llama/variant{{=}}"gray"]}}
+* Gives a llama spawn egg that spawns a gray llama.
+
+=== mooshroom/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/mooshroom/variant}}
+</div>
+''Example:'' {{cmd|/give @s mooshroom_spawn_egg[mooshroom/variant{{=}}"brown"]}}
+* Gives a mooshroom spawn egg that spawns a brown mooshroom.
+
+=== painting/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/painting/variant}}
+</div>
+''Example:'' {{cmd|/give @s painting[painting/variant{{=}}"plant"]}}
+* Gives a painting that places the "Paradisträd" painting.
+
+=== parrot/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/parrot/variant}}
+</div>
+''Example:'' {{cmd|/give @s parrot_spawn_egg[parrot/variant{{=}}"blue"]}}
+* Gives a parrot spawn egg that spawns a blue parrot.
+
+=== pig/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/pig/variant}}
+</div>
+''Example:'' {{cmd|/give @s pig_spawn_egg[pig/variant{{=}}"warm"]}}
+* Gives a pig spawn egg that spawns a warm pig.
+
+=== rabbit/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/rabbit/variant}}
+</div>
+''Example:'' {{cmd|/give @s rabbit_spawn_egg[rabbit/variant{{=}}"evil"]}}
+* Gives a rabbit spawn egg that spawns an evil rabbit.
+
+=== salmon/size ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/salmon/size}}
+</div>
+''Example:'' {{cmd|/give @s salmon_spawn_egg[salmon/size{{=}}"large"]}}
+* Gives a salmon spawn egg that spawns a large salmon.
+
+=== sheep/color ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/sheep/color}}
+</div>
+''Example:'' {{cmd|/give @s sheep_spawn_egg[sheep/color{{=}}"blue"]}}
+* Gives a sheep spawn egg that spawns a sheep with blue wool.
+
+=== shulker/color ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/shulker/color}}
+</div>
+''Example:'' {{cmd|/give @s shulker_spawn_egg[shulker/color{{=}}"red"]}}
+* Gives a shulker spawn egg that spawns a red shulker.
+
+=== tropical_fish/base_color ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/tropical_fish/base_color}}
+</div>
+
+=== tropical_fish/pattern ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/tropical_fish/pattern}}
+</div>
+
+=== tropical_fish/pattern_color ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/tropical_fish/pattern_color}}
+</div>
+''Example:'' {{cmd|/give @s tropical_fish_spawn_egg[tropical_fish/pattern{{=}}"snooper", tropical_fish/base_color{{=}}"red", tropical_fish/pattern_color{{=}}"blue"]}}
+* Gives a tropical fish spawn egg that spawns a red-blue snooper tropical fish.
+
+=== villager/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/villager/variant}}
+</div>
+''Example:'' {{cmd|/give @s villager_spawn_egg[villager/variant{{=}}"desert"]}}
+* Gives a villager spawn egg that spawns a desert villager.
+
+=== wolf/collar ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/wolf/collar}}
+</div>
+''Example:'' {{cmd|/give @s wolf_spawn_egg[wolf/collar{{=}}"blue"]}}
+* Gives a wolf spawn egg that spawns a wolf with a blue collar (when tamed).
+
+=== wolf/sound_variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/wolf/sound_variant}}
+</div>
+''Example:'' {{cmd|/give @s wolf_spawn_egg[wolf/sound_variant{{=}}"cute"]}}
+* Gives a wolf spawn egg that spawns a cute wolf.
+
+=== wolf/variant ===
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{/wolf/variant}}
+</div>
+''Example:'' {{cmd|/give @s wolf_spawn_egg[wolf/variant{{=}}"rusty"]}}
+* Gives a wolf spawn egg that spawns a rusty wolf.
+
+== Non-encoded components ==
+These data components exist and are used by the game internally, but are not encoded on items. Therefore, they cannot be used in commands, nor seen with {{command|data}}.
+
+=== creative_slot_lock ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:creative_slot_lock}}: Only used internally to lock the informational [[paper]] items in the [[creative inventory]]. If set, this item cannot be taken out of its slot.
+</div>
+
+=== map_post_processing ===
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|int|minecraft:map_post_processing}}: Only used internally when this [[filled map]] has been duplicated or locked in a [[crafting table]] or a [[cartography table]]. Can be 0 (lock) or 1 (scale), adding the "Locked" line or "Scale" line in this item's tooltip, respectively.
+</div>
+
+=== additional_trade_cost ===
+{{in development|java||26.1|section=1}}
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|int|minecraft:additional_trade_cost}}: Used on the {{cd|gives}} item of a [[villager trade definition|villager trade]] to add to the {{cd|count}} of the {{cd|wants}} item.
+</div>
+
+== Exclusive to joke versions ==
+The following components were added and used in [[April Fools' Day jokes|April Fools' Day joke]] snapshots.
+
+=== [[24w14potato]] ===
+
+{{Collapse|title=List of the components|head=1}}
+==== clicks ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|int|minecraft:clicks}}: The number of times this [[poisonous potato plant]] has been clicked in the inventory.
+</div>
+
+==== contacts_messages ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|long-array|minecraft:contacts_messages}}: Used by the [[poisonous potato plant]].
+</div>
+
+==== explicit_foil ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|boolean|minecraft:explicit_foil}}: Whether or not this item should display a glint.
+</div>
+
+==== fletching ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:fletching}}: Information about this [[fletching table]].
+*** {{nbt|string|quality}}: A single character defining the quality of this block.
+*** {{nbt|string|impurities}}: A single character defining the impurity of this block.
+*** {{nbt|string|next_level_impurities}}: A single character defining the impurity of the next level of this block.
+*** {{nbt|short|processs_time}}{{sic}}: The process time of this block, in ticks.
+*** {{nbt|boolean|explored}}: Whether this block has been explored.
+</div>
+
+==== heat ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:heat}}: Information about this [[hot potato]].
+*** {{nbt|int|heat}}: The amount of heat. Has a maximum value of 200.
+*** {{nbt|int|slot}}: The inventory slot this item is in.
+*** {{nbt|int-array|owner}}: The UUID of the entity currently holding this item.
+</div>
+
+==== hovered ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|boolean|minecraft:hovered}}: Whether or not this [[poisonous potato plant]] is the last item stack hovered in the inventory.
+</div>
+
+==== lubrication ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:lubrication}}
+*** {{nbt|int|level}}: The level of slipperiness this item has when thrown on the ground.
+</div>
+
+==== potato_bane ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:potato_bane}}: Used by the [[potato peeler]].
+*** {{nbt|float|damage_boost}}: The amount of bonus damage applied to potato mobs.
+</div>
+
+==== resin ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:resin}}: Information about this [[toxic resin]].
+*** {{nbt|string|quality}}: A single character defining the quality of this item. Used to prefix the "Clarity" line on the tooltip.
+*** {{nbt|string|impurities}}: A single character defining the impurity of this item. Used to prefix the "Impurities" line on the tooltip.
+</div>
+
+==== secret_message ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|long|minecraft:secret_message}}: Used by the [[poisonous potato plant]].
+</div>
+
+==== snek ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:snek}}: Information about this [[snektato]].
+*** {{nbt|boolean|revealed}}: Whether or not this item has been eaten yet. When {{cd|true}}, its name is "Venomous Potato" and its texture is different.
+</div>
+
+==== undercover_id ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|int|minecraft:undercover_id}}: Used by the [[poisonous potato plant]].
+</div>
+
+==== views ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|int|minecraft:views}}: Used by the [[poisonous potato plant]].
+</div>
+
+==== xp ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|int|minecraft:xp}}: The amount of experience points granted by this [[potato of knowledge]].
+</div>
+{{Collapse|tail=1}}
+
+=== [[25w14craftmine]] ===
+
+{{Collapse|title=List of the components|head=1}}
+==== dimension_id ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|string|minecraft:dimension_id}}: The resource location of the dimension this [[Mine (item)|mine]] item will teleport the player to when placed on a [[mine revisitor]] and used.
+</div>
+
+==== exchange_value ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|float|minecraft:exchange_value}}: The value of the item, which is used to determine how much experience the player gains from it when exiting a mine.
+</div>
+
+==== instant_room ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:instant_room}}: The room this [[shimmering key]] opens.
+*** {{nbt|string|structure}}: The resource location of the structure. The key can only open a room if a structure file with the specified name exists inside the {{cd|hub/room/}} folder under the specified namespace in a [[data pack]].
+</div>
+
+==== mine_active ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:mine_active}}: Is set on the [[Mine (item)|mine]] item in the [[mine crafter]] when the player is inside a mine.
+</div>
+
+==== mine_completed ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|boolean|minecraft:mine_completed}}: Whether the mine this [[Mine (item)|mine]] item refers to was completed. Determines the color of the glint on the item (green if completed, red if failed).
+</div>
+
+==== mob_trophy/type ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:mob_trophy/type}}: Information about this [[mob trophy]].
+*** {{nbt|boolean|shiny}}: Whether the mob inside this mob trophy has an enchantment glint on it. Also adds the text "Oooh, shiny!" to the tooltip.
+*** {{nbt|string|type}}: The resource location for the entity type inside this mob trophy.
+</div>
+
+==== sky ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:sky}}: Information about this [[sky box]].
+*** {{nbt|string|type}}: The type of sky that [[Sky (block)|sky]] blocks render. Must be one of {{cd|overworld}}, {{cd|end}}, {{cd|cube}}, {{cd|panorama}}, {{cd|code}}.
+*** If the value is {{cd|cube}}, there are additional fields that are required:
+*** {{nbt|string|texture}}: A resource location pointing to a texture asset.
+*** {{nbt|int|repeats}}: The number of times the texture will be tiled horizontally and vertically on each plane of the cube.
+*** {{nbt|float|size}}: Is set to 400.0 for [[sky box]]es in the boiler room.{{more info needed|this doesn't look like it changes anything}}
+*** {{nbt|string}}{{nbt|list}}{{nbt|compound|name}}: A text component that will be shown as the name of the sky in the "Sky:" line of the tooltip.
+</div>
+
+==== special_mine ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|string|minecraft:special_mine}}: The resource location of the special mine this [[Mine (item)|mine]] item teleports the player to.
+</div>
+
+==== trophy/type ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|string|minecraft:trophy/type}}: The type of this [[Trophy (April Fools' joke)|trophy]]. Must be one of {{cd|gold}}, {{cd|mega_spud}}, {{cd|no_medal}}.
+</div>
+
+==== world_effect_uhint ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:world_effect_uhint}}: {{more info needed}}
+</div>
+
+==== world_effect_unlock ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:world_effect_unlock}}: {{more info needed}}
+</div>
+
+==== world_modifiers ====
+
+<div class="treeview">
+* {{nbt|compound|components}}: Parent tag.
+** {{nbt|compound|minecraft:world_modifiers}}: The [[mine ingredient]]s included in the mine this [[Mine (item)|mine]] item teleports the player to.
+*** {{nbt|list|effects}}: List of resource locations of world modifiers included in the mine.
+**** {{nbt|string}}: A world modifier.
+*** {{nbt|boolean|include_description}}: Whether to show the mine ingredients in the tooltip of this mine item.
+</div>
+{{Collapse|tail=1}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20.5|dev=24w09a|Replaced {{nbt|compound|tag}} tag and all underlying item-specific tags with data components.
+|Replaced {{nbt|byte|Count}} with {{nbt|int|count}}.}}
+|{{HistoryLine|||dev=24w10a|Renamed {{cd|lodestone_target}} component to {{cd|lodestone_tracker}}, and moved {{nbt|int-array|pos}} and {{nbt|string|dimension}} fields to {{nbt|compound|target}}.
+|{{cd|d=and|profile|dyed_color|attribute_modifiers|potion_contents|enchantments|stored_enchantments}} components can now optionally be defined in simpler formats.
+|{{cd|lore}} and {{cd|fireworks}} components now allow up to 256 entries in their list.
+|{{cd|container}} component now applies to all [[container]]s, instead of only [[shulker box]]es.
+|{{nbt|string|name}} is no longer required in {{cd|profile}} component.}}
+|{{HistoryLine|||dev=24w12a|Added {{cd|d=and|food|max_stack_size|max_damage|fire_resistant|rarity|tool|hide_tooltip}} components.
+|The old <code>{...}</code> item format has been removed, and can no longer be used as a shortcut for {{cd|custom_data}} component.}}
+|{{HistoryLine|||dev=24w13a|Added {{cd|d=and|item_name|ominous_bottle_amplifier}} components.
+|Components with non-default values on block items are now stored on block entities when placed.}}
+|{{HistoryLine|||dev=24w14a|Renamed {{nbt|string|text}} to {{nbt|string|raw}} in {{cd|d=and|writable_book_content|written_book_content}} components.}}
+|{{HistoryLine|||dev=Pre-Release 1|Renamed {{nbt|float|saturation_modifier}} to {{nbt|float|saturation}} in {{cd|food}} component.
+|{{cd|d=and|max_damage|max_stack_size}} components can no longer be put together.}}
+|{{HistoryLine||1.21|dev=24w19a|{{cd|custom_data}} component can now be defined as a SNBT string.
+|Added {{nbt|compound|using_converts_to}} in {{cd|food}} component.}}
+|{{HistoryLine|||dev=24w21a|Added {{cd|jukebox_playable}} component.
+|Changed {{cd|attribute_modifiers}} component: removed {{nbt|string|name}} and {{nbt|int-array|uuid}} fields, added {{nbt|string|id}} field.}}
+|{{HistoryLine||1.21.2|dev=24w33a|Added <code>repairable</code> and <code>enchantable</code> components.
+|The title specified in the <code>written_book_content</code> component is now prioritized over <code>custom_name</code> and <code>item_name</code> for any item with a non-empty title in this component.}}
+|{{HistoryLine|||dev=24w34a|Added <code>consumable</code>, <code>use_cooldown</code> and <code>use_remainder</code> components.
+|The <code>food</code> component has been changed to become a data container that holds only the food stats applied when the item is consumed. The component no longer gives the item the ability to be consumed. Removed the {{nbt|float|eat_seconds}}, {{nbt|compound|using_converts_to}} and {{nbt|list|effects}} fields from <code>food</code>.}}
+|{{HistoryLine|||dev=24w36a|Added <code>equippable</code>, <code>item_model</code>, <code>glider</code> and <code>tooltip_style</code> components.
+|The <code>item_name</code> component is now always present on every item.}}
+|{{HistoryLine|||dev=24w37a|Added <code>death_protection</code> component.
+|Renamed <code>fire_resistant</code> component to <code>damage_resistant</code>, and added {{nbt|string|types}} field.
+|The name provided by the <code>item_name</code> component now always has the lowest priority.
+|Added {{nbt|string|custom_name}} in <code>potion_contents</code> component.
+|Added {{nbt|boolean|swappable}} and {{nbt|boolean|damage_on_hurt}} in <code>equippable</code> component.}}
+|{{HistoryLine|||dev=24w39a|The <code>lock</code> component is now a compound that represents an item predicate.}}
+|{{HistoryLine|||dev=Pre-Release 1|Added {{nbt|string|camera_overlay}} in <code>equippable</code> component.}}
+|{{HistoryLine||1.21.4|dev=24w45a|{{cd|custom_model_data}} now has more fields to accommodate new uses by various model property getters: {{cd|floats}}, {{cd|flags}}, {{cd|strings}} and {{cd|colors}}.
+|{{cd|item_model}} now uses {{cd|assets/[namespace]/items/}}, rather than {{cd|assets/[namespace]/models/item}}.
+|The {{cd|equippable}} component had its field {{cd|model}} renamed to {{cd|asset_id}}.}}
+|{{HistoryLine||1.21.5|dev=25w02a|Added <code>weapon</code> and <code>potion_duration_scale</code> components.
+|Added new optional field {{nbt|bool|can_destroy_blocks_in_creative}} to {{cd|tool}} component.}}
+|{{HistoryLine|||dev=25w03a|{{nbt|int|damage_per_attack}} field in {{cd|weapon}} component was renamed to {{nbt|int|item_damage_per_attack}}
+|{{cd|equippable}} component can now apply to saddle slot, and has a new optional field: {{nbt|boolean|equip_on_interact}}.
+|Added 21 components, all of which are entity variant components.}}
+|{{HistoryLine|||dev=25w04a|Added the {{cd|blocks_attacks}}, {{cd|break_sound}}, {{cd|provides_banner_patterns}}, {{cd|provides_trim_material}} and {{cd|tooltip_display}} components.
+|Removed the {{cd|hide_tooltip}} and {{cd|hide_additional_tooltip}} components in favor of the new {{cd|tooltip_display}} component.
+|Removed the {{nbt|boolean|show_in_tooltip}} field from all components that previously had it in favor of the new {{cd|tooltip_display}} component.
+|{{nbt|boolean|can_disable_blocking}} field in {{cd|weapon}} component was renamed to {{nbt|float|disable_blocking_for_seconds}}.
+|Most components that used to have two fields (one of them being the {{nbt|boolean|show_in_tooltip}} field) now always use their simplified form, with the other one field inlined to top-level. For example: {{cd|<nowiki>enchantments={levels:{sharpness:2}}</nowiki>}} -> {{cd|<nowiki> enchantments={sharpness:2}</nowiki>}}}}
+|{{HistoryLine|||dev=25w05a|Added {{nbt|string|bypassed_by}} field to {{cd|blocks_attacks}} component.
+|Added {{nbt|float|horizontal_blocking_angle}} field to objects within {{nbt|list|damage_reduction}} field to {{cd|blocks_attacks}} component.
+|Added {{cd|cow/variant}} entity variant component.}}
+|{{HistoryLine|||dev=25w06a|Added {{cd|chicken/variant}} entity variant component.}}
+|{{HistoryLine|||dev=25w08a|Added {{cd|wolf/sound_variant}} entity variant component.}}
+|{{HistoryLine||1.21.6|dev=25w15a|Added optional {{nbt|compound|display}} field to {{cd|attributes_modifiers}}.}}
+|{{HistoryLine|||dev=25w16a|The {{cd|painting/variant}} component no longer allows inline paining variant definitions.}}
+|{{HistoryLine|||dev=25w20a|Added optional {{nbt|bool|can_be_sheared}} and {{nbt|string}}{{nbt|compound|shearing_sound}} fields to {{cd|equippable}}.}}
+|{{HistoryLine||1.21.9|dev=25w34a|Player profiles in data components and block entities no longer resolve automatically.
+|The <code>minecraft:profile</code> component has now two behaviors, Static or Dynamic, depending on which fields are specified.}}
+|{{HistoryLine|||dev=Pre-Release 1|{{cd|minecraft:profile}}: Profiles can now also have additional fields that can replace various values used for rendering; if any of the fields are omitted, the value from the resolved profile is used, even if the profile resolved to the default skin.}}
+|{{HistoryLine||1.21.11|dev=25w41a|Added {{cd|minecraft:damage_type}}, {{cd|minecraft:kinetic_weapon}}, {{cd|minecraft:minimum_attack_charge}}, {{cd|minecraft:piercing_weapon}}, {{cd|minecraft:swing_animation}} and {{cd|minecraft:use_effects}} item components.
+|{{cd|minecraft:consumable}}: The animation field has been updated.
+|{{cd|minecraft:intangible}}: Items with this component now show information about it in their tooltip.}}
+|{{HistoryLine|||dev=25w42a|{{cd|minecraft:kinetic_weapon}}: Added new field, {{cd|contact_cooldown_ticks}}.}}
+|{{HistoryLine|||dev=25w45a|{{cd|minecraft:piercing_weapon}} and {{cd|minecraft:kinetic_weapon}} data components now have bounds on their reach parameters.}}
+|{{HistoryLine|||dev=25w46a|Added food properties to the following fish bucket items: {{cd|minecraft:cod_bucket}}, {{cd|minecraft:salmon_bucket}}, {{cd|minecraft:pufferfish_bucket}}, and {{cd|minecraft:tropical_fish_bucket}}.|{{cd|minecraft:use_effects}}: added field {{cd|interact_vibrations}}.}}
+|{{HistoryLine|||dev=pre1|{{cd|min_reach}}, {{cd|max_reach}} and {{cd|hitbox_margin}} have been moved from {{cd|minecraft:piercing_weapon}} and {{cd|minecraft:kinetic_weapon}} into a new component {{cd|minecraft:attack_range}} to allow all melee weapon types to use them.}}
+|{{HistoryLine|||dev=pre4|{{cd|minecraft:attack_range}}: Added fields {{cd|min_creative_reach}} and {{cd|max_creative_reach}}.}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap1|Added {{cd|minecraft:additional_trade_cost}}.}}
+}}
+
+== Notes ==
+{{notelist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:Gegenstandsdaten]]
+[[fr:Format de composant de données]]
+[[ja:データコンポーネント]]
+[[pt:Formato de componente de dado]]
+[[uk:Формат компонента даних]]
+[[zh:数据组件]]

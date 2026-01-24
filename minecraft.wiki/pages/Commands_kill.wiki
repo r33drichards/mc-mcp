@@ -1,0 +1,101 @@
+{{Redirect|Kill|the action of killing|Death}}
+{{Infobox command
+| name = kill
+| oplevel = 
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+| others = [[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Kills and removes [[Entity|entities]] (players, mobs, items, etc.).
+
+== Usage ==
+Directly kills living targets compulsorily (which deals 2{{^|128}} or as a number 340282366920938463463374607431768211456 or (~3.40282×10{{^|38}}) damage), which is irrespective of any of the targeted mob(s)' protective effects ([[armor]], [[Protection]] and [[Resistance]]). However, the damage can be adjusted by the [[ender dragon]]. [[Totems of undying]] can't be triggered when their owner(s) die(s) because of this command.
+
+When the command kills mob(s), it issues the appropriate [[death message]]. Players and mobs killed this way [[Drops|drop loot]], and [[slime]]s and [[magma cube]]s that are not of minimum size spawn smaller ones. Non-mob entities disappear if they are targeted.
+
+{{IN|java}}, [[ender dragon]]s killed by this command will skip their death animation and immediately open the [[exit portal]].
+
+{{IN|bedrock}}, players in [[Creative]] mode cannot be killed using this command.
+
+==Syntax==
+
+* '''Java Edition'''
+: <code>kill [<targets>]</code>
+
+* '''Bedrock Edition'''
+: <code>kill [target: target]</code>
+
+==Arguments==
+
+{{argument|targets|entity|target: target|CommandSelector<Actor>}}
+: Specifies the target(s) to kill. If not specified, defaults to the player who executed the command.
+: {{arg desc|je=entity|amount=multiple|type=entities|be=actor}}
+
+==Result==
+
+{{Result table}}
+{{Result table|Any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code><targets></code> or <code>target: target</code> is not specified when the command's executor is not an entity.|fail|fail}}
+{{Result table|<code><targets></code> or <code>target: target</code> fails to resolve to one or more entities (named players must be online).}}
+{{Result table|All the targets are creative-mode players.|success}}
+{{Result table|succeed}}
+{{Result table}}
+
+==Output==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of targeted entities}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|the number of entities that are killed}}
+{{Output table}}
+
+==Examples==
+
+* To kill the player executing the command: <code>kill @s</code> or <code>kill</code>
+* To kill the player Steve: <code>kill Steve</code>
+* To kill item entities: <code>kill @e[type=item]</code>
+* To kill all entities except players: <code>kill @e[type=!player]</code>
+* To kill all creepers within 10 blocks:
+**{{el|je|short=1}}: <code>kill @e[distance=..10,type=creeper]</code><br>
+**{{el|be|short=1}}: <code>kill @e[r=10,type=creeper]</code>
+* To kill all arrows that are stuck in a [[target]]: <code>kill @e[type=arrow,nbt={inBlockState:{Name:"minecraft:target"}}]</code>{{only|je}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||v1.2.6|Added {{cmd|kill|link=none}}. It currently deals {{hp|1000}} [[damage]].}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.3.1|dev=12w16a|{{cmd|kill|link=none}} is now usable in singleplayer.|Parsing of the command is now more strict, rejecting extra characters after the command name (such as {{cmd|killme|link=none}} or {{cmd|killed|link=none}}).  However, arguments are still ignored, meaning {{cmd|kill playername|link=none}} still only kills the executor.|{{cmd|kill|link=none}} now uses void damage instead of generic damage, bypassing armor.  The death message is now "<var>player</var> fell out of the world" instead of "<var>player</var> died".|{{cmd|kill|link=none}} now prints the message "Ouch! That looked like it hurt" on execution.}}
+|{{HistoryLine||1.6.1|dev=13w24b|{{cmd|kill|link=none}} now deals 2{{^|128}} (~3.4×10{{^|38}}) damage.}}
+|{{HistoryLine||1.8|dev=14w02a|Added <code>(player{{!}}entity)</code> argument to {{cmd|kill|link=none}}.|Replaced the "Ouch! That looked like it hurt" message with "Killed <var>player</var>".}}
+|{{HistoryLine|||dev=14w02c|To fix {{bug|MC-44371}}, {{cmd|kill|link=none}} now directly kills non-living targets.}}
+|{{HistoryLine||1.13|dev=17w45a|<code><target></code> argument is no longer optional.}}
+|{{HistoryLine||1.15|dev=19w38a|<code><target></code> argument is once again optional.}}
+|{{HistoryLine||1.20|dev=Pre-release 1|<code>/kill</code> now uses <code>generic_kill</code> type damage instead of void damage.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|kill|link=none}}.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/kill?view=minecraft-bedrock-stable|title=<code>/kill</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/kill]]
+[[es:Comandos/kill]]
+[[it:Comandi/kill]]
+[[ja:コマンド/kill]]
+[[ko:명령어/kill]]
+[[pt:Comandos/kill]]
+[[ru:Команды консоли/kill]]
+[[uk:Команди консолі/kill]]
+[[zh:命令/kill]]

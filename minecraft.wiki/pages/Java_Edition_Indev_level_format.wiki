@@ -1,0 +1,111 @@
+{{outdated|This format was [[Java Edition Alpha level format|replaced]] starting with [[Infdev]].|edition=java}}
+The '''.mclevel map format''' is an old map format created by Notch. It is based on the [[NBT format]] and is GZip compressed.
+
+The map format was in use since [[Java Edition Indev 0.31 20100122-2251|Indev 0.31 20100122-2251]] up until [[Java Edition Infdev 20100325-1640|Infdev 20100325-1640]].
+
+While Alpha (and Infdev) levels use NBT files, they have a very different file format.
+
+For details on the infinite map format, see [[Java Edition Alpha level format]].
+
+== NBT structure ==
+<div class="treeview">
+* {{nbt|compound|MinecraftLevel}}: The root tag.
+** {{nbt|compound|About}}: Information about the level.
+*** {{nbt|long|CreatedOn}}: The Unix time when the level was created.
+*** {{nbt|string|Name}}: The name of the level, always "A Nice World."
+*** {{nbt|string|Author}}: The name of the user who created the level.
+** {{nbt|compound|Environment}}: Information about the level's environment, which varies based on the map generation settings.
+*** {{nbt|short|TimeOfDay}}: The time in ticks affecting daylight cycle. Range 0 - 24000.
+*** {{nbt|byte|SkyBrightness}}: The sky light level, 0 to 15.
+*** {{nbt|int|SkyColor}}: The RGB color of the sky, 24 bits. Red is SkyColor >> 16 & 255, green is SkyColor >> 8 & 255, blue is SkyColor & 255. 
+*** {{nbt|int|FogColor}}: The RGB color of the fog, 24 bits. Red is FogColor >> 16 & 255, green is FogColor >> 8 & 255, blue is FogColor & 255.
+*** {{nbt|int|CloudColor}}: The RGB color of the clouds, 24 bits. Red is CloudColor >> 16 & 255, green is CloudColor >> 8 & 255, blue is CloudColor & 255.
+*** {{nbt|short|CloudHeight}}: The height of the clouds (Y coordinate).
+*** {{nbt|byte|SurroundingGroundType}}: The block ID of the "surrounding ground".
+*** {{nbt|short|SurroundingGroundHeight}}: The height of the "surrounding ground".
+*** {{nbt|byte|SurroundingWaterType}}: The block ID of the "surrounding water".
+*** {{nbt|short|SurroundingWaterHeight}}: The height of the "surrounding water".
+** {{nbt|compound|Map}}: The actual map data.
+*** {{nbt|short|Width}}: The width of the level.
+*** {{nbt|short|Length}}: The length of the level.
+*** {{nbt|short|Height}}: The height of the level.
+*** {{nbt|list|Spawn}}: List of 3 TAG_Shorts for the X, Y, and Z spawn coordinates.
+*** {{nbt|byte-array|Blocks}}: Width*Length*Height bytes of block IDs. (8 bits)
+*** {{nbt|byte-array|Data}}: Width*Length*Height bytes of block data (4 bit) and light value (next 4 bit).
+** {{nbt|list|Entities}}: List of TAG_Compounds for the entities in the level.
+*** {{nbt|compound}} An entity. The player has its own entity, shown below as an example.
+**** {{nbt|string|id}}: The entity ID. In this case, "LocalPlayer".
+**** {{nbt|list|Pos}}: List of 3 TAG_Floats for the X, Y, and Z position of the player.
+**** {{nbt|list|Rotation}}: List of 2 TAG_Floats for the yaw and pitch of the player's view.
+**** {{nbt|list|Motion}}: List of 3 TAG_Floats for the X, Y, and Z motion in meters per tick.
+**** {{nbt|float|FallDistance}}: How far the player has fallen.
+**** {{nbt|short|Health}}: The number of hit points the player has. 20 is 10 hearts.
+**** {{nbt|short|AttackTime}}: Number of ticks the player is immune to attacks.
+**** {{nbt|short|HurtTime}}: Number of ticks the player is red from being attacked.
+**** {{nbt|short|DeathTime}}: Number of ticks the player has been dead for - used for controlling the death animation.
+**** {{nbt|short|Air}}: The number of ticks before the player starts to drown. It starts at 300.
+**** {{nbt|short|Fire}}: When negative, the number of ticks before the player can catch on fire. When positive, the number of ticks before the fire is extinguished.
+**** {{nbt|int|Score}}: The player's score.
+**** {{nbt|list|Inventory}}: List of TAG_Compounds representing items in the player's inventory.
+***** {{nbt|compound}} An item stack.
+****** {{nbt|byte|Slot}}: The [[Java Edition data values#Inventory Slot Number|Slot]] the item is in.
+****** {{nbt|short|id}}: The Item [[Java Edition data values#IDs|ID]].
+****** {{nbt|short|Damage}}: The item's [[Java Edition data values#Data|data]] value, or damage value for tools.
+****** {{nbt|byte|Count}}: The number of this item in the stack. Range -128 to 127. Values less than 2 are not displayed in-game.
+** {{nbt|list|TileEntities}}: List of TAG_Compounds for the tile entities in the level.
+*** {{nbt|compound}} A tile entity.
+**** {{nbt|string|id}}: Tile entity id. In this case, "Chest".
+**** {{nbt|int|Pos}}: Position of the tile entity, explained later.
+**** {{nbt|list|Items}}: List of TAG_Compounds representing items in the chest.
+***** {{nbt|compound}} An item stack.
+****** {{nbt|byte|Slot}}: The [[Java Edition data values#Inventory Slot Number|Slot]] the item is in.
+****** {{nbt|short|id}}: The Item [[Java Edition data values#IDs|ID]].
+****** {{nbt|short|Damage}}: The item's [[Java Edition data values#Data|data]] value, or damage value for tools.
+****** {{nbt|byte|Count}}: The number of this item in the stack. Range -128 to 127. Values less than 2 are not displayed in-game.
+</div>Calculating "Pos" tag of the tile entity:
+
+pos = x + (y << 10) + (z << 20)
+
+Calculating X, Y, and Z from "Pos" tag:
+
+x = pos % 1024
+
+y = (pos >> 10) % 1024
+
+z = (pos >> 20) % 1024
+
+== Blocks ==
+The block byte array is used to define the types of blocks that occupy a map.
+The number of bytes in the array may be calculated by multiplying the dimensions of the map.
+Y being the up direction rather than Z.
+For hex values see [[Java Edition data values#Blocks|Block IDs]].
+
+To access a specific block from either the block or data array from XYZ coordinates, use the following formula:
+
+<math>array index = (y * length + z) * width + x</math>
+
+== Data ==
+The data byte array is used for lighting and extra block data.
+
+For extended information on block metadata, refer to [[Java Edition data value/Indev]].
+
+== Lighting ==
+[[File:Lighting values.png]]
+
+There are 16 levels of lighting for a block ranging from <code>0x0</code> (0, no light) to <code>0xF</code> (15, full light).
+
+== External links ==
+* [https://web.archive.org/web/20100124075449/http://www.minecraft.net/docs/levelformat.jsp Indev level format specification on minecraft.net] <small>(archived)</small>
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:Spielstand-Speicherung/Indev Level Format]]
+[[fr:Format de niveau de l'édition Java Indev]]
+[[ja:Levelフォーマット/Java Edition Indev]]
+[[nl:Indev level formaat]]
+[[pt:Formato de nível da Edição Java Indev]]
+[[ru:Формат файлов Minecraft (NBT)]]
+[[zh:Indev世界格式]]

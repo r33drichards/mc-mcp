@@ -1,0 +1,1652 @@
+{{Infobox version
+| title = v1.20.30
+| image = Bedrock 1.20.30 PatchNotes.png
+| image2 = Bedrock 1.20.30.png
+| server = 1.20.30.02
+| build = 17844363
+| internal = '''Windows''': 1.20.3002.0<br>'''ChromeOS, Android, iOS, iPadOS, Fire''': 1.20.30.02<br>'''Xbox One''': 1.20.3002.70<br>'''PlayStation 4''': 2.72<br>'''Nintendo Switch''': v87
+| versioncode = '''Android''':<br />
+952003002 (armeabi-v7a, 33)<br />
+962003002 (x86, 33)<br />
+972003002 (arm64-v8a, 33)<br />
+982003002 (x86_64, 33)
+| vernum = 1.20.30
+| edition = Bedrock
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.20.30.02.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.20.30.02.zip Linux]
+| date = September 19, 2023
+| prevparent = 1.20.0
+| prev = 1.20.15
+| next = 1.20.31
+| nextparent = 1.20.50
+}}
+
+'''1.20.30''' is a minor update to {{BE}} released on September 19, 2023,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/19545277817357-Minecraft-1-20-30-Bedrock-|title=Minecraft - 1.20.30 (Bedrock)|website=Minecraft Feedback|date=September 19, 2023}}</ref><ref>{{cite|url=https://learn.microsoft.com/en-us/minecraft/creator/documents/update1.20.30?view=minecraft-bedrock-stable|title=Minecraft Bedrock 1.20.30 Update Notes for Creators|website=Microsoft Learn|date=November 7, 2023}}</ref> which makes experimental changes to the [[villager]] and [[wandering trader]] [[trade]]s, brings more parity with {{JE}}, and fixes bugs. What was going to be 1.20.20 was merged into this version during development.
+
+== Additions ==
+=== Gameplay ===
+'''[[Game rule]]s'''
+* Added <code>doLimitedCrafting</code>, controlling whether players can craft only those recipes that they have unlocked, defaults to <code>false</code>.
+** Needs the <code>recipesUnlock</code> game rule set to <code>true</code> to work properly.
+* Added <code>playersSleepingPercentage</code>, set to <code>100</code> by default.
+** Controls what percentage of players must sleep to skip the night.
+** When set to <code>0</code> or a negative value, a single player is sufficient to skip the night, and night is skipped immediately without the falling asleep transition.
+** When set over <code>100</code>, the night cannot be skipped.
+* Added <code>recipesUnlock</code>, controlling whether the player needs to collect items to unlock recipes in the [[recipe book]], defaults to <code>true</code>.
+
+=== General ===
+'''[[Experimental Gameplay|Experiments]]'''
+* Added the "[[Villager Trade Rebalancing]]" experimental toggle.
+** Contains updated trades for [[villager]]s for the purpose of rebalancing.
+
+'''[[Settings]]'''
+* Added "Recipe unlocking" game and advanced option. (<code>recipesUnlock</code> game rule)
+* Added alerts for iOS and iPadOS users who have run out of disk space.
+* Now is displayed a message when the players presses the camera perspective change button but a particular perspective is already set via the {{cmd|camera}} [[command]].
+* Added "Vertical Sync" video option.
+* Added '''Improved Input Response''' experimental video option.
+** Only available for players on Windows.
+** Reduces input latency.
+*** Enabling this setting will increase battery consumption.
+
+'''<samp>[[options.txt]]</samp>'''
+* Added the following <code>options</code>:
+** <code>deferred_viewdistance</code>, defaults to <code>8</code>.
+** <code>deferred_upscaling</code>, defaults to <code>1</code>.
+** <code>gfx_resizableui</code>, defaults to <code>0</code>.
+** <code>new_video_settings</code>, defaults to <code>0</code>.
+** <code>graphics_mode</code>, defaults to <code>2</code>.
+** <code>shadow_quality</code>, defaults to <code>3</code>.
+** <code>point_light_loding_quality</code>, defaults to <code>3</code>.
+** <code>bloom_enabled</code>, defaults to <code>1</code>.
+** <code>ctrl_improvedInputResponse</code>, defaults to <code>0</code>.
+
+=== Technical ===
+'''[[Add-on]]s'''
+* Added support for the <code>allow_random_seed</code> option in world template manifests.
+* Move ''PlacementDirection'' (<code>minecraft:placement_direction</code>) and ''PlacementPosition'' (<code>minecraft:placement_position</code>) block traits out of experimental. These traits can be used for blocks with <code>format_version >= 1.20.20</code>.
+
+'''[[JSON]]'''
+* Released the following components out of experimental in JSON formats 1.20.30 and higher:
+** <code>minecraft:wearable</code> item component.
+** <code>minecraft:digger</code> item component.
+** <code>minecraft:hand_equipped</code> item component.
+** <code>minecraft:use_duration</code> item component.
+** <code>minecraft:stacked_by_data</code> item component.
+** <code>minecraft:use_animation</code> item component.
+** <code>minecraft:allow_off_hand</code> item component.
+** <code>minecraft:should_despawn</code> item component.
+** <code>minecraft:liquid_clipped</code> item component.
+** <code>minecraft:damage</code> item component.
+** <code>minecraft:enchantable</code> item component.
+** <code>minecraft:food</code> item component.
+* Added <code>minecraft:interact_button</code> item component to enable and set text on the interact button in JSON formats 1.20.30 and above.
+
+== Changes ==
+=== Blocks ===
+'''[[Breaking|Block Breaking]]'''
+* Changed the hardness and blast resistance of 188 blocks to match {{JE}}.
+{|class="mw-collapsible mw-collapsed wikitable"
+! Block
+! Old Hardness
+! New Hardness
+! Old Blast Resistance
+! New Blast Resistance
+|-
+| {{BlockLink|Activator Rail}}
+| 0.5
+| 0.7
+| 0.5
+| 0.7
+|-
+| {{BlockLink|Ancient Debris}}
+|
+|
+| 720
+| 1200
+|-
+| {{BlockLink|Andesite Stairs}}
+| 2
+| 1.5
+| 
+| 
+|-
+| {{BlockLink|Bamboo}}
+| 2
+| 1
+| 2
+| 1
+|-
+| {{BlockLink|Block of Bamboo}} ({{BlockLink|Block of Stripped Bamboo|Stripped}})
+| 
+| 
+| 3
+| 2
+|-
+| {{BlockLink|Bamboo Shoot}}
+| 0
+| 1
+| 0
+| 1
+|-
+| {{BlockLink|Bee Nest}}
+| 
+| 
+| 2.7
+| 0.3
+|-
+| {{BlockLink|Beehive}}
+| 
+| 
+| 5.4
+| 0.6
+|-
+| {{BlockLink|Bell}}
+| 1
+| 5
+| 3
+| 5
+|-
+| {{BlockLink|Big Dripleaf}}
+| 0
+| 0.1
+| 0
+| 0.1
+|-
+| {{BlockLink|Campfire}} (All Variants)
+| 5
+| 2
+| 5
+| 2
+|-
+| {{BlockLink|id=iron-chain|Chain}}
+| 
+| 
+| 3
+| 6
+|-
+| {{BlockLink|Chiseled Deepslate}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Cobbled Deepslate}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Cobbled Deepslate Slab}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Cobbled Deepslate Stairs}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Cobbled Deepslate Wall}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Composter}}
+| 2
+| 0.6
+| 2
+| 0.6
+|-
+| {{BlockLink|id=all-copper-blocks|Block of Copper}} (All Variants)
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Copper Ore}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Coral Blocks}}
+| 7
+| 1.5
+| 0.9
+| 6
+|-
+| {{BlockLink|Coral Fans}}
+| 
+| 
+| 0.9
+| 0
+|-
+| {{BlockLink|Dead Coral Fans}}
+| 
+| 
+| 0.9
+| 0
+|-
+| {{BlockLink|Cracked Deepslate Bricks}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Cracked Deepslate Tiles}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Crimson Hyphae}}
+| 0.3
+| 2
+| 0.3
+| 2
+|-
+| {{BlockLink|Crimson Stem}}
+| 
+| 
+| 0.3
+| 2
+|-
+| {{BlockLink|id=all-cut-copper-blocks|Cut Copper}} (All Variants)
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|id=all-cut-copper-slabs|Cut Copper Slab}} (All Variants)
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|id=all-cut-copper-stairs|Cut Copper Stairs}} (All Variants)
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate Bricks}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate Brick Slab}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate Brick Stairs}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate Brick Wall}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate Coal Ore}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Deepslate Copper Ore}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Deepslate Diamond Ore}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Deepslate Gold Ore}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Deepslate Iron Ore}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Deepslate Lapis Lazuli Ore}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Deepslate Redstone Ore}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Deepslate Tiles}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate Tile Slab}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate Tile Stairs}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Deepslate Tile Wall}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Diorite Stairs}}
+| 2
+| 1.5
+| 
+| 
+|-
+| {{BlockLink|Dragon Egg}}
+| 
+| 
+| 3
+| 9
+|-
+| {{BlockLink|Dried Kelp Block}}
+| 
+| 
+| 0.5
+| 2.5
+|-
+| {{BlockLink|End Stone Bricks}}
+| 0.8
+| 3
+| 0.8
+| 9
+|-
+| {{BlockLink|End Stone Brick Stairs}}
+| 2
+| 3
+| 6
+| 9
+|-
+| {{BlockLink|Granite Stairs}}
+| 2
+| 1.5
+| 
+| 
+|-
+| {{BlockLink|Infested Blocks}} (All Variants)
+| 
+| 
+| 1.8
+| 0.75
+|-
+| {{BlockLink|Jukebox}}
+| 0.8
+| 2
+| 0.8
+| 6
+|-
+| {{BlockLink|Lantern}} (All Variants)
+| 5
+| 3.5
+| 5
+| 3.5
+|-
+| {{BlockLink|Lectern}}
+| 2
+| 2.5
+| 2
+| 2.5
+|-
+| {{BlockLink|Light Block}}
+| 
+| 
+| 3600000
+| 3600000.8
+|-
+| {{BlockLink|Light Gray Candle}}
+| 0
+| 0.1
+| 0
+| 0.1
+|-
+| {{BlockLink|Lightning Rod}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Lodestone}}
+| 2
+| 3.5
+| 2
+| 3.5
+|-
+| {{BlockLink|Magma Block}}
+| 
+| 
+| 1.5
+| 0.5
+|-
+| {{BlockLink|Mossy Cobblestone Stairs}}
+| 2
+| 1.5
+| 
+| 
+|-
+| {{BlockLink|Mud Bricks}}
+| 2
+| 1.5
+| 2
+| 3
+|-
+| {{BlockLink|Mud Brick Slab}}
+| 2
+| 1.5
+| 6
+| 3
+|-
+| {{BlockLink|Mud Brick Stairs}}
+| 2
+| 1.5
+| 6
+| 3
+|-
+| {{BlockLink|Mud Brick Wall}}
+| 2
+| 1.5
+| 6
+| 3
+|-
+| {{BlockLink|Block of Netherite}}
+| 
+| 
+| 720
+| 1200
+|-
+| {{BlockLink|Piston}}
+| 0.5
+| 1.5
+| 0.5
+| 1.5
+|-
+| {{BlockLink|Sticky Piston}}
+| 0.5
+| 1.5
+| 0.5
+| 1.5
+|-
+| {{BlockLink|Pointed Dripstone}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Polished Andesite Stairs}}
+| 2
+| 1.5
+| 
+| 
+|-
+| {{BlockLink|Polished Blackstone}}
+| 1.5
+| 2
+| 
+| 
+|-
+| {{BlockLink|Polished Blackstone Stairs}}
+| 1.5
+| 2
+| 
+| 
+|-
+| {{BlockLink|Polished Blackstone Wall}}
+| 1.5
+| 2
+| 
+| 
+|-
+| {{BlockLink|Polished Deepslate}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Polished Deepslate Slab}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Polished Deepslate Stairs}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Polished Deepslate Wall}}
+| 
+| 
+| 3.6
+| 6
+|-
+| {{BlockLink|Polished Diorite Stairs}}
+| 2
+| 1.5
+| 
+| 
+|-
+| {{BlockLink|Polished Granite Stairs}}
+| 2
+| 1.5
+| 
+| 
+|-
+| {{BlockLink|Reinforced Deepslate}}
+| 
+| 
+| 720
+| 1200
+|-
+| {{BlockLink|Respawn Anchor}}
+| 
+| 
+| 720
+| 1200
+|-
+| {{BlockLink|Scaffolding}}
+| 0.6
+| 0
+| 0.9
+| 0
+|-
+| {{BlockLink|Sculk}}
+| 0.6
+| 0.2
+| 0.6
+| 0.2
+|-
+| {{BlockLink|Sculk Catalyst}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Sculk Shrieker}}
+| 
+| 
+| 1.8
+| 3
+|-
+| {{BlockLink|Shulker Box}} (All Variants)
+| 2.5
+| 2
+| 2.5
+| 2
+|-
+| {{BlockLink|Smooth Quartz Stairs}}
+| 0.8
+| 2
+| 0.8
+| 2
+|-
+| {{BlockLink|Smooth Stone}}
+| 1.5
+| 2
+| 
+| 
+|-
+| {{BlockLink|Sniffer Egg}}
+| 0.4
+| 0.5
+| 0.4
+| 0.5
+|-
+| {{BlockLink|Soul Soil}}
+| 1
+| 0.5
+| 1
+| 0.5
+|-
+| {{BlockLink|Stripped Crimson Hyphae}}
+| 0.3
+| 2
+| 0.3
+| 2
+|-
+| {{BlockLink|Stripped Crimson Stem}}
+| 
+| 
+| 0.3
+| 2
+|-
+| {{BlockLink|Stripped Warped Hyphae}}
+| 0.3
+| 2
+| 0.3
+| 2
+|-
+| {{BlockLink|Stripped Warped Stem}}
+| 
+| 
+| 0.3
+| 2
+|-
+| {{BlockLink|Sweet Berry Bush}}
+| 0.2
+| 0
+| 0.2
+| 0
+|-
+| {{BlockLink|Turtle Egg}}
+| 0.4
+| 0.5
+| 0.4
+| 0.5
+|-
+| {{BlockLink|Warped Hyphae}}
+| 0.3
+| 2
+| 0.3
+| 2
+|-
+| {{BlockLink|Warped Stem}}
+| 
+| 
+| 0.3
+| 2
+|}
+
+'''[[Leaves|Cherry Leaves]]'''
+* Will now generate particle effects at a relatively large distance based on system performance.
+
+'''[[Concrete Powder]]'''
+* The different [[block states]] for the <code>concrete_powder</code> ID have now been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="16" | {{BlockSprite|concrete-powder}} <code>concrete_powder</code>
+| {{BlockSprite|white-concrete-powder}} <code>white_concrete_powder</code>
+|-
+| {{BlockSprite|orange-concrete-powder}} <code>orange_concrete_powder</code>
+|-
+| {{BlockSprite|magenta-concrete-powder}} <code>magenta_concrete_powder</code>
+|-
+| {{BlockSprite|light-blue-concrete-powder}} <code>light_blue_concrete_powder</code>
+|-
+| {{BlockSprite|yellow-concrete-powder}} <code>yellow_concrete_powder</code>
+|-
+| {{BlockSprite|lime-concrete-powder}} <code>lime_concrete_powder</code>
+|-
+| {{BlockSprite|pink-concrete-powder}} <code>pink_concrete_powder</code>
+|-
+| {{BlockSprite|gray-concrete-powder}} <code>gray_concrete_powder</code>
+|-
+| {{BlockSprite|light-gray-concrete-powder}} <code>light_gray_concrete_powder</code>
+|-
+| {{BlockSprite|cyan-concrete-powder}} <code>cyan_concrete_powder</code>
+|-
+| {{BlockSprite|purple-concrete-powder}} <code>purple_concrete_powder</code>
+|-
+| {{BlockSprite|blue-concrete-powder}} <code>blue_concrete_powder</code>
+|-
+| {{BlockSprite|brown-concrete-powder}} <code>brown_concrete_powder</code>
+|-
+| {{BlockSprite|green-concrete-powder}} <code>green_concrete_powder</code>
+|-
+| {{BlockSprite|red-concrete-powder}} <code>red_concrete_powder</code>
+|-
+| {{BlockSprite|black-concrete-powder}} <code>black_concrete_powder</code>
+|}
+
+'''[[Pumpkin]]'''
+* Using [[shear]]s on it now produces a carving sound to match {{JE}}.
+
+'''[[Sculk Sensor]] and [[Calibrated Sculk Sensor]]'''
+* Can now detect the following events:
+** Throwing an [[eye of ender]].
+** [[Minecart]]s, consistently when moving on [[rail]]s while empty.
+** Collecting [[fish]], [[axolotl]]s, and [[tadpole]]s with [[bucket]]s.
+** Cleaning items in [[cauldron]]s.
+** Dying leather [[armor]] in cauldrons.
+** [[Arrow|Tipping arrow]]s in cauldrons.
+** Using [[dye]]s to change cauldrons' water color.
+** Non-player actors event when equipping [[shield]]s in their off-hand slot.
+** Applying a [[nametag]].
+** [[Evoker]]s summoning [[vex]]es or fangs.
+** [[Chicken]]s, [[frog]]s, and [[turtle]]s laying eggs.
+** Using [[bone meal]].
+** [[Chiseled Bookshelf|Chiseled bookshelves]] when [[book]]s are inserted into them using [[hopper]]s.
+** Extinguishing [[fire]].
+** Mounting or dismounting a [[vehicle]].
+** [[Rabbit]]s eating [[carrot]] crops.
+** [[Fox]]es eating [[sweet berry]] bushes.
+** Unequipping [[armor]].
+** Placing a [[banner]], [[bamboo sapling]], [[lily pad]], or a [[head]].
+** Placing [[frogspawn]]s.
+** Placing or adding [[sea pickles]].
+** Adding/destroying a [[turtle egg]].
+** [[Turtle egg]]s cracking.
+
+'''[[Snow]]'''
+* Now different layers of snow have different heights to match {{JE}}.
+
+'''[[Glass|Stained Glass]]'''
+* The different [[block states]] for the <code>stained_glass</code> ID have now been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="16" | {{BlockSprite|stained-glass}} <code>stained_glass</code>
+| {{BlockSprite|white-stained-glass}} <code>white_stained_glass</code>
+|-
+| {{BlockSprite|orange-stained-glass}} <code>orange_stained_glass</code>
+|-
+| {{BlockSprite|magenta-stained-glass}} <code>magenta_stained_glass</code>
+|-
+| {{BlockSprite|light-blue-stained-glass}} <code>light_blue_stained_glass</code>
+|-
+| {{BlockSprite|yellow-stained-glass}} <code>yellow_stained_glass</code>
+|-
+| {{BlockSprite|lime-stained-glass}} <code>lime_stained_glass</code>
+|-
+| {{BlockSprite|pink-stained-glass}} <code>pink_stained_glass</code>
+|-
+| {{BlockSprite|gray-stained-glass}} <code>gray_stained_glass</code>
+|-
+| {{BlockSprite|light-gray-stained-glass}} <code>light_gray_stained_glass</code>
+|-
+| {{BlockSprite|cyan-stained-glass}} <code>cyan_stained_glass</code>
+|-
+| {{BlockSprite|purple-stained-glass}} <code>purple_stained_glass</code>
+|-
+| {{BlockSprite|blue-stained-glass}} <code>blue_stained_glass</code>
+|-
+| {{BlockSprite|brown-stained-glass}} <code>brown_stained_glass</code>
+|-
+| {{BlockSprite|green-stained-glass}} <code>green_stained_glass</code>
+|-
+| {{BlockSprite|red-stained-glass}} <code>red_stained_glass</code>
+|-
+| {{BlockSprite|black-stained-glass}} <code>black_stained_glass</code>
+|}
+
+'''[[Glass Pane|Stained Glass Pane]]'''
+* The different [[block states]] for the <code>stained_glass_pane</code> ID have now been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="16" | {{BlockSprite|stained-glass-panes}} <code>stained_glass_pane</code>
+| {{BlockSprite|white-stained-glass-pane}} <code>white_stained_glass_pane</code>
+|-
+| {{BlockSprite|orange-stained-glass-pane}} <code>orange_stained_glass_pane</code>
+|-
+| {{BlockSprite|magenta-stained-glass-pane}} <code>magenta_stained_glass_pane</code>
+|-
+| {{BlockSprite|light-blue-stained-glass-pane}} <code>light_blue_stained_glass_pane</code>
+|-
+| {{BlockSprite|yellow-stained-glass-pane}} <code>yellow_stained_glass_pane</code>
+|-
+| {{BlockSprite|lime-stained-glass-pane}} <code>lime_stained_glass_pane</code>
+|-
+| {{BlockSprite|pink-stained-glass-pane}} <code>pink_stained_glass_pane</code>
+|-
+| {{BlockSprite|gray-stained-glass-pane}} <code>gray_stained_glass_pane</code>
+|-
+| {{BlockSprite|light-gray-stained-glass-pane}} <code>light_gray_stained_glass_pane</code>
+|-
+| {{BlockSprite|cyan-stained-glass-pane}} <code>cyan_stained_glass_pane</code>
+|-
+| {{BlockSprite|purple-stained-glass-pane}} <code>purple_stained_glass_pane</code>
+|-
+| {{BlockSprite|blue-stained-glass-pane}} <code>blue_stained_glass_pane</code>
+|-
+| {{BlockSprite|brown-stained-glass-pane}} <code>brown_stained_glass_pane</code>
+|-
+| {{BlockSprite|green-stained-glass-pane}} <code>green_stained_glass_pane</code>
+|-
+| {{BlockSprite|red-stained-glass-pane}} <code>red_stained_glass_pane</code>
+|-
+| {{BlockSprite|black-stained-glass-pane}} <code>black_stained_glass_pane</code>
+|}
+
+'''[[Stained Terracotta]]'''
+* The different [[block states]] for the <code>stained_hardened_clay</code> ID have now been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="16" | {{BlockSprite|stained-terracotta}} <code>stained_hardened_clay</code>
+| {{BlockSprite|white-terracotta}} <code>white_terracotta</code>
+|-
+| {{BlockSprite|orange-terracotta}} <code>orange_terracotta</code>
+|-
+| {{BlockSprite|magenta-terracotta}} <code>magenta_terracotta</code>
+|-
+| {{BlockSprite|light-blue-terracotta}} <code>light_blue_terracotta</code>
+|-
+| {{BlockSprite|yellow-terracotta}} <code>yellow_terracotta</code>
+|-
+| {{BlockSprite|lime-terracotta}} <code>lime_terracotta</code>
+|-
+| {{BlockSprite|pink-terracotta}} <code>pink_terracotta</code>
+|-
+| {{BlockSprite|gray-terracotta}} <code>gray_terracotta</code>
+|-
+| {{BlockSprite|light-gray-terracotta}} <code>light_gray_terracotta</code>
+|-
+| {{BlockSprite|cyan-terracotta}} <code>cyan_terracotta</code>
+|-
+| {{BlockSprite|purple-terracotta}} <code>purple_terracotta</code>
+|-
+| {{BlockSprite|blue-terracotta}} <code>blue_terracotta</code>
+|-
+| {{BlockSprite|brown-terracotta}} <code>brown_terracotta</code>
+|-
+| {{BlockSprite|green-terracotta}} <code>green_terracotta</code>
+|-
+| {{BlockSprite|red-terracotta}} <code>red_terracotta</code>
+|-
+| {{BlockSprite|black-terracotta}} <code>black_terracotta</code>
+|}
+
+=== Command format ===
+'''{{cmd|camera}}'''
+* Now is available without using the "Experimental Cameras" experimental toggle.
+
+'''{{cmd|recipe}}'''
+* Now is available without using the "Recipe Unlocking" experimental toggle.
+* Updated the syntax to match {{JE}}.
+** Old syntax:
+*** <code>/recipe <victim: target> give <recipe: string></code>
+*** <code>/recipe <victim: target> take <recipe: string></code>
+** New syntax:
+*** <code>/recipe give <player: target> <recipe: string></code>
+*** <code>/recipe take <player: target> <recipe: string></code>
+* Now the recipes are suggested by the [[command]] auto-complete.
+* Now an output message appears after the command is executed.
+* Renamed the <code>''victim'': target</code> argument to <code>''player'': target</code>.
+
+'''{{cmd|scriptevent}}'''
+* Now is available without using the "Beta APIs" experimental toggle.
+
+'''[[Amethyst Cluster]]'''
+* Now uses the <code>minecraft:block_face</code> [[block state]] instead of <code>facing_direction</code>.
+** <code>minecraft:block_face</code> uses six string values <code>["down", "east", "north", "south", "up", "west"]</code>.
+
+'''[[Anvil]], [[Big Dripleaf]], [[Blast Furnace]], [[Calibrated Sculk Sensor]], [[Campfire]], [[End Portal Frame]], [[Furnace]], [[Lectern]], [[Pink Petals]], [[Redstone Comparator]], [[Redstone Repeater]], [[Small Dripleaf]], [[Smoker]], and [[Soul Campfire]]'''
+* Now they use the <code>minecraft:cardinal_direction</code> [[block state]] instead of <code>direction</code> or <code>facing_direction</code>.
+** <code>minecraft:cardinal_direction</code> uses four string values <code>["east", "north", "south", "west"]</code>.
+
+'''[[Slab]]s'''
+* Now uses the <code>minecraft:vertical_half</code> [[block state]] instead of <code>top_slot_bit</code>. 
+** <code>minecraft:vertical_half</code> uses two string values <code>["bottom", "top"]</code>.
+
+=== Gameplay ===
+'''[[Crawling]]'''
+* The ability to crawl is now available without using the "Crawling" experimental toggle.
+* The player now gets forced out of crawl state when riding.
+* Players can now toggle flying when crawling in [[Creative]] mode.
+
+'''[[Recipe book]]'''
+* The new recipe unlocking system and its features are now available without using the "Recipe Unlocking" experimental toggle.
+** Now are behind the <code>recipesUnlock</code> [[game rule]].
+* The recipe book search has been updated when playing in [[Survival]], with the following changes:
+** The search will only match the beginning of any word in the item's name.
+*** For example, searching for "'''tor'''" will now show [[Torch|'''tor'''ch]], [[Soul Torch|soul '''tor'''ch]], and [[Redstone Torch|redstone '''tor'''ch]] but not the [[Activator Rail|activa'''tor''' rail]].
+** All recipes, including those that have not been unlocked, will now show up in search results.
+* Updated the recipe notification sound to match {{JE}}.
+* Now the duration of the recipe notifications are calculated based on how many recipes got unlocked.
+
+'''[[Sneaking]]'''
+* The player now gets forced out of sneak state when riding.
+* Players can now toggle flying when sneaking in [[Creative]] mode.
+
+=== General ===
+'''[[Inventory|Creative Inventory]]'''
+* Removed the [[suspicious stew]] from the [[Creative]] inventory.
+
+'''[[Experiments]]'''
+* Removed the "Recipe Unlocking" and "Crawling" experimental toggles.
+
+'''General'''
+* The normal game's application icon has been updated.
+** For ''[[Minecraft Preview]]'' the application icon has been changed from a [[grass block]] to [[dirt]].
+
+'''[[Title Screen|Main menu]]'''
+* Changed the in-game logo for ''[[Minecraft Preview]]''.
+
+'''[[Music]]'''
+* The places where the following existing music can be played are changed:
+** "Aerie", "Firebugs", and "Labyrinthine" can no longer be played in the menu screens. 
+** "A Familiar Room", "Bromeliad", "Crescent Dunes", and "Echo in the Wind" can now be played in the menu screens.
+
+'''New [[death screen]]'''
+* Enabled the new version of the death Screen. The user can opt-in or opt-out using a feature toggle under Settings-Video Tab.
+* Now has partial support (color, static obfuscation) for "[[Formatting codes]]".
+[[File:New UI - Death Screen Menu - Steve Died (Bedrock 1.20.30).png|380px|thumb|New Death Screen in Steve Died.]]
+
+'''[[Settings]]'''
+* "Text to Speech" narrator will now read out the instruction text as well as the confirm button in the "Safe Area" menu.
+* Changed the "Joystick Always Visible" and "Joystick Visible When Unused" touch options to "Joystick Visibility Option" dropdown menu.
+* Changed the "Sneak Toggle" touch option to "Sneak" dropdown menu.
+* Moved "Sync Old World" button to the storage section.
+* Renamed the "Lefty" touch option to "Left hand mode".
+* Renamed the "Extra Large GUI Scaling" accessibility and video option to "Extra Large New UI".
+* "Text to Speech" narrator now read the disconnected message in the game menu when opened without an internet connection.
+* Renamed the "Manage" button to "Cancel" in "Options" > "Subscriptions".
+
+'''[[Pause menu]]'''
+* The "Pause menu" has been renamed to "Game menu".
+
+'''[[UI]]'''
+* Updated the menu HUD icons for [[Controls|touch controls]].
+* Added three new user-friendly disconnection error messages and improved two others.
+
+=== Mobs ===
+'''[[Hoglin]]'''
+* Now have their own sound when transforming into [[zoglin]]s.
+
+'''[[Husk]]'''
+* Now plays a sound when converting to a [[drowned]].
+
+'''[[Pig]]'''
+* Now emit sounds when transformed into [[zombified piglin]].
+
+'''[[Snow Golem]]'''
+* Now plays a sound when they throw [[snowball]]s.
+
+'''[[Villager]]s'''
+* The discount for curing a villager is no longer multiplied if the villager is reinfected and cured again.
+* When killed they no longer drop items held in their hands.
+
+'''[[Wandering Trader]]'''
+* Now can sell 1 [[Sapling|cherry sapling]] for 5 [[emerald]]s.
+
+'''[[Witch]]'''
+* Now throws [[Healing]] and [[Regeneration]] [[potion]]s at raiders during village [[raid]]s.
+
+'''[[Zombie Villager]]'''
+* Now displays their rank in appearance.
+
+=== Non-mob entities ===
+'''[[Falling Block]] '''
+* Will now break when falling onto a [[boat]] or [[cocoa beans]].
+
+=== World generation ===
+'''[[Ore]] distribution'''
+* [[Diamond ore]] is now generated more frequently in the [[deepslate]] layers of the Overworld.
+** Added a new ore blob placement: Uniform distributed, from height -64 to -4, with blob size 8, generation frequency 2 and a 50% chance of discarding when exposed to air.
+** Other existing diamond ore placements remain untouched.
+
+=== Technical ===
+'''[[Server]]'''
+* Linux dedicated server: Ubuntu 20.04 LTS (Focal Fossa) is now the minimum supported version of Ubuntu. Ubuntu 18.04 LTS is no longer supported.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Villager Trade Rebalancing", "Beta APIs", "Molang Features", and "Experimental Cameras" experimental toggles.
+=== Additions ===
+==== Technical ====
+'''[[API]]'''
+* Added camera scripting APIs for the following APIs: 
+** <code>setCamera()</code>: to set the camera to a specified preset.
+** <code>fade()</code>: to start a camera fade.
+** <code>clear()</code>: to clear the current settings on the camera.
+
+'''[[JSON]]'''
+* Exposed <code>DimensionType</code> to scripting.
+* Exposed the following feature placement rules:
+** <code>minecraft:aggregate_feature</code>.
+** <code>minecraft:cave_carver_feature</code>.
+** <code>minecraft:fossil_feature</code>.
+** <code>minecraft:geode_feature</code>.
+** <code>minecraft:growing_plant_feature</code>.
+** <code>minecraft:multiface_feature</code>.
+** <code>minecraft:nether_cave_carver_feature</code>.
+** <code>minecraft:ore_feature</code>.
+** <code>minecraft:partially_exposed_blob_feature</code>.
+** <code>minecraft:scatter_feature</code>.
+** <code>minecraft:search_feature</code>.
+** <code>minecraft:sequence_feature</code>.
+** <code>minecraft:single_block_feature</code>.
+** <code>minecraft:snap_to_surface_feature</code>.
+** <code>minecraft:structure_template_feature</code>.
+** <code>minecraft:surface_relative_threshold_feature</code>.
+** <code>minecraft:tree_feature</code>.
+** <code>minecraft:underwater_cave_carver_feature</code>.
+** <code>minecraft:vegetation_patch_feature</code>.
+** <code>minecraft:weighted_random_feature</code>.
+
+=== Changes ===
+==== Gameplay ====
+'''[[Trading]]'''
+* Changed the trading mechanism of librarians selling enchanted books.
+** Instead of offering every possible enchanted book, librarians will now be offering specific enchanted books depending on which biome they come from.
+*** Jungle and swamp villages do not generate naturally. Thus, players must breed villagers or cure zombie villagers in these biomes to access their trades.
+** All tradable enchanted books now split to special books and normal books.
+*** Special books have a specific enchantment with a fixed level, and are only available from master librarians with full XP.
+*** Normal books have a specific enchantment without a fixed level, just like before.
+** All enchantments used for [[crossbow]], [[fishing rod]], and [[trident]] are removed from trading.
+:: {| class="wikitable" style="text-align:center"
+|+ Available tradable enchantments
+|-
+! Category
+! Desert
+! Plains
+! Savanna
+! Snow
+! Taiga
+! Jungle
+! Swamp
+|-
+| Special
+| [[Efficiency]] III
+| [[Protection]] III
+| [[Sharpness]] III
+| [[Silk Touch]]
+| [[Fortune]] II
+| [[Unbreaking]] II
+| [[Mending]]
+|-
+| Normal
+| [[Fire Protection]]<br>[[Thorns]]<br>[[Infinity]]
+| [[Punch]]<br>[[Smite]]<br>[[Bane of Arthropods]]
+| [[Knockback]]<br>[[Curse of Binding]]
+| [[Aqua Affinity]]<br>[[Looting]]<br>[[Frost Walker]]
+| [[Blast Protection]]<br>[[Fire Aspect]]<br>[[Flame]]
+| [[Feather Falling]]<br>[[Projectile Protection]]<br>[[Power]]
+| [[Depth Strider]]<br>[[Respiration]]<br>[[Curse of Vanishing]]
+|}
+
+* Changed the [[wandering trader]] trades.
+** Trade list now made up by following trades, in order:
+*** Buying Trade (new) × 2
+*** Special Selling Trade × 2
+*** Ordinary Selling Trade × 5
+** Added new buying trades, some selling trades, and changed some existing selling trades:
+:: {| class="wikitable"
+|+ New trades of wandering traders
+! Category
+! Item wanted
+! Quantity
+! Item given
+! Quantity
+! Trades until disabled
+|-
+| Buying
+| {{ItemLink|Baked Potato}}
+| 4
+| {{ItemLink|Emerald}}
+| 1
+| 1
+|-
+| Buying
+| {{ItemLink|Fermented Spider Eye}}
+| 1
+| {{ItemLink|Emerald}}
+| 3
+| 1
+|-
+| Buying
+| {{BlockLink|Hay Bale}}
+| 1
+| {{ItemLink|Emerald}}
+| 1
+| 1
+|-
+| Buying
+| {{ItemLink|Milk Bucket}}
+| 1
+| {{ItemLink|Emerald}}
+| 2
+| 1
+|-
+| Buying
+| {{ItemLink|Water Bottle}}
+| 1
+| {{ItemLink|Emerald}}
+| 1
+| 1
+|-
+| Buying
+| {{ItemLink|Water Bucket}}
+| 1
+| {{ItemLink|Emerald}}
+| 2
+| 1
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Acacia Log}}
+| 8
+| 4
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Birch Log}}
+| 8
+| 4
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Cherry Log}}
+| 8
+| 4
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Dark Oak Log}}
+| 8
+| 4
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 6-20
+| {{ItemLink|Iron Pickaxe}} (Enchanted)
+| 1
+| 1
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Jungle Log}}
+| 8
+| 4
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Oak Log}}
+| 8
+| 4
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 5
+| {{ItemLink|Potion of Invisibility}} (Long)
+| 1
+| 1
+|-
+| Special Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Spruce Log}}
+| 8
+| 4
+|}
+:: {| class="wikitable"
+|+ Changed trades of wandering traders
+! Category
+! Item wanted
+! Quantity
+! Item given
+! Quantity
+! Trades until disabled
+|-
+| Ordinary Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Brown Mushroom}}
+| 1 -> 3
+| 12 -> 4
+|-
+| Special Selling -> Ordinary Selling
+| {{ItemLink|Emerald}}
+| 5 -> 3
+| {{ItemLink|Bucket of Pufferfish}}
+| 1
+| 4
+|-
+| Special Selling -> Ordinary Selling
+| {{ItemLink|Emerald}}
+| 5 -> 3
+| {{ItemLink|Bucket of Tropical Fish}}
+| 1
+| 4
+|-
+| Ordinary Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{ItemLink|Gunpowder}}
+| 1 -> 4
+| 8 -> 2
+|-
+| Ordinary Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Lily Pad}}
+| 2 -> 5
+| 5 -> 2
+|-
+| Ordinary Selling
+| {{ItemLink|Emerald}}
+| 3 -> 1
+| {{BlockLink|Packed Ice}}
+| 1
+| 6
+|-
+| Ordinary Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Red Mushroom}}
+| 1 -> 3
+| 12 -> 4
+|-
+| Ordinary Selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Vines}}
+| 1 -> 3
+| 12 -> 4
+|}
+
+==== Technical ====
+'''[[API]]'''
+* Converted <code>set_block_property</code> to <code>set_block_state</code> for custom blocks.
+* Added <code>defineVector</code> to <code>DynamicPropertiesDefinition</code>.
+* <code>EntityEquipmentInventoryComponent</code>
+** Implemented slot ''validation'' for <code>setEquipment</code>, which now returns a boolean indicating whether the item can be equipped to the specified slot.
+** <code>EntityEquipmentInventoryComponent</code> is currently limited to players only.
+*** Moved <code>getDay</code> to <code>1.4.0</code>.
+*** Moved <code>getTimeOfDay</code> to <code>1.4.0</code>.
+*** Moved <code>setTimeOfDay(timeOfDay: number | TimeOfDay)</code> to <code>1.4.0</code>.
+*** Moved <code>getAbsoluteTime</code> to <code>1.4.0</code>.
+*** Moved <code>setAbsoluteTime(absoluteTime: number)</code> to <code>1.4.0</code>.
+** Moved <code>TimeOfDay</code> to <code>1.4.0</code>.
+*** Added length restrictions to <code>setLore</code> - Up to <code>20</code> lines with up to <code>50</code> characters per line.
+*** Moved function <code>setLore</code> to <code>1.4.0</code>.
+*** Moved function <code>getLore</code> to <code>1.4.0</code>.
+*** Moved class <code>SystemAfterEvents</code> to <code>1.4.0</code>.
+*** Moved class <code>ScriptEventCommandMessageAfterEvent</code> to <code>1.4.0</code>.
+** Moved player <code>onScreenDisplay</code> to <code>1.4.0</code>.
+** Moved <code>titleDisplayOptions</code> to <code>1.4.0</code>.
+** Moved <code>screenDisplay</code> to <code>1.4.0</code>.
+* Removed <code>MinecraftBlockTypes</code> defined in <code>@minecraft/server</code>.
+* Moved <code>ItemUseBeforeEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemUseOnBeforeEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemUseAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemUseOnAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemStartUseOnAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemStopUseAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemStopUseOnAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemCompleteUseAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemReleaseUseAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>ItemStartUseAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>DimensionLocation</code> to <code>1.4.0</code>.
+* Renamed <code>PositionInUnloadedChunkError</code> to <code>LocationInUnloadedChunkError</code> and moved it to <code>1.4.0</code>.
+* Renamed <code>PositionOutOfWorldBoundariesError</code> to <code>LocationOutOfWorldBoundariesError</code> and moved it to <code>1.4.0</code>.
+** Moved <code>getSpawnPoint</code> to <code>1.4.0</code>.
+** Moved <code>setSpawnPoint</code> to <code>1.4.0</code>.
+** Moved <code>getDefaultSpawnLocation</code> to <code>1.4.0</code>.
+** Moved <code>setDefaultSpawnLocation</code> to <code>1.4.0</code>.
+* <code>WorldAfterEvents</code>
+** Removed <code>projectileHit</code>.
+** Added <code>projectileHitBlock</code>.
+** Added <code>projectileHitEntity</code>.
+* Added class <code>ProjectileHitBlockAfterEvent</code> export class:
+** <code>ProjectileHitBlockAfterEvent { readonly dimension: Dimension; readonly hitVector: Vector3; readonly location: Vector3; readonly projectile: Entity; readonly source?: Entity; getBlockHit(): BlockHitInformation; }</code>
+* Added class <code>ProjectileHitEntityAfterEvent</code> export class:
+** <code>ProjectileHitEntityAfterEvent { readonly dimension: Dimension; readonly hitVector: Vector3; readonly location: Vector3; readonly projectile: Entity; readonly source?: Entity; getEntityHit(): EntityHitInformation; }</code>
+* Released Scoreboard API's from <code>beta</code> to <code>1.4.0</code>.
+** Updated <code>Scoreboard.getObjective</code>, <code>getObjectiveAtDisplaySlot</code>, and <code>clearObjectiveAtDisplaySlot</code> to <code>return '| undefined '</code>.
+* Released <code>isValid()</code> from <code>beta</code> to <code>1.4.0</code> for the following classes:
+** <code>Block</code>
+** <code>Container</code>
+** <code>Entity</code>
+** <code>Player</code>
+** <code>SimulatedPlayer</code>
+* Moved <code>Direction</code> to <code>1.4.0</code>.
+* Moved <code>EntityDamageSource</code> to <code>1.4.0</code>.
+* Moved <code>EntityDieAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>EntityEventOptions</code> to <code>1.4.0</code>.
+* Moved <code>EntityHitBlockAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>EntityHitEntityAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>EntityHurtAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>EntityHealthChangedAfterEvent</code> to <code>1.4.0</code>.
+* Moved <code>Dimension.getBlockFromRay</code> method to <code>1.4.0</code>.
+* Moved <code>Dimension.getEntitiesFromRay</code> method to <code>1.4.0</code>.
+* Moved <code>Entity.getBlockFromViewDirection</code> method to <code>1.4.0</code>.
+* Moved <code>Entity.getEntitiesFromViewDirection</code> method to <code>1.4.0</code>.
+* Moved <code>BlockRaycastHit</code> to <code>1.4.0</code>.
+* Moved <code>BlockRaycastOptions</code> to <code>1.4.0</code>.
+* Moved <code>EntityRaycastHit</code> to <code>1.4.0</code>.
+* Moved <code>EntityRaycastOptions</code> to <code>1.4.0</code>.
+* Moved <code>PressurePlatePushEvent</code> to <code>1.4.0</code>.
+* Moved <code>PressurePlatePopEvent</code> to <code>1.4.0</code>.
+* Moved <code>TripWireTripEvent</code> to <code>1.4.0</code>.
+* Moved <code>TargetBlockHitEvent</code> to <code>1.4.0</code>.
+** Made property <code>id</code> accessible even if entity is not valid.
+** Made property <code>typeId</code> accessible even if entity is not valid.
+** Changed item event <code>source</code> properties from type <code>Entity</code> to <code>Player</code>.
+* Removed <code>MinecraftItemTypes</code> from <code>@minecraft/server</code> and replaced with version from <code>@minecraft/vanilla-data</code>.
+* Added function <code>remove-</code> Removes the entity. This cannot be called on players but can be used on ''simulated players'' in <code>Gametest</code>.
+* <code>MolangVariableMap</code>
+** Added <code>setFloat</code> function.
+** Changed return type of <code>setColorRBG</code>, <code>setColorRGBA</code>, <code>setSpeedAndDirection</code>, and <code>setVector3</code> to <code>void</code>.
+** Changed the <code>MolangVariableMap</code> property on <code>spawnParticle</code> to be optional: <code>spawnParticle(effectName: string, location: Vector3, molangVariables?: MolangVariableMap): void</code>.
+* Renamed <code>Colorinterface</code> to <code>RGBA</code>.
+* Added interface <code>RGB</code>.
+* Added script binding functions to get/set the <code>CompoundBlockVolume</code> origin.
+* Added additional params to some methods to query the children of <code>CompoundBlockVolume</code> for their positional relativity to the parent.
+* Added additional params to some methods to freeze positional relativty when origin changes are submitted.
+* Converting the <code>CompoundBlockVolume</code> container to use relative coordinates to an internal origin.
+* Moved <code>ProjectileHitBlockAfterEvent</code> to <code>1.5.0</code>.
+* Moved <code>ProjectileHitEntityAfterEvent</code> to <code>1.5.0</code>.
+* Moved <code>ProjectileHitBlockAfterEventSignal</code> to <code>1.5.0</code>.
+* Moved <code>ProjectileHitEntityAfterEventSignal</code> to <code>1.5.0</code>.
+* Moved <code>BlockHitInformation</code> to <code>1.5.0</code>.
+* Moved <code>EntityHitInformation</code> to <code>1.5.0</code>.
+** Moved <code>spawnParticle(effectName: string, location: Vector3, molangVariables?: MolangVariableMap)</code> to <code>1.5.0</code>.
+** Moved <code>setColorRGB(variableName: string, color: RGB)</code> to <code>1.5.0</code>.
+** Moved <code>setColorRGBA(variableName: string, color: RGBA)</code> to <code>1.5.0</code>.
+** Moved <code>setFloat(variableName: string, number: number)</code> to <code>1.5.0</code>.
+** Moved <code>setSpeedAndDirection(variableName: string, speed: number, direction: Vector3)</code> to <code>1.5.0</code>.
+** Moved <code>setVector3(variableName: string, vector: Vector3)</code> to <code>1.5.0</code>.
+* <code>RGB</code>
+** Moved <code>RGB</code> to <code>1.5.0</code>.
+** Moved <code>RGBA</code> to <code>1.5.0</code>.
+** Moved <code>triggerEvent(eventName: string)</code> to <code>1.5.0</code>.
+* Renamed <code>EntityEquipmentInventoryComponent</code> to <code>EntityEquippableComponent</code>.
+* Updated <code>isSolid</code>, <code>isLiquid</code>, and <code>isAir</code> to be properties instead of methods.
+* <code>ScriptEventCommandMessageAfterEvent</code>
+** Made <code>initiator</code>, <code>sourceBlock</code>, and <code>sourceEntity</code> optional types.
+* <code>ItemStack</code>
+** Added <code>getCanPlaceOn()</code> and <code>getCanDestroy()</code>.
+** Added upper maximum limit of 255 to amount property - will throw if exceeds.
+* <code>Entity</code>
+** Added function <code>getProperty(identifier: string): boolean | number | string | undefined</code> - Gets an entity property.
+**Added function <code>setProperty(identifier: string, value: boolean | number | string): void</code> - Sets an entity property during the next tick.
+** Added function <code>resetProperty(identifier: string): boolean | number | string;</code> - Resets an entity property to its default value during the next tick and returns the default value.
+* <code>beforeEvents</code>
+** Added event/property <code>removeEvent</code>.
+* <code>afterEvents</code>
+** Renamed event/property <code>removedEvent</code> to <code>removeEvent</code>.
+* Class <code>EntityRemovedAfterEvent</code>
+** Renamed field <code>removedEntity</code> to <code>removedEntityId: removedEntityId: string</code>.
+** Added field <code>typeId: string</code>.
+* Added class <code>EntityRemovedBeforeEvent</code>.
+** Added field <code>removedEntity: Entity</code>.
+* Moved <code>EquipmentSlot</code> to <code>5.0</code> and changed enum values to uppercase.
+* Moved <code>EntityEquippableComponent</code> to <code>5.0</code>.
+* <code>Scoreboard</code>
+** <code>setObjectiveAtDisplaySlot</code> return type now correctly set to <code>ScoreboardObjective</code> or <code>undefined</code>.
+* <code>ScoreboardIdentity</code>
+** <code>getEntity</code> return type now correctly set to <code>Entity</code> or <code>undefined</code>.
+* <code>setWeather</code> API can now take an optional duration parameter to set the weather duration.
+* Added <code>read-only</code> property <code>heightRange: NumberRange</code> - Gets min/max dimension height limits.
+* Adding <code>Player.isSleeping</code> and <code>Player.isEmoting</code>.
+* Changed <code>scoreboardIdentity</code> to be valid even after the entity has been killed.
+* World Events
+** Renamed <code>BlockBreakAfterEvent</code> to <code>PlayerBreakBlockAfterEvent</code>.
+*** Added read-only <code>itemStackAfterBreak?: ItemStack</code> (undefined if empty hand).
+*** Added read-only <code>itemStackBeforeBreak?: ItemStack</code> (undefined if empty hand).
+** Renamed <code>BlockBreakAfterEventSignal</code> to <code>PlayerBreakBlockAfterEventSignal</code>.
+*** ''subscribe'' function now takes <code>options?: BlockEventOptions</code>.
+** Added <code>PlayerBreakBlockBeforeEvent</code> with the following members.
+*** <code>cancel: boolean</code>, cancels event from happening.
+*** <code>itemStack?: ItemStack</code>, the item stack in use by the player (undefined if empty hand).
+*** read-only <code>player: Player</code>, the player breaking the block.
+** Added <code>PlayerBreakBlockBeforeEventSignal</code>.
+** Renamed <code>BlockPlaceAfterEvent</code> to <code>PlayerPlaceBlockAfterEvent</code>.
+** Renamed <code>BlockPlaceAfterEventSignal</code> to <code>PlayerPlaceBlockAfterEventSignal</code>.
+*** ''subscribe'' function now takes <code>options?: BlockEventOptions</code>.
+** Added <code>PlayerPlaceBlockBeforeEvent</code> with the following members.
+*** <code>cancel: boolean</code>, cancels event from happening.
+*** readonly <code>face: Direction</code>, the face the block is being placed on.
+*** readonly <code>faceLocation: Vector3</code>, the location on the face the block was placed on.
+*** <code>itemStack: ItemStack</code>, the item stack being used to place the block.
+*** read-only <code>player: Player</code>, the player placing the block.
+** Added <code>PlayerPlaceBlockBeforeEventSignal</code>.
+** Modified <code>WorldAfterEvents</code>.
+*** Renamed <code>blockBreak</code> to <code>playerBreakBlock</code>.
+*** Renamed <code>|blockPlace</code> to <code>playerPlaceBlock</code>.
+** Modified <code>WorldBeforeEvents</code>.
+*** Added <code>playerBreakBlock</code>.
+*** Added <code>playerPlaceBlock</code>.
+** Added <code>BlockEventOptions</code> with the following members.
+*** <code>blockTypes?: string[]</code>, names of blocks to be filtered against.
+*** <code>permutations?: BlockPermutation[]</code>, specific block permutations to be filtered against.
+** Added class <code>EntityLoadAfterEvent</code>.
+*** New field <code>entity: Entity</code>.
+*** Added class <code>EntityLoadAfterEventSignal</code>.
+** Class <code>EntitySpawnAfterEvent</code>.
+*** Added property reado-nly <code>cause: EntityInitializationCause</code>.
+** Class <code>WorldAfterEvents</code>.
+*** Added property read-only <code>entityLoad: EntityLoadAfterEventSignal</code>.
+** Added enum <code>EntityInitializationCause</code>.
+
+'''[[JSON]]'''
+* Deprecate <code>minecraft:creative_category</code> component in JSON formats 1.20.20 and higher.
+* Creative group and command visibility can now be set in the <code>description</code> field in JSON formats 1.20.20 and higher.
+* Changed fire enchant duration used on projectiles from a <code>ShooterItemComponent</code> to match vanilla behavior.
+* Sound definitions now accept both float and integer values for <code>min_distance</code> and <code>max_distance</code>.
+* Render controllers without textures will now result in a content error and be ignored.
+* <code>minecraft:entity_placer</code> will now content error when invalid blocks are named in the <code>use_on</code> and <code>dispense_on</code> lists.
+* Removed <code>MinecraftEntityTypes</code> from <code>@minecraft/server</code> and replaced with version from <code>@minecraft/vanilla-data</code>.
+* Exposed <code>MoonPhase</code> and <code>World.getMoonPhase</code> to script.
+* Removed the <code>minecraft:animates_in_toolbar</code> component.
+* Removed the <code>minecraft:explodable</code> component.
+* Extra damage hover text now appears on all component items that have an applied Sharpness enchantment.
+* The <code>minecraft:shooter</code> component now supports the Quick Charge enchantment with <code>minecraft:enchantable</code> when <code>charge_on_draw</code> is true.
+* Remove nonfunctional entity slot options from <code>minecraft:wearable</code> component, ie. saddle, entity armor, and chest.
+* Custom items with <code>minecraft:wearable</code> component auto-equip when dropped from a dispenser, matching parity with vanilla armor items.
+* Removed the <code>server-authoritative-sound</code> bool from <code>server.properties</code>.
+* Deprecate <code>on_dig</code> parameters from <code>minecraft:digger</code> item component in JSON formats 1.20.20 and higher.
+* Removed the <code>minecraft:ignores_permission</code> component.
+* Removed the <code>minecraft:mirrored_art</code> component.
+* Moved the <code>protection</code> field from <code>minecraft:armor</code> component to <code>minecraft:wearable</code> component in JSON formats 1.20.20 and higher 
+* Deprecate <code>minecraft:armor</code> component in JSON formats 1.20.20 and higher.
+* Removed ''nonfunctional'' and ''redundant'' slot options from <code>minecraft:wearable</code> component, ie. mainhand, hotbar, inventory, enderchest, and equippable.
+* Items with the <code>minecraft:wearable</code> component using the <code>weapon.offhand</code> slot will no longer equip when item is used in hotbar.
+* Equipping custom wearable items trigger generic equip sound.
+* Custom items with <code>minecraft:wearable</code> component can now be equipped by clicking and dragging in inventory or shift-clicking.
+* Added <code>Scoreboard.addScore</code> and improved <code>Scoreboard.setScore</code> to return the updated score.
+* <code>cooldown</code> field for target descriptors now properly work in <code>minecraft:behavior.nearest_prioritized_attackable_target</code> goal.
+* Deprecated <code>minecraft:mining_speed</code> in JSON formats 1.20.30 and higher.
+* Fixed an issue where items with format version 1.20.20 and above using the <code>menu_category</code> field in a world with the "Holiday Creator Features" experimental toggle enabled would not load.
+* Removed <code>minecraft:requires_interact</code> component.
+
+'''[[Molang]]'''
+* Renamed <code>block_property</code> and <code>has_block_property</code> to <code>block_state</code> and <code>has_block_state</code>.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.20.20 Preview,1.20.20.21 Preview,1.20.20.22 Preview,1.20.20.23 Preview,1.20.30.20 Preview,1.20.30.21 Preview,1.20.30.22 Preview,1.20.30.24 Preview,1.20.30.25 Preview,1.20.30
+|;From released versions before 1.20.0
+|19700|Wrong elytra texture in item frame and hand.
+|33139|No anvil step sound.
+|43402|Trident channeling sound is unused.
+|43831|Trident w/loyalty doesn't make the returning sound to the player but the trident.
+|44296|Fence gates don't have the correct model in the inventory.
+|46490|Crossbow durability decreases after charging.
+|50609|Missing sounds when a hostile mob shoots arrows or throws trident.
+|52452|Coral blocks take too long to break.
+|60024|Snow layer collision only changes twice.
+|62797|Pickaxes don't speed up piston breaking.
+|68721|Scaffolding and sweet berry bushes cannot be broken instantly in Survival.
+|77746|Burning mobs do not catch player on fire.
+|80924|Adult zombie villagers use the farmer texture regardless of their actual profession.
+|81790|Villagers can change their profession in the night time/during raids.
+|85429|Camera does not pass through glass, glass panes and iron bars.
+|85888|Horizon changes color when standing under blocks.
+|87379|Hoglins play wrong conversion sounds.
+|94722|Nether portal make no breaking animation or sound when obsidian is broken.
+|95872|Netherite items make burn sounds in lava.
+|96015|Items burning in lava doesn't make the burning sound and is inconsistent when doing so.
+|98861|Significant input delay on devices with render dragon.
+|101180|Hyphae mining speed is faster than stems.
+|101644|Crimson and warped stems/hyphae lower blast resistance than other types of wood.
+|119083|When a snow golem throws a snowball it plays the arrow shoot sound.
+|114425|There is no {{cmd|gamerule playerssleepingpercentage}} in {{BE}}.
+|114602|The mining speed of end stone bricks does not match the speed of end stone.
+|123488|Big dripleaf tilting up sounds uses tilt down sounds instead.
+|128117|No sound when conduit deactivates.
+|130070|Stuck swimming down/falling issue.
+|131572|Cannot use the mouse or touch to navigate text menus.
+|132408|Deepslate variants have a significantly lower blast resistance than stone variants.
+|132511|Sound not playing while getting out of water.
+|136484|Respawn anchor ambient sound doesn't play.
+|137449|End stone bricks has a lower blast resistance, compared to normal end stones.
+|138995|Potion trajectory is broken.
+|139021|Game crashes while entering a world where you are going through the endportal back to the overworld.
+|139242|Copper and cut copper blocks have a weaker blast resistance compared to {{JE}}.
+|139246|Copper ore blast resistance is weaker compared to other ores.
+|151745|Undead mobs equips illager banner instead of hold it in mainhand slot.
+|154378|<code>min_distance</code> / <code>max_distance</code> requires decimal numbers, silently fails with integers.
+|154428|Large enchants on table are blocked by overlayed items.
+|159217|Vignette overlaps hotbar and other HUD elements with "Fancy Graphics" enabled.
+|159736|Duplicating stackable armor when equipping from hotbar.
+|157055|Powering or unpowering a repeater or comparator in flowing water briefly blocks the water flow.
+|159409|Hasitem/data argument does not on items that use data as "damage".
+|160889|Warden does not detect falling items.
+|161134|Renamed entity or some blocks have container with format "(text)text" display <code>$container_title</code>.
+|161165|Sculk sensor does not send a signal to shrieker when player drops item.
+|161438|Raid boss bar becomes automatically empty when defeated.
+|162061|See transparent blocks through end portal off a chunk border.
+|162253|Book and quill not making sounds while using Xbox controller bumpers.
+|163050|Xbox: Error says I'm out of storage space, quits to menu with weird background.
+|163497|Camels don't make sand sounds on red sand or concrete powder.
+|163671|Xbox: Mouse movement is jittery / pixel-based / not smooth.
+|164634|My Minecraft world keeps crashing when I approach a specific area.
+|165062|Sleeping under an end portal causes the game to get stuck on the loading screen and summons a nether portal.
+|165301|Unknown block.
+|166152|Book and quills text line breaks are erased when previous text is changed [on iOS and iPadOS].
+|166565|Crouching and then swimming makes player constantly descend.
+|167403|Cannot crouch while flying in Creative with touch controls.
+|168789|Nametags are completely invisible while sneaking.
+|168887|Sculk sensors do not detect when chiseled bookshelf changes with using hoppers and droppers.
+|168998|Redstone transmission through custom <code>minecraft:block</code> is inconsistent.
+|169557|Pigs do not make death sound upon being converted.
+|169728|Bulk item crafting buggy.
+|169840|Backspace does not erase all text when pressed.
+|171213|Wrong camera collision with the composter in 3rd person.
+|172381|Top snow has inconsistent collision for dropped items.
+|172429|Structure void can't be targetted.
+|;From the 1.20.0 version
+|163456|Hanging signs placed by commands has a very large hitbox compared to the normal ones.
+|168805|Some brushing sounds missing.
+|168813,169953|Calibrated sculk sensor doesn't fully light up when activated.
+|170033|Campfires are lit up instead of extinguished inside the trail ruins structure.
+|170841|Camera speed ​​difference when crawling or using riptide parity.
+|171254|Character creator features do not match preview icon.
+|171383|Bone meal not working underwater after 1.20.
+|171461|Sleep fade black screen turns completely black.
+|171489|Trails & Tales soundtrack does not play in game and in main menu.
+|171521|Wandering trader does not trade cherry saplings.
+|171560|Pink petals cannot be farmed using bone meal in a dispenser.
+|;From 1.20.x versions
+|171822|Cherry grove uses the 1.16.100 water fog.
+|172704|Sculk sensor triggers repeatedly when there are arrows, tridents, or thrown items on top of it.
+|172835|Pressing enter while not at end of text in chat deletes everything ahead of it.
+|172910|Setting the <code>playerssleepingpercentage</code> gamerule to 0 or on negative numbers skips the sleeping animation.
+|172917|There is no chat message for when skipping the night is not possible with <code>playerssleepingpercentage</code> set above 100.
+|172920|[ScriptAPI] <code>ScoreboardObjective::removeParticipant&nbsp;</code> is not synced with clients.
+|173028|"Detected lost connection" and "Abandoned connection closed" error message is untranslated.
+|173189|[ScriptAPI] Some characters are counted as 2 or 3 characters in the character count check of the <code>setLore()</code> method.
+|173323|Pillager outposts do not generate in cherry groves.
+|173524|Multiple {{cmd|camera}} commands in the same tick are ignored.
+|173706|Chunk-wide block rendering lag triggered by block updates along chunk borders.
+|174073|[Script API] Unexpected change to properties of native classes.
+|;From the 1.20.10 version
+|170870|Crawl mode don't get disabled when riding.
+|170907|When switching to a Spectator, the player does not stop sneaking or crawling.
+|170969|Swimming mechanics have been altered to where you have to look up at the sky to take a breath.
+|170994|Crawl parity issue.
+|171065|{{cmd|recipe}} doesn't send a chat output when correct syntax is entered.
+|171086|Entering {{cmd|recipe}} command doesn't show suggestions.
+|171098|{{cmd|recipe}} command syntax doesn't match {{JE}}.
+|171112|Recipe unlocking UI can appear in pause menu or world settings.
+|171116|The "Recipe Unlock Toast" sound does not match {{JE}}.
+|171141|Translated toast recipe unlocked content is cut off and unreadable.
+|171797|The player can enable flight mode while flying the elytra.
+|171800|Pick blocking a decorated pot from the Creative inventory gives invalid inventory description.
+|171812|Spectators still adapt to small spaces.
+|otherissuescount=31
+|171225|<nowiki>Players suffocate while crawling at Y=1 and Y=2.</nowiki>}}
+'''Others'''
+* Empty maps now emit the appropriate sound when players draw them.
+* The third-person camera will no longer clip through terrain when near water or lava.
+* Fixed Creative mode players not being ignited when standing in fire.
+* The player no longer gets forced into sneak or crawl during the riptide animation.
+* Players should no longer accidentally trigger crawling when they shouldn't.
+* Fixed bottom face of portal effect so its color and transparency match the other faces.
+* Fixed an issue where players would disappear temporarily when joining a game for the first time.
+* iOS and iPadOS: Fixed crash in blocks JSON loading.
+* Fixed a crash that could occur when the game lost focus while entering a world.
+* Fixed an issue where screen narration would read recipe book folder items as the first item in the folder.
+* Fixed held map not being centered when playing on narrow aspect ratio screens.
+* Xbox: Fixed missing low disk space warning.
+* Third person camera no longer clips through snow, mud, and soul sand.
+* Fixed an issue with the client failing to attempt connection to dedicated server in some situations.
+* Fixed a bug that autocomplete suggestions for values coming after brackets are missing if there is no space between tilde (as Z coordinate) and block name in commands.
+* The game no longer crashes when it tries to place an invalid custom feature.
+* Crouch-jumping while aiming forward and holding down the build button will no longer continue to build blocks upwards past where the player is aiming.
+* Fixed a crash in the Deferred Technical Preview that could occur while generating terrain.
+* Fixed an issue with content errors occurring with the Holiday Creator Features toggle turned on when using a json object version of <code>max_stack_size</code>, <code>can_destroy_in_creative</code>, <code>hover_text_color</code>.
+* Fixed worlds downloaded from Realms not loading packs correctly.
+* Collecting fish, axolotls, and tadpoles with buckets now emits vibrations at the right position.
+* Fixed ZL/ZR icons for Joy-Con and Switch Pro controller on Android.
+* Fixed lighting of items in hand in the "Deferred Technical Preview".
+* Optimization and fixes for point light contributions.
+* Fixed feedback button behavior in the new "Play screen" not linking to the feedback page.
+* Fixed various pixel scaling issues on the HUD screen.
+* Fixed an issue where content errors for items at the latest format version would appear for other items.
+* The game menu gamepad shortcut on the new death screen now works correctly.
+* Concrete powder blocks are now the correct color for worlds imported from previous versions.
+* Fixed an issue where the boat wouldn't spawn on the water if the block underneath the water was highlighted.
+* Fixed a bug in Education mode that prevented summon NPC commands from working if the users did not have <code>worldbuilder</code> permission when the base version of the world was before [[Bedrock Edition 1.19.80|1.19.80]].
+{{fixes|project=BDS|fixedin=1.20.30.22 Preview
+|;From released versions before 1.20.0
+|17527|Multiple server crashes due to memory leak when loading chunks.}}
+
+== Trivia ==
+* 1.20.20 is the sixth skipped version of {{BE}}, after 1.3.0, 1.15.0, 1.16.230, 1.17.20, and 1.18.20 being skipped.
+* This is the update in the 1.20 cycle to have the most Previews/Betas, having 10.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[de:Bedrock Edition 1.20.30]]
+[[es:Bedrock Edition 1.20.30]]
+[[ko:Bedrock Edition 1.20.30]]
+[[pt:Edição Bedrock 1.20.30]]
+[[uk:1.20.30 (Bedrock Edition)]]
+[[zh:基岩版1.20.30]]

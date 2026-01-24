@@ -1,0 +1,186 @@
+{{Lowercase title}}
+{{Exclusive|Java}}
+{{Infobox program
+| group1 = GUI
+| group2 = Command line
+| 1-1 = Server.jar GUI.png
+| 2-1 = Server.jar CLI.png
+| title = server.jar
+| author =
+* [[File:Mojang Studios logo.svg|x20px|link=Mojang Studios]] [[Mojang Studios]]
+| platform = {{OS|win|mac|lin}} and other platforms that support running a JVM
+| programming language = {{OS|java}} {{w|Java (programming language)|Java}}
+| price = Free
+| license = [https://www.minecraft.net/en-us/eula EULA]
+| website = https://www.minecraft.net/en-us/download/server
+| source available = Partial
+| size =
+* Only JAR: ≈ 54 MiB
+* With initial generated data: ≈ 114 MiB
+| version =
+* '''Release''': {{v|java}}
+{{#if: {{v|java-snap}} | * '''Snapshot''': {{v|java-snap}} }}
+| date = June 8, 2009
+}}
+{{relevant tutorial|Setting up a Java Edition server}}
+<code>'''server.jar'''</code> is an executable {{w|JAR (file format)|JAR}} file containing the program and resources of the {{JE}} server software. It is distributed by [[Mojang Studios]] and can be downloaded free of charge.
+
+Code is shared between <code>server.jar</code> and <code>[[client.jar]]</code>, meaning they are identical in [[gameplay]]. The <code>client.jar</code> file provides an internal server used for playing [[singleplayer]] worlds, but <code>server.jar</code> does not provide a client.
+
+== Contents ==
+
+The <code>server.jar</code> file can be opened with a {{w|file archiving program}} that supports ZIP files.
+
+When ran, libraries from the contained <code>META-INF</code> directory are extracted into the working directory. This behavior can further be configured by a different main class available on the JAR file, see {{slink||Bundler options}}.
+
+The archive also contains a <code>[[version.json]]</code> file, which provides version information.
+
+== Directory structure ==
+
+Upon running the <code>server.jar</code>, the program generates the following files and directories:
+
+<div class="treeview">
+* {{File|directory|''working directory''}}: The working directory of the server software process.
+** {{File|directory|libraries}}: contains external libraries and JAR files required by the server software.
+** {{File|archive|versions/''<version>''/server-''<version>''.jar}}: a versioned JAR file that contains the primary code and resources for the server (similar to <code>[[client.jar]]</code>, but without client-related files, e.g. rendering code).
+** {{File|directory|logs}}: Contains logs.
+*** {{File|file|''YYYY''-''MM''-''DD''-''ordinal''.log.gz}}: Rotated older log. There might be any number of these files depending on how many times the log was rotated. Same format as latest.log, but compressed with gzip.
+*** {{File|file|latest.log}}: The most recent log. UTF-8 format, CRLF line endings on Windows, LF line endings on Linux and macOS.
+** {{File|directory|world}}: [[Java Edition level format|World data]] directory. Can have different name or location if the default value in server.properties is changed. Not generated until the EULA is accepted.
+** {{File|file|banned-ips.json}}: Specifies IP addresses that are banned from the server. Not generated until the EULA is accepted.
+** {{File|file|banned-players.json}}: Specifies players that are banned from the server. Not generated until the EULA is accepted.
+** {{File|file|eula.txt}}: Contains information about the EULA applying to the server software, as well as specifying whether the user has accepted it.
+** {{File|file|[[ops.json]]}}: Specifies [[operator]] status of players. Not generated until the EULA is accepted.
+** {{File|file|server-icon.png}}: Server icon that appears on the server list. Not generated automatically. Must be in PNG format and 64x64 pixels.
+** {{File|archive|server.jar}}: Primary server software JAR file. Can be located elsewhere, but usually placed in the same directory as the rest of the server data.
+** {{File|file|[[server.properties]]}}: Preset configuration file used to configure most of the server's functionality.
+** {{File|file|[[whitelist.json]]}}: Specifies players that are whitelisted. Not generated until the EULA is accepted.
+</div>
+
+Files are generated on the first run if not mentioned otherwise.
+
+=== eula.txt ===
+
+If an <code>eula.txt</code> file does not exist on startup, it is generated with default content and the program exits. The default content is as follows:
+
+<syntaxhighlight lang="properties">
+#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).
+#[Generation time]
+eula=false
+</syntaxhighlight>
+
+Much like <code>server.properties</code>, it follows the {{w|.properties}} syntax. <code>eula</code> has to be set to <code>true</code> for the server to start.
+
+== Interface ==
+
+The server software has both a command-line interface and a basic {{w|graphical user interface}}.
+
+The command-line interface outputs logs to the {{w|standard output}}, and accepts newline delimited input from the {{w|standard input}}, which is executed by the server as [[commands]] (similar to being executed by [[command block]]s, but with the highest privilege level). Running a command in the interface does not require <code>/</code> at the beginning of the line.
+
+The GUI appears if the platform supports windowing and the <code>--nogui</code> or <code>nogui</code> option is not provided. It is written in {{w|Abstract Window Toolkit}} (AWT), and it features three sections:
+* "Stats" which displays memory usage as a graph and as a value, and average tick time,
+* "Players" which displays a player list, and
+* "Log and chat" which displays logs and serves the same function as the command-line interface.
+
+== Command-line options ==
+<section begin="command-line-options"/>
+{| class="wikitable"
+|-
+! Option !! Description
+|- 
+| <code>'''--bonusChest'''</code> || Enable the [[bonus chest]] when generating a world for the first time.
+|-
+| <code>'''--demo'''</code> || Enable [[demo mode]]. Shows the players a demo pop-up, and players cannot break or place blocks after the 5 in-game days demo time has expired, even if they have purchased the game.
+|-
+| <code>'''--eraseCache'''</code> || Erase cached data like light levels and biome data, which must then be regenerated. Equivalent to the "Erase Cached Data" option of "Optimize World" in [[World Options]] on the client.
+|-
+| <code>'''--forceUpgrade'''</code> || Optimize the world by upgrading the level data to the [[Java Edition level format|latest format]]. Once the world is optimized, it is no longer compatible with older level formats. Equivalent to the "Optimize World" option in [[World Options]] on the client.
+|-
+| <code>'''--help'''</code> || Print available options without starting the server.
+|-
+| <code>'''--initSettings'''</code> || Initialize <code>[[server.properties]]</code> and <code>eula.txt</code> without starting the server. If either file is missing, it creates them with default values.
+|-
+| <code>'''--jfrProfile'''</code> || Initialize {{w|Java Flight Recorder}} profiler for the server. While the server is running, the profiler can be opened using an external tool or software, such as [https://visualvm.github.io/ VisualVM]. It enables monitoring of the server's CPU, memory, and threads usage. Additionally, it saves a <code>jfr</code> file on the <code>debug</code> folder of the <code>server.jar</code>, containing JVM and operating system events, and several ''Minecraft''-related custom events. Further information on {{slink|Commands/jfr|Usage}}.
+|-
+| <code>'''--nogui'''</code> || Disable the [[#Interface|GUI]] when launching the server.
+|-
+| <code>'''nogui'''</code> || Legacy alias of <code>'''--nogui'''</code>.
+|-
+| <code>'''--pidFile''' ''&lt;path&gt;''</code> || Create a text file at <code>''path''</code> containing the {{w|process identifier}} (PID) of the server process while it's running.
+|-
+| <code>'''--port''' ''&lt;port&gt;''</code> || Specify the TCP port to use instead of the value in <code>server.properties</code>.
+|-
+| <code>'''--recreateRegionFiles'''</code> || Optimize the world similar to <code>'''--forceUpgrade'''</code>, but also rewrites all the chunks independently of whether they have been upgraded, creating fresh and defragmented region files.<ref>{{Cite |url=https://www.minecraft.net/en-us/article/minecraft-snapshot-24w04a |title=Minecraft Snapshot 24w04a |section=Region file compression algorithm |author=Java Team |website=[[Minecraft.net]] |date=January 24, 2024}}</ref> Using this option after changing <code>region-file-compression</code> in <code>server.properties</code> will recompress all region files in the new format.
+|-
+| <code>'''--safeMode'''</code> || Ensure the server only loads the vanilla [[data pack]].
+|-
+| <code>'''--serverId''' ''&lt;id&gt;''</code> || Specify the "Server Id" string used in the [[crash]] report details.
+|-
+| <code>'''--universe''' ''&lt;path&gt;''</code> || Specify the path to the directory <code>level-name</code> in <code>server.properties</code> is relative to. If empty, it is relative to the working directory.
+|- 
+| <code>'''--world''' ''&lt;name&gt;''</code> || Specify the world name to use instead of the <code>level-name</code> value in <code>server.properties</code>.
+|}<section end="command-line-options"/>
+
+== Bundler options ==
+The <code>server.jar</code> introduces an extra layer of code (called the "bundler") for extracting runtime libraries. This allows the main class to be specified at startup using system properties.
+
+The following system properties can change the startup behavior:<ref>{{Cite |url=https://www.minecraft.net/en-us/article/minecraft-snapshot-21w39a |title=Minecraft Snapshot 21w39a |section=Server bundling |website=[[Minecraft.net]] |author=Adrian Östergård |date=September 29, 2021}}</ref>
+* <code>bundlerMainClass</code>: Specifies the main class to start. If not specified, the main class defined on <code>META-INF/main-class</code> file in the <code>server.jar</code> (usually <code>net.minecraft.server.Main</code>) is used instead. There are three available main classes:
+** <code>net.minecraft.server.Main</code>: Used for launching the ''Minecraft'' server.
+** <code>net.minecraft.data.Main</code>: Used as entry point for {{tpl|MCW:Projects/wiki.vg merge/Data Generators|data generators|vg}}.
+** <code>net.minecraft.gametest.Main</code>: Used as an entry point for the [[GameTest]] framework, which provides its own command-line options.<ref>{{cite |url=https://www.minecraft.net/en-us/article/minecraft-snapshot-25w03a |title=Minecraft Snapshot 25w03a |section=Technical Changes |website=[[Minecraft.net]] |date=January 15, 2025}}</ref>
+** ''Unspecified'': If no option is specified or an empty blank string (<code>""</code>) is entered, it results in <code>Empty main class specified, exiting</code>.
+: Before executing the main class, the JAR file automatically extracts {{cd|libraries}} and {{cd|versions}} folders, even for ''unspecified'' option.
+* <code>bundlerRepoDir</code>: Specifies the working directory for the resources extraction. If not specified, the current working directory is used instead.
+
+System properties are specified like <code>-D''<property>''</code>, which ''property'' is the name defined above. They must be specified for the JVM program in the command-line, placed before <code>-jar</code> parameter (otherwise it will be specified for the <code>server.jar</code> file, which is invalid), e.g. {{Nowrap|1=<code>java -DbundlerMainClass="net.minecraft.data.Main" -jar server.jar</code>}} is a valid execution.
+
+== History ==
+{{For|general multiplayer server history|Multiplayer#History}}
+{{HistoryTable
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||1.0.15|<code>server.jar</code> was released to the public for [[Survival]] multiplayer server.}}
+|{{HistoryLine|java edition}}
+|{{HistoryLine||1.0.1|<code>server.jar</code> was updated in a server-only release.
+|Fixed <code>Invalid server key</code> error when logging in.
+|Fixed <code>Null pointer exception</code> error when logging in.}}
+|{{HistoryLine||1.3.1|dev=12w18a|The server logic was separated from the client, making singleplayer effectively run an internal server.
+|Added command-line arguments: <code>--demo</code>, <code>--port</code>, <code>--singleplayer</code>, <code>--universe</code>, and <code>--world</code>. The legacy <code>nogui</code> argument remained functional.}}
+|{{HistoryLine|||dev=12w19a|Added the <code>--bonusChest</code> command-line argument.}}
+|{{HistoryLine|||dev=12w21a|Removed <code>server.jar</code> dependency in singleplayer.}}
+|{{HistoryLine||1.16|dev=20w20b|The dedicated server main class was changed from <code>net.minecraft.server.MinecraftServer</code> to <code>net.minecraft.server.Main</code>.}}
+|{{HistoryLine|||dev=20w22a|Added the <code>--safeMode</code> command-line argument.}}
+|{{HistoryLine||1.18|dev=21w37a|Added the <code>--jfrProfile</code> command-line argument.}}
+|{{HistoryLine|||dev=21w39a|Changed the file structure of <code>server.jar</code>. Individual libraries are now bundled separately instead of being merged into a single archive.
+|Server startup now unpacks libraries into a directory configured by the <code>bundlerRepoDir</code> property (defaults to the working directory).
+|The main class can be changed using the <code>bundlerMainClass</code> property.}}
+|{{HistoryLine|||dev=1.18-pre3|Starting <code>server.jar</code> with an empty <code>bundlerMainClass</code> property now validates and extracts files, then exits.}}
+|{{HistoryLine||1.20|dev=23w06a|Added the <code>--pidFile</code> command-line argument.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Removed the <code>--singleplayer</code> command-line argument.}}
+|{{HistoryLine||1.20.5|dev=24w04a|Added the <code>--recreateRegionFiles</code> command-line argument.
+|Added the <code>region-file-compression</code> setting to [[server.properties]].}}
+|{{HistoryLine||1.21.4|dev=24w45a|The data generator entry point (<code>net.minecraft.data.Main</code>) no longer generates the assets directory.
+|The <code>--client</code> command-line option was removed for the data generator entry point.}}
+|{{HistoryLine||1.21.5|dev=25w03a|Added the <code>net.minecraft.gametest.Main</code> entry point for running automated game tests from <code>server.jar</code>.
+|Added associated command-line arguments for the gametest entry point: <code>--help</code>, <code>--packs</code>, <code>--report</code>, <code>--tests</code>, <code>--universe</code>, and <code>--verify</code>.}}
+}}
+
+== Issues ==
+{{Issue list|server.jar|server jar|java server|projects=mc}}
+
+== References ==
+<references/>
+
+== See also ==
+* [[Bedrock Dedicated Server]], the server software used to host a {{BE}} server.
+* [[client.jar]], the program and resources for the ''[[Minecraft: Java Edition]]'' game.
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Server]]
+
+[[de:server.jar]]
+[[fr:server.jar]]
+[[pt:Server.jar]]
+[[zh:服务端核心文件]]

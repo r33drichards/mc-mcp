@@ -1,0 +1,121 @@
+{{distinguish|Commands/immutableworld}}
+{{for|other uses|Border (disambiguation)}}
+{{exclusive|java}}
+{{Infobox command
+|name=worldborder
+|oplevel=2
+}}
+
+These commands control the [[world border]]. They only affect the world border of the dimension in which the command is executed.
+
+==Syntax==
+
+<code>worldborder add <distance> [&lt;time&gt;]</code>
+: Increases or decreases the world border size. Optionally, a <code>&lt;time&gt;</code> may be specified such that the border grows or shrinks from the previous size to that being set over the specified time in seconds. The border still grows or shrinks and the animation displays even if the game is paused. If <code>&lt;time&gt;</code> is not specified, the world border changes immediately. Initial size is 59,999,968.
+<code>worldborder center <pos></code>
+: Recenters the world border. Sets the center of the world border to the specified coordinates. Initial center is (0, 0).
+<code>worldborder damage amount <damagePerBlock></code>
+: Sets the world border damage amount to the specified value. Any player outside the world border buffer takes this amount of damage per second per block outside from the world border buffer distance. Initial value is 0.2 damage per second per block.
+<code>worldborder damage buffer <distance></code>
+: Sets the world border buffer distance to the specified value. Players won't take damage until they move outside this distance from the world border. Initial value is 5 blocks. 
+<code>worldborder get</code>
+: Gets the current size of the world border.
+<code>worldborder set <distance> [&lt;time&gt;]</code>
+: Sets the world border region size with the specified distance in blocks as the width and length. Optionally, a <code>&lt;time&gt;</code> may be specified such that the border grows or shrinks from the previous size to that being set over the specified time in seconds. The border still grows or shrinks and the animation displays even if the game is paused. If <code>&lt;time&gt;</code> is not specified, the world border changes immediately. Initial size is 59,999,968.
+<code>worldborder warning distance <distance></code>
+: Sets the world border warning distance to the specified value. Causes the screen to be tinted red when the player is within the specified number of blocks from the world border. Initial value is 5 blocks. The tint does not display if the user is using fast graphics.
+<code>worldborder warning time &lt;time&gt;</code>
+: Sets the world border warning time to the specified value. Causes the screen to be tinted red when a contracting world border reaches the player within the specified time. Initial value is 15 seconds. The tint does not display if the user is using fast graphics.
+
+==Arguments==
+
+{{argument|distance|double}} (in <code>add</code> mode)
+: Specifies the number of blocks to add to the world border diameter.
+: {{arg desc|je=double|min=-59,999,968|max=59,999,968}}
+
+{{argument|time|integer}} (in <code>add</code> and <code>set</code> mode)
+: Specifies the number of seconds it should take for the world border to move from its current diameter to the new diameter. If not specified, defaults to 0.
+: {{arg desc|je=integer|min=0}}
+
+{{argument|pos|vec2}}
+: Specifies the horizontal coordinates of the world border's center.
+: {{arg desc|je=vec2}} And it's X and Z should be between ±29999984 (inclusive).
+
+{{argument|damagePerBlock|float}}
+: Specifies the damage a player takes per second per block past the world border buffer. For example, if <code><damagePerBlock></code> is 0.1, a player 5 blocks outside the world border buffer takes 0.5 damage per second (damage less than half a heart might not change the visual health display, but still accumulates). Initially set to 0.2.
+: {{arg desc|je=float|min=0.0}}
+
+{{argument|distance|float}} (in <code>damage buffer</code> mode)
+: Specifies the distance outside the world buffer a player must be before they start taking damage. Initially set to 5.0.
+: {{arg desc|je=float|min=0.0}}
+
+{{argument|distance|double}} (in <code>set</code> mode)
+: Specifies the new diameter for the world border.
+: {{arg desc|je=double|min=-59,999,968|max=59,999,968}}
+
+{{argument|distance|integer}} (in <code>warning distance</code> mode)
+: Specifies the distance from the world border at which players begins to see a visual warning of the world border's proximity. Initially set to 5.
+: {{arg desc|je=integer|min=0}}
+
+{{argument|time|integer}} (in <code>warning time</code> mode)
+: Specifies the number of seconds that a player begins to see a visual warning before a moving world border passes their position. Initially set to 15.
+: {{arg desc|je=integer|min=0}}
+
+==Result==
+
+{{Result table|onlyje=1}}
+{{Result table|the arguments are not specified correctly|unparseable}}
+{{Result table|cmd=/worldborder add ...<br>/worldborder set ...|the size is unchanged|fail}}
+{{Result table|the new size is less than 1.0 or greater than 59,999,968}}
+{{Result table|cmd=/worldborder center ...|the center is unchanged}}
+{{Result table|the specified X or Z is not between ±29999984.}}
+{{Result table|cmd=/worldborder damage amount ...|the damage amount is unchanged}}
+{{Result table|cmd=/worldborder damage buffer ...|the damage buffer is unchanged}}
+{{Result table|cmd=/worldborder warning distance ...|the warning distance is unchanged}}
+{{Result table|cmd=/worldborder warning time ...|the warning time is unchanged}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/worldborder add ...|On success|1|1|the specified {{cd|<distance>}}}}
+{{Output table|cmd=/worldborder center ...|On success|1|1|0}}
+{{Output table|cmd=/worldborder damage amount ...|On success|1|1|the specified {{cd|<damagePerBlock>}}}}
+{{Output table|cmd=/worldborder damage buffer ...|On success|1|1|the specified {{cd|<distance>}}}}
+{{Output table|cmd=/worldborder get|On success|1|1|the size of the world border after rounding to the nearest integer}}
+{{Output table|cmd=/worldborder set ...|On success|1|1|the amount of change in the width of the world border<br>(a positive number means an increase, a negative number means a decrease).}}
+{{Output table|cmd=/worldborder warning distance ...|On success|1|1|the specified {{cd|<distance>}}}}
+{{Output table|cmd=/worldborder warning time ...|On success|1|1|the specified {{cd|<<nowiki/>time>}}}}
+{{Output table}}
+
+== History ==
+{{info needed section|the update for the world border's radius that [[Java Edition distance effects|controlled by float replaced by double]] }}
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w17a|Added {{cmd|worldborder|link=none}}.}}
+|{{HistoryLine|||dev=14w19a|Added {{cmd|worldborder damage|link=none}}.
+|Added {{cmd|worldborder warning|link=none}}.}}
+|{{HistoryLine|||dev=14w26a|Added {{cmd|worldborder add|link=none}}.}}
+|{{HistoryLine|||dev=14w29a|Added {{cmd|worldborder get|link=none}}.}}
+|{{HistoryLine||1.17|dev=21w17a|The arguments about world border size now require a double instead of a float.<ref>{{bug|MC-187664}}</ref>
+|The max world border size has been shrunk to 59,999,968 from 60,000,000.}}
+|{{HistoryLine||1.18|dev=?|The center's X and Z now must be between ±29999984 (inclusive).}}
+|{{HistoryLine||1.21.9|dev=25w36a|The command now only affects the world border of the [[dimension]] it is executed in.}}
+|{{HistoryLine||1.21.11|dev=25w43a|The {{cd|time}} argument is now given in ticks instead of seconds.}}
+|{{HistoryLine|||dev=25w44a|The {{cd|time}} argument for setting the size can now also specify seconds or in-game days using an {{cd|s}} or {{cd|d}} suffix.|The {{cd|time}} argument for setting the warning distance now specifies ticks by default but can also specify seconds or in-game days using an {{cd|s}} or {{cd|d}} suffix.}}
+}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/worldborder]]
+[[es:Comandos/worldborder]]
+[[ja:コマンド/worldborder]]
+[[pt:Comandos/worldborder]]
+[[ru:Команды консоли/worldborder]]
+[[zh:命令/worldborder]]

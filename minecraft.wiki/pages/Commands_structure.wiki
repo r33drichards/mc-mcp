@@ -1,0 +1,118 @@
+{{for|the command {{in|java}} that can place structures|Commands/place}}
+{{exclusive|bedrock|education}}
+{{Infobox command
+|name=structure
+|oplevel=1
+|cheat=y
+}}
+
+Used to save and load structures without having to use [[structure block]]s.
+
+==Syntax==
+
+:<code>structure save <name: string> <from: x y z> <to: x y z> [saveMode: StructureSaveMode]</code>
+:<code>structure save <name: string> <from: x y z> <to: x y z> [includeEntities: Boolean] [saveMode: StructureSaveMode] [includeBlocks: Boolean]</code>
+:: Saves a structure.
+:<code>structure load <name: string> <to: x y z> [rotation: Rotation] [mirror: Mirror] [includeEntities: Boolean] [includeBlocks: Boolean] [waterlogged: Boolean] [integrity: float] [seed: string]</code>
+:<code>structure load <name: string> <to: x y z> [rotation: Rotation] [mirror: Mirror] [animationMode: StructureAnimationMode] [animationSeconds: float] [includeEntities: Boolean] [includeBlocks: Boolean] [waterlogged: Boolean] [integrity: float] [seed: string]</code>
+:: Loads a structure.
+:<code>structure delete <name: string></code>
+:: Deletes saved structure file.
+
+==Arguments==
+{{main|Structure Block}}
+
+{{argument|be=1|name: string|basic_string}}
+: {{arg desc|be=basic_string}}
+: Should be in the format of <code>name</code> or <code>namespace:name</code>. If namespace is unspecified, defaults to <code>mystructure:</code>
+
+{{argument|be=1|from: x y z|CommandPosition}} and {{argument|be=1|to: x y z|CommandPosition}} (in <code>save</code> mode)
+: Specifies any two opposing corner blocks of the region to be saved.
+: {{arg desc|be=CommandPosition}}
+
+{{argument|be=1|to: x y z|CommandPosition}} (in <code>load</code> mode)
+: Specifies the lower northwest corner of the destination region.
+: {{arg desc|be=CommandPosition}}
+
+{{argument|be=1|saveMode: StructureSaveMode|enum}}
+: Specifies the storage location.
+: Must be one of <code>disk</code> and <code>memory</code>. If not specified, defaults to memory.
+:<code>disk</code> saves the structure to the world database itself. After leaving and rejoining the world, the structure save files is still there.
+:<code>memory</code> only saves the structure in memery temporarily. When leaving and rejoining the world, the structure save files are gone.
+
+{{argument|be=1|includeEntities: Boolean|enum}}
+: Specifies whether including entities or not. If unspecified, defaults to <code>true</code>.
+: {{arg desc|be=bool}}
+
+{{argument|be=1|rotation: Rotation|enum}}
+: Specifies the rotation when loading a structure. If unspecified, defaults to <code>0_degrees</code>.
+: Must be one of <code>0_degrees</code>, <code>90_degrees</code>, <code>180_degrees</code>, and <code>270_degrees</code>.
+
+{{argument|be=1|mirror: Mirror|enum}}
+: Specifies the axis of mirror flip when loading a structure. If unspecified, defaults to <code>none</code>.
+: Must be one of <code>x</code>, <code>z</code>, <code>xz</code>, and <code>none</code>.
+
+{{argument|be=1|animationMode: StructureAnimationMode|enum}}
+: Specifies the animation to generate structures.
+: Must be one of <code>block_by_block</code> and <code>layer_by_layer</code>.
+
+{{argument|be=1|animationSeconds: float|float}}
+: Specifies the duration of the animation.
+: {{arg desc|be=float}}
+
+{{argument|be=1|includeBlocks: Boolean|enum}}
+: Specifies whether including blocks or not. If unspecified, defaults to <code>true</code>.
+: {{arg desc|be=bool}}
+
+{{argument|be=1|integrity: float|float}}
+: Specifies the integrity (probability of each block being loaded). If 100, all blocks in the structure are loaded. If 0, no blocks are loaded. If unspecified, defaults to <code>100</code>.
+: {{arg desc|be=float}} Should be between 0 and 100 (inclusive).
+
+{{argument|be=1|seed: string|basic_string}}
+: Specifies the seed when calculating whether a block should be loaded according to integrity. If unspecified, a random seed is taken.
+: {{arg desc|be=basic_string}}
+
+{{argument|be=1|waterlogged: Boolean|enum}}
+:Specifies whether or not waterlog the blocks when the structure is loaded in water. If unspecified, defaults to <code>false</code>.
+: {{arg desc|be=bool}}
+
+==Result==
+
+{{Result table|onlybe=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.||unparseable}}
+{{Result table|One or both specified regions are unloaded or out of the world.||fail}}
+{{Result table|cmd=/structure save ...|The region is greater than 64 * 384 * 64.}}
+{{Result table|cmd=/structure load ...<br>/structure delete ...|The specified structure does not exist.}}
+{{Result table|cmd=/structure load ...|<code>integrity: float</code> is lower than 0 or higher than 100.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+==Output==
+
+{{Output table|onlybe=1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.100|dev=beta 1.16.100.52|Added {{cmd|structure|link=none}}.}}
+|{{HistoryLine|||dev=beta 1.16.100.60|Added the ability to animate the placement of a structure.}}
+|{{HistoryLine||1.16.210|dev=beta 1.16.210.54|{{cmd|structure|link=none}} now has the ability to delete saved structure files.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/structure?view=minecraft-bedrock-stable|title=<code>/structure</code> Command|website=Microsoft Learn|date=June 25, 2025}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/structure]]
+[[es:Comandos/structure]]
+[[ja:コマンド/structure]]
+[[pt:Comandos/structure]]
+[[ru:Команды консоли/structure]]
+[[zh:命令/structure]]

@@ -1,0 +1,277 @@
+{{about|effects which arise due to floating-point precision loss|effects which arise due to integer limits|Java Edition hard limits|other uses|Distance effects}}
+{{Exclusive|Java}}
+
+{{IN|je}}, certain game mechanics start to break down as the player's distance from the center of the world increases.
+
+== Vanilla bounds (X/Y/Z ±0–29,999,984<!-- The world border is actually one chunk away from 30 million blocks within Vanilla Minecraft (ironically, Fandom is more correct here). -->) ==
+
+=== Horizontal effects ===
+; World
+* [[The End]]'s generation is completely absent in repeating concentric rings centered on the world.<ref name=":3">{{bug|MC-159283||The End terrain does not generate in multiple rings centered around the world center}}</ref>
+* Temperature distribution breaks at high distances,<ref name="snow">{{bug|MC-192718||Casting issue: Temperature loses precision at high distances leading to incorrect snow and ice generation and incorrect snowfall}}</ref> which can be easily noticed with the creation of [[snow]] and [[ice]] in [[mountains]] appearing blockier due to both world generation and subsequent regeneration from snowfall or freezing.
+
+; Sounds
+* Many break down slightly.<ref name="audio">{{bug|MC-191170||Casting issue: Positional audio can come from the wrong location at high coordinates}}</ref>
+** Becomes considerably more pronounced beyond vanilla bounds at 2{{^|28}} (268,435,456) blocks.
+
+=== Vertical effects ===
+; Entities
+* Entities are immune to damage above 2{{^|23}} (8,388,608) blocks on the Y axis.<ref name="collisions">{{Bug|MC-278503||Entities above Y {{=}} 8,388,608 are immune to damage|Won't Fix}}</ref>
+
+; Rendering
+* Rain and snow [[#Rain/snow rendering|jitter and appear distorted]] at large heights.<ref name="rain">{{bug|MC-164352||Casting issue: Snow animation becomes stretched when being very high above the ground}}</ref>
+* Lighting stops working beyond ±2,048 blocks on the Y axis, causing all entities (including the [[player]]) to appear completely black.<ref>{{Bug|MC-194878||Lighting stops working above/below 2048 on the y axis / beyond 33,554,432 on the x and z axes}}</ref>
+
+== Beyond the vanilla world boundary (X/Y/Z ±29,999,984–2,147,483,647) ==
+{{disclaimer|section=1}}
+
+Horizontal distances beyond 30 million blocks cannot be reached without modifications to the game's code.
+
+Vertical distances beyond 20 million blocks cannot be reached with the {{cmd|teleport}} command; they can only be reached by using external programs (e.g. [[NBT]] editors), or by modifying the game's code to remove this limitation.
+
+=== Horizontal effects ===
+{| class="wikitable"
+!Coordinates
+!Effects
+!Example
+|-
+|X/Z ±33,554,432 (±2{{^|25}})
+|
+* Coordinates of all entities are slices of 134,217,728 (<sup>1</sup>⁄<sub>134,217,728</sub> blocks).
+* Lighting breaks down.{{verify|26.1-snap1 significantly reworked lighting; is this still accurate?}} All blocks appear completely black and are unaffected by sky and block light (light-emitting blocks may create a local area of light in its block space, but this cannot extend). As a result, hostile mob spawning is extremely common, cave ambience sounds can play, and mushrooms can spawn naturally. By opening the debug screen on these areas, the light level reported is always 0. It is effectively mandatory to use the night vision effect to facilitate any reasonable exploration beyond this point. This can be fixed by switching the data type to 64-bit floats in the lighting engine's algorithms.
+* The game crashes if the player teleports a few blocks before this point, but the game still works when teleporting anywhere after that.
+|[[File:Far darkness.png|128px]]
+|-
+|X/Z ±268,435,456 (±2{{^|28}})
+|
+* Coordinates of all entities are slices of 16,777,216 (<sup>1</sup>⁄<sub>16,777,216</sub> blocks).
+* Many sounds stop working 16 blocks beyond this point.
+|
+|-
+|X/Z ±1,073,741,824 (±2{{^|30}})
+|
+* Coordinates of all entities are slices of 4,194,304 (<sup>1</sup>⁄<sub>4,194,304</sub> blocks).
+* [[Village]]s stop generating correctly. The only part which generates is the meeting point, sometimes with accompanying [[villager]]s; every other part is missing. Some villages can generate several blocks in the air or underground.
+* [[Ancient cities]] stop generating correctly. The only part which generates is the center point; every other part is missing.
+* [[Pillager outpost]]s can generate several blocks in the air, without any scarecrows or jails.
+* [[Bastion remnant]]s generate as a near perfect cube, sometimes with entrances blocked by walls.
+* The player can easily get stuck in the positive sides of blocks. This does not stop fall damage if the player gets stuck while falling. Almost all mobs can [[suffocate]] if pushed into the positive sides of blocks.
+* All entities, including the player, can easily go through the [[world border]] on the positive coordinates.
+* Loading a world saved at this distance may result in a very large amount of mobs spawning, which can cause the game to freeze or crash.
+| [[File:Broken Village.png|128px]]  [[File:Mob spawning 2 billion.png|128px]]
+|-
+|X/Z ±2,147,483,647 (±2{{^|31}} − 1)*
+|
+* The game crashes if a chunk is loaded beyond this point without directly modifying the game to use 64-bit floats and/or long integers. The world renderer stops working 147 blocks beyond this point, allowing the player to get stuck, lightning stops working entirely, and clouds in fast graphics are stretched, while fancy cloud rendering still works normally. It is advisable to set the world border to at least several hundred blocks before this limit and make sure not to teleport past this.
+|
+|}
+
+== Beyond the 32-bit limit (X/Y/Z ±2,147,483,648–9,223,372,036,854,775,807) ==
+{{disclaimer|section=1}}
+The [[wikipedia:Double-precision floating-point format|standard format for doubles]] dedicates 52 bits to the fraction, as opposed to the 23 bits used by the [[wikipedia:Single-precision floating-point format|32-bit float]]. As a result, beyond 2{{^|30}} (1,073,741,824) blocks, the player would only be off by (2{{^|30}}) / (2{{^|52}}) = 1/2{{^|22}} = {{frac|1|4194304}} blocks, which is absolutely indistinguishable from the distance back at spawn. This is around equivalent to the precision of 2 to 4 blocks out on ''Bedrock Edition''.
+
+Each doubling, however, indeed halves the precision used, up to a point where every single element of the game ends up breaking down.
+
+Horizontal distances beyond the 32-bit integer limit (X/Z ±2,147,483,647) cannot be reached without substantial modifications to the game's code.
+
+=== 64-bit precision loss ===
+''Minecraft: Java Edition'' uses [[wikipedia:Double-precision floating-point format|64-bit floating point precision]] for entity positions and other calculations. Several mechanics which do not break down within vanilla bounds break down at very high distances similarly to ''Bedrock Edition''.
+
+==== Horizontal effects ====
+{| class="wikitable"
+!Coordinates
+!Effects
+|-
+|X/Z ±2,147,483,648 (±2{{^|31}})
+|
+* Coordinates of all entities are slices of 2,097,152 ({{frac|1|2,097,152}} blocks).
+* It becomes impossible to [[swimming|swim]].
+|-
+|X/Z ±34,359,738,368 (±2{{^|35}})
+|
+* Coordinates of all entities are slices of 131,072 ({{frac|1|131,072}} blocks).
+|-
+|X/Z ±68,719,476,736 (±2{{^|36}})
+|
+* Coordinates of all entities are slices of 65,536 ({{frac|1|65,536}} blocks).
+* The game loads the [[spawn chunk]]s at this position, overwriting the terrain with the content of the spawn chunks. This will happen again at any power of two beyond this point.
+|-
+|X/Z ±281,474,970,710,656 (±2{{^|48}})
+|
+* Coordinates of all entities are slices of 16 ({{frac|1|16}} blocks).
+* All entities are on the edges of block pixels.
+* Jitter is easily noticeable at this point, which is the equivalent of 524,288 blocks in ''Bedrock Edition''.<ref name=":0">{{YouTube link|F8cMZA8J2Hk|breaking Minecraft's FINAL Distance Limit...|AntVenom|2021-04-01|t=327}}</ref>.
+* Beyond this point, the skybox starts flashing between blue and purple colors when the player's camera moves. This effect becomes more intense at higher distances.
+|-
+|X/Z ±2,251,799,813,685,248 (±2{{^|51}})
+|
+* Coordinates of all entities are slices of 2 ({{frac|1|2}} blocks).
+* It becomes impossible for the player to move along that axis by using normal walking speed.
+|-
+|X/Z ±4,503,599,627,370,496 (±2{{^|52}})
+|
+* Coordinates of all entities are integers (1 block).
+* All entities that have a hitbox equal to or smaller than 1 block fall through the world, including the player.
+|-
+|X/Z ±9,007,199,254,740,992 (±2{{^|53}})
+|
+* Coordinates of all entities are multiples of 2.
+* The [[#Stripe Lands|Stripe Lands]] start beyond this coordinate.
+* A Stripe Lands rendering fix is required to traverse beyond this point, as the game freezes when the Stripe Lands are rendered.
+* After this point, at every power of two, water, vines and lava double in size.
+|-
+|X/Z ±18,014,398,509,481,984 (±2{{^|54}})
+|
+* Coordinates of all entities are multiples of 4.
+* In older versions of ''Java Edition'', the world would render similarly to the Slice Lands of ''Bedrock Edition''; in newer versions (starting from around [[Java Edition 1.12|1.12]], or even earlier), the world renders stripes with a larger distance between them instead.
+|-
+|X/Z ±144,115,188,075,855,872 (±2{{^|57}})
+|
+* Coordinates of all entities are multiples of 32.
+* Terrain flickering occurs in modern versions, similar to 2{{^|28}} blocks in versions before Beta 1.8.<ref name=":0" />
+|-
+|X/Z ±9,223,372,036,854,775,807 (±2{{^|63}} − 1)*
+|
+* The game crashes if chunks are loaded beyond this point.<ref name=":0" />
+|}
+
+==== Vertical effects ====
+{| class="wikitable"
+!Coordinates
+!Effects
+!Example
+|-
+|Y ±2,147,483,648 (±2{{^|31}})
+|
+* The game freezes beyond this point if [[third-person view]] is activated.
+* Rain and snow stop rendering entirely.
+|
+|-
+|Y ±281,474,970,710,656 (2{{^|48}})
+|
+* Beyond this point, the skybox starts flashing between blue and purple colors when the player's camera moves. This effect becomes more intense at higher Y coordinates.
+|
+|-
+|Y ±4,503,599,627,370,496 (±2{{^|52}})
+|
+* Flying upwards or downwards in [[Creative]] becomes impossible.<ref name="heightvideo">{{YouTube link|SYuocMFOD6w|HOW HIGH / LOW CAN YOU GO in MINECRAFT?!|AntVenom|2017-04-23}}</ref>
+|
+|-
+|Y ±36,028,797,018,963,968 (±2{{^|55}})
+|
+* Falling downwards becomes impossible.<ref name="heightvideo" />
+* Beyond this point, the game crashes if the player points their camera at a vertical 40-degree angle.
+|
+|-
+|Y ±36,893,488,147,419,103,232
+|
+* The stripes in the [[world border]]'s texture become completely vertical, instead of diagonal.
+| [[File:High distance worldborder Y.png|128px]]
+|} 
+
+==== Stripe Lands ====
+[[File:1.2.5 Stripe Lands.png|240px|thumb|The Stripe Lands in [[Java Edition 1.2.5|1.2.5]]]]
+As 52 bits are dedicated to the fraction in the double format rather than 23 in the single format, after 2{{^|53}} or 9,007,199,254,740,992 blocks out, precision breaks to consider only every second block, and so on. The rendering breaks down in an effectively identical manner to ''Bedrock Edition'' and yields the famous Stripe Lands as a result.
+
+Fluids break down differently from blocks; while block rendering breaks down to form the usual stripes, fluids instead stretch to the size of the precision loss, with the initiation of the Stripe Lands causing each liquid to become two blocks long, then four at the next doubling, and so on.
+
+In older versions, beyond 2{{^|54}} blocks, the world would render similarly to the Slice Lands of ''Bedrock Edition'', in newer versions (starting from around 1.12, or even earlier), the world renders stripes with a larger distance between them instead.
+
+In modern versions of ''Java Edition'' ([[Java Edition 1.14|1.14]] and later) the game freezes when the Stripe Lands are rendered, so a Stripe Lands rendering fix is required to traverse further.
+
+== Beyond the 64-bit limit (X/Y/Z ±9,223,372,036,854,775,808–2{{^|1024}}) ==
+{{disclaimer|section=1}}
+Beyond the 64-bit integer limit, the precision loss becomes greater by every passing exponent of two that is passed.
+
+[[File:Infinity Java X Y Z.png|thumb|240px|Going to Infinity in Java Edition 1.21.4]]
+
+=== Vertical effects ===
+* Entity positions lose precision when the player passes every exponent of two.
+* The skybox flashing continues until 2{{^|1024}}.
+* The player cannot surpass 2{{^|1024}} on the Y axis as that is the position limit for 64-bit floats. This cannot be surpassed without a rework of the game's coordinate system.<ref name="heightvideo" />
+
+== Analysis ==
+Due to precision loss becoming more extreme at greater distances, features affected at it behave different depending on how far out they are.
+
+=== Rain/snow rendering ===
+'''''First affected bracket:'''<br />First affected version: Unspecified [[Java Edition Classic|Classic]]<br />Last affected version: [[Java Edition Indev 20100214|Indev 2010-02-14]]''
+
+'''''Second affected bracket:'''<br />First affected version: [[Java Edition Alpha v1.0.4|Alpha v1.0.4]]<br />Last affected version: [[Java Edition Alpha v1.1.2 01|Alpha v1.1.2_01]]''
+
+'''''Third affected bracket:'''<br />First affected version: [[Java Edition Beta 1.6.5|Beta 1.6.5]]<br />Still affects the current release ([[Java Edition 1.21.10|1.21.10]]) and snapshot ([[1.21.11-rc2]])<br />Suspected to affect as far back as [[Java Edition Beta 1.5|Beta 1.5]], but cannot be reasonably tested due to crashes''<br />
+''Note: This affects both rain and snow, but this can only be seen with rain in versions prior to [[Java Edition 1.7.2|1.7.2]] because temperature did not change with height in these versions.''
+
+; 16,384 - 262,143 blocks
+Beyond this point on the Y axis one can start to see the first signs of snow/rain jittering. Up to 65,535 blocks. this can only be reasonably seen with snowflakes with a mainly horizontal trajectory, as vertical traveling snowflakes are moving at a speed where travel still appears mostly smooth. Beyond 65,536 and especially 131,072 blocks, the effect becomes very obvious for almost all snow.
+
+; 262,144 - 2,147,483,647 blocks
+The first signs of geometrical distortion in the snow itself can be seen. Very little non-misshapen snow is present beyond here, and most of it has transformed into either lone rectangles, or the odd paired rectangles similar in shape to a pause button.
+
+Deformity progresses after every power of two surpassed from this point. Past 16,777,216 blocks, snow becomes a near unrecognizable pattern of suspended vertical lines.
+
+; 2,147,483,648+ blocks
+Beyond this point, snow stops rendering. The sky itself still renders correctly. When the player goes below the 32-bit integer limit, rain appears for an unknown reason.
+
+=== Sound positioning errors ===
+Become very severe beyond 2{{^|28}} (268,435,456) blocks, where many sounds are simply no longer audible at all.
+
+=== Temperature distribution breakdown ===
+''First affected version: [[16w02a]]<br />Still affects the current release ([[Java Edition 1.21.10|1.21.10]]) and snapshot ([[1.21.11-rc2]])''
+
+; 16,777,216 - 33,554,431 blocks
+As snowfall/rainfall is handled on a per-block basis, the effects of precision loss here can only be seen once precision itself can no longer represent blocks (integers) individually.
+
+Beyond this point, while perhaps not immediately obvious (especially due to the vertical variation in almost all biomes where this effect can be seen), the patterns resulting from snow landing on surfaces become much more angular than before, being commonly composed of large rectangles, thin lines and lone dots which are either filled with snow or have it completely absent. This is similarly true of water, with ice corresponding to cold blocks and water to warmer blocks. 
+
+As temperature varies with height, in order to properly see the effects of this, it is strongly recommended to build a flat plane for snow to accumulate on instead, or to generate a [[Superflat]] world with snow/ice set to generate with it as it would naturally. A modified Tunneler's Dream preset set to generate 94 layers of black concrete (Looking At Block should say 93 for the top concrete layer) is ideal for this case, providing a roughly 50/50 density of snowy and clear blocks, with black providing maximum contrast.
+
+Teleporting to 16,777,216 on both axes should show four quadrants - one with normal looking snow/ice generation, and three with far more angular features due to the precision loss exceeding a full block. During times of precipitation, it can be seen that the blocky patterns of snow/ice match up with the weather directly above - snowy areas have snowfall where areas with no snow cover have rain. This is obviously true anywhere and is unrelated to precision loss, but (especially in the case of already-generated worlds) this can be used to prove that the precision loss lies with temperature calculation and is not merely a world generation issue disjoint from it.
+
+<gallery>
+Snow precision normal.png|An example of snow generated correctly near the spawn point.
+Snow precision broken.png|An example of snow generated at high distances. Notice the differing consistency composed of squares and lines.
+Snow gen v1.png|Snow generated in an extreme hills biome in 1.8, showing intended behavior.
+Snow gen v2.png|The exact same area as generated in 1.9, showing the newly broken generation.
+</gallery>
+
+; 33,554,432+ blocks
+Beyond this point, temperature calculation becomes very broken depending of the axes where this position has been exceeded. If beyond this point on one axis, the terrain has clearly visible "stripes" of snow in mountain biomes. If beyond this point on both axes, snowy areas have square shapes covering several blocks (especially beyond 67,108,864 blocks). These effects can only be seen on modded versions, since terrain does not generate beyond 30,000,000 blocks in vanilla.
+
+== Historical effects ==
+Due to the incredibly large amount of documentation on effects in older versions of the game, all such content has been relocated to [[/Historical effects]].
+
+== Gallery ==
+
+=== Stripe Lands ===
+<gallery>
+1.2.5 Stripe Lands.png
+1.2.5 Corner Stripe Lands.png
+Screenshot 2022-06-22 2.44.39 PM.png
+Screenshot 2022-07-10 9.08.47 AM.png
+MC-distance19.png|alt=
+MC-distance17.png|alt=
+MC-distance9.png|alt=
+MC-distance8.png|alt=
+Java Edition Edge Stripe Lands.png
+MC-distance20.png|alt=
+MC-distance16.png|alt=
+MC-distance15.png|alt=
+MC-distance14.png|alt=
+MC-distance7.png|alt=
+MC-distance6.png|alt=
+MC-distance5.png|alt=
+MC-distance13.png|alt=
+MC-distance4.png|alt=
+</gallery>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox environment}}
+{{DEFAULTSORT:Distance effects}}
+[[Category:Glitches]]
+[[Category:Analysis]]
+[[ja:距離効果/Java Edition]]
+[[lzh:距離之象/爪哇版]]
+[[zh:距离现象/Java版]]

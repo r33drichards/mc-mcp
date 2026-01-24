@@ -1,0 +1,206 @@
+{{Infobox version
+| title = Minecraft 23w43a
+| image = 23w43a.jpg
+| image2 = Java Edition 23w43a.png
+| edition = Java
+| type = Snapshot
+| date = October 25, 2023
+| jsonhash = 1db1ac2c71609b927aaa2f3c099ec24e4a5e4e6e
+| clienthash = dcb8011ca231f2810d5e713b7683f3551a5420a2
+| clientmap = 702f352a23bd37619d24c8926f5309b3b180fb0c
+| serverhash = 135f89e56c2d83d9ef0f7915f0cdf1047737d51a
+| servermap = fb7db2fd0cd59c85173d1b04c906f46c0c673b1f
+| parent = 1.20.3
+| prevparent = 1.20.2
+| prev = 23w42a
+| next = 23w43b
+| nextparent = 1.20.4
+}}<onlyinclude>
+
+'''23w43a''' is the fourth [[snapshot]] for [[Java Edition 1.20.3]], released on October 25, 2023,<ref>{{snap|23w43a|October 25, 2023}}</ref> which adds copper and tuff family blocks under experimental features, introduces a new look for bats, adds {{cmd|tick}} command, and fixes bugs.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|tick}}'''
+* A new administrative and debugging command which allows the player to control the ticking flow and measure the performance of the game.
+** Requires elevated permissions (admins and above), and so it is not by default available in [[command block]]s and [[data pack]]s.
+** Syntaxes:
+*** {{cmd|link=none|tick query}}
+**** Outputs the current target ticking rate, with information about the tick times performance.
+*** {{cmd|link=none|tick rate <rate>}}
+**** Sets a custom target ticking rate to the specified value. The value <code>rate</code> must be greater than <code>1.0</code> and lower than <code>10000.0</code>.
+*** {{cmd|link=none|tick freeze}}
+**** Freezes all gameplay elements, except for [[player]]s and any [[entity]] a player is [[riding]].
+*** {{cmd|link=none|tick step <time>}}
+**** Only works when the game is frozen. It runs the game for the specified number of ticks and then freezes the game again.This allows to step through the game a set amount of ticks at a time.
+*** {{cmd|link=none|tick step stop}}
+**** Stops the current stepping process, and re-freezes the game.
+*** {{cmd|link=none|tick unfreeze}}
+**** Unfreezes the game and resumes all gameplay elements.
+*** {{cmd|link=none|tick sprint <time>}}
+**** Runs the game while ignoring the set ticking target rate for the specified number of ticks. At the end of the sprint, the game resumes the previous ticking target and display performance information about the tick times while sprinting.
+*** {{cmd|link=none|tick sprint stop}}
+**** Stops the current {{cmd|link=none|tick sprint}}, and resumes the previous ticking target.
+
+== Changes ==
+=== Blocks ===
+'''[[Jigsaw block]]'''
+* Added two new input fields in the edit screen.
+** Selection priority
+*** When the parent piece is being processed for connections, this controls the order in which this jigsaw block attempts to connect to its target piece.
+*** Jigsaws are processed in descending priority order and randomly within the same priority.
+** Placement priority
+*** When this jigsaw block connects to a piece, this is the order in which that piece is processed for connections in the wider structure.
+*** Pieces are processed in descending priority order with the default insertion order breaking ties within the same priority.
+** This functionality has been added to support the ability for jigsaw structures to generate branches in a depth-first order, as well as give finer control over ordering of connections.
+** All existing jigsaw blocks default their selection and placement priority to 0, resulting in the same behavior as before these two configurable values were introduced.
+
+=== Items ===
+'''[[Arrow]]s'''
+* Special arrows, such as [[spectral arrow]]s, no longer revert to regular arrows when shot and picked up.
+
+'''[[Ender pearl]]'''
+* Thrown ender pearls produce a teleportation sound on impact.
+
+=== Mobs ===
+'''[[Bat]]'''
+* Their model, animations, and texture have been updated.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>22</code>.
+
+'''[[Entity format]]'''
+* In NBT format for entity type <code>arrow</code> and <code>spectral_arrow</code>:
+** Added {{nbt|compound|item}}.
+*** This field is the item that will be picked up.
+* In NBT format for entity type <code>trident</code>:
+** Renamed {{nbt|compound|Trident}} to {{nbt|compound|item}}.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>20</code>.
+** <code>bat.png</code> has been updated for the new bat model.
+** Added block models, items models and block state definitions for the following blocks:
+*** {{cd|d=and|chiseled_copper|exposed_chiseled_copper|weathered_chiseled_copper|oxidized_chiseled_copper|copper_grate|exposed_copper_grate|weathered_copper_grate|oxidized_copper_grate|copper_bulb|exposed_copper_bulb|weathered_copper_bulb|oxidized_copper_bulb|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|tuff_stairs|tuff_slab|tuff_wall|chiseled_tuff|polished_tuff|polished_tuff_stairs|polished_tuff_slab|polished_tuff_wall|tuff_bricks|tuff_brick_stairs|tuff_brick_slab|tuff_brick_wall|chiseled_tuff_bricks}}.
+** Added unique sprites for the following blocks:
+*** {{cd|d=and|chiseled_copper|exposed_chiseled_copper|weathered_chiseled_copper|oxidized_chiseled_copper|copper_grate|exposed_copper_grate|weathered_copper_grate|oxidized_copper_grate|copper_bulb|exposed_copper_bulb|weathered_copper_bulb|oxidized_copper_bulb|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|chiseled_tuff|polished_tuff|tuff_bricks|chiseled_tuff_bricks}}.
+** Renamed all generic [[music]] file names to their titles.
+
+'''Telemetry'''
+* Small tweaks to the telemetry data collection screen, such as a box for allowing or denying collection of optional data.
+
+== Experimental ==
+These additions and changes only take effect when the [[Update 1.21]] experimental data pack is enabled.
+
+=== Additions ===
+==== Blocks ====
+'''{{Animate|Chiseled Copper JE1 BE1.png;Exposed Chiseled Copper JE1 BE1.png;Weathered Chiseled Copper JE1 BE1.png;Oxidized Chiseled Copper JE1 BE1.png|32px}} [[Chiseled copper]]'''
+* Have 8 variants in 4 oxidation levels, waxed or not waxed.
+* Can be crafted both in [[crafting table]] and [[stonecutter]]:
+** When in crafting table, consume 2 [[cut copper slab]]s from the same type, resulting in 1 chiseled copper with the same type.
+** When in stonecutter, consume 1 [[block of copper]], resulting in 4 chiseled copper from the same type.
+
+'''{{Animate|Copper Bulb JE1 BE1.png;Exposed Copper Bulb JE1 BE1.png;Weathered Copper Bulb JE1 BE1.png;Oxidized Copper Bulb JE1 BE1.png|32px}} [[Copper bulb]]'''
+* A light-emitting block that can toggle its light emission through redstone pulses.
+* Have 8 variants in 4 oxidation levels, waxed or not waxed.
+* Can be crafted in crafting table with a cross pattern, by 3 blocks of copper from the same type, 1 [[blaze rod]] in the center slot, and 1 [[redstone dust]] in the bottom slot, resulting in 1 copper bulb with the same type.
+* They emit less light the more oxidized they are. From less oxidized to most oxidized, they emit block light levels of 15, 12, 8, and 4, respectively.
+* While powered by a redstone signal, a redstone crystal in the center of them glows.
+* They have following properties:
+** Only toggle their light on or off when receiving a redstone pulse. Their state isn't changed if the source of the redstone pulse is removed.
+** When the light is on, redstone comparators read a signal strength of 15.
+** Don't conduct redstone power.
+
+'''{{Animate|Copper Door JE1 BE1.png;Exposed Copper Door JE1 BE1.png;Weathered Copper Door JE1 BE1.png;Oxidized Copper Door JE1 BE1.png|32px}} [[Copper door]] and {{Animate|Copper Trapdoor JE1 BE1.png;Exposed Copper Trapdoor JE1 BE1.png;Weathered Copper Trapdoor JE1 BE1.png;Oxidized Copper Trapdoor JE1 BE1.png|32px}} [[copper trapdoor]]'''
+* Have 8 variants in 4 oxidation levels, waxed or not waxed.
+* Works like wooden doors in that they can be opened and closed by the player as well as redstone.
+* Can be crafted as other doors, with blocks of copper from the same type (instead of [[copper ingot|ingots]], as in [[iron door]]s).
+
+'''{{Animate|Copper Grate JE1 BE1.png;Exposed Copper Grate JE1 BE1.png;Weathered Copper Grate JE1 BE1.png;Oxidized Copper Grate JE1 BE1.png|32px}} [[Copper grate]]'''
+* A new type of decorative block unique to the copper family.
+* Have 8 variants in 4 oxidation levels, waxed or not waxed.
+* Can be crafted both in crafting table and stonecutter:
+** When in crafting table, consume 4 blocks of copper from the same type in rhombic pattern, resulting in 1 copper grate with the same type.
+** When in stonecutter, consume 1 block of copper, resulting in 4 copper grate from the same type.
+* They are transparent, so they allow light to pass through and cannot conduct redstone.
+
+'''[[Tuff]] family'''
+* Added following blocks:
+** [[File:Tuff Stairs JE1 BE1.png|32px]] [[Tuff stairs]]
+** [[File:Tuff Slab JE1 BE1.png|32px]] [[Tuff slab]]
+** [[File:Tuff Wall JE1 BE1.png|32px]] [[Tuff wall]]
+** [[File:Chiseled Tuff JE1 BE1.png|32px]] [[Chiseled tuff]]
+** [[File:Polished Tuff JE1 BE1.png|32px]] [[Polished tuff]]
+** [[File:Polished Tuff Stairs JE1 BE1.png|32px]] [[Polished tuff stairs]]
+** [[File:Polished Tuff Slab JE1 BE1.png|32px]] [[Polished tuff slab]]
+** [[File:Polished Tuff Wall JE1 BE1.png|32px]] [[Polished tuff wall]]
+** [[File:Tuff Bricks JE1 BE1.png|32px]] [[Tuff bricks]]
+** [[File:Tuff Brick Stairs JE1 BE1.png|32px]] [[Tuff brick stairs]]
+** [[File:Tuff Brick Slab JE1 BE1.png|32px]] [[Tuff brick slab]]
+** [[File:Tuff Brick Wall JE1 BE1.png|32px]] [[Tuff brick wall]]
+** [[File:Chiseled Tuff Bricks JE1 BE1.png|32px]] [[Chiseled tuff bricks]]
+* Can be crafted in crafting table or stonecutter.
+
+=== Changes ===
+==== Blocks ====
+'''[[Crafter]]'''
+* Its texture has been updated to [[File:Crafter JE2.png|32px]] [[File:Crafter Triggered JE2.png|32px]] [[File:Crafter Crafting JE2.png|32px]].
+* Slots can no longer be toggle by pressing hotkeys, instead, pressing hotkeys now puts items normally.
+
+==== General ====
+'''[[Tag]]s'''
+* Added {{cd|d=and|tuff_slab|tuff_stairs|tuff_wall|chiseled_tuff|polished_tuff|polished_tuff_slab|polished_tuff_stairs|polished_tuff_wall|tuff_bricks|tuff_brick_slab|tuff_brick_stairs|tuff_brick_wall|chiseled_tuff_bricks|chiseled_copper|exposed_chiseled_copper|weathered_chiseled_copper|oxidized_chiseled_copper|waxed_chiseled_copper|waxed_exposed_chiseled_copper|waxed_weathered_chiseled_copper|waxed_oxidized_chiseled_copper|copper_grate|exposed_copper_grate|weathered_copper_grate|oxidized_copper_grate|waxed_copper_grate|waxed_exposed_copper_grate|waxed_weathered_copper_grate|waxed_oxidized_copper_grate|copper_bulb|exposed_copper_bulb|weathered_copper_bulb|oxidized_copper_bulb|waxed_copper_bulb|waxed_exposed_copper_bulb|waxed_weathered_copper_bulb|waxed_oxidized_copper_bulb|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|waxed_copper_door|waxed_exposed_copper_door|waxed_weathered_copper_door|waxed_oxidized_copper_door|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|waxed_copper_trapdoor|waxed_exposed_copper_trapdoor|waxed_weathered_copper_trapdoor|waxed_oxidized_copper_trapdoor}} into <code>mineable/pickaxe</code> block tag.
+* Added {{cd|d=and|chiseled_copper|exposed_chiseled_copper|weathered_chiseled_copper|oxidized_chiseled_copper|waxed_chiseled_copper|waxed_exposed_chiseled_copper|waxed_weathered_chiseled_copper|waxed_oxidized_chiseled_copper|copper_grate|exposed_copper_grate|weathered_copper_grate|oxidized_copper_grate|waxed_copper_grate|waxed_exposed_copper_grate|waxed_weathered_copper_grate|waxed_oxidized_copper_grate|copper_bulb|exposed_copper_bulb|weathered_copper_bulb|oxidized_copper_bulb|waxed_copper_bulb|waxed_exposed_copper_bulb|waxed_weathered_copper_bulb|waxed_oxidized_copper_bulb|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|waxed_copper_door|waxed_exposed_copper_door|waxed_weathered_copper_door|waxed_oxidized_copper_door|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|waxed_copper_trapdoor|waxed_exposed_copper_trapdoor|waxed_weathered_copper_trapdoor|waxed_oxidized_copper_trapdoor}} into <code>needs_stone_tool</code> block tag.
+* Added {{cd|d=and|tuff_slab|polished_tuff_slab|tuff_brick_slab}} into <code>slabs</code> block and item tags.
+* Added {{cd|d=and|tuff_stairs|polished_tuff_stairs|tuff_brick_stairs}} into <code>stairs</code> block and item tags.
+* Added {{cd|d=and|tuff_wall|polished_tuff_wall|tuff_brick_wall}} into <code>walls</code> block and item tags.
+* Added {{cd|d=and|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|waxed_copper_door|waxed_exposed_copper_door|waxed_weathered_copper_door|waxed_oxidized_copper_door}} into <code>wooden_doors</code> block tag.
+
+== Fixes ==
+{{fixes|fixedin=23w43a
+|;From released versions before 1.20
+|1981|All arrow types lose their name/NBT data when shot and picked up.
+|234472|The right side of the selection box is cut off by the scroll bar in the realms "Players" menu.
+|234567|The "minecraft:ui.button.click" sound isn't played when interacting with the spawn protection slider in the Realms world options menu.
+|257786|The game takes a long time to process players leaving realms groups or accepting or declining realms invitations.
+|265899|The translation for <code>gamerule.commandModificationBlockLimit</code> is in title case instead of sentence case.
+|;From 1.20
+|263263|The operator buttons intersect the scroll bar within the realms player menu.
+|263272|You cannot click on an area to set a value within the spawn protection slider in the realms world options menu.
+|263309|You can configure your realm before it has been created by using the {{key|Tab}} key.
+|;previous
+|265872|The word "available" is misspelled as "availible" within the <code>recover_world.no_fallback</code> string.
+|265874|Right-clicking and keyboard input can disable or enable slots in the crafter.
+|265880|The subtitle for Crafters crafting something uses inconsistent tense.
+|265884|The word "occurred" is misspelled as "occured" within the <code>recover_world.message</code> string.
+|265885|Extra space in the word "cannot" in <code>selectWorld.incompatible.description</code>.
+|265886|The built-in <code>update_1_21</code> pack contains duplicate files from the vanilla pack.
+|265891|Placing items into the crafter output slot deletes them.
+|265896|Additional lines appear on the crafter's face when it crafts.
+|265901|Comparator sometimes doesn't update when crafting with the Crafter.
+|265938|Elements within the list in the "Changes From Last Backup" realms menu cannot be selected via the mouse cursor.
+|265939|The "No pending invites!" text within the realms invitation menu cannot be narrated or selected.
+|265961|Inconsistent pixels near light on the crafter's side.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|pmLIU-g0bPY|YXOoe8dlXNE}}<onlyinclude>
+
+== Trivia ==
+* This snapshot was released exactly 11 years after the release of [[Java Edition 1.4.2|1.4.2]], the [[Pretty Scary Update]], which coincidentally added [[bat]]s.</onlyinclude>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:23w43a]]
+[[es:Java Edition 23w43a]]
+[[fr:Édition Java 23w43a]]
+[[ja:Java Edition 23w43a]]
+[[lzh:二三週四三甲]]
+[[pt:Edição Java 23w43a]]
+[[ru:23w43a (Java Edition)]]
+[[uk:23w43a (Java Edition)]]
+[[zh:Java版23w43a]]

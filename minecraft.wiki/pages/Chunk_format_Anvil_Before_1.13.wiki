@@ -1,0 +1,207 @@
+{{Incomplete|Missing entity & tile entity data among other things}}
+
+[[Chunk]]s store the terrain and entities within a 16×256×16 area. They also store precomputed lighting, heightmap data for Minecraft's performance, and other meta information.
+
+== NBT structure ==
+{{See also|Anvil file format#Further information|title1=Information from the Anvil format page}}
+
+Chunks are stored in [[NBT Format|NBT]] format, with this structure (see [[#Block format|Block Format]] below for the ordering of the blocks within each array):
+
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+**{{nbt|int|[[DataVersion]]}} Version of the chunk NBT structure. '''Not present before [[Java Edition 15w32a]]'''
+**{{nbt|compound|Level}} Chunk data.
+***{{nbt|int|xPos}} X position of the chunk.
+***{{nbt|int|zPos}} Z position of the chunk.
+***{{nbt|long|LastUpdate}} Tick when the chunk was last saved.
+***{{nbt|byte|LightPopulated}} 1 or 0 (true/false) - If true, the server/client has already calculated lighting values for this chunk after generation.
+***{{nbt|byte|TerrainPopulated}} 1 or not present (true/false) indicate whether the terrain in this chunk was populated with special things. (Ores, special blocks, trees, dungeons, flowers, waterfalls, etc.) If set to zero then Minecraft will regenerate these features in the blocks that already exist.
+***{{nbt|byte|V}} Currently always saved as 1 and not actually loaded by the game. Likely a chunk version tag. '''Not present before [[Java Edition 13w36a]]'''
+***{{nbt|long|InhabitedTime}} The cumulative number of ticks players have been in this chunk. Note that this value increases faster when more players are in the chunk. Used for regional difficulty: increases the chances of mobs spawning with equipment, the chances of that equipment having enchantments, the chances of spiders having potion effects, the chances of mobs having the ability to pick up dropped items, and the chances of zombies having the ability to spawn other zombies when attacked. Note that at values 3600000 and above, regional difficulty is effectively maxed for this chunk. At values 0 and below, the difficulty is capped to a minimum (thus, if this is set to a negative number, it will behave identically to being set to 0, apart from taking time to build back up to the positives). See [[Difficulty#Regional difficulty|Regional Difficulty]] for more specifics.
+***{{nbt|byte-array|Biomes}} May not exist. 256 bytes of biome data, one byte for each vertical column in the chunk. See [[Data Values#Biome IDs|Data Values]] for biome IDs. If this tag does not exist it will be created and filled by Minecraft when the chunk is loaded and saved. If any values in this array are -1, Minecraft will also set them to the correct biome.
+***{{nbt|int-array|HeightMap}} 1024 bytes(256 TAG_Int) of heightmap data. 16 × 16. Each byte records the lowest level in each column where the light from the sky is at full strength. Speeds computing of the SkyLight.
+***{{nbt|list|Sections}} List of Compound tags, each tag is a sub-chunk of sorts.
+****{{nbt|compound}} An individual Section.
+*****{{nbt|byte|Y}} The Y index (not coordinate) of this section. Range 0 to 15 (bottom to top), with no duplicates but some sections may be missing if empty.
+*****{{nbt|byte-array|Blocks}} 4096 bytes of [[Data values#Block IDs|block IDs]] defining the terrain. 8 bits per block, plus the bits from the below Add tag.
+*****{{nbt|byte-array|Add}} May not exist. 2048 bytes of additional block ID data. The value to add to (combine with) the above block ID to form the true block ID in the range 0 to 4095. 4 bits per block. Combining is done by shifting this value to the left 8 bits and then adding it to the block ID from above.
+*****{{nbt|byte-array|Data}} 2048 bytes of [[Data values#Data|block data]] additionally defining parts of the terrain. 4 bits per block.
+*****{{nbt|byte-array|BlockLight}} 2048 bytes recording the amount of block-emitted light in each block. Makes load times faster compared to recomputing at load time. 4 bits per block.
+*****{{nbt|byte-array|SkyLight}} 2048 bytes recording the amount of sunlight or moonlight hitting each block. 4 bits per block.
+***{{nbt|list|Entities}} Each TAG_Compound in this list defines an entity in the chunk. See [[#Entity format|Entity Format]] below. If this list is empty it will be a list of End tags (before 1.10, list of Byte tags).
+***{{nbt|list|TileEntities}} Each TAG_Compound in this list defines a block entity in the chunk. See [[#Block entity format|Block Entity Format]] below. If this list is empty it will be a list of End tags (before 1.10, list of Byte tags).
+***{{nbt|list|TileTicks}} May not exist. Each TAG_Compound in this list is an "active" block in this chunk waiting to be updated. These are used to save the state of redstone machines, falling sand or water, and other activity. See [[#Tile tick format|Tile Tick Format]] below. This tag may not exist.
+</div>
+
+== Block format ==
+In the Anvil format, block positions are ordered YZX for compression purposes.
+
+The coordinate system is as follows:
+* '''X''' increases East, decreases West
+* '''Y''' increases upwards, decreases downwards
+* '''Z''' increases South, decreases North
+
+This also happens to yield the most natural scan direction, because all indices in the least significant dimension (i.e. X in this case) appear for each index in the next most significant dimension; so one reads an array ordered YZX as one would a book lying with its top northward, all letters (or X-indices) on a single line (or Z-index) at a time, and all lines on a single page (or Y-index) at a time. For the 2D arrays (i.e. "Biomes" and "HeightMap") the inapplicable Y dimension is simply omitted, as though the book is only one page thick.
+
+Each section in a chunk is a 16x16x16-block area, with up to 16 sections in a chunk. Section 0 is the bottom section of the chunk, and section 15 is the top section of the chunk. To save space, completely empty sections are not saved. Within each section is a byte tag "Y" for the Y index of the section, 0 to 15, and then byte arrays for the blocks. The "Block" byte array has 4096 partial block IDs at 8 bits per block. Another byte array "Add" is used for block with IDs over 255, and is 2048 bytes of the other part of the 4096 block IDs at 4 bits per block. When both the "Block" and "Add" byte arrays exist, the partial ID from the "Add" array is shifted left 8 bits and added to the partial ID from the "Blocks" array to form the true Block ID. The "Data" byte array is also 2048 bytes for 4096 block data values at 4 bits per block. The "BlockLight" and "SkyLight" byte arrays are the same as the "Data" byte array but they are used for block light levels and sky light levels respectively. The "SkyLight" values represent how much sunlight or moonlight can potentially reach the block, independent of the current light level of the sky.
+
+The endianness of the 2048-byte arrays (i.e. "Add," "Data," "BlockLight," & "SkyLight"), which give only 4 bits per block, seems to stand as the one anomalous exception to the otherwise consistent, format-wide standard of big-endian data storage. It also runs counter to the presumably natural human-readable printing direction. If the blocks begin at 0, they are grouped with even numbers preceding odd numbers (i.e. 0 & 1 share a byte, 2 & 3 share the next, etc.); under these designations Minecraft stores even-numbered blocks in the least significant half-byte, and odd-numbered blocks in the most significant half-byte. Thus block[0] is byte[0] at 0x0F, block[1] is byte[0] at 0xF0, block[2] is byte[1] at 0x0F, block[3] is byte[1] at 0xF0, etc. ...
+
+The pseudo-code below shows how to access individual block information from a single section. Hover over text to see additional information or comments.
+
+<pre<!---->>
+<abbr title="Function to return the 4-bit nibble in a byte array at the given index"><span style="color:blue">byte</span> Nibble4(<span style="color:blue">byte</span>[] arr, <span style="color:blue">int</span> index)</abbr>{ <span style="color:blue">return</span> <abbr title="If index is even...">index%2 == 0 ?</abbr> <abbr title="...then return the low nibble...">arr[index/2]&0x0F</abbr> <abbr title="...else return the high nibble.">: (arr[index/2]>>4)&0x0F</abbr>; }
+<span style="color:blue">int</span> '''<abbr title="The index the block is at in the arrays">BlockPos</abbr>''' = <abbr title="Careful! This is the Y coordinate relative to the section, not the whole chunk!">y</abbr>*<abbr title="Chunk/Section Width">16</abbr>*<abbr title="Section Height">16</abbr> + z*<abbr title="Chunk/Section Width">16</abbr> + x;
+<span style="color:blue">byte</span> <abbr title="The first half of the block ID">BlockID_a</abbr> = <abbr title="The Block byte array, 8 bits per block">''Blocks''</abbr>[BlockPos];
+<span style="color:blue">byte</span> <abbr title="The second half of the block ID">BlockID_b</abbr> = Nibble4(<abbr title="The Add byte array, 4 bits per block">''Add''</abbr>, BlockPos);
+<span style="color:blue">short</span> <abbr title="The actual, real Block ID">'''BlockID'''</abbr> = <abbr title="Combine the separate parts of the block ID">BlockID_a + (BlockID_b << 8)</abbr>;
+<span style="color:blue">byte</span> <abbr title="The data value for the block">'''BlockData'''</abbr> = Nibble4(<abbr title="The Data byte array, 4 bits per block">''Data''</abbr>, BlockPos);
+<span style="color:blue">byte</span> <abbr title="The block light for the block">'''Blocklight'''</abbr> = Nibble4(<abbr title="The BlockLight byte array, 4 bits per block">''BlockLight''</abbr>, BlockPos);
+<span style="color:blue">byte</span> <abbr title="The sky light for the block">'''Skylight'''</abbr> = Nibble4(<abbr title="The SkyLight byte array, 4 bits per block">''SkyLight''</abbr>, BlockPos);
+</pre>
+
+== Entity format ==
+Every [[entity]] is an unnamed {{nbt|compound|TAG_Compound}} contained in the Entities list of a chunk file. The sole exception is the Player entity, stored in [[level.dat]], or in [[Player.dat Format|<player>.dat]] files on servers.
+
+== Tile tick format ==
+Tile Ticks represent block updates that need to happen because they could not happen before the chunk was saved. Examples reasons for tile ticks include redstone circuits needing to continue updating, water and lava that should continue flowing, recently placed sand or gravel that should fall, etc. Tile ticks are not used for purposes such as leaf decay, where the decay information is stored in the leaf block data values and handled by Minecraft when the chunk loads. For map makers, tile ticks can be used to update blocks after a period of time has passed with the chunk loaded into memory.
+
+<div class="treeview">
+* {{nbt|compound}} A Tile Tick
+** {{nbt|int|i}}: The ID of the block; used to activate the correct block update procedure.
+** {{nbt|int|t}}: The number of ticks until processing should occur. May be negative when processing is overdue.
+** {{nbt|int|p}}: If multiple tile ticks are scheduled for the same tick, tile ticks with lower p will be processed first. If they also have the same p, the order is unknown.
+** {{nbt|int|x}}: X position
+** {{nbt|int|y}}: Y position
+** {{nbt|int|z}}: Z position
+</div>
+
+== History ==
+
+Chunks were first introduced in Minecraft [[Infdev]]. Before the addition of the [[Region file format|MCRegion]] format in Beta 1.3, chunks were stored as individual chunk files ".dat" where the file names contained the chunk's position encoded in Base36 - this is known as the [[Alpha level format]]. MCRegion changed this by storing groups of 32×32 chunks in individual ".mcr" files with the coordinates in Base10, with the goal being to reduce disk usage by cutting down on the number of file handles Minecraft had open at once. MCRegion's successor is the current format, [[Anvil file format|Anvil]], which only made changes to the '''chunk format'''. The region file technique is still used, but the region file extensions are ".mca" instead.
+
+The major change from MCRegion to Anvil was the division of Chunks into Sections; each chunk has up to 16 individual 16×16×16 block Sections so that completely empty sections will not be saved at all. Preparation has also been made to support blocks with IDs in the range 0 to 4095, as compared to the previous 0 to 255 limitation. However, Minecraft is not fully prepared for such blocks to exist as items; many item IDs are already taken in the range 256 to 4095.
+
+The Blocks, Data, BlockLight, and SkyLight arrays are now housed in individual chunk Sections. The Data, SkyLight, and BlockLight are arrays of 4-bit values, and the BlockLight and SkyLight arrays no longer house part of the block ID. The Blocks array is 8 bits per block, and the 4096-blocks support exists in the form of an optional Add byte array of 4-bits per block for additional block ID information. With the Anvil format, the [[NBT Format]] was changed from Notch's original specification to include an integer array tag similar to the existing byte array tag. It is currently only used for HeightMap information in chunks.
+
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||?|Removed <code>MaxExperience</code>, <code>RemainingExperience</code>, <code>ExperienceRegenTick</code>, <code>ExperienceRegenRate</code> and <code>ExperienceRegenAmount</code> from <code>MobSpawner</code>.}}
+|{{HistoryLine||1.4.2|dev=12w34a|Added entity <code>WitherBoss</code>.}}
+|{{HistoryLine||1.5|dev=13w02a|Added entity <code>MinecartTNT</code>.
+|<code>Minecart</code> is now deprecated.}}
+|{{HistoryLine|||dev=13w03a|Added entity <code>MinecartHopper</code>.}}
+|{{HistoryLine|||dev=13w06a|Added entity <code>MinecartSpawner</code>.}}
+|{{HistoryLine||1.6.1|dev=13w16a|Added entity <code>EntityHorse</code>.}}
+|{{HistoryLine|||dev=13w21a|Removed <code>ArmorType</code> from <code>EntityHorse</code>.
+|Removed <code>Saddle</code> from <code>EntityHorse</code>.}}
+|{{HistoryLine|||dev=1.6.1-pre|Readded <code>Saddle</code> to <code>EntityHorse</code>.}}
+|{{HistoryLine||1.7.2|dev=13w36a|Added <code>V</code> tag to chunk format}}
+|{{HistoryLine|||dev=13w39a|Added entity <code>MinecartCommandBlock</code>.}}
+|{{HistoryLine||1.8|dev=14w02a|Added <code>Lock</code> to containers.
+|Item IDs are no longer used when specifying NBT data.
+|Added <code>Block</code> to <code>FallingSand</code>, using the alphabetical ID format.}}
+|{{HistoryLine|||dev=14w06a|Added <code>ShowParticles</code> to all mobs.
+|Added <code>PickupDelay</code> to item entities.
+|Setting <code>Age</code> to -32768 makes items which never expire.
+|Removed <code>AttackTime</code> from mobs.}}
+|{{HistoryLine|||dev=14w10a|Added <code>rewardExp</code> to <code>Villager</code>.
+|Added <code>OwnerUUID</code> for mobs that can breed.
+|Added <code>Owner</code> to <code>Skull</code>.
+|Changes to item frames and paintings: added <code>Facing</code>, <code>TileX</code>, <code>TileY</code> and <code>TileZ</code> now represent the co-ordinates of the block the item is in rather than what it is placed on, deprecated <code>Direction</code> and <code>Dir</code>.}}
+|{{HistoryLine|||dev=14w11a|Added entity <code>Endermite</code>.
+|Added <code>EndermiteCount</code> to <code>Enderman</code>.}}
+|{{HistoryLine|||dev=14w21a|<code>CustomName</code> and <code>CustomNameVisible</code> now work for all entities.}}
+|{{HistoryLine|||dev=14w25a|Added entity <code>Guardian</code>.
+|Added <code>Text1</code>, <code>Text2</code>, <code>Text3</code> and <code>Text4</code> to signs. The limit no longer depends on the amount of characters (16), it now depends on the width of the characters.}}
+|{{HistoryLine|||dev=14w27a|Added entity <code>Rabbit</code>.
+Added <code>CommandStats</code> to [[command block]]s and [[sign]]s.}}
+|{{HistoryLine|||dev=14w28a|Removed <code>EndermiteCount</code> from <code>Enderman</code>.}}
+|{{HistoryLine|||dev=14w30a|Added <code>Silent</code> for all entities.}}
+|{{HistoryLine|||dev=14w32a|Added <code>NoAI</code> for all mobs.
+|Added entity <code>ArmorStand</code>.}}
+|{{HistoryLine|||dev=14w32c|Added <code>NoBasePlate</code> to <code>ArmorStand</code>.}}
+|{{HistoryLine||1.9|dev=15w31a|Added tags <code>HandItems</code>, <code>ArmorItems</code>, <code>HandDropChances</code>, and <code>ArmorDropChances</code> to <code>Living</code>, which replace the <code>DropChances</code> and <code>Equipment</code> tags.
+|Added <code>HandItems</code> and <code>ArmorItems</code> to <code>ArmorStand</code>.
+|Added <code>Glowing</code> to <code>Entity</code>.
+|Added <code>Team</code> to <code>LivingBase</code>.
+|Added <code>DragonPhase</code> to <code>EnderDragon</code>
+|Added entity <code>Shulker</code>, child of <code>Entity</code>.
+|Added entity <code>ShulkerBullet</code>, child of <code>Entity</code>.
+|Added entity <code>DragonFireball</code>, which extends <code>FireballBase</code> and has no unique tags.
+|Added entities <code>TippedArrow</code> and <code>SpectralArrow</code>, children of <code>Arrow</code>.
+|Added block <code>EndGateway</code>, child of <code>TileEntity</code>.
+|Added block <code>Structure</code>, child of <code>TileEntity</code>.
+|Added item tag <code>Potion</code>, child of <code>tag</code>.}}
+|{{HistoryLine|||dev=15w32a|<code>Tags</code> and <code>DataVersion</code> tag can now be applied on [[entities]].
+|Changed the <code>Fuse</code> tag's type for the </code>PrimedTnt</code> entity from "Byte" to "Short".}}
+|{{HistoryLine|||dev=15w32c|Introduced a limit on the amount of tags an entity can have (1024 tags). When surpassed it displays an error saying: "Cannot add more than 1024 tags to an entity."}}
+|{{HistoryLine|||dev=15w33a|Added entity <code>AreaEffectCloud</code>, child of <code>Entity</code>.
+|Added <code>ExactTeleport</code> and renamed <code>Life</code> to <code>Age</code> for <code>EndGateway</code>.
+|Added <code>Linger</code> to <code>ThrownPotion</code>.
+|Removed <code>DataVersion</code> from <code>Entity</code>. It is now only applied to <code>Player</code> only, child of <code>LivingBase</code>.
+|Removed <code>UUID</code> from <code>Entity</code>.
+|<code>HealF</code> under <code>LivingBase</code> has become deprecated.
+|<code>Health</code> under <code>LivingBase</code> has changed from type "Short" to "Float".
+|<code>Equipment</code> removed from <code>ArmorStand</code> and <code>Living</code> entity, its usage replaced by <code>HandItems</code> and <code>ArmorItems</code> which were added earlier.}}
+|{{HistoryLine|||dev=15w33c|Added <code>BeamTarget</code> to <code>EnderCrystal</code>.}}
+|{{HistoryLine|||dev=15w34a|Added <code>powered</code> and <code>conditional</code> byte tags to <code>Control</code> tile entity for [[command block]]s.
+|Added <code>life</code> and <code>power</code> to <code>FireballBase</code>.
+|Added <code>id</code> inside <code>SpawnData</code> to <code>MobSpawner</code>.
+|Added <code>powered</code> to the <code>Music</code> tile entity for [[note block]]s.}}
+|{{HistoryLine|||dev=15w35a|Added <code>VillagerProfession</code> to <code>Zombie</code>.}}
+|{{HistoryLine|||dev=15w37a|Added <code>Enabled</code> to <code>MinecartHopper</code>.}}
+|{{HistoryLine|||dev=15w38a|Added <code>SkeletonTrap</code> and <code>SkeletonTrapTime</code> to <code>EntityHorse</code>.}}
+|{{HistoryLine|||dev=15w41a|Replaced <code>Riding</code> with <code>Passengers</code> for all entities.
+|Added <code>RootVehicle</code> for all passengers.
+|Added <code>Type</code> to <code>Boat</code>.}}
+|{{HistoryLine|||dev=15w42a|Added <code>Fuel</code> to <code>Cauldron</code> (brewing stands).}}
+|{{HistoryLine|||dev=15w43a|Added <code>LootTable</code> and <code>LootTableSeed</code> to <code>Chest</code>, <code>Minecart</code> and <code>MinecartHopper</code>.
+|Added <code>DeathLootTable</code> and <code>DeathLootTableSeed</code> to all mobs.
+|Added <code>life</code> and <code>power</code> to all fireballs (<code>FireballBase</code>).}}
+|{{HistoryLine|||dev=15w44a|Added <code>ShowBottom</code> to <code>EnderCrystal</code>.}}
+|{{HistoryLine|||dev=15w44b|Added <code>Potion</code> and <code>CustomPotionEffects</code> to <code>Arrow</code>.
+|Added <code>Potion</code> to <code>AreaEffectCloud</code>.}}
+|{{HistoryLine|||dev=15w45a|Removed <code>Linger</code> from <code>ThrownPotion</code>. Instead, the potion will linger if the stored item has an ID of <code>minecraft:lingering_potion</code>.
+|<code>ThrownPotion</code> will now render as its stored item even if the item is not a potion.}}
+|{{HistoryLine|||dev=15w46a|<code>MoreCarrotTicks</code> from <code>Rabbit</code> is now set to 40 when rabbits eat a carrot crop, but is not used anyway.}}
+|{{HistoryLine|||dev=15w47a|Added <code>PaymentItem</code> to <code>Beacon</code>.}}
+|{{HistoryLine|||dev=15w49a|Removed <code>PaymentItem</code> from <code>Beacon</code>.
+|In order for a sign to accept text, all 4 tags ("Text1", "Text2", "Text3", and "Text4") must exist.}}
+|{{HistoryLine|||dev=15w51b|The original values of <code>DisabledSlots</code> in <code>ArmorStand</code> have changed in nature.}}
+|{{HistoryLine||1.10|dev=16w20a|Added entity <code>PolarBear</code>.
+|Added <code>ZombieType</code> to <code>Zombie</code>, replacing <code>VillagerProfession</code> and <code>IsVillager</code>. Value of 6 indicates the "husk" zombie.
+|A value of 2 on <code>SkeletonType</code> indicates the "stray" skeleton.
+|<code>NoGravity</code> extended to all entities.
+|Added <code>powered</code>, <code>showboundingbox</code> and <code>showair</code> to <code>Structure</code>.}}
+|{{HistoryLine|||dev=16w21a|Added <code>FallFlying</code> to mobs and armor stands.
+|Added <code>integrity</code> and <code>seed</code> to <code>Structure</code>.}}
+|{{HistoryLine|||dev=1.10-pre1|Added <code>ParticleParam1</code> and <code>ParticleParam2</code> to <code>AreaEffectCloud</code>.}}
+|{{HistoryLine||1.11|dev=16w32a|Horse was split into entity IDs <code>horse</code>, <code>donkey</code>, <code>mule</code>, <code>skeleton_horse</code> and <code>zombie_horse</code> for their respective types. <code>Type</code> and <code>HasReproduced</code> removed from <code>horse</code>, <code>ChestedHorse</code> and <code>Items</code> tags now apply only to <code>mule</code> and <code>donkey</code>, and <code>SkeletonTrap</code> and <code>SkeletonTrapTime</code> tags now apply only to <code>skeleton_horse</code>.
+|Skeleton was split into entity IDs <code>skeleton</code>, <code>stray</code> and <code>wither_skeleton</code>. <code>SkeletonType</code> tag is removed from all skeleton types. 
+|Zombie was split into entity IDs <code>zombie</code>, <code>zombie_villager</code> and <code>husk</code>. <code>ZombieType</code> tag is removed from all zombie types, <code>ConversionTime</code> and <code>Profession</code> tags now apply only to <code>zombie_villager</code>.
+|Guardian was split into entity IDs <code>guardian</code> and <code>elder_guardian</code>. <code>Elder</code> tag is removed from <code>guardian</code>.
+|Unused savegame IDs <code>Mob</code> and <code>Monster</code> were removed.
+|<code>Pumpkin</code> byte tag is added to <code>snowman</code>.}}
+|{{HistoryLine|||dev=16w35a|Added <code>CustomName</code> to <code>banner</code>.}}
+|{{HistoryLine|||dev=16w39a|Added <code>llama</code>, <code>llama_spit</code>, <code>vindication_illager</code>, <code>vex</code>, <code>evocation_fangs</code> and <code>evocation_illager</code>.
+|Added <code>Color</code> to <code>shulker</code>.
+|Added <code>LocName</code>, <code>CustomPotionColor</code> and <code>ColorMap</code> to items.}}
+|{{HistoryLine|||dev=16w40a|Added <code>Johnny</code> to <code>vindication_illager</code>.
+|Removed <code>xTile</code>, <code>yTile</code>, <code>zTile</code>, <code>inTile</code>, <code>inGround</code> from the FireballBase class (in large fireballs, small fireballs, dragon fireballs, and wither skulls).}}
+|{{HistoryLine|||dev=16w41a|<code>llama_spit</code> is now available as a save game entity.}}
+|{{HistoryLine|||dev=16w42a|Added <code>crit</code> to <code>arrow</code>.}}
+|{{HistoryLine|||dev=16w43a|Added <code>OwnerUUIDLeast</code> and <code>OwnerUUIDMost</code> to <code>evocation_fangs</code>.}}
+|{{HistoryLine|||dev=16w44a|Removed <code>xTile</code>, <code>yTile</code>, <code>zTile</code>, <code>inTile</code>, <code>inGround</code> from the fishing bobber entity.}}
+|{{HistoryLine|||dev=1.11-pre1|Changed <code>ench</code> to require at least one compound.}}
+|{{HistoryLine||1.12|dev=17w13a|Added entity <code>Parrot</code>, <code>ShoulderEntityLeft</code>/<code>ShoulderEntityRight</code>, <code>seenCredits</code>, <code>recipeBook</code> and <code>Recipes</code>.}}
+|{{HistoryLine|||dev=17w14a|Added <code>isFilteringCraftable</code>, <code>isGuiOpen</code> and <code>recipes</code> to <code>recipeBook</code> which is now a compound tag.
+|Added <code>ConversionPlayerLeast</code> and <code>ConversionPlayerMost</code> to entity <code>Zombie</code>.}}
+|{{HistoryLine|||dev=17w16a|Improved NBT parsing in commands.}}
+|{{HistoryLine|||dev=17w17a|Added <code>toBeDisplayed</code> to <code>recipeBook</code>, <code>UpdateLastExecution</code> and <code>LastExecution</code>.}}
+|{{HistoryLine|||dev=17w17b|Added <code>LoveCauseLeast</code> and <code>LoveCauseMost</code> to breedable entities.}}
+}}
+
+{{Navbox Java Edition technical|general}}
+[[Category:Development]]
+[[Category:Java Edition technical]]

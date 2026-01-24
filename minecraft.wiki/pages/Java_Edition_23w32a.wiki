@@ -1,0 +1,163 @@
+{{Infobox version
+| title = Minecraft 23w32a
+| image = 23w32a.jpg
+| image2 = Java Edition 23w32a.png
+| edition = Java
+| type = Snapshot
+| date = August 9, 2023
+| jsonhash = 9b9d01ff2db2fd414f19578b1830b61fb9fb4804
+| clienthash = 08314fae8fbff190e056a8ae4b9fc9cd603436f6
+| clientmap = 537ce3a73b6a75008e5d0a8a0afe26d58f27fe3f
+| serverhash = bfe1a408d8d809b206369fceab0e8a883226d0a6
+| servermap = e949295085435bb727c816fd5cd99188b57a3a16
+| parent = 1.20.2
+| prevparent = 1.20.1
+| prev = 23w31a
+| next = 23w33a
+| nextparent = 1.20.3
+}}<onlyinclude>
+
+'''23w32a''' is the second [[snapshot]] for [[Java Edition 1.20.2]], released on August 9, 2023,<ref>{{snap|23w32a|August 9, 2023}}</ref> which fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Loot table]]'''
+* Added <code>sequence</code> loot function.
+** Contains 1 field:
+*** <code>functions</code>: an array of sub-functions to run in sequence.
+** Can also be declared as an inline array without a type.
+*** This matches the existing behavior where loot function JSON files can be declared as an array of composite functions.
+* <code>all_of</code> predicates in loot tables can now be declared implicitly as an inline array without a type.
+** This similarly matches the existing behavior where loot predicate JSON files can be declared as an array of sub-predicates.
+
+== Changes ==
+=== Blocks ===
+'''[[Sculk sensor]] and [[calibrated sculk sensor]]'''
+* Vibrations no longer risk being lost on simulation distance limit.
+* Can now detect the following events:
+** <code>block_change</code>, with frequency 11:
+*** [[Carrot]]s being eaten by [[rabbit]]s.
+*** [[Chiseled bookshelves]] receiving books from [[hopper]]s.
+*** [[Sweet berries]] being eaten by [[fox]]es.
+*** [[Turtle egg]]s cracking.
+** <code>block_destroy</code>, with frequency 12:
+*** [[Fire]] being doused by water potion.
+*** Turtle eggs hatching.
+** <code>entity_place</code>, with frequency 14:
+*** [[Evoker]]s evoking [[vex]]es or fangs.
+** <code>item_interact_finish</code>, with frequency 3:
+*** Using [[bone meal]].
+** <code>unequip</code> (new), with frequency 4:
+*** Unequipping items.
+* [[Camel]]s eating cactus now emits an <code>eat</code> vibration with frequency 8, instead of <code>entity_interact</code> vibration with frequency 6.
+
+=== General ===
+'''[[Chat]]'''
+* Clients no longer disconnect themselves when receiving an invalid chat message.
+** A placeholder message is instead shown in chat.
+
+'''[[Chunk format]]'''
+* Game no longer uses numeric values when storing mob effects to world.
+** For example, <code>4</code> becomes <code>minecraft:mining_fatigue</code>.
+** Changed following fields in mob effect instances:
+*** <code>Id</code> (integer) -> <code>id</code> (string, resource location)
+*** <code>Ambient</code> -> <code>ambient</code>
+*** <code>Amplifier</code> -> <code>amplifier</code>
+*** <code>Duration</code> -> <code>duration</code>
+*** <code>ShowParticles</code> -> <code>show_particles</code>
+*** <code>ShowIcon</code> -> <code>show_icon</code>
+*** <code>HiddenEffect</code> -> <code>hidden_effect</code>
+**** This field is a mob effect instance, so changes to the parent also applied here, recursively.
+*** <code>FactorCalculationData</code> -> <code>factor_calculation_data</code>
+* In NBT format for block entity type <code>beacon</code>:
+** <code>Primary</code> (integer) -> <code>primary_effect</code> (string, resource location)
+** <code>Secondary</code> (integer) -> <code>secondary_effect</code> (string, resource location)
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>17</code>.
+
+'''[[Debug screen]]'''
+* Opening it with {{key|Ctrl+F3}} now shows charts for ping and received network traffic.
+
+'''[[Entity format]]'''
+* In NBT format for entity type <code>mooshroom</code>:
+** Removed <code>EffectId</code> and <code>EffectDuration</code>.
+** Added <code>stew_effects</code>, with the same format as <code>effects</code> field in <code>suspicious_stew</code> item format.
+* In NBT format for entity type <code>area_effect_cloud</code>:
+** Renamed <code>Effects</code> to <code>effects</code>.
+* In NBT format for entity type <code>arrow</code>:
+** Renamed <code>CustomPotionEffects</code> to <code>custom_potion_effects</code>.
+* In NBT format for living entities (players, armor stands, and all mobs):
+** Renamed <code>ActiveEffects</code> to <code>active_effects</code>.
+
+'''Game events'''
+* Added <code>unequip</code> game event.
+
+'''[[player.dat format]]'''
+* In NBT format for item type {{cd|d=and|potion|lingering_potion|splash_potion|tipped_arrow}}:
+** Renamed <code>CustomPotionEffects</code> to <code>custom_potion_effects</code>.
+* In NBT format for item type <code>suspicious_stew</code>:
+** Renamed <code>Effects</code> to <code>effects</code>, also changed following fields in this field:
+*** <code>EffectId</code> (integer) -> <code>id</code> (string, resource location)
+*** <code>EffectDuration</code> -> <code>duration</code>
+
+'''Protocol'''
+* Optimized networking to improve the experience on low bandwidth connections.
+** Gameplay packets are now packed into bigger TCP-packets to reduce overhead from TCP-headers, significantly reducing network usage.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>17</code>.
+** The text field background is now a nine-sliced sprite at <code>widget/text_field</code> and <code>widget/text_field_highlighted</code>.
+** The scroll bar in lists and text fields is now a nine-sliced sprite at <code>widget/scroller</code>.
+
+'''[[Tag]]s'''
+* Added <code>unequip</code> to <code>#vibrations</code> and <code>#warden_can_listen</code> game event tags.
+
+== Fixes ==
+{{fixes|fixedin=23w32a
+|;From released versions before 1.20
+|61041|{{cd|d=and|CustomPotionEffects|ActiveEffects|Effects}} NBT tags still use numeral IDs.
+|80938|Non-default {{cd|BurnTime}}, {{cd|CookTime}} and {{cd|CookTimeTotal}} values of furnace can cause GUI to be displayed incorrectly.
+|135339|Host's skin is not visible to other players in a LAN world if the host has not opened any world before.
+|169201|Missing "rolls" in loot tables causes {{cd|NullPointerException}}.
+|177110|Mob stepping sounds are inconsistently subtitled.
+|209798|Sculk sensors are not activated upon using bone meal.
+|210485|Sculk sensors are not activated upon evokers summoning vexes.
+|219440|Sculk sensors do not detect fire being put out by a water splash potion.
+|231898|The structure block UI selection outline doesn't highlight the right side of certain focused fields.
+|251525|Sculk sensors are not activated upon rabbits eating planted carrots.
+|253137|The game output console is logged with errors regarding missing signatures from property textures when joining LAN worlds.
+|261261|Sculk sensors do not detect when a chiseled bookshelf changes via hoppers and droppers.
+|;From 1.20
+|262591|Camels emit mob interaction vibrations instead of item consumption vibrations when eating cactus.
+|;From 1.20.1
+|264260|Furnace GUI is displayed incorrectly when modifying block data.
+|;previous
+|264548|A strange error appears in the log file with Minecraft 23w31a.
+|264557|The file names for the food full and half sprites for both normal and hunger are backwards.
+|264565|{{cd|bundle}} folder in the sprites directory with only an {{cd|mcmeta}} file.
+|264576|Bossbar gets visually stretched instead of cut off.
+|264610|The game hangs if {{cd|border}} in {{cd|button.png.mcmeta}} is changed to half of {{cd|width}} or greater and you try to open the Game Menu.
+|264664|High contrast slider indicators in menus missing.
+|264687|The capes and skins of the hosts of LAN worlds don't render for other players.
+|264689|High Contrast resource pack makes extra pixels appear at a full bossbar.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|8uZGFDb4BWw|b_oI2O7cZ_Y|WKQsQNVJ5Ao}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:23w32a]]
+[[es:Java Edition 23w32a]]
+[[fr:Édition Java 23w32a]]
+[[ja:Java Edition 23w32a]]
+[[pt:Edição Java 23w32a]]
+[[ru:23w32a (Java Edition)]]
+[[tr:Java Sürümü 23w32a]]
+[[uk:23w32a (Java Edition)]]
+[[zh:Java版23w32a]]

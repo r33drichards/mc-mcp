@@ -1,0 +1,168 @@
+{{about||the [[Bedrock Edition]] equivalent|Commands/replaceitem|other uses|Item (disambiguation)}}
+{{Exclusive|Java}}
+{{Infobox command
+|name=item
+|oplevel=2
+}}
+Manipulate or copy [[item]]s in the [[inventories]] of [[block]]s ([[chest]]s, [[furnace]]s, etc.) or [[entities]] ([[player]]s or [[mob]]s).
+
+== Syntax ==
+: <code>'''item modify''' (block <pos>|entity <targets>) <slot> <modifier></code>
+:: Modifies the items in the specified slot with the specified [[item modifier]].
+: <code>'''item replace''' (block <pos>|entity <targets>) <slot> '''with''' <item> [<count>]</code>
+:: Replaces the items in the specified slot with the specified items.
+: <code>'''item replace''' (block <pos>|entity <targets>) <slot> '''from''' (block <sourcePos>|entity <sourceTarget>) <sourceSlot> [<modifier>]</code>
+:: Copies the source items to the target slot and optionally modifies it with the <code>modifier</code>.
+
+'''Syntax displayed in various ways'''
+:{| class="collapsible collapsed collapse-button-none" data-description="simple_tree"
+|-
+! style="text-align:left" | Simplified tree:
+|-
+|
+* <code>'''item''' ...</code>
+** <code>... '''modify''' <''TARGET''> <slot> <modifier></code>
+** <code>... '''replace''' <''TARGET''> <slot></code>
+*** <code>... '''with''' <item> [<count>]</code>
+*** <code>... '''from''' <''SOURCE''> <sourceSlot> [<modifier>]</code>
+: where substituted arguments are:
+:: <code><''TARGET''></code> = <code>(block <pos>|entity <targets>)</code>
+:: <code><''SOURCE''></code> = <code>(block <sourcePos>|entity <sourceTarget>)</code>
+
+|}
+:{| class="collapsible collapsed collapse-button-none" data-description="one_line"
+|-
+! style="text-align:left" | Minimised:
+|-
+|
+: <code>item (modify (block <pos>|entity <targets>) <slot> <modifier>|replace (block <pos>|entity <targets>) <slot> (with <item> [<count>]|from (block <sourcePos>|entity <sourceTarget>) <sourceSlot> [<modifier>]))</code>
+|}
+:{| class="collapsible collapsed collapse-button-none" data-description="maximised_tree"
+|-
+! style="text-align:left" | Maximised:
+|-
+|
+: <code>item modify block <pos> <slot> <modifier></code>
+: <code>item modify entity <targets> <slot> <modifier></code>
+: <code>item replace block <pos> <slot> with <item> [<count>]</code>
+: <code>item replace block <pos> <slot> from block <sourcePos> <sourceSlot> [<modifier>]</code>
+: <code>item replace block <pos> <slot> from entity <sourceTarget> <sourceSlot> [<modifier>]</code>
+: <code>item replace entity <targets> <slot> with <item> [<count>]</code>
+: <code>item replace entity <targets> <slot> from block <sourcePos> <sourceSlot> [<modifier>]</code>
+: <code>item replace entity <targets> <slot> from entity <sourceTarget> <sourceSlot> [<modifier>]</code>
+|}
+
+== Arguments ==
+{{argument|pos|block_pos}}
+: Specifies the position of the block to be modified.
+: {{arg desc|je=block_pos}}
+
+{{argument|targets|entity}}
+: Specifies one or more entities to modify.
+: {{arg desc|je=entity|amount=multiple|type=entities}}
+
+{{argument|slot|item_slot}}
+: Specifies the inventory slot to be modified. Valid values depend on whether a block or an entity is being modified.
+: {{arg desc|je=item_slot}}
+
+{{argument|modifier|loot_modifier}}
+: Specifies the [[item modifier]] to apply on the chosen item.
+: {{Arg desc|je=loot_modifier}}
+
+{{argument|item|item_stack}}
+: Specifies the item to be placed in the block or entity's inventory slot.
+: {{arg desc|je=item_stack}}
+
+{{argument|count|integer}}
+: Specifies the number of items to be placed in the block or entity's inventory slot.
+: {{arg desc|je=integer|min=1|max=99}}<!--unparseable if bigger than 99, failed if bigger than the max stack size-->
+
+{{argument|sourcePos|block_pos}}
+: Specifies the position of the block to copy items from.
+: {{arg desc|je=block_pos}}
+
+{{argument|sourceTarget|entity}}
+: Specifies an entity to copy items from.
+: {{arg desc|je=entity|amount=single}}
+
+{{argument|sourceSlot|item_slot}}
+: Specifies the inventory slot to copy the items from. Valid values depend on whether the source is block or an entity.
+: {{arg desc|je=item_slot}}
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/item modify ...<br>/item ... from ...|<code><modifier></code> doesn't meet any of the following conditions:
+* If it is a resource location, it should be the resource location of an existing item modifier.
+* If it is a string NBT tag, it should be able to be parsed into a resource location, and the resource location should be of an existing item modifier.
+* If it is a non-string NBT tag, it should be able to be decoded as an item modifier.|fail}}
+{{Result table|cmd=/item modify block ...<br>/item replace block ...|<code><pos></code> is unloaded or out of the world.}}
+{{Result table|The block at the <code><pos></code> is not a container.}}
+{{Result table|The block at the <code><pos></code> does not have the specified slot.}}
+{{Result table|cmd=/item modify entity ...<br>/item replace entity ...|<code><targets></code> fails to resolve to one or more entities (named player must be online).}}
+{{Result table|All selected entities meet one or more of the following conditions:
+* It doesn't have the specified slot (for example, zombies have no <code>horse.armor</code>).
+* Specified item cannot be placed into the specified slot of its (for example, to place a stone into <code>armor.chest</code> of a player).}}
+{{Result table|cmd=/... with <item> <count>|<code><count></code> exceeds the stack limit of the specified item.}}
+{{Result table|cmd=/... from block ...|<code><sourcePos></code> is unloaded or out of the world.}}
+{{Result table|The block at <code><sourcePos></code> is not a container.}}
+{{Result table|The block at <code><sourcePos></code> does not have the specified slot.}}
+{{Result table|cmd=/... from entity ...|<code><sourceTarget></code> fails to resolve to a single entity (named player must be online).}}
+{{Result table|The <code><sourceTarget></code> doesn't have the specified slot (for example, zombies have no horse.armor).}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/item (modify{{!}}replace) block ...|On success|1|1|1}}
+{{Output table|cmd=/item (modify{{!}}replace) entity ...|On success|1|1|the number of entities whose items are successfully replaced}}
+{{Output table}}
+
+== Examples ==
+* To replace the items in the bottom-right slot of a single chest two block above with four spruce saplings:
+** <code>/item replace block ~ ~2 ~ container.26 with minecraft:spruce_sapling 4</code>
+* To replace the items in the rightmost hotbar slot of the nearest player with four spruce saplings:
+** <code>/item replace entity @p hotbar.8 with minecraft:spruce_sapling 4</code>
+* To replace the item in the offhand of the selected player with the item in their main hand:
+** <code>/item replace entity @s weapon.offhand from entity @s weapon.mainhand</code>
+* To put a brown [[banner]] on a player's head
+** <code>/item replace entity @s armor.head with minecraft:brown_banner</code>
+* To increase the count of the item in your main hand:
+** <code>/item modify entity @s weapon.mainhand example:increase_count</code>
+** file in a data pack: <code>data/example/item_modifier/increase_count.json</code><syntaxhighlight lang="json">{
+  "function": "minecraft:set_count",
+  "count": 1,
+  "add": true
+}</syntaxhighlight>
+* To increase the count of the item in your main hand without external files:
+** <code>item modify entity @s weapon.mainhand {"function":"minecraft:set_count","count":1,"add":true}</code>
+* To put the item in your hand, on your head:
+** <code>/item replace entity @s armor.head from entity @s weapon.mainhand</code>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||November 8, 2017|link=https://www.minecraft.net/en-us/article/minecraft-snapshot-17w45a|A command called {{cmd|modifyitem|link=none}} was mentioned in snapshot's [[Java Edition 17w45a]] update log at [[minecraft.net]]. At first it was planned to replace {{cmd|enchant}}.}}
+|{{HistoryLine||February 9, 2018|link=https://www.minecraft.net/en-us/article/minecraft-snapshot-18w06a|In [[Java Edition 18w06a]]'s update logs, [[Dinnerbone]] states that the team has shelved the {{cmd|modifyitem|link=none}} idea, but that it may be considered the future.}}
+|{{HistoryLine||1.17|dev=20w46a|Added {{cmd|item|link=none}}, replacing {{cmd|replaceitem}} and reusing the idea of {{cmd|modifyitem|link=none}} through one of its arguments, <code>modify</code>, which in fact contains a similar functionality to {{cmd|enchant|link=none}}, as they use [[item modifier]]s capable of changing the specified item's enchantments.}}
+|{{HistoryLine|||dev=21w19a|Syntax of {{cmd|item|link=none}} has been changed.}}
+|{{HistoryLine||1.19|dev=Pre-release 1|Replacing the off-hand slot using {{cmd|item|link=none}} no longer produces a [[vibration]].<ref>{{bug|MC-250022}}</ref>}}
+|{{HistoryLine||1.20.2|dev=23w31a|Can now replace items in [[jukebox]]es.
+|Can now remove items in [[chiseled bookshelves]].}}
+}}
+
+== See also ==
+* {{cmd|data}} — can also replace items in a container's or mob's inventory, or modify the drop chances of armor and weapons
+* {{cmd|give}} — give items to players without specifying specific inventory slots or overwriting other items
+* {{cmd|replaceitem}} — The {{el|be}} equivalent
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/item]]
+[[es:Comandos/item]]
+[[ja:コマンド/item]]
+[[pt:Comandos/item]]
+[[ru:Команды консоли/item]]
+[[zh:命令/item]]

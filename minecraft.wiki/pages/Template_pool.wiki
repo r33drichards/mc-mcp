@@ -1,0 +1,106 @@
+A '''template pool''' is a group of structure pieces of [[jigsaw structure]]s. A structure piece is a [[structure template]], a [[placed feature]], or a combination of multiple other pieces. During generation, pieces are randomly selected from the pool. Template pools are configured using [[JSON]] files stored within a data pack in the folder {{cd|data/<namespace>/worldgen/template_pool}} or a addon at {{cd|<root BP>/worldgen/template_pools}}.
+
+== JSON format ==
+{{el|java}}:
+<div class="treeview"><section begin="json format" />
+*{{Nbt|compound}} The root tag.
+**{{nbt|string|fallback}}: {{json ref|template pool}} &mdash; Used for terminating pieces (such as the end of a village road) or as fallback if structures in this pool can't generate. (Note that empty pool elements don't trigger this, they just generate nothing.)
+**{{nbt|list|elements}}: A list of elements to randomly select from.
+***{{nbt|compound}}: An element.
+****{{nbt|int|weight}}: How likely this element is to be chosen when using this pool. Value between 1 and 150 (inclusive).
+****{{nbt|compound|element}}: A pool element.
+*****{{nbt|string|element_type}}: The type of the pool element. See {{slink|Template pool|Pool elements}}.
+*****{{nbt|string|projection}}: Can be {{cd|rigid}} to place a fixed structure (like a house), or {{cd|terrain_matching}} to match the terrain height (like a village road).
+***** Additional fields depending on {{nbt|string|element_type}}. See {{slink|Template pool|Pool elements}}.<section end="json format" />
+</div>
+
+{{el|bedrock}}:
+<div class="treeview"><section begin="json format" />
+*{{nbt|compound}} The root tag.
+**{{nbt|string|format_version}}: {{more info}}
+**{{nbt|compound|minecraft:template_pool}}
+***{{nbt|compound|description}}
+****{{nbt|string|identifier}}: The identifier used for this template pool.
+***{{nbt|string|fallback}}: {{json ref|template pool}} &mdash; Used for terminating pieces (such as the end of a village road) or as fallback if structures in this pool can't generate. (Note that empty pool elements don't trigger this, they just generate nothing.)
+***{{nbt|list|elements}}: A list of elements to randomly select from.
+****{{nbt|compound}}: An element.
+*****{{nbt|int|weight}}: How likely this element is to be chosen when using this pool. Value between 1 and 150 (inclusive).
+*****{{nbt|compound|element}}: A pool element.
+******{{nbt|string|element_type}}: The type of the pool element. See {{slink|Template pool|Pool elements}}.
+******{{nbt|string|projection}}: Can be {{cd|rigid}} to place a fixed structure (like a house), or {{cd|terrain_matching}} to match the terrain height (like a village road). {{verify|Is this the case? My IDE doesn't display it when entering a empty pool element. I think only element type is needed.}}
+***** Additional fields depending on {{nbt|string|element_type}}. See {{slink|Template pool|Pool elements}}.
+<section end="json format" />
+</div>
+
+== Pool elements ==
+A '''pool element''' represents a single piece of a [[jigsaw structure]]. 
+
+=== Single pool element ===
+This piece places a single [[structure template]]. The jigsaw blocks in the template are used for connections and the size of the template determines the bounding box of the piece. The template gets processed using a [[processor list]].
+
+<div class="treeview">
+*{{nbt|compound}}: The element
+**{{nbt|string|element_type}}: {{cd|minecraft:single_pool_element}}
+**{{nbt|string|projection}}: See above.
+**{{nbt|string|location}}: {{json ref|structure template|Structure_template}} &mdash; The template to place
+**{{nbt|string}}{{nbt|compound}}{{nbt|list|processors}}: {{json_ref|processor list|Processor_list|inline=1|inline_type={{nbt|compound}}{{nbt|list}}}} &mdash; The processors that should modify the template.
+**{{nbt|string|override_liquid_settings}}{{only|je|short=1}}: Overrides the {{cd|liquid_settings}} value in structure definition for this particular element. See [[Jigsaw_structure#Data_values]]. 
+</div>
+{{more info|format in bedrock edition}}
+
+=== Legacy single pool element ===
+{{exclusive|java|section=1}}
+This is a legacy version of the single pool element that doesn't place any air blocks in the template, instead keeping the original block of the world.
+
+<div class="treeview">
+*{{nbt|compound}}: The element
+**{{nbt|string|element_type}}: {{cd|minecraft:legacy_single_pool_element}}
+**{{nbt|string|projection}}: See above.
+**{{nbt|string|location}}: {{json ref|structure template|Structure_template}} &mdash; The template to place
+**{{nbt|string}}{{nbt|compound}}{{nbt|list|processors}}: {{json_ref|processor list|Processor_list|inline=1|inline_type={{nbt|compound}}{{nbt|list}}}} &mdash; The processors that should modify the template.
+</div>
+
+=== Feature pool element ===
+{{exclusive|java|section=1}}
+This piece places a [[placed feature]]. The bounding box of the piece is 1&times;1&times;1 blocks. The piece gets connected to its parent piece as if it had a jigsaw block that faces downwards with the name {{cd|minecraft:bottom}}.
+
+Feature will always attempt to spawn if jigsaw {{cd|joint}} is set to {{cd|rollable}}. If {{cd|joint}} is set to {{cd|aligned}}, then a feature will attempth to spawn only when structure rotation upon generation is corresponding to jigsaw {{cd|orientation}} in next cases: 0°={{cd|up_south}}, 90°={{cd|up_east}}, 180°={{cd|up_north}}, 270°={{cd|up_west}}.
+
+<div class="treeview">
+*{{nbt|compound}}: The element
+**{{nbt|string|element_type}}: {{cd|minecraft:feature_pool_element}}
+**{{nbt|string|projection}}: See above.
+**{{nbt|string|feature}}: {{json ref|placed feature|inline=1}} &mdash; The feature to place.
+</div>
+
+=== List pool element ===
+{{exclusive|java|section=1}}
+This piece places multiple pool elements at once in the same place. Pieces lower in the list replace blocks of pieces higher in the list. The bounding box of the piece is the smallest box that contains all elements bounding boxes. Only the jigsaw blocks of the first element are used for connections.
+
+<div class="treeview">
+*{{nbt|compound}}: The element
+**{{nbt|string|element_type}}: {{cd|minecraft:list_pool_element}}
+**{{nbt|string|projection}}: See above.
+**{{nbt|list|elements}}: A list of elements to choose from.
+***{{nbt|compound}}: A pool element.
+</div>
+
+=== Empty pool element ===
+This piece doesn't place anything.
+
+<div class="treeview">
+*{{nbt|compound}}: The element
+**{{nbt|string|element_type}}: {{cd|minecraft:empty_pool_element}}
+**{{nbt|string|projection}}: See above. {{only|je|short=1}}
+</div>
+
+== External links ==
+* [https://misode.github.io/worldgen/template-pool/ Template pool Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Vorlagenpool]]
+[[fr:Groupe de modèles]]
+[[pt:Conjunto de modelos]]
+[[zh:模板池]]

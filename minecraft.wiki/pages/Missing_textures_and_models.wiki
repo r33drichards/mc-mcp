@@ -1,0 +1,648 @@
+''Minecraft'' makes use of '''missing textures''' and '''missing models''' to handle potential errors present in the game's resources as well as [[resource pack]]s.
+
+== Missing texture ==
+{{FakeImage|{{pximg|Missing Texture JE4.png|160px}}|Missing texture}}
+The '''missing texture''' is a [[Dynamic textures|dynamic]] [[placeholder texture]] used by ''Minecraft'' for handling cases where a suitable texture cannot be found. Outside of its use in missing models, this is almost always due to a texture being referenced which simply does not exist under that name.
+
+The texture uses a prominent black {{Color|#000000}} and magenta {{Color|#f800f8}} checkerboard {{in|JE}} or a black {{Color|#000000}} and magenta {{Color|#fc00ff}} checkerboard {{in|BE}}, in order to stand out as much as possible in most cases. Using bright colors to indicate missing textures is industry standard. The black and magenta combination is most typically employed by games developed using the Source video game engine,<ref>{{Citation|url=https://developer.valvesoftware.com/wiki/Missing_content|title=Missing content|website=developer.valvesoftware.com}}</ref> although ''Minecraft'' itself does not use the engine.
+
+While internally referred to as ''missingno'', there is no file for the missing texture {{in|JE}}, and it therefore cannot be changed under intended mechanics. It is possible to overwrite the copies of it which appear in [[texture atlas]]es with another texture using atlas json files,<ref>{{bug|MC-277702}}</ref> although this is presumably not intended.
+
+As of [[Java Edition 1.21.9 Pre-Release 1]], there are eleven main ways in which the missing texture can appear without using a resource pack, all of which require commands. Hover over any text below saying "ids" for a list of namespaced IDs which return the missing texture when used in a given example command.
+{| class="wikitable"
+! Occurrence
+! Example command
+! Bug report
+|-
+| Creating {{code|minecraft:block_marker}}<br>particles for [[air]], [[cave air]] or [[void air]]
+| {{cmd|particle minecraft:block_marker{block_state:{Name:"<ref group="ids">{{code|minecraft:air}}<br>{{code|minecraft:cave_air}}<br>{{code|minecraft:void_air}}</ref>"<nowiki>}}</nowiki>}}
+| {{bug|MC-239407}}<br>{{bug|MC-270529}}<br>{{bug|MC-278165}}
+|-
+| Creating {{code|minecraft:item}} particles<br>for something using the air model
+| see [[Java Edition missing texture and model uses#Air item particles|here]]
+| {{bug|MC-278165}}
+|-
+| Giving an item with an invalid {{code|tooltip_style}} component
+| {{cmd|/give @s ice[minecraft:tooltip_style{{=}}""]}}
+| {{bug|MC-276673}}
+|-
+| Giving an item with an invalid {{code|camera_overlay}} subcomponent
+| {{cmd|/give @s ice[equippable{{=}}{slot:"head",camera_overlay:""}]}}
+| {{bug|MC-277439}}
+|-
+| Specifying an incorrect texture for a [[player head]]
+| {{cmd|/give @s minecraft:player_head<nowiki>[profile={texture:""}]</nowiki>}}
+| {{bug|MC-303065}}
+|-
+| Viewing an entity with an invalid waypoint style
+| {{cmd|/summon minecraft:armor_stand ~ ~ ~ {attributes:[{id:waypoint_transmit_range,base:200}]<nowiki>}</nowiki>}}<br>then {{cmd|/waypoint modify @n[type{{=}}minecraft:armor_stand] style set nonexistent}}
+| {{bug|MC-298671}}
+|-
+| Specifying a text object with an invalid sprite<br>name but with a valid atlas
+| {{cmd|/tellraw @s {atlas:"blocks",sprite:""<nowiki>}</nowiki>}}
+| {{bug|MC-302110}}
+|-
+| Specifying a text object with an invalid profile texture
+| {{cmd|/tellraw @s {"player":{"name":"",texture:""}<nowiki>}</nowiki>}}
+| {{bug|MC-303066}}
+|-
+| Specifying an incorrect texture for a [[mannequin]] skin
+| {{cmd|/summon minecraft:mannequin ~ ~ ~ {profile:{texture:""}<nowiki>}</nowiki>}}
+| {{bug|MC-301827}}
+|-
+| Specifying an incorrect texture for a mannequin cape
+| {{cmd|/summon minecraft:mannequin ~ ~ ~ {profile:{name:MuzikBike,cape:""}<nowiki>}</nowiki>}}
+| {{bug|MC-301828}}
+|-
+| Specifying an incorrect texture for a mannequin elytra
+| {{cmd|/summon minecraft:mannequin ~ ~ ~ {equipment:{chest:{id:"minecraft:elytra"<nowiki>}</nowiki>},profile:{name:MuzikBike,elytra:""}<nowiki>}</nowiki>}}
+| {{bug|MC-301829}}
+|}
+
+=== History ===
+{{for|cases where the missing texture was used in-game|Java Edition missing texture and model uses#Missing texture|Bedrock Edition missing texture and model uses#Missing texture}}
+
+==== History of the texture itself ====
+===== ''Java Edition'' =====
+{{HistoryTable
+|{{HistoryLine|java beta}}
+|{{HistoryLine||1.4|{{pximg|Missing Texture (Windows) JE1.png|64px}} The missing texture has been implemented. It differs depending on the system - see the subsection below.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.5|dev=13w02a|{{pximg|Missing Texture (Windows) JE2.png|64px}} The missing texture has changed to display more descriptive text.}}
+|{{HistoryLine||1.6.1|dev=13w18a|{{pximg|Missing Texture JE3.png|64px}} The missing texture generated has changed to a magenta and black checkerboard texture.}}
+|{{HistoryLine||1.7.2|dev=13w38a|{{pximg|Missing Texture (anisotropic filtering) JE3.png|64px}} When anisotropic filtering is enabled, the missing texture has a 4×4 checker instead of a 2×2 checker.<ref>https://youtu.be/nJun57MSyYY</ref><ref>Many screenshots from bug tracker tickets feature this version of the texture:
+* {{bug|MC-31886|||Duplicate}}
+* {{bug|MC-31913|||Duplicate}}
+* {{bug|MC-31883|||Fixed}}
+* {{bug|MC-47653|||Fixed}}
+* {{bug|MC-50238|||Duplicate}}
+* {{bug|MC-50252|||Duplicate}}
+* {{bug|MC-50254|||Fixed}}
+* {{bug|MC-50266|||Duplicate}}
+* {{bug|MC-50385|||Duplicate}}
+* {{bug|MC-50447|||WAI}}</ref><ref>https://web.archive.org/web/20140328101841/https://mojang.com/2014/03/minecraft-snapshot-14w10a/</ref> This is due to this option extending each texture by 8 pixels in each direction using the pixels from the opposite side of the texture, which for the missing texture gives the appearance of a 4×4 tiling.}}
+|{{HistoryLine||1.8|dev=14w25a|Removed the anisotropic filtering option, meaning that the 2×2 checker is once again the only missing texture.}}
+|{{HistoryLine||1.13|dev=17w43a|{{pximg|Missing Texture JE4.png|64px}} The missing texture generated has changed.}}
+}}
+
+===== ''Bedrock Edition'' =====
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 5|{{pximg|Missing Texture BE1.png|64px}} The missing texture has been implemented.
+|Prior to this version,{{info needed|at least back to v0.15.0 build 1 - we may need to modify some prior versions}} graphics which could not be loaded{{info needed|tested with plaintext files with a .png suffix - test other cases such as images with excessive dimensions or deleting images from the game files}} would use a zero-opacity black texture instead.}}
+}}
+
+; b1.4-13w17a platform differences
+The missing texture used in these versions would be generated differently depending on the operating system and Java version.<ref>{{Citation|url=https://github.com/NeRdTheNed/MC-TextureGen/commit/efdaa6c6a637b1f8cf8d0160c4ac7c4f779f945e#commitcomment-56639065|title=Missing texture generator|author=NeRdTheNed|website=GitHub|date=September 17, 2021}}</ref>
+{| class="wikitable pixel-image" data-description="Original missing texture platform differences"
+! colspan="2" | Texture
+! rowspan="2" | Operating system
+! rowspan="2" | Java version
+! rowspan="2" | Notes
+|-
+! b1.4 - 13w01b
+! 13w02a - 13w17a
+|-
+| rowspan="4" | [[File:Missing Texture (Windows) JE1.png|128px]]
+| rowspan="4" | [[File:Missing Texture (Windows) JE2.png|128px]]
+| Windows XP
+|
+* 6.0.370.6<ref>{{Cite bug|MC|8149|Redstone Dust appears as a piece of code in the HUD|date=January 23, 2013|resolution=Fixed}}</ref>
+| rowspan="4" | Appears standard across all Windows versions.<br>No smoothing.
+|-
+| Windows 7<ref>{{Cite bug|MC|7861|wrong door particle effect|date=January 18, 2013|resolution=Duplicate}}</ref>
+|
+* 7<ref>{{Cite bug|MC|6865|No texture on breaking doors particle|date=January 10, 2013}}</ref>
+** Update 11<ref>{{Cite bug|MC|10625|Missing textures in texture packs|date=March 1, 2013|resolution=Invalid}}{{Cite bug|MC|10682|Animations missing|date=March 1, 2013|resolution=Duplicate}}</ref>
+** Update 13<ref>{{Cite bug|MC|17999|high grass shows "missing texture" when it gets signal from a level-3-repeater|date=June 15, 2013|resolution=Incomplete}}</ref>
+** r15<ref>{{Cite bug|MC|10328|Texture pack won't animated or missing textures|date=February 26, 2013|resolution=Duplicate}}</ref>
+** Update 17<ref>{{Cite bug|MC|12026|water texure pack is missing|date=March 16, 2013}}</ref>
+|-
+| Windows 10
+|
+* 1.8.0_51<ref name="ClearedUp">{{Citation|url=https://github.com/NeRdTheNed/MC-TextureGen/issues/22#issuecomment-922438619|title=Text based textures generated by MC-TextureGen may differ from official generated textures (larger sample size needed)|author=NeRdTheNed|website=GitHub|date=September 19, 2021}}</ref>
+|-
+| Solaris 10<ref>https://discord.com/channels/361634042317111296/433407899403026434/1071555493904011294</ref>
+|
+* 1.6.0_37<ref>https://discord.com/channels/361634042317111296/433407899403026434/1074447704450670672</ref>
+|-
+| [[File:Missing Texture (Windows 10, Java 16.0.2) JE1.png|128px]]
+| [[File:Missing Texture (Windows 10, Java 16.0.2) JE2.png|128px]]
+| Windows 10
+|
+* 11.0.10<ref name="ClearedUp"/>
+* 16.0.2
+| Minor differences in the x and u. No smoothing.
+|-
+| rowspan="4" | [[File:Missing Texture (MacOS 10.14.6, Apple legacy Java runtime 1.6.0 65-b14-468) JE1.png|128px]]
+| rowspan="4" | [[File:Missing Texture (MacOS 10.14.6, Apple legacy Java runtime 1.6.0 65-b14-468) JE2.png|128px]]
+| macOS 10.3.9<ref name="Mac1039">{{Citation|url=https://github.com/NeRdTheNed/MC-TextureGen/commit/efdaa6c6a637b1f8cf8d0160c4ac7c4f779f945e#commitcomment-56642974|title=Missing texture generator|author=NeRdTheNed|website=GitHub|date=September 17, 2021}}</ref>
+|
+* 4<ref name="Mac1039"/>
+| rowspan="4" | No smoothing - standard for non-Retina systems.<ref name="ClearedUp"/>
+|-
+| macOS 10.5.8
+|
+* 1.5.0_30<ref>{{Cite bug|MC|7319|missing textures for new 1.5 blocks and items|date=January 12, 2013|resolution=Duplicate}}</ref>
+|-
+| macOS 10.6.8<ref name="Mac1068">{{Citation|url=https://github.com/NeRdTheNed/MC-TextureGen/commit/efdaa6c6a637b1f8cf8d0160c4ac7c4f779f945e#commitcomment-56649619|title=Missing texture generator|author=NeRdTheNed|website=GitHub|date=September 17, 2021}}</ref>
+|
+* 6<ref name="Mac1068"/>
+|-
+| macOS 10.14.6<ref name="ClearedUp"/>
+|
+* Apple legacy Java runtime 1.6.0_65-b14-468<ref name="ClearedUp"/>
+|-
+| [[File:Missing Texture (MacOS 10.14.6, Apple legacy Java runtime 1.6.0 65-b14-468, antialiased) JE1.png|128px]]
+| [[File:Missing Texture (MacOS 10.14.6, Apple legacy Java runtime 1.6.0 65-b14-468, antialiased) JE2.png|128px]]
+| macOS 10.14.6<ref name="ClearedUp"/>
+|
+* Apple legacy Java runtime 1.6.0_65-b14-468<ref name="ClearedUp"/>
+| Monochromatic smoothing - standard for Retina systems.<ref name="ClearedUp"/>
+|-
+| [[File:Missing Texture (MacOS 10.14.6, Apple legacy Java runtime 1.6.0 65-b14-468, smoothed) JE1.png|128px]]
+| [[File:Missing Texture (MacOS 10.14.6, Apple legacy Java runtime 1.6.0 65-b14-468, smoothed) JE2.png|128px]]
+| macOS 10.14.6
+|
+* Apple legacy Java runtime 1.6.0_65-b14-468<ref>{{Citation|url=https://github.com/NeRdTheNed/MC-TextureGen/issues/22#issuecomment-922492792|title=Text based textures generated by MC-TextureGen may differ from official generated textures (larger sample size needed)|author=NeRdTheNed|website=GitHub|date=September 19, 2021}}</ref>
+| Uses polychromatic smoothing instead of monochromatic smoothing like above.
+|-
+| rowspan="3" |
+| rowspan="3" | [[File:Missing Texture (MacOS 10.5.8) JE2.png|128px]]
+| MacOS 10.3.9<ref name="comment9226">{{Citation|url=https://github.com/NeRdTheNed/MC-TextureGen/issues/22#issuecomment-922617901|title=Text based textures generated by MC-TextureGen may differ from official generated textures (larger sample size needed)|author=NeRdTheNed|website=GitHub|date=September 19, 2021}} (also refer to other specifications in source)</ref>
+|
+* 4<ref name="comment9226"/>
+| rowspan="3" | Monochromatic smoothing. Almost identical to the previously-mentioned version, with almost unnoticeable single-pixel differences.
+|-
+| macOS 10.5.8<ref>{{Cite bug|MC|7208|Missing quartz, hopper, and comparator textures|date=January 12, 2013|resolution=Fixed}}</ref>
+| Unknown
+|-
+| Leopard (specific version unknown)<ref>{{bug|MC-7225}}</ref>
+| Unknown
+|-
+|
+| [[File:Missing Texture (MacOS 10.4.11) JE2.png|128px]]
+| macOS 10.4.11
+|
+* 1.5.0_19<ref>{{Cite bug|MC|7267|Missing textures for new blocks/items (redstone block, hopper, quartz)|date=January 12, 2013|resolution=Duplicate}}</ref>
+| Polychromatic smoothing.
+|-
+| rowspan="2" | [[File:Missing Texture (MacOS UseQuartz) JE1.png|128px]]
+| rowspan="2" | [[File:Missing Texture (MacOS UseQuartz) JE2.png|128px]]
+| macOS 10.6.8
+|
+* 1.6.0_65 (UseQuartz set to true)<ref name="comment9226"/>
+| rowspan="2" | Polychromatic smoothing.
+|-
+| Unspecified macOS versions<ref>{{bug|MC-5094}}, {{bug|MC-8997}}</ref>
+| Unknown
+|-
+| [[File:Missing Texture (MacOS 10.14.6, Java 1.7.0 80-b15) JE1.png|128px]]
+| [[File:Missing Texture (MacOS 10.14.6, Java 1.7.0 80-b15) JE2.png|128px]]
+| macOS 10.14.6<ref name="ClearedUp"/>
+|
+* 1.7.0 80-b15<ref name="ClearedUp"/>
+* 1.8.0_51<ref name="ClearedUp"/>
+| No smoothing.
+|-
+| [[File:Missing Texture (MacOS 10.14.6) JE1.png|128px]]
+| [[File:Missing Texture (MacOS 10.14.6) JE2.png|128px]]
+| macOS 10.14.6<ref name="ClearedUp"/>
+|
+* 1.8.0_301, GraalVM EE 21.2.0
+* 11.0.12, GraalVM EE 21.2.0
+* 16.0.2, GraalVM EE 21.2.0
+| Monochromatic smoothing.
+|-
+| [[File:Missing Texture (MacOS 12.3.0, Java 1.8.0 74 64 bit) JE1.png|128px]]
+| [[File:Missing Texture (MacOS 12.3.0, Java 1.8.0 74 64 bit) JE2.png|128px]]
+| macOS 12.3.0<ref name="rightallalong">{{Citation|url=https://github.com/NeRdTheNed/MC-TextureGen/issues/22#issuecomment-1771775344|title=Text based textures generated by MC-TextureGen may differ from official generated textures (larger sample size needed)|author=NeRdTheNed|website=GitHub|date=October 19, 2023}}</ref>
+|
+* 1.8.0_74 (64-bit)<ref name="rightallalong"/>
+| Appears to have been smoothed monochromatically with all non-white pixels subsequently set to black.
+|-
+| rowspan="2" | [[File:Missing Texture (Old Linux) JE1.png|128px]]
+| rowspan="2" | [[File:Missing Texture (Old Linux) JE2.png|128px]]
+| Debian<ref name="Jan92023">https://discord.com/channels/361634042317111296/433407899403026434/1062142954837377105</ref>
+|
+* 1.8.0_351
+| rowspan="2" | No smoothing.
+|-
+| Kubuntu 24.04
+|
+* 1.8.0_202 via Prism Launcher
+|-
+| rowspan="7" | [[File:Missing Texture (Linux) JE1.png|128px]]
+| rowspan="7" | [[File:Missing Texture (Linux) JE2.png|128px]]
+| Debian<ref name="Jan92023"/>
+|
+* Zulu OpenJDK 1.8.0_352
+| rowspan="7" | No smoothing.
+|-
+| Debian under WSL2<ref>{{Citation|url=https://github.com/NeRdTheNed/MC-TextureGen/commit/efdaa6c6a637b1f8cf8d0160c4ac7c4f779f945e#commitcomment-56731586|title=Missing texture generator|author=forkiesassds|website=GitHub|date=September 19, 2021}}</ref>
+|
+* 11.0.11
+|-
+| Ubuntu
+|
+* 16.0.1<ref>{{Citation|url=https://imgur.com/gallery/i3FaUkW|title=debug.stitched_items.png and debug.stitched_terrain.png (UBUNTU LINUX, 1.5.1) with 21w37a screenshot|author=MrRhino684|website=Imgur|date=September 18 2021|archive-url=https://web.archive.org/web/20230508203053/https://imgur.com/gallery/i3FaUkW}}</ref>
+|-
+| Kubuntu 24.04
+|
+* 1.8.0_422 64bit
+|-
+| FreeBSD
+|
+* 16.0.2
+|-
+| OpenBSD
+|
+* 16.0.2
+|-
+| Solaris 11<ref>https://discord.com/channels/361634042317111296/433407899403026434/1074451519673483415</ref>
+|
+* 1.8.0_311<ref>https://discord.com/channels/361634042317111296/433407899403026434/1074447243018506280</ref>
+|-
+| rowspan="2" | [[File:Missing Texture (Arch) JE1.png|128px]]
+| rowspan="2" | [[File:Missing Texture (Arch) JE2.png|128px]]
+| Arch<ref>https://discord.com/channels/361634042317111296/433407899403026434/986983086845730856</ref>
+|
+* Temurin-17.0.3+7
+| rowspan="2" | No smoothing.
+|-
+| Ubuntu 23.10
+|
+* default Java (from launcher)
+|-
+| <!--[[File:Missing Texture (Not Arch) JE1.png|128px]]-->
+| [[File:Missing Texture (Not Arch) JE2.png|128px]]
+| Kubuntu 24.04
+|
+* 1.8.0_202 via Mojang's launcher
+| No smoothing.
+|-
+| 
+| [[File:Missing Texture (Arch 6.1.1) JE2.png|128px]]
+| Arch 6.1.1<ref>https://discord.com/channels/361634042317111296/433407899403026434/1061086331247284295</ref>
+|
+* 1.8.0_352 (64-bit)
+| No smoothing.
+|}
+
+==== General history ====
+===== ''Java Edition'' =====
+{{HistoryTable
+|{{HistoryLine|java beta}}
+|{{HistoryLine||1.4|The game now generates missing textures for absent assets.
+|Prior to this version, the game would outright crash if a texture could not be loaded.
+|The texture does not exist in the vanilla game files as an image, and must be induced through either modding (such as simply deleting existing texture files from the jar) or major glitches which cannot be reliably reproduced.<ref>https://www.minecraftforum.net/forums/archive/legacy-support/1805293-client-problems-game-isnt-even-playable</ref><ref>https://www.minecraftforum.net/forums/archive/legacy-support/1841577-weird-rain-bug</ref><ref>https://www.minecraftforum.net/forums/support/java-edition-support/1947231-missing-tex-inventory-screen-and-other-item-uis</ref>}}
+|{{HistoryLine||1.8|dev=Pre-release|The missing texture is now used when a texture pack provides an image with invalid dimensions.<ref>https://www.minecraftforum.net/forums/minecraft-java-edition/discussion/175116-the-secret-text-in-paintings</ref>{{info needed|Maximum texture size is somewhere above 512 and below 4096. Would not surprise me if this was dependent on dedicated memory or hardware power.}}}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.5|dev=13w02a|The missing texture is now added to procedurally-generated block and item texture atlases (<samp>[[stitched_terrain.png]]</samp> and <samp>[[stitched_items.png]]</samp>).}}
+|{{HistoryLine|||dev=13w09a|The missing texture is now used if an animated texture is provided, but no accompanying text file exists.<ref>https://web.archive.org/web/20200728074157/http://www.mojang.com/2013/02/minecraft-snapshot-13w09a/</ref><ref>{{bug|MC-10625}}</ref> Previously, animated texture files would be accepted even without a text file.}}
+|{{HistoryLine||1.6.1|dev=13w24b|The missing texture is now used if the game tries to load a texture file which is not valid. Previously, the game would seemingly outright refuse to load texture packs or resource packs containing invalid png files.}}
+|{{HistoryLine||1.8|dev=14w25a|With the merging of <samp>[[blocks-atlas]]</samp> and <samp>[[items-atlas]]</samp> into <samp>[[textures-atlas]]</samp>, blocks and items now both reference the same missing texture.}}
+|{{HistoryLine||1.14|dev=19w06a|Added <samp>[[particles.png-atlas]]</samp> with the deprecation of <samp>[[particles.png]]</samp>, containing a missing particle texture.}}
+|{{HistoryLine|||dev=19w07a|Added <samp>[[paintings.png-atlas]]</samp> with the deprecation of <samp>[[paintings_kristoffer_zetterstrand.png]]</samp>, containing a missing painting texture.
+|Textures which are not animated and not square are now supported, and no longer return the missing texture due to being interpreted as invalid animations. This change may have been due to some paintings not being perfect squares.}}
+|{{HistoryLine|||dev=19w08a|Added <samp>[[mob_effects.png-atlas]]</samp> with the removal of effect icons from <samp>[[inventory.png]]</samp>, containing a missing effect texture.}}
+|{{HistoryLine||1.15|dev=Pre-release 1|<samp>textures-atlas</samp> has been split into seven other atlases, each having its own copy of the missing texture, rather than all of these referencing the same missing texture:
+* Blocks, items and some entities into <samp>[[blocks.png-atlas]]</samp>
+* Banner patterns on banners into <samp>[[banner_patterns.png-atlas]]</samp>
+* Banner patterns on shields into <samp>[[shield_patterns.png-atlas]]</samp>
+* Beds into <samp>[[beds.png-atlas]]</samp>
+* Chests into <samp>[[chest.png-atlas]]</samp>
+* Signs into <samp>[[signs.png-atlas]]</samp>
+* Shulker boxes into <samp>[[shulker_boxes.png-atlas]]</samp>}}
+|{{HistoryLine||1.19.3|dev=22w42a|An error is no longer produced in the output log if a model is loaded which does not resolve a texture reference.
+|Added <samp>[[hanging_signs.png-atlas]]</samp>, containing a missing hanging sign texture.}}
+|{{HistoryLine|||dev=22w46a|Merged <samp>hanging_signs.png-atlas</samp> into <samp>signs.png-atlas</samp>; all types of signs now reference the same missing texture.}}
+|{{HistoryLine||1.19.4|dev=23w04a|Added <samp>[[armor_trims.png-atlas]]</samp>, containing a missing armor trim texture.}}
+|{{HistoryLine|||dev=23w07a|Added <samp>[[decorated_pot.png-atlas]]</samp>, containing a missing decorated pot texture.}}
+|{{HistoryLine|||dev=Pre-release 3|F3+S now dumps all dynamic textures to the screenshots folder. This includes the missing texture (as <samp>minecraft_missingno.png</samp>), alongside every texture atlas containing one.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Added <samp>[[gui.png-atlas]]</samp> with the deprecation and splitting of many files, containing a missing user interface sprite texture.}}
+|{{HistoryLine||1.20.5|dev=24w12a|Added <samp>[[map_decorations.png-atlas]]</samp> with the deprecation of <samp>[[map_icons.png]]</samp>, containing a missing map icon texture.}}
+|{{HistoryLine||1.21.2|dev=24w33a|[[Cloud]]s no longer use the missing texture if the texture cannot be loaded; they instead simply do not render, and a dedicated error message is produced in the log.}}
+|{{HistoryLine||1.21.4|dev=24w45a|An error is once again produced in the log if a model does not resolve a texture reference.<ref>{{bug|MC-276828}}</ref>
+|An error is also now produced if a model fails to define a particle texture for a block.<ref>{{bug|MC-236295}}</ref>}}
+|{{HistoryLine||1.21.6|dev=25w19a|Removed <samp>mob_effects.png-atlas</samp>; absent or broken mob effect graphics will now point to <samp>gui.png-atlas</samp>'s missing texture instead.}}
+|{{HistoryLine||1.21.11|dev=25w41a|Added <samp>[[celestials.png-atlas]]</samp> with the deprecation of <samp>[[moon_phases.png]]</samp>, containing a missing celestial object texture.}}
+|{{HistoryLine|||dev=25w44a|Padding is now added to all textures on atlases, including the missing texture, making it 18&times;18 on most atlases, and potentially much bigger on the blocks atlas.}}
+|{{HistoryLine|||dev=25w45a|Added <samp>[[items.png-atlas]]</samp> with the splitting of item textures from <samp>blocks.png</samp>; items now use a separate missing texture, as was the case before 14w25a.}}
+}}
+
+===== ''Bedrock Edition'' =====
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 5|Presumably the version that added the missing texture. It is predefined as an actual file, rather than generated by the game.
+|The missing texture is stored as a .png file in the miscellaneous textures folder, and can be replaced by means of a resource pack as with other textures.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||v1.8.0|dev=beta 1.8.0.8|It is no longer possible to change the missing texture using a resource pack.}}
+}}
+
+== Missing model ==
+[[File:Missing Model.png|thumb|160px|Missing model]]
+In an analogous fashion to the missing texture being used for instances where no texture is defined, the '''missing model''' is use in cases where no [[model]] is defined, or the model is invalid.
+
+By default, the missing model is a full 16×16 cube which uses the missing texture on all six faces. These faces are culled accordingly where possible. Only two faces will have the same color at each vertex, rather than the three one may expect; Mojang has decided to not fix this.<ref>{{Cite bug|MC|239083|Missing model textures do not match up correctly at each corner|date=October 16, 2021|resolution=Won't Fix}}</ref>
+
+The missing model is obviously also never intended to appear in standard gameplay, and uses the missing texture again to appear prominent and highlight errors to fix.
+
+Contrary to popular belief, no central "missing texture block" has ever existed in the game; all cases of blocks which use this model are due to another block simply having no assigned texture or model.
+
+As of [[Java Edition 24w36a]], there is one main way in which the missing model can appear without using a resource pack, which requires commands.
+{| class="wikitable"
+! Occurrence
+! Example command
+! Bug report
+|-
+| Giving an item with an invalid {{code|item_model}} component
+| {{cmd|/give @s ice[minecraft:item_model{{=}}""]}}
+| {{bug|MC-276671}}
+|}
+
+=== History ===
+{{for|cases where the missing model was used in-game|Java Edition missing texture and model uses#Missing model}}
+
+==== History of the model itself ====
+
+===== Block =====
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w06b|[[File:Missing Model JE1.png|32px]] [[File:Missing Model (anisotropic filtering) JE1.png|32px]] Added the missing model.
+|It is worth noting that despite being 8x8x8, it maps the entire 16x16 texture on each side as opposed to only the central 8x8 section. This results in no visual oddities for the 2x2 missing texture due to it already only having four distinct square regions at each corner.}}
+|{{HistoryLine|||dev=14w10a|[[File:Missing Model JE2.png|32px]] [[File:Missing Model (anisotropic filtering) JE2.png|32px]] The missing model has changed to be a full cube.}}
+|{{HistoryLine|||dev=14w25a|Removed the anisotropic filtering option, meaning that the 2x2 checker is once again the only missing texture, and the missing model that uses it the only missing model.}}
+|{{HistoryLine||1.13|dev=17w43a|[[File:Missing Model JE3.png|32px]] The missing texture's change has resulted in the appearance of the missing model also changing.}}
+}}
+
+===== Item =====
+
+; GUI
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w25a|[[File:Missing Model (inventory) JE1.png|32px]] The missing model now also applies to items. Its "gui" display type appears equivalent to other cubes.}}
+|{{HistoryLine||1.9|dev=15w31a|[[File:Missing Model (inventory) JE2.png|32px]] In the inventory, the missing model visually ''appears'' to be a 2D missing texture; this is due to its viewing angle defaulting to straight-on from a face instead of at an angle, due to changes in how item models can be rendered, and only one face is visible as a result.}}
+|{{HistoryLine||1.13|dev=17w43a|[[File:Missing Model (inventory) JE3.png|32px]] The changes to the missing texture have modified the appearance of the missing model.}}
+|{{HistoryLine||1.15|dev=19w39a|[[File:Missing Model (inventory) JE4.png|32px]] Major changes to rendering in this version have made the missing model appear very slightly darker by default.}}
+|{{HistoryLine|||dev=19w40a|[[File:Missing Model (inventory) JE5.png|32px]] Items in the inventory are now shaded far less than previously. As a result, the missing model now appears much brighter.}}
+|{{HistoryLine|||dev=pre3|[[File:Missing Model (inventory) JE6.png|32px]] Shading has returned to items. The missing model now appears far darker than before 19w40a.}}
+|{{HistoryLine|||dev=pre4|[[File:Missing Model (inventory) JE7.png|32px]] Item shading has changed, resulting in the missing model appearing darker than in the prior pre-release.}}
+|{{HistoryLine||1.17|dev=21w10a|[[File:Missing Model (inventory) JE8.png|32px]] The missing model's shading has returned to the level of shading it had in 1.15-pre3.}}
+}}
+
+; Ground
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w25a|[[File:Missing Model (dropped) JE1.gif|64px]] [[File:Missing Model (dropped) JE1.png|64px]] The missing model now also applies to items. Its "ground" display type appears equivalent to other cubes.}}
+|{{HistoryLine||1.9|dev=15w31a|[[File:Missing Model (dropped) JE2.gif|64px]] [[File:Missing Model (dropped) JE2.png|64px]] The missing model now appears the size of a full block as a dropped item.}}
+|{{HistoryLine||1.13|dev=17w43a|[[File:Missing Model (dropped) JE3.gif|64px]] [[File:Missing Model (dropped) JE3.png|64px]] The changes to the missing texture have modified the appearance of the missing model.}}
+|{{HistoryLine||1.21.5|dev=25w07a|No longer clips into the ground as a dropped item.}}
+}}
+
+; Fixed
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w25a|[[File:Missing Model (fixed) 14w25a.png|64px]] The missing model now also applies to items. Its "fixed" display type appears equivalent to other cubes, with an edge length of four block pixels.}}
+|{{HistoryLine|||dev=14w31a|[[File:Missing Model (fixed) 14w31a.png|64px]] Changed lighting for the "fixed" model.}}
+|{{HistoryLine||1.9|dev=15w31a|[[File:Missing Model (fixed) 15w31a.png|64px]] The missing model now appears larger than before in an item frame, with an edge length of eight block pixels.}}
+|{{HistoryLine||1.13|dev=17w43a|[[File:Missing Model (fixed) 17w43a.png|64px]] The changes to the missing texture have modified the appearance of the missing model.}}
+}}
+
+; On shelf
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.9|dev=25w33a|[[File:Missing Model (on shelf) 25w33a.png|64px]] The "on_shelf" display type has been added. When using it, the missing model appears equivalent to other cubes, with an edge length of four block pixels.}}
+}}
+
+; Held, first person
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w25a|[[File:Missing Model (first person, right hand) JE1.png|64px]] The missing model now also applies to items. Its "firstperson_righthand" display type appears equivalent to other cubes.}}
+|{{HistoryLine||1.9|dev=15w31a|[[File:Missing Model (first person, right hand) JE2.png|64px]] The missing model now appears the size of a full block when held in first person.
+|[[File:Missing Model (first person, left hand) JE1.png|64px]] Objects can now be held in the player's left hand.}}
+|{{HistoryLine||1.13|dev=17w43a|[[File:Missing Model (first person, left hand) JE2.png|64px]] [[File:Missing Model (first person, right hand) JE3.png|64px]] The changes to the missing texture have modified the appearance of the missing model.}}
+}}
+
+; Held, third person/other entity
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w25a|[[File:Missing Model (third person, right hand) 14w25a.png|64px]] The missing model now also applies to items. Its "thirdperson_righthand" display type appears equivalent to other cubes.
+|[[File:Missing Model (translucent, third person, right hand) 14w25a.png|64px]] Translucent items with a missing model exhibit a particularly interesting visual bug in relation to entities (including its holder) and translucent objects.}}
+|{{HistoryLine|||dev=14w29a|[[File:Missing Model (third person, right hand) 14w29a.png|64px]] [[File:Missing Model (translucent, third person, right hand) 14w29a.png|64px]] The "thirdperson_righthand" model has changed.}}
+|{{HistoryLine|||dev=14w30a|[[File:Missing Model (third person, right hand) 14w30a.png|64px]] [[File:Missing Model (translucent, third person, right hand) 14w30a.png|64px]] For most items, the missing model is now the size of a full block when held in third person or by a mob or another player. Invalid data value chests, trapped chests and ender chests still appear to use the normal size.}}
+|{{HistoryLine||1.9|dev=15w31a|[[File:Missing Model (third person, right hand) 15w31a.png|64px]] [[File:Missing Model (translucent, third person, right hand) 15w31a.png|64px]] The hold position for the missing model is now lower, covering less of the player's shoulder.
+|[[File:Missing Model (third person, left hand) 15w31a.png|64px]] [[File:Missing Model (translucent, third person, left hand) 15w31a.png|64px]] Objects can now be held in the player's left hand.
+|Invalid data value chests, trapped chests and ender chests now use the full-size missing model.}}
+|{{HistoryLine||1.13|dev=17w43a|[[File:Missing Model (third person, left hand) 17w43a.png|64px]] [[File:Missing Model (translucent, third person, left hand) 17w43a.png|64px]] [[File:Missing Model (third person, right hand) 17w43a.png|64px]] [[File:Missing Model (translucent, third person, right hand) 17w43a.png|64px]] The changes to the missing texture have modified the appearance of the missing model.}}
+|{{HistoryLine||1.15|dev=19w39a|Fixed the rendering bug that caused translucent items with broken models to render very strangely around entities and translucent objects, likely as part of the fix to {{bug|MC-9553}}.}}
+}}
+
+; On head
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w25a|[[File:Missing Model (head) 14w25a.png|64px]] The missing model now also applies to items. Its "head" display type appears equivalent to other cubes.
+|[[File:Missing Model (translucent, head) 14w25a.png|64px]] Translucent items with a missing model exhibit a particularly interesting visual bug in relation to entities (including its holder) and translucent objects.}}
+|{{HistoryLine|||dev=14w26a|[[File:Missing Model (head) 14w26a.png|64px]] [[File:Missing Model (translucent, head) 14w26a.png|64px]] The missing model now appears smaller when equipped in a head slot, presumably due to the fix for {{bug|MC-57188}}.}}
+|{{HistoryLine||1.13|dev=17w43a|[[File:Missing Model (head) 17w43a.png|64px]] [[File:Missing Model (translucent, head) 17w43a.png|64px]] The changes to the missing texture have modified the appearance of the missing model.}}
+|{{HistoryLine||1.15|dev=19w39a|Fixed the rendering bug that caused translucent items with broken models to render very strangely around entities and translucent objects, likely as part of the fix to {{bug|MC-9553}}.}}
+}}
+
+==== General history ====
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w06b|The missing model has been added as a model file under <samp>models/block/missingno.json</samp>.
+|Prior to this version, the game would crash with a NullPointerException if it tried to render a block with no defined model.<ref>{{bug|MC-47560|||Fixed}}</ref>}}
+|{{HistoryLine|||dev=14w07a|Invalid model files will now cause the missing model to be loaded in their place. Previously, no model would be loaded at all, and the block in question would appear completely empty.}}
+|{{HistoryLine|||dev=14w18a|The missing model is now hardcoded and cannot be modified by resource packs, as to prevent a crash if the model is replaced by something invalid.<ref>{{bug|MC-50073|||Fixed}}</ref>
+|As a result, it is also absent from the jar file from this point onwards.}}
+|{{HistoryLine|||dev=14w25a|The block breaking animation now applies properly to the model; previously, blocks that used it would appear to light up when broken (similarly to the tops and bottoms of [[bed]]s before 14w10a) without displaying the cracking animation properly.
+|The missing model now uses the missing texture for its particles. Particle textures were previously hardcoded per block ID and could not be changed.}}
+|{{HistoryLine||1.21.2|dev=24w33a|The missing model is now affected by [[color]]s for biomes, tinted items, and so on.<ref>{{bug|MC-277830}}</ref>}}
+|{{HistoryLine|||dev=24w40a|The missing material, used by the missing model for particles, is now defined in the block model .java rather than the missing model .java.}}
+}}
+
+== Missing font character ==
+Much like for missing textures and missing models, ''Minecraft'' also uses a graphic for rendering Unicode characters when it cannot find a valid texture. This appears as a hollow rectangle, sometimes referred to as "[[Wikipedia:Unicode replacement character|tofu]]".
+
+Generally, in fonts, the <samp>[[wikipedia:.notdef|.notdef]]</samp> character is used for this purpose, and is defined per-font. However, Minecraft's missing font character is hardcoded and cannot be configured by resource packs.
+
+The missing font character is most often seen when trying to render a character for which no fonts currently define a glyph; this most often affects Private Use Area characters such as , as well as unassigned or recently assigned code points which are not covered by [[GNU Unifont]].
+
+It can also be seen when the game attempts to render a character with an invalid texture, such as one whose dimensions exceed 256 pixels on one or both axes. In this case, the horizontal width of the character will still be used, causing either large gaps in text or the missing glyph to intersect the next character, a bug which Mojang has decided not to fix.<ref>{{Cite bug|MC|277677|Invalid font characters remember their width and the placeholder glyph incorrectly uses it|date=October 18, 2024|resolution=Won't Fix}}</ref> There is also no error produced in the log.<ref>{{bug|MC-277670}}</ref>
+
+=== History ===
+
+==== History of the character itself ====
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=pre7|[[File:Missing Glyph JE2.png|10px]] Added the missing font character.
+|Before this version, characters without defined glyphs would simply render as blank and of minimum width.}}
+|{{HistoryLine|||dev=pre9|[[File:Missing Glyph JE3.png|10px]] The center of the missing font character is now solid black.}}
+|{{HistoryLine||1.13.1|dev=18w30a|[[File:Missing Glyph JE4.png|10px]] The center of the missing font character is now transparent again.<ref>https://cdn.skye.lol/diffs/1.13_to_18w30a.html, line 17 of net/minecraft/client/render/font/MissingGlyph.java: changed -16777216 (full opacity black) to 0 (no opacity black)</ref>}}
+}}
+
+==== General history ====
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=pre6|Characters without a defined texture now print an error to the game log.}}
+|{{HistoryLine|||dev=pre7|The error message now includes the ID of the character in question.}}
+|{{HistoryLine|||dev=pre8|Errors are no longer printed for characters without defined textures.}}
+|{{HistoryLine||1.13.1|dev=18w30a|The missing glyph is now used for invalid font characters, such as those with dimensions too large; previously they would fall back to the default font.}}
+|{{HistoryLine||1.16|dev=20w17a|[[Raw JSON text format]] now supports applying any font to text, allowing for the missing font character to be seen with more accessible characters, or with any character if a nonexistent font is specified.{{note|Example command: /tellraw @p {"text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789↊↋", "font": "fontthatdoesnotexist"<nowiki>}</nowiki>}}}}
+|{{HistoryLine||1.21.2|dev=Pre-Release 2|Characters without a defined texture now print an error to the game log once again.<ref>{{bug|MC-276813|||fixed}}</ref>}}
+|{{HistoryLine||1.21.9|dev=25w31a|Errors are again no longer printed for characters without defined textures.<ref>{{bug|MC-301094}}</ref>}}
+}}
+
+== Other missing assets ==
+Missing and misconfigured sounds are not played at all. Errors are still logged in the game output when attempting to play a sound event with no assigned sound, for example.
+
+Missing post shaders (at least in 1.13's development phase) do not appear to load at all, and the view is normal without the expected modifications by the shader.
+
+Translation strings which are not specified in any used lang files will display as they are.
+
+=== "missingno" text ===
+The term "missingno" was used in previous versions for some cases where text could not be loaded, specifically for [[splash]] texts from [[Java Edition Alpha v1.0.12|Alpha v1.0.12]] up to [[19w12b]], for items with a CanDestroy NBT tag from [[14w02a]] to [[24w07a]], and for items with a CanPlaceOn NBT tag from [[14w06a]] to 24w07a. All of these cases have since been removed in [[19w13a]] and [[24w09a]] respectively, and the term "missingno" is no longer used in-game in any known cases, besides when referring to missing texture and model assets.
+
+<gallery>
+19w12b missingno.png|The "missingno" splash test
+Candestroy missingno.png|"missingno" on an item with CanDestroy NBT
+Canplaceon missingno.png|"missingno" on an item with CanPlaceOn NBT
+</gallery>
+
+== Notable bugs ==
+
+=== Examples of cases where the missing model is not used ===
+By definition, any block which does not use a model does not use the cubic missing model. If a model is still not defined for the block, however, this will likely still reflect in the block's particles.
+
+{{Non-remodellable blocks}}
+
+The vast majority of entity models are also completely hardcoded. There are two notable exceptions in the [[item frame]] and [[glow item frame]], which do in fact have customizable models. Therefore, the item frame and glow item frame are the only two entities which are capable of using the missing model; all other entities may lose their texture, but retain the same model shape.
+
+Entities that exist to extend the behavior of blocks, such as [[falling sand]] and [[primed TNT]], reference block models, and therefore will use the missing model if required. In addition, other entities that incorporate block models, such as [[mooshroom]]s, [[endermen]] holding blocks, and [[minecart]]s containing blocks, will use the missing model for the part that references the block model, but the entity model itself will remain intact.
+
+[[Horse]]s are a particularly interesting example of an entity which are discussed further in a later section. In multiple version ranges, certain invalid horses can either appear completely invisible or have a solid white texture, neither of which are the missing model.
+
+=== Translucency ordering ===
+From 13w47a{{verify}} up to 19w38b, there existed a remarkable visual bug where missing models associated with blocks that used translucent rendering (such as ice, stained glass, stained glass panes and slime blocks) would interact anomalously with the rendering of transparent blocks in the world, as well as of entities, including the holder. Unlike normal missing models, translucent blocks and other entities would render in front of such a model when held, even if they were physically farther away from the camera. However, this only applies if the distant entity or transparent block in question is not first occluded by the player model. As a result, the held translucent block can form a player-shaped silhouette around the player model in front of a background made of entities (such as paintings) or translucent blocks.
+
+This effect can be seen without the use of resource packs up to 17w46a simply by holding ice, stained glass, stained glass panes or slime blocks of an invalid data value. For versions 17w47a up to 19w38b a resource pack is required to break the model of an existing translucent item, and from 19w39a the bug is no longer present at all.
+
+This only appears to affect items that are either equipped on an entity's head or held in their hand (in the case of the player, only in third person). This would not affect things held in first person, dropped on the ground, or in an item frame.
+
+While observable in any version from 13w47a onward, changes in 14w25a resulted in item forms of transparent blocks rendering their interior faces instead of just their exterior faces, which resulted in the visibly bizarre geometry seen in practice with missing item models.
+
+<div style="text-align: center;">
+<gallery>
+No missing model.png|Normal player model for shape reference
+Normal missing model.png|Missing model belonging to a non-translucent item
+Translucent missing model.png|Missing model belonging to a translucent item, resulting in a player outline forming behind it
+</gallery>
+</div>
+
+This effect also happened to particles and certain other objects in-game from 13w41a onwards.
+
+=== Unloading the default resources ===
+If a sufficiently broken resource pack is loaded, the game will catch such resource packs and unload them automatically if errors were detected. From [[Java Edition 17w43a|17w43a]] up to the full release of [[Java Edition 1.13|1.13]], this also included the default resources, meaning that applying a flawed resource pack would result in all assets being unloaded, and as such the missing error assets appearing everywhere.
+
+<div style="text-align: center;">
+<gallery>
+All textures unloaded.png
+</gallery>
+</div>
+
+From 18w30a onwards, the game was made to unload all resource packs ''except'' the default resources in cases like these.<ref>{{Cite bug|MC|123756|Trying to load broken resource pack also disables all intact resource packs ("Caught error stitching, removing all assigned resourcepacks")|date=January 2, 2018|resolution=Cannot Reproduce}}</ref>
+
+As [[textures-atlas]] becomes 16x16 (its minimum possible size), the [[enchantment glint]] looks much different from what may be expected otherwise. A table is provided on said page.
+
+; Layered textures
+Certain game objects do not use textures in the standard way, instead layering them on top of each other. Horses use these for their pattern variants, and banners for each banner pattern. When there is no texture to pick from, these instead appear completely white. If the textures in question have already been loaded into the game, it is not possible to unload them even if all other textures are unloaded.
+
+As shields use an item model, even though said item model points to an entity model, it appears as a missing model even though it makes use of texture layering.
+
+Tropical fish, despite also using composite textures to distinguish variants, do not turn white if a texture cannot be loaded, and instead use the usual checkerboard (which is tinted in certain cases).
+
+The screenshots below also demonstrate that player skins, despite not being layer-based, are also not unloaded due to not being resource pack dependent.
+
+<div style="text-align: center;">
+<gallery>
+Unloaded layer textures.png|Horses and banners with no textures loaded
+Loaded layer textures.png|Horses and banners with textures persisting after everything else has been unloaded
+</gallery>
+</div>
+
+; Main menu
+It is interesting to note how this bug highlights different changes to parts of the game through 1.13's development. Focusing on the main menu, for example, reveals multiple details:
+* From 17w43a up to 18w22c, the menu appears as in the first image. The panorama cube is clearly visible, with each square replaced with the missing texture.
+* From 1.13-pre1 up to 1.13-pre5, the main menu background is now a large missing texture itself, obscuring the view of the panorama cube. This is likely due to the introduction of the <samp>panorama_overlay.png</samp> texture file in this version, which is responsible for the whitish gradient effect visible above the panorama; previously the gradient was hardcoded and unable to be changed with resource packs.
+* In 1.13-pre6, the font does not seem to load at all.
+* In 1.13-pre7 and 1.13-pre8, the newly-implemented missing font character is used for all non-space glyphs; in versions before 1.13-pre6, they instead used colors from the missing texture, implying that the font was reading from the missing texture itself as though it were a font texture file.
+* From 1.13-pre9 up to the full release of 1.13, due to the missing font character visually changing, this also manifests visually; the interior is black rather than transparent.
+<div style="text-align: center;">
+<gallery>
+Broken main menu 17w43a.png|17w43a - 18w22c
+Broken main menu 1.13-pre1.png|1.13-pre1 - 1.13-pre5
+Broken main menu 1.13-pre6.png|1.13-pre6
+Broken main menu 1.13-pre7.png|1.13-pre7 - 1.13-pre8
+Broken main menu 1.13-pre9.png|1.13-pre9 - 1.13
+</gallery>
+</div>
+
+Font charactter sizes are variable in 1.13-pre5 and earlier, and appear to be inherited from whatever resource pack was active previously.
+
+=== Contagious textures ===
+In 1.8 snapshots 14w07a and 14w08a, in some cases, missing models would cause nearby blocks to display the missing texture. This could also affect the player's held item. Why exactly this happens is unknown, as it appears to be positional, and is somewhat unstable; placing some blocks such as ladders or vines nearby can nullify the effect entirely.
+
+Blocks known to be affected include oak and iron [[door]]s, oak and iron [[trapdoor]]s, [[pumpkin stem]]s and [[melon stem]]s, [[bed]]s, [[tripwire]], [[lily pad]]s, [[flower pot]]s and their contents, and [[cake]]s. In some cases, [[wooden slab]]s have been seen to be affected, however reproducibility of this case has not been achieved, and it is not known if slabs made of stone-like materials are also subject to this.
+
+The following screenshots are triggered by a [[cocoa pod]] with metadata 12:
+<div style="text-align: center;"><gallery>
+Firstpersonmissingitem.png|A jungle log using the missing texture in first person
+Thirdpersonmissingitem.png|A jungle log using the missing texture in third person
+Infectedblocktypes.png|Affected blocks; the pumpkin and melon stem are [[Java Edition removed blocks/Metadata variants#Overgrown melon and pumpkin stems|overgrown]] and one of the cakes is [[Java Edition removed blocks/Metadata variants#Overeaten cakes|overeaten]]
+</gallery></div>
+
+== Trivia ==
+{{FakeImage|{{pximg|Source error.png|128px}}|The missing texture graphic used in several Source Engine games (<samp>__error.vmt</samp>), on which the ''Minecraft'' texture is based. Note the transparent black.}}
+* 14w04b is the last Java Edition version in which the missing texture cannot be encountered in the vanilla game without resource packs:
+** From 14w05a through 14w21b inclusive, the end portal item uses the missing texture.
+** In 14w25a, the version directly following 14w21b, the end portal item is removed, but all invalid data value items use the missing item model.
+*** In addition, this is the first version that allows the use of the {{cmd|particle}} command to generate block particles, which includes particles for invalid blocks such as air. This functionality is temporarily removed in later snapshots and the full release of 1.8, but returns soon after, and the missing texture can still be seen via invalid data value items.
+** In 17w47a, invalid data value items are effectively removed, however it is still possible to generate missing texture particles if the air item is specified. From 24w09a, this could crash the game, and from 1.20.5 Pre-Release 1, is now forbidden.
+** Since 21w42a, it has been possible to create block_marker particles which use the missing texture by referencing air, cave air or void air. This continues to the latest version.
+* The missing texture can be seen in the official version banners for [[14w10a]] and [[17w47a]], and is also referenced by the banner for [[13w24a]].
+* [[Minecraft Earth]] used Bedrock Edition's missing texture.<ref>https://www.reddit.com/r/Minecraft/comments/f3kekq/minecraft_earth_missing_texture/</ref> However, it is unknown if [[Minecraft Dungeons]], [[Minecraft Legends]], [[Minecraft Blast]] or either release of [[Minecraft Story Mode]] used a missing texture.
+
+== Gallery ==
+=== Screenshots ===
+<gallery>
+Missing texture in Classic JS.png|The [[Minecraft Classic (JavaScript remake)|2019 Classic remake]] also has a missing texture.
+</gallery>
+=== Development images ===
+<gallery>
+13w24a Banner.png|13w24a's release banner, which references the texture
+14w10a Banner.png|14w10a's release banner
+17w47a.gif|17w47a's release banner
+Rain Missing Texture.png|A screenshot by [[Dinnerbone]] with no [[rain]] texture
+JSON Book.png|A screenshot by [[Searge]] with no [[written book]] model
+Phantom Missing Texture.png|A screenshot by [[jeb]] with no [[phantom]] texture
+Blaze3D UI 1.png|[[Blaze3D]] UI rendering. Missing texture can be seen as part of the [[blocks.png-atlas]].
+</gallery>
+
+== Notes ==
+{{notelist}}
+
+=== ID lists ===
+Lists of relevant IDs for commands listed in previous sections.
+
+<references group="ids"/>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|resourcepack}}
+
+[[pt:Texturas e modelos ausentes]]
+[[ja:欠落したテクスチャとモデル]]
+[[zh:无效纹理与模型]]

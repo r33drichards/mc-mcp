@@ -1,0 +1,84 @@
+{{For|the [[Bedrock Edition]] equivalent|Commands/tickingarea}}{{exclusive|java}}
+{{Infobox command
+|name=forceload
+|oplevel=2
+}}
+
+Force [[chunk]]s to load constantly or not, or lists/queries forceloaded chunks.
+
+== Usage ==
+{{See also|Chunk}}
+Forced chunks get load ticket with load level of 31, the same level as the ticket caused by a player, which means that the said chunks process all aspects of the game, while adjacent chunks get activated by the load level's spreading. But since it increases its load level per chunk when spreading, adjacent chunks don't process every aspect of the game as well.
+
+As of [[Java_Edition_1.21.5#Blocks_2|version 1.21.5]], crops do grow in forceloaded chunks even without a nearby player.  Blocks in forceloaded chunks receive random ticks (see [[Tick#Chunk_tick|chunk ticks]]) and process all updates except for mob spawning, lightning strikes, and fire spreading (unless game rule {{cd|allowFireTicksAwayFromPlayer}} is set to true).
+
+Coordinates are actually [[Coordinates#Block position|block coordinates]]. In order to forceload chunks 0,0 to 1,2, the [[player]] should use commands like {{code|/forceload add 0 0 31 47}}, which loads chunks 0,0 to 1,2 (1,2 inclusive, 2×3 chunks). When using {{code|/forceload add 0 0 10 30}} chunks 0,0 to 0,1 are actually loaded (one chunk equals 16×16 blocks on x/z axis).
+
+Similarly, {{code|/forceload query}} uses block coordinates as well.
+
+==Syntax==
+
+<code>forceload add <from> [<to>]</code>
+: Forces the chunk at the <code><from></code> block position (through the <code><to></code> block position, if set) in the dimension of the command's execution to be loaded constantly.
+<code>forceload remove <from> [<to>]</code>
+: Unforces the chunk at the <code><from></code> block position (through the <code><to></code> block position, if set) in the dimension of the command's execution to be loaded constantly.
+<code>forceload remove all</code>
+: Unforces all chunks in the dimension of the command's execution to be loaded constantly.
+<code>forceload query [<pos>]</code>
+: If block coordinates are given, displays the specified chunk in the dimension of the command's execution is force loaded; otherwise, lists which chunks in the dimension of the command's execution are force loaded.
+
+==Arguments==
+
+{{argument|from|column_pos}} and {{argument|to|column_pos}}
+: Specifies the targeted chunks based on block position.
+: {{arg desc|je=column_pos}}
+
+{{argument|pos|column_pos}}
+: Specifies a chunk to query based on block position.
+: {{arg desc|je=column_pos}}
+
+==Result==
+
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/forceload add ...|More than 256 chunks are specified.|fail}}
+{{Result table|There's a specified chunk that is out of the world.}}
+{{Result table|cmd=/forceload add ...|All specified chunks have already been forced to be loaded.}}
+{{Result table|cmd=/forceload remove <from> [<to>]|None of specified chunks have been forced to be loaded.}}
+{{Result table|cmd=/forceload query <pos>|The specified chunk hasn't been forced to be loaded.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/forceload add ...|On success|1|1|the number of forceloaded chunks that is newly added.}}
+{{Output table|cmd=/forceload remove <from> [<to>]|On success|1|1|the number of forceloaded chunks that is successfully removed.}}
+{{Output table|cmd=/forceload remove all|On success|1|1|0}}
+{{Output table|cmd=/forceload query|On success|1|1|The number of forceloaded chunks in the current dimension.}}
+{{Output table|cmd=/forceload query <pos>|On success|1|1|1}}
+{{Output table}}
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13.1|dev=18w31a|Added {{cmd|chunk|link=none}}.}}
+|{{HistoryLine|||dev=pre1|Renamed {{cmd|chunk|link=none}} to {{cmd|link=none|forceload}}.}}
+|{{HistoryLine||1.14.4|dev=pre4|{{cmd|forceload|link=none}} is now available up to permission level 2.}}
+|{{HistoryLine||1.17|dev=20w45a|Chunks are now loaded asynchronously, so chunks selected by {{cmd|forceload|link=none}} are no longer guaranteed to be loaded on the same tick that the command is run.<ref>{{bug|MC-227930|resolution=WAI}}</ref>}}
+|{{HistoryLine||1.21.5|dev=25w06a|Any block loaded by a source of chunk loading (including {{cmd|link=none|forceload}}) may now receive random ticks, instead of just 8 chunks around players.}}
+}}
+
+==References==
+<references/>
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/forceload]]
+[[es:Comandos/forceload]]
+[[ja:コマンド/forceload]]
+[[pt:Comandos/forceload]]
+[[ru:Команды консоли/forceload]]
+[[zh:命令/forceload]]

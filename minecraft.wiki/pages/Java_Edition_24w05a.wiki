@@ -1,0 +1,142 @@
+{{Infobox version
+|title=Minecraft 24w05a
+|image=24w05a.jpg
+|image2=Java Edition 24w05a.png
+|edition=Java
+|type=Snapshot
+|date=January 31, 2024
+|jsonhash=ed586ec8f42b680a52a2b381aa2452e4a1b9813d
+|clienthash=314fbbdb6a7872889d7b8cc673bd43c2d64604b1
+|clientmap=f73510891fb691fe15918eeb2917594b787d9677
+|serverhash=cc0f01e6406fa8a2b50c3c06edef74e7a7bf74de
+|servermap=5c1132d3b66299cec90da0536d4f5c7fcfeae90f
+|parent=1.20.5
+|prevparent=1.20.4
+|prev=24w04a
+|next=24w05b
+|nextparent=1.20.6
+}}<onlyinclude>
+
+'''24w05a''' is the sixth [[snapshot]] for [[Java Edition 1.20.5]], released on January 31, 2024<ref>{{snap|24w05a|January 31, 2024}}</ref> which adds the [[vault]] and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Particles (Java Edition)|Particles]]'''
+* Added <code>vault_connection</code> particle, which shows up when near a [[vault]].
+
+'''[[Server]]'''
+* Added a reserved region file compression id for third-party servers to use for custom compression implementations.
+** Compression id <code>127</code> can now be used for custom implementations of region file compression.
+** When used, the version id must be followed by a namespaced string representing the custom algorithm used.
+* Added an option to not compress region files.
+** Added a third value to the dedicated server configuration property <code>region-file-compression</code>: <code>none</code> does not compress the data.
+** Consumes significantly more space and requires significant time to read and write, even though CPU is used less.
+** Might make sense together with filesystem level compression.
+* Allowed server operators to view dedicated server TPS debug chart.
+
+'''[[Tag]]s'''
+* Added the <code>#dyeable</code> item tag: contains {{cd|d=and|leather_helmet|leather_chestplate|leather_leggings|leather_boots|leather_horse_armor}}.
+
+== Changes ==
+=== Mobs ===
+'''[[Horse]]'''
+* Replaced {{nbt|compound|ArmorItem}} tag with {{nbt|compound|body_armor_item}}.
+
+'''[[Llama]]'''
+* Replaced {{nbt|compound|DecorItem}} tag with {{nbt|compound|body_armor_item}}.
+
+'''[[Wolf]]'''
+* Replaced {{nbt|byte|armor}} tag with {{nbt|compound|body_armor_item}}.
+
+=== Command format ===
+'''[[Slot]]s'''
+* Replaced <code>horse.armor</code> [[slot]] argument with <code>armor.body</code>, applicable now to all mobs.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>30</code>.
+* Added {{nbt|compound|body_armor_item}} to [[entity data]], which functions similarly to entries of {{nbt|list|HandItems}} and {{nbt|list|ArmorItems}}.
+** Also added {{nbt|float|body_armor_drop_chance}}, which determines the chance of dropping body armor.
+* Potion effects stored in items or entities no longer encode their default values.
+** <code>amplifier</code>: <code>0</code>
+** <code>duration</code>: <code>0</code>
+** <code>ambient</code>: <code>false</code>
+** <code>show_particles</code>: <code>true</code>
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>25</code>.
+* The unused attributes array in core shader definitions has been removed.
+* The <code>IViewRotMat</code> uniform has been removed, and the Position attribute for entities is now in (camera relative) world space.
+* Light direction uniforms are no longer premultiplied by the view matrix.
+* Added texture and model files for vault block.
+* Changed texture for the trial key item.
+* Added texture and particle file for <code>vault_connection</code> particle.
+
+'''[[Shader]]s'''
+* Removed <code>position_color_normal</code> and <code>position_tex_lightmap_color</code> shaders.
+* Replaced <code>position_tex_color_normal</code> shader with <code>rendertype_clouds</code>.
+
+== Experimental ==
+These additions and changes only take effect when the [[Update 1.21]] experimental data pack is enabled.
+
+=== Additions ===
+==== Blocks ====
+'''[[File:Vault (active) JE3 BE3.png|32px]] [[Vault]]'''
+* A block that holds locked treasure and loot - find the right key to eject its rewards.
+** Found throughout [[trial chambers]], containing the structures' most valuable loot.
+** Vaults in trial chambers require a [[trial key]] to be unlocked.
+** When activated with a trial key, it ejects rewards.
+* Can be unlocked by an unlimited amount of [[player]]s.
+** It can be only activated once per player. After a player has unlocked a vault, they cannot unlock that vault again.
+** If a player has not unlocked that vault before, an orange stream of particles flows from the player to the vault when nearby.
+* Has a keyhole that is open or closed depending on the players nearby.
+** If any nearby player has not unlocked that vault, the keyhole is open.
+** If all nearby players have unlocked that vault, the keyhole is closed.
+* Within its cage, it cycles through and displays items which are possible to eject from its loot table.
+* The rewards it ejects are randomized from its loot table each time it is unlocked.
+* Cannot be crafted or obtained in Survival, and does not drop anything when mined.
+* Explosion-resistant and cannot be moved.
+* Vaults currently reuse the same loot table that reward chests previously used in the trial chambers.
+
+=== Changes ===
+==== Items ====
+'''[[File:Trial Key JE2 BE2.png|32px]] [[Trial key]]'''
+* Can now be used to open [[vault]]s.
+* Texture changed to match the vaults.
+
+==== General ====
+'''[[Tag]]s'''
+* Added <code>vault</code> to the <code>#features_cannot_replace</code> block tag.
+
+== Fixes ==
+{{fixes|fixedin=24w05a
+|;From released versions before 1.20
+|187616|Totems rendered too dark for a second after being used.
+|193656|Banners' breaking texture is displaced and/or repeatedly flips horizontally, depending on the banner's rotation.
+|225170|Normal matrix scaling broken in some situations.
+|239084|Item pickup animation is darker than the actual item model.
+|248689|Fog on falling blocks happens too early.
+|260099|Sniffer's snout shading changes during sniffing.
+<!-- MC-264821 is marked to first appear in 1.20.1 in the bug tracker, but it has been tested that it affected the game since 1.18-pre1 -->
+|264821|The fog on armor worn by entities occurs too early.
+|;dev
+|267922|Wolf armor loses custom display name and other NBT when equipped.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|raDURYBW6eU|yEEtS5je_sA}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w05a]]
+[[es:Java Edition 24w05a]]
+[[fr:Édition Java 24w05a]]
+[[ja:Java Edition 24w05a]]
+[[pt:Edição Java 24w05a]]
+[[ru:24w05a (Java Edition)]]
+[[uk:24w05a (Java Edition)]]
+[[zh:Java版24w05a]]

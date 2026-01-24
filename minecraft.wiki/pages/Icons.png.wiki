@@ -1,0 +1,249 @@
+{{DISPLAYTITLE:<samp>icons.png</samp>}}
+{{wip}}{{Exclusive|bedrock}}{{Outdated feature|edition=java}}<samp>'''icons.png'''</samp> is a texture sheet used by the game to store the textures of several UI elements.
+[[File:201511110718_icons.png|thumb|The latest icons.png file in {{BE}}.]]
+
+== Content ==
+<samp>icons.png</samp> contains the sprites of older UI elements, including [[health]], [[hunger]], [[experience]], and [[armor]].
+
+{{IN|je}}, unlike a large amount of texture sheets, it was still used until recent updates. However, it has now been split into multiple files in the hud folder (assets/minecraft/textures/gui/sprites/hud).
+
+The following image map shows how the elements are used when hovered over. Several of them are unused and therefore have no label.<ref>{{cite|date=April 2016|url=https://docs.google.com/document/d/1g83uC9-sVpaSPghGSsTYYngDS2tbseDkW6ZRgGmadp8/edit?usp=sharing |title=The GUIde}}</ref>
+
+<imagemap>
+File:icons-tripled.png|768px|border|center
+
+rect 0 0 48 48 [[Cursor]]
+
+rect 48  0  75 27 [[Heart outline]]
+rect 48  0 102 27 [[Half heart outline]]
+rect 48  0 156 27 [[Half heart outline #2]]
+
+rect 48  0 183 27 [[Health heart]]
+rect 48  0 210 27 [[Half health heart]]
+rect 48  0 237 27 [[Health heart flashed when hurt]]
+rect 48  0 264 27 [[Half health heart flashed when hurt]]
+
+rect 48  0 291 27 [[Poisoned heart]]
+rect 48  0 318 27 [[Half poisoned heart]]
+rect 48  0 345 27 [[Poisoned heart flashed when hurt]]
+rect 48  0 372 27 [[Half poisoned heart flashed when hurt]]
+
+rect 48  0 399 27 [[Wither heart]]
+rect 48  0 426 27 [[Half wither heart]]
+rect 48  0 453 27 [[Wither heart, flashed when hurt]]
+rect 48  0 480 27 [[Half wither heart, flashed when hurt]]
+
+rect 48  0 507 27 [[Absorption heart]]
+rect 48  0 534 27 [[Half absorption heart]]
+
+
+rect 48 27  75 54 [[Empty armor slot]]
+rect 48 27 102 54 [[Half armor slot]]
+rect 48 27 129 54 [[Full armor slot]]
+rect 48 27 156 54 [[Full armor slot #2]]
+
+rect 48 27 183 54 [[Mob (horse) heart outline]]
+rect 48 27 210 54 [[Mob (horse) half heart outline]]
+rect 48 27 264 54 [[Mob (horse) half heart outline #2]]
+
+rect 48 27 291 54 [[Mob (horse) health heart]]
+rect 48 27 318 54 [[Half mob (horse) health heart]]
+rect 48 27 345 54 [[Mob (horse) health heart flashed when hurt]]
+rect 48 27 372 54 [[Half mob (horse) health heart flashed when hurt]]
+
+
+rect 48 54  75 81 [[Underwater bubble]]
+rect 48 54 102 81 [[Underwater bubble popping]]
+
+
+rect 48 81  75 108 [[Haunch outline]]
+rect 48 81 102 108 [[Half haunch outline]]
+
+rect 48 81 183 108 [[Haunch]]
+rect 48 81 210 108 [[Half haunch]]
+
+rect 48 81 291 108 [[Hunger haunch]]
+rect 48 81 318 108 [[Half hunger haunch]]
+
+rect 48 135  75 162 [[Heart outline (hardcore)]]
+rect 48 135 102 162 [[Half heart outline (hardcore)]]
+rect 48 135 156 162 [[Half heart outline #2 (hardcore)]]
+
+rect 48 135 183 162 [[Health heart (hardcore)]]
+rect 48 135 210 162 [[Half health heart (hardcore)]]
+rect 48 135 237 162 [[Health heart flashed when hurt (hardcore)]]
+rect 48 135 264 162 [[Half health heart flashed when hurt (hardcore)]]
+
+rect 48 135 291 162 [[Poisoned heart (hardcore)]]
+rect 48 135 318 162 [[Half poisoned heart (hardcore)]]
+rect 48 135 345 162 [[Poisoned heart flashed when hurt (hardcore)]]
+rect 48 135 372 162 [[Half poisoned heart flashed when hurt (hardcore)]]
+
+rect 48 135 399 162 [[Wither heart (hardcore)]]
+rect 48 135 426 162 [[Half wither heart (hardcore)]]
+rect 48 135 453 162 [[Wither heart, flashed when hurt (hardcore)]]
+rect 48 135 480 162 [[Half wither heart, flashed when hurt (hardcore)]]
+
+
+rect 48 135 507 162 [[Absorption heart (hardcore)]]
+rect 48 135 534 162 [[Half absorption heart (hardcore)]]
+
+
+rect 0 192 546 207 [[Empty experience bar]]
+rect 0 207 546 222 [[Full experience bar]]
+
+rect 0 252 546 267 [[Empty horse jump bar]]
+rect 0 267 546 282 [[Full horse jump bar]]
+
+rect 0 282 108 345 [[Weapon readiness indicators (hotbar)]]
+rect 108 282 252 310 [[Weapon readiness indicators (crosshair)]]
+
+rect  0  48 30 228 [[Player list signal strength]]
+rect  0 531 30 672 [[Server list signal strength]]
+rect 30 531 60 648 [[Server ping animation frames]]
+</imagemap>
+
+
+Logic for determining what heart or haunch icon to use:
+<syntaxhighlight lang="python">
+def draw_heart(x, y):
+    if is_hardcore:
+        v = 45
+    else:
+        v = 0
+
+    # Draw background/outline
+    if recently_changed:
+        # White outline
+        draw(x, y, 16 + 9, v, 9, 9)  # 25
+    else:
+        # Black outline
+        draw(x, y, 16, v, 9, 9)
+
+    if not is_absorption_heart:
+        # Above check did not exist until 20w49a, causing invisible absorption hearts
+        # https://bugs.mojang.com/browse/MC-18880
+        if is_poisoned:
+            u = 16 + 36  # 52
+        elif is_withered:
+            u = 16 + 72  # 88
+        elif is_frozen:
+            u = 16 + 126  # 142
+        else:
+            u = 16
+
+    if recently_lost:
+        # These are always drawn, but are overwritten in most cases
+        # (They draw up to the previous health value, while the regular hearts
+        # draw to the current health value)
+        # This references a nonexistent texture when frozen:
+        # https://bugs.mojang.com/browse/MC-206881
+        if half_heart:
+            draw(x, y, u + 54 + 9, v, 9, 9)  # 79 / 115 / 151 / 205 (invalid)
+        else:
+            draw(x, y, u + 54, v, 9, 9)  # 70 / 106 / 142 / 196 (invalid)
+
+    if is_absorption_heart:
+        # Prior to MC-18880 being fixed this could use missing textures
+        # After the fix u is always 16
+        if half_heart:
+            draw(x, y, u + 144 + 9, v, 9, 9)  # 169
+        else:
+            draw(x, y, u + 144, v, 9, 9)  # 160
+    else:
+        if half_heart:
+            draw(x, y, u + 36 + 9, v, 9, 9)  # 61 / 97 / 133 / 203
+        else:
+            draw(x, y, u + 36, v, 9, 9)  # 52 / 88 / 124 / 194
+
+    # 34 and 43 (red outline, white outline) seem to be unused)
+
+def draw_haunch(x, y):
+    # Draw background/outline
+    if has_hunger:
+        # Green outline
+        draw(x, y, 16 + 13 * 9, 27, 9, 9)  # 133
+        u = 16 + 36  # 52
+    else:
+        # Black outline
+        draw(x, y, 16, 27, 9, 9)
+        u = 16
+
+    if half_haunch:
+        draw(x, y, u + 45, 27, 9, 9)  # 61 / 97
+    else:
+        draw(x, y, u + 36, 27, 9, 9)  # 52 / 88
+
+    # 25, 34, 43, and 124 (white, red, white, and brown outlines) go unused
+    # As are 70, 79, 106, 155 (lighter variants that could have served the same
+    # purpose as recently lost hearts, but that doesn't really make sense for
+    # hunger)
+</syntaxhighlight>
+
+There are a few additional invisible textures that have alpha set to zero but still have color data.
+
+== History ==
+{{info needed section|the uses of the following icons, or if they are truly unused:
+* Duplicate connection icons added in Beta 1.8
+* Mirrored hunger icon added in Beta 1.8
+* Golden outlined empty hunger icon added in Beta 1.8
+* Blue armor outline textures added in 15w34b}}
+The file was compressed in 13w09c, 15w49a, 1.11-pre1, 17w50a and 19w41a.
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java classic}}
+|{{HistoryLine||0.24_SURVIVAL_TEST|[[File:200908201528 icons.png|left|128px]] Added <samp>icons.png</samp>.<br>The crosshair texture has been added.<br>Eight heart textures have been added for the health bar. Their uses are: empty,{{verify}} empty while damaged, unknown, unknown, full heart (2 HP), half heart (1 HP), full heart while being damaged and half heart while being damaged.
+<br>Textures for the armor bar have been added, with icons for 2, 1 and 0 points.<br>A bubble and bubble popping icon for the air meter has been added.<br>There is a large region of purple grid closely resembling the [[File:Placeholder Texture JE1 BE1.png|32px]] placeholder block texture found in <samp>[[terrain.png]]</samp> and <samp>[[kz.png]]</samp>, however the icons are not aligned to it at all (this grid appears to be 8x8, with 9x9 icons through it).}}
+|{{HistoryLine|java indev}}
+|{{HistoryLine||0.31|dev=20100109-1939|[[File:201001091910 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>Changed heart textures. Red parts now brighter and empty parts now darker.}}
+|{{HistoryLine||Minecraft Indev|dev=20100218-0011|link=Minecraft Indev|slink=Java Edition Indev 20100218-0011|[[File:201002172248 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>The armor bar textures appear to have been repositioned, and a duplicate 2 armor points icon added - whether it has use or is an unused duplicate is unknown.}}
+|{{HistoryLine|java beta}}
+|{{HistoryLine||1.8|dev=Pre-release|[[File:201108311418 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>Textures for the hunger bar have been added, like with the health bar: empty,{{verify}} unknown, unknown, unknown, full icon (2), half icon (1), unknown, unknown.<br>Textures for hearts with the Poison status effect have been added: full, half, full taking damage, half taking damage.<br>Textures for hunger with the Hunger effect have been added: full, half, unknown, unknown.<br>There are two empty hunger shaped icons, one is for empty hunger under the Hunger effect. The other is unknown.<br>There is a mirrored hunger icon, its use unknown.<br>There are two sets of connection icons. The ones under the crosshair are unused, whereas the ones in the bottom left corner are seen in game.<br>Textures for the experience bar have been added.<br>The half armor bar icon has been mirrored to reflect its new placement.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.0.0|dev=Beta 1.9 Prerelease 2|[[File:201109231402 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>Textures for hearts in hardcore mode have been added:empty,{{verify}} unknown, unknown, unknown, full heart (2 HP), half heart (1 HP), full heart while being damaged, half heart being damaged, poisoned full heart, poisoned half heart, poisoned full heart being damaged, poisoned half heart being damaged}}
+|{{HistoryLine|||dev=Beta 1.9 Prerelease 6|[[File:201111101925 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>The boss bar textures have been added.}}
+|{{HistoryLine||1.3.1|dev=12w25a|[[File:201206211211 icons.png|left|128px]] Added unknown white textures.}}
+|{{HistoryLine||1.4.2|dev=12w34a|[[File:201208231427 icons.png|left|128px]] Added textures for hearts with the Wither effect: full, half, full damaging, half damaging, hardcore full, hardcore half, hardcore full damaging and hardcore half damaging.}}
+|{{HistoryLine||1.6.1|dev=13w16a|[[File:201304192237 icons.png|left|128px]] Added icons for hearts of mobs the player is riding: empty,{{verify}} unknown, unknown, unknown, full heart (2 HP), half heart (1 HP), full heart while being damaged, half heart being damaged<br>The horse jump bar has been added.}}
+|{{HistoryLine|||dev=13w25a|[[File:201306171611 icons.png|left|128px]] Added absorption hearts: full, half, hardcore full, hardcore half}}
+|{{HistoryLine||1.9|dev=15w31a|The boss bar textures are no longer used with the addition of <samp>[[bars.png]]</samp>.}}
+|{{HistoryLine|||dev=15w34a|[[File:201508191505 icons.png|left|128px]] Added attack cooldown indicators: an empty and full hotbar indicator and an empty and full crosshair indicator.}}
+|{{HistoryLine|||dev=15w34b|[[File:201508201601 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>Two light blue armor icon outlines have been added, of completely unknown use.}}
+|{{HistoryLine||1.11.1|dev=16w50a|[[File:201612151438 icons.png|left|128px]] A third crosshair attack indicator with an exclamation mark (!) has been added, displayed when fully loaded and aiming at [[entity]] in range of attack.}}
+|{{HistoryLine|||dev=release|[[File:201612201405 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>Attack indicator when focussing on entity now shows plus-sign (+) rather than an exclamation mark.}}
+|{{HistoryLine||1.17|dev=20w46a|[[File:202011111530 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>Added hearts for taking freezing damage.}}
+|{{HistoryLine|||dev=20w49a|[[File:202012021646 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>This version duplicates frozen hearts for hardcore mode.}}
+|{{HistoryLine|||dev=21w11a|[[File:202103171404 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>This version made frozen hearts actually unique in hardcore mode.<ref>{{bug|MC-207557}}</ref>}}
+|{{HistoryLine||1.19|dev=22w17a|[[File:202204271653 icons.png|left|128px]] <samp>icons.png</samp> has been updated.<br>The armor icons, incorrectly updated in Beta 1.8, have been fixed.<ref>{{bug|MC-249039}}</ref>}}
+|{{HistoryLine||1.20.2|dev=23w31a|<samp>icons.png</samp> has been removed, with each texture split into individual files.}}
+|{{HistoryLine|combat java}}
+|{{HistoryLine||3|[[File:201910311331 icons.png|left|128px]] Added four icons for shield blocking cooldown.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.1.0|[[File:201002172248 icons.png|left|128px]] Added <samp>icons.png</samp>.}}
+|{{HistoryLine||v0.6.0|[[File:201301171851 icons.png|left|128px]] <samp>icons.png</samp> has been updated.}}
+|{{HistoryLine||v0.11.0|dev=build 1|[[File:201504091714 icons.png|left|128px]] <samp>icons.png</samp> has been updated.}}
+|{{HistoryLine||v0.13.0|dev=build 4|[[File:201511110718 icons.png|left|128px]] <samp>icons.png</samp> has been updated.}}
+|{{HistoryLine||v0.15.0|dev=build 1|[[File:201606021313 icons.png|left|128px]] <samp>icons.png</samp> has been updated.}}
+}}
+
+== Gallery ==
+<gallery>
+File:Unused textures arrangement in the icons.png|Most of the historically unused textures in icons.png, excluding those whose positions would have coincided.
+</gallery>
+
+== See also ==
+*[[Resource pack]]
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox texture atlases}}
+
+[[ja:Icons.png]]
+[[pt:Icons.png]]

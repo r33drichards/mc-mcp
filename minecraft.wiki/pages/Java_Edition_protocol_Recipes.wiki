@@ -1,0 +1,330 @@
+This page presents the structures of the Recipe Display and Slot Display types, used when new crafting recipes are being sent to the client.
+
+=== Recipe Display structure ===
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Recipe Display Type
+ | {{Type|VarInt}}
+ | ID in the <code>minecraft:recipe_display</code> registry.
+ |-
+ | Data
+ | Varies
+ | See [[#Recipe Display types]] below.
+ |}
+
+==== Recipe Display types ====
+
+{| class="wikitable"
+ ! ID
+ ! Name
+ ! Data
+ |-
+ | 0
+ | <code>minecraft:crafting_shapeless</code>
+ | [[#minecraft:crafting_shapeless|data]]
+ |-
+ | 1
+ | <code>minecraft:crafting_shaped</code>
+ | [[#minecraft:crafting_shaped|data]]
+ |-
+ | 2
+ | <code>minecraft:furnace</code>
+ | [[#minecraft:furnace|data]]
+ |-
+ | 3
+ | <code>minecraft:stonecutter</code>
+ | [[#minecraft:stonecutter|data]]
+ |-
+ | 4
+ | <code>minecraft:smithing</code>
+ | [[#minecraft:smithing|data]]
+ |}
+
+===== <code>minecraft:crafting_shapeless</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Ingredient Count
+ | {{Type|VarInt}}
+ | Number of elements in the following array.
+ |-
+ | Ingredients
+ | {{Type|Array}} of {{Type|Slot Display}}
+ |
+ |-
+ | Result
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Crafting Station
+ | {{Type|Slot Display}}
+ | Crafting station icon to display in the recipe notification.
+ |}
+
+===== <code>minecraft:crafting_shaped</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Width
+ | {{Type|VarInt}}
+ |
+ |-
+ | Height
+ | {{Type|VarInt}}
+ |
+ |-
+ | Ingredient Count
+ | {{Type|VarInt}}
+ | Number of elements in the following array. Always equal to Width * Height.
+ |-
+ | Ingredients
+ | {{Type|Array}} of {{Type|Slot Display}}
+ |
+ |-
+ | Result
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Crafting Station
+ | {{Type|Slot Display}}
+ | Crafting station icon to display in the recipe notification.
+ |}
+
+===== <code>minecraft:furnace</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Ingredient
+ |{{Type|Slot Display}}
+ |
+ |-
+ | Fuel
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Result
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Crafting Station
+ | {{Type|Slot Display}}
+ | Crafting station icon to display in the recipe notification.
+ |-
+ | Cooking Time
+ | {{Type|VarInt}}
+ | Time to smelt in a regular furnace, in ticks.
+ |-
+ | Experience
+ | {{Type|Float}}
+ |
+ |}
+
+===== <code>minecraft:stonecutter</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Ingredient
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Result
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Crafting Station
+ | {{Type|Slot Display}}
+ | Crafting station icon to display in the recipe notification.
+ |}
+
+===== <code>minecraft:smithing</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Template
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Base
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Addition
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Result
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Crafting Station
+ | {{Type|Slot Display}}
+ | Crafting station icon to display in the recipe notification.
+ |}
+
+=== Slot Display structure ===
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Slot Display Type
+ | {{Type|VarInt}}
+ | ID in the <code>minecraft:slot_display</code> registry.
+ |-
+ | Data
+ | Varies
+ | See [[#Slot Display types]] below.
+ |}
+
+==== Slot Display types ====
+
+{| class="wikitable"
+ ! ID
+ ! Name
+ ! Data
+ |-
+ | 0
+ | <code>minecraft:empty</code>
+ | no data
+ |-
+ | 1
+ | <code>minecraft:any_fuel</code>
+ | no data
+ |-
+ | 2
+ | <code>minecraft:item</code>
+ | [[#minecraft:item|data]]
+ |-
+ | 3
+ | <code>minecraft:item_stack</code>
+ | [[#minecraft:item_stack|data]]
+ |-
+ | 4
+ | <code>minecraft:tag</code>
+ | [[#minecraft:tag|data]]
+ |-
+ | 5
+ | <code>minecraft:smithing_trim</code>
+ | [[#minecraft:smithing_trim|data]]
+ |-
+ | 6
+ | <code>minecraft:with_remainder</code>
+ | [[#minecraft:with_remainder|data]]
+ |-
+ | 7
+ | <code>minecraft:composite</code>
+ | [[#minecraft:composite|data]]
+ |}
+
+===== <code>minecraft:item</code> =====
+
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Item Type
+ | {{Type|VarInt}}
+ | ID in the <code>minecraft:item</code> registry.
+ |}
+
+===== <code>minecraft:item_stack</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Item Stack
+ | {{Type|Slot}}
+ |
+ |}
+
+===== <code>minecraft:tag</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Tag
+ | {{Type|Identifier}}
+ | Tag in the <code>minecraft:item</code> registry. Not prefixed by '#'!.
+ |}
+
+===== <code>minecraft:smithing_trim</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Base
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Material
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Pattern
+ | {{Type|VarInt}}
+ | ID in the <code>trim_pattern</code> registry.
+ |}
+
+===== <code>minecraft:with_remainder</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Ingredient
+ | {{Type|Slot Display}}
+ |
+ |-
+ | Remainder
+ | {{Type|Slot Display}}
+ |
+ |}
+
+===== <code>minecraft:composite</code> =====
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Option Count
+ | {{Type|VarInt}}
+ | Number of elements in the following array.
+ |-
+ | Options
+ | {{Type|Array}} of {{Type|Slot Display}}
+ |
+ |}
+
+[[Category:Protocol Details]]
+[[Category:Java Edition protocol]]
+{{license wiki.vg}}

@@ -1,0 +1,52 @@
+{{More images}}
+{{Infobox version
+| title = v0.6.9
+| edition = Editor
+| type =
+| date = July 17, 2024
+| client = 1.21.20.23
+| prevparent = 0.6.0
+| prev = 0.6.8
+| next = 0.6.10
+| nextparent = 0.7.0
+}}
+'''Bedrock Editor v0.6.9''' is a minor alpha release for the [[Bedrock Editor]] released on July 17, 2024, which makes some UI and API changes.<ref>https://github.com/Mojang/minecraft-editor/discussions/185</ref><ref>https://feedback.minecraft.net/hc/en-us/articles/28486285876237</ref>
+
+== Additions ==
+'''UI'''
+* Added persistence for the default hotbar.
+
+'''[[API]]'''
+* Added {{cd|ExtensionContext.settings.theme}} which will represent the In-World UI Theme.
+** This feature currently has three functions: {{cd|resolveColorKey(string): Color}}, {{cd|setCurrentTheme(string): void}}, and {{cd|getThemeList(): string[]}}.
+** There is a single {{cd|minecraft:default}} theme.
+** Future work will add the ability to create, modify, and delete custom themes but the default themes will not be modifiable.
+
+== Changes ==
+'''UI'''
+* Updated block hotbar to have non-air defaults.
+
+'''[[API]]'''
+* Updated subset of {{cd|PropertyPane}} API to use {{cd|IObservable}} pattern.
+** Added an alternative Property Pane {{cd|addVector3}} API that leverages type safe {{cd|IObservable}}. Observables can be created using {{cd|makeObservable}} API.
+*** Added interfaces {{cd|IVector3PropertyItem}} and {{cd|IVector3PropertyItemOptions}} for the new property item.
+*** Renamed function to create property bag {{cd|Vector3}} to {{cd|addVector3_deprecated}}.
+** Added an alternative Property Pane {{cd|addBool}} API that leverages type safe {{cd|IObservableProp}} value API.
+*** Added interfaces {{cd|IBoolPropertyItem}} and {{cd|IBoolPropertyItemOptions}} for the new property item.
+*** Renamed function to create property bag {{cd|bool}} item to {{cd|addBool_deprecated}}.
+** Converted Property Pane {{cd|addText}} API to use {{cd|IObservableProp}}.
+** Added interfaces {{cd|IButtonPropertyItem}} and {{cd|IButtonPropertyItemOptions}} for the button property item.
+*** {{cd|IPropertyPane}} {{cd|addButton}} API can now take a plain function.
+*** Removed {{cd|ButtonVarianttype}}, and added {{cd|ButtonPropertyItemVariant}} enum API.
+** Renamed {{cd|EDITOR_PANE_PROPERTY_ITEM_TYPE}} enum API to {{cd|PropertyItemType}}.
+** Converted property pane {{cd|addImage}} API to support {{cd|IObservable}}. It will also be possible to use custom image formats like icon and block with {{cd|ImageResourceData}} as value.
+*** Added {{cd|onClickfunction}} and {{cd|alignment}} property to {{cd|IImagePropertyItemOptions}} API.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Editor versions|alpha}}
+
+[[pt:Bedrock Editor 0.6.9]]
+[[uk:0.6.9 (Bedrock Editor)]]

@@ -1,0 +1,170 @@
+{{Infobox version
+|edition=Java
+|image=Java Edition 14w07a.png
+|type=Snapshot
+|date=February 14, 2014
+|parent=1.8
+|clienthash=d6a73ccba25f4c30d56af73f43a2d3c9a5458a1e
+|jsonhash=b3f18dabae1e9c1b4888e26f2a7ee0fc4ca13cdd
+|serverhash=de78ac487cf3fb6770e8c15f83e2219d4df851ae
+|exehash=a2c16840eeb7d900c8bf7f9f9f228e1c856637d9
+|prevparent=1.7.10
+|prev=14w06b
+|next=14w08a
+|nextparent=1.8.1
+}}<onlyinclude>
+
+'''14w07a''' is the twelfth [[snapshot]] for [[Java Edition 1.8]], released on February 14, 2014,<ref>{{cite|url=https://web.archive.org/web/20140221073128/https://mojang.com/2014/02/minecraft-snapshot-14w07a/|title=Minecraft snapshot 14w07a|date=February 14, 2014|website=Mojang.com|author=[[Dinnerbone]]}}</ref> which adds [[iron trapdoor]]s and the {{cmd|execute}} and {{cmd|testforblocks}} [[command]]s.
+
+== Additions ==
+=== Blocks ===
+'''[[Iron trapdoor]]'''
+* Can only be opened and closed using [[redstone]], similar to an [[iron door]].
+* Crafted by placing [[iron ingot]]s in a 2×2 pattern, yields 1 iron trapdoor.
+
+=== Command format ===
+'''{{cmd|execute}} '''
+* Allows commands to be run from the position of specified entities using.
+** Example: {{cmd|1=execute @e[type=Chicken] ~ ~ ~ fill ~-1 ~-1 ~-1 ~1 ~1 ~1 minecraft:glass}}.
+
+'''{{cmd|testforblocks}}'''
+* Compares two areas of a world.
+** Example: {{cmd|testforblocks 100 64 100 107 69 107 0 64 0 masked}}.
+
+'''[[Scoreboard]]'''
+* Scoreboard objectives for fake players with a name starting with # never show up on the sidebar.
+* New {{cmd|scoreboard}} subcommands: {{cmd|scoreboard operation}} and {{cmd|scoreboard test}}.
+** The <code>operation</code> subcommand can apply arithmetic operation to scores (+ – * / %) and accumulate player scores.
+*** Example: {{cmd|1=scoreboard players operation #teamscores redScore += @a[team=red] blueKills}} adds every red player's count of kills on blue to the red team's score of kills.
+** The <code>test</code> subcommand can be used to test if a scoreboard value is between a min and a max value.
+*** Example: {{cmd|scoreboard players test #global anObjective 12 19}} checks whether the global score of the given objective is between 12 and 19, inclusive.
+* Different teams can now have different objectives displayed in the sidebar.
+** Example: {{cmd|scoreboard objectives set display sidebar.team.yellow objectiveName}} (referring to team color, not team name).
+* Teams can now have settings on how the nametags are to be shown - {{cmd|scoreboard teams option red nametagVisibility hideForOtherTeam}}. Also possible: hideForOwnTeam, never, always (default).
+
+'''[[Target selectors]] '''
+* New selector parameters for entity selectors to detect entity rotations with <code>rxm</code> – x rot min, <code>rx</code> – x rot max, <code>rym</code> – y rot min, <code>ry</code> – y rot max.
+** Example: <code>@a[rxm=-15,rx=15,rym=-45,ry=45]</code>, <code>/say @a[rxm=30,rx=90] , don't look down!</code>.
+
+== Changes ==
+=== Blocks ===
+'''General'''
+* Updated the block model format.
+** Now less exploitable.
+** UV has to be [0,1] (Textures can no longer be "borrowed" from neighboring block textures).
+** Planes need to have 1 axis 'identical' (so aligned to either x, y, or z).
+** Plane rotation can only be -45/45 on a single axis.
+** From/to and uv coordinates are now in 'pixelspace' (multiples of 1/16th of a block).
+
+'''[[Cocoa]]'''
+* Invalid metadata versions now [[Missing model|have no model]].
+
+'''[[Command block]]s'''
+* Now show the <code>@e</code> [[target selector]] variable.
+
+'''[[Dispenser]]s'''
+* Can now place [[command block]]s with pre-configured commands, rather than dispensing it
+
+'''[[Ladder]]s'''
+* Invalid metadata versions now [[Missing model|have no model]].
+
+'''[[End portal frame]]s'''
+* Invalid metadata versions now [[Missing model|have no model]].
+
+'''[[Redstone torch]]es, [[torch]]es'''
+* Now have an angled top side when placed on walls.
+
+=== Items ===
+'''[[Blaze rod]]s'''
+* Are now held similarly to [[tool]]s.
+
+=== Command format ===
+'''{{cmd|testfor}}, {{cmd|testforblock}}, {{cmd|clear}}'''
+* Can now test for partial matches of NBT lists.
+** Example: {{cmd|testfor @p <nowiki>{Inventory:[{Slot:6b,id:"minecraft:diamond_sword"}],SelectedItemSlot:6}</nowiki>}}.
+
+'''{{cmd|tellraw}}'''
+* Can now insert values from scoreboards into messages.
+** Example: {{cmd|tellraw @p <nowiki>{text:"Have ",extra:[{score:{name:"Searge",objective:"reward"}},{text:" diamonds"}]}</nowiki>}}.
+
+=== Gameplay ===
+'''[[Creative]] mode'''
+* Players can create a copy of a block entity in their hotbar, including all NBT data, with ctrl+{{ctrl|pick block}}.
+
+'''[[Spectator]] mode'''
+* Players can now share LAN.
+
+=== General ===
+'''[[Debug screen]]'''
+* Looking at a block in the world shows the coordinates of that block on the debug screen.
+* BlockItem instances can now hold a custom tag that is merged into a [[block entity]] when it's placed.
+** Example: {{cmd|give @p command_block 1 0 <nowiki>{BlockEntityTag:{Command:"setblock ~ ~ ~ minecraft:diamond_block"}}</nowiki>}}.
+
+'''[[Inventory]] system'''
+* Rewrote the inventory system.
+** Reverted before the full release of [[Java Edition 1.8]].<ref>{{reddit|31z5gz/dinnerbone_working_with_inventories|cq6k74n}}</ref>
+* Fixes some bugs, improves performance and allows easier improvements.
+* Allows custom NBT that isn't handled by the game to be added onto items.
+** Custom tags remain even if the item's NBT is changed in-game. (i.e. by renaming).
+
+'''[[Resource pack]]s'''
+* Resource packs can now be bundled with a world, put it in the map save directory and name it "resources.zip".
+** Example: <code>.minecraft/saves/TheMapWithTheThing/resources.zip</code>.
+
+== Fixes ==
+{{fixes|fixedin=14w07a|prefix=Minecraft
+|;old
+|1818|Skullowner is lost when "picking" the skull in Creative.
+|4837|Zombie/player held beacon experience Z-fighting.
+|7133|Texture of burning furnace (ID62) shows no face in Inventory.
+|11270|Scoreboard don't work with offline / non-existant players.
+|36947|{{cmd|weather clear <nowiki><time in seconds></nowiki>}} doesn't clear weather for anywhere near the amount given.
+|41594|Game crashes when Ender crystal is stacked on top of horse.
+|44829|Unable to load Twitch libraries.
+|46431|Iron golem breaks lead.
+|;dev
+|46696|Too many flowers near lake <!-- comment in tracker by cconsenza, fixed in 07a -->.
+|;prev
+|44489|{{cmd|kill @e}} doesn't kill ender dragons.
+|45106|Mipmapping strength is not applied to non-standard blocks.
+|45571|Farmer type villagers don't generate on superflat without grass.
+|45773|Chest not spawning in monster dungeons.
+|46400|Player arm invisible after using F5 in spectator mode and switching to creative.
+|46559|Spectating a mob leaves the player at two blocks tall view.
+|46838|{{cmd|testfor}} NBT parsing error.
+|47212|{{cmd|testfor}} + inventory bug.
+|47520|Standing under block with water/lava on top will apply blue/red filter.
+|47543|Items stacked with items that have <code>PickupDelay</code> set to 32767 can no longer be picked up.
+|47545|<code>CanPlaceOn</code> does not work with wooden doors.
+|47555|Cannot place boats.
+|47596|Items of the same type (IE, stone, and stone) ignore data values and stack anyway.
+|47598|The color of sugar canes doesn't change depending on the biome.
+|47642|<code>Hopper: java.lang.ArrayIndexOutOfBoundsException: 4</code>.
+|47653|Torches causing missing texture when placed on bottom side of block.
+|47685|<code>Hopper: java.lang.ArrayIndexOutOfBoundsException: 3</code>.
+|47796|Leaves, grass, and tall grass all have a more brightly colored tint.
+|47817|Baby zombie pigman running with strange speed.
+|47821|Ghasts do not despawn in Peaceful mode
+|48043|Held blaze rod not in hand.
+|48341|Locking chests, furnaces, etc.
+|48357|Cubic selectors return out-of-order (per-chunk?) results. ({{cmd|kill}}).
+|48784|Duplication of items using gravity.
+}}</onlyinclude>
+
+== Trivia ==
+* 14w07a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:14w07a]]
+[[es:Java Edition 14w07a]]
+[[fr:Édition Java 14w07a]]
+[[ja:Java Edition 14w07a]]
+[[pt:Edição Java 14w07a]]
+[[ru:14w07a (Java Edition)]]
+[[uk:14w07a (Java Edition)]]
+[[zh:Java版14w07a]]

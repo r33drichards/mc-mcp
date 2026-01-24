@@ -1,0 +1,236 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.10020.0<br>'''Android''': 1.21.100.20
+| image = Bedrock 1.21.100.20 PatchNotes.jpg
+| image2 = Bedrock 1.21.100.20.png
+| build = 32724063
+| editorver = 1.0.1
+| versioncode = '''Android''':<br />
+952110020 (armeabi-v7a, 34)<br />
+962110020 (x86, 34)<br />
+972110020 (arm64-v8a, 34)<br />
+982110020 (x86_64, 34)
+| date = June 10, 2025
+| server = 1.21.100.20
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.100.20.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.100.20.zip Linux]
+| parent = 1.21.100
+| prevparent = 1.21.94
+| prev = 
+| next = Preview 1.21.100.21
+| nextparent = 1.21.101
+}}
+<onlyinclude>
+
+'''Beta 1.21.100.20''' (ChromeOS, Android) or '''Preview 1.21.100.20''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the first beta/''Preview'' version for [[Bedrock Edition 1.21.100]], released on June 10, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/37264366737421-Minecraft-Beta-Preview-1-21-100-20|title=Minecraft Beta & Preview - 1.21.100.20|website=Minecraft Feedback|date=June 10, 2025}}</ref> which fixes bugs and makes some small changes to improve [[parity]] with {{JE}}.
+
+== Additions ==
+=== General ===
+'''[[Accessibility]]'''
+*Added screen narrator enumeration to UI buttons when adding a new server.
+
+== Changes ==
+=== Command format ===
+'''[[World spawn]]'''
+*The world spawn can now be set in the [[End]] using {{cmd|spawnpoint}}.
+
+'''{{cmd|locate}}'''
+*{{cmd|locate biome}} command now requires that the biome's namespace is specified (ex: {{cd|minecraft:plains}} instead of just {{cd|plains}}). Auto-complete suggestions for this command will now include namespaces.
+
+=== Mobs ===
+'''[[Animal]]s'''
+*The ambient sound interval for all animals has been adjusted to 6 seconds, matching {{JE}}.
+
+'''[[Ghast]]s'''
+*The ambient sound interval for all ghasts has been adjusted to 4 seconds, matching {{JE}}.
+
+'''[[Snowball]]s, [[Ender Pearl]]s, [[Ender Eye]]s, [[Experience Bottle]]s, [[Splash Potion]]s, [[Lingering Potion]]s, and [[Ice Bomb]]s'''
+* Their sprites, when rendered in the world, now have the correct scaling and positional offset.
+* They now match {{JE}}, and also match better with their collider.
+
+=== General ===
+{{Missing information|section|The which marketplace-related menus were changed.}}
+'''[[UI]]'''
+*"Owned" or "Download" is now displayed on items the player owns outside of the "My Library" page.
+*The Marketplace Pass chevron will now show on items that the user owns while on normal Marketplace pages. Not on the inventory. Owned/Download text moved to the right.
+*Updated Marketplace Pass chevron to show on items in the inventory.
+*Moved the "Owned"/"Download" text to the right side.
+
+'''[[Settings#Audio|Audio Settings]] Screen'''
+*The audio default volumes have been updated.
+*Audio settings have been updated with a brand-new look and improved navigation:
+**Each setting now includes a helpful description, making it easier to understand what it does.
+**Improved interaction with sliders that are now smoother and more responsive than before.
+[[File:New UI - Audio Settings Screen Menu (Bedrock Preview 1.21.100.20).png|thumb|New Audio Settings Screen.]]
+
+=== World generation ===
+'''[[Tree]]s'''
+*Trees now generate more sparsely in [[grove]]s.
+*Trees now generate more frequently in [[snowy plains]].
+
+'''[[Frozen Ocean]]'''
+*Its surface is no longer entirely covered by ice, and now features patches of open water.
+*Icebergs in frozen ocean biomes now generate with a shape and frequency that more closely matches {{JE}}.
+
+'''[[Deep Frozen Ocean]]'''
+*Its surface is no longer covered by ice and now consists entirely of open water.
+
+'''[[Old Growth Spruce Taiga]] and [[Old Growth Pine Taiga]]'''
+*Increased the size of the [[podzol]] patches generated beneath mega pines and mega [[spruce]]s.
+**This change affects both world generation and trees grown by players.
+
+'''[[Mushroom]]s'''
+*Mushrooms now properly generate under trees in [[swamp]]s and other biomes where they naturally generate.
+
+'''[[Seagrass]]'''
+*Seagrass no longer pokes through [[ice]] when it generates in shallow [[water]] in biomes that have ice on the water's surface.
+
+=== Technical ===
+'''[[Add-On]]s and Script Engine'''
+*Custom biome names are no longer implied by their filenames. Biome names are explicitly specified via the {{cd|identifier}} property under the {{cd|description}} sub-object of their JSON definition.
+*Biome identifiers must now be namespaced (ex: {{cd|minecraft:plains}}). Client biomes with a format version lower than 1.21.90 will have their identifier automatically prefixed {{cd|minecraft:}} when loaded if no namespace is already specified.
+*Updated biome documentation to match updated biome JSON formatting and requirements.
+
+'''[[API]]'''
+*The {{cd|message}} parameter of the {{cd|setText}} method on {{cd|BlockSignComponent}} no longer accepts a {{cd|RawText}} as an option. This option was redundant as it is covered by the existing {{cd|RawMessage}} option. This affects the {{cd|setText}} method in all versions.
+*Updated many error strings to use consistent punctuation.
+*The properties {{cd|minValue}} and {{cd|maxValue}} on the {{cd|ArgumentOutOfBoundsError}} class are now optional.
+*Updated several APIs to throw {{cd|ArgumentOutOfBoundsError}} instead of {{cd|Error}} where appropriate. This affects the following APIs in all versions:
+**{{cd|Entity.addEffect}} for when the {{cd|amplifier}} setting is out of bounds (0 - 255) or {{cd|duration}} setting is out of bounds (1 - 20000000).
+**{{cd|Entity.applyImpulse}} for when the {{cd|vector}} parameter is out of bounds (-1000 - 1000 per axis).
+**{{cd|ItemStack.setLore}} and {{cd|ContainerSlot.setLore}} for when the {{cd|loreList}} parameter is out of bounds (0 - 100 max lines, 0 - 1000 max length per line).
+**{{cd|ItemStack.setAmount}} and {{cd|ContainerSlot.setAmount}} for when the {{cd|amount}} parameter is out of bounds (0 - 255).
+*Some existing errors that throw {{cd|ArgumentOutOfBoundsError}} have been updated to use a standardized error message. This affects the following APIs in all versions:
+**{{cd|ScreenDisplay.setTitle}} for when the {{cd|fadeInDuration}}, {{cd|stayDuration}} or {{cd|fadeOutDuration}} settings are out of bounds (min value of 0).
+**{{cd|StructureManager.placeStructure}} for when the {{cd|integrity}} setting is out of bounds (0 - 1).
+**{{cd|PlayerAimAssist.setAimAssistSettings}} for when the {{cd|viewAngle}} setting is out of bounds (10 - 90) or {{cd|distance}} setting is out of bounds (1 - 16).
+**{{cd|ItemStack.setNameTag}} and {{cd|ContainerSlot.setNameTag}} for when the {{cd|nameTag}} parameter length is out of bounds (0 - 255).
+*Some existing errors that throw {{cd|InvalidArgumentError}} have been updated to use a standardized error message.
+**{{cd|CustomSpawnRulesRegistry.registerObstructionCallback}} for when the {{cd|predicate}} parameter is empty or a duplicate.
+*Released {{cd|DyeableItemComponent}} to {{cd|stable}}.
+
+'''Block Components'''
+*Modified {{cd|minecraft:geometry}} block component.
+**Field {{cd|uv_lock}} no longer requires "Upcoming Creator Features" experiment to work, Json {{cd|format_version}} still needs to be >= {{cd|1.19.80}}.
+
+'''Components'''
+*Content warnings will log missing entity references in {{cd|Spawn Rule}} JSON.
+*Content warnings will log missing references in {{cd|Client Biome}} JSON.
+*The {{cd|minecraft:body_rotation_axis_aligned}} component has been renamed to {{cd|minecraft:rotation_axis_aligned}}.
+
+'''Entity Components'''
+*Made the schema for the {{cd|minecraft:tick_world}} entity component stricter so that the parsing now refuses out of range values for {{cd|radius}} and {{cd|distance_to_players}}.
+
+'''Graphical'''
+*Changed cloud quality to player visible option and not a dev only option.
+
+'''[[Jigsaw]]'''
+*Added {{cd|minecraft:blockstate_match}} and {{cd|minecraft:random_blockstate_match}} rules to jigsaw processors.
+*Added heightmap projection type {{cd|none}} and made it the default setting, which instead of performing heightmap calculations uses the starting placement position.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Experimental Creator Camera", and "Custom Biomes" [[experimental]] toggles.
+
+=== Additions ===
+==== Technical ====
+'''API'''
+*Added class {{cd|InvalidItemStackError}} to {{cd|beta}}.
+
+'''[[Commands]]'''
+*Added the {{cd|fov_set}} keyword to the {{cmd|camera}} command for changing the camera's field of view. Enabled with the Experimental Creator Camera toggle.
+
+'''Scripting'''
+*Added support for text to speech for tooltips at Server-UI forms.
+
+'''UI'''
+*Added support for navigation using keyboard and gamepad for tooltips at settings. Also, to be showed always inside the visible area. Mobile resolutions were having issues with this.
+
+=== Changes ===
+==== Technical ====
+'''API'''
+*Moved class {{cd|PlayerHotbarSelectedSlotChangeAfterEvent}} from {{cd|beta}} to {{cd|2.1.0}}.
+*Moved class {{cd|PlayerHotbarSelectedSlotChangeAfterEventSignal}} from {{cd|beta}} to {{cd|2.1.0}}.
+*Moved class {{cd|PlayerInventoryItemChangeAfterEvent}} from {{cd|beta}} to {{cd|2.1.0}}.
+*Moved class {{cd|PlayerInventoryItemChangeAfterEventSignal}} from {{cd|beta}} to {{cd|2.1.0}}.
+*Moved interface {{cd|HotbarEventOptions}} from {{cd|beta}} to {{cd|2.1.0}}.
+*Moved interface {{cd|InventoryItemEventOptions}} from {{cd|beta}} to {{cd|2.1.0}}.
+*Moved enum {{cd|PlayerInventoryType}} from {{cd|beta}} to {{cd|2.1.0}}.
+*Class {{cd|HotbarEventOptions}}.
+**Field {{cd|allowedSlots}} added bound validation, numbers inside the array must be between 0 and 8.
+*Class {{cd|InventoryItemEventOptions}}.
+**Field {{cd|allowedSlots}} added bound validation, numbers inside the array must be positive.
+*{{cd|ItemInventoryComponent}}
+**Bundle UI now renders non-contiguous items added to the container with this API correctly.
+
+'''[[Experiment]]al'''
+*{{cmd|locate structure}} command (and similar structure-searching gameplay elements) will now quickly return no result if experimental Custom Biomes have replaced all of the biomes where that structure could appear.
+
+'''Jigsaw'''
+*{{cd|max_distance_from_center}} now parses horizontal and vertical values separately in an object while supporting horizontal only with parsing as a constant, the vertical value is now optional and defaults to having no limit.
+
+'''World generation'''
+*Mixing Terrain matching and Rigid Structures will no longer sink rigid structure 1 block.
+*Chunks will no longer infinitely load when multiple structures are used within a structure set.
+*Can now use {{cd|minecraft:empty_pool_element}} jigsaw template pools to represent empty elements.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.100.20 Preview
+|;old
+|63460|Water is not transparent in swamp biome
+|74983|Grass blocks can sometimes generate in Mushroom Islands
+|88837|Piglin brutes do not despawn in Peaceful mode
+|114253|Squid rendering is offset in the -Y direction
+|137029|Swamp Biome no longer has a bumpy shoreline
+|140517|Large spruce tree (2x2) can generate half or fully floating
+|149587|Pressing "choose new skin" button and then pressing back button prevents skin from being changed until game is restarted
+|157125|Non-player entities teleport to the void when transported from the End to the Overworld
+|159044|Allay not disconnecting from lead
+|163558|Breaking a fence that has an entity tied to it keeps the lead floating for a few seconds
+|185429|{{cd|<message: message>}} command argument can be empty and runs successfully
+|186435|Allays can hold leads
+|187041|Leash knots do not adapt to the size of wall blocks that are not connected to anything when animals are leashed to it
+|190531|{{cd|flipbook_textures.json}} does not support animating multiple variants of a same block and only animates the last entry for that block.
+|190751|No camera perspective button in spectator mode
+|190776|Standing in Scaffolding or Powder Snow causes pick-block button on mobile to disappear
+|194268|Stacking multiple Add-Ons warning button says "Link" instead of "Read more"
+|197900|When I load a world I get a notification saying Cloud Syncing has failed check internet connection and try again. I am connected to the internet just fine.
+|217597|Vibrant Visuals: Lead is animated incorrectly in first person view
+|217667|Clicking a world thumbnail while in the grid layout no longer plays click sounds
+|218617|"Invite to Game" button obscured by scoreboard
+|219364|{{cmd|music}} command stops working after leaving and rejoining world until game restart
+|219554|New Tears disc has extra spaces in its name
+|220347|The {{cd|on_fire_color}} component in a mob's render controllers does not display the right color in game
+|220829|Addon Entities using Properties and Render controllers now have texture replacement issues in the v1.21.82 update
+|otherissuescount=18}}
+'''Other'''
+*Emoting players will no longer get stuck in a boat.
+*Fixed a bug where caustics were not appearing for player hand and held items in first person view.
+*Fixed the spyglass and fire effects in first person not receiving gamma calibration in Vibrant Visuals.
+*Fixed a bug that caused bottle o' enchanting not to glow when thrown in Vibrant Visuals.
+*Fixed clusters of mangrove root blocks displaying a non-uniform color.
+*Fixed chain blocks not being rendered with PBR properties defined by the texture set.
+*Fixed an issue that caused chain blocks to change PBR properties of surrounding blocks.
+*Fixed a bug where glow squid would not act as leash anchor points.
+*Fixed a bug that caused happy ghast to not rotate properly if dismounted while moving vertically.
+*Fixed rare crashes during the app suspension on Xbox.
+*Player dots on the locator bar now move smoothly when strafing near other players.
+*Player dot on the Locator Bar now stops 1 pixel before the edge of the bar.
+*Fixed a bug which could cause the bed screen to not be removed properly when being disconnected from a server.
+*Fixed a bug where the {{cd|includeLiquidBlocks}} property on {{cd|BlockRaycastOptions}} would not correctly result in hits on liquids if it didn't also reach a solid block afterward.
+*Fixed a crash with the {{cd|DebugDrawer}} when used too early in the client joining a world (such as inside the {{cd|playerSpawn}} event).
+*Fixed assert "can't add a new vertex field at this point: COLOR" when loading some worlds that contained clusters of mangrove roots blocks.
+*Fixed assert "can't add a new vertex field at this point: TEXCOORD_4" when loading some worlds that contained chain or end portal blocks.
+*Fixed an issue where projectiles were shot in the wrong direction when using touch controls and custom cameras.<!-- has the MCPE-201558 code in the changelog, but the link is broken --></onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.100 betas]]
+
+[[de:Bedrock Edition beta 1.21.100.20]]
+[[pt:Edição Bedrock Preview 1.21.100.20]]
+[[uk:Preview 1.21.100.20 (Bedrock Edition)]]
+[[zh:基岩版1.21.100.20]]

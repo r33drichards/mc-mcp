@@ -1,0 +1,631 @@
+From Minecraft 1.13, the '''Command Graph''' data structure defines commands which can be used in chat or in command blocks, and how they're parsed. For more information see the page on [[Argument types|command argument types]].
+
+== Graph Structure ==
+
+The graph consists of nodes of type <code>root</code>, <code>literal</code> and <code>argument</code>. A node may point to a number of child nodes, or redirect to another node, or neither. The root node is nameless, and its children are literal nodes for familiar commands ("msg", "me", etc). 
+
+Nodes are marked as executable if the node stack to this point constitutes a valid command. E.g. this is false for <code>/ban</code> but true for <code>/ban Dinnerbone</code> and <code>/ban Dinnerbone created this crazy format</code>.
+
+When including redirects, this structure is a directed graph that may include cycles (e.g. consider <code>/execute run execute run execute ...</code>). When excluding redirects, the structure no longer contains cycles but may still not be a tree, as a node may have multiple parents.
+
+== Node Format ==
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | [[ #Flags | Flags ]]
+ | {{Type|Byte}}
+ | See below.
+ |-
+ | Children count
+ | {{Type|VarInt}}
+ | Number of elements in the following array.
+ |-
+ | Children
+ | {{Type|Array}} of {{Type|VarInt}}
+ | Array of indices of child nodes.
+ |-
+ | Redirect node
+ | {{Type|Optional}} {{Type|VarInt}}
+ | Only if <code>flags & 0x08</code>. Index of redirect node.
+ |-
+ | Name
+ | {{Type|Optional}} {{Type|String}} (32767)
+ | Only for <code>argument</code> and <code>literal</code> nodes.
+ |-
+ | [[ #Parsers | Parser ID ]]
+ | {{Type|Optional}} {{Type|VarInt}}
+ | Only for <code>argument</code> nodes.
+ |-
+ | Properties
+ | {{Type|Optional}} Varies
+ | Only for <code>argument</code> nodes. Varies by parser.
+ |-
+ | [[ #Suggestions_Types | Suggestions type ]]
+ | {{Type|Optional}} {{Type|Identifier}}
+ | Only if <code>flags & 0x10</code>.
+ |}
+
+=== Flags ===
+
+{| class="wikitable"
+! Bit Mask
+! Flag Name
+! Notes
+|-
+| <code>0x03</code>
+| Node type
+| 0: <code>root</code>, 1: <code>literal</code>, 2: <code>argument</code>. 3 is not used.
+|-
+| <code>0x04</code>
+| Is executable 
+| Set if the node stack to this point constitutes a valid command.
+|-
+| <code>0x08</code>
+| Has redirect
+| Set if the node redirects to another node.
+|-
+| <code>0x10</code>
+| Has suggestions type
+| Only present for <code>argument</code> nodes.
+|-
+| <code>0x20</code>
+| Is restricted
+| Set if the node requires the player to have a permission level above 0.
+|}
+
+=== Parsers ===
+
+Clients are expected to implement all parsers, including properties (if any). If an unknown parser is encountered by a client, unpacking of the [[ Minecraft Wiki:Projects/wiki.vg merge/Protocol#Commands | Commands ]] packet should stop immediately, as the structure of the remainder of the packet cannot be guessed.
+
+Since 1.19, parsers are identified by their ID in the Node Format. Parsers (as well as parser IDs) are provided only for <code>argument</code> nodes. If properties for parser are not specified, then this parser has no properties and "Properties" section in Node Format contains no data.
+{{warning| Some IDs have changed thoughout versions}}
+{| class="wikitable"
+ ! Numeric ID
+ ! String Identifier
+ ! Properties
+ ! Description
+ |-
+ | 0
+ | <code>brigadier:bool</code>
+ | N/A
+ | Boolean value (<code>true</code> or <code>false</code>, case-sensitive)
+ |-
+ | 1
+ | <code>brigadier:float</code>
+ | [[ #brigadier:float | See below ]]
+ | Float
+ |-
+ | 2
+ | <code>brigadier:double</code>
+ | [[ #brigadier:double | See below ]]
+ | Double
+ |-
+ | 3
+ | <code>brigadier:integer</code>
+ | [[ #brigadier:integer | See below ]]
+ | Integer
+ |-
+ | 4
+ | <code>brigadier:long</code>
+ | [[ #brigadier:long | See below ]]
+ | Long
+ |-
+ | 5
+ | <code>brigadier:string</code>
+ | [[ #brigadier:string | See below ]]
+ | A string
+ |-
+ | 6
+ | <code>minecraft:entity</code>
+ | [[ #minecraft:entity | See below ]]
+ | A selector, player name, or UUID.
+ |-
+ | 7
+ | <code>minecraft:game_profile</code>
+ | N/A
+ | A player, online or not.  Can also use a selector, which may match one or more players (but not entities).
+ |-
+ | 8
+ | <code>minecraft:block_pos</code>
+ | N/A
+ | A location, represented as 3 numbers (which must be integers).  May use relative locations with <code>~</code>.
+ |-
+ | 9
+ | <code>minecraft:column_pos</code>
+ | N/A
+ | A column location, represented as 2 numbers (which must be integers).  May use relative locations with <code>~</code>.
+ |-
+ | 10
+ | <code>minecraft:vec3</code>
+ | N/A
+ | A location, represented as 3 numbers (which may have a decimal point, but will be moved to the center of a block if none is specified).  May use relative locations with <code>~</code>.
+ |-
+ | 11
+ | <code>minecraft:vec2</code>
+ | N/A
+ | A location, represented as 2 numbers (which may have a decimal point, but will be moved to the center of a block if none is specified).  May use relative locations with <code>~</code>.
+ |-
+ | 12
+ | <code>minecraft:block_state</code>
+ | N/A
+ | A block state, optionally including NBT and state information.
+ |-
+ | 13
+ | <code>minecraft:block_predicate</code>
+ | N/A
+ | A block, or a block tag.
+ |-
+ | 14
+ | <code>minecraft:item_stack</code>
+ | N/A
+ | An item, optionally including NBT.
+ |-
+ | 15
+ | <code>minecraft:item_predicate</code>
+ | N/A
+ | An item, or an item tag.
+ |-
+ | 16
+ | <code>minecraft:color</code>
+ | N/A
+ | A chat color.  One of the names from [[Formatting_codes#Color_codes]], or <code>reset</code>.  Case-insensitive.
+ |-
+ | 17
+ | <code>minecraft:hex_color</code>
+ | N/A
+ | An RGB color encoded as hex, like <code>FF0</code> or <code>FF0000</code>.
+ |-
+ | 18
+ | <code>minecraft:component</code>
+ | N/A
+ | A JSON [[Minecraft Wiki:Projects/wiki.vg merge/Text formatting#Text components|text component]].
+ |-
+ | 19
+ | <code>minecraft:style</code>
+ | N/A
+ | A JSON object containing the [[Minecraft Wiki:Projects/wiki.vg merge/Text formatting#Styling fields|text component styling fields]].
+ |-
+ | 20
+ | <code>minecraft:message</code>
+ | N/A
+ | A regular message, potentially including selectors.
+ |-
+ | 21
+ | <code>minecraft:nbt_compound_tag</code>
+ | N/A
+ | An NBT value, parsed using JSON-NBT rules.
+ |-
+ | 22
+ | <code>minecraft:nbt_tag</code>
+ | N/A
+ | Represents a partial nbt tag, usable in data modify command.
+ |-
+ | 23
+ | <code>minecraft:nbt_path</code>
+ | N/A
+ | A path within an NBT value, allowing for array and member accesses.
+ |-
+ | 24
+ | <code>minecraft:objective</code>
+ | N/A
+ | A scoreboard objective.
+ |-
+ | 25
+ | <code>minecraft:objective_criteria</code>
+ | N/A
+ | A single score criterion.
+ |-
+ | 26
+ | <code>minecraft:operation</code>
+ | N/A
+ | A scoreboard operator.
+ |-
+ | 27
+ | <code>minecraft:particle</code>
+ | N/A
+ | A particle effect (an identifier with extra information following it for specific particles, mirroring the [[#Particle|Particle]] packet)
+ |-
+ | 28
+ | <code>minecraft:angle</code>
+ | N/A
+ | 
+ |-
+ | 29
+ | <code>minecraft:rotation</code>
+ | N/A
+ | An angle, represented as 2 numbers (which may have a decimal point, but will be moved to the center of a block if none is specified).  May use relative locations with <code>~</code>.
+ |-
+ | 30
+ | <code>minecraft:scoreboard_slot</code>
+ | N/A
+ | A scoreboard display position slot.  <code>list</code>, <code>sidebar</code>, <code>belowName</code>, and <code>sidebar.team.${color}</code> for all chat colors (<code>reset</code> is not included)
+ |-
+ | 31
+ | <code>minecraft:score_holder</code>
+ | [[ #minecraft:score_holder | See below ]]
+ | Something that can join a team.  Allows selectors and <code>*</code>.
+ |-
+ | 32
+ | <code>minecraft:swizzle</code>
+ | N/A
+ | A collection of up to 3 axes.
+ |-
+ | 33
+ | <code>minecraft:team</code>
+ | N/A
+ | The name of a team.  Parsed as an unquoted string.
+ |-
+ | 34
+ | <code>minecraft:item_slot</code>
+ | N/A
+ | A name for an inventory slot.
+ |-
+ | 35
+ | <code>minecraft:item_slots</code>
+ | N/A
+ | A name for multiple inventory slots(?).
+ |-
+ | 36
+ | <code>minecraft:resource_location</code>
+ | N/A
+ | An Identifier.
+ |-
+ | 37
+ | <code>minecraft:function</code>
+ | N/A
+ | A function.
+ |-
+ | 38
+ | <code>minecraft:entity_anchor</code>
+ | N/A
+ | The entity anchor related to the facing argument in the teleport command, is feet or eyes.
+ |-
+ | 39
+ | <code>minecraft:int_range</code>
+ | N/A
+ | An integer range of values with a min and a max.
+ |-
+ | 40
+ | <code>minecraft:float_range</code>
+ | N/A
+ | A floating-point range of values with a min and a max.
+ |-
+ | 41
+ | <code>minecraft:dimension</code>
+ | N/A
+ | Represents a dimension.
+ |-
+ | 42
+ | <code>minecraft:gamemode</code>
+ | N/A
+ | Represents a gamemode. (<code>survival</code>, <code>creative</code>, <code>adventure</code> or <code>spectator</code>)
+ |-
+ | 43
+ | <code>minecraft:time</code>
+ | [[ #minecraft:time | See below ]]
+ | Represents a time duration.
+ |-
+ | 44
+ | <code>minecraft:resource_or_tag</code>
+ | [[ #minecraft:resource_or_tag | See below ]]
+ | An identifier or a tag name for a registry.
+ |-
+ | 45
+ | <code>minecraft:resource_or_tag_key</code>
+ | [[ #minecraft:resource_or_tag_key | See below ]]
+ | An identifier or a tag name for a registry.
+ |-
+ | 46
+ | <code>minecraft:resource</code>
+ | [[ #minecraft:resource | See below ]]
+ | An identifier for a registry.
+ |-
+ | 47
+ | <code>minecraft:resource_key</code>
+ | [[ #minecraft:resource_key | See below ]]
+ | An identifier for a registry.
+ |-
+ | 48
+ | <code>minecraft:resource_selector</code>
+ | [[ #minecraft:resource_selector | See below ]]
+ | An identifier for a registry(?).
+ |-
+ | 49
+ | <code>minecraft:template_mirror</code>
+ | N/A
+ | Mirror type (<code>none</code>, <code>left_right</code> or <code>front_back</code>)
+ |-
+ | 50
+ | <code>minecraft:template_rotation</code>
+ | N/A
+ | Rotation type (<code>none</code>, <code>clockwise_90</code>, <code>180</code> or <code>counterclockwise_90</code>)
+ |-
+ | 51
+ | <code>minecraft:heightmap</code>
+ | N/A
+ | Post-worldgen heightmap type (<code>motion_blocking</code>, <code>motion_blocking_no_leaves</code>, <code>ocean_floor</code> and <code>world_surface</code>)
+ |-
+ | 52
+ | <code>minecraft:loot_table</code>
+ | N/A
+ | 
+ |-
+ | 53
+ | <code>minecraft:loot_predicate</code>
+ | N/A
+ | 
+ |-
+ | 54
+ | <code>minecraft:loot_modifier</code>
+ | N/A
+ | 
+ |-
+ | 55
+ | <code>minecraft:dialog</code>
+ | N/A
+ | An identifier in the dialog registry.
+ |-
+ | 56
+ | <code>minecraft:uuid</code>
+ | N/A
+ | Represents a UUID value.
+ |}
+
+==== <code>brigadier:double</code> ====
+
+Specifies min and max values.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Flags
+ | {{Type|Byte}}
+ |
+ |-
+ | Min
+ | {{Type|Optional}} {{Type|Double}}
+ | Only if flags & 0x01.  If not specified, defaults to <code>-Double.MAX_VALUE</code> (≈ -1.7976931348623157E307)
+ |-
+ | Max
+ | {{Type|Optional}} {{Type|Double}}
+ | Only if flags & 0x02.  If not specified, defaults to <code>Double.MAX_VALUE</code> (≈ 1.7976931348623157E307)
+ |}
+
+==== <code>brigadier:float</code> ====
+
+Specifies min and max values.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Flags
+ | {{Type|Byte}}
+ |
+ |-
+ | Min
+ | {{Type|Optional}} {{Type|Float}}
+ | Only if flags & 0x01.  If not specified, defaults to <code>-Float.MAX_VALUE</code> (≈ 3.4028235E38)
+ |-
+ | Max
+ | {{Type|Optional}} {{Type|Float}}
+ | Only if flags & 0x02.  If not specified, defaults to <code>Float.MAX_VALUE</code> (≈ 3.4028235E38)
+ |}
+ 
+==== <code>brigadier:integer</code> ====
+
+Specifies min and max values.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Flags
+ | {{Type|Byte}}
+ |
+ |-
+ | Min
+ | {{Type|Optional}} {{Type|Int}}
+ | Only if flags & 0x01.  If not specified, defaults to <code>Integer.MIN_VALUE</code>  (-2147483648)
+ |-
+ | Max
+ | {{Type|Optional}} {{Type|Int}}
+ | Only if flags & 0x02.  If not specified, defaults to <code>Integer.MAX_VALUE</code>  (2147483647)
+ |}
+
+==== <code>brigadier:long</code> ====
+
+Specifies min and max values.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Flags
+ | {{Type|Byte}}
+ |
+ |-
+ | Min
+ | {{Type|Optional}} {{Type|Long}}
+ | Only if flags & 0x01.  If not specified, defaults to <code>Long.MIN_VALUE</code>  (−9,223,372,036,854,775,808)
+ |-
+ | Max
+ | {{Type|Optional}} {{Type|Long}}
+ | Only if flags & 0x02.  If not specified, defaults to <code>Long.MAX_VALUE</code>  (9,223,372,036,854,775,807)
+ |}
+
+==== <code>brigadier:string</code> ====
+
+A {{Type|VarInt}} {{Type|Enum}}.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Behavior
+ | {{Type|VarInt}} {{Type|Enum}}
+ | Parsing behavior (see below).
+ |}
+
+{| class="wikitable"
+ ! ID
+ ! Behavior Name
+ ! Notes
+ |-
+ | 0
+ | <code>SINGLE_WORD</code>
+ | Reads a single word
+ |-
+ | 1
+ | <code>QUOTABLE_PHRASE</code>
+ | If it starts with a <code>"</code>, keeps reading until another <code>"</code> (allowing escaping with <code>\</code>).  Otherwise behaves the same as <code>SINGLE_WORD</code>
+ |-
+ | 2
+ | <code>GREEDY_PHRASE</code>
+ | Reads the rest of the content after the cursor.  Quotes will not be removed.
+ |}
+
+==== <code>minecraft:entity</code> ====
+
+Has a single flags byte.
+
+{| class="wikitable"
+ ! Bit Mask
+ ! Meaning
+ |-
+ | 0x01
+ | If set, only allows a single entity/player
+ |-
+ | 0x02
+ | If set, only allows players
+ |}
+
+==== <code>minecraft:score_holder</code> ====
+
+Has a single flags byte.
+
+{| class="wikitable"
+ ! Bit Mask
+ ! Meaning
+ |-
+ | 0x01
+ | If set, allows multiple.
+ |}
+
+==== <code>minecraft:time</code> ====
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Min
+ | {{Type|Int}}
+ | Minimum duration in ticks
+ |}
+
+==== <code>minecraft:resource_or_tag</code> ====
+
+Has a single identifier.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Registry
+ | {{Type|Identifier}}
+ | The registry from where suggestions will be sourced from.
+ |}
+
+==== <code>minecraft:resource_or_tag_key</code> ====
+
+Has a single identifier.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Registry
+ | {{Type|Identifier}}
+ | The registry from where suggestions will be sourced from.
+ |}
+
+==== <code>minecraft:resource</code> ====
+
+Has a single identifier.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Registry
+ | {{Type|Identifier}}
+ | The registry from where suggestions will be sourced from.
+ |}
+
+==== <code>minecraft:resource_key</code> ====
+
+Has a single identifier.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Registry
+ | {{Type|Identifier}}
+ | The registry from where suggestions will be sourced from.
+ |}
+
+=== <code>minecraft:resource_selector</code> ===
+
+Has a single identifier.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Registry
+ | {{Type|Identifier}}
+ | The registry from where suggestions will be sourced from.
+ |}
+
+=== Suggestions Types ===
+
+If the provided suggestion type is not recognized by Notchian client, it will use <code>minecraft:ask_server</code>.
+
+{| class="wikitable"
+   ! Identifier
+   ! Description
+   |-
+   | <code>minecraft:ask_server</code>
+   | Sends the [[ Minecraft Wiki:Projects/wiki.vg merge/Protocol#Command%20Suggestions%20Request | Command Suggestions Request ]] packet to the server to request tab completions.
+   |-
+   | <code>minecraft:all_recipes</code>
+   | Suggests all the available recipes.
+   |-
+   | <code>minecraft:available_sounds</code>
+   | Suggests all the available sounds.
+   |-
+   | <code>minecraft:summonable_entities</code>
+   | Suggests all the summonable entities.
+   |}
+
+== Example Graphs ==
+[[File:Commands graph.png|center|thumb|Command graph from 1.21.8 Executable nodes are shown in green; redirects are dashed.]]
+[[Category:Protocol Details]]
+[[Category:Java Edition protocol]]
+{{license wiki.vg}}

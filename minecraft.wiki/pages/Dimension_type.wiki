@@ -1,0 +1,151 @@
+{{Exclusive|java}}
+'''Dimension types''' are technical [[JSON]] files within a [[data pack]], in the folder {{cd|data/<namespace>/dimension_type}}. They define properties of a [[Dimension definition|dimension]] such as world height build limits, the ambient light, and more.
+
+== JSON format ==
+<div class="treeview">
+* {{nbt|compound}} The root object.<section begin="definition" />
+** {{nbt|double|coordinate_scale}}: The multiplier applied to coordinates when leaving the dimension. Value between 0.00001 and 30000000.0 (both inclusive)。
+** {{nbt|boolean|has_skylight}}: Whether the dimension has skylight or not. If set to false, weather is additionally disabled.
+** {{nbt|boolean|has_ceiling}}: Whether the dimension has a bedrock ceiling. Note that this is only a logical ceiling. It is unrelated with whether the dimension really has a block ceiling. If set to true, there is no weather, the way respawn and mob spawning positions are calculated is changed, and maps record terrain within a 32 block radius around the player, instead of 64 – however, no data is actually recorded, and instead a pattern will be displayed.
+** {{nbt|float|ambient_light}}: How much light the dimension has. When set to 0, it completely follows the light level; when set to 1, there is no ambient lighting.{{more info|Precise effects for other values need testing}}
+** {{nbt|boolean|has_fixed_time}}: (optional, defaults to <code>false</code>) Whether this dimension has fixed time. {{more info|which behaviours are affected by this?}}
+** {{nbt|int|monster_spawn_block_light_limit}}: A single integer from 0 to 15. Block light level must be less than or equal to this value for monsters to spawn.
+** {{nbt|int}}{{nbt|compound|monster_spawn_light_level}}: An integer or int provider from 0 to 15. The result of the following formula must be less than or equal to this value for monsters to spawn. The formula is: <code>max( skyLight - 10, blockLight )</code> during thunderstorms, and <code>max( [[Light#Internal_sky_light|internalSkyLight]], blockLight )</code> during other weather.
+*** {{nbt inherit/int provider}}
+** {{nbt|integer|logical_height}}: The maximum height to which [[chorus fruit]]s and [[Nether portal]]s can bring players within this dimension. This excludes portals that were already built above the limit as they still connect normally. Cannot be greater than {{nbt|integer|height}}.
+** {{nbt|integer|min_y}}: The minimum height in which blocks can exist within this dimension. Must be between -2032 and 2031 and be a multiple of 16 (effectively making 2016 the maximum).
+** {{nbt|integer|height}}: The total height in which blocks can exist within this dimension. Must be between 16 and 4064 and be a multiple of 16. The maximum building height = min_y + height - 1, which cannot be greater than 2031.
+** {{nbt|string|infiniburn}}: A block tag with <code>#</code>. Fires on these blocks burns infinitely.
+** {{nbt|string|skybox}}: (optional, defaults to <code>overworld</code>) The skybox to use. Can be {{cd|none|overworld|end}}.
+** {{nbt|string|cardinal_light}}: (optional, defaults to <code>default</code>) Direction of cardinal light affecting blocks. Can be {{cd|default|nether}}
+** {{nbt|compound|attributes}}: Map of [[environment attribute]]s that apply when in this dimension.
+** {{nbt|string}}{{nbt|list|timelines}}: {{json ref|timeline|tag=1}} that are active in this dimension.<section end="definition" />
+</div>
+
+== Defaults ==
+These are the settings used by the 3 dimensions present in Vanilla and the additional Overworld Caves settings provided by Minecraft.
+
+{| class="wikitable"
+! Property
+! [[Overworld]]
+! [[The Nether]]
+! [[The End]]
+! Overworld Caves
+|-
+| {{nbt|boolean|has_skylight}}
+| {{tc|yes|true}}
+| {{tc|no|false}}
+| {{tc|yes|true}}
+| {{tc|yes|true}}
+|-
+| {{nbt|boolean|has_ceiling}}
+| {{tc|no|false}}
+| {{tc|yes|true}}
+| {{tc|no|false}}
+| {{tc|yes|true}}
+|-
+| {{nbt|double|coordinate_scale}}
+| 1.0
+| 8.0
+| 1.0
+| 1.0
+|-
+| {{nbt|boolean|has_fixed_time}}
+| {{tc|false}}
+| {{tc|true}}
+| {{tc|true}}
+| {{tc|false}}
+|-
+| {{nbt|float|ambient_light}}
+| 0.0
+| 0.1
+| 0.0
+| 0.0
+|-
+| {{nbt|int|min_y}}
+| -64
+| 0
+| 0
+| -64
+|-
+| {{nbt|int|height}}
+| 384
+| 256
+| 256
+| 384
+|-
+| {{nbt|int|logical_height}}
+| 384
+| 128
+| 256
+| 384
+|-
+| {{nbt|int}}{{nbt|compound|monster_spawn_light_level}}
+| 0-7
+| 7
+| 15
+| 0-7
+|-
+| {{nbt|int|monster_spawn_block_light_limit}}
+| 0
+| 15
+| 0
+| 0
+|-
+| {{nbt|string|infiniburn}}
+| #infiniburn_overworld
+| #infiniburn_nether
+| #infiniburn_end
+| #infiniburn_overworld
+|-
+| {{nbt|string|skybox}}
+| overworld
+| none
+| end
+| overworld
+|-
+| {{nbt|string|cardinal_light}}
+| default
+| nether
+| default
+| default
+|}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.16|dev=Pre-release 1|Added dimension types to [[data pack]]s.}}
+|{{HistoryLine||1.16.2|dev=pre1|Dimension types now use the same folder pattern in data packs as other resources: <samp>namespace/<''type''>/resource.json</samp>.}}
+|{{HistoryLine|||dev=pre2|Replaced the field {{nbt|bool|shrunk}} with {{nbt|double|coordinate_scale}}.}}
+|{{HistoryLine||1.17|dev=20w49a|Added {{nbt|integer|min_y}} and {{nbt|integer|height}}.}}
+|{{HistoryLine||1.18.2|dev=22w06a|infiniburn's defined tag must be preceded by a # symbol; this was previously optional.}}
+|{{HistoryLine||1.19|dev=22w11a|Dimension types can no longer be inlined in the dimension, they have to be a reference to a separate dimension_type file.}}
+|{{HistoryLine|||dev=pre1|Added {{nbt|integer|monster_spawn_block_light_limit}} and {{nbt|int}}{{nbt|compound|monster_spawn_light_level}} to the dimension type.}}
+|{{HistoryLine||1.21.6|dev=25w15a|Added {{nbt|integer|cloud_height}} to the dimension type; cloud presence is no longer controlled by {{nbt|string|effects}} and their height is no longer a fixed value.}}
+|{{HistoryLine||1.21.11|dev=25w42a|Added new attributes field for dimensions to specify Environment Attributes.
+|Many fields have been migrated to [[environment attribute]]s:
+* {{nbt|boolean|ultrawarm}} -> {{cd|minecraft:gameplay/water_evaporates}}, {{cd|minecraft:gameplay/fast_lava}}, {{cd|visual/default_dripstone_particle}}
+* {{nbt|boolean|bed_works}} -> {{cd|minecraft:gameplay/bed_rule}}
+* {{nbt|boolean|respawn_anchor_works}} -> {{cd|minecraft:gameplay/respawn_anchor_works}}
+* {{nbt|int|cloud_height}} -> {{cd|minecraft:visual/cloud_height}}
+* {{nbt|boolean|piglin_safe}} -> {{cd|minecraft:gameplay/piglins_zombify}}
+* {{nbt|boolean|has_raids}} -> {{cd|minecraft:gameplay/can_start_raid}}
+| The {{nbt|boolean|natural}} field no longer controls whether Nether portals spawn piglin, which was migrated to the {{cd|minecraft:gameplay/nether_portal_spawns_piglin}} environment attribute.}}
+|{{HistoryLine|||dev=25w45a|Added a new optional {{cd|timelines}} field that specifies which [[timeline]]s are active in this dimension.
+|The remaining functionality of {{nbt|boolean|natural}} field has been migrated to the {{cd|minecraft:gameplay/eyeblossom_open}} and {{cd|minecraft:gameplay/creaking_active}} environment attributes.
+|The {{nbt|string|effects}} field has been removed and replaced with the following new fields: {{nbt|string|skybox}} and {{nbt|string|cardinal_light}}.
+|The {{nbt|int|fixed_time}} field has been replaced by {{nbt|boolean|has_fixed_time}}.}}
+|{{HistoryLine|java upcoming}}
+|{{HistoryLine||26.1|dev=snap3|Added the field {{cd|default_clock}}: optional world clock ID.}}
+}}
+
+== External links ==
+* [https://misode.github.io/dimension-type/ Dimension type Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Dimensionsarten]]
+[[fr:Type de dimension]]
+[[ja:ディメンションタイプ]]
+[[zh:维度类型]]

@@ -1,0 +1,68 @@
+{{for|vanilla world presets|World preset}}
+{{exclusive|java}}
+'''World presets''' can be chosen in "World Type" button in "More World Options..." screen in "Create New World" to determine what [[dimension]]s the new world has.
+
+== Usage ==
+When opening the "More World Options..." screen for the first time, the "World Type" button is displayed as "Default". In this case the new world does '''not''' use any world preset, but uses the three vanilla dimensions by default, and tries to read the dimension files from the dimension folder of the data pack. In this case, the player can modify these three dimensions or add new dimensions with the dimension files, but they cannot delete these three vanilla dimensions.
+
+Once the player clicks the "World Type" button, the game uses the world preset to determine the dimensions of the new world, no longer using the dimension folder. Changing the button back to "Default" uses the {{cd|minecraft:normal}} world preset, instead of the original default state. However, without the data pack, the default state is exactly the same as the "Default" preset ({{cd|minecraft:normal}}).
+
+== Definition ==
+Custom world presets are stored as JSON files in the data pack directory structure, highlighted below: 
+{{Data pack directory|worldgen|world_preset|{{ph|name}}.json}}
+
+== JSON format ==
+<div class="treeview">
+* {{nbt|compound}}: The root object.
+** {{nbt|compound|dimensions}}: A collection of dimensions. Must contain a <code>minecraft:overworld</code> object.
+*** {{nbt|compound|''<dimension name>''}}: The definition of a dimension, see {{slink|Dimension definition|JSON format}}.
+</div>
+
+== Tags ==
+{{Main|World preset tag (Java Edition)}}
+To make a custom world preset appear in the "World Type" button, it must be added to the following [[tags]]:
+* {{cd|minecraft:normal}}: The world presets displayed in the "World Type" button.
+* {{cd|minecraft:extended}}: The world presets in the "World Type" button when holding down the {{Keys|Alt}} key.
+
+It is also necessary to define the display text with the key of {{cd|generator.<''namespace''>.<''name''>}} in the language file in a [[resource pack]] .
+
+== World presets with settings ==
+There are currently two world presets that have hardcoded settings screens where the overworld dimension can be customized. Includes {{cd|minecraft:flat}} ([[Superflat]]) and {{cd|minecraft:single_biome_surface}} ([[single biome]]).
+
+=== Superflat ===
+When Superflat is selected in the "World Type" button, clicking the "Customize" button opens the "Superflat Customization" screen, where the player can directly change block of each layer, or click the “Presets” button to modify the superflat generator settings via preset code text.
+
+==== Superflat Level Generation Preset ====
+Clicking the "Presets" button to open the "Select a Preset" screen, the player can modify the settings of the superflat generator through preset code text, or they can choose a "'''Flat Level Generator Preset (aka. Flat World Preset)'''".
+
+Superflat level generation presets are stored as JSON files in <code>data/''<namespace>''/worldgen/flat_level_generator_preset/''<name>''.json</code>.
+
+<div class="treeview">
+* {{nbt|compound}}: The root object.
+** {{nbt|string|display}}: This icons. Must be an item ID.
+** {{nbt|compound|settings}}: The settings for the generator of the superflat overworld.
+*** {{Nbt inherit/flat generator settings}}
+</div>
+
+To make a custom superflat level generation preset appear in the "Select a Preset" screen, it must be added to the {{cd|minecraft:visible}} [[tag]]. It is also necessary to define the display text with the key of {{cd|flat_world_preset.<''namespace''>.<''name''>}} in the language file in a [[resource pack]] .
+
+=== Single Biome ===
+Clicking the "Customize" button, and in the "Buffet world customization" screen, the player can choose the single biome of the overworld.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.19|dev=22w11a|World presets/types and superflat world presets in "Create World" screen can now be controlled by data packs.
+|New registry types <code>worldgen/world_preset</code> and <code>worldgen/flat_level_generator_preset</code> were added to data-driven presets (like "Amplified" or "Single Biome").}}
+}}
+
+== External links ==
+* [https://misode.github.io/worldgen/world-preset/ World preset Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Weltvorlagendefinition]]
+[[fr:Définition de préréglage de monde]]
+[[ja:カスタムワールドプリセット]]
+[[zh:世界预设定义格式]]

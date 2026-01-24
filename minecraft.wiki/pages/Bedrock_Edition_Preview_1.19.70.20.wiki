@@ -1,0 +1,242 @@
+{{Infobox version
+| image = Bedrock 1.19.70.20 PatchNotes.jpg
+| image2 = Bedrock 1.19.70.20.png
+| edition = Bedrock
+| type = Preview
+| versioncode = '''Android''':<br>
+951907020 (armeabi-v7a, 31)<br>
+961907020 (x86, 31)<br>
+971907020 (arm64-v8a, 31)<br>
+981907020 (x86_64, 31)<br>
+| date = '''Windows, iOS, iPadOS, Xbox''' - January 26, 2023<br>'''Android''' - January 27, 2023
+| internal = '''Windows''': 1.19.7020.0<br>'''Xbox''': 1.19.7020.70<br>'''Android, iOS, iPadOS''': 1.19.70.20
+| serverdl = '''Server'''<br>
+[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.19.70.20.zip Windows]
+[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.19.70.20.zip Linux]
+| parent = 1.19.70
+| prevparent = 1.19.63
+| prev =
+| next = Preview 1.19.70.21
+| nextparent = 1.19.71
+}}<onlyinclude>
+
+'''Beta 1.19.70.20''' (Android) or '''Preview 1.19.70.20''' (Windows, iOS, iPadOS, Xbox) is the first beta/''Preview'' version for [[Bedrock Edition 1.19.70]], released on January 26, 2023,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/12571216557709|title=Minecraft Beta & Preview - 1.19.70.20|website=Minecraft Feedback|date=January 26, 2023}}</ref> which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[End Crystal]]'''
+* Increased end crystal collision box size to match {{JE}}.
+* End crystals with obsidian or bedrock below them now will not damage blocks below them when they explode.
+
+'''[[Hopper]]'''
+* Hoppers can now collect items through all blocks that have a lower height than a full block.
+
+'''[[Wool]]'''
+* The ID's of the wools have now been split up into their own ID's.
+
+=== Gameplay ===
+'''[[Sneaking]]'''
+* Player’s hitbox height now reduces to 1.5 blocks while sneaking.
+* Sneaking will automatically be initiated while stuck in a gap of less than 1.8 blocks.
+* Sneaking will lower the player camera height respective of these changes.
+* Sneaking now requires enough space to stand in order to exit sneaking.
+* Players will transition from swimming to sneaking if they are unable to stand up but would be able to sneak. 
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Next Major Update" and "Beta APIs" experimental toggle.
+=== Changes ===
+==== Blocks ====
+'''[[Head]]s'''
+* Piglin Head Blocks rendered in the hotbar or inventory no longer have the ear overlapping the rest of the head. ({{bug|MCPE-164605}})
+
+==== Mobs ====
+'''[[Camel]]'''
+* Players can now receive damage when falling while riding a camel.
+
+==== Technical ====
+'''Commands'''
+* Fixed a crash with deferred command execution when the executing actor is removed before execution.
+
+'''API'''
+* ItemStack
+** Item lore can now be cleared by calling <code>setLore(undefined)</code> or <code>setLore([])</code>.
+** Added function <code>clearLore</code> - Clears the item lore.
+* ItemStack
+** Fixed a bug where calling function <code>getComponent</code> or <code>ItemStack.getComponents</code> would fail on ''ItemStacks'' returned from <code>EntityItemComponent.itemStack</code>.
+* BeforeChatEvent
+** Renamed function <code>tell</code> to <code>sendMessage</code>.
+* Block
+** Added function <code>isAir</code> - Returns if the block is an air block (i.e. empty space).
+** Added function <code>isLiquid</code>- Returns if the block is a liquid (e.g., a water block and a lava block are liquid, while an air block and a stone block are not).
+** Added function <code>isSolid</code> - Returns if the block is solid (e.g., a cobblestone block and a diamond block are solid, while a ladder block and a fence block are not).
+** The following blocks now have an inventory component:
+*** Barrel
+*** Beacon
+*** Blast Furnace
+*** Brewing Stand
+*** Dispenser
+*** Dropper
+*** Furnace
+*** Hopper
+*** Jukebox
+*** Lectern
+*** Smoker
+* World Events
+** Added event <code>entityDie</code> - It is fired when an entity dies.
+** Modified <code>projectileHit</code> to be a ''readOnly'' property on the Events class.
+* Player
+** Added method <code>getSpawnPosition</code>: Gets the ''spawnPoint'' position.
+** Added property <code>spawnDimension</code>: Gets the ''spawnPoint'' dimension.
+** Added method <code>setSpawn(spawnPosition : Vec3, spawnDimension : Dimension)</code>: Sets spawnPoint with a position and dimension.
+** Added method <code>clearSpawn</code>: Sets the ''spawnPoint'' position and dimension to undefined.
+* World
+** Renamed function <code>say</code> to <code>sendMessage</code>.
+** Added method <code>getDefaultSpawnPosition</code>: Gets the ''spawnPoint'' position.
+** Added method <code>setDefaultSpawn(spawnPosition : Vec3)</code>: Sets the spawnPoint position within 'overworld' dimension.
+* BeforeChatEvent
+** Added function <code>getTargets(): Player[]</code> - Gets chat Player targets.
+** Added function <code>setTargets(players: Player[])</code> - Sets chat Player targets.
+** Removed property targets.
+* BeforeDataDrivenEntityTriggerEvent
+** Added function <code>getModifiers(): DefinitionModifier[]</code> - Gets entity definition modifiers.
+** Added function <code>setModifiers(modifiers: DefinitionModifier[])</code> - Sets entity definition modifiers.
+** Removed property modifiers.
+* BoolBlockProperty
+** Added function <code>getValidValues(): boolean[]</code> - Gets all valid boolean values for the ''BoolBlockProperty''.
+** Removed property <code>validValues</code>.
+** Converted <code>BlockHitInformation</code> to an interface.
+* ChatEvent
+** Added function <code>getTargets(): Player[]</code> - Gets chat Player targets.
+** Removed property targets.
+** Converted <code>Color</code> to an interface.
+* DataDrivenEntityTriggerEvent
+** Added function <code>getModifiers(): DefinitionModifier[]</code> - Gets Entity definition modifiers.
+** Removed property modifiers.
+* DefinitionModifier
+** Added function <code>getComponentGroupsToAdd(): string[]</code> - Gets component groups that will be added with the ''DefinitionModifier''.
+** Added function <code>setComponentGroupsToAdd(newGroups: string[]): void</code> - Sets component groups that will be added with the ''DefinitionModifier''.
+** Added function <code>getComponentGroupsToRemove(): string[]</code> - Gets component groups that will be removed with the ''DefinitionModifier''.
+** Added function <code>setComponentGroupsToRemove(removedGroups: string[]): void</code> - Sets component groups that will be removed with the ''DefinitionModifier''.
+** Added function <code>getTriggers(): Trigger[]</code> - Gets event triggers of the DefinitionModifier.
+** Added function <code>setTriggers(newTriggers: Trigger[]): void</code> - Sets event triggers of the ''DefinitionModifier''.
+** Removed property <code>componentGroupsToAdd</code>.
+** Removed property <code>componentGroupsToRemove</code>.
+** Removed property <code>triggers</code>.
+* DirectionBlockProperty
+** Added function <code>getValidValues(): Direction[]</code> - Gets all valid direction enum values for the ''DirectionBlockProperty''.
+** Removed property <code>validValues</code>.
+* Entity
+* Added function <code>getViewDirection(): Vector3</code> - Gets view direction of the Entity.
+* Added function <code>getRotation(): XYRotation</code> -  Gets rotation of the Entity.
+* Added function <code>getVelocity(): Vector</code> - Gets velocity of the Entity.
+** Removed property <code>viewDirection</code>.
+** Removed property <code>rotation</code>.
+** Removed property <code>velocity</code>.
+* EntityAgeableComponent
+** Added function <code>getDropItems(): string[]</code> - Gets items that drop when entity grows.
+** Added function <code>getFeedItems(): EntityDefinitionFeedItem[]</code> - Gets items that can be fed to the entity.
+** Removed property <code>dropItems</code>.
+** Removed property <code>feedItems</code>.
+* EntityBreathableComponent
+* Added function <code>getBreatheBlocks(): BlockPermutation[]</code> - Gets blocks entity can breathe in.
+* Added function <code>getNonBreatheBlocks(): BlockPermutation[]</code> - Gets blocks entity can't breathe in.
+* Removed property <code>breatheBlocks</code>.
+* Removed property <code>nonBreatheBlocks</code>.
+* EntityHealableComponent
+** Added function <code>getFeedItems(): FeedItem[]</code> - Gets healing items for the ''EntityHealableComponent''.
+** Removed property <code>items</code>.
+** Converted <code>EntityHitInformation</code> to an interface.
+* EntityRideableComponent
+** Added function <code>getFamilyTypes(): string[]</code> - Gets supported rider entity types.
+** Added function <code>getSeats(): Seat[]</code> - Gets rider information for each seat.
+** Removed property <code>familyTypes</code>.
+** Removed property <code>seats</code>.
+* EntityTameableComponent
+** Added function <code>getTameItems(): string[]</code> - Gets tame items of the ''EntityTameableComponent''.
+** Removed property <code>tameItems</code>.
+* FeedItem
+** Added function <code>getEffects(): FeedItemEffect[]</code> - Gets effect of the ''FeedItem''.
+** Removed property <code>effects</code>.
+* IntBlockProperty
+** Added function <code>getValidValues(): number[]</code> - Gets all valid integer values for the ''IntBlockProperty''.
+** Removed property <code>validValues</code>.
+* ItemDurabilityComponent
+** Added function <code>getDamageRange(): NumberRange</code> - Gets the range of numbers that describes the chance of the item losing durability.
+** Removed property <code>damageRange</code>.
+** Converted <code>NumberRange</code> to an interface.
+* ProjectileHitEvent
+** Added function <code>getBlockHit(): BlockHitInformation</code> - Gets block hit information from the ''ProjectileHitEvent''.
+** Added function <code>getEntityHit(): EntityHitInformation</code> - Gets entity hit information from the ProjectileHitEvent.
+** Removed property <code>blockHit</code>.
+** Removed property <code>entityHit</code>.
+* StringBlockProperty
+** Added function <code>getValidValues(): string[]</code> - Gets all valid string values for the ''StringBlockProperty''.
+** Removed property <code>validValues</code>.
+
+== Fixes ==
+
+'''Vanilla Parity'''
+* Bells that are connected to multiple blocks no longer drop when one block is broken.
+* Breeding horses can now produce random variants. ({{bug|MCPE-129071}})
+* Fixed an issue where dead players prevented other players from skipping night.
+* Eating and drinking animations will now always be centered, regardless of screen aspect ratio.
+* Note Block sound attenuation over a distance is now linear. ({{bug|MCPE-164935}})
+
+'''Gameplay'''
+* Players no longer take rapid damage when touching damaging blocks. ({{bug|MCPE-165347}})
+* Fixed a crash that could occur when entering a 1.7.1.0 world in 1.8 or above. ({{bug|MCPE-165564}})
+* Projectiles shot while swimming/gliding no longer spawn from above the player's position. ({{bug|MCPE-31896}})
+* Items dropped while swimming/gliding, manually or on death, no longer spawn from above the player's position. ({{bug|MCPE-31896}})
+* The player's crosshair now properly mines/interacts with items in front of them while swimming/gliding, rather than 1 block above their position. ({{bug|MCPE-57257}})
+* Written Books can now be moved in the inventory even when the player has identical Written Books.
+* Double-clicking on the Furnace output slot will no longer drop the item ({{bug|MCPE-165079}}).
+* Fixed a bug where Observers would not detect changes due to corrupted data. ({{bug|MCPE-150506}})
+
+'''Blocks'''
+* Destroying Mangrove Log or Mangrove Wood now properly cause leaves to decay.
+* End Crystals occupying the same space as a block will no longer cause that block to disappear.
+
+'''Graphical'''
+* Fixed an issue where the "Mine" tooltip was appearing when targeting a block with a Trident in Creative game mode. ({{bug|MCPE-44846}})
+
+'''Mobs'''
+* Parrots will no longer shake while on a player riding a Horse that is turning mid-jump.
+* Fixed a bug causing global entities (e.g. Ender Dragon and projectiles) to stop rendering when out of normal entity render distance. ({{bug|MCPE-161136}})
+
+'''Touch Controls'''
+* Updated the How to Play screen with info on new touch controls.
+* Changing input modes from Gamepad to Touch while an item is selected will return the selected to the inventory or drop it.
+* Fixed an issue on the Furnace screen where double-tapping the output window caused other slots to become unselectable.
+* Fixed a bug where progressive select was automatically initiated on the first slot when opening a small Chest.
+
+'''Mobile'''
+* When starting a new world in Pocket UI, removed the "Press Open Chat to open chat" message for players with text-to-speech turned off.
+
+'''User Interface'''
+* Ocean Explorer, Woodland Explorer, and Treasure Maps now show the proper icon in the inventory. ({{bug|MCPE-163464}})
+* Fixed a bug where mouse scrolling on the Friend Options dropdown would not scroll the dropdown contents.
+* Resolved an issue where graphical elements of the Sign-In/Sign-Up screen could extend beyond the bounds of the dialog container.
+
+'''Commands'''
+* {{cmd|replaceitem}} and {{cmd|loot replace block}} commands no longer place items in Cauldrons. ({{bug|MCPE-129472}})
+* Rotation in the teleport command is now relative to the executor of the command instead of the target. Old usage of rotations in commands will stay relative to the target mob for backwards compatibility.
+
+'''Technical'''
+* Tropical Fish spawn rules .json file is now located in the correct folder. ({{bug|MCPE-165963}})
+* Witch potion drinking and ranged attack behavior is now defined in its .json file.
+
+'''Creative'''
+* The game will no longer create a content error when Bee spawn eggs are used on a Spawner.
+* Behavior packs with scripts can now be removed from worlds.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[Category:Bedrock Edition 1.19.70 betas]]
+[[de:Bedrock Edition beta 1.19.70.20]]
+[[es:Bedrock Edition beta 1.19.70.20]]
+[[pt:Edição Bedrock Preview 1.19.70.20]]
+[[zh:基岩版1.19.70.20]]

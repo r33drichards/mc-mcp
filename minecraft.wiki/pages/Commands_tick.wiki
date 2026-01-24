@@ -1,0 +1,73 @@
+{{exclusive|java}}
+{{Infobox command
+|name=tick
+|oplevel=3
+}}
+
+The '''/tick''' command provides utilities for modifying the target [[tick rate]] of the game, temporarily fast forwarding the game, and pausing the game server side among other things. The /tick command cannot be executed from a command block.{{verify|Is this intentional or a bug?}}
+
+==Syntax==
+: <code>tick query</code>
+:: Outputs the current ticking status and target ticking rate, with information about the tick performance, including average time per tick and [[wikipedia:percentile|percentile]]s of time per tick.
+: <code>tick rate &lt;rate&gt;</code>
+:: Sets the target ticking rate to the specified value. Modifying the target ticking rate changes the relative speed of the game as the game still expects a constant tick rate of 20.0, the default tick rate.
+: <code>tick freeze</code>
+:: Freezes ticking. All gameplay elements are frozen, except players and any entity a player is riding.
+: <code>tick unfreeze</code>
+:: Unfreezes ticking.
+: <code>tick step [&lt;time&gt;]</code>
+:: Unfreezes ticking, runs specified amount of time, and refreezes. Only works if ticking is frozen.
+: <code>tick step stop</code>
+:: Stops the current stepping process and refreeze the tick.
+: <code>tick sprint [&lt;time&gt;]</code>
+:: Fast forwards the game by specified amount of ticks as fast as it can run, ignoring the target ticking rate. At the end of the sprint, the game will resume the previous ticking status and display performance information about the tick times from sprinting.
+: <code>tick sprint stop</code>
+:: Stops the current tick sprinting and resumes the previous ticking status.
+
+== Arguments ==
+{{argument|rate|float}}
+: Specifies the target rate in TPS. The default rate is 20.0 TPS.
+: {{arg desc|je=float|min=1.0|max=10000.0}}
+
+{{argument|time|time}}
+: Specifies the number of ticks to step or sprint. Defaults to 1 game tick if not specified.
+: {{arg desc|je=time|min=1}}
+
+{{Calculator|tick}}
+
+==Result==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|cmd=/tick query|On success|1|1|the current target ticking rate}}
+{{Output table|cmd=/tick rate &lt;rate&gt;|On success|1|1|the specified <code>rate</code>}}
+{{Output table|cmd=/tick freeze|On success|1|1|1}}
+{{Output table|cmd=/tick unfreeze|On success|1|1|0}}
+{{Output table|cmd=/tick step [&lt;time&gt;]|On success|1|1|1}}
+{{Output table|cmd=/tick step stop|On success|1|1|1 if ticking is stepping; 0 if not}}
+{{Output table|cmd=/tick sprint [&lt;time&gt;]|On success|1|1|1}}
+{{Output table|cmd=/tick sprint stop|On success|1|1|1 if ticking is sprinting; 0 if not}}
+{{Output table}}
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20.3|dev=23w43a|Added {{cmd|tick|link=none}}.}}
+|{{HistoryLine|||dev=23w44a|The <code><nowiki><time></nowiki></code> parameter in the {{cmd|link=none|tick step}} command is now optional. The default value is <code>1</code>.}}
+|{{HistoryLine|||dev=1.20.3-pre3|The {{cmd|tick query|link=none}} now shows "The game is running, but can't keep up with the target tick rate" when the game is lagging.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/tick]]
+[[ja:コマンド/tick]]
+[[lzh:令/tick]]
+[[pt:Comandos/tick]]
+[[ru:Команды консоли/tick]]
+[[zh:命令/tick]]

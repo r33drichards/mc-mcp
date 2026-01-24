@@ -1,0 +1,518 @@
+{{Infobox version
+|title=Minecraft 25w42a
+|image=25w42a.jpg
+|image2=Java Edition 25w42a.png
+|edition=Java
+|type=Snapshot
+|date=October 14, 2025
+|jsonhash=cb44662eb9b38b02bc65949b96b524fd2525c614
+|clienthash=69479469a0c1ed7cd80ea45ed6c36aa07fc36001
+|clientmap=7a75fd07429f580ed95121a4771337e3f4b242fd
+|serverhash=d9c6cfd4ba84f5080206259d2563f75796f14470
+|servermap=9315756cde3359f55f4572b49b0e98a352b87e12
+|parent=1.21.11
+|prevparent=1.21.10
+|prev=25w41a
+|next=25w43a
+|nextparent=26.1
+}}<onlyinclude>
+'''25w42a''' is the second [[snapshot]] for [[Java Edition 1.21.11]], released on October 14, 2025.<ref>{{snap|25w42a|id=a|October 14, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Environment attribute]]s'''
+{{collapse|
+content=
+* Provides a data-driven way to control a variety of visual and gameplay systems.
+* Each Environment Attribute controls a specific visual or gameplay effect: 
+** For example, {{cd|minecraft:visual/sky_color}} controls the color of the sky, and {{cd|minecraft:gameplay/water_evaporates}} controls whether water can be placed at a given location.
+
+* Sources
+** Environment Attribute values can be provided by the following Environment Attribute sources (in order of low to high priority):
+*** Dimensions
+*** Biomes
+** The "effective" value of the Environment Attribute (i.e. what will actually show up in game) will be some combination of the values provided by each source according to their priority.
+*** For example, in the following scenario:
+**** The overworld dimension provides <code>sky_color = #00ff00</code> (green)
+**** The plains biome provides <code>sky_color = #ff0000</code> (red)
+*** When the player is in the plains biome, they will see the red {{cd|sky_color}}, while anywhere else in the overworld they will see green.
+** When an Environment Attribute source provides an Environment Attribute, it can:
+*** Override the value, such as the plains biome overriding the overworld's {{cd|sky_color}} in the above scenario.
+*** Apply a modifier to a previous value.
+
+* Modifiers
+** An environment attribute source may simply override the value of a particular attribute. 
+*** However, it is sometimes also desirable to rather apply a modifier to a value provided by a source with lower priority.
+*** For example, in the following scenario:
+**** The overworld dimension provides <code>water_fog_radius = 96.0</code>
+**** The plains biome modifies {{cd|water_fog_radius}} with a multiply modifier of {{cd|0.85}}
+*** When in the plains biome, the {{cd|water_fog_radius}} will be resolved to <math>96.0*0.85 = 81.6</math>, while in any other Overworld biome, it will resolve to {{cd|96.0}}.
+** The kinds of modifiers available depends on the type of Environment Attribute. 
+*** The most basic modifier, supported by every Environment Attribute, is the override modifier. 
+*** This behaves purely as an override of the preceding value. 
+**** If not specified by an Environment Attribute source, the modifier will always be assumed to be override.
+
+* Interpolation
+** Interpolation describes the combination of values within a source. 
+** Is performed on values from a source after modifiers have been applied.
+** Only some Environment Attributes support interpolation. This allows for the smooth transition between two or more values, such as when moving between two biomes.
+** Biomes
+*** {{cd|sky_color}} is one attribute that will transition smoothly based on position.
+*** For example, in the following scenario:
+**** The plains biome provides <code>sky_color = #ff0000</code> (red)
+**** The desert biome provides <code>sky_color = #ffff00</code> (yellow)
+*** In the above scenario, as a player moves from a plains to a desert biome, the sky color will gradually shift from red to yellow. 
+*** Other attributes, such as {{cd|water_evaporates}}, represent discrete values and will not be smoothly transitioned - only the biome exactly at a subject position will be considered.
+*** Smooth transitions between biomes are based on the biomes within an 8 block radius of the camera. Biomes that occupy a larger portion of that radius and are closer to the camera will have a stronger influence on the final interpolated value.
+
+* Environment Attribute Map
+** Dimension Type and Biome definitions contain a new attributes field, enabling them to define Environment Attributes.
+** This map generally takes the form of an object mapping between Environment Attribute IDs and their corresponding values, for example:
+<code>"attributes": {
+"minecraft:visual/fog_color": "#ffaa00",
+"minecraft:gameplay/water_evaporates": true
+}</code>
+* Values defined as above will always be assumed to use the override modifier.
+** The value object can however be expanded in order to express different modifiers, in the format of an object with the following fields:
+*** {{cd|modifier}}: optional string modifier ID, dependent on the Attribute Type.
+**** Default: {{cd|override}}
+*** {{cd|argument}}: the modifier argument (format dependent on the chosen modifier).
+**** How the argument is used also depends on the type of modifier.
+*** For example, the following definition describes multiplying {{cd|water_fog_radius}} by 85%:
+<code>"attributes": {
+"minecraft:visual/water_fog_radius": {
+"modifier": "multiply",
+"argument": 0.85
+}
+}</code>
+
+* Common Data Types
+** The following data types are reused in various parts of the Environment Attributes system.
+** RGB Color
+*** Format can be one of the following:
+**** A hex color RGB string, in the form {{cd|#rrggbb}}
+**** A float array with 3 components, between {{cd|0}} and {{cd|1}}, in the form {{cd|[r, g, b]}}
+**** An integer in packed RGB form.
+** ARGB Color
+*** Format can be one of the following:
+**** A hex color ARGB string, in the form {{cd|#aarrggbb}}
+**** A float array with 4 components, between {{cd|0}} and {{cd|1}}, in the form {{cd|[a, r, g, b]}}
+**** An integer in packed ARGB form.
+** Particle Options
+*** A full definition of a particle, including any type-specific properties (as in the /particle command).
+**** For example:
+<code>{
+"type": "minecraft:block_crumble",
+"block_state": {
+"Name": "minecraft:dirt"
+}
+}</code>
+
+* Common Modifiers
+* Every Environment Attribute has a specific value type, which describes how values must be defined as well as what modifiers are available and how they are interpolated. 
+** Some are very specific, while others are reused across many attributes.
+** Modifiers on Boolean Values
+*** Argument format: boolean
+**** {{cd|override}}
+**** {{cd|and}}
+**** {{cd|nand}}
+**** {{cd|or}}
+**** {{cd|nor}}
+**** {{cd|xor}}
+**** {{cd|xnor}}
+** Modifiers on Float Values
+*** Argument format: float
+**** {{cd|override}}
+**** {{cd|add}}
+**** {{cd|subtract}}
+**** {{cd|multiply}}
+**** {{cd|minimum}}
+**** {{cd|maximum}}
+** Modifiers on Color Values
+*** Argument format: RGB color (except {{cd|alpha_blend}})
+**** {{cd|override}}
+**** {{cd|add}} - component-wise additive color blending
+**** {{cd|subtract}} - component-wise subtractive color blending..
+**** {{cd|multiply}} - component-wise multiplicative color blending.
+**** {{cd|alpha_blend}} - traditional alpha blending that might be seen in image editing software.
+***** Argument format: ARGB Color
+***** When the argument alpha is {{cd|1}}, it will behave as an override with no blending.
+
+* New Environment Attributes
+** {{cd|minecraft:visual/fog_color}}
+*** The color of fog (when the camera is not submerged in another substance).
+**** Value type: RGB color
+**** Default value: {{cd|#000000}}
+**** Modifiers: Color Modifiers
+**** Interpolated: yes
+**** Resolved at the camera's position.
+**** Replaces Biome {{cd|effects.fog_color}} field.
+*** Note: the final value is also affected by the time of day, weather, and potion effects.
+** {{cd|minecraft:visual/extra_fog}}
+*** Controls whether dense fog (like that of the Nether) should be used (when the camera is not submerged in another substance).
+**** Value type: boolean
+**** Default value: {{cd|false}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved at the camera's position.
+** {{cd|minecraft:visual/water_fog_color}}
+*** The color of fog when submerged in water. 
+**** Value type: RGB color
+**** Default value: {{cd|#050533}}
+**** Modifiers: Color Modifiers
+**** Interpolated: yes
+**** Resolved at the camera's position.
+**** Replaces Biome {{cd|effects.water_fog_color}} field.
+*** Note: the final value is also affected by the time of day, weather, and potion effects.
+** {{cd|minecraft:visual/water_fog_radius}}
+*** The distance in blocks from the camera at which underwater fog reaches its maximum density.
+**** Value type: non-negative float
+**** Default value: {{cd|96.0}}
+**** Modifiers: Float Modifiers
+**** Interpolated: yes
+**** Resolved at the camera's position.
+**** Replaces {{cd|#has_closer_water_fog}} Biome Tag.
+*** Note: the final value is also modified by how long the player has been underwater.
+** {{cd|minecraft:visual/sky_color}}
+*** The color of the sky. This color is only visible for the overworld sky.
+**** Value type: RGB color
+**** Default value: {{cd|#000000}}
+**** Modifiers: Color Modifiers
+**** Interpolated: yes
+**** Resolved at the camera's position.
+**** Replaces Biome {{cd|effects.sky_color}} field.
+*** Note: the final value is also affected by the time of day and weather.
+** {{cd|minecraft:visual/cloud_opacity}}
+*** The opacity of clouds. If {{cd|0}}, clouds are entirely disabled and [[happy ghast]]s will not regenerate health faster when at cloud height.
+**** Value type: float between 0 and 1
+**** Default value: {{cd|0.0}}
+**** Modifiers: Float Modifiers
+**** Interpolated: yes
+**** Resolved at the camera's position for rendering, or at the position of a [[happy ghast]] for regeneration.
+** {{cd|minecraft:visual/cloud_height}}
+*** The height at which all clouds appear.
+**** Value type: float
+**** Default value: {{cd|192.33}}
+**** Modifiers: Float Modifiers
+**** Interpolated: yes
+**** Resolved at the camera's position for rendering, or at the position of a [[happy ghast]] for regeneration.
+**** Replaces Dimension Type {{cd|cloud_height}} field.
+** {{cd|minecraft:visual/default_dripstone_particle}}
+*** The default particle to be dripped from [[dripstone block]]s when no fluid is placed above.
+**** Value type: Particle Options
+**** Default value: {{cd|{type:"minecraft:dripping_dripstone_water"}}}
+**** Modifiers: {{cd|override}}
+**** Interpolated: no
+**** Resolved at the position of the [[dripstone block]].
+**** Replaces Dimension Type {{cd|ultrawarm}} field.
+** {{cd|minecraft:visual/ambient_particles}}
+*** Controls ambient particles that randomly spawn around the camera.
+**** Value type: list of objects with fields
+***** {{cd|particle}}: Particle Options to spawn.
+***** {{cd|probability}}: float between 0 and 1, the probability to spawn the particle in an empty space when randomly ticked.
+**** Default value: {{cd|[]}}
+**** Modifiers: {{cd|override}}
+**** Interpolated: no
+**** Resolved at the camera's position.
+**** Replaces Biome {{cd|effects.particle}} field.
+** {{cd|minecraft:audio/background_music}}
+*** Controls how and which background music is played.
+**** Value type: object with fields
+***** {{cd|default}}: optional object with fields:
+****** {{cd|sound}}: Sound Event to play.
+****** {{cd|min_delay}}: int, minimum delay in ticks between tracks.
+****** {{cd|max_delay}}: int, maximum delay in ticks between tracks.
+****** {{cd|replace_current_music}}: optional boolean, whether this track can replace whatever is currently playing.
+******* Default: false
+****** If not defined and not overridden, no music will start playing while this attribute is active.
+***** {{cd|underwater}}: optional object with fields in the same format as default - if present and the player is underwater, will override default.
+***** {{cd|creative}}: optional object with fields in the same format as default - if present and the player is in Creative Mode, will override default.
+**** Default value: <code>{}</code>
+**** Modifiers: {{cd|override}}
+**** Interpolated: no
+**** Resolved at the camera's position.
+**** Replaces Biome {{cd|effects.music}} field.
+** {{cd|minecraft:audio/music_volume}}
+*** The volume at which music should play. Any music playing will fade over time to this value.
+**** Value type: float between 0 and 1
+**** Default value: {{cd|1.0}}
+**** Modifiers: Float Modifiers
+**** Interpolated: no
+**** Resolved at the camera's position.
+**** Replaces Biome {{cd|effects.music_volume}} field.
+** {{cd|minecraft:audio/ambient_sounds}}
+*** Controls which ambient sounds are played around the camera, and when.
+**** Value type: object with fields
+***** {{cd|loop}}: optional Sound Event, sound to be continually looped.
+***** {{cd|mood}}: object with fields, sounds that will be randomly played based on surrounding darkness.
+****** {{cd|sound}}: Sound Event to play.
+****** {{cd|tick_delay}}: int, the number of ticks between mood sounds, assuming a light level of 0.
+****** {{cd|block_search_extent}}: int, the radius in which light levels are sampled.
+****** {{cd|offset}}: double, an additional distance offset to apply to sounds produced.
+***** {{cd|additions}}: list of objects with fields, sounds that will be randomly played.
+****** {{cd|sound}}: Sound Event to play
+****** {{cd|tick_chance}}: float between 0 and 1, probability within a tick to play a given sound.
+**** Default value: <code>{}</code>
+**** Modifiers: {{cd|override}}
+**** Interpolated: no
+**** Resolved at the camera's position.
+**** Replaces Biome {{cd|effects.ambient_sound}}, {{cd|effects.mood_sound}}, and {{cd|effects.additions_sound}} fields.
+** {{cd|minecraft:gameplay/can_start_raid}}
+*** If {{cd|false}}, a [[raid]] cannot be started by a player with [[raid omen]].
+**** Value type: boolean
+**** Default value: {{cd|true}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved at the position that the Raid would be started.
+**** Replaces Dimension Type {{cd|has_raids}} field.
+** {{cd|minecraft:gameplay/water_evaporates}}
+*** If {{cd|true}}, [[water]] cannot be placed with a [[bucket]], melting [[ice]] will not produce water, [[wet sponge]] will dry out when placed, and [[dripstone]] will not produce water from [[mud]] blocks.
+**** Value type: boolean
+**** Default value: {{cd|false}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved at the position of the interaction.
+**** Replaces Dimension Type {{cd|ultrawarm}} field.
+** {{cd|minecraft:gameplay/bed_rule}}
+*** Controls whether a [[bed]] can be used to sleep, and whether it can be used to set a respawn point.
+**** Value type: object with fields.
+***** {{cd|can_sleep}}: one of:
+****** {{cd|always}} - the bed can always be used to sleep (assuming the bed is not obstructed and there are no monsters nearby).
+****** {{cd|when_dark}} - bed bed can only be used to be sleep when the global skylight level is less than 4.
+****** {{cd|never}} - the bed can never be used to sleep.
+***** {{cd|can_set_spawn}} - same as {{cd|can_sleep}}
+***** {{cd|explodes}} - optional boolean, if true the bed will explode when interacted with.
+****** Default: {{cd|false}}
+***** {{cd|error_message}}: optional Text Component, the message to show if the player is unable to sleep or set their spawn.
+**** Default value: {{cd|{type:"can_sleep_when_dark",error_message:{translate:"block.minecraft.bed.no_sleep"}<nowiki/>}<nowiki/>}}
+**** Modifiers: {{cd|override}}
+**** Interpolated: no
+**** Resolved at the head position of the Bed block.
+**** Replaces Dimension Type {{cd|bed_works}} field.
+** {{cd|minecraft:gameplay/respawn_anchor_works}}
+*** Controls whether [[respawn anchor]]s can be used to set spawn (or respawn). 
+*** If false, the respawn anchor will explode once charged.
+**** Value type: boolean
+**** Default value: {{cd|false}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved at the position of the Respawn Anchor block.
+**** Replaces Dimension Type {{cd|respawn_anchor_works}} field.
+** {{cd|minecraft:gameplay/nether_portal_spawns_piglin}}
+*** Controls whether [[nether portal]] blocks can spawn [[piglin]]s.
+**** Value type: boolean
+**** Default value: {{cd|false}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved at the position of a random Nether Portal block.
+**** Replaces Dimension Type {{cd|natural}} field.
+** {{cd|minecraft:gameplay/fast_lava}}
+*** Controls whether Lava should spread faster and further, as well as have a stronger pushing force on entities when flowing.
+**** Value type: boolean
+**** Default value: {{cd|false}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved for a whole dimension (cannot be specified on a Biome).
+**** Replaces Dimension Type {{cd|ultrawarm}} field.
+** {{cd|minecraft:gameplay/increased_fire_burnout}}
+*** Controls whether fire blocks burn out more rapidly than normal.
+**** Value type: boolean
+**** Default value: {{cd|false}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved at the position of the burning Fire block.
+**** Replaces {{cd|#increased_fire_burnout}} Biome Tag.
+** {{cd|minecraft:gameplay/piglins_zombify}}
+*** Controls whether [[piglin]]s and [[hoglin]]s should zombify.
+**** Value type: boolean
+**** Default value: {{cd|true}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved at the position of the zombifying entity.
+**** Replaces Dimension Type {{cd|piglin_safe}} field.
+** {{cd|minecraft:gameplay/snow_golem_melts}}
+*** Controls whether a [[snow golem]] should be damaged.
+**** Value type: boolean
+**** Default value: {{cd|false}}
+**** Modifiers: Boolean Modifiers
+**** Interpolated: no
+**** Resolved at the position of the snow golem.
+**** Replaces {{cd|#snow_golem_melts}} Biome Tag.
+}}
+
+== Changes ==
+=== Items ===
+'''[[Elytra]]'''
+* Players can now [[glide]] with [[elytra]] through [[cave vine]]s and similar blocks.<ref>{{bug|MC-295949||Flying through vines with an elytra cancels the flight}}</ref>
+
+'''[[Nautilus armor]]'''
+* Can now be [[smelted]] in a [[blast furnace]] or [[furnace]].
+
+'''[[Spawn egg]]s'''
+* The zombie horse and zombie nautilus spawn eggs now work in [[Peaceful]] worlds.
+
+'''[[Spear]]'''
+* Can no longer be used to hit targets through solid blocks.
+* Can no longer break item frames with the jab attack.
+
+=== Mobs ===
+'''[[Nautilus]]''' and '''[[zombie nautilus]]'''
+* Can now be controlled while on land.
+* Are now able to despawn when not tamed.
+
+'''[[Piglin]]'''
+* Piglins now consider [[golden nautilus armor]] as one of the items they like.
+
+'''[[Skeleton horse]]'''
+* No longer burns in sunlight.
+
+'''[[Zombie]]'''
+* Now cannot hold another item other than a spear when paired with a zombie horse.
+
+'''[[Zombie horse]]'''
+* Can no longer be leashed while being ridden by a jockey.
+
+=== Command format ===
+'''General'''
+* Resource suggestions now show results in any namespace instead of just within <code>minecraft</code>.
+
+'''{{cmd|stopwatch}}'''
+* Switched the order of the {{cd|id}} argument.
+** Example: {{cmd|stopwatch foo:bar create}} is now {{cmd|stopwatch create foo:bar}}.
+* {{cd|query}} now returns the queried value and takes in a new {{cd|scale}} argument.
+** The returned value will be scaled by that argument and truncated.
+** The scale is optional and will default to {{cd|1}} if omitted.
+** Example: {{cmd|stopwatch query foo:bar 20}} to get the elapsed time in ticks.
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Updated the "[[Oh Shiny]]" advancement to include the [[golden spear]] and [[golden nautilus armor]].
+
+'''[[Enchantment]]s'''
+* [[Lunge]] is no longer mutually exclusive with [[Mending]].
+
+=== General ===
+'''[[Biome]]s'''
+* Underwater biome fog color and fog distance is now blended based on the player's position between biomes, similarly to regular biome fog and sky colors.
+* Added new attributes field for biomes to specify Environment Attributes.
+** Note: certain attributes, such as gameplay/fast_lava are not evaluated positionally and thus cannot be set on a Biome.
+* Many subfields under effects have been migrated to Environment Attributes:
+** Note: the form of these attributes may not be identical to the original fields.
+** {{cd|fog_color}} -> {{cd|minecraft:visual/fog_color}}
+** {{cd|water_fog_color}} -> {{cd|minecraft:visual/water_fog_color}}
+** {{cd|sky_color}} -> {{cd|minecraft:visual/sky_color}}
+** {{cd|particle}} -> {{cd|minecraft:visual/ambient_particles}}
+** {{cd|ambient_sound}}, {{cd|mood_sound}}, {{cd|additions_sound}} -> {{cd|minecraft:audio/ambient_sounds}}
+** {{cd|music}} -> {{cd|minecraft:audio/background_music}}
+** {{cd|music_volume}} -> {{cd|minecraft:audio/music_volume}}
+
+'''[[Data component format]]'''
+* {{cd|minecraft:kinetic_weapon}}
+** Added new field:
+*** {{cd|contact_cooldown_ticks}}: integer, the cooldown in ticks after hitting, and loosing contact with an entity before being able to hit it again.
+**** Default value: {{cd|10}}
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|90.0}}.
+
+'''[[Dimension type]]s'''
+* Added new attributes field for dimensions to specify Environment Attributes.
+* Many fields have been migrated to Environment Attributes:
+** Note: the form of these attributes may not be identical to the original fields.
+** {{cd|ultrawarm}} -> {{cd|minecraft:gameplay/water_evaporates}}, {{cd|minecraft:gameplay/fast_lava}}, {{cd|visual/default_dripstone_particle}}
+** {{cd|bed_works}} -> {{cd|minecraft:gameplay/bed_rule}}
+** {{cd|respawn_anchor_works}} -> {{cd|minecraft:gameplay/respawn_anchor_works}}
+** {{cd|cloud_height}} -> {{cd|minecraft:visual/cloud_height}}
+** {{cd|piglin_safe}} -> {{cd|minecraft:gameplay/piglins_zombify}}
+** {{cd|has_raids}} -> {{cd|minecraft:gameplay/can_start_raid}}
+** {{cd|natural}} (note: not removed) -> {{cd|minecraft:gameplay/nether_portal_spawns_piglin}}
+
+'''[[Minecraft Server Management Protocol]]'''
+* Enable authentication from web browsers.
+** Authenticate by passing the token in <code>Sec-WebSocket-Protocol</code> header when opening the WebSocket connection.
+*** Example: Sec<code>-WebSocket-Protocol: minecraft-v1, <token></code>
+** Requests authenticating this way are subject to Origin header checks. This requires configuration of allowed origins on the server side using <code>management-server-allowed-origins</code>. The default value is empty, meaning <code>Sec-Websocket-Protocol</code> authentication is effectively disabled.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|70.1}}.
+
+'''[[Tag]]s'''
+* Biome Tags
+** Removed {{cd|#snow_golem_melts}} and {{cd|#increased_fire_burnout}} - replaced by {{cd|gameplay/snow_golem_melts}} and {{cd|gameplay/increased_fire_burnout}} Environment Attributes.
+** Removed {{cd|#plays_underwater_music}} - replaced by {{cd|only_underwater}} field in the {{cd|audio/background_music}} Environment Attribute.
+** Removed {{cd|#has_closer_water_fog}} - replaced by {{cd|visual/water_fog_radius}} Environment Attribute.
+* Block Tags
+** Added {{cd|#cave_vines}} to {{cd|#can_glide_through}} tag.
+* Enchantment Tags
+** Removed {{cd|#exclusive_set/lunge}} tag.
+* Entity Tags
+** Added {{cd|d=and|bogged|skeleton|stray|wither_skeleton}} and removed {{cd|#skeletons}} from {{cd|#burn_in_daylight}} tag.
+* Item Tags
+** Added {{cd|golden_nautilus_armor}} to {{cd|#piglin_loved}} tag.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w42a
+|;From released versions before 1.21
+|263562|World types in Realms backup info screen are untranslatable.
+|;From 1.21.6
+|298405|Text components in the "{{cd|label}}" of input controls in dialogs don't support "{{cd|hover_event}}".
+|;From 1.21.8
+|299876|Labels for booleans within dialogs are rendered in a slightly different shade of white than normal.
+|;From 1.21.9
+|301271|Object text components do not render in some places unless there are text glyphs on the same line.
+|301518|The mouse cursor doesn’t change to the hand shape when hovering over checkboxes.
+|301520|The mouse cursor doesn’t change to the hand shape when hovering over the difficulty lock button.
+|301557|The shading direction of the bolts on single and large copper chests does not match.
+|301879|Double weathered and waxed weathered copper chests' bottom texture looks off compared to the other variants.
+|302071|Single and double copper chests have inconsistent side textures.
+|302246|Sprite object component does not render in server list depending on component tree.
+|302409|Lightning that strikes waxed lightning rods do not deoxidize nearby unwaxed copper blocks.
+|;From 1.21.10
+|302816|When running NBT to SNBT conversion, the program waits for 1 minute after completion.
+|;prev
+|302656|Skeleton horses burn in the sunlight.
+|302657|The "{{cd|subtitles.entity.nautilus.eat}}" string misspells the word “Nautilus” as “Nauilus”.
+|302664|Piglins aren't attracted to golden nautilus armor.
+|302672|"Invalid player data" error when loading a world in which you have an effect applied.
+|302680|Zombie horses and zombie nautiluses cannot be spawned in Peaceful difficulty.
+|302683|The "Confirm Command Execution" dialog is popped up for commands with a permission level of 0.
+|302729|Blast furnaces do not smelt nautilus armor.
+|302732|Performing a charge attack with a spear in your off hand applies the effects from the enchantments present on the item held in the main hand.
+|302743|Repeatedly using a spear keeps performing charge attacks every 10 ticks.
+|302767|Holding a spear in Spectator mode and performing a jab attack plays the jab sound.
+|302783|Baby nautiluses use {{cd|#minecraft:nautilus_taming_items}} instead of {{cd|#minecraft:nautilus_food}} for growing up.
+|302802|Spear charge attack breaks item frames when still.
+|302813|Zombified piglins no longer appear to sprint or make any angry noises when angry.
+|302817|Spears with Fire Aspect can ignite victims even when the attacks are blocked.
+|302818|Zombie horsemen can occasionally spawn holding something other than an iron spear.
+|302827|Spears can jab through walls.
+|302834|Wolves' eyes don't turn red when angry.
+|302838|Extreme TPS lag when using high Lunge levels with Unbreaking.
+|302842|Nautiluses and zombie nautiluses never despawn.
+|302920|{{cmd|scoreboard players display}} settings sometimes reset on world load.
+|302924|Players can no longer be invited to realms.
+|302988|Bees no longer get angry at players or mobs.
+|303083|Searching in the resource/data pack selection screens doesn't properly scroll to the results.
+|303089|Level 3 operators cannot use client-side operator features.
+}}</onlyinclude>
+
+== Trivia ==
+* This version has the same protocol version number as [[1.21.10 Release Candidate 1]]. The two versions are not actually compatible; 25w42a crashes when attempting to join a 1.21.10-rc1 world, and 1.21.10-rc1 throws a "Network Protocol Error" message when attempting to join a 25w42a world.
+
+== Videos ==
+{{slicedlime|Xb0Mlu81aRU|MvCaASGRvEM}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w42a]]
+[[es:Java Edition 25w42a]]
+[[fr:Édition Java 25w42a]]
+[[ja:Java Edition 25w42a]]
+[[lzh:二五週四二甲]]
+[[pt:Edição Java 25w42a]]
+[[ru:25w42a (Java Edition)]]
+[[zh:Java版25w42a]]

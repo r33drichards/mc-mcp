@@ -1,0 +1,177 @@
+{{Infobox version
+|title=Minecraft 21w44a
+|image=21w44a.jpg
+|image2=Java Edition 21w44a.png
+|edition=Java
+|type=Snapshot
+|date=November 3, 2021
+|jsonhash=fd990561a3502903a819815ca63b7ac13110a84c
+|clienthash=6bf2feca56785edfddf308cbeef0fc3331155685
+|clientmap=7e7ead13deb9d525c9764f933fb11cd76b7b79ae
+|serverhash=ae583fd57a8c07f2d6fbadce1ce1e1379bf4b32d
+|servermap=122dd671c989bd1f0247c0d2924f45ea41595c71
+|parent=1.18
+|prevparent=1.17.1
+|prev=21w43a
+|next=1.18 Pre-release 1
+|nextparent=1.18.1
+}}<onlyinclude>
+
+'''21w44a''' is the eighth and final [[snapshot]] for [[Java Edition 1.18]], released on November 3, 2021,<ref>{{snap|21w44a|November 3, 2021}}</ref> which improves the upgrading of old worlds, introduces new options, makes some tweaks, and fixes bugs. This is the final snapshot released in 2021.
+
+== Additions ==
+=== World generation ===
+'''Upgrading of old worlds'''
+* [[Cave]]s are now inserted under existing chunks when upgrading a world to the new world height.
+** Deepslate and the bedrock layer currently don't generate due to a bug.<ref>{{bug|MC-240481}}</ref>
+* Large biomes and amplified worlds now have an upgrade path, and retain more of their characteristics when upgraded to the new terrain system.
+
+=== General ===
+'''[[Options]]'''
+* Added "Online Options" as a separate screen:
+** The "Realms Notifications" option has been moved to this screen.
+** Contains the new "Allow Server Listings" option.
+*** When deactivated, the player name doesn't show up in server online player listings.
+** Contains the new "Server Difficulty" option, to indicate the difficulty of the current server.
+
+'''[[server.properties]]'''
+* Added <code>hide-online-players</code>, which when set to "True", doesn't send a player list on status requests.
+
+'''[[Tags]]'''
+* Added following block tags to decide the corresponding creatures to spawn:
+** <code>animals_spawnable_on</code>
+*** Contains [[grass block]].
+** <code>axolotls_spawnable_on</code>
+*** Contains [[clay]].
+** <code>foxes_spawnable_on</code>
+*** Contains grass block, [[snow]], [[snow block]], [[podzol]], and [[coarse dirt]].
+** <code>goats_spawnable_on</code>
+*** Contains [[stone]], snow, [[powder snow]], snow block, [[packed ice]], and [[gravel]].
+** <code>mooshrooms_spawnable_on</code>
+*** Contains [[mycelium]].
+** <code>parrots_spawnable_on</code>
+*** Contains grass block, [[air]], [[Tag#blocks leaves|#leaves]], and [[Tag#blocks logs|#logs]].
+** <code>polar_bears_spawnable_on_in_frozen_ocean</code>
+*** Contains [[ice]].
+** <code>rabbits_spawnable_on</code>
+*** Contains grass block, snow, snow block, and [[sand]].
+** <code>wolves_spawnable_on</code>
+*** Contains grass block, snow, and snow block.
+
+== Changes ==
+=== Gameplay ===
+'''[[Advancement]]s'''
+* All 50 Overworld biomes are now required to be visited for the Adventuring Time advancement, including the following biomes which were previously not required:
+:{| class="wikitable collapsed collapsible"
+! Required biomes
+|-
+| {{BiomeLink|Deep Ocean}}
+|-
+| {{BiomeLink|Dripstone Caves}}
+|-
+| {{BiomeLink|Eroded Badlands}}
+|-
+| {{BiomeLink|Flower Forest}}
+|-
+| {{BiomeLink|Frozen Ocean}}
+|-
+| {{BiomeLink|Frozen Peaks}}
+|-
+| {{BiomeLink|Grove}}
+|-
+| {{BiomeLink|Ice Spikes}}
+|-
+| {{BiomeLink|Jagged Peaks}}
+|-
+| {{BiomeLink|Lush Caves}}
+|-
+| {{BiomeLink|Meadow}}
+|-
+| {{BiomeLink|Ocean}}
+|-
+| {{BiomeLink|Old Growth Birch Forest}}
+|-
+| {{BiomeLink|Old Growth Spruce Taiga}}
+|-
+| {{BiomeLink|Snowy Slopes}}
+|-
+| {{BiomeLink|Stony Peaks}}
+|-
+| {{BiomeLink|Sunflower Plains}}
+|-
+| {{BiomeLink|Windswept Gravelly Hills}}
+|-
+| {{BiomeLink|Windswept Savanna}}
+|}
+
+'''[[Weather]]'''
+* Sleeping now only resets the weather cycle if the weather is [[rain]] or a [[thunderstorm]].
+
+=== World generation ===
+'''[[Deepslate]]'''
+* Now the gradual transition from stone starts at height between Y=0 to Y=8, rather than Y=-8 to Y=0 previously.
+
+=== General ===
+'''JFR profiling'''
+* If it is started from an external source, the JFR events for network packets are now aggregated instead of one event per packet.
+
+'''Simulation distance'''
+* Blocks and fluids are now also affected.
+* Increased the lower limit for simulation distance from 2 chunks to 5 chunks.
+
+'''General'''
+* Optimized entity collisions.
+
+== Fixes ==
+{{fixes|fixedin=21w44a
+|;old
+|63340|Sleeping always resets time until rain.
+|170551|[[Fox]]es can't spawn on podzol or coarse dirt.
+|187716|Nether biome surface builder types incorrectly assume the world height is 128 blocks.
+|190285|"<code>bedrock_roof_position</code>" tag number does not represent height, but height modifier.
+|200494|In [[mineshaft]]s, [[torch]]es can generate attached to blocks other than the wooden supports.
+|216432|Mineshafts can generate with light but without any torches.
+|216561|Torches not spawning in abandoned mineshafts under Y{{=}}0.
+|238877|Deep ocean and ocean are not needed for the "Adventuring Time" advancement.
+|238966|Old growth spruce taiga and old growth birch forest aren't a part of the "Adventuring Time" advancement.
+|238968|Windswept gravelly hills and windswept savanna aren't a part of the "Adventuring Time" advancement.
+|;dev
+|236701|New mountain biomes don't count towards "Adventuring Time" advancement.
+|236938|{{cmd|jfr stop}} output does not have a link.
+|237986|[[Mob]]s specific to structures aren't spawning in their structures.
+|238062|Foxes and wolves don't spawn in groves.
+|238761|Adventuring Time does not account for the new cave biomes.
+|238900|Values of <code>Infinity</code> in noise settings in default worldgen.
+|238912|[[Powder snow]] strips can't generate exposed to the surface.
+|238962|[[Iceberg]]s go all the way to ocean floor.
+|239280|[[Wither]]s do not move down to follow the player when the wither's health is half or lower.
+|239344|All torches in mineshafts are facing the wrong way.
+|239359|[[Wither skeleton]]s can only spawn on Nether bricks.
+|239689|The "amplified" boolean in noise settings does nothing.
+|;previous
+|239854|[[Nether]] and caves world is missing [[bedrock]].
+|239858|Nether decorations can be generated on the original bedrock layer.
+|239866|Terrain shaper in <code>noise_settings</code> is not used.
+|239876|[[Map]]s appear gray when opened in old terrain after conversion.
+|239882|[[Beacon]]s deactivate when upgrading worlds.
+|239902|Weather effects appear in caves and structures in 1.17.1 worlds loaded in 21w43a.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|tDX-nIkDkR8|dPDeWk87CSE}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:21w44a]]
+[[es:Java Edition 21w44a]]
+[[fr:Édition Java 21w44a]]
+[[it:Java Edition 21w44a]]
+[[ja:Java Edition 21w44a]]
+[[pt:Edição Java 21w44a]]
+[[ru:21w44a (Java Edition)]]
+[[th:รุ่น Java 21w44a]]
+[[zh:Java版21w44a]]

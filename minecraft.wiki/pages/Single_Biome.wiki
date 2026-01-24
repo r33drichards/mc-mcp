@@ -1,0 +1,108 @@
+{{exclusive|java}}
+[[File:BuffetWorldCustomization.png|right|thumb|300px|The customization screen for Single Biome.]]
+
+'''Single Biome''' (formerly known as '''Buffet''') is a [[world type]] or a vanilla [[world preset]] in which the entire [[Overworld]] consists of one [[biome]]. It is simple to customize, albeit very limited.
+
+== Generation ==
+Single Biome uses a single [[Dimension_definition#fixed|fixed]] biome source for generating the [[Overworld]] with the default [[Custom_dimension#noise|noise generator]]. Similar to the [[Default]] world type, this configuration generates a world with a bedrock floor at the Y=-64 lower height limit, and the rest of the terrain is generated on top of it. However, in contrast to the Default world type, the Overworld in a Single Biome world consists of only one biome.
+
+The Nether and the End are unchanged from their Default world type counterpart. The Nether uses the multi-noise biome source and the End uses the {{code|minecraft:the_end}} biome source.
+
+Additionally, players can override any dimension with the same fixed biome source generation like Single Biome using a [[custom dimension]] data pack.
+
+=== Custom biome ===
+Single Biome world type allows players to choose a biome that the world generates in the terrain of the [[Overworld]]. Biome choice determines things such as terrain, vegetation, generated structures, and to some extent, mob spawning. Single Biome worlds can be customized to use any one of the available biomes, using only that particular biome for the entire world. The player can choose any of the existing biomes, including the Nether and the End biomes, and custom biomes from [[data pack]]s.
+
+This customization is available in the "Buffet world customization" menu, accessible by clicking the "Customize" button beside the world type selector in the world creation settings.
+
+Using a biome from the Nether or the End to generate the Overworld results in a world with their structures and characteristics, albeit very incomplete. For example, [[warped forest]] does not generate any warped trees, but still generates fogs, particles, and [[nether fortress]]es. This is caused by a bug where the biome surface and terrain is different from their own dimension.<ref>{{bug|MC-239041||The surface in single biome worlds set to use nether or end biomes consists of grass blocks and dirt.}}</ref>
+
+Server operators can set a Single Biome world type by setting <code>level-type=minecraft:single_biome_surface</code> in [[server.properties]].
+
+== ''Bedrock Edition'' (unused) ==
+Code for the Single Biome world type exists in ''Bedrock Edition''; however, it is inaccessible through the game's GUI. It can only be accessed by editing the world's [[Bedrock Edition level format#level.dat|level.dat]] file using external programs. This code supports every biome in the game, including [[Biome/Before 1.18|unused biomes]].
+
+In ''Bedrock Edition'', Single Biome has a few quirks such as:
+
+* [[Mineshaft]]s and [[stronghold]]s generate in every biome.
+* Single Biome affects the [[End]] but not the [[Nether]].
+* [[Biome#Non-land biomes|Non-land biomes]] do not generate their terrain.
+* [[Ocean]]s and [[river]]s when inside of a [[Nether biomes|Nether biome]] have a checkerboard-like pattern of water and lava.
+* [[Structure]] generation cuts off at Y-level 256 when in a Nether or End biome.
+
+This feature is neither widely known nor is it fully developed, and is unlikely to be fully implemented into the game, but it can still be accessed.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=18w16a|Added Buffet world type. At this time, the world generation options were "Overworld" and "End".}}
+|{{HistoryLine|||dev=18w19a|Added the "Caves" generation option.
+|Changed the "Overworld" generator option to "Surface", and changed the "End" option to "Floating Islands".
+|Before this snapshot, players could change the [[Java Edition level format#level.dat format|level.dat]]'s {{nbt|string|generatorOptions}} tag to <code>{"biome_source":{"type":"minecraft:fixed","biomes":["minecraft:plains"]},"chunk_generator":{"type":"'''minecraft:nether'''<nowiki>"}}</nowiki></code> to create the "Caves" generation option.}}
+|{{HistoryLine|||dev=pre4|Biome names are now sorted alphabetically in the Buffet menu.}}
+|{{HistoryLine||1.16|dev=20w21a|The world generator types are now world type values instead of being an option in the Buffet world type.
+|Renamed "Surface" generator to "Single Biome".}}
+|{{HistoryLine||1.17|dev=21w06a|Cave and Floating Island worlds now generate up to y{{=}}319 and down to y{{=}}-64.}}
+|{{HistoryLine|||dev=21w07a|Cave and Floating Island worlds do not generate with grimstone.}}
+|{{HistoryLine|||dev=21w15a|Cave and Floating Island worlds now generate up to y{{=}}255 and down to y{{=}}0.}}
+|{{HistoryLine|||dev=21w17a|Cave and Floating Island worlds now once again generate as they did prior to 21w06a.}}
+|{{HistoryLine||1.18|dev=Experimental Snapshot 1|Cave and Floating Island worlds no longer generate surface features.
+|Floating Island worlds no longer generate terrain properly, and terrain generated above y{{=}}~64 now generates as end stone.}}
+|{{HistoryLine|||dev=21w43a|Cave worlds now generate with netherrack on the ceiling.}}
+|{{HistoryLine|||dev=21w44a|Cave worlds now once again generate with a bedrock ceiling, but now generate with netherrack instead of stone, and without a surface layer.
+|Floating Island worlds now generate as a single thick floating layer of end stone.}}
+|{{HistoryLine|||dev=Pre-release 1|[[Old Buffet world generators|Removed the "Caves" and "Floating Islands"]] generation options from the world creation screen.
+|Existing Cave and Floating Island worlds can still be opened, but still do not generate properly.}}
+|{{HistoryLine|||dev=Pre-release 5|Cave worlds once again generate with stone and a surface layer, and now generate down to y{{=}}-64.
+|Deepslate now generates in Cave worlds.
+|Floating Island worlds once again generate as they did in 21w16a.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||?|Added the Single Biome world type, although it is unused and inacessible through the game's GUI.}}
+}}
+
+== Issues ==
+{{Issue list|Single biome|Buffet|projects=MC}}
+
+== Trivia ==
+*If the Nether or the End is used as the sole biome, then the sky would appear as if it is a mixture of the Overworld and the [[dimension]]s.
+
+== Gallery ==
+=== Screenshots ===
+<gallery>
+Borderless Beach.png|A beach biome generated using Single Biome world type, showing a borderless beach that looks like a desert, but with naturally spawning [[turtle]]s.
+Borderless River.png|A river biome generated using Single Biome world type, showing a borderless river that looks like a shallow ocean.
+Voidland.png|A void-like biome generated using Single Biome world type, resulting in terrain made entirely of stone with a single block of cobblestone generated on the player's spawn point.
+EndHighlandsoverworldgeneration.png|The End generated using the Single Biome generation.
+The End–Overworld Buffet.png|The End buffet world generated using Overworld terrain.
+Extreme Hills Edge Buffet.png|A [[mountain edge]] buffet world.
+Nether wastes overworld.png|A [[Nether Wastes|nether wastes]] biome using Single Biome type. Although the terrain is that of the Overworld, [[ghast]]s still spawn naturally.
+Buffet Mushroom Island Shore.png|A [[mushroom fields]] buffet world.
+</gallery>
+
+=== Mojang Screenshots ===
+<gallery>
+Single Biome Desert.jpg|A desert buffet world.
+Single Biome Comparison.jpg|The same terrain in different biomes.
+</gallery>
+
+== See also ==
+*[[Old Buffet world generators]]
+*[[Custom]]
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox environment}}
+
+[[Category:World types]]
+
+[[de:Buffet]]
+[[fr:Biome unique]]
+[[it:Bioma singolo]]
+[[ja:シングルバイオーム]]
+[[ko:뷔페]]
+[[pl:Bufet]]
+[[pt:Bioma único]]
+[[ru:Ассорти]]
+[[zh:单一生物群系]]

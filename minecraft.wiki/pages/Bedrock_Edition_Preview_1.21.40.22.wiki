@@ -1,0 +1,231 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.4022.0<br>'''Android, iOS, iPadOS''': 1.21.40.22
+| image = Bedrock 1.21.40.22 PatchNotes.jpeg
+| image2 = Bedrock 1.21.40.22.png
+| build = 27814251
+| editorver = 0.7.2
+| versioncode = '''Android''':<br />
+952104022 (armeabi-v7a, 34)<br />
+962104022 (x86, 34)<br />
+972104022 (arm64-v8a, 34)<br />
+982104022 (x86_64, 34)<br />
+| date = September 18, 2024
+| server = 1.21.40.22
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.40.22.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.40.22.zip Linux]
+| parent = 1.21.40
+| prevparent = 1.21.31
+| prev = Preview 1.21.40.21
+| next = Preview 1.21.40.23
+| nextparent = 1.21.41
+}}<onlyinclude>
+'''Beta 1.21.40.22''' (ChromeOS, Android) or '''Preview 1.21.40.22''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the third beta/''Preview'' version for [[Bedrock Edition 1.21.40]], released on September 18, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/30356048742413|title=Minecraft Beta & Preview - 1.21.40.22|website=Minecraft Feedback|date=September 18, 2024}}</ref> which adds dyed [[bundle]]s in all 16 colors, and fixes bugs.
+
+== Changes ==
+=== General ===
+'''[[Realms]]'''
+*Added a new Realm Event.
+[[File:New UI - Play Screen Menu "Realms" Tab (Bedrock Preview 1.21.40.22).png|380px|thumb|New Play Screen "Realms" Tab.]]
+
+=== Mobs ===
+'''[[Bat]]s'''
+*Updated the rules under which they spawn in the world:
+**Bats can now spawn at any height, provided the area is covered and sufficiently dark.
+**They must spawn on one of the following blocks: stone, granite, diorite, andesite, tuff, or deepslate.
+**As a result, bats may now happen to spawn above the surface.
+
+=== Technical ===
+'''[[API]]'''
+*Moved {{cd|getRedstonePower}} from {{cd|beta}} to {{cd|1.15.0}}.
+
+'''[[Block]]s'''
+*Updated the jigsaw block:
+**Updated the jigsaw block UI.
+**Added selection priority and placement priority fields.
+*Updated references to old block names in behavior pack color recipe files.
+*Updated references to old block names in behavior pack feature files.
+*Updated references to old block names in biome definition files.
+
+'''[[Commands/camera|Camera]]'''
+*The {{cd|minecraft:follow_orbit}} preset is no longer behind the experimental toggle.
+
+'''Components'''
+*Moved the {{cd|minecraft:redstone_conductivity}} component out of the Upcoming Creator Features experiment for {{cd|format_versions}} {{cd|1.21.30}} and above.
+
+'''Entity Components'''
+*Expanded {{cd|minecraft:explode}} with the following new fields:
+**{{cd|damage_scaling}}: A scale factor applied to the explosion's damage to entities. A value of 0 prevents the explosion from dealing any damage. Negative values cause the explosion to heal entities instead:
+**{{cd|toggles_blocks}}: If true, the explosion will toggle blocks in the explosion radius.
+**{{cd|knockback_scaling}}: A scale factor applied to the knockback force caused by the explosion.
+**{{cd|particle_effect}}: The name of the particle effect to use. The accepted strings are {{cd|wind_burst}} or {{cd|breeze_wind_burst}}. All other inputs will use the default explosion particles.
+**{{cd|sound_effect}}: The name of the sound effect played when the explosion triggers.
+**{{cd|negates_fall_damage}}: Defines whether the explosion should apply fall damage negation to players above the point of collision.
+**{{cd|allow_underwater}}: If true, the explosion will affect blocks and entities underwater.
+
+'''Graphical'''
+*Starting with base game version 1.21.40, built-in {{cd|biomes_client.json}} files will no longer be loaded. That file from other packs will continue to be loaded. Water and fog settings are now in individual {{cd|client_biome.json }} files in resource packs. When both {{cd|biomes_client.json}} and the individual {{cd|client_biome.json}} file specify competing values, the loaded {{cd|biomes_client.json}} from creator content will have priority.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Bundles", "New Third Person Presets", and "Upcoming Creator Features" experimental toggles.
+=== Additions ===
+==== Technical ====
+'''[[Add-on]]s and Script Engine'''
+*Add support for custom items with the {{cd|minecraft:block_placer}} item component to use the referenced "block" as the icon for the item:
+**If the {{cd|minecraft:icon}} component is specified, it will override the "block" icon.
+**Requires the "Upcoming Creator Features" toggle. Must use item json version {{cd|1.21.40}} or higher.
+
+'''API'''
+*Added enum {{cd|PlatformType}} export enum {{cd|<nowiki>PlatformType { Console = 'Console', Desktop = 'Desktop', Mobile = 'Mobile', } Class ScriptClientSystemInfo</nowiki>}}:
+**Added field {{cd|platformType}}.
+**Added field {{cd|maxRenderDistance}}.
+
+'''Camera'''
+*Added camera relative movement to the "New Third Person Presets" experimental toggle:
+**Camera relative movement is enabled on any camera that inherits from {{cd|minecraft:follow_orbit}} and sets {{cd|align_camera_and_target_forward}} to {{cd|false}}.
+
+=== Changes ===
+==== Items ====
+'''[[Bundle]]s'''
+* {{Animate|White Bundle JE1 BE1.png; Light Gray Bundle JE1 BE1.png; Light Gray Bundle JE1 BE1.png; Black Bundle JE1 BE1.png; Brown Bundle JE1 BE1.png; Red Bundle JE1 BE1.png; Orange Bundle JE1 BE1.png; Yellow Bundle JE1 BE1.png; Lime Bundle JE1 BE1.png; Green Bundle JE1 BE1.png; Cyan Bundle JE1 BE1.png; Light Blue Bundle JE1 BE1.png; Blue Bundle JE1 BE1.png; Purple Bundle JE1 BE1.png; Magenta Bundle JE1 BE1.png; Pink Bundle JE1 BE1.png|32px}} They can now be dyed 16 different colors using dyes.
+
+==== Technical ====
+'''API'''
+*Moved {{cd|PlayerInteractWithBlockBeforeEvent}} and {{cd|PlayerInteractWithBlockAfterEvent}} from {{cd|beta}} to {{cd|1.15.0}}.
+*Moved {{cd|PlayerInteractWithEntityBeforeEvent}} and {{cd|PlayerInteractWithEntityAfterEvent}} from {{cd|beta}} to {{cd|1.15.0}}.
+
+'''Graphical'''
+*Updated some JSON schemas for Deferred Technical Preview resource packs. Creators must update their packs to the new format. Documentation on the Creator Learning Portal will be updated accordingly:
+**Split up the contents of {{cd|lighting/global.json}} into 3 files: {{cd|lighting/global.json}}, {{cd|point_lights/global.json}} and {{cd|pbr/global.json}}. They contain directional lights + emissive desaturation, point light colors and MERS fallbacks respectively.
+**The schema for {{cd|lighting/global.json}} is now wrapped in a new {{cd|minecraft:lighting_settings}} object and also requires a {{cd|description}} object with an {{cd|identifier}} string to act as a unique name for your settings. The {{cd|format_version}} field has also been modified to require a string as opposed to an array of integers, and must use a version of {{cd|1.21.40}}.
+**The filepath for atmospheric scattering files has been relocated to {{cd|atmospherics/atmospherics.json}}.
+**The schema for {{cd|atmospherics/atmospherics.json}} is now wrapped in a new {{cd|minecraft:atmosphere_settings}} object and also requires a {{cd|description}} object with an {{cd|identifier}} string to act as a unique name for player's settings. It also requires a {{cd|format_version}} string, which must be a version of {{cd|1.21.40}}.
+**The schema for {{cd|color_grading/color_grading.json}} now requires a {{cd|format_version}} string, which must be a version of {{cd|1.21.40}}.
+**The schema for {{cd|water/water.json}} now requires a {{cd|format_version}} string, which must be a version of {{cd|1.21.40}}.
+{{Collapse
+|title='''Updated JSON schemas'''
+|content=
+<pre>"lighting/global.json"
+{
+	"minecraft:lighting_settings": {
+		"format_version": "1.21.40",
+		"description": {
+			"identifier": string
+		},
+		"directional_lights": {
+			"sun": {
+				"illuminance": float,
+				"color": RGB color
+			},
+			"moon": {
+				"illuminance": float,
+				"color": RGB color
+			},
+			"orbital_offset_degrees": float
+		},
+		"emissive": {
+			"desaturation": float
+		}
+	}
+}
+"point_lights/global.json"
+{
+	"minecraft:point_light_settings": {
+		"format_version": "1.21.40",
+		"colors": {
+			"minecraft:block_name": RGB color,
+			...
+		}
+	}
+}
+"pbr/global.json"
+{
+	"minecraft:pbr_fallback_settings": {
+		"format_version": "1.21.40",
+		"blocks": {
+			"global_metalness_emissive_roughness_subsurface": RGBA color
+		},
+		"actors": {
+			"global_metalness_emissive_roughness_subsurface": RGBA color
+		},
+		"particles": {
+			"global_metalness_emissive_roughness_subsurface": RGBA color
+		},
+		"items": {
+			"global_metalness_emissive_roughness_subsurface": RGBA color
+		}
+	}
+}
+"atmospherics/atmospherics.json"
+{
+	"minecraft:atmosphere_settings": {
+		"format_version": "1.21.40",
+		"description": {
+			"identifier": string
+		},
+		...
+	}
+}
+"color_grading/color_grading.json"
+{
+	"minecraft:color_grading_settings": {
+		"format_version": "1.21.40",
+		"description": {
+			"identifier": string
+		},
+		...
+	}
+}
+"water/water.json"
+{
+	"minecraft:water_settings": {
+		"format_version": "1.21.40",
+		"description": {
+			"identifier": string
+		},
+		...
+	}
+}</pre>}}
+
+'''[[Molang]]'''
+*Added {{cd|query.client_max_render_distance}}. It returns the max render distance in chunks of the current client. Available on the Client (Resource Packs) only.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.40.22 Preview
+|;old
+|73593|Items sometimes become stuck in the crafting grid
+|109595|Identical lodestone compasses don't stack
+|128464|Item categories are shown when the recipe book window is closed
+|159557|Sneak button disappear when (swaped, lefty, touching a part of the screen
+|175113|Pressure-sensitive Left and right triggers on controller now "double-tap" after pressing
+|176922|Jump boost does not affect the breeze's jump
+|176991|Breeze can jump on top of honey blocks
+|181055|TNT explosion cancels the downward momentum of other falling lit TNT instead of accelerating it
+|181405|Jigsaw Blocks Don't hold data
+|181789|Cannot break blocks by tapping when using "Joystick & aim crosshair" Control Mode
+|184090|New Bed screen has a different background overlay when Screen Animations is off
+|185643|Minecart stopping on rail and will not proceed when pushed
+|185952|Wrong death message is displayed when being killed by a mob's smash attack
+|186255|Some flattened IDs are still incorrectly overwritten by original ID in {{cd|blocks.json}} with {{cd|format_version}} {{cd|1.21.20}} or higher
+|186324|When attempting to respawn, it shows a loading icon and never actually respawns you.
+|;previous
+|186359|Bundle items cannot be accessed in Creative Mode with Clear Hotbar enabled
+|otherissuescount=5}}
+'''Other'''
+*Zombified piglins spawned by a nether portal now have 15-second cooldown before it can use the portal.
+*Fixed a bug where Realms invite links could overflow past their text boxes.
+*Fixed an issue where the new Bed screen wouldn't be narrated fully in certain scenarios (''Preview'' only).
+*Fixed some cases when the {{cd|entityRemove}} world event would sometimes not be triggered.
+*Wind charges now use the {{cd|minecraft:explode}} component instead of {{cd|minecraft:wind_burst}}.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.40 betas]]
+
+[[de:Bedrock Edition beta 1.21.40.22]]
+[[uk:Preview 1.21.40.22 (Bedrock Edition)]]
+[[zh:基岩版1.21.40.22]]

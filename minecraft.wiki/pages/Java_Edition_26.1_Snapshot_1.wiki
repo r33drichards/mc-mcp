@@ -1,0 +1,333 @@
+{{Infobox version
+|title=Minecraft 26.1 Snapshot 1
+|image=26.1-snapshot-1.jpg
+|image2=Java Edition 26.1-snapshot-1.png
+|edition=java
+|type=Snapshot
+|date=December 16, 2025
+|clienthash=bd354bbd46835d7c7753e0b19c718777fb2386ba
+|jsonhash=b9345ee364d36ef1c7ec26df6bf99d3e4a4393f5
+|jsonfile=26.1-snapshot-1
+|serverhash=99786473e61ff6fcf0df4db9e0d6c9012c196116
+|parent=26.1
+|prevparent=1.21.11
+|prev=
+|next=26.1 Snapshot 2
+|nextparent=
+}}
+<onlyinclude>
+
+'''26.1 Snapshot 1''' (known as '''26.1-snapshot-1''' in the [[launcher]]) is the first [[snapshot]] for [[Java Edition 26.1]], released on December 16, 2025.<ref>{{mcnet|minecraft-26-1-snapshot-1|Minecraft 26.1 Snapshot 1|December 16, 2025}}</ref> It adds [[data pack]]-controlled [[trading]], improves the game's [[lighting]] and the look of the [[Night Vision]] effect, and makes other technical changes (i.e. related to data packs).
+
+This is the first snapshot to use the [[Version formats#Snapshots|new version format]] announced earlier that month,<ref>{{Mcnet|minecraft-new-version-numbering-system|Minecraft’s new version numbering system|2 December 2025}}</ref> the first snapshot to require Java 25, the first snapshot to be released with only an [[Obfuscation map#Unobfuscated versions|unobfuscated]] build, and the final snapshot released in 2025.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|swing}}'''
+* New command that enables swinging of entities' arms.
+* Not all entities support swing animation. {{cmd|swing}} will succeed for those entities, but clients will only display it when possible.
+** For example, this makes it possible to swing mannequin arms.
+* Returns the amount of entities for which a swing was sent.
+** Syntax: {{cmd|swing <entity selector> <mainhand&vert;offhand>}}
+
+=== General ===
+'''[[Data component format]]'''
+* Added {{cd|minecraft:additional_trade_cost}}
+** Transient component used to modify count needed of the wants item in a villager trade, is removed after a trade has been generated
+** Format: integer
+
+'''[[Villager trade definition|Data-driven villager trades]]'''
+* Trades offered by [[villager]]s and [[wandering trader]]s are now data-driven and can be customized by datapack developers.
+** Villager Trades
+*** Present in the {{cd|villager_trade}} folder, represents a blueprint for trades which is used by villagers and wandering traders to generate actual trades.
+*** Entry Format:
+**** {{cd|wants}}, an object representing an item type and number of them needed to trade.
+***** {{cd|id}}, the id of the item
+***** {{cd|count}}, an optional number provider representing how many of the item is needed for the trade.
+****** Defaults to a constant {{cd|1}}
+***** {{cd|components}}, an optional component map representing the expected data components on the item.
+****** Defaults to an empty map.
+**** {{cd|additional_wants}}, an optional object representing an additional item required by the merchant, has the same format as wants.
+**** {{cd|gives}}, an item Stack representing the resulting item given by the merchant when trading.
+***** Uses the existing format for item stacks.
+**** {{cd|given_item_modifiers}}, a optional list of item Modifiers representing modifiers to apply to the item in gives such as enchantments or potions, used to add dynamism to the trade rather than hardcoding certain values.
+***** Uses the existing format for item modifiers (also known as loot modifiers, item functions, loot functions...).
+***** If any of these returns an empty item the entire trade will be discarded.
+***** Item Modifier references are not supported.
+***** If the final item has a {{cd|stored_enchantment}} component containing an enchantment in the {{cd|#double_trade_price}} tag, then the count of {{cd|wants}} is doubled.
+**** {{cd|max_uses}}, an optional number provider representing the maximum number of times a trade may be used.
+***** Is set to {{cd|1}} if the number provider returns a lower value.
+***** Defaults to {{cd|4}}
+**** {{cd|reputation_discount}}, an number provider representing how much factors such as demand, discounts or penalties affects the cost represented by wants.
+***** Is set to {{cd|0.0}} if the number provider returns a lower value.
+***** Defaults to {{cd|0.0}}
+**** {{cd|xp}}, an optional number provider representing the amount of xp a merchant gets when the trade is done.
+***** Is set to {{cd|0}} if the number provider returns a lower value.
+***** Defaults to {{cd|1}}
+**** {{cd|merchant_predicate}}, a predicate representing conditions on the merchant that need to be met for the trade to be offered.
+***** Uses the existing format for predicates.
+***** Predicate references are not supported.
+**** {{cd|double_trade_price_enchantments}}, an optional enchantment id, list of namespaced enchantment IDs, or hash-prefixed enchantment tag representing enchantments that will double the additional cost from {{cd|minecraft:enchant_randomly}} and {{cd|minecraft:enchant_with_levels}} if they have {{cd|include_additional_cost_component}} set to {{cd|true}} and if the item has one of the provided values in its {{cd|minecraft:stored_enchantments}} component.
+** An example trade of an emerald and a book for an enchanted book offered only by desert villagers.
+<syntaxhighlight lang="json">
+{
+  "additional_wants": {
+    "id": "minecraft:book"
+  },
+  "double_trade_price_enchantments": "#minecraft:double_trade_price",
+  "given_item_modifiers": [
+    {
+      "function": "minecraft:enchant_randomly",
+      "include_additional_cost_component": true,
+      "only_compatible": false,
+      "options": "#minecraft:trades/desert_common"
+    },
+    {
+      "function": "minecraft:filtered",
+      "item_filter": {
+        "items": "minecraft:enchanted_book",
+        "predicates": {
+          "minecraft:stored_enchantments": [
+            {}
+          ]
+        }
+      },
+      "on_fail": {
+        "function": "minecraft:discard"
+      }
+    }
+  ],
+  "gives": {
+    "count": 1,
+    "id": "minecraft:enchanted_book"
+  },
+  "max_uses": 12.0,
+  "merchant_predicate": {
+    "condition": "minecraft:entity_properties",
+    "entity": "this",
+    "predicate": {
+      "predicates": {
+        "minecraft:villager/variant": "minecraft:desert"
+      }
+    }
+  },
+  "reputation_discount": 0.2,
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}
+</syntaxhighlight>
+
+'''[[Environment attribute]]s'''
+* {{cd|minecraft:visual/block_light_tint}}
+** Tint of the block light. Block light color start as dark grey at low light levels, becomes tinted by this attribute at medium levels and turns white at high levels. By default, it provides the yellowish tint of torches. Bright colors work best for this attribute, with at least one color component being fully bright. The tint applies globally to all light sources visible on the screen. Individual lights can not be tinted differently.
+** Value type: RGB color
+** Default value: {{color|#FFD88C}}
+** Modifiers: RGB Color Modifiers
+** Interpolated: yes
+** Resolved at the camera's position
+
+* {{cd|minecraft:visual/ambient_light_color}}
+** Defines both the ambient light tint and brightness. This light is applied to the world at 0 light level. Block and sky light are added on top of it.
+** Value type: RGB color
+** Default value: {{color|#000000}}.
+** Modifiers: RGB Color Modifiers
+** Interpolated: yes
+** Resolved at the camera's position.
+** Set to {{color|#0A0A0A}} in the Overworld, {{color|#302821}} in the Nether, and {{color|#3f473f}} in the End.
+
+* {{cd|minecraft:visual/night_vision_color}}
+** This color is used similarly to ambient light color. When the Night Vision effect is active, per-component maximum of {{cd|minecraft:visual/night_vision_color}} and {{cd|minecraft:visual/ambient_light_color}} is used as ambient color. [[Night Vision]] is not tinted by default.
+** Value type: RGB color
+** Default value: {{color|#999999}}
+** Modifiers: RGB Color Modifiers
+** Interpolated: yes
+** Resolved at the camera's position
+
+'''Lightmap debug renderer'''
+* A new debug renderer for the lightmap was added, which can be enabled using the {{key|F3+4}} keybind.
+* It is mutually exclusive with FPS/TPS and networking charts.
+* It shows the lightmap texture in real-time in the bottom right corner of the screen.
+* The vertical axis of the texture represent sky light levels (0-15 from bottom to top).
+* The horizontal axis of the texture represent block light levels (0-15 from left to right).
+* The color of each pixel represents the resulting color that will be applied to blocks and entities lit with the corresponding block and sky light levels.
+
+'''[[Loot functions]]'''
+* Added {{cd|minecraft:villager_trade}} loot table type which takes the following parameters:
+** {{cd|this}}, the entity offering the trade.
+** {{cd|origin}}, the block position of the entity at its feet.
+
+* Added {{cd|minecraft:set_random_dyes}}
+** Additively adds dyes to an item's {{cd|minecraft:dyed_color}} data component if the item is in the {{cd|#dyeable}} tag Fields:
+** {{cd|conditions}} - conditions for the function to apply.
+** {{cd|number_of_dyes}} - number provider representing the number of random dyes out of sixteen to apply to the item.
+*** The same dye might be selected repeatedly.
+
+* Added {{cd|minecraft:set_random_potion}}
+** Randomly sets the minecraft:potion_contents data component on an item Fields:
+** {{cd|conditions}} - conditions for the function to apply.
+** {{cd|options}} - optional potion id, list of namespaced potion IDs, or hash-prefixed potion tag, representing the possible potions to select from.
+*** Defaults to any potion in the potions registry.
+
+'''[[Predicate]]s'''
+* Added {{cd|minecraft:sum}}
+** Returns the sum of a list of number providers.
+** Fields:
+*** {{cd|summands}}, a list of number providers.
+
+'''[[Tag]]s'''
+* Added several tags representing groups of villager trades from which [[villager]]s and [[wandering trader]]s derive their trading pools.
+** Villagers have the following tags representing each profession and level of trade in the format: {{cd|#<profession>/level_<level>}}, up to level 5.
+*** Smiths have the {{cd|#common_smith/level_<level>}} tags representing common trades among armorers, weaponsmiths and toolsmiths, up to level 5.
+** Wandering Traders have the following tags: {{cd|#wandering_trader/buying}}, {{cd|#wandering_trader/special}}, {{cd|#wandering_trader/common}}.
+
+* Potion tags
+** Added {{cd|#tradeable}}
+*** Contains all potion effects that can appear in villager trades.
+
+'''[[Trade sets]]'''
+* What trades are unlocked by villager professions are now determined using deterministic random sequences, like loot drops and barter loot.
+* Present in the {{cd|trade_set}} folder, they are groupings of trades offered by [[villager]]s and [[wandering trader]]s.
+* Currently only hardcoded ones are available in {{cd|<profession>/level_<level>}} for villagers, as well as {{cd|wandering_trader/buying}}, {{cd|wandering_trader/special}}, {{cd|wandering_trader/common}} for wandering traders.
+* Entry Format:
+** {{cd|trades}}, a villager trade id, list of namespaced villager trade IDs, or hash-prefixed villager trade tag representing the trades that are part of this trade set.
+** {{cd|amount}}, a number provider representing the amount of trades to be generated from this set when used.
+*** If the generated number is greater than the number of available {{cd|trades}} then it will only generate until all {{cd|trades}} have been used once, unless {{cd|allow_duplicates}} is set to {{cd|true}}
+** {{cd|allow_duplicates}}, a boolean representing if the trade set can use the same villager trade multiple times to generate trades.
+*** Defaults to {{cd|false}}
+** {{cd|random_sequence}}, an optional named random sequence that determines which trades are generated.
+*** Defaults to a non-deterministic random sequence.
+** An example trade set offering 2 trades from the {{cd|#minecraft:armorer/level_1}} tag, allowing duplicates.
+<syntaxhighlight lang="json">
+{
+ "amount": 2.0,
+ "trades": "#minecraft:armorer/level_1",
+ "random_sequence": "minecraft:trade_set/armorer/level_1",
+ "allow_duplicates": true
+}
+</syntaxhighlight>
+
+== Changes ==
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|95.0}}.
+
+'''[[Debug screen]]'''
+* The {{cd|looking_at_block}} and {{cd|looking_at_fluid}} debug entries no longer show tags.
+* New debug entries have been added:
+** {{cd|looking_at_block_tags}}
+** {{cd|looking_at_fluid_tags}}
+** {{cd|looking_at_entity_tags}}
+* Renamed debug entries:
+** {{cd|looking_at_block}} -> {{cd|looking_at_block_state}}
+** {{cd|looking_at_fluid}} -> {{cd|looking_at_fluid_state}}
+
+'''[[Enchantment definition]]'''
+* The {{cd|post_piercing_attack}} component no longer only works for a player if that player has a certain food level.
+
+'''Lightmap algorithm'''
+* The algorithm that maps block and sky light levels to how bright things appear on screen has been fully rewritten.
+* A new algorithm that is supposed to mostly provide the same overall results as previous one, but:
+** It is simpler and more straightforward, and fixes multiple issues of the previous one.
+** The [[darkness]] effect and world darkening effect of the [[Wither]] fight now works the same way in all dimensions.
+** The [[night vision]] effect now simply adds ambient light instead of scaling the resulting colors.
+*** It means that fully dark areas no longer look brighter than areas lit by block or sky light.
+** Other aspects of the algorithm such as block light tint, ambient light color and night vision color are now data-driven through environment attributes.
+
+'''Lightmap shader'''
+* The {{cd|lightmap.fsh}} shader was significantly modified.
+** The {{cd|LightmapInfo}} uniform now has two new fields:
+*** {{cd|BlockLightTint}}
+*** {{cd|NightVisionColor}}
+** The {{cd|AmbientLightFactor}} field was removed, its value is now premultiplied into {{cd|AmbientColor}}
+** The {{cd|DarkenWorldFactor}} was renamed to {{cd|BossOverlayWorldDarkeningFactor}}
+* Text and items rendered in UI now use a separate 1x1 white lightmap texture, so the lightmap shader does not always have to keep the 15, 15 pixel purely white.
+
+'''[[Loot functions]]'''
+* Changed {{cd|minecraft:enchant_with_levels}}
+** Now also takes the following field:
+*** {{cd|include_additional_cost_component}} - optional boolean representing if a {{cd|minecraft:additional_trade_cost}} component should be added to the item based on the cost of the enchantment.
+**** Defaults to {{cd|false}}
+**** The value is determined by the levels number provider and is the same that is used to determine what enchantment level is used for enchanting.
+
+* Changed {{cd|minecraft:enchant_randomly}}
+** Now also takes the following field:
+*** {{cd|include_additional_cost_component}} - optional boolean representing if a {{cd|minecraft:additional_trade_cost}} component should be added to the item based on the cost of the enchantment.
+**** Defaults to {{cd|false}}
+**** The value is determined by the value selected by levels or its default value using the following formula: <math>2 + random(0, 5 + level * 10) + 3 * level</math>
+
+'''[[Predicate]]s'''
+* Entity Predicates
+** {{cd|player}} Sub-Predicate
+*** New optional field: {{cd|food}} 
+*** A Food predicate
+*** Format: Object with fields:
+**** {{cd|level}} - optional integer min/max range specifying the required food level.
+**** {{cd|saturation}} - optional float min/max range specifying the required saturation level.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|76.0}}.
+
+'''[[Splash]]es'''
+* Changed "Java 16 + 1 + 4 = 21!" to "Java 16 + 1 + 4 * 2 = 25!".
+
+'''[[Tag]]s'''
+* Enchantment Tags
+** Removed the following tags:
+*** {{cd|trades/desert_special}}
+*** {{cd|trades/jungle_special}}
+*** {{cd|trades/plains_special}}
+*** {{cd|trades/savanna_special}}
+*** {{cd|trades/snow_special}}
+*** {{cd|trades/swamp_special}}
+*** {{cd|trades/taiga_special}}
+
+'''General'''
+* If a server's disk space is low, a toast will now be shown to server operators.
+* The game now requires Java 25.
+* The included Java distribution is now the Microsoft build of OpenJDK 25.
+* Piglin inventory slots can now be accessed using {{cd|piglin.*}} similar to how villager inventories can be accessed using {{cd|villager.*}}.
+
+== Fixes ==
+{{fixes|fixedin=26.1 Snapshot 1
+|;From released versions before 26.1
+|64087|Revengeful zombies / Zombie reinforcements will try to attack you in Creative mode.
+|179949|You cannot edit the inventories of piglins by using {{cmd|item replace}}.
+|197497|Smooth lighting transition from level 1 to 0 is not smooth.
+|199589|Hitting mobs in Creative mode then switching into Survival causes the mob to target you.
+|219981|Leader zombie-type mobs spawn with 20 health despite having an increased maximum health.
+|300465|Maps with the maximum number of markers cannot be placed in item frames.
+|302186|Ambient lighting in the Nether appears discolored compared to previous versions.
+|302408|Inconsistent underwater lighting with the Conduit Power effect applied.
+|302528|Low sky & block light look outright broken when cast on the same area.
+|303119|Feeding a cat or wolf in Survival mode with only one item in the selected item slot does not restore as much health as it should.
+|303125|Creepers can blow up after the player dies.
+|303389|The ender dragon's velocity can be affected by attacks while perched.
+|303692|Debug overlay text has an indent when improved transparency is disabled.
+|304023|Redundant level data fixer files are saved in worlds' "data" folder.
+|304217|Lunge's hunger requirement applies to {{cd|post_piercing_attack}} effects of custom enchantments.
+|304599|Dolphins don't follow players riding nautiluses like in Bedrock Edition.
+|304631|Anisotropic filtering set to 8x causes opaque translucent textures to become transparent in the distance when there are odd-sized block textures.
+|304725|Zombie villagers summoned with default spawn eggs always spawn as their plains variant.
+|304991|Clicking on a chest with loot that hasn't been generated in Spectator mode makes the "{{cd|block.chest.locked}}" sound.
+|305012|The description of the "Universal anger" game rule still uses the old ID of the "Forgive dead players" game rule.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|3TQ8ch8bN4A|iymV0-l0HUE}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|2026}}
+
+[[de:26.1-snapshot-1]]
+[[es:Java Edition 26.1 Snapshot 1]]
+[[fr:Édition Java 26.1 Snapshot 1]]
+[[it:Java Edition 26.1 Snapshot 1]]
+[[ja:Java Edition 26.1 Snapshot 1]]
+[[lzh:爪哇版二六點一之快照一]]
+[[pt:Edição Java 26.1 Snapshot 1]]
+[[ru:26.1 Snapshot 1 (Java Edition)]]
+[[zh:Java版26.1-snapshot-1]]

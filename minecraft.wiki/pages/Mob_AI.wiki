@@ -1,0 +1,424 @@
+{{WIP}}
+{{Stub}}
+
+This article describes the various components of a mob's AI that control the mob's behavior.
+
+== Brain ==
+Some mobs use a complex AI system called a brain. A mob's brain stores memories (data), a list of tasks that can be performed, and a list of sensors used to determine which tasks it can perform.
+
+=== Sensor ===
+Sensors are used to detect if a mob with a brain can perform certain tasks. Examples of sensors include, a sensor to detect if an armadillo should be scared, a sensor to detect the nearest player, and a sensor to detect if a mob is in water.
+
+=== Task ===
+Tasks are activities that mobs with brain AI systems can perform. Sensors are used to determine if a task can be performed, and tasks may use information stored in memories. Examples of tasks include a villager walking to its jobsite, a piglin admiring an item, or a warden emerging. Tasks have priorities, so tasks with a higher priority will over run tasks with lower priority, for example, if a zombie is wandering and  it sees a player, it will switch tasks to attacking.
+
+=== Memory ===
+Memories are used to store data, and are used when mobs perform tasks. Examples of memories include a list of all visible mobs in range, the location of a villager's jobsite block, and any cooldowns the mob may have.
+
+== Control ==
+=== Walking ===
+{{Empty section}}
+
+=== Swimming ===
+{{Empty section}}
+
+=== Flying ===
+{{Empty section}}
+
+== Goals ==
+Goals are a simple AI system used by mobs that don't use brain AI. Goals can range from wandering around, opening doors, attacking another mob, and more. Each type of mob that uses goals has its own defined list of goals, and each goal has a priority. Mobs attempt to perform the lowest priority goal they can, and may switch goals if there is an opportunity to pursue a lower priority goal. For example, if a zombie is targeting and chasing a villager (priority of 3) and a player comes within the detection range of the zombie, the zombie may target and chase the player (priority of 2) instead.
+
+=== List of goals ===
+List of goals that are used by many different mobs.
+
+{|class="wikitable collapsible collapsed"
+|+List of Goals
+!Goal !! Description !! Notes
+|-
+|Active Target
+|Select an entity to target for chasing and attacking
+|-
+|Ambient Stand
+|Untamed horse bucks when player tries to ride it
+|-
+|Attack
+|Attack target
+|-
+|Attack with Owner
+|Tamed animal attacks a target mob attacked by owner
+|-
+|Avoid Sunlight
+|During day, move out of direct line-of-sight with sky
+|-
+|Bow Attack
+|Attack target with bow
+|-
+|Breathe Air
+|Mob that can drown tries to move out of water
+|-
+|Cat Sit on Block
+|Cat sits on bed, chest, or furnace
+|-
+|Chase Boat
+|Chase after boat ridden by player
+|''Unused''
+|-
+|Creeper Ignite
+|Creeper ignites
+|-
+|Crossbow Attack
+|Attack target with crossbow
+|-
+|Destroy Egg
+|Destroy turtle eggs
+|-
+|Disableable Follow Target
+|Raid entity stops following target
+|''Unused''
+|-
+|Dive Jump
+|Mob jumps up and dives down
+|-
+|Dolphin Jump
+|Dolphin jumps out of water
+|-
+|Door Interact
+|Mob tries to open a door
+|-
+|Eat Grass
+|Mob grazes on grass
+|-
+|Escape Danger
+|Mob panics and runs away when damaged
+|-
+|Flee Entity
+|Mob runs away from another mob that it is scared of (e.g. skeletons running from wolves)
+|-
+|Fly
+|Mob tries to fly
+|-
+|Follow Group Leader
+|Fish tries to follow the leader of a school of fish
+|-
+|Follow Mob
+|Mob follows another mob
+|-
+|Follow Owner
+|Tamed mob follows owner
+|-
+|Follow Parent
+|Baby mob follows its parent
+|-
+|Form Caravan
+|Llama follows other llamas to form a caravan | up to 8 llamas in caravan
+|-
+|Go to Bed and Sleep
+|Tamed cat sleeps in bed
+|-
+|Go to Walk Target
+|Mob walks to a target
+|-
+|Hold in Hands
+|Mob holds an item in its main hand
+|-
+|Horse Bond with Player
+|Horse attempts to bond with player attempting to tame it
+|-
+|Iron Golem Look
+|Iron golem looks at a villager
+|-
+|Iron Golem Wander Around
+|Iron golem wanders around village
+|uses points of interest
+|-
+|Long Door Interact
+|Open a door, then close it after a delay
+|-
+|Look Around
+|Mob spins around and looks in random directions
+|-
+|Look At Customer
+|Villager or wandering trader looks at player while trading
+|-
+|Look At Entity
+|Mob looks at another mob
+|-
+|Melee Attack
+|Mob paths to target and attacks
+|-
+|Move Into Water
+|Mob paths to water
+|-
+|Move Through Village
+|Mob moves between points of interest in a village
+|-
+|Move To Raid Center
+|Raiders move toward village after spawning
+|-
+|Move To Target Position
+|Mob paths to a specific block
+|-
+|Pounce At Target
+|Mob jumps towards target
+|cats, foxes, ocelots
+|-
+|Powder Snow Jump
+|Mob dives into powder snow
+|foxes
+|-
+|Prioritized Goal
+|Used to override the default priority of a goal
+|-
+|Projectile Attack
+|Mob attacks target with a projectile
+|arrow, spit, trident, potion, snow ball, wither skull, ''not fireballs''
+|-
+|Raid Goal
+|Raiders target villagers
+|-
+|Revenge
+|Target entity that attacked the mob
+|-
+|Wander Around
+|Move to a nearby random position
+|-
+|Wander Around Far
+|Move to a random position, sometimes farther away than Wander Around goal
+|-
+|Zombie Attack
+|Attack goal for zombies and zombie variants
+|}
+
+=== Lists of mob goals ===
+Lists of goals and associated priorities for individual mobs.
+
+{|class="wikitable collapsible"
+|+Zombie
+!Goal !! Priority !! Notes
+|-
+|Revenge || 1 || Attack entity that damaged the zombie
+|-
+|Active Target - Player || 2 || Target the player
+|-
+|Zombie Attack || 2 || Attack current target
+|-
+|Active Target - Iron Golem || 3 || Target Iron Golem
+|-
+|Active Target - Merchant || 3 || Target Villager or Wandering Trader
+|-
+|Destroy Egg || 4 || Break turtle eggs
+|-
+|Active Target - Turtle || 5 || Target baby turtle
+|-
+|Wander Around Far || 7 ||
+|-
+|Look Around || 8 ||Looks away from Entities
+|-
+|Look at Entity || 8 ||Looks at nearest Entities
+|}
+
+== Pathfinding ==
+=== Pathfinding penalties ===
+[[File:Zombified piglin pathing 1.png|thumb|[[Zombified piglin]] starts pathfinding to a [[turtle egg]]]]
+[[File:Zombified_pigling_pathing_2.png|thumb|Due to pathfinding penalties, the zombified piglin takes an indirect path to the turtle egg, pathing through [[wither rose]]s and taking damage, instead of pathing through the lava or magma blocks, which do not damage the zombified piglin]]
+
+When pathfinding to a target, mobs will sometimes avoid certain blocks (usually blocks that cause damage or slow the mob down). These blocks have a penalty associated with them. Generally, mobs try to path through blocks with the smallest penalty. There are some blocks that most mobs cannot path through; these all have a penalty of -1.
+
+The following table is a list of all pathfinding penalties and their default values. Each type of pathfinding (land, water, air) uses its own subset of these penalties. Some mobs override these default values.
+
+{|class=wikitable
+!Penalty type !! Penalty !! Description
+|-
+|blocked || -1 || can't pathfind through block (most full solid blocks)
+|-
+|powder snow || -1 || {{BlockLink|powder snow}}
+|-
+|fence || -1 || {{BlockLink|fences}}<br>{{BlockLink|walls}}<br>{{BlockLink|fence gates}} (closed)
+|-
+|lava || -1 || {{BlockLink|lava}}
+|-
+|unpassable rail || -1 || {{BlockLink|rail}}
+|-
+|damage - other || -1 || {{BlockLink|cactus}}<br>{{BlockLink|sweet berry bush}}
+|-
+|closed wood door || -1 || {{BlockLink|oak door|wood door}}
+|-
+|closed iron door || -1 || {{BlockLink|iron door}}
+|-
+|open || 0 || {{BlockLink|air}}<br>{{BlockLink|cave air}}<br>{{BlockLink|void air}}
+|-
+|walkable || 0 || {{BlockLink|TNT}} with pressure plate on top (under the mob)
+|-
+|walkable door || 0 || a door the mob can open
+|-
+|trapdoor || 0 || {{BlockLink|trapdoors}}<br>{{BlockLink|lily pad}}<br>{{BlockLink|big dripleaf}}
+|-
+|danger - powder snow || 0 || neighboring block is {{BlockLink|powder snow}}
+|-
+|open door || 0 || open wood or iron door
+|-
+|cocoa || 0 ||{{BlockLink|cocoa}}
+|-
+|damage - cautious || 0 || {{BlockLink|wither rose}}<br>{{BlockLink|pointed dripstone}}
+|-
+|danger - trapdoor || 0 || neighboring block is {{BlockLink|trapdoor}}
+|-
+|breach water || 4 || there is an air block above a water block
+|-
+|water || 8 || {{BlockLink|water}}
+|-
+|water border || 8 || neighboring block is {{BlockLink|water}}
+|-
+|danger - fire || 8 || neighboring block is:<br>{{BlockLink|fire}}<br>{{BlockLink|lava}}<br>{{BlockLink|magma block}}<br>{{BlockLink|campfire|lit campfire}}<br>{{BlockLink|lava cauldron}}
+|-
+|danger - other || 8 || neighboring block is: <br>{{BlockLink|cactus}}<br>{{BlockLink|sweet berry bush}}
+|-
+|honey || 8 || {{BlockLink|honey block}}
+|-
+|damage - fire || 16 || {{BlockLink|fire}}<br>{{BlockLink|lava}}<br>{{BlockLink|magma block}}<br>{{BlockLink|campfire|lit campfire}}<br>{{BlockLink|lava cauldron}}
+|}
+
+;Mob pathfinding penalty overrides
+The following mobs override the default pathfinding penalty for some blocks:
+{|class="wikitable collapsible collapsed"
+!Mob !! Penalty Type !! Penalty
+|-
+|{{EntityLink|axolotl}} || water || 0
+|- style="border-top: solid"
+|{{EntityLink|bee}} || damage - fire || -1
+|-
+| || water || -1
+|-
+| || cocoa || -1
+|-
+| || fence || -1
+|-
+| || water border || 16
+|- style="border-top: solid"
+|{{EntityLink|chicken}} || water || 0
+|- style="border-top: solid"
+|{{EntityLink|fox}} || danger - other || 0
+|-
+| || damage - other || 0
+|- style="border-top: solid"
+|{{EntityLink|frog}} || trapdoor || -1
+|-
+| || water || 4
+|- style="border-top: solid"
+|{{EntityLink|goat}} || powder snow || -1
+|-
+| || danger - powder snow || -1
+|- style="border-top: solid"
+|{{EntityLink|villager}}<br>{{EntityLink|wandering trader}} || damage-fire || -1
+|-
+| || danger - fire || 16
+|- style="border-top: solid"
+|{{EntityLink|parrot}} || danger-fire || -1
+|-
+| || damage - fire || -1
+|-
+| || cocoa || -1
+|- style="border-top: solid"
+|{{EntityLink|sniffer}} || water || -1
+|-
+| || danger - powder snow || -1
+|-
+| || damage - cautious || -1
+|- style="border-top: solid"
+|{{EntityLink|strider}} || water || -1
+|-
+| || lava || 0
+|-
+| || danger - fire || 0
+|-
+| || damage - fire || 0
+|- style="border-top: solid"
+|{{EntityLink|turtle}} || close iron door || -1
+|-
+| || closed wood door || -1
+|-
+| || open door || -1
+|-
+| || water || 0
+|- style="border-top: solid"
+|{{EntityLink|wolf}} || powder snow || -1
+|-
+| || danger - powder snow || -1
+|- style="border-top: solid"
+|{{EntityLink| piglin}}<br>{{EntityLink|piglin brute}} || damage - fire || -1
+|-
+| || danger - fire || 16
+|- style="border-top: solid"
+|{{EntityLink|blaze}} || water || -1
+|-
+| || danger - fire || 8
+|-
+| || damage - fire || 8
+|-
+| || lava || 8
+|- style="border-top: solid"
+|{{EntityLink|breeze}} || danger - trapdoor || -1
+|-
+| || damage - fire || -1
+|- style="border-top: solid"
+|{{EntityLink|drowned}} || water || 0
+|- style="border-top: solid"
+|{{EntityLink|enderman}} || water || -1
+|- style="border-top: solid"
+|{{EntityLink|guardian}} || water || 0
+|- style="border-top: solid"
+|{{EntityLink|ravager}} || leaves || 0
+|- style="border-top: solid"
+|{{EntityLink|warden}} || unpassable rail || 0
+|-
+| || damage - fire || 0
+|-
+| || danger - fire || 0
+|-
+| || damage - other || 8
+|-
+| || powder snow || 8
+|-
+| || lava || 8
+|- style="border-top: solid"
+|water creatures || water || 0
+|- style="border-top: solid"
+|{{EntityLink|wither skeleton}} || lava || 8
+|- style="border-top: solid"
+|{{EntityLink|zombified piglin}} || lava || 8
+|- style="border-top: solid"
+|animal || damage - fire || -1
+|-
+| || danger - fire
+|}
+
+=== Pathfinding on land ===
+
+* All entities Move based off of random targets that are generated every tick with a priority toward their entity specific goals.
+* These targets can be located anywhere in 3D space within the entity range and are only every generated when wandering or when they have no goals. 
+* For every target a path is generated; with the entity preferring the path with the lowest score regarding the Pathfinding penalties.
+* If an entity cannot take any paths with a low enough score, or any paths without a score of -1 the entity will not move until one is found.
+* If an entity's target is located inside a block (including water), the target is moved to the nearest air block above it.
+
+This means, every entitiy when wandering will always prefer to pathfind to a block with the most blocks below it within range.
+
+Due to the higher chance that a target will be generated within the blocks below it and moved up to the nearest air block above before generating a path.
+
+=== Pathfinding in water ===
+
+* Pathfinding in water is roughly the same as land, however, most entities, excluding fish and drowned, will bounce on the surface preferring land due to the Pathfinding penalties of water.
+
+=== Pathfinding in air ===
+
+* Pathfinding in air is roughly the same as land, however, the few entities that can pathfind to air.
+
+== See also ==
+* [[Mob infighting]]
+
+==Navigation==
+{{Navbox Java Edition technical|general}}
+
+[[de:Künstliche Intelligenz]]
+[[ja:Mob AI]]
+[[pt:IA de criatura]]
+[[zh:生物AI]]

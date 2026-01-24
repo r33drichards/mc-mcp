@@ -1,0 +1,200 @@
+{{Infobox version
+| title = Minecraft 24w10a
+| image = 24w10a.jpg
+| image2 = Java Edition 24w10a.png
+| edition = Java
+| type = Snapshot
+| date = March 6, 2024
+| jsonhash = 39222ffc70b35f3193b39eb0268bb446cfc6b7e6
+| clienthash = 099bf3a8ad10d4a4ca8acc3f7347458ed7db16ec
+| clientmap = cd2395447a7c169f1b00cc13dc685a73cbaa3ce6
+| serverhash = 9f8e96ebe4db0323653111b28df63f66395cb19d
+| servermap = 22749bb13951c94cf5d21fe16b9884a81d1c6225
+| parent = 1.20.5
+| prevparent = 1.20.4
+| prev = 24w09a
+| next = 24w11a
+| nextparent = 1.20.6
+}}<onlyinclude>
+
+'''24w10a''' is the eleventh [[snapshot]] for [[Java Edition 1.20.5]], released on March 6, 2024,<ref>{{snap|24w10a|March 6, 2024}}</ref> which adds eight new wolf variants found in different biomes, simplified forms for [[item stack component]]s, updated [[inventory]] slot names, allows item components in [[recipe]]s, and fixes bugs.
+
+== Additions ==
+=== Mobs ===
+'''[[Wolf]]'''
+* Added variants of wolves.
+** [[File:EntitySprite wolf.png|16px]] The familiar pale wolf now spawns in [[taiga]]s.
+** [[File:EntitySprite rusty-wolf.png|16px]] The rusty wolf spawns in [[sparse jungle]]s.
+** [[File:EntitySprite spotted-wolf.png|16px]] The spotted wolf spawns in [[savanna plateau]]s.
+** [[File:EntitySprite black-wolf.png|16px]] The black wolf spawns in [[old growth pine taiga]].
+** [[File:EntitySprite striped-wolf.png|16px]] The striped wolf spawns in [[wooded badlands]].
+** [[File:EntitySprite snowy-wolf.png|16px]] The snowy wolf spawns in [[grove]]s.
+** [[File:EntitySprite ashen-wolf.png|16px]] The ashen wolf spawns in [[snowy taiga]]s.
+** [[File:EntitySprite woods-wolf.png|16px]] The woods wolf spawns in [[forest]]s.
+** [[File:EntitySprite chestnut-wolf.png|16px]] The chestnut wolf spawns in [[old growth spruce taiga]].<ref>{{Mcnet|new-minecraft-wolves|New Minecraft Wolves|March 5, 2024|Sophie Austin}}</ref>
+** Wolves spawned with a [[spawn egg]] spawn as the variant associated with the biome the egg is used in. They default to pale wolf in any other biome.
+
+=== General ===
+'''Entity [[predicate]]'''
+* Added entity sub-predicate <code>slots</code>, used to check single or multiple slots on any entity.
+** For slot ranges, only one slot needs to match for whole entry to pass.
+** The field contains a map of slot names (same as ones used in <code>item</code> commands) to item predicate.
+** Example:
+:: <syntaxhighlight lang="json">{
+    "condition": "minecraft:entity_properties",
+    "entity": "this",
+    "predicate": {
+        "slots": {
+            "container.*": {
+                "items": "dirt"
+            }
+        }
+    }
+}</syntaxhighlight>
+
+'''[[Inventory]]'''
+* Added new slot names:
+** <code>container.*</code>: contains <code>container.0</code> to <code>container.53</code>.
+** <code>hotbar.*</code>: contains <code>hotbar.0</code> to <code>hotbar.8</code>.
+** <code>inventory.*</code>: contains <code>inventory.0</code> to <code>inventory.26</code>.
+** <code>enderchest.*</code>: contains <code>enderchest.0</code> to <code>enderchest.26</code>.
+** <code>villager.*</code>: contains <code>villager.0</code> to <code>villager.7</code>.
+** <code>horse.*</code>: contains <code>horse.0</code> to <code>horse.14</code>.
+** <code>weapon.*</code>: contains <code>weapon.mainhand</code> and <code>weapon.offhand</code>.
+** <code>armor.*</code>: contains {{cd|d=and|armor.head|armor.chest|armor.legs|armor.feed|armor.body}}.
+** <code>player.cursor</code>: item held by player on screen except [[Creative]] mode<ref>{{bug|MC-269127||player.cursor slot name is available in creative mode|WAI}}</ref>.
+** {{cd|d=and|player.crafting.0|player.crafting.1|player.crafting.2|player.crafting.3|player.crafting.*}}: player's crafting slots.
+
+== Changes ==
+=== Blocks ===
+'''[[Grindstone]]'''
+* No longer accepts items with {{nbt|compound|unbreakable}} component that do not have an enchantment.
+** If the item above has [[durability]], it can be repaired with an unbreakable item and the output doesn't inherit {{nbt|compound|unbreakable}} component. If the order is swapped, the item is neither repaired nor disenchanted. If the only item in the slots is an enchanted unbreakable item, it is disenchanted and {{nbt|compound|unbreakable}} component remains.
+* No longer disenchants two [[enchanted book]]s at the same time.
+
+'''[[Player head]]'''
+* Now stores item name in <code>custom_name</code> tag.
+* Tags <code>SkullOwner</code> and <code>ExtraType</code> are replaced with <code>profile</code> to keep a consistent format with the item component form.
+
+=== Items ===
+'''General'''
+* Now <code>count</code> is stored again when there is only 1 item.
+** Defaults to 1 if this field is invalid.
+
+=== Mobs ===
+'''[[Wolf]]'''
+* Now spawns on [[coarse dirt]] and [[podzol]] blocks.
+* Now spawns in [[sparse jungle]], [[savanna plateau]], and [[wooded badlands]] biomes.
+
+=== World generation ===
+'''[[Grove]]'''
+* [[Rabbit]]s, [[wolves]], and [[fox]]es are now the only passive mobs spawning in the grove biome.
+
+=== Command formats ===
+'''{{cmd|execute}}'''
+* <code>if</code> and <code>unless</code> sub-commands can now use <code>items</code> to compare or count items.
+** <code><nowiki>execute if|unless items <source> <slots> <item_predicate></nowiki></code>
+*** <code><nowiki><source></nowiki></code> is the same one as used in {{cmd|item}}.
+**** e.g. <code>block <x> <y> <z></code> or <code>entity <target></code> (selector can return multiple entities)
+*** <code><slots></code> can accept single slot (like <code>container.0</code>) or a range (like <code>container.*</code>)
+*** <code><item_predicate></code> is the same as item predicate in {{cmd|clear}} command.
+* If used alone, it returns total number of items in stacks that match predicates.
+
+=== General ===
+'''[[Data pack]]s'''
+* The data pack version is now 34.
+* [[Banner pattern]]s are now be loaded into the registry from <code>data/<''namespace''>/banner_pattern/<''id''></code>
+<div class="treeview">
+:* {{nbt|compound}}: The root object.
+:** {{nbt|string|asset_id}}: A namespaced id for the texture. e.g. <code>custom:pattern</code> resolves to <code>assets/custom/textures/entity/banner/pattern.png</code> and <code>assets/custom/textures/entity/shield/pattern.png</code>.
+:** {{nbt|string|translation_key}}: A translation key prefix. e.g. <code>block.minecraft.banner.custom.pattern</code> resolves to <code>block.minecraft.banner.custom.pattern.<''color''></code>.
+</div>
+
+'''[[Item stack component]]s'''
+* {{nbt|string}}{{nbt|compound|profile}} no longer requires {{nbt|string|name}} field.
+* Some additional item stack components now support alternative, simple definitions:
+** {{nbt|compound|profile}} can now be defined as {{nbt|string|profile}} for a player name. e.g. <code>profile="jeb_"</code>.
+** {{nbt|compound|dyed_color}} can now be defined as {{nbt|int|dyed_color}}. e.g. <code>dyed_color=16711680</code>.
+** {{nbt|compound|attribute_modifiers}} can now be defined as {{nbt|list|attribute_modifiers}}. e.g. <code>attribute_modifiers=[{type:'generic.scale',uuid:[1,2,3,4],name:'Big!',amount:1.0,operation:'add_multiplied_base'}]</code>.
+** {{nbt|compound|potion_contents}} can now be defined as a single potion id {{nbt|string|potion_contents}}. e.g. <code>potion_contents="invisibility"</code>.
+** {{nbt|compound|enchantments}} and {{nbt|compound|stored_enchantments}} can be defined as an inline map of [[enchantment]] id to level: <code>enchantments={sharpness:1}</code>.
+** When stored, they still are in full formats.
+* {{nbt|compound|container}} now applies to all [[container]]s instead of only [[shulker box]]es.
+* {{nbt|compound|lodestone_target}} is renamed to {{nbt|compound|lodestone_tracker}}.
+** {{nbt|int-array|pos}} and {{nbt|string|dimension}} are now moved to {{nbt|compound|target}} (optional).
+** When {{nbt|compound|target}} does not exist, the compass spins.
+* {{nbt|list|lore}} and {{nbt|list|fireworks/explosions}} now allows 256 entities.
+* Items with {{nbt|compound|can_break}} and {{nbt|compound|can_place_on}} can now be stacked properly.
+
+'''[[Recipe]]'''
+* Can now specify item component.
+** {{nbt|compound|result}} field for {{cd|d=and|crafting_shaped|crafting_shapeless|stonecutting|smithing_transform}} now accepts {{nbt|compound|components}}.
+** {{nbt|string|result}} field for {{cd|d=and|smelting|blasting|smoking|campfire_cooking}} recipes are now an item stack without count. That is, {{nbt|string|id}} must be specified and {{nbt|compound|components}} is now accepted.
+
+'''[[Tag]]s'''
+* Added <code>coarse_dirt</code> and <code>podzol</code> to <code>#wolves_spawnable_on</code>.
+
+'''[[Tooltip]]'''
+* No longer appears when hovering outside the containing element.
+
+== Experimental ==
+=== Changes ===
+'''[[Vault]]'''
+* The left pixels in the disabled vault have been updated to match the other vault textures.
+
+== Fixes ==
+{{fixes|fixedin=24w10a
+|;From released versions before 1.20
+|131636|One additional character at the end is allowed in JSON text components.
+|140397|When combining two enchanted unbreakable items, the result will be two stacked items.
+|157133|Enchanted books with curses can be stacked using a grindstone.
+|167324|Multiple UI buttons can be highlighted at the same time.
+|174496|Player heads lose their name after being placed.
+|187746|Game rule buttons on "Edit game rules" screen are highlighted despite being covered.
+|217084|Player head NBT "{{cd|ExtraType}}" is no longer saved but doesn't use {{cd|DataFixerUpper}} upgrade path.
+|;dev
+|268392|Setting gravity attribute to 0.0 kicks player for flying.
+|268462|Saturation suspicious stew now grants 7 seconds of effect instead of 7 ticks.
+|;previous
+|268800|All tools have 4 attack damage, and 1.6 attack speed.
+|268801|Shulker boxes in saved hotbars inconsistently update to item components.
+|268813|Crash when spawning item with {{cd|can_break}}/{{cd|can_place_on}} component containing unknown/invalid tag.
+|268824|Disenchanted books from grindstone don't stack with books that were in the inventory.
+|268830|Effect particles appear when specifying no particles using {{cmd|effect}} command.
+|268834|Vault texture is inconsistent.
+|268842|Crash when saving world with painting/on wandering trader spawn/when pressing escape.
+|268845|Items with {{cd|can_break}}/{{cd|can_place_on}} components update every time the inventory is changed in Creative mode.
+|268850|Attribute modifier: Not updated when switching items in hotbar.
+|268851|Crossbows don't make a firing sound.
+|268853|Unable to load paintings for any variants.
+|268856|Loading shulker box/bundle with a single 'invalid' item in it renders the whole component invalid.
+|268864|An item modifier with a duplicate item stack component prevents the entire data pack from (re)loading, rather than ignoring that one specific item modifier.
+|268879|Having a high damage value breaks and crashes the game.
+|268897|Cannot select entities who have any item stack with the count being 1.
+|268904|Suspicious stew not giving effects.
+|268921|Arrows lose particles after unloading world.
+|268971|Lodestone compass stops being a lodestone compass after breaking its tracked lodestone.
+|269005|Player heads from previous versions cause game crash and/or are converted incorrectly.
+|269062|Bundles with "Bundle Contents" component removed return after right clicking.
+|269066|Item modifier cannot remove `{{cd|custom_name}}`.
+|269091|{{cd|AttributeModifiers}} NBT with missing fields is not upgraded correctly to components.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|kdhlUztJ3pc|nt11uauVmg4}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w10a]]
+[[es:Java Edition 24w10a]]
+[[fr:Édition Java 24w10a]]
+[[ja:Java Edition 24w10a]]
+[[lzh:二四週一〇甲]]
+[[pt:Edição Java 24w10a]]
+[[ru:24w10a (Java Edition)]]
+[[uk:24w10a (Java Edition)]]
+[[zh:Java版24w10a]]

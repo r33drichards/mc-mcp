@@ -1,0 +1,230 @@
+{{Infobox version
+|title=v1.17.40
+|vernum=1.17.40
+|server=1.17.40.06
+|internal='''Android''': 1.17.40.06<br>
+'''PlayStation''': 2.32<br>
+'''Windows''': 1.17.4006.0<br>
+'''Xbox One''': 1.17.4006.70
+|image=Bedrock 1.17.40 PatchNotes.png
+|image2=Bedrock 1.17.40.png
+|image3=Bedrock 1.17.40 Halloween.png
+|edition=Bedrock
+|date=October 19, 2021
+|prevparent=1.17.0
+|prev=1.17.34
+|next=1.17.41
+|nextparent=1.18.0
+|serverdl='''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.17.40.06.zip Windows] [https://minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.17.40.06.zip Linux]
+}}<onlyinclude>
+
+'''1.17.40''' is a minor update to {{BE}} released on October 19, 2021, which brought new features behind the experimental toggle and fixed bugs.<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/4411311573133-Minecraft-1-17-40-Bedrock-|title=Minecraft - 1.17.40 (Bedrock)|website=feedback.minecraft.net|date=October 19, 2021}}</ref>
+
+== Changes ==
+=== General ===
+'''[[Achievements]]'''
+* Now available on Windows 10 ARM-based PCs.
+
+'''[[Cloud]]s'''
+* Raised cloud level from 128 to 192.
+
+=== Technical ===
+'''Data-Driven Blocks '''
+* Updated documentation for the Block Rotation component.
+* Updated documentation for 'BlockExplosionResistance'.
+* Added required toggles to documentation and to content error for block components.
+
+'''Graphical'''
+* Added a content error for using a material but not providing the required number of textures to the render controller.
+
+'''Molang'''
+* Fixed 'item_remaining_use_duration'having improperly scaled or inverted results (This fix is a Versioned Change as of engine version 1.17.30).
+* Add new compile errors for expressions like 'text' + 3, which were previously ignored (This is a Versioned Change as of engine version 1.17.40).
+* Molang expressions that contain capital letters are properly evaluated now
+* 'query.get_equipped_item_name' will now recognize Sea Lanterns ({{bug|MCPE-67893}}).
+* Added new compile errors for expressions like 1 + (9 10), which were previously ignored (This is a Versioned Change as of engine version 1.17.40).
+
+== Experimental ==
+These additions and changes are accessible by enabling the "[[Caves & Cliffs]]" and "Enable GameTest Framework" experimental toggle.
+
+=== Mobs ===
+'''[[Donkey]] and [[Sheep]]'''
+* Can now spawn in [[meadow]] biome.
+
+'''[[Fox]]'''
+* Can now spawn in [[grove]] biome.
+
+'''[[Goat]]'''
+* Now only spawn in [[snowy slopes]], [[stony peaks]], [[lofty peaks]], and [[snow capped peaks]] biomes.
+
+'''[[Rabbit]]'''
+* Can now spawn in [[meadow]] and [[snowy slopes]] biome.
+
+=== World generation ===
+'''[[Biome]]s'''
+* Re-added [[ice spikes]], [[eroded badlands]], [[jungle edge]], and [[savanna plateau]].
+
+'''[[Cave]]s'''
+* The cavern now generates in 2 layers of different stone bases depending on the depth.
+** Cavern layer above Y=0 is made up of regular [[stone]].
+** Stone transitions to [[deepslate]] from Y=0 to Y=-7.
+** Deepslate now completely replaces stone from Y=-8 to [[bedrock]].
+*** Certain types of ores and structures still generate in the deepslate layer.
+*** [[Dirt]], [[diorite]], [[granite]] and [[andesite]] do not generate in this layer.
+
+'''[[Dripstone Caves]]'''
+* In world generation, grass is replaced with stone (if generated near grass).
+
+'''[[Mountains]]'''
+* Meadows sometimes spawn a lone oak or birch, often with a bee nest.
+* Infested stone now generate in the new mountain biomes.
+
+[[File:1.18 Experimental Snapshot 1 approximate ore distribution.jpg|thumb|300px|The new ore generation behind the experimental toggle.]]
+'''Ore distribution'''
+* Tweaked ore distribution to match in parity with ''Java Edition''.
+
+'''[[Pillager outpost]]s'''
+* Now generate in all the new mountain biomes. 
+
+'''[[Stony peaks]]'''
+* A new mountains biome that is a variant of lofty/snowcapped peaks that uses stone and strips of gravel, instead of snow and ice.
+** Is used to avoid temperature clashes.
+
+'''[[Stone shore]]s'''
+* Sometimes generate layers (strips) of [[gravel]].
+
+'''[[Village]]s'''
+* Now generate in [[Mountain#Meadows|meadows]].
+
+'''General'''
+* Tweaked biome placement, river size, and terrain shapes for a better overworld experience. 
+* Added new world/cave generation when upgrading saved chunks below Y=0 using the Caves and Cliffs experimental toggle.
+** Chunks previously upgraded with Bedrock underneath will not see this change.
+* Upgrades older flat worlds to the new extended heights available with the Caves & Cliffs experimental toggle
+* New flat worlds using the Caves & Cliffs experimental toggle will generate starting at "y=-64"
+
+=== Technical ===
+'''GameTest Framework'''
+* Renamed method succeedWhenBlockTypePresent to succeedWhenBlockPresent
+* Identifier strings returned from property idnow include the item's namespace
+* Updated the GameTest Framework interface and added a new SimulatedPlayer capability:
+** Added 'SimulatedPlayer'class to GameTest. This class enables GameTest to simulate a variety of player behaviors such as movement, using items, and interacting with blocks and entities. See the GameTest API reference documentation for more details.
+*** Added function spawnSimulatedPlayer(blockLocation: BlockLocation, name: string): SimulatedPlayer
+*** Added function removeSimulatedPlayer(simulatedPlayer: SimulatedPlayer): void
+** mojang-gametest.Test type
+*** Changed signature of function assertEntityInstancePresent(entity: Entity, blockLocation: BlockLocation, isPresent: boolean = true)
+** mojang-minecraft components
+*** Component inventory now works with Player inventories
+
+* GameTestSequence
+** Removed method thenWaitWithDelay
+** Added method thenWaitAfter(delayTicks: number, callback: () => undefined) - After a delay, executes the given callback every tick until it succeeds. Exceptions thrown within the callback will end sequence execution
+
+* Player
+** Fixed a bug where the location property would return an incorrect height for players
+** Added property id
+
+* Block
+** Replaced method getLocationwith property location
+** Replaced method getPermutationwith property permutation
+** Replaced method getTypewith property type
+** Replaced methods isWaterloggedand setWaterlogged with property isWaterlogged
+** Replaced method getBlockDatawith property permutation
+** Replaced method isEmptywith property isEmpty
+** Removed property canBeWaterlogged
+
+* BlockType
+** Replaced method getNamewith property id
+** Replaced method canBeWaterloggedwith property canBeWaterlogged
+
+* BlockPermutation
+** Replaced method getTypewith property type
+
+== Fixes ==
+'''Performance / Stability'''
+* Fixed a crash that could occur when using Character Creator
+* Fixed a softlock that could occur when on the Realms world slots screen and the internet connection was lost
+
+'''General'''
+* Fixed an issue causing Marketplace downloads on Nintendo Switch to fail after entering and leaving a world
+* World settings are now carried over on to Realms when replacing worlds
+
+'''Gameplay'''
+* Fixed a most unfortunate issue that caused players to be set on fire upon changing dimensions if there was Lava underneath the Nether Portal ({{bug|MCPE-28765}})
+* Improved world visibility culling for underground situations to eliminate seeing sky at the end of tunnels/stairs ({{bug|MCPE-128372}})
+* Players can no longer eat food at full hunger in Survival mode ({{bug|MCPE-60807}})
+* Amethyst geodes are now much less likely to generate in Strongholds, and if they do they will not destroy End Portals ({{bug|MCPE-129861}}, {{bug|MCPE-128799}})
+* Dungeons are no longer misplaced or missing outside of the Caves & Cliffs experimental toggle ({{bug|MCPE-121708}})
+* Vanilla Parity: Players are now able to activate Elytra gliding while moving upward ({{bug|MCPE-59580}})
+
+'''Mobs'''
+* Tropical Fish no longer lose their colors upon grabbing them with a Water Bucket and then releasing them ({{bug|MCPE-137158}})
+* Bees now spawn properly in the world ({{bug|MCPE-132195}})
+* Mobs no longer casually stroll into open flames ({{bug|MCPE-23835}})
+* Villagers can no longer spam doors open and closed ({{bug|MCPE-28055}})
+* Cartographers now more consistently give new maps on all platforms
+* Improved mob pathing around partial blocks ({{bug|MCPE-127381}})
+* Armor no longer renders on Pillagers and Vindicators, but the mobs are still granted armor effects ({{bug|MCPE-74242}})
+* Fixed an issue with mob rendering that caused Vindicator Axes to be visible even when they're not attacking on older Resource Packs ({{bug|MCPE-123229}})
+* More mobs will now spawn underground in the Overworld
+* Fixed failure to render Leads when attached to mobs out of view ({{bug|MCPE-63931}})
+* Iron Golems now spawn only on solid blocks ({{bug|MCPE-140145}})
+
+'''Blocks'''
+* Falling Stalactites are now offset properly to avoid interacting with entities outside their intended hitbox ({{bug|MCPE-132772}})
+* Beehives now generate in the world facing South
+* Trapdoors now rotate correctly when loaded from a Structure Block ({{bug|MCPE-66933}})
+* Powder Snow no longer disappears when looking at it from a distance ({{bug|MCPE-127565}})
+* Sea Grass no longer spawns under Lily Pads during world generation to avoid breaking them
+* Holding Top Snow in hand while hovering over Grass Blocks no longer causes incorrect behavior ({{bug|MCPE-140659}}, {{bug|MCPE-140660}})
+
+'''User Interface'''
+* Riding an animal now displays the correct button prompt when playing with non-touch controls
+* Using Dye on Signs that contain formatted color text will now overwrite the formatted color text
+* Fixed text on Signs losing their formatting when new lines or word-wrapping are encountered. Formatting will now persist until the reset code or an overriding code is found. This is not retroactive and previously created Signs will not be changed
+* Altered the message that is displayed when players change skins in-game ({{bug|MCPE-92772}})
+* Fixed an issue where the D-pad and directional keys could not be used to navigate in certain parts of the user interface ({{bug|MCPE-132826}})
+* Fixed an issue where an error message could be shown after suspending the game on the Achievements screens with Screen Animations disabled ({{bug|MCPE-132269}})
+* Fixed an issue where an obscure game rule was added to Settings ({{bug|MCPE-139025}})
+* The sign in text on the main menu no longer overlaps the Marketplace button
+* Added space between tab title and the word 'Tab' for text-to-speech on Settings screen
+* Added a "More Info" button to the sign in error screen
+* Several seeds have been removed from the [[seed picker]] in preparation for the 1.18 release, which introduces significant changes to terrain generation.
+
+'''Realms'''
+* All changes to settings made on new worlds before creation are now transferred to the world after creation
+
+'''Character Creator'''
+* In Character Creator, tweaked color tint for the default Steve skin to match default Steve ({{bug|MCPE-120818}})
+* Back appearance pieces will no longer cover the left and right arrows in the profile screen
+* Sidebar no longer opens upon expanding any of the classic skin packs in the Dressing Room
+* Improved the navigation flow for Character Creator so that it always switches to the selected Character Creator profile ({{bug|MCPE-139022}})
+* Skins that are equipped from Marketplace while in-game now apply to the player’s character
+
+'''Commands'''
+* Education Edition items are no longer shown as an option when using @e[type=] ({{bug|MCPE-78363}})
+* Command Blocks with 'Needs Redstone' and a non-zero 'Delay in Ticks' will now execute only if they remain powered for the delay duration ({{bug|MCPE-74281}})
+* Fixed alignment of the sidebar display from the '/scoreboard' command when text length changes
+* Fixed the ability to summon experience orbs via the '/summon' command ({{bug|MCPE-130835}})
+
+'''Technical '''
+* Fixed display only entity destruction in chunk discard scenarios
+* Fixed a bug that caused animations to be restarted when changing render controllers
+* Fixed 'item_remaining_use_duration'having improperly scaled or inverted results (This fix is a Versioned Change as of engine version 1.17.30)
+* Add new compile errors for expressions like 'text' + 3, which were previously ignored (This is a Versioned Change as of engine version 1.17.40)
+* Molang expressions that contain capital letters are properly evaluated now
+* 'query.get_equipped_item_name' will now recognize Sea Lanterns ({{bug|MCPE-67893}})
+* Fixed a bug where property id would return "Unknown" for custom entities ({{bug|MCPE-137786}})
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[de:Bedrock Edition 1.17.40]]
+[[es:Bedrock Edition 1.17.40]]
+[[ja:Bedrock Edition 1.17.40]]
+[[pt:Edição Bedrock 1.17.40]]
+[[ru:1.17.40 (Bedrock Edition)]]
+[[zh:基岩版1.17.40]]

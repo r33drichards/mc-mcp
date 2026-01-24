@@ -1,0 +1,218 @@
+{{Infobox version
+| title = Minecraft 24w46a
+| image = 24w46a.jpg
+| image2 = Java Edition 24w46a.png
+| edition = Java
+| type = Snapshot
+| date = November 13, 2024
+| jsonhash = 632cbbcd347c5c46db74a6f65564581716998ad8
+| clienthash = 9e9dfb043846a9f40986e6504333e6a81d45ff9b
+| clientmap = 5994f01a2c97af3c61bfbc80ee1a26979ffdeb69
+| serverhash = 9b2e96ae27afaf9a6c682c5d92d37a99da4a8d1a
+| servermap = 552c9c75307d928976ba92047d58fde36b2d2f0e
+| parent = 1.21.4
+| prevparent = 1.21.3
+| prev = 24w45a
+| next = 1.21.4 Pre-Release 1
+| nextparent = 1.21.5
+}}<onlyinclude>
+
+'''24w46a''' is the third and final snapshot for [[Java Edition 1.21.4]], released on November 13, 2024,<ref>{{snap|24w46a|November 13, 2024}}</ref> which fixes bugs. This is the final snapshot released in 2024.
+
+== Additions ==
+=== General ===
+'''[[Items model definition]]'''
+* Boolean property types
+** Added {{cd|minecraft:extended_view}} boolean property
+*** Returns true if player has requested extended details by holding shift key down.
+**** Note: not a keybind, can't be rebound.
+*** Only works when item is displayed in UI.
+*** No fields.
+** Added {{cd|minecraft:keybind_down}} boolean property
+*** Returns true if keybind is currently active.
+*** Fields:
+**** {{cd|keybind}} - keybind ID, same as value in {{cd|keybind}} text component.
+
+* Property types
+** Added {{cd|minecraft:local_time}} property
+*** Returns the current time formatted according to a given pattern.
+*** The value is updated every second.
+*** For full format documentation for locale, time zone and pattern, see ICU (International Components for Unicode) documentation.
+*** Fields:
+**** {{cd|locale}} - optional value describing locale
+*** Examples:
+**** {{cd|en_US}}: English language (used for things like week names), formating as in USA.
+**** {{cd|cs_AU@numbers{{=}}thai;calendar{{=}}japanese}}: Czech language, Australian formatting, Thai numerals and Japanese calendar.
+*** Default value is {{cd|""}}, which means "root" locale (a set of defaults, including English names)
+**** {{cd|time_zone}} - optional value describing time zone.
+***** If not present, defaults to timezone set on client.
+***** Examples:
+****** {{cd|Europe/Stockholm}}.
+****** {{cd|GMT+0:45}}.
+**** pattern - describes format to be used for time formatting
+***** Examples:
+****** {{cd|yyyy-MM-dd}} - 4-digit year number, then 2-digit month number, then 2-digit day of month number, all zero-padded if needed, separated by {{cd|-}}.
+****** {{cd|HH:mm:ss}} - current time (hours, minutes, seconds), 24-hour cycle, all zero-padded to 2 digits of needed, separated by {{cd|:}}.
+*** Values: any string.
+** Added {{cd|minecraft:holder_type}} property
+*** Returns holding entity type, if present.
+*** No fields.
+*** Values: namespaced entity type ID.
+
+* Special model type
+** Added {{cd|minecraft:standing_sign}} special model type
+*** Renders a standing sign.
+*** Fields:
+**** {{cd|wood_type}} - one of {{cd|oak}}, {{cd|spruce}}, {{cd|birch}}, {{cd|acacia}}, {{cd|cherry}}, {{cd|jungle}}, {{cd|dark_oak}}, {{cd|pale_oak}}, {{cd|mangrove}}, {{cd|bamboo}}, {{cd|crimson}}, {{cd|warped}}
+**** {{cd|texture}} - optional namespaced ID for texture, without {{samp|textures/entity/signs/}} prefix and {{samp|.png}} suffix.
+***** If not present, it is derived from {{cd|wood_type}}.
+** Added {{cd|minecraft:hanging_sign}} special model type
+*** Renders a hanging sign.
+*** Fields:
+**** {{cd|wood_type}} - one of {{cd|oak}}, {{cd|spruce}}, {{cd|birch}}, {{cd|acacia}}, {{cd|cherry}}, {{cd|jungle}}, {{cd|dark_oak}}, {{cd|pale_oak}}, {{cd|mangrove}}, {{cd|bamboo}}, {{cd|crimson}}, {{cd|warped}}
+**** texture - optional namespaced ID for texture, without {{samp|textures/entity/signs/hanging/}} prefix and {{samp|.png}} suffix.
+***** If not present, it is derived from {{cd|wood_type}}.
+
+'''[[Tag]]'''
+* Added {{cd|#wither_skeleton_disliked_weapons}} for weapons that [[wither skeletons]] don't want to pick up.
+
+== Changes ==
+=== Blocks ===
+'''[[Block of resin]] '''
+* The sounds were adjusted to make them softer.
+
+'''[[Chiseled resin bricks]]'''
+* Texture changed so that they are consistent with [[resin bricks]] in the corner pixels.
+
+'''[[Creaking heart]]'''
+* Mining speed and blast resistance was doubled.
+* Introduced a variation in how long time it takes for each creaking heart to spawn a creaking.
+
+'''[[Resin clump]]'''
+* Can be placed on any full face of a neighboring block.
+* Can now be waterlogged.
+* Moved position in the Creative inventory.
+
+=== Items ===
+'''[[Suspicious stew]]'''
+* The stew of [[Blindness]] now gains the same duration when crafted from [[azure bluet]] and open [[eyeblossom]]s.
+
+=== Mobs ===
+'''[[Bee]]'''
+* No longer get poisoned when touching closed eyeblossoms.
+* Leashed bees no longer enter [[beehive]]s or [[bee nest]]s.
+
+'''[[Creaking]]'''
+* The attack sounds have been updated.
+* Now persists when a world is reloaded.
+* The statistics screen now shows correct stats from creakings, both produced by a [[spawn egg]] and from a [[creaking heart]].
+* Pickblocking a naturally-spawned creaking in Creative mode now gives a spawn egg.
+* The entity shadows of creakings are now more appropriate for their size.
+
+'''[[Wither skeleton]]'''
+* No longer have [[bow]]s as their preferred weapon.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|60}}.
+* Removed {{cd|creaking_transient}} entity type.
+
+'''[[Items model definition]]'''
+* Boolean property types
+** {{cd|minecraft:has_component}}
+*** Added field: {{cd|ignore_default}} - if default component value should be handled as "no component".
+*** Default: {{cd|false}}.
+
+* {{cd|minecraft:condition}} item model type
+** {{cd|minecraft:xmas}} has been renamed to {{cd|minecraft:local_time}}.
+** {{cd|minecraft:shift_down}} has been renamed to {{cd|minecraft:extended_view}}.
+
+* Special model types
+** {{cd|minecraft:head}}
+*** Added field: {{cd|texture}} - optional namespaced ID for texture, without {{samp|textures/entity/}} prefix and {{samp|.png}} suffix.
+**** If absent, default texture is used, depending on kind of field.
+**** Additionally, if present, {{cd|minecraft:profile}} component is ignore.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now {{cd|45}}.
+* All blocks that previously rendered only block entity (banners, heads, beds, chests, conduits, decorated pots, shulker boxes and signs) now also render normal block model over it (same as existing behavior of bells, enchantment tables, etc.).
+** Rendered block entity still can't be removed or data-driven, this change only affects previously ignored block models.
+
+'''[[Tag]]'''
+* The "preferred weapon" tags are now named in plural instead of singular.
+* Removed the {{cd|trim_templates}} item tag.
+* Replaced {{cd|resin_clump}} with {{cd|resin_brick}} in the {{cd|#trim_materials}} item tag.
+* Added {{cd|#small_flowers}}, and {{cd|pale_moss_carpet}} to the {{cd|#replaceable_by_trees}} block tag.
+
+'''[[Dynamic textures]]'''
+* Player [[skin]] and [[cape]] textures are now produced in the debug folder if loaded.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=24w46a
+|;From released versions before 1.21
+|150224|Rabbits can occasionally get stuck on the edges of blocks.
+|160001|Skulls, signs, hanging signs, banners and decorated pots have no breaking/sprinting particles.
+|256649|Hanging signs aren't rendered when held by endermen or as block display entities.
+|266991|Exposed Copper Bulb has inconsistent pixels.
+|271169|The "Isn't It Scute?" advancement is granted when unleashing an armadillo while holding a brush.
+|272245|You can get the advancement "Shear Brilliance" when you use shears on a leashed wolf.
+'''From 1.21'''
+|273710|Wild foxes "trust" the player after being leashed to a fence.
+|273861|When a leashed bee enters a hive, the leash disappears.
+|274571|The advancement "Little Sniffs" can be obtained by unleashing the snifflet and not feeding it.
+|;From 1.21.2
+|275274|Missing sound for event: <code>minecraft:block.spawner.fall</code>.
+|275339|Bad contrast in bundle interface with dark blocks.
+|276697|Neutral mobs don't pathfind correctly to their target after being unleashed.
+|276986|Missing pixel in open bundle texture.
+|277042|Blue and Red open bundle are inconsistent with the other colors.
+|277071|Middle clicking on a creaking spawned naturally through a creaking heart doesn't give you the spawn egg.
+|277074|The entity shadows of creakings are slightly too large in relation to the size of their models.
+|277140|The statistics screen does not visually differentiate the creaking and creaking_transient entities.
+|277152|The statistic for killing a creaking doesn't increment when breaking a creaking heart.
+|277226|Creakings not linked to any heart display wrong subtitles when attacked with non-damaging projectiles.
+|277399|The hand animation isn't played when constantly emptying items from bundles.
+|277413|The empty state sprite for the oxygen bar takes a little longer to start displaying compared to Bedrock Edition.
+|277533|Bundles can remain in the open state when taken out from saved hotbars.
+|;From 1.21.3
+|277892|Clicking on the selected recipe a second time in the stonecutter GUI turns the result item into a ghost item.
+|277959|Reloading chunks can break translucency sorting.
+|278058|Breeze entity model rods no longer spin around when it is moving.
+|278102|Recipe book icons no longer visually indicate that an item has multiple recipes.
+|;dev
+|277948|Suspicious stew gives different durations of Blindness for Eyeblossom and Azure Bluet.
+|277962|Chiseled Resin Bricks have a miscolored pixel.
+|278028|Using items underwater can force you to exit swimming mode.
+|278124|Resin clumps are not waterloggable.
+|;prev
+|278130|Resin bricks cannot be placed or used inside smithing tables.
+|278131|Resin clumps can be placed inside smithing tables.
+|278132|Using items while riding camels that are sprinting slows the camel down.
+|278136|Bees still get poisoned when touching closed eyeblossoms.
+|278149|Strays, bogged, and wither skeletons hold their bows incorrectly when charging and shooting.
+|278158|Block/item models can no longer override parent model texture references by referencing the textures in the parent model of the first parent model.
+|278184|Eyeblossoms can generate replacing Pale Oak logs.
+|278191|Wandering Traders can sell Pale Oak Saplings in multiple offers at once.
+|278212|Resin clump is placed in an unexpected position in the creative inventory.
+|278286|Standing banners have breaking/sprinting particles but wall banners do not.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|ftCldvN4UZY|Q9PytIVqDkc}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[Category:Java Edition 1.21.4 development versions]]
+
+[[de:24w46a]]
+[[es:Java Edition 24w46a]]
+[[fr:Édition Java 24w46a]]
+[[ja:Java Edition 24w46a]]
+[[pt:Edição Java 24w46a]]
+[[ru:24w46a (Java Edition)]]
+[[uk:24w46a (Java Edition)]]
+[[zh:Java版24w46a]]

@@ -1,0 +1,145 @@
+{{Infobox version
+|title=Minecraft 18w01a
+|edition=Java
+|image=18w01a.png
+|image2=Java Edition 18w01a.png
+|type=Snapshot
+|date=January 3, 2018
+|parent=1.13
+|clienthash=504f07f4a10f295522a57f2b1163298dc4a63103
+|jsonhash=b1f57752ac2e0ead0fdd7434140bf2f5088cff40
+|serverhash=47a8d2bb4db5b5e3db6b7837c9f0fa17ea660448
+|prevparent=1.12.2
+|prev=17w50a
+|next=18w02a
+|nextparent=1.13.1
+}}<onlyinclude>
+
+'''18w01a''' is the twelfth [[snapshot]] for [[Java Edition 1.13]], released on January 3, 2018<ref name=18w01a>{{snap|18w01a|January 3, 2018}}</ref>. This is the first snapshot released in 2018.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|teleport}}'''
+* Added <code>facing</code> to the command.
+** Syntax: {{cmd|teleport [<targets>] (<location>{{!}}<destination>) facing (<facingEntity>{{!}}<facingLocation>)}}
+** Rotates an entity to face either an entity or a location.
+
+'''{{cmd|time}}'''
+* Added <code>noon</code> and <code>midnight</code> to {{cmd|time set}}.
+
+=== General ===
+'''[[Data pack]]s'''
+* Added <code>set_name</code> function to loot tables.
+* Functions tagged in <code>minecraft:load</code> now run once after a (re)load.
+* Added the new block tag <code>minecraft:anvil</code>.
+** Contains <code>minecraft:anvil</code>, <code>minecraft:chipped_anvil</code>, and <code>minecraft:damaged_anvil</code>.
+
+'''[[Death messages]]'''
+* Added a death message for when a mob or player causes another player to die in the void.
+** "''Player'' didn't want to live in the same world as ''Player/Mob''".
+
+== Changes ==
+=== Command format ===
+* Changed all custom names (blocks, items, entities, block entities) to translatable text components.
+** Removed the <code>LocName</code> tag. Instead of <code>LocName:"gui.toTitle"</code>, use <code>Name:"{\"translate\":\"gui.toTitle\"}"</code>.
+* <code>Thrower</code> and <code>Owner</code> nbt keys of [[item entities]] are no longer strings but are instead compounds with two longs named <code>L</code> and <code>M</code>.
+* <code>owner</code> nbt keys of [[snowball]]s, [[egg]]s and [[ender pearl]]s are no longer strings but are instead compounds with two longs named <code>L</code> and <code>M</code>.
+
+=== General ===
+'''Crashes'''
+* Crash reports now list what data packs are enabled.
+
+'''Data generators'''
+* Now exposed, the player can get a dump of all blocks/items/commands/etc. from the game without opening it up.
+
+== Fixes ==
+{{fixes|fixedin=18w01a|prefix=Minecraft
+|;old
+|2340|Redstone torches schedule updates when they should not, causing unreliable timings.
+|4381|Water places behind tall grass.
+|9194|A comparator can lock a repeater, but the repeater doesn't look like it is locked.
+|64836|Mobs "control" the minecart they are riding.
+|71401|Tab list ignores initial display name of players.
+|72943|Game freeze after closing an "Open to LAN" single-player world.
+|92255|Singleplayer freezes instead of kicking a player.
+|112693|Scoreboard team colors use raw § formatting instead of text components.
+|112742|Name of unnamed villager is rendered with TeamColor instead of prefix and suffix of scoreboard team.
+|112743|Glowing outline and spectator GUI use prefix color instead of TeamColor.
+|115059|Narrator reads scoreboard team color codes in player names.
+|121719|Enchantment GUI's book opening and closing animation are rendered at approximately 20fps, even if actual framerate is higher.
+|121884|Server->Client custom payload packets can leak resources.
+|122053|Mouse wheel/touchpad scroll amount is ignored.
+|123708|clearCustomName() and hasDisplayName() inconsistent.
+|;dev
+|121331|Client crashes when minimizing game while server disconnect window is displayed.
+|121379|Functions, advancements and loot tables allow other filetypes than .mcfunction and .json.
+|121719|Enchantment GUI's book opening and closing animation are rendered at approximately 20fps, even if actual framerate is higher.
+|121827|Selectors and scoreboards not working for signs (works correctly for books, {{cmd|tellraw}}, and {{cmd|title}}).
+|121842|In a LAN world, all OP players can use commands, but the UI and autocompletion are only accessible by the host player.
+|121897|Gaps in an animation's used frames throws ArrayIndexOutOfBoundsException.
+|121913|Log files are HUGE (5GB) because Brigadier also logs errors continuously.
+|121934|execute sub-commands only run (for each entity), if the next sub-command runs at least one command for each entity.
+|122057|{{cmd|teleport x_rotation}} and <code>y_rotation</code> being swapped.
+|122118|{{cmd|tp @s ~ ~ ~}} acts like an absolute teleport, killing all momentum.
+|122188|Vanilla structure files aren't updated yet causing missing/wrong blocks.
+|122270|Pushing blocks with connections does not update them.
+|122272|Game crashes when I start a new world.
+|122409|Players can't open chests under leaves/glowstone/sea lantern/ice/frosted ice.
+|122431|'{{cmd|scoreboard players get}}' shows message with '%s' when no score is set.
+|122487|Randomized blockstates do not apply full models.
+|122493|Boats fall through blocks when slightly intersecting with water.
+|122503|{{cmd|title}} or {{cmd|tellraw}} score component with fake players returns "No entity was found".
+|122609|'{{cmd|scoreboard players reset * objective}}' does not work.
+|122724|Blockstates not working properly with two model options.
+|122782|Orange and Yellow Terracotta Animations do not function in 17w48a (1.13 snapshot).
+|122828|32768 is specified as the maximum allowed area size for the fill command, but is not allowed.
+|122894|Using teleport command without target value in functions does not use original position.
+|122897|Overwriting structure containing signs InvalidArgumentException.
+|122915|The default block/item tags aren't in the tab-completion list.
+|123039|Hitting a key in the creative mode inventory search resets scrollbar.
+|123067|Wall-mounted banners/skulls are treated as full blocks.
+|123110|Bowl can't be used in furnace as fuel.
+|;previous
+|123117|Strange lighting by slabs/stairs/grass path/farmland.
+|123131|Hopper and hopper minecart item pickup area too small/low.
+|123135|Standing on half block/stairs/grass path/farmland gives "cave effect" to sky.
+|123138|Placing double-grass on the lower half of a double-grass block removes the upper half.
+|123159|Gravity-affected blocks, such as sand, do not fall when the block underneath them is pulled by a piston.
+|123162|Placing a grass path under a block makes the block disappear.
+|123168|advanced tooltips hide map numbers.
+|123183|Cannot eat plantable items when looking at blocks.
+|123184|"Pick Block" on empty flower pots does nothing.
+|123222|Item frames can be placed below Y{{=}}0.
+|123304|"Ticking block entity" NullPointerException game crash 64 pistons in 1 chunk.
+|123305|JSON text throws syntax error when JSON is more than 1024 characters long.
+|123322|Structures placed by structure blocks do not update connecting blocks on the outside or inside of the structure.
+|123331|'{{cmd|execute if/unless score}}' sets the score to 0 if unset.
+|123360|{{cmd|teleport}} tries to center-correct the y-axis.
+|123388|"{{cmd|execute store}}" on "<code>double</code>" data types uses only '<code>float</code>' rather than '<code>double</code>.' precision in intermediate scale calculation.
+|123401|In commands, block states are attempted to be read after the end of the previous value.
+|123459|Error when reading pack.mcmeta of data or resource packs shows default string representation.
+|123562|Replacing vanilla data (except for tags) simply doesn't work on Apple devices.
+|;Private issues
+|121804|"{{cmd|publish}}" can be executed from command blocks.<ref name=18w01a/>
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|j8B9LjyJ2Vs}}
+
+== Trivia ==
+* Along with [[13w01a]], 18w01a was released on the earliest calendar year out of all snapshots, on January 3.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:18w01a]]
+[[es:Java Edition 18w01a]]
+[[fr:Édition Java 18w01a]]
+[[ja:Java Edition 18w01a]]
+[[nl:18w01a]]
+[[pt:Edição Java 18w01a]]
+[[ru:18w01a (Java Edition)]]
+[[zh:Java版18w01a]]

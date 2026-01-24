@@ -1,0 +1,216 @@
+{{Dangerous version|type=crash|edition=java|version=release|multiple=1|Issues and crashes fixed in [[1.19.2]]:
+* Issue causing players to get disconnected with secure chat.
+* Crash in the social interactions screen}}
+{{Infobox version
+|title=Minecraft 1.19.1
+|image=1.19.1 banner.jpg
+|image2=Java Edition 1.19.1.png
+|edition=Java
+|date=July 27, 2022
+|jsonhash=ccdbe5073004b9276479ccc92faf8c69d5172759
+|clienthash=90d438c3e432add8848a9f9f368ce5a52f6bc4a7
+|clientmap=fc8e22d42c0e4eb1899e2acf7e97eae917e1cb94
+|serverhash=8399e1211e95faa421c1507b322dbeae86d604df
+|servermap=3565648cdd47ae15738fb804a95a659137d7cfd3
+|prevparent=1.19
+|prev=
+|next=1.19.2
+|nextparent=1.20
+}}
+
+'''1.19.1''' is a minor update to {{JE}} released on July 27, 2022. It adds [[allay]] duplication, player chat reports, chat signing status indicators, and fixes bugs and crashes.<ref>{{mcnet|minecraft-java-edition-1-19-1|Minecraft 1.19.1|July 27, 2022}}</ref> This version is not compatible with [[Java Edition 1.19|1.19]] servers.
+
+This update was originally planned to be released on June 28, 2022,<ref>{{mcnet|minecraft-1-19-1-pre-release-1|Minecraft 1.19.1 Pre-release 1|June 21, 2022|}}</ref> but it was postponed and then released on July 27, 2022.<ref>{{mcnet|minecraft-java-edition-1-19-1|Minecraft 1.19.1|July 27, 2022|}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Chat]]'''
+* Messages that are not signed with the secure chat system, or have been tampered with by the server are now marked.
+** Messages with missing or invalid signatures are marked as "Not Secure".
+** Messages that are detected as modified are marked as "Modified".
+** A warning toasts when connecting to a server that doesn’t enforce secure chat.
+* The trust status of messages are displayed with both a colored indicator and an icon.
+** The colored indicator is always visible.
+** The icon is only visible when the chat screen is open.
+* Hovering over the icon provides more information about the trust status.
+** For modified messages, the original secure text is also displayed in the tooltip.
+
+'''[[Resource pack]]'''
+* Added {{samp|report_button.png}}, which contains 3 new icons for the report chat function.
+* Added {{samp|chat_tags.png}}, which contains 2 new icons about trust statuses of messages.
+
+'''[[Social interactions screen]]'''
+[[File:Permanently Banned.png|thumb|right|The screen that appears in-game when an account is banned. In this case, the ban is permanent.]]
+* The list of players on the social interactions screen now places entries for players with recently seen messages at the top of the list.
+* It is now possible to report a player for sending abusive messages in the chat on the social interactions screen.
+** Multiple chat messages can be selected for reporting.
+** The category of the chat report can be selected from a list of chat report categories, as following:
+*** Child sexual exploitation or abuse
+**** Someone is talking about or otherwise promoting indecent behavior involving children.
+*** Defamation, impersonation, or false information
+**** Someone is damaging someone else's reputation, pretending to be someone they're not, or sharing false information with the aim to exploit or mislead others.
+*** Drugs or alcohol
+**** Someone is encouraging others to partake in illegal drug related activities or encouraging underage drinking.
+*** Harassment or bullying
+**** Someone is shaming, attacking, or bullying you or someone else. This includes when someone is repeatedly trying to contact you or someone else without consent or posting private personal information about you or someone else without consent ("doxing").
+*** Hate speech
+**** Someone is attacking you or another player based on characteristics of their identity, like religion, race, or sexuality.
+*** Imminent harm - Self-harm or suicide
+**** Someone is threatening to harm themselves in real life, or talking about harming themselves in real life.
+*** Imminent harm - Threat to harm others
+**** Someone is threatening to harm you or someone else in real life.
+*** Non-consensual intimate imagery
+**** Someone is talking about, sharing, or otherwise promoting private and intimate images.
+*** Terrorism or violent extremism
+**** Someone is talking about, promoting, or threatening to commit acts of terrorism or violent extremism for political, religious, ideological, or other reasons.
+** Additional comments can be entered to provide more details and information regarding the report.
+* Reported players can now be banned from online play and Realms after moderator review.
+* The game shows a notice screen on startup if a player has been banned from online play.
+** The reason and the duration of the ban is shown on this screen.
+
+'''Game events'''
+* Added the following game events:
+** {{cd|jukebox_play}}
+** {{cd|jukebox_stop_play}}
+
+'''Realms'''
+* A message that has been filtered by the Java Realms profanity filter is now marked with a yellow marker.
+* Players are notified if a chat message they have sent has been fully filtered for one or more receiving players on the Realm.
+
+'''[[Splash]]'''
+* Added the splash "Technoblade never dies!" for the commemoration of {{w|Technoblade}}.
+
+== Changes ==
+=== Blocks ===
+'''[[Sculk catalyst]]s'''
+* Now drop 5 XP instead of 20 XP.
+
+=== Mobs ===
+'''[[Allay]]s'''
+* Can now dance when a nearby [[jukebox]] is playing.
+* If an allay is given an [[amethyst shard]] while dancing, it can "duplicate", creating another allay and consuming the shard.
+** It has a 5 minute cooldown between each duplication.
+** The newly created allay does not share the original allay's properties (such as custom name).
+** Controlled by a {{nbt|byte|CanDuplicate}} tag (set to true by default).
+
+=== Command format ===
+'''General'''
+* The {{cd|run_command}} click event for text components no longer supports sending chat messages directly or any commands that send chat messages.
+** {{cmd|tellraw}} should be used instead.
+
+=== General ===
+'''[[Chat]]'''
+* Moved the chat scrollbar to the right of the chat window.
+* When writing chat messages, the signing status of the displayed chat messages is shown with a colored indicator.
+** The indicator either appears to the left of the chat input field, or to the left of the chat preview if chat preview is being used.
+** The indicator is light blue when the displayed message is signed.
+** The indicator is light yellow when chat preview is enabled and a preview is waiting to be signed.
+* System message are now displayed with a gray color indicator.
+* Insecure chat messages logged in the server are prefixed with a {{cd|[Not Secure]}} tag.
+* The order of chat messages are now cryptographically verified.
+** This is used for validating the context of chat messages for player reports.
+* Chat types added to the {{cd|chat_types}} registry are now only used for player chat, and not system messages.
+** The {{cd|system}} and {{cd|game_info}} chat types have been removed.
+* The {{cd|msg_command}} chat type has been split apart into {{cd|msg_command_incoming}} and {{cd|msg_command_outgoing}}.
+* The {{cd|team_msg_command}} chat type has been split apart into {{cd|team_msg_command_incoming}} and {{cd|team_msg_command_outgoing}}.
+* The {{cd|team_name}} chat type parameter has been renamed to {{cd|target}}.
+** This chat type parameter is now used by {{cd|msg_command_outgoing}}.
+* Chat types have been simplified and are now only required to define {{cd|chat}} and {{cd|narration}} decorations.
+** Chat types no longer support overlays.
+** A system message should instead be used to display overlays.
+* The chat input box no longer applies to custom font glyphs with negative advances, or glyphs with advances greater than 32.
+
+'''Chat preview'''
+* The background of the chat preview also displays slightly faded when a preview is waiting to be signed.
+* The "While Typing" mode no longer displays previews if the message has not been modified by the server.
+* Chat preview is now enabled in singleplayer, and is displayed when using commands that have selector substitution such as {{cmd|say}}.
+* Previewed hover events and click events are now highlighted with a solid background.
+
+'''Chat styling'''
+* The {{cd|style}} field default value is no longer present in the JSON file for chat types.
+* {{samp|game_info.json}} now contains a narration setting by default.
+
+'''[[Options]]'''
+* Added "When Sending" chat preview option for updating chat previews only when attempting to send a message.
+** To confirm sending a message, a second hit of the {{key|Enter}}/{{key|Return}} key is required.
+** The previous "ON" setting has been renamed to "While Typing".
+
+'''[[Pause menu]]'''
+* The social interactions screen is now available via the pause screen when in a multiplayer game.
+
+'''Protocol'''
+* Custom servers can set their own auto-completion options for regular chat via a new network packet.
+* Custom servers can hide player chat messages from display via a new network packet.
+** This does not delete player chat messages from chat logs.
+
+'''{{samp|[[server.properties]]}}'''
+* {{cd|enforce-secure-profile}} is now defaulted to true for dedicated servers.
+
+== Fixes ==
+{{fixes|fixedin=1.19.1,1.19.1 Release Candidate 3,1.19.1 Release Candidate 2,1.19.1 Pre-release 6,1.19.1 Pre-release 5,1.19.1 Pre-release 4,1.19.1 Pre-release 3,1.19.1 Pre-release 2,1.19.1 Release Candidate 1,1.19.1 Pre-release 1,22w24a
+|;From released versions before 1.19
+|72687|There are no shadows on text displayed within the action bar.
+|93254|Color in text prompt using commands.
+|130243|{{cmd|debug stop}} message uses OS locale specific number formatting.
+|144043|Trader llamas continue to spit after their target died.
+|146891|Nitwit villager can have a profession.
+|148149|Linux game crash when opening links.
+|149047|Scroll Sensitivity slider label uses OS locale for number formatting.
+|177505|Cured Villager can work at wrong workstation.
+|207077|Crash on loading pre-1.13 world with noteblock + {{cd|note}} NBT in inventory.
+|211239|The background opacity box of command suggestions is rendered behind the "Leave Bed" button when sleeping in a bed
+|220872|Chat scroll bar is still offset
+|235614|Reference to unexisting predicate in a datapack causes {{cd|java.lang.NullPointerException}}.
+|252082|Loading server resource packs reloads twice when one is already loaded.
+|252265|{{cd|--server}} argument causes {{cd|java.lang.NullPointerException}} crash on some servers.
+|;From 1.19
+|249523|Sky color is visible for a brief moment after applying Night Vision under Darkness effect.
+|249973|Loading resource packs is significantly slower in 1.19.
+|250020|Allay doesn't ignore items when {{cd|mobGriefing}} is set to {{cd|false}}.
+|250261|Frogs can lay spawn on flowing water.
+|250267|Frogs don't lay their spawn on waterlogged blocks.
+|252190|Player-dropped items creating vibrations depends on you sneaking at the moment the item hits the ground, instead of when you threw the item.
+|252258|Wool block / carpet items generate vibrations, unless thrown by crouching players.
+|252327|World list fails to load after restarting game and deleting a world.
+|252363|Mobs that naturally spawn in with equipment will play the respective equipping noise.
+|252439|Cured Villager trades are not refreshing.
+|252508|Realms worldgen type missing language string.
+|252511|Bedrock not generating on the new blending border between old and new blending.
+|252539|Commands sending messages use formatting of regular chat in server logs.
+|252546|Poor audio quality compared to 1.18.2.
+|252683|Unexpected exception in the selector loop causing server lag.
+|252702|Game crashes when trying to launch 1.19 when system is in Arabic, Persian, or adjacent formats.
+|252987|Illegal character {{cd|\n}} in text component {{cd|clickEvent}}.
+|253053|Tooltips are cut off at the bottom of the screen
+|253055|Resource packs causing each WeighedSoundEvents to duplicate Sounds
+|253214|Tooltips will become offset in certain cases.
+|253336|Using the eye of ender "crashes" game in the seed: {{cd|-3721742095548798177}}.
+|253402|Game crash when you {{key|Shift}} right click on item in your hotbar to the chest at the same time as you die.
+|253888|Messages that servers have tampered with through chat reporting are signed and reportable.
+|254228|Client data generator crashes due to locale-dependent {{cd|String.format}}.
+|254230|{{cmd|worldborder center}} message uses OS locale specific number formatting.
+|254349|Crash when putting dye into a loom on a modded server.
+|254355|Key binds set to mouse buttons of number greater than 8 switch over by 1 when the game starts.
+}}
+
+== Videos ==
+{{Slicedlime|GFH9RWHrjSc}}
+
+== Trivia ==
+* This is the first minor update to have a pre-release released after a release candidate.
+* This is the first minor update since [[1.16.4]] to have been postponed.
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:1.19.1]]
+[[es:Java Edition 1.19.1]]
+[[fr:Édition Java 1.19.1]]
+[[ja:Java Edition 1.19.1]]
+[[pl:Java Edition 1.19.1]]
+[[pt:Edição Java 1.19.1]]
+[[ru:1.19.1 (Java Edition)]]
+[[zh:Java版1.19.1]]

@@ -1,0 +1,128 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.8027.0<br>'''Android''': 1.21.80.27
+| image = Bedrock 1.21.80.27 PatchNotes.jpeg
+| image2 = Bedrock 1.21.80.27.png
+| build = 32353441
+| editorver = 0.9.5
+| versioncode = '''Android''':<br />
+952108027 (armeabi-v7a, 34)<br />
+962108027 (x86, 34)<br />
+972108027 (arm64-v8a, 34)<br />
+982108027 (x86_64, 34)
+| date = April 8, 2025
+| server = 1.21.80.27
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.80.27.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.80.27.zip Linux]
+| parent = 1.21.80
+| prevparent = 1.21.73
+| prev = Preview 1.21.80.25
+| next = Preview 1.21.80.28
+| nextparent = 1.21.81
+}}<onlyinclude>
+'''Beta 1.21.80.27''' (ChromeOS, Android) or '''Preview 1.21.80.27''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fifth beta/''Preview'' version for [[Bedrock Edition 1.21.80]], released on April 8, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/35680472765325-Minecraft-Beta-Preview-1-21-80-27|title=Minecraft Beta & Preview - 1.21.80.27|website=Minecraft Feedback|date=April 8, 2025}}</ref> which fixes bugs.
+
+== Changes ==
+=== Items ===
+'''[[Firework Rocket]]'''
+* Changed elytra so that while gliding, using a firework will only be used as a boost even if placed on a block.
+
+=== General ===
+'''[[Settings]]'''
+*Enabled Filter Profanity toggle on Xbox and Nintendo platforms.
+
+=== World generation ===
+'''[[Trail Ruins]]'''
+*Trail ruins generate at the same location in [[old growth birch forest]]s between ''Java'' and ''Bedrock'' on the same world seed.
+
+=== Technical ===
+'''[[API]]'''
+:{{cd|@minecraft/server 1.19.0}}
+*Moved methods {{cd|StructureManager.placeJigsaw}} and {{cd|StructureManager.placeJigsawStructure}} from {{cd|beta}} to {{cd|1.19.0}}.
+*Moved interface {{cd|JigsawPlaceOptions}} from {{cd|beta}} to {{cd|1.19.0}}.
+*Moved interface {{cd|JigsawStructurePlaceOptions}} from {{cd|beta}} to {{cd|1.19.0}}.
+*Moved error class {{cd|PlaceJigsawError}} from {{cd|beta}} to {{cd|1.19.0}}.
+
+'''Components'''
+*Content errors will log missing entity references in the {{cd|minecraft:entity_placer}} and {{cd|minecraft:projectile}} item components.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Upcoming Creator Features", "Custom biomes" and "Experimental Creator Camera Features" experimental toggles.
+
+=== Additions ===
+==== Command format ====
+'''{{cmd|/controlscheme}}'''
+*Added the {{cmd|/controlscheme}} command for switching control schemes when the Experimental Creator Camera toggle is enabled.
+
+==== Technical ====
+'''[[Blocks]]'''
+*New field {{cd|condition}} added to the culling rules schema. It provides more control over which neighbor blocks will trigger a face or part to be culled.
+**The supported values are {{cd|default}}, {{cd|same_culling_layer}}, {{cd|same_block}} and {{cd|same_block_permutation}}.
+***{{cd|default}} will pass the condition if the neighbor block is full and opaque.
+****All conditions are an extension of {{cd|default}}, meaning a full and opaque neighbor will always be a passing condition, before the extended {{cd|same_*}} condition is checked.
+***{{cd|same_culling_layer}} will pass the condition if the neighbor block shares the same {{cd|culling_layer}} as the block being occluded, defined in the geometry component.
+****If either of the culling layers being compared is {{cd|minecraft:culling_layer.undefined}}, the condition will never pass.
+***{{cd|same_block}} will pass the condition if the neighbor block has the same identifier.
+***{{cd|same_block_permutation}} will pass the condition if the neighbor block has the same identifier and is the exact same permutation.
+**Additionally, the feature is currently only usable behind the "upcoming creator features" toggle.
+*New field {{cd|culling_layer}} added to the block's geometry component. It allows different blocks to be grouped together when using the {{cd|same_culling_layer}} condition in a culling rules file.
+**When using the {{cd|minecraft}} namespace, the only allowed culling layer identifiers are: {{cd|minecraft:culling_layer.undefined}} or {{cd|minecraft:culling_layer.leaves}}.
+**Additionally, the feature is currently only usable behind the "upcoming creator features" toggle.
+
+'''[[Gameplay]]'''
+*Added {{cd|minecraft:replace_biomes}} component to allow for custom biomes to replace portions of vanilla biomes. To use, add to custom biome files in behavior packs.
+
+=== Changes ===
+==== Technical ====
+:{{cd|@minecraft/server 2.0.0-beta}}
+*Coroutines (promises) are now flushed in early execution to allow async imports to interact with early execution APIs like custom components and custom commands.
+*Added support for custom command enums.
+*Added {{cd|Enum}} type to {{cd|CustomCommandParamType}}.
+*{{cd|spawnEntity}} method of {{cd|Dimension}} no longer supports using a spawn event inside the {{cd|identifier}} parameter. {{cd|SpawnEntityOptions}} interface now has an optional string member {{cd|spawnEvent?: string}} for specifying a spawn event to be sent to the entity when it is spawned. Please update any existing usages of spawn events inside {{cd|identifier}} to instead use this new {{cd|spawnEvent}} option. For example {{cd|spawnEntity("minecraft:horse<minecraft:ageable_grow_up>", {x:0, y:0, z:0})}} should become {{cd|spawnEntity("minecraft:horse", {x:0, y:0, z:0}, {spawnEvent: 'minecraft:ageable_grow_up'})}}
+*{{cd|EntityGroundOffsetComponent}} has been removed.
+*{{cd|Block}} method {{cd|getComponent}} will return {{cd|BlockCustomComponentInstance}} for custom components registered with {{cd|BlockComponentRegistry}} in {{cd|2.0.0}}.
+
+:{{cd|@minecraft/server-ui 2.0.0-beta}}
+*Class {{cd|ModalFormResponse}}.
+**Changed type for {{cd|formValues}} property from {{cd|(boolean | number | string)[] to (boolean | number | string | undefined)[]}}.
+*** New Signature: {{cd|formValues?: (boolean | number | string | undefined)[]}}.
+*** Old Signature: {{cd|formValues?: (boolean | number | string)[]}}.
+**{{cd|formValues}} array now contains entries for all the elements provided by the request. It means that labels, headers, and dividers are considered into the response with an {{cd|undefined}} value.
+
+'''Graphical'''
+*Re-enabled local exposure on all platforms in Vibrant Visuals mode.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.80.27 Preview
+|;old
+|132021|Candles don't accept PBR Textures
+|191193|Evoker's legs don't move
+|191595|Can't take off with elytra while targeting a block
+|194677|Dead Bush & Sand ambient sounds don't work at all
+|;previous
+|194008|Basalt does not always generate from lava on soul soil next to blue ice
+|otherissuescount=4}}
+'''Other'''
+*Stained glass now renders with correct colors when using Vibrant Visuals.
+*Bundle UI now correctly disappears when interacting with Inventory tabs in Pocket UI.
+*Fixed a bug where the game would be unresponsive for a short while after leaving the bed screen.
+*Fixed isotropic textures in {{cd|minecraft:material_instances}} being squashed and stretched for non-square face.</onlyinclude>
+
+== Videos ==
+:'''Updates for Creators (Preview 1.21.80.27)'''
+{{YT|zMF3JPahrPQ}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.80 betas]]
+
+[[de:Bedrock Edition beta 1.21.80.27]]
+[[ja:Bedrock Edition Preview 1.21.80.27]]
+[[pt:Edição Bedrock Preview 1.21.80.27]]
+[[ru:Preview 1.21.80.27 (Bedrock Edition)]]
+[[uk:Preview 1.21.80.27 (Bedrock Edition)]]
+[[zh:基岩版1.21.80.27]]

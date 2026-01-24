@@ -1,0 +1,203 @@
+{{Infobox version
+|title=Minecraft 20w17a
+|image=20w17a.jpg
+|image2=Java Edition 20w17a.png
+|edition=Java
+|type=Snapshot
+|date=April 22, 2020
+|clienthash=0f9a4d6f9bc5b8fe3a3b5e1d6787f856de3d4f72
+|jsonhash=0789d5bc725164232417eb1c6adca0d94b27aa77
+|serverhash=0b7e36b084577fb26148c6341d590ac14606db21
+|clientmap=4154bab4c16af203c027c51646a87e17034cd096
+|servermap=073daf6a9d136b57c63a11460761d59ec8ed93f4
+|parent=1.16
+|prevparent=1.15.2
+|prev=20w16a
+|next=20w18a
+|nextparent=1.16.1
+}}<onlyinclude>
+
+'''20w17a''' is the thirteenth [[snapshot]] for [[Java Edition 1.16]], released on April 22, 2020,<ref name="20w17a">{{snap|20w17a|April 22, 2020}}</ref> which added the {{cmd|attribute}} command, tweaked [[bastion remnant]] loot, and lowered the spawn rate of [[ruined portal]]s, along with bug fixes.
+
+== Additions ==
+=== Command format ===
+'''[[Commands]]'''
+* Added the {{cmd|attribute}} command.
+** Used to get, set, or modify [[attribute]]s.
+** Syntax:
+*** <code>attribute <''target''> <''attribute''> get [<''scale''>]</code>: get total value of attribute
+*** <code>attribute <''target''> <''attribute''> base set <''value''></code>: sets base value
+*** <code>attribute <''target''> <''attribute''> base get [<''scale''>]</code>: get base value
+*** <code>attribute <''target''> <''attribute''> modifier add <''uuid''> <''name''> <''value''> (add|multiply|multiply_base)</code>: adds modifier (fails if modifier is already present)
+*** <code>attribute <''target''> <''attribute''> modifier remove <''uuid''></code>: removes modifier
+*** <code>attribute <''target''> <''attribute''> modifier value get <''uuid''> [<''scale''>]</code>: get value of modifier
+**Parameters:
+*** <code><''target''></code>: single entity (note: only players, armor stands and mobs have attributes)
+*** <code><''attribute''></code>: name of attribute (like <code>minecraft:generic.max_health</code>)
+*** <code><''name''></code>: string (in optional quotes) describing human-readable name of modifier
+*** <code><''value''></code>: floating point value (note: certain attributes have limits on final value, so the change might not be noticeable)
+
+=== General ===
+'''Options'''
+* Added an "Entity Distance" scale option ranging from 50% to 500%.
+** Sets the distance at which [[mob]]s render into frame.
+
+'''[[Tag]]s'''
+* Added <code>pressure_plates</code> block tag.
+** Contains light and heavy weighted pressure plates, as well as the <code>[[Tag#blocks wooden_pressure_plates|#wooden_pressure_plates]]</code> and <code>[[Tag#blocks stone_pressure_plates|#stone_pressure_plates]]</code> block tags.
+* Added <code>stone_pressure_plates</code> block tag.
+** Contains stone and polished blackstone pressure plates.
+
+'''[[Sound]]s'''
+* Added new sounds for [[Iron Chain|chain]]s.
+
+'''World creation'''
+* [[Difficulty]] and [[game rule]]s can now be changed from the "Create World" screen.
+
+== Changes ==
+=== Blocks ===
+'''[[Furnace]]s'''
+* Breaking a furnace now gives the experience for the smelted things inside.
+
+'''[[Gilded blackstone]] and [[Nether gold ore]]'''
+* Now use the same sounds as [[Nether quartz ore]].
+
+'''[[Smithing table]]s'''
+[[File:SmithingTableUI-20w17.png|thumb|The new smithing table UI]]
+* Improved UI.
+** Added an ingot outline to the second input slot.
+** Added a hammer icon above the input slots, similar to the anvil UI.
+
+'''[[Soul fire lantern]]s and [[soul fire torch]]es'''
+* Renamed "Soul Fire Lantern" and "Soul Fire Torch" to "Soul Lantern" and "Soul Torch", respectively.
+* IDs have been changed from <code>soul_fire_torch</code> and <code>soul_fire_lantern</code> to <code>soul_torch</code> and <code>soul_lantern</code>, respectively.
+
+'''[[Wall]]s'''
+* Now change into posts when [[pressure plate]]s and [[banner]]s are placed on them.
+
+=== World generation ===
+'''[[Bastion remnant]]s'''
+* Loot has been tweaked.
+** Ancient debris and netherite scraps have been made generally rarer.
+** Netherite gear can no longer be found in bastion remnants; instead, diamond gear is found.
+** The chances and stack sizes of various items have been tweaked.
+
+'''[[Ruined portal]]s'''
+* Now spawn about 30% less frequently.
+
+=== Gameplay ===
+'''Creative inventory'''
+* Inventory tab names, which appear in the description of items when in the Search tab, now display in boldface.
+** Other information, such as tag names, are now displayed in boldface as well.
+* Netherite ingots and netherite scrap have been moved next to iron and gold ingots.
+
+=== General ===
+'''Block storage format'''
+* Format in chunks has been slightly changed to speed up various tasks (rendering, pathfinding, world generation, etc.).
+** <code>BlockStates</code> in <code>Sections</code> elements no longer contain values stretching over multiple 64-bit fields.
+*** If the number of bits per block is not the power of two (i.e. single 64-bit value can't fill the whole number of blockstates) some bits aren't used.
+*** For example, if a single block state takes 5 bits, the highest 4 bits of every 64-bit field are unused. That also means a slight increase in storage size (in case of 5 bits, from 320 to 342 64-bit fields).
+
+'''Fonts'''
+* Chat component style now supports <code>font</code> property, which is a resource location for the font in the resource pack. No entry is equivalent to <code>minecraft:default</code>.
+* Full range of Unicode characters is supported, making it possible to type emojis and other Unicode characters outside of the [[wikipedia:Plane (Unicode)#Basic Multilingual Plane|Basic Multilingual Plane]].
+** However, custom resource packs must be used to display correct characters instead of tofu, due to the lack of these characters in the default font.
+* <code>Force Unicode</code> option now switches between normal and alternative font (called <code>uniform.json</code>) - no reload needed.
+
+'''[[Main menu]]'''
+* The "Singleplayer" button jumps directly to the "Create World" screen if there are no worlds to select.
+
+'''[[Raw JSON text format]]'''
+* The JSON <code>color</code> component now supports 6-digit hexadecimal colors to specify custom colors other than the 16 default [[color codes]].
+** Example: <code>/tellraw @a {"text":"Turquoise output","color":"#00ff88"}</code>
+* The <code>hoverEvent</code> chat component now uses the parameter <code>contents</code>, with contents depending on type:
+** For <code>show_text</code> - chat component
+** For <code>show_item</code> - either item id or object with fields <code>id</code>, <code>count</code> and <code>tag</code> (with last one being serialized NBT)
+** For <code>show_entity</code> - object with fields: <code>id</code> (UUID), <code>name</code> (chat component) and <code>type</code> (entity type resource location)
+** The <code>value</code> argument is now deprecated, but still supported.
+
+'''[[Tag]]s'''
+* Changed the <code>wall_post_override</code> block tag to include the <code>banners</code> and <code>pressure_plates</code> block tags.
+
+'''UI'''
+* Changed checkbox texture.
+
+'''World save format'''
+* Saving <code>level.dat</code> now uses randomly-named temporary files (instead of using <code>level.dat_new</code> every time).
+* <code>player/*.dat</code> are now saved in a way similar to <code>level.dat</code> (including leaving <code>.dat_old</code> files).
+
+== Fixes ==
+{{fixes|fixedin=20w17a
+|;old
+|1601|Breaking a furnace will not give the player experience for the smelted things inside.
+|5410|In creative mode, flying down is stopped when brushing up against ladders or vines.
+|31032|Using only one empty map does not increase {{cd|minecraft.used:minecraft.map}}.
+|46417|Sprint particles are emitted in spectator mode.
+|56373|Selector and score text components do not work on {{cd|hoverEvents}}.
+|63020|Some chunks are not rendered in the first person from some angles in certain situations (incorrect frustum culling).
+|94535|Flying and holding {{key|Ctrl}} close to the ground emits walking particles.
+|96319|Mob pathfinding AI does not regard some blocks as obstructions and is unable to pathfind on top of them.
+|108598|Client rendering other player or mob holding compass influences compass of user.
+|114544|Kicked by "Flying is not enabled on this server" while sleeping.
+|117710|Bonus Chest setting is not copied when re-creating world.
+|117805|Oak trees can generate right below height limit (y {{=}} 256) resulting in an incomplete tree.
+|120572|{{cmd|recipe}} crashes the game.
+|126244|{{cmd|locate}}, explorer maps, and treasure maps can cause extreme TPS lag, even leading to a complete server freeze if structure generation is turned off.
+|131360|Music sometimes stops abruptly when you go underwater.
+|132926|The width of an advancement's description depends on the first line.
+|135738|Bossbar names that have scores don't update as intended after exiting and re-entering the world.
+|144622|Using {{cmd|data modify}} to set the name from a block only works once.
+|149704|Sneaking/crouching twice makes player sprint.
+|149792|Client book length mismatch resulting in crash.
+|151364|Feeding a dolphin causes a crash when structure generation is turned off.
+|169514|Tamed parrots cannot be renamed unless they are flying.
+|170075|"Online play is not rated" checkbox has no outline when focused.
+|171939|Many mobs are placed incorrectly in the statistics.
+|176104|Dropped compasses always point up.
+|177346|A compass in a mob's hand does not point to correct location if the mob turns.
+|;dev
+|171561|Only one player can access a shulker box at a time.
+|174359|Piglins prefer using an unenchanted gold item instead of an enchanted gold item.
+|174473|Nether gold ore uses stone sound effects.
+|175113|Rain prevents entities from burning in fire.
+|175186|Respawning does not check if the "respawn block" is the correct one for the dimension.
+|175998|Striders move very fast between two blocks or when diagonally running into blocks.
+|176029|Right clicking a lodestone with a stack of compasses converts the whole stack.
+|176060|Recipe book does not load the entire empty map recipe anymore.
+|176116|Saddle texture on strider is backwards.
+|176348|Cartographer villagers cannot trade explorer maps.
+|176521|Pressing space while the recipe book button is highlighted in crafting interfaces does not toggle the recipe book.
+|177776|Netherite ingots are not sorted properly with other ingots.
+|177780|Shulkers cannot be opened while playing closing animation anymore.
+|177796|Blackstone walls are in the "Building Blocks" category instead of "Decoration Blocks" category, unlike all other walls.
+|177862|Polished blackstone button and pressure plate are in incorrect area of the Creative inventory.
+|177885|Invisible horses show patterns.
+|177997|Baby zoglins still deal the same attack damage as an adult.
+|178050|New Nether music is inconsistently loud.
+|178086|Flying close to the ground with soul speed over soul blocks speeds up the player and emits soul particles.
+|178093|Piglins with full inventories will not pick up gold ingots to barter, even though you can still right-click to barter with them.
+|178259|Game crashes when an iron golem with the attack damage attribute is set to 0.5d.
+|178316|Dispenser plays "dispensed item" sound when attempting to charge a full respawn anchor instead of "dispenser fails".
+|178630|TNT eye height changed.
+|;prev
+|178797|Barrier blocks generate in bastion remnant.
+|178955|Badlands are viewed as a mountainous biome for ruined portals.
+|179542|Basalt delta blocks override Nether bricks in fortresses.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|kpW4UlT9J_c}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:20w17a]]
+[[es:Java Edition 20w17a]]
+[[fr:Édition Java 20w17a]]
+[[ja:Java Edition 20w17a]]
+[[pt:Edição Java 20w17a]]
+[[ru:20w17a (Java Edition)]]
+[[zh:Java版20w17a]]

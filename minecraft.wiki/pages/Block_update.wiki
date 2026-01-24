@@ -1,0 +1,529 @@
+A '''block update''' is an in-game mechanism that occurs when a block is modified in some way.
+Limited to the computing power of a computer, the game can not process all blocks at all times, which is why the game needs such mechanism. When a block changes (due to a player, an entity, or a [[Tick#Chunk_tick|chunk tick]], etc.), it notifies nearby blocks that they should check if they need to respond to the change.
+
+==''Java Edition''==
+{{IN|java}}, there are two main types of block updates: post placement (PP) and neighbor changed (NC).
+
+===Priorities===
+
+This article uses the priorities listed in the table below to categorize the various block updates. However, keep in mind that these values are not actually present in the game's code.
+
+{|class="wikitable"
+! Priority !! Description !! Method in code
+|-
+| -3 || Updates before the change. || N/A
+|-
+| -2 || Some updates after the change. || Blockstate.onRemove()
+|-
+| -1 || Some updates after the change. || Blockstate.onPlace()
+|-
+| 0 || General NC updates. || Level.blockUpdated()
+|-
+| 1 || General comparator updates. || Level.updateNeighbourForOutputSignal()
+|-
+| 2 || General PP updates. || Level.updateNeighbourShapes()
+|-
+| 3 || Later updates. || N/A
+|}
+
+Most players only use -3 to 3 priority values to describe [[tick#scheduled tick|scheduled tick]]s, so it is recommended not to use these values for the update sequence in order to avoid ambiguity with scheduled tick priorities. 
+
+===Post placement update===
+
+A '''post placement''' (PP) update (aka '''update post placement''', '''update neighbor shapes''', '''update shape''') is the most common type of block updates, mainly used for connected blocks changing their shapes (e.g. stairs, fences) and attached blocks dropping into items (e.g. torches, cactus, wheat).
+
+====Sending====
+{{Schematic | caption = Range of General PP updates (Green wool)
+ ||input||-
+ |input|stone|input|-
+ ||input||-
+}}
+:;General PP updates
+::When a block is placed, destroyed, replaced, or its blockstate is changed, the game sends PP update to its immediate neighbors, in this order: '''west, east, north, south, down, up'''.
+
+:;Exceptions
+::Some blocks have unique behaviors:
+::*Lighting a nether portal does not send PP update.
+::*A nether portal generating does not send PP update.
+::*Changing block state with debug stick does not send PP update.
+::*Shulker boxes sends general PP updates when beginning to open/close or finished opening/closing.
+::*When a redstone wire is placed, destroyed, replaced, or its blockstate is changed, for any block that the redstone wire points horizontally to, if it is not a redstone wire, then the game also sends PP updates to the block above it and the block below it. However, it does not send PP update to an observer.
+::*Pistons and beds have more complex updates.
+
+====Receiving====
+When a block receives a PP update, the direction of the PP update may be considered. For example, a [[wheat]] block accepts only PP updates from beneath.
+
+Only the following blocks can receive PP updates:
+
+{|class="wikitable"
+! Block !! What to do when receiving a PP update
+|-
+| Support-requiring blocks (e.g. torches, snow, carpets, doors, fire, etc.) || Checks if it should break and drop as an item.
+|-
+| Connective blocks (e.g. fences, stairs, chests, redstone wires, nether portals, etc.) || Checks if it should change its shape.
+|-
+| {{BlockLink|Redstone repeater}} || Checks for being locked or unlocked.
+|-
+| {{BlockLink|Note block}} || Tries to update its instrument type.
+|-
+| {{BlockLink|Leaves|id=oak leaves}} || Calculates the distance to logs.
+|-
+| {{BlockLink|Concrete powder}} || Solidifies if contacted with water.
+|-
+| {{BlockLink|Water}} and waterlogged blocks || Requests a [[Tick#Scheduled tick|scheduled tick]] for flowing.
+|-
+| {{BlockLink|Observer}} || Requests a [[Tick#Scheduled tick|scheduled tick]] for pulsing.
+|-
+| {{EntityLink|Gravity-affected blocks|link=Falling Block|id=falling-blocks}} || Requests a [[Tick#Scheduled tick|scheduled tick]] for checking for falling.
+|-
+| {{BlockLink|Dirt Path|Dirt path}}
+| rowspan = "2" | Requests a [[Tick#Scheduled tick|scheduled tick]] for checking whether it is covered by a solid block.
+|-
+|{{BlockLink|farmland}}
+|-
+| {{BlockLink|Cactus}} || Requests a [[Tick#Scheduled tick|scheduled tick]] for checking if it should drop.
+|-
+| {{BlockLink|Coral}} || Requests a [[Tick#Scheduled tick|scheduled tick]] for checking whether it is outside of water.
+|-
+| {{BlockLink|Magma block}}
+| rowspan = "2" | Tries to request a [[Tick#Scheduled tick|scheduled tick]] to generate bubble columns.
+|-
+|{{BlockLink|soul sand}}
+|}
+
+===Neighbor changed update===
+'''Neighbor changed''' (NC) updates (aka '''neighbor changed''', '''update neighbors''', '''redstone update''') are the most widely known type of block updates (for [[#History|historical]] reasons), and are mainly used for redstone components.
+
+====Sending====
+{{Schematic | caption = Range of General NC updates (Green wool)
+ ||input||-
+ |input|stone|input|-
+ ||input||-
+}}
+:;General NC updates
+::Most blocks send NC updates to their immediate neighbors when they are placed, destroyed, or replaced, in this order: '''west, east, down, up, north, south'''.
+
+:;Exceptions
+::Some changes do not produce General NC updates:
+::*{{BlockLink|Bamboo}}
+::** Thickens when the upper bamboo thickens. 
+::* {{BlockLink|Bamboo shoot}}
+::** Grows into a bamboo.
+::* {{BlockLink|Water}} and {{BlockLink|Bubble column}}
+::** Convert to each other.
+::* {{BlockLink|Carved pumpkin}}, {{BlockLink|Jack o'lantern}}, {{BlockLink|Snow block}} and {{BlockLink|Block of Iron}}
+::** Turn into a golem.
+::* Plants
+::** Turn into a double-block plant.
+::* {{BlockLink|Cauldron}}
+::** Its water level changes.
+::* {{BlockLink|Chorus flower}} and {{BlockLink|Chorus plant}}
+::** Grow, ripen or change their shape.
+::* {{BlockLink|Cocoa}}
+::** Grows.
+::*{{BlockLink|Redstone repeater}}
+::** Becomes lit or unlit.
+::* {{BlockLink|Redstone comparator}}
+::** Its signal or its mode is changed.
+::* {{BlockLink|Coral}}, {{BlockLink|Coral fans}}, and {{BlockLink|Coral blocks}}
+::** Die.
+::* {{BlockLink|Wheat}}, {{BlockLink|Potatoes}}, {{BlockLink|Carrots}}, and {{BlockLink|Beetroots}}
+::** Grow.
+::* {{BlockLink|Doors}}, {{BlockLink|Trapdoors}}, and {{BlockLink|Fence gates|id=oak-fence-gate}}
+::** Opes, close, activate, or deactivate.
+::* {{BlockLink|Dragon egg}}
+::** Transports to destination.
+::* {{BlockLink|Farmland}}
+::** Gets hydrated or dry.
+::* {{BlockLink|Frosted ice}}
+::** Melts gradually (but has not turned into water).
+::* {{BlockLink|Jukebox}}
+::** Inserts or ejects records.
+::* {{BlockLink|Nether wart}}
+::** Grows.
+::* {{BlockLink|Observer}}
+::** Becomes lit or unlit.
+::* {{BlockLink|Redstone lamp}}
+::** Becomes lit or unlit.
+::* {{BlockLink|Sea pickle}}
+::** Increases its number using bone meal.
+::* {{BlockLink|Sponge}}
+::** Absorbs water.
+::* {{BlockLink|Melon stem}} and {{BlockLink|Pumpkin stem}}
+::** Grow.
+::** Melon or pumpkin is removed from them.
+::* {{BlockLink|Sweet berry bush}}
+::** Grows.
+::** Its fruits are collected.
+::* {{BlockLink|Turtle egg}}
+::** Its number decreases.
+::* {{BlockLink|Vines}}
+::** Grows, changes its shape, grows out a new vine block.
+::* {{BlockLink|Wither skeleton skull}}, {{BlockLink|Soul soil}}, and {{BlockLink|Soul sand}}
+::** Turn into a wither.
+::* {{BlockLink|Grass block}}
+::** Gets eaten by a sheep.
+::* {{BlockLink|Carrots}}
+::** Get eaten by a rabbit.
+::* {{BlockLink|Anvil}}
+::** Gets damaged.
+::* {{BlockLink|End portal frame}}
+::** The Eye of Ender is placed.
+::* {{BlockLink|End portal}}
+::** Generates.
+::* {{BlockLink|Brewing stand}}
+::** Bottles or potions are added into it.
+::* {{BlockLink|Structure block}} and {{BlockLink|Command block}}
+::** Change their mode.
+::* {{BlockLink|Cactus}} and {{BlockLink|Sugar cane}}
+::** Grow.
+::* {{BlockLink|Daylight detector}}
+::** Changes its mode.
+::* {{BlockLink|Dispenser}}, {{BlockLink|Dropper}}, and {{BlockLink|Hopper}}
+::** Becomes activated or deactivated.
+::* {{BlockLink|Fire}}
+::** Its age or shape changes.
+::* {{BlockLink|Saplings}}
+::** Increase their stage.
+::* {{BlockLink|Tripwire}}
+::** Its "disarmed" value changes.
+::* {{BlockLink|Beds}}
+::** Become occupied or unoccupied.
+::* {{BlockLink|Nether portal}} and {{BlockLink|Obsidian}}
+::** Generates as a nether portal.
+::* {{BlockLink|Campfire}}
+::** Add or remove hay bale below it.
+::* {{BlockLink|Fences}}, {{BlockLink|Stairs}}, {{BlockLink|Glass panes|id=stained-glass-panes}}, {{BlockLink|Iron bars}}, {{BlockLink|Mushroom blocks}}, and {{BlockLink|Walls}}
+::** Its shape changes.
+::* {{BlockLink|Grass block}}, {{BlockLink|Podzol}}, and {{BlockLink|Mycelium}}
+::** Be covered or uncovered by snow.
+::* {{BlockLink|Kelp}}, {{BlockLink|Weeping vines}}, and {{BlockLink|Twisting vines}}
+::** Grow.
+::** Add or remove kelp/vines above/below it.
+::* {{BlockLink|Pressure plates}}
+::** Its signal changes.
+::* All blocks
+::** Change their blockstate using debug stick.
+::** Placed by a command.
+::* {{BlockLink|Piston}}s and {{BlockLink|Beds}}
+::** Have more complex behavior.
+
+:;Other NC updates
+::Some blocks (mainly redstone components) send more NC updates other than general NC updates when changing.
+
+{|class="wikitable"
+|-
+! Block !! Change !! Priority !! Range and order !! Schematic diagram
+|-
+| rowspan = "2" | Lever / Button / Pressure plate / Tripwire hook
+| Destroy an activated lever/button/pressure plate/tripwire hook.
+| -2
+| rowspan = "2" |Their immediate neighbors (in order of west, east, down, up, north, south). Then the immediate neighbors (in order of west, east, down, up, north, south) of the block they're attached to.
+| rowspan = "2" |
+{{Schematic
+ ||input|input||-
+ |input|input|input+le-$w|input|-
+ ||input|input|
+}}
+|-
+| Active or deactive them.<br>Change pressure plate's signal.<br>Tripwire hook connects to a tripwire.
+| 3
+|-
+| rowspan = "3" | Repeater and Comparator
+| Place or its blockstate changes.
+| -1
+| rowspan = "3" | The block they're facing. Then the immediate neighbors (without the repeater/comparator itself. In order of west, east, down, up, north, south) of the block they're facing.
+| rowspan = "3" |
+{{Schematic
+ ||input||-
+ |rr-$e1|input|input|-
+ ||input||-
+}}
+|-
+| Remove.
+| -2
+|-
+| Comparator's signal changes.
+| 3
+|-
+| Chest
+| Begin to be open/closed
+| N/A (the block is not changed)
+| Its immediate neighbors (in order of west, east, down, up, north, south).
+|
+{{Schematic
+ ||input||-
+ |input|ch|input|-
+ ||input||-
+}}
+|-
+| Trapped chest
+| Begin to be open/closed
+| N/A (the block is not changed)
+| Its immediate neighbors (in order of west, east, down, up, north, south). Then the immediate neighbors (in order of west, east, down, up, north, south) of the block below it.
+|
+{{Schematic
+ ||input||-
+ |input|input+ch-$|input|-
+ |input|input|input|-
+ ||input|
+}}
+|-
+| rowspan="3" | Observer
+| Lit or unlit.
+| 3
+| rowspan="2" | The block it's facing. Then the immediate neighbors (without the observer itself. In order of west, east, down, up, north, south) of the block it's facing.
+|rowspan="3" |
+{{Schematic
+ ||input||-
+ |obs-e|input|input|-
+ ||input||-
+}}
+|-
+| Destroy or replace an activated observer.
+| -2
+|-
+| Place an activated observer.
+| -1
+| Set itself to unactivated without any update. Then update the block it's facing. Then the immediate neighbors (excluding the observer itself. In order of west, east, down, up, north, south) of the block it's facing.
+|-
+| rowspan="2" | Redstone torch
+| Place or its blockstate changes.
+| -1
+| rowspan="2" | The immediate neighbors (in order of west, east, down, up, north, south) of the immediate neighbors (in order of down, up, north, south, west, east) of the torch.
+| rowspan="2" |
+{{Schematic
+ |||input|||-
+ ||input|input|input||-
+ |input|input|input+rt-$d!|input|input|-
+ ||input|input|input||-
+ |||input|||-
+}}
+|-
+| Destroy, replace, or its blockstate changes.
+| -2
+|-
+| rowspan="4" | Redstone wire
+| Destroy or replace.
+| -2
+| The immediate neighbors (in order of west, east, down, up, north, south) of the immediate neighbors (in order of down, up, north, south, west, east) of the wire. 
+<br>
+Then updates ''the immediate neighbors (in order of west, east, down, up, north, south) and the immediate neighbors (in order of west, east, down, up, north, south) of the immediate neighbors (in order of down, up, north, south, west, east)'' of adjacent redstone wires (in order of north, east, south, west). 
+<br><br>
+Then updates ''the immediate neighbors (in order of west, east, down, up, north, south) and the immediate neighbors (in order of west, east, down, up, north, south) of the immediate neighbors (in order of down, up, north, south, west, east)'' of redstone wires above the solid blocks adjacent to the redstone wire (in order of north, east, south, west). 
+<br><br>
+Then updates ''the immediate neighbors (in order of west, east, down, up, north, south) and the immediate neighbors (in order of west, east, down, up, north, south) of the immediate neighbors (in order of down, up, north, south, west, east)'' of redstone wires below the non-solid blocks adjacent to the redstone wire (in order of north, east, south, west).
+|
+{{Schematic |caption = When removing "R"
+ |||input|||-
+ ||input||input||-
+ |input||input+rd-$+R||input|-
+ ||input||input||-
+ |||input|||-
+}}
+{{Schematic |caption = When removing "R"
+ |||||input|||-
+ ||||input|input|input||-
+ |||input|input|input+rd|input|input|-
+ ||input|input|input+rd-$+R|input+SB-u|input||-
+ |input|input|input+rd-$|input|input|||-
+ ||input|input|input||||-
+ |||input|||||-
+}}
+|-
+| Place.
+| -1
+| Updates the immediate neighbors (in order of west, east, down, up, north, south) of the block above the wire. 
+<br>
+Then updates the immediate neighbors (in order of west, east, down, up, north, south) of the block below the wire. 
+<br><br>
+Then updates ''the immediate neighbors (in order of west, east, down, up, north, south) and the immediate neighbors (in order of west, east, down, up, north, south) of the immediate neighbors (in order of down, up, north, south, west, east)'' of adjacent redstone wires (in order of north, east, south, west). 
+<br><br>
+Then updates ''the immediate neighbors (in order of west, east, down, up, north, south) and the immediate neighbors (in order of west, east, down, up, north, south) of the immediate neighbors (in order of down, up, north, south, west, east)'' of redstone wires above the solid blocks adjacent to the redstone wire (in order of north, east, south, west). 
+<br><br>
+Then updates ''the immediate neighbors (in order of west, east, down, up, north, south) and the immediate neighbors (in order of west, east, down, up, north, south) of the immediate neighbors (in order of down, up, north, south, west, east)'' of redstone wires below the non-solid blocks adjacent to the redstone wire (in order of north, east, south, west).
+|
+{{Schematic |caption = When removing "R"
+ ||input||-
+ |input||input|-
+ ||input+rd-$+R||-
+ |input||input|-
+ ||input||-
+}}
+{{Schematic |caption = When removing "R"
+ |||||input|||-
+ ||||input|input|input||-
+ |||input|input|input+rd|input|input|-
+ ||input|input|input+rd-$+R|input+SB-u|input||-
+ |input|input|input+rd-$|input|input|||-
+ ||input|input|input||||-
+ |||input|||||-
+}}
+|-
+|Its signal changes
+|3
+|Update the immediate neighbors (in order of west, east, down, up, north, south) of the datum points. Datum points include the wire and the immediate neighbors of the wire, in random order.
+|
+{{Schematic
+ |||input|||-
+ ||input|input|input||-
+ |input|input|input+rd-$|input|input|-
+ ||input|input|input||-
+ |||input|||-
+}}
+|-
+|Changes between dot and cross
+|3
+|Update the immediate neighbors (without the wire itself, and in order of west, east, down, up, north, south) of the solid block next to the wire (in order of north, east, south, west).
+|
+{{Schematic
+ ||||input||-
+ |||rd-$|SB|input|-
+ ||||input||-
+}}
+|-
+|Rails
+|{{info needed}}
+|-
+|Any block
+|Placed with a command.
+|3
+|Update the immediate neighbors (in order of west, east, down, up, north, south).
+|
+{{Schematic
+ ||input||-
+ |input|SB|input|-
+ ||input||-
+}}
+|}
+
+====Receiving====
+
+When an NC update is received, the block that caused that update may taken into consideration. For example, a rail accepts only NC updates from [[Redstone_components#Power_components|power components]].
+
+Only the following blocks can react to NC updates:
+
+{|class="wikitable"
+! Block !! What to do when receiving an NC update
+|-
+| {{BlockLink|Frosted ice}} || Tries to melt.
+|-
+| {{BlockLink|Redstone dust}} 
+| rowspan="18" | Tries to change its state.
+|-
+| {{BlockLink|Redstone repeater}}
+|-
+| {{BlockLink|Redstone comparator}}
+|-
+| {{BlockLink|Redstone torch}}
+|-
+| {{BlockLink|Rail}}
+|-
+| {{BlockLink|Detector rail}}
+|-
+| {{BlockLink|Activator rail}}
+|-
+| {{BlockLink|Powered rail}}
+|-
+| {{BlockLink|Command blocks}}
+|-
+| {{BlockLink|Dropper}}
+|-
+| {{BlockLink|Dispenser}}
+|-
+| {{BlockLink|Note block}}
+|-
+| {{BlockLink|Redstone lamp}}
+|-
+| {{BlockLink|TNT}}
+|-
+| {{BlockLink|Piston}}
+|-
+| {{BlockLink|Trapdoors}}
+|-
+| {{BlockLink|Fence gates|id=oak-fence-gate}}
+|-
+| {{BlockLink|Doors}}
+|-
+| {{BlockLink|Water}}
+| rowspan="2" | Tries to change itself to be in the correct state.
+|-
+| {{BlockLink|Lava}}
+|-
+| {{BlockLink|Sponge}} || Tries to absorb water.
+|}
+
+===Comparator update===
+{{Expand section}}
+{{Schematic|caption = Comparator updates
+ ||input+rc-e||-
+ ||SB||-
+ |input+rc-w|ch|SB|-
+}}
+The '''comparator update''' (i.e. '''Block entity updates''', '''Update neighbor for output signal''') is a subtype of the ''neighbor update'' that is only sent to comparators. [[Redstone comparator]]s can read certain blocks and produce an output signal, and in turn, these blocks can send comparator updates when changing, to notify the comparators. Comparators can also read some entities ([[item frame]]s and [[glow item frame]]s), as such, these entities can send comparator updates too, even though they are not blocks.
+
+When a block that can be detected by comparators changes, it sends updates to surrounding comparators (including comparators separated by a solid block), in this order: '''north, east, south, west'''.
+
+After receiving a comparator update, comparators attempt to calculate and change their output signal.
+
+===Special blocks===
+{{Expand section}}
+*{{BlockLink|Pistons}}: during the start of the extension/retraction process, every time a [[Piston/Technical_components#Moving piston|moving piston]] block gets placed and every time one of the normal blocks<ref>"Normal block" is intended as not a "moving piston" block.</ref> is replaced/removed, PP updates are sent to these blocks' neighbors. Once '''all''' moving piston blocks have been placed, the game will send NC updates to the replaced/removed normal blocks' neighbors. 
+:[[Sticky pistons]], however, do not send NC updates around their head when they start to pull blocks: only the NC updates caused by the moving piston block turning back into a normal block are sent, once the retraction process is over. If a sticky piston fails to retract a [[slime block]] or a [[honey block]] due to the [[Sticky piston#Limitations|pull limit]], no updates will be sent around the head whatsoever.
+
+
+===Block updates and DFS===
+
+Block updates follow the principle of {{w|depth-first search}} (DFS).
+
+For example, when Block A changes, it maybe sends block updates to B and C one by one. Receiving the update, B maybe changes and sends updates to D and E. Receiving update from B, D changes and sends updates to some block. Then E receives the update from B. Then C receives the update from A.
+
+===Self update===
+When a block is placed, it checks and adapts itself to its surroundings by Blockstate.onPlace() or similar methods. Strictly speaking, this isn't a block update; however when a block is placed or changed, if it changes again when self-updated, then the former change does not produce any general update (this is a bug).
+
+Here is a list of self updates that can cause this bug.
+* {{BlockLink|Hopper}}
+** When being placed, if it should be powered, becomes powered.
+* {{BlockLink|Wet sponge}}
+** If in the nether, it turns into an dry sponge.
+* {{BlockLink|Sponge}}
+** When being placed, it absorbs water and turns into an wet sponge.
+* {{BlockLink|Target}} and {{BlockLink|Observer}}
+** When a powered target or observer is placed, it turns into an unpowered state.
+* {{BlockLink|Tripwire}}
+** When being placed, it updates the signal and connection.
+* {{BlockLink|Fire}}
+** When being placed, if it should be extinguished, removes itself.
+* {{BlockLink|TNT}}
+** When being placed, if it should explode, removes itself.
+* {{BlockLink|Rail}}, {{BlockLink|Detector rail}}, {{BlockLink|Activator rail}}, {{BlockLink|Powered rail}}
+** When being placed, it updates its shape.
+* {{BlockLink|Detector rail}}
+** When being placed, it checks whether it is pressed and updates its state.
+* {{BlockLink|Carved pumpkin}}
+** When being placed, if it should turn into a golem, removes itself.
+
+==''Bedrock Edition''==
+{{empty section}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|?}}
+|{{HistoryLine||?|Neighbor Changed updates have been added to the game.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.5|dev=13w05a|Comparator updates have been added to the game.}}
+|{{HistoryLine||1.11|dev=16w44a|Post Placement updates have been added to the game. At this point in time only [[observers]] react to them.}}
+|{{HistoryLine||1.13|dev=18w47a|The update system has been overhauled: many blocks that used to react to NC updates now react to PP updates instead, also some blocks can now react to both and will behave differently depending on which type of update they receive.}}
+}}
+
+
+== Navigation ==
+{{Navbox Java Edition}}
+{{Navbox Bedrock Edition}}
+
+[[de:Blockupdate]]
+[[ja:ブロック更新]]
+[[lzh:塊竦]]
+[[pt:Atualização de bloco]]
+[[zh:方块更新]]

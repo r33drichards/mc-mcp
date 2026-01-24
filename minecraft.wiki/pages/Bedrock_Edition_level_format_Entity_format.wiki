@@ -1,0 +1,944 @@
+{{exclusive|bedrock}}
+This page lists the entity NBT structures {{in|bedrock}}.
+
+__TOC__
+<div class="treeview">
+== Entity ==
+All entities share this base:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|Chested}}: 1 or 0 (true/false) - true if this entity is chested. Used by donkey, llama, and mule.
+** {{nbt|byte|Color}}: The main color value of the entity. Used by sheep, llama, shulker, tropical fish, etc. Defaults to 0.
+** {{nbt|byte|Color2}}: The entity's second color value. Used by tropical fish. Defaults to 0.
+** {{nbt|string|CustomName}}: (May not exist) The custom name of this entity.
+** {{nbt|byte|CustomNameVisible}}: 1 or 0 (true/false) - (may not exist) if true, and this entity has a custom name, the name always appears above the entity, regardless of where the cursor points. If the entity does not have a custom name, a default name is shown.
+** {{nbt|list|definitions}}: (May not exist) The namespaced ID of this entity and its current and previous component groups. 
+*** {{nbt|string}}: Unknown
+** {{nbt|float|FallDistance}}: Distance the entity has fallen. Larger values cause more damage when the entity lands.
+** {{nbt|short|Fire}}: Number of ticks until the fire is put out. Default 0 when not on fire.
+** {{nbt|string|identifier}}: The namespaced ID of this entity.
+** {{nbt|compound|internalComponents}}: Unknown.
+*** {{nbt|compound|EntityStorageKeyComponent}}: Unknown.
+**** {{nbt|string|StorageKey}}: Unknown.
+** {{nbt|byte|Invulnerable}}: 1 or 0 (true/false) - true if the entity should not take damage. This applies to living and nonliving entities alike: mobs should not take damage from any source (including potion effects), and cannot be moved by fishing rods, attacks, explosions, or projectiles, and objects such as vehicles cannot be destroyed. Invulnerable player entities are also ignored by any hostile mobs. Note that these entities can be damaged by players in Creative mode.{{needs testing}}
+** {{nbt|byte|IsAngry}}: 1 or 0 (true/false) - true if this entity is angry. Used by wolf and bee.
+** {{nbt|byte|IsAutonomous}}: 1 or 0 (true/false) - true if this entity is an autonomous entity.
+** {{nbt|byte|IsBaby}}: 1 or 0 (true/false) - true if this entity is a baby.
+** {{nbt|byte|IsEating}}: 1 or 0 (true/false) - true if this entity is eating.
+** {{nbt|byte|IsGliding}}: 1 or 0 (true/false) - true if this entity is gliding.
+** {{nbt|byte|IsGlobal}}: 1 or 0 (true/false) - true if this entity is a global entity (e.g. lightning bolt, ender dragon, arrow).
+** {{nbt|byte|IsIllagerCaptain}}: 1 or 0 (true/false) - true if the entity is an illager captain. Used by pillager and vindicator.
+** {{nbt|byte|IsOrphaned}}: 1 or 0 (true/false) - true if this entity is not spawn from its parents. Used by all the mobs that can breed.
+** {{nbt|byte|IsOutOfControl}}: 1 or 0 (true/false) - true if the entity is out of control. Used by boat.
+** {{nbt|byte|IsRoaring}}: 1 or 0 (true/false) - true if this entity is roaring. Used by ravager.
+** {{nbt|byte|IsScared}}: 1 or 0 (true/false) - true if this entity is scared.
+** {{nbt|byte|IsStunned}}: 1 or 0 (true/false) - true if this entity is stunned. Used by ravager.
+** {{nbt|byte|IsSwimming}}: 1 or 0 (true/false) - true if this entity is swimming.
+** {{nbt|byte|IsTamed}}: 1 or 0 (true/false) - true if this entity is tamed.
+** {{nbt|byte|IsTrusting}}: 1 or 0 (true/false) - true if this entity is trusting a player. Used by fox and ocelot.
+** {{nbt|int|LastDimensionId}}: (May not exist) Unknown.
+** {{nbt|compound|LinksTag}}: (May not exist) Unknown
+*** {{nbt|long|entityID}}: The Unique ID of an entity.
+*** {{nbt|int|LinkID}}: Unknown.
+** {{nbt|byte|LootDropped}}: 1 or 0 (true/false) - true if this entity can drop [[Drops#Mob_drops|loot]] when died.
+** {{nbt|int|MarkVariant}}: The ID of the mark variant. Used by villager, horse, bee etc. Defaults to 0.
+** {{nbt|list|Motion}}: (May not exist) Three TAG_Floats describing the current dX, dY and dZ velocity of the entity in meters per tick.
+*** {{nbt|float}}: dX
+*** {{nbt|float}}: dY
+*** {{nbt|float}}: dZ
+** {{nbt|byte|OnGround}}: 1 or 0 (true/false) - true if the entity is touching the ground.
+** {{nbt|long|OwnerNew}}: Unknown. Defaults to -1.
+** {{nbt|byte|Persistent}}: 1 or 0 (true/false) - true if an entity should be [[Mob spawning#Despawning|persistent]] in the world.
+** {{nbt|int|PortalCooldown}}: The number of ticks before which the entity may be teleported back through a nether portal. Initially starts at 300 ticks (15 seconds) after teleportation and counts down to 0.
+** {{nbt|list|Pos}}: Three TAG_Floats describing the current X, Y and Z position of the entity.
+*** {{nbt|float}}: X
+*** {{nbt|float}}: Y
+*** {{nbt|float}}: Z
+** {{nbt|list|Rotation}}: Two TAG_Floats representing rotation in degrees.
+*** {{nbt|float}}: The entity's rotation clockwise around the Y axis (called yaw). Due south is 0. Does not exceed 360 degrees.
+*** {{nbt|float}}: The entity's declination from the horizon (called pitch). Horizontal is 0. Positive values look downward. Does not exceed positive or negative 90 degrees.
+** {{nbt|byte|Saddled}}: 1 or 0 (true/false) - true if this entity is saddled.
+** {{nbt|byte|Sheared}}: 1 or 0 (true/false) - true if this entity is sheared. Used by sheep and snow golem.
+** {{nbt|byte|ShowBottom}}: 1 or 0 (true/false) - true if the End Crystal shows the bedrock slate underneath.{{Needs testing}}
+** {{nbt|byte|Sitting}}: 1 or 0 (true/false) - true if this entity is sitting.
+** {{nbt|int|SkinID}}: The entity's Skin ID value. Used by villager and zombified villager. Defaults to 0.
+** {{nbt|int|Strength}}: Determines the number of items the entity can carry (items = 3 × strength). Used by llama. Defaults to 0.
+** {{nbt|int|StrengthMax}}: Determines the maximum number of items the entity can carry (items = 3 × strength). Defaults to 0.
+** {{nbt|list|Tags}}: (May not exist) List of [[Scoreboard|scoreboard tags]] of this entity.
+*** {{nbt|string}}: A tag.
+** {{nbt|long|UniqueID}}: The Unique ID of this entity.
+** {{nbt|int|Variant}}: The ID of the variant. Used by cat, villager, horse, etc. Defaults to 0.
+
+== Additional fields for entity categories ==
+=== Minecart ===
+Minecart entities include:
+** {{EntityLink|Minecart}}
+*** {{EntityLink|Minecart with Chest}}
+*** {{EntityLink|Minecart with Command Block}}
+*** {{EntityLink|Minecart with Hopper}}
+*** {{EntityLink|Minecart with TNT}}
+Additional fields for minecart entities:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|CustomDisplayTile}}: 1 or 0 (true/false) - (may not exist) if is displayed the custom tile in this minecart.
+** {{nbt|compound|DisplayBlock}}: (May not exist) The custom block in the minecart.
+*** {{bedrock nbt|block}}
+** {{nbt|int|DisplayOffset}}: (May not exist) The offset of the block displayed in the Minecart in pixels. Positive values move the block upwards, while negative values move it downwards. A value of 16 moves the block up by exactly one multiple of its height.{{Needs testing}}
+
+=== Villagers ===
+Villager entities include:
+** {{EntityLink|Old Villager|Villager}}
+** {{EntityLink|Villager|Villager V2}}
+Additional fields for village entities:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|Willing}}: 1 or 0 (true/false) - true if the villager is willing to mate. Becomes true after certain trades (those that would cause offers to be refreshed), and false after mating.
+
+=== Monster ===
+Monster entities include:
+** {{EntityLink|Blaze}}
+** {{EntityLink|Breeze}}
+** {{EntityLink|Creeper}}
+** {{EntityLink|Ender Dragon}}
+** {{EntityLink|Enderman}}
+** {{EntityLink|Endermite}}
+** {{EntityLink|Ghast}}
+** {{EntityLink|Guardian}}
+*** {{EntityLink|Elder Guardian}}
+*** {{EntityLink|Elder Guardian Ghost}}
+** [[#Humanoid Monster|Humanoid Monster]]
+** {{EntityLink|Phantom}}
+** {{EntityLink|Ravager}}
+** {{EntityLink|Slime}}
+*** {{EntityLink|Magma Cube}}
+** {{EntityLink|Silverfish}}
+** {{EntityLink|Spider}}
+*** {{EntityLink|Cave Spider}}
+** {{EntityLink|Vex}}
+** {{EntityLink|Warden}}
+** {{EntityLink|Wither}}
+Additional fields for monsters:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|SpawnedByNight}}: 1 or 0 (true/false) - true if is spawned by night.{{more info}}
+
+=== Humanoid Monster ===
+Humanoid monster entities include:
+** {{EntityLink|Evoker|Evocation Illager}}
+** {{EntityLink|Piglin}}
+*** {{EntityLink|Piglin Brute}}
+** {{EntityLink|Pillager}}
+** {{EntityLink|Skeleton}}
+*** {{EntityLink|Bogged}}
+*** {{EntityLink|Stray}}
+*** {{EntityLink|Wither Skeleton}}
+** {{EntityLink|Vindicator|Vindication Illager}}
+** {{EntityLink|Witch}}
+** {{EntityLink|Zombie}}
+*** {{EntityLink|Drowned}}
+*** {{EntityLink|Husk}}
+*** {{EntityLink|Old Zombie Villager|Zombie Villager}}
+*** {{EntityLink|Zombie Villager|Zombie Villager V2}}
+*** {{EntityLink|Zombified Piglin}}
+Additional fields for humanoid monsters:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|compound|ItemInHand}}: (May not exist) The items in the entity's hand.
+*** {{bedrock nbt|Item Stack|item}}
+
+=== Mob ===
+Mob entities include:
+** {{EntityLink|Agent}}
+** {{EntityLink|Allay}}
+** [[Animal]]
+*** {{EntityLink|Armadillo}}
+*** {{EntityLink|Axolotl}}
+*** {{EntityLink|Bee}}
+*** {{EntityLink|Camel}}
+*** {{EntityLink|Cat}}
+*** {{EntityLink|Chicken}}
+*** {{EntityLink|Cow}}
+*** {{EntityLink|Fox}}
+*** {{EntityLink|Frog}}
+*** {{EntityLink|Goat}}
+*** {{EntityLink|Horse}}
+**** {{EntityLink|Donkey}}
+**** {{EntityLink|Mule}}
+**** {{EntityLink|Skeleton Horse}}
+**** {{EntityLink|Zombie Horse}}
+*** {{EntityLink|Llama}}
+**** {{EntityLink|Trader Llama}}
+*** {{EntityLink|Mooshroom|Mushroom Cow}}
+*** {{EntityLink|Ocelot}}
+*** {{EntityLink|Panda}}
+*** {{EntityLink|Parrot}}
+*** {{EntityLink|Pig}}
+*** {{EntityLink|Polar Bear}}
+*** {{EntityLink|Rabbit}}
+*** {{EntityLink|Sheep}}
+*** {{EntityLink|Sniffer}}
+*** {{EntityLink|Strider}}
+*** {{EntityLink|Turtle}}
+*** {{EntityLink|Wolf}}
+** {{EntityLink|Armor Stand}}
+** {{EntityLink|Bat}}
+** {{EntityLink|Iron Golem}}
+** {{EntityLink|Hoglin}}
+** [[#Monster|Monsters]]
+** {{EntityLink|NPC}}
+** {{EntityLink|Player}}
+** {{EntityLink|Shulker}}
+** {{EntityLink|Snow Golem}}
+** {{EntityLink|Squid}}
+*** {{EntityLink|Glow Squid}}
+** {{EntityLink|Tripod Camera}}
+**[[#Villagers|Villagers]]
+** {{EntityLink|Wandering Trader}}
+** [[Aquatic#Animals|Water Animal]]
+*** {{EntityLink|Dolphin}}
+*** [[Fish]]
+**** {{EntityLink|Cod}}
+**** {{EntityLink|Salmon}}
+**** {{EntityLink|Pufferfish}}
+*** {{EntityLink|Tadpole}}
+*** {{EntityLink|Tropical Fish}}
+** {{EntityLink|Zoglin}}
+Additional fields for mobs:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|list|ActiveEffects}}: (May not exist) The list of potion effects on this mob.
+*** {{nbt|compound}}: An effect.
+**** {{bedrock nbt|Mob Effect}}
+** {{nbt|short|Air}}: How much air the living entity has, in ticks.
+** {{nbt|list|Armor}}: The list of items the mob is wearing as armor.
+*** {{nbt|compound}}: The item on the head.
+**** {{bedrock nbt|Item Stack|item}}
+*** {{nbt|compound}}: The item on the chest.
+**** {{bedrock nbt|Item Stack|item}}
+*** {{nbt|compound}}: The item on the legs.
+**** {{bedrock nbt|Item Stack|item}}
+*** {{nbt|compound}}: The item on the feets.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|short|AttackTime}}: Number of ticks the mob attacks for. 0 when not attacking.
+** {{nbt|list|Attributes}}: A list of [[Attribute]]s for this mob. These are used for many purposes in internal calculations. Valid Attributes for a given mob are listed in the [[Attribute|main article]].
+*** {{nbt|compound}}: An Attribute.
+**** {{bedrock nbt|Attribute}}
+** {{nbt|float|BodyRot}}: (May not exist) Unknown.
+** {{nbt|int|boundX}}: X of the bound origin.
+** {{nbt|int|boundY}}: Y of the bound origin.
+** {{nbt|int|boundZ}}: Z of the bound origin.
+** {{nbt|byte|canPickupItems}}: 1 or 0 (true/false) - true if this entity can pick up items.
+** {{nbt|byte|Dead}}: 1 or 0 (true/false) - true if dead.
+** {{nbt|short|DeathTime}}: Number of ticks the mob has been dead for. Controls death animations. 0 when alive.
+** {{nbt|byte|hasBoundOrigin}}: 1 or 0 (true/false) - if this mob has bound origin. Only{{needs testing}} effects [[Vex]]. When a vex is idle, it wanders, selecting air blocks from within a 15×11×15{{needs testing}} cuboid range centered at BoundX, BoundY, BoundZ. when it summoned the vex, this value is set to true, and the central spot is the location of the evoker. Or if an evoker was not involved, this value is false.
+** {{nbt|byte|hasSetCanPickupItems}}: 1 or 0 (true/false) - true if <code>canPickupItems</code> has been set by the game.
+** {{nbt|short|HurtTime}}: Number of ticks the mob turns red for after being hit. 0 when not recently hit.
+** {{nbt|long|LeasherID}}: The Unique ID of an entity that is leashing it with a lead. Set to -1 if there's no leasher.
+** {{nbt|long|limitedLife}}: The left time in ticks until this entity disapears. Only{{needs testing}} effects [[Evoker Fang]]s. For other entities, it is set to 0.
+** {{nbt|list|Mainhand}}: The item being held in the mob's main hand.
+*** {{nbt|compound}}: The item.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|byte|NaturalSpawn}}: 1 or 0 (true/false) - true if it is naturally spawned.
+** {{nbt|list|Offhand}}: The item being held in the mob's off hand.
+*** {{nbt|compound}}: The item.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|compound|persistingOffers}}: (May not exist) Unknown.
+** {{nbt|int|persistingRiches}}: (May not exist) Unknown.
+** {{nbt|byte|Surface}}: 1 or 0 (true/false) - true if it is naturally spawned on the surface.
+** {{nbt|long|TargetCaptainID}}: (May not exist) The Unique ID of a captain to follow. Used by pillager and vindicator.
+** {{nbt|long|TargetID}}: The Unique ID of an entity that this entity is angry at.
+** {{nbt|int|TradeExperience}}: (May not exist) Trade experiences of this trader entity.
+** {{nbt|int|TradeTier}}: (May not exist) Trade tier of this trader entity.
+** {{nbt|byte|WantsToBeJockey}}: (May not exist) unknown.
+
+=== Abstract Arrow ===
+Abstract arrow entities include:
+** {{EntityLink|Arrow}}
+** {{EntityLink|Trident|Thrown Trident}}
+Additional fields for abstract arrow entities:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|isCreative}}: 1 or 0 (true/false) - true if its owner is a player in Creative mode.
+** {{nbt|long|OwnerID}}: The Unique ID of the entity this projectile was thrown by. Set to -1 if it has no owner.
+** {{nbt|byte|player}}: 1 or 0 (true/false) - true if its owner is a player.
+
+=== Throwable ===
+Throwable entities include:
+** {{EntityLink|Bottle o' Enchanting|Experience Potion}}
+** {{EntityLink|Snowball}}
+** {{EntityLink|Ender Pearl|Thrown Ender Pearl}}
+** {{EntityLink|Egg|Thrown Egg}}
+** {{EntityLink|Ice Bomb|Thrown Ice Bomb}}
+** {{EntityLink|Splash Potion|Thrown Potion}}
+Additional fields for throwable entities:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|inGround}}: Unknown.
+** {{nbt|long|OwnerID}}: The Unique ID of the entity this projectile was thrown by.
+** {{nbt|byte|shake}}: Unknown.
+
+== Additional fields for entity types ==
+=== Allay ===
+Additional fields for [[allay]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|inventory|component}}
+** {{nbt|long|AllayDuplicationCooldown}}: The allay's duplication cooldown in ticks. This is set to 6000 ticks (5 minutes) when the allay duplicates.
+** {{nbt|compound|VibrationListener}}: The vibration event listener of this allay.
+*** {{nbt|int|event}}: Unknown.
+*** {{nbt|compound|pending}}: Unknown.
+**** {{nbt|float|distance}}: Unknown.
+**** {{nbt|long|source}}: Unknown.
+**** {{nbt|int|vibration}}: Unknown.
+**** {{nbt|int|x}}: Unknown.
+**** {{nbt|int|y}}: Unknown.
+**** {{nbt|int|z}}: Unknown.
+*** {{nbt|compound|selector}}: Unknown.
+*** {{nbt|int|ticks}}: Unknown.
+
+=== Area Effect Cloud ===
+Additional fields for [[area effect cloud]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|int|Duration}}: The maximum age of the field.
+** {{nbt|int|DurationOnUse}}: The amount the duration of the field changes upon applying the effect.
+** {{nbt|float|InitialRadius}}: The field's initial radius.
+** {{nbt|list|mobEffects}}: A list of the applied [[effect]]s.
+*** {{bedrock nbt|Mob Effect}}
+** {{nbt|long|OwnerId}}: The Unique ID of the entity who created the cloud. If it has no owner, defaults to -1.
+** {{nbt|int|ParticleColor}}: The color of the particles.
+** {{nbt|int|ParticleId}}: The particles displayed by the field.
+** {{nbt|int|PickupCount}}: How many [[dragon's breath]] can be picked up.
+** {{nbt|short|PotionId}}: The name of the default potion effect. See [[potion#Item data|potion data values]] for valid IDs.
+** {{nbt|float|Radius}}: The field's current radius.
+** {{nbt|float|RadiusChangeOnPickup}}: The amount the radius changes when picked up by a glass bottle.
+** {{nbt|float|RadiusOnUse}}: The amount the radius changes upon applying the effect. Normally negative.
+** {{nbt|float|RadiusPerTick}}: The amount the radius changes per tick. Normally negative.
+** {{nbt|int|ReapplicationDelay}}: The number of ticks before reapplying the effect.
+** {{nbt|long|SpawnTick}}: The time when it was spawned.
+
+=== Armadillo ===
+Additional fields for [[armadillo]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|spawn_entity|component}}
+** {{nbt|compound|properties}}: The armadillo <code>properties</code>.
+*** {{nbt|byte|minecraft:is_rolled_up}}: 1 or 0 (true/false) - true if the armadillo is rolled up.
+*** {{nbt|byte|minecraft:is_threatened}}: 1 or 0 (true/false) - true if the armadillo was hit.
+*** {{nbt|byte|minecraft:is_trying_to_relax}}: 1 or 0 (true/false) - {{info needed}}.
+
+=== Armor Stand ===
+Additional fields for [[armor stand]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|compound|Pose}}: The ArmorStand's pose.
+*** {{nbt|int|LastSignal}}: The redstone signal level it received.
+*** {{nbt|int|PoseIndex}}: The index of current pose.
+
+=== Arrow ===
+Additional fields for [[arrow]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+** {{nbt|byte|auxValue}}: The metadata of this arrow. See [[Arrow#Metadata]].
+** {{nbt|byte|enchantFlame}}: The level of [[Flame]] enchantment on the bow that shot this arrow, where 1 is level 1. 0 if no Flame enchantment.
+** {{nbt|byte|enchantInfinity}}: The level of [[Infinity]] enchantment on the bow that shot this arrow, where 1 is level 1. 0 if no Infinity enchantment.
+** {{nbt|list|mobEffects}}: Effects on a tipped arrow.
+*** {{nbt|compound}}: An effect.
+**** {{bedrock nbt|Mob Effect}}
+** {{nbt|byte|enchantPower}}: The level of [[Power]] enchantment on the bow that shot this arrow, where 1 is level 1. 0 if no Power enchantment.
+** {{nbt|byte|enchantPunch}}: The level of [[Punch]] enchantment on the bow that shot this arrow, where 1 is level 1. 0 if no Punch enchantment.
+
+=== Axolotl ===
+Additional fields for [[axolotl]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|drying_out_timer|component}}
+** {{nbt|short|DamageTime}}: (May not exist) Applies a defined amount of damage to the axolotl at specified intervals.
+** {{nbt|int|TicksRemainingUntilDryOut}}: Number of ticks until the axolotl dies when it is on the surface. Initially starts at 6000 ticks (5 minutes) and counts down to 0.
+
+=== Bat ===
+Additional fields for [[bat]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|BatFlags}}: 1 when hanging upside down and 0 when flying.{{More info}}
+
+=== Bee ===
+Additional fields for [[bee]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|home|component}}
+** {{bedrock nbt|timer|component}}
+** {{nbt|compound|properties}}: The bee <code>properties</code>.
+*** {{nbt|byte|minecraft:has_nectar}}: 1 or 0 (true/false) - true if the bee is carrying pollen.
+
+=== Boat with Chest ===
+Additional fields for [[boat with chest]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|inventory|component}}
+
+=== Breeze ===
+Additional fields for [[breeze]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|compound|properties}}: The breeze <code>properties</code>.
+*** {{nbt|byte|minecraft:is_playing_idle_ground_sound}}: 1 or 0 (true/false) - true if the breeze is playing the <code>mob.breeze.idle_ground</code> sound.
+
+=== Camel ===
+Additional fields for [[camel]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|inventory|component}}
+
+=== Cat ===
+Additional fields for [[cat]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|dweller|component}}
+
+=== Chicken ===
+Additional fields for [[chicken]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{nbt|list|entries}}
+*** {{nbt|compound}}: An entry.
+**** {{nbt|int|SpawnTimer}}: Unknown.
+**** {{nbt|byte|StopSpawning}}: Unknown.
+
+=== Cow ===
+Additional fields for [[cow]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+
+=== Creeper ===
+Additional fields for [[creeper]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|explode|component}}
+
+=== Dolphin ===
+Additional fields for [[dolphin]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|drying_out_timer|component}}
+** {{nbt|int|BribeTime}}: Unknown.
+** {{nbt|short|DamageTime}}: (May not exist) Applies a defined amount of damage to the dolphin at specified intervals.
+** {{nbt|int|TicksRemainingUntilDryOut}}: Number of ticks until the dolphin dies when it is on the surface. Initially starts at 2400 ticks (2 minutes) and counts down to 0.
+
+=== Donkey ===
+Additional fields for [[donkey]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|inventory|component}}
+** {{nbt|int|Temper}}: Random number that ranges from 0 to 100; increases with feeding or trying to tame it. Higher values make the donkey easier to tame.
+
+=== Egg ===
+Additional fields for [[egg]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+
+=== End Crystal ===
+Additional fields for [[end crystal]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|explode|component}}
+** {{nbt|int|BlockTargetX}}: (May not exist) The block location its beam points to.
+** {{nbt|int|BlockTargetY}}: (May not exist) See above.
+** {{nbt|int|BlockTargetZ}}: (May not exist) See above.
+
+=== Enderman ===
+Additional fields for [[enderman]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|compound|carriedBlock}}: The block carried by the enderman.
+*** {{bedrock nbt|Block}}
+
+=== Endermite ===
+Additional fields for [[endermite]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|int|Lifetime}}: How long the endermite has existed in ticks. Disappears when this reaches around 2400.
+
+=== Evoker ===
+Additional fields for [[evoker]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|dweller|component}}
+
+=== Experience Orb ===
+Additional fields for [[experience orb]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|short|Age}}: The number of ticks the XP orb has been "untouched". After 6000 ticks (5 minutes) the orb is destroyed.{{Needs testing}}
+** {{nbt|int|experience value}}: The amount of experience the orb gives when picked up.
+
+=== Experience Potion ===
+Additional fields for [[experience potion]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+
+=== Falling Block ===
+Additional fields for [[falling block]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|compound|FallingBlock}}
+*** {{bedrock nbt|Block}}
+** {{nbt|byte|Time}}: The number of ticks the entity has existed. If set to 0, the moment it ticks to 1, it vanishes if the block at its location has a different ID than the entity's <code>FallingBlock.Name</code>. If the block at its location has the same ID as its <code>FallingBlock.Name</code> when <code>Time</code> ticks from 0 to 1, the block is deleted, and the entity continues to fall, having overwritten it. When Time goes above 600, or above 100 while the block is below Y=1 or is outside building height, the entity is deleted. {{Needs testing}}
+
+=== Fireball ===
+Additional fields for [[fireball]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|explode|component}}
+** {{bedrock nbt|projectile|component}}
+** {{nbt|list|Direction}}: List of 3 doubles. Should be identical to Motion.{{needs testing}}
+*** {{nbt|float}}: X
+*** {{nbt|float}}: Y
+*** {{nbt|float}}: Z
+** {{nbt|byte|inGround}}: Unknown.
+** {{nbt|list|power}}: List of 3 floats that adds to <code>Direction</code> every tick. Act as the acceleration.
+*** {{nbt|float}}: X
+*** {{nbt|float}}: Y
+*** {{nbt|float}}: Z
+
+=== Fireworks Rocket ===
+Additional fields for [[firework|firework rocket]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|int|Life}}: The number of ticks this fireworks rocket has been flying for.
+** {{nbt|int|LifeTime}}: The number of ticks before this fireworks rocket explodes. This value is randomized when the firework is launched.{{Needs testing}}
+
+=== Fishing Bobber ===
+Additional fields for [[fishing bobber]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+
+=== Fox ===
+Additional fields for [[fox]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{nbt|int|TrustedPlayersAmount}}: The number of players who are trusted by the fox.
+** {{nbt|long|TrustedPlayer<''num''>}}: A player's Unique ID. Note that <code><''num''></code> counts from 0.
+
+=== Frog ===
+Additional fields for [[frog]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|breedable|component}}
+
+=== Goat ===
+Additional fields for [[goat]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|genetics|component}}
+** {{nbt|int|GoatHornCount}}: Unknown.
+
+=== Guardian and Elder Guardian ===
+Additional fields for [[guardian]] and [[elder guardian]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|home|component}}
+** {{bedrock nbt|timer|component}}
+** {{nbt|byte|Elder}}: 1 or 0 (true/false) - true if it is an elder guardian.
+
+=== Hoglin ===
+Additional fields for [[hoglin]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|timer|component}}
+
+=== Horse ===
+Additional fields for [[horse]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|inventory|component}}
+** {{nbt|int|Temper}}: Random number that ranges from 0 to 100; increases with feeding or trying to tame it. Higher values make the horse easier to tame.
+
+=== Husk ===
+Additional fields for [[husk]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|timer|component}}
+
+=== Iron Golem ===
+Additional fields for [[iron golem]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|dweller|component}}
+
+=== Item Entity ===
+Additional fields for [[Item (entity)|item entity]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|short|Age}}: The number of ticks the item has been "untouched". After 6000 ticks (5 minutes) the item is destroyed.
+** {{nbt|short|Health}}: The health of the item, which starts at 5. Items take damage from fire, lava, and explosions. The item is destroyed when its health reaches 0.{{Needs testing}}
+** {{nbt|compound|Item}}: The item of this stack.
+*** {{bedrock nbt|Item Stack|item}}
+** {{nbt|long|OwnerID}}: If present, only the player{{Needs testing}} with this Unique ID can pick up the item.
+
+=== Llama ===
+Additional fields for [[llama]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|inventory|component}}
+** {{nbt|int|Temper}}: Random number that ranges from 0 to 100; increases with feeding or trying to tame it. Higher values make the llama easier to tame.
+
+=== Llama Spit ===
+Additional fields for [[Llama_Spit|llama spit]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+
+=== Minecart with Chest ===
+
+Additional fields for [[minecart with chest]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|inventory|component}}
+
+=== Minecart with Command Block ===
+Additional fields for [[minecart with command block]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|Command Block|other}}
+** {{bedrock nbt|inventory|component}}
+** {{nbt|int|CurrentTickCount}}: Number of ticks until it executes the command again.
+** {{nbt|byte|Ticking}}: Unknown.
+
+=== Minecart with Hopper ===
+Additional fields for [[minecart with hopper]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|inventory|component}}
+
+=== Minecart with TNT ===
+Additional fields for [[minecart with tnt]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|explode|component}}
+
+=== Mooshroom ===
+Additional fields for [[mooshroom]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+
+=== Mule ===
+Additional fields for [[mule]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|inventory|component}}
+** {{nbt|int|Temper}}: Random number that ranges from 0 to 100; increases with feeding or trying to tame it. Higher values make the mule easier to tame.
+
+=== NPC ===
+Additional fields for [[NPC]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|string|Actions}}: (May not exist) The actions.{{more info}}
+** {{nbt|string|InterativeText}}: (May not exist) The interactive text.{{more info}}
+** {{nbt|list|PlayerSceneMapping}}: (May not exist) Unknown
+*** {{nbt|compound}}: A key-value pair.
+**** {{nbt|long|PlayerID}}: A player's Unique ID.
+**** {{nbt|string|SceneName}}: Unknown
+** {{nbt|string|RawtextName}}: (May not exist) The name.{{more info}}
+
+=== Ocelot ===
+Additional fields for [[ocelot]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+
+=== Painting ===
+Additional fields for [[painting]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|Dir}}: The direction the painting faces: 0 is south, 1 is west, 2 is north, 3 is east.{{needs testing}}
+** {{nbt|byte|Direction}}: Unknown.
+** {{nbt|string|Motif}}: (May not exist) The ID of the painting's artwork.
+
+=== Panda ===
+Additional fields for [[panda]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|genetics|component}}
+** {{bedrock nbt|inventory|component}}
+
+=== Pig ===
+Additional fields for [[pig]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+
+=== Piglin ===
+Additional fields for [[piglin]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|inventory|component}}
+** {{bedrock nbt|timer|component}}
+
+=== Piglin Brute ===
+Additional fields for [[piglin brute]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|home|component}}
+** {{bedrock nbt|timer|component}}
+
+=== Pillager ===
+Additional fields for [[pillager]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|dweller|component}}
+
+=== Player ===
+Additional fields for [[player]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|Abilities}}
+** {{bedrock nbt|timer|component}}
+** {{nbt|long|AgentID}}: The Unique ID of the player's agent.
+** {{nbt|int|DimensionId}}: The ID of the dimension the player is in.
+** {{nbt|int|EnchantmentSeed}}: The seed used for the next enchantment in [[enchantment table]]s.
+** {{nbt|list|EnderChestInventory}}: Each compound tag in this list is an item in the player's 27-slot ender chest inventory.
+*** {{nbt|compound}}: An item in the inventory.
+**** {{nbt|byte|Slot}}: The slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|list|fogCommandStack}}: Unknown.
+*** {{nbt|string}}: Unknown.
+** {{nbt|string|format_version}}: The format version of this NBT.
+** {{nbt|byte|HasSeenCredits}}: 1 or 0 (true/false) - true if the player has traveled to the [[Overworld]] via an [[End portal]].
+** {{nbt|list|Inventory}}: Each compound tag in this list is an item in the player's inventory.
+*** {{nbt|compound}}: An item in the inventory, including the slot tag.
+**** {{nbt|byte|Slot}}: The slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|long|LeftShoulderRiderID}}: The Unique ID of the entity that is on the player's left shoulder.
+** {{nbt|int|MapIndex}}: Unknown.
+** {{nbt|int|PlayerGameMode}}: The game mode of the player.
+** {{nbt|int|PlayerLevel}}: The level shown on the [[XP]] bar.
+** {{nbt|float|PlayerLevelProgress}}: The progress/percent across the XP bar to the next level.
+** {{nbt|list|PlayerUIItems}}: Unknown
+*** {{nbt|compound}}: An item in the UI, including the slot tag.
+**** {{nbt|byte|Slot}}: The slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|compound|recipe_unlocking}}: Contains information about the recipes that the player has unlocked.
+*** {{nbt|list|unlocked_recipes}}: A list of all recipes the player has unlocked.
+**** {{nbt|string}}: The name of a recipe, for instance <code>minecraft:stick</code> or <code>minecraft:ladder</code>.
+*** {{nbt|int|used_contexts}}: Unknown. Defaults to 2.
+** {{nbt|long|RideID}}: The Unique ID of the entity that the player is riding.
+** {{nbt|long|RightShoulderRiderID}}: The Unique ID of the entity that is on the player's right shoulder.
+** {{nbt|int|SelectedContainerId}}: The ID of the selected container.{{needs testing}}
+** {{nbt|int|SelectedInventorySlot}}: The selected inventory slot of the player.
+** {{nbt|byte|Sleeping}}: 1 or 0 (true/false) - true if the player is sleeping.
+** {{nbt|short|SleepTimer}}: The number of ticks the player had been in bed. 0 when the player is not sleeping. In bed, increases up to 100, then stops. Skips the night after all players in bed have reached 100. When getting out of bed, instantly changes to 100 and then increases for another 9 ticks (up to 109) before returning to 0.{{needs testing}}
+** {{nbt|byte|Sneaking}}: 1 or 0 (true/false) - true if the player is sneaking.
+** {{nbt|int|SpawnBlockPositionX}}: The X coordinate of the player's spawn block.
+** {{nbt|int|SpawnBlockPositionY}}: The Y coordinate of the player's spawn block.
+** {{nbt|int|SpawnBlockPositionZ}}: The Z coordinate of the player's spawn block.
+** {{nbt|int|SpawnDimension}}: The dimension of the player's spawn point.
+** {{nbt|int|SpawnX}}: The X coordinate of the player's spawn point.
+** {{nbt|int|SpawnY}}: The Y coordinate of the player's spawn point.
+** {{nbt|int|SpawnZ}}: The Z coordinate of the player's spawn point.
+** {{nbt|int|TimeSinceRest}}: The time in ticks since last rest.
+** {{nbt|int|WardenThreatDecreaseTimer}}: The number of ticks since the player was threatened for warden spawning. Increases by 1 every tick. After 12000 ticks (10 minutes) it will be set back to 0, and the <code>WardenThreatLevel</code> will be decreased by 1.
+** {{nbt|int|WardenThreatLevel}}: A threat level between 0 and 4 (inclusive). The warden will spawn at level 4.
+** {{nbt|int|WardenThreatLevelIncreaseCooldown}}: The number of ticks before the <code>WardenThreatLevel</code> can be increased again. Decreases by 1 every tick. It is set 200 ticks (10 seconds) every time the threat level is increased.
+
+=== Polar Bear ===
+Additional fields for [[polar bear]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+
+=== Pufferfish ===
+Additional fields for [[pufferfish]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|timer|component}}
+
+=== Rabbit ===
+Additional fields for [[rabbit]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{nbt|int|CarrotsEaten}}: Unknown.
+** {{nbt|int|MoreCarrotTicks}}: Set to 40 when a carrot crop is eaten, decreases by 0–2 every tick until it reaches 0.{{needs testing}}
+
+=== Ravager ===
+Additional fields for [[ravager]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|dweller|component}}
+** {{bedrock nbt|timer|component}}
+
+=== Sheep ===
+Additional fields for [[sheep]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+
+=== Shulker Bullet ===
+Additional fields for [[shulker bullet]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+
+=== Skeleton ===
+Additional fields for [[skeleton]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|timer|component}}
+** {{nbt|compound|ItemInHand}}: The item in its hand. Defaults to a bow.
+*** {{bedrock nbt|Item Stack|item}}
+
+=== Skeleton Horse ===
+Additional fields for [[skeleton horse]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+
+=== Slime ===
+Additional fields for [[slime]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|Size}}: The size of the slime. Note that this value is zero-based, so 0 is the smallest slime, 1 is the next larger, etc.
+
+=== Sniffer ===
+Additional fields for [[sniffer]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+
+=== Snowball ===
+Additional fields for [[snowball]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+
+=== Strider ===
+Additional fields for [[strider]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+
+=== Tadpole ===
+Additional fields for [[tadpole]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+
+=== Thrown Ender Pearl ===
+Additional fields for thrown [[ender pearl]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+
+=== Thrown Potion ===
+Additional fields for thrown [[potion]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+** {{nbt|short|PotionId}}: The [[Potion#Item data|ID of the potion effect]].
+
+=== Thrown Trident ===
+Additional fields for thrown [[trident]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+** {{nbt|int|favoredSlot}}: The slot id when it is thrown out.This means thrown trident with [[Loyalty]] prefers to return to this slot when this slot is empty. Set to -1 when without [[Loyalty]] enchantment.
+** {{nbt|compound|Trident}}: The item that is given when the entity is picked up.
+*** {{bedrock nbt|Item Stack|item}}
+
+=== TNT ===
+Additional fields for [[tnt]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|explode|component}}
+
+=== Turtle ===
+Additional fields for [[turtle]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{bedrock nbt|home|component}}
+** {{nbt|byte|IsPregnant}}: 1 or 0 (true/false) - true if the turtle has eggs.
+
+=== Vex ===
+Additional fields for [[vex]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|compound|ItemInHand}}: The item in its hand. Defaults to an iron sword.
+*** {{bedrock nbt|Item Stack|item}}
+
+=== Villager (V2) ===
+Additional fields for [[villager]] (v2):
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|dweller|component}}
+** {{bedrock nbt|economy_trade_table|component}}
+** {{bedrock nbt|inventory|component}}
+** {{bedrock nbt|trade_table|component}}
+** {{nbt|byte|HasResupplied}}: 1 or 0 (true/false) - true if the villager's trade has been resupplied.
+** {{nbt|byte|IsInRaid}}: Unknown.
+** {{nbt|byte|ReactToBell}}: Unknown.
+
+=== Vindicator ===
+Additional fields for [[vindicator]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|dweller|component}}
+
+=== Wandering Trader ===
+Additional fields for [[wandering trader]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|economy_trade_table|component}}
+** {{bedrock nbt|timer|component}}
+** {{nbt|list|entries}}
+*** {{nbt|compound}}: An entry.
+**** {{nbt|int|SpawnTimer}}: Unknown.
+**** {{nbt|byte|StopSpawning}}: Unknown.
+
+=== Warden ===
+Additional fields for [[warden]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|list|Nuisances}}: List of nuisances that have angered the warden.
+*** {{nbt|compound}}: A nuisance.
+**** {{nbt|long|ActorId}}: The Unique ID of the entity that is associated with the anger.
+**** {{nbt|int|Anger}}: The level of anger. It has a maximum value of 150 and decreases by 1 every second.
+**** {{nbt|byte|Priority}}: 1 or 0 (true/false) - true if the nuisance is priority.
+** {{nbt|compound|VibrationListener}}: The vibration event listener of the warden.
+*** {{nbt|int|event}}: Unknown.
+*** {{nbt|compound|pending}}: Unknown.
+**** {{nbt|float|distance}}: Unknown.
+**** {{nbt|long|source}}: Unknown.
+**** {{nbt|int|vibration}}: Unknown.
+**** {{nbt|int|x}}: Unknown.
+**** {{nbt|int|y}}: Unknown.
+**** {{nbt|int|z}}: Unknown.
+*** {{nbt|compound|selector}}: Unknown.
+*** {{nbt|int|ticks}}: Unknown.
+
+=== Wind Charge Projectile ===
+Additional fields for [[wind charge projectile]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|projectile|component}}
+
+=== Witch ===
+Additional fields for [[witch]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|dweller|component}}
+
+=== Wither ===
+Additional fields for [[wither]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|AirAttack}}: Whether the wither exhibits first or second phase behavior, as well as whether the shield effect is visible - 1 for first phase and shield invisible, 0 for second phase and shield visible.
+** {{nbt|int|dyingFrames}}: The number of ticks remaining before the wither explodes during its death animation. 
+** {{nbt|int|firerate}}: The delay in ticks between wither skull shots. Does not affect the delay between volleys.
+** {{nbt|int|Invul}}: The remaining number of ticks the wither will be invulnerable for. Updated to match SpawningFrames or dyingFrames every tick during spawn/death animation, otherwise remains static.
+** {{nbt|int|lastHealthInterval}}: The greatest multiple of 75 that is fewer than the wither's lowest health. Does not increase if the wither is healed. 
+** {{nbt|int|maxHealth}}: Unknown.
+** {{nbt|float|oldSwellAmount}}: The swellAmount in the previous tick.
+** {{nbt|float|overlayAlpha}}: The alpha/brightness of the wither texture overlay during its death animation. Has no effect outside the death animation.
+** {{nbt|int|Phase}}: Which phase the wither is in. Has no effect on wither behavior or shield visibility. Has a value of 1 during spawning and first phase and 0 during second phase and death.
+** {{nbt|int|ShieldHealth}}: Unknown.
+** {{nbt|int|SpawningFrames}}: The number of ticks remaining before the wither finishes its spawning animation and becomes vulnerable.
+** {{nbt|float|swellAmount}}: How much the wither has swelled during its death animation. Has no effect outside the death animation.
+
+=== Wither Skull ===
+Additional fields for [[Wither|wither skull]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|explode|component}}
+** {{bedrock nbt|projectile|component}}
+
+=== Wolf ===
+Additional fields for [[wolf]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+** {{bedrock nbt|breedable|component}}
+** {{nbt|compound|properties}}: The wolf <code>properties</code>.
+*** {{nbt|byte|minecraft:has_armor}}: 1 or 0 (true/false) - true if the wolf has [[wolf armor]].
+*** {{nbt|byte|minecraft:has_increased_max_health}}: 1 or 0 (true/false) - true if the wolf's maximum health is {{hp|40}}.
+*** {{nbt|byte|minecraft:is_armorable}}: 1 or 0 (true/false) - true if the wolf can be equipped with [[wolf armor]].
+
+=== Zombie ===
+Additional fields for [[zombie]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|timer|component}}
+
+=== Zombie Horse ===
+Additional fields for [[zombie horse]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{bedrock nbt|ageable|component}}
+
+=== Zombie Villager ===
+Additional fields for [[zombie villager]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|byte|SpawnedFromVillage}}: 1 or 0 (true/false) - true if spawned from village.
+
+=== Zombified Piglin ===
+
+Additional fields for [[zombified piglin]]:
+* {{nbt|compound}}: The entity's root tag.
+** {{nbt|short|Anger}}: Unknown.
+</div>
+
+[[pt:Formato de nível da Edição Bedrock/Formato de entidade]]
+[[zh:基岩版存档格式/实体格式]]

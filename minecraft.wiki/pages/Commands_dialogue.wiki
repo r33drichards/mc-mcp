@@ -1,0 +1,86 @@
+{{Distinguish|/dialog}}
+{{Exclusive|bedrock|edu}} 
+{{Infobox command
+|name=dialogue
+|oplevel=1
+|cheat=1
+}}
+Opens an NPC dialogue screen to the player(s), or changes the dialogue displayed by an [[NPC]].
+
+== Usage ==
+Dialogue can be branched with the use of a scene file. The scene file is a Json file located inside the <samp>dialogue</samp> folder in the root directory of the active behavior pack that contains all the information needed for branching dialogue. There is no limit to the amount of scene files, as the game reads all the files in the folder and call based on <code>scene_tag</code> property indicated in the given scene data.
+
+See this [https://docs.microsoft.com/en-us/minecraft/creator/documents/npcdialogue documentation] for scene file setup.
+
+== Syntax ==
+:<code>dialogue open <npc: target> <player: target> [sceneName: string]</code>
+::Forces open the targeted NPC's dialogue box to the targeted player(s), simulating the experience of clicking on an NPC.
+::* A targeted scene can also be indicated.
+
+:<code>dialogue change <npc: target> <sceneName: string> [player: target]</code>
+::Changes the content of the targeted NPC according to the targeted scene, including dialogue, commands, and name.
+::* This closes the dialogue box and update for the next time the NPC is interacted.
+::* The content can be updated on a per-player basis. If no player is targeted, the dialogue updates for all players.
+
+== Arguments ==
+{{argument|be=1|npc: target|CommandSelector<Actor>}}
+: Specifies the target to open an NPC screen from.
+: {{arg desc|be=CommandSelector<Actor>}} And it should target only one entity that has the <code>minecraft:npc</code> component.
+
+{{argument|be=1|player: target|CommandSelector<Player>}}
+: Specifies the player(s) to display the NPC screen.
+: Must be specified in <code>open</code> mode. In <code>change</code> mode, all players are affected if not specified.
+: {{arg desc|be=CommandSelector<Player>}}
+
+{{argument|be=1|sceneName: string|basic_string}}
+: Specifies what scene to show from the dialogue folder in a behavior pack from the <code>scene_tag</code> property.
+: Must be specified in <code>change</code> mode. In <code>open</code> mode, the last dialogue shown is used if not specified.
+: {{arg desc|be=string}}
+
+== Result ==
+{{Result table|onlybe=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.||unparseable}}
+{{Result table|<code>npc: target</code> fails to resolve to a singular entity with the <code>minecraft:npc</code> component.||fail}}
+{{Result table|<code>player: target</code> is a target selector that is not in [[Target_selectors#Player_type_and_single_type|player type]].}}
+{{Result table|<code>player: target</code> fails to resolve one or more online players.}}
+{{Result table|<code>sceneName: string</code> fails to resolve to a dialogue tag in a behavior pack.}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table|onlybe=1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== Examples ==
+* Open the dialogue of an NPC with tag "ducky" toward the nearest player showing scene "ducky_intro":
+:: <code>dialogue open @e[type=npc, tag=ducky] @p ducky_intro</code>
+* Change the dialogue of an NPC with tag "ducky" into scene "duck_intro" toward the [[Target selectors|initiator]]:
+::<code>dialogue change @e[type=npc, tag=ducky] ducky_intro @initiator</code>
+
+== History ==
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.17.10|dev=beta 1.17.10.22|Added {{cmd|dialogue|link=none}}.}}
+}}
+
+=== ''Minecraft Education'' ===
+{{HistoryTable
+|{{HistoryLine|education edition}}
+|{{HistoryLine||1.17.30|dev=1.17.30.2|Added {{cmd|dialogue|link=none}}.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/dialogue?view=minecraft-bedrock-stable|title=<code>/dialogue</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[ja:コマンド/dialogue]]
+[[lzh:令/dialogue]]
+[[pt:Comandos/dialogue]]
+[[zh:命令/dialogue]]
+[[de:Befehl/dialogue]]

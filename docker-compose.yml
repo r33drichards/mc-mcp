@@ -2,7 +2,8 @@ services:
   mineflayer-mcp:
     build: .
     image: mc-mcp
-    stdin_open: true
+    container_name: mineflayer-mcp
+    restart: unless-stopped
     network_mode: host
     environment:
       - MC_HOST=localhost
@@ -10,3 +11,33 @@ services:
       - MC_USERNAME=mcp-bot
       - MC_AUTH=offline
       - VIEWER_PORT=3000
+      - MCP_TRANSPORT=http
+      - MCP_PORT=3001
+    volumes:
+      - ./state:/usr/src/app/state
+      # mineflayer and minecraft.wiki files
+      - ./mineflayer:/usr/src/app/mineflayer
+      - ./minecraft.wiki:/usr/src/app/minecraft.wiki
+  mc:
+    image: itzg/minecraft-server:latest
+    pull_policy: daily
+    tty: true
+    stdin_open: true
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      FABRIC_LOADER_VERSION: "LATEST"
+      MAX_PLAYERS: "40"
+      MEMORY: "4G"
+      MODRINTH_DOWNLOAD_DEPENDENCIES: "required"
+      MODS: ""
+      ONLINE_MODE: "false"
+      OPS: "lmoik"
+      TYPE: "FABRIC"
+      VERSION: "1.21.4"
+      VIEW_DISTANCE: "10"
+      SPAWN_PROTECTION: "0"
+    volumes:
+      # attach the relative directory 'data' to the container's /data path
+      - ./data:/data

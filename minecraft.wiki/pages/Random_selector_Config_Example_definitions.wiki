@@ -1,0 +1,28 @@
+The 'random_selector' feature placement type has two ways of selecting a feature. The first way is by directly referencing a placed feature (e.g. "feature": "diamond_ore_placed"), and the second way is by nesting another 'feature' node within the first one, which allows a configured feature to be referenced along with some placement predicates.
+
+An example of a 'random_selector' feature with both methods of specifying a feature is given below.<syntaxhighlight lang="json" line="1">
+{
+  "type": "random_selector",
+  "config": {
+    "default": "placed_diamond_ore", // direct reference to a placed feature
+    "features": [
+      {
+        "chance": 0.25,
+        "feature": "placed_iron_ore" // direct reference to a placed feature
+      },
+      {
+        "chance": 0.25,
+        "feature": {
+          "feature": "configured_gold_ore", // reference to a configured feature with a placement predicate
+          "placement": [] // can be empty but cannot be omitted
+        }
+      }
+    ]
+  }
+}
+</syntaxhighlight>
+The use of organized file titles is recommended to avoid confusion of which features are 'placed' and which are 'configured'.
+
+Note that circular references can cause the datapack to fail to load or crash upon trying to generate the feature.
+
+[[pt:Seletor aleatório/Config/Exemplos de definição]]

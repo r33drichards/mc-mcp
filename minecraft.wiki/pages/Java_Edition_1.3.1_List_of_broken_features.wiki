@@ -1,0 +1,386 @@
+This is a list of features which were broken by 12w18a's client-server logic split which remained broken into the full release of 1.3.1. As a relatively large number of things were affected by this change, and in many cases the differences are subtle or difficult to notice at a glance, this page serves to demonstrate these behaviors in more detail than is typically provided by the regular changelog.
+
+== Summary ==
+
+Note that due to the nature of these bugs, all of the features listed here only functioned in singleplayer prior to 12w18a &ndash; the reason they broke in the first place is because singleplayer was changed to use multiplayer logic internally and these features were not accounted for. Likewise, features that have since been fixed now function in both singleplayer and multiplayer.
+
+{| class="wikitable" style="text-align:center" data-description="A list of things 12w18a completely broke"
+! Feature
+! Description
+! Fixed in version(s)
+! [[Bug tracker]] report(s)
+|-
+! [[#Darker thunderstorms|Darker thunderstorms]]
+| Thunderstorms would darken the sky, clouds, and lighting to a greater extent than normal rain.
+| {{tc|yes|[[13w39a]]}}
+| {{tc|yes|{{bug|MC-673}}}}
+|-
+! [[#Health bar showing lost hearts|Health bar showing lost hearts]]
+| Taking damage would cause the lost hearts to flash a pale red color on the HUD.
+| {{tc|yes|[[14w32a]]}}
+| {{tc|yes|{{bug|MC-2390}}}}
+|-
+! [[#Portal travel sound|Portal travel sound]]
+| Entering a Nether portal or End portal would play a sound once the loading screen appeared.
+| {{tc|yes|[[16w02a]]}}
+| {{tc|yes|{{bug|MC-233}}}}
+|-
+! [[#Most server-side particles|Most server-side particles]]
+| Water/lava collisions, burning out redstone torches, mob armor breaking, end portal frame eye additions and more would create dedicated particles for these events.
+| {{tc|yes|[[19w14a]]}}
+| {{tc|yes|{{bug|MC-10369}}}}
+|-
+! [[#Saving Level text|Saving Level text]]
+| A "Saving level.." indicator would appear on the bottom left of the pause menu when the level was being saved.
+| {{tc|yes|[[21w42a]]}}
+| {{tc|yes|{{bug|MC-73300}}}}
+|-
+! [[#Nether portal exit animation|Nether portal exit animation]]
+| Being placed at a destination nether portal would show the effect at full intensity, rapidly decreasing to nothing.
+| {{tc|yes|[[1.20 Pre-release 1]]}}
+| {{tc|yes|{{bug|MC-180}}}}
+|-
+! [[#Ambient darkness effects|Ambient darkness effects]]
+| Entity shadows, water overlays and vignettes would adjust according to sky brightness.
+| {{tc|yes|[[24w40a]]}}
+| {{tc|yes|{{bug|MC-259651}}}}
+|-
+! [[#Sky instantly reflecting desired time after time change|Sky instantly reflecting desired time after time change]]
+| The sky would instantly change its appearance after sleeping or changing time with commands.
+| {{tc|upcoming|[[24w44a]] (commands)<br />[[26.1 Snapshot 3]] (beds){{upcoming}}}}
+| {{tc|yes|{{bug|MC-72846}}<br />{{bug|MC-233911}}}}
+|-
+! [[#Directional damage tilt|Directional damage tilt]]
+| The screen tilting would indicate what direction damage came from.
+| {{tc|partial|[[23w03a]] (partial)}}
+| {{tc|partial|{{bug|MC-26678}} (fixed)<br />{{bug|MC-259212}}}}
+|-
+! [[#Dragon egg trails|Dragon egg trails]]
+| [[Dragon egg]]s would create a trail of particles leading from their old location to their new location upon teleporting.
+| {{tc|partial|[[Java Edition 1.4.3|1.4.3]] (partial)}}
+| {{tc|partial|{{bug|MC-160}} (fixed)<br />{{bug|MC-2157}}}}
+|-
+! [[#Map behavior|Map behavior]]
+| [[Map]]s would draw new terrain very quickly, restore visible terrain instantly after a world reload, and update the position marker to match the player's position/rotation continuously with no delay.
+| {{tc|partial|[[14w28a]] (partial)}}
+| {{tc|partial|{{bug|MC-237239}}}}
+|- 
+! [[#Progress bars|Progress bars]]
+| These would be shown under text when creating, loading or saving worlds or when entering or exiting dimensions.
+| {{tc|partial|[[25w31a]] (partial)}}
+| {{tc|No|{{bug|MC-2681}}<br />resolved as "Works As Intended"}}
+|-
+! [[#Specialized loading text|Specialized loading text]]
+| Loading screens would display specialized text for entering and leaving dimensions, respawning, and deleting the world in hardcore mode.
+| {{tc|no|Not fixed}}
+| {{tc|partial|{{bug|MC-12789}}}}
+|-
+! [[#Notch dropping an apple on death|Notch dropping an apple on death]]
+| Players named [[Notch]] would drop an apple along with their inventory upon death.
+| {{tc|no|Not fixed}}
+| {{tc|partial|{{bug|MC-96781}}}}
+|- 
+! [[#Mob construction particles|Mob construction particles]]
+| Building iron golems and snow golems would result in the production of particles.
+| {{tc|no|Not fixed}}
+| {{tc|partial|{{bug|MC-217618}}<br />{{bug|MC-217619}}<br />{{bug|MC-217641}}}}
+|- 
+! [[#Enderman teleport particles|Enderman teleport particles]]
+| [[Endermen]] would produce a trail of particles upon teleportation.
+| {{tc|no|Not fixed}}
+| {{tc|partial|{{bug|MC-258347}}}}
+|- 
+! [[#Ghast loading animation|Ghast loading animation]]
+| [[Ghast]]s would visually expand directly prior to shooting a fireball.
+| {{tc|no|Not fixed}}
+| {{tc|no|{{bug|MC-165038}}<br />resolved as "Won't Fix"}}
+|-
+! [[#Minecart physics|Minecart physics]]
+| Minecarts would quickly change orientation in response to entity collision and could push other entities.
+| {{tc|no|Not fixed}}
+| {{tc|no|{{bug|MC-193779}}<br />resolved as "Works As Intended"}}
+|- 
+! [[#Instant entity teleportation|Instant entity teleportation]]
+| Teleporting entities, namely Endermen, would move instantly to their new location instead of interpolating to it.
+| {{tc|no|Not fixed}}
+| {{tc|no|{{bug|MC-303560}}<br />resolved as "Works As Intended"}}
+|-
+! [[#Creative mode default items|Creative mode default items]]
+| Players in [[creative mode]] would receive a set of default items upon loading the world or switching from another game mode.
+| {{tc|no|Not fixed}}
+| {{tc|unknown|None/Unknown}}
+|}
+
+== Still broken features ==
+=== Specialized loading text ===
+Loading screens would originally change their upper line of text to be specialized to the action that was being performed. When entering the Nether or End, the screen would respectively display "Entering the Nether" or "Entering the End". Leaving either dimension would display "Leaving the Nether" or "Leaving the End". Respawning after death would display "Respawning", while deleting the world after dying in [[Hardcore]] mode would display "Deleting world". All of these no longer occur since 12w18a. In [[Java Edition 1.20.5]], dimension backgrounds were added to distinguish the Nether or End dimension teleports, but the text has yet to be restored and there is still no loading screen displayed when respawning.
+
+As Hardcore mode no longer deletes the world on death, the loading text for that can arguably be considered "fixed" by technicality &ndash; although no corresponding text is displayed for spectating the world either.
+<gallery>
+Entering the Nether.png|Entering the Nether
+Leaving the Nether.png|Leaving the Nether
+Entering the End.png|Entering the End
+Leaving the End.png|Leaving the End
+Respawning.png|Respawning
+Deleting world.png|Deleting world
+</gallery>
+
+=== Notch dropping an apple on death ===
+Prior to 12w18a, any player named "[[Notch]]" would drop an [[apple]] along with their inventory when killed in singleplayer. This no longer happens, and their inventory will simply be dropped as normal.
+
+In the years since, Mojang has distanced themselves from Notch and removed most references to him from the game, following controversial statements he made on Twitter. Despite this, the associated bug tracker issue remains open.
+
+=== Mob construction particles ===
+When a [[snow golem]] was built, along with the snow golem, a cloak of snowflake particles would also be generated around it. Similarly, when building an [[iron golem]], a burst of [[snowball]]-textured particles would also be created at the instant of its spawning. In 12w18a, these particles would no longer appear at all, and the mobs would just phase into existence with no further effects.
+
+When the [[wither]] was made spawnable, its spawning code also made it create snowball particles in much the same way that iron golems would. Being introduced after 12w18a, the particles produced by them never ended up able to be seen.{{Citation needed}}
+
+In [[Java Edition 17w47a|17w47a]], due to changes to the breaking of blocks, particles would again be generated upon the creation of the golems and for the first time ever the wither. However, these particles are functionally and fundamentally different &ndash; where the particles were themed for the mob at first, these particles were simply the result of the constituent blocks being broken by the game, and as such were block breaking particles using the textures of the blocks in question.<ref>{{bug|MC-123338}}</ref> The actual particles for these three mobs still remain to be fixed.
+
+Before:
+<gallery>
+Snow golem creation particles.png
+Iron golem creation particles.png
+</gallery>
+
+After:
+<gallery>
+Snow golem no creation particles.png
+Iron golem no creation particles.png
+</gallery>
+
+=== Enderman teleport particles ===
+{{more images|section=1}}
+[[Endermen]] are programmed to create a trail of particles leading from their old location to their new location when teleporting, but this is not networked correctly. As a result, the particles did not appear in multiplayer and no longer appear at all since 12w18a. Note that due to [[#Instant entity teleportation|teleportation no longer being instant]], some particles may still appear &ndash; these are simply a result of the enderman happening to emit ambient particles mid-interpolation, rather than an effect intentionally programmed into the game. The original teleportation particles have yet to be fixed.
+
+=== Ghast loading animation ===
+When [[ghast]]s were first added, they would expand slightly before shooting a fireball, similarly to a creeper about to explode. This created the effect of the ghast "charging" a fireball, rather than just opening its mouth and firing it. However, the effect was not properly networked from the server to the client, causing it to not work in multiplayer. As a result, when singleplayer was changed to use an internal server, the effect broke there too. The expand code was removed entirely in [[Java Edition 1.8|1.8]].
+<gallery>
+Expanding Ghast.gif
+</gallery>
+
+=== Minecart physics ===
+Prior to the client-server split, minecarts were capable of pushing players, and would react immediately and change direction when pushed. However, minecarts no longer push the player, and turn very sluggishly.<gallery>
+Minecart1.2.5.gif|Minecart in 1.2.5 
+Minecart1.3.1.gif|Minecart in 1.3.1 and onwards
+</gallery>
+
+=== Instant entity teleportation ===
+{{more images|section=1}}
+Teleporting entities originally snapped straight from their old position to their new position, with no visible movement between them, as would be expected from a teleport. However, client-side interpolation is not turned off for teleporting entities in multiplayer (and singleplayer after 12w18a), causing them to instead appear to quickly travel in a straight line to the new position. This was reported on the issue tracker and closed as "Works As Intended".<ref>{{bug|MC-303560|resolution=WAI}}</ref>
+
+=== Creative mode default items ===
+Prior to 12w18a, creating or loading a singleplayer world in creative mode would automatically fill empty slots in the hotbar with specific blocks corresponding to each slot:
+{{Hotbar
+|Stone
+|Cobblestone
+|Bricks
+|Dirt
+|Oak Planks
+|Oak Log
+|Oak Leaves
+|Torch
+|Smooth Stone Slab
+}}
+These are the same blocks that Creative mode players spawned with from [[Java Edition Indev 0.31 20091223-1457|Indev version 20091223-1457]] until the mode's removal [[Java Edition Indev 0.31 20091231-1856|a few days later]]. When commands were added to singleplayer in [[12w16a]], these blocks would also be given when switching from Survival to Creative mode using the {{cmd|gamemode}} command. In 12w18a onwards, the player no longer receives these blocks.
+
+== Partially fixed features ==
+=== Directional damage tilt ===
+Originally, taking damage would cause the camera to tilt toward the direction the damage came from. However, the direction value was not properly networked from the server to the client, causing the camera to always tilt left in multiplayer. As a result, when singleplayer was changed to use an internal server, the directional tilt broke there too. The code still existed and was broken until [[Java Edition 23w03a|23w03a]], despite being marked as "Won't Fix" on issue tracker before.
+<gallery>
+Pre 1.3.1 Screen Tilt.gif|Screen tilt used in versions before 1.3.1
+Post 1.3.1 Screen Tilt.gif|Screen tilt used in versions after 1.3.1
+</gallery>
+
+It is worth noting that damage without an associated direction is still not fully fixed, as it will "remember" the direction of the previously taken directed damage. Prior to 12w18a, directionless damage would tilt the screen either left or right randomly. Refer to {{bug|MC-259212}} for more information.
+
+=== Dragon egg trails ===
+When first implemented, [[dragon egg]]s would leave a trail of particles upon performing a teleportation. This trail of particles would lead from their initial position directly to the position they teleported to. Like several other particle effects, these stopped appearing in 12w18a.
+
+In [[Java Edition 1.4.3|1.4.3]],<ref>{{bug|MC-160}}</ref> the particles were restored, but they are broken &ndash; they are created by the client independently of the egg's actual teleport destination, and thus rarely point to the correct location. This has yet to be fixed.
+<gallery>
+Dragon egg trail particles.png|b1.9-pre6 &ndash; 12w17a: accurate particles
+Dragon egg no trail particles.png|12w18a &ndash; 1.4.2: no particles
+Dragon egg wrong trail particles.png|1.4.3 &ndash; present: particles point in a completely wrong direction
+</gallery>
+
+=== Map behavior ===
+[[Map]]s originally had the ability to draw in new terrain very quickly, and the marker indicating the player's location would update in real-time as the player moved and turned. Additionally, opening an existing map after a world reload would have its contents be visible immediately. Since 12w18a, terrain on maps (both new and existing) is now very slowly drawn in column-by-column, and the the position marker appears noticeably more choppy, only updating around three to four times per second.
+
+[[14w28a]] greatly improved the speed at which terrain appears on maps to be near-instant, but the position marker remains unfixed.
+
+Before:
+<gallery>
+1.2.5 map drawing speed.gif|Creating a new map
+1.2.5 full map drawing speed.gif|Viewing an existing map
+1.2.5 map marker rotation.gif|Marker rotation
+</gallery>
+
+After:
+<gallery>
+1.3.1 map drawing speed.gif|Creating a new map
+1.3.1 full map drawing speed.gif|Viewing an existing map
+1.3.1 map marker rotation.gif|Marker rotation
+</gallery>
+
+=== Progress bars ===
+When generating or loading a world or entering a given dimension, a green progress bar would appear on screen under relevant text. As of 1.3.1, this progress bar would no longer appear. For world generation and loading, a chunk graph was added in [[Java Edition 1.14|1.14]] and a progress bar was re-added in [[Java Edition 1.21.9|1.21.9]]. However, dimension loading screens still show nothing.
+<gallery>
+Progress bar.png
+</gallery>
+
+== Fixed features ==
+=== Darker thunderstorms ===
+Prior to 12w18a, thunderstorms would darken the sky, clouds, and world lighting further than rain did. However, clients were not notified if the world was thundering so the sky appears to be like regular rain instead. This was fixed in [[Java Edition 13w39a|13w39a]], where thunderstorms now darken the sky again.
+
+<gallery>
+Broken1.3-rain.png|Regular rainy weather, sky light level 12
+Broken1.3-thunder-sp.png|Intended appearance of thunderstorm in singleplayer, sky light level 10
+Broken1.3-thunder-mp.png|Appearance of thunderstorm in multiplayer with a brighter sky than intended
+</gallery>
+
+=== Health bar showing lost hearts ===
+Originally when taking damage, the health bar would flash the hearts that had just been lost with a pale red color. This effect did not work in multiplayer, and thus broke when singleplayer was changed to an internal server. The animation was restored in [[14w32a]], and further enhanced so it now stacks lost hearts if damage is taken repeatedly in a short period of time.<ref>https://twitter.com/Dinnerbone/status/497362125476478976</ref>
+
+<gallery>
+1.2.5 lost hearts.png|Before 1.3.1
+1.3.1 lost hearts.png|After 1.3.1
+</gallery>
+
+=== Portal travel sound ===
+Travelling to another dimension via the use of a [[nether portal]] or [[end portal]] would result in a dedicated sound being played on the dimension loading screen. However, this sound did not play in multiplayer, and the player would instead be teleported silently. Therefore, when singleplayer was changed to use a multiplayer server in 12w18a, the sound stopped playing in singleplayer too. In [[Java Edition 16w02a|16w02a]], this sound would now play again, but after transport to the dimension rather than on the loading screen.<ref>{{bug|MC-212651}}</ref>
+
+=== Most server-side particles ===
+Certain particles were created dependent on the server, and never showed up on clients connected to said servers. As a result, several particles simply stopped appearing in 12w18a and beyond. The majority of these were eventually fixed in [[Java Edition 19w14a|19w14a]].
+
+The following particles stopped appearing in 12w18a:
+
+* Particles from [[redstone torch]]es burning out
+* Bursts of particles from successful [[breeding]]
+** Active particles from animals in love mode stopped appearing in 1.9, for a likely similar server-related reason.<ref>{{bug|MC-93826}}</ref>
+* Particles from mobs created by [[monster spawner]]s
+* Particles from contact between [[water]] and [[lava]]
+* Particles from placing an [[eye of ender]] in an [[end portal frame]]
+
+Before:
+<gallery>
+Redstone torch burnout particles.png
+Animal birth particles.png
+Spawner mob spawning particles.png
+Water and lava collision particles.png
+End portal frame filling particles.png
+</gallery>
+
+After:
+<gallery>
+Redstone torch no burnout particles.png
+Animal no birth particles.png
+Spawner no mob spawning particles.png
+Water and lava no collision particles.png
+End portal frame no filling particles.png
+</gallery>
+
+=== Saving Level text ===
+{{verify|Was this caused by the internal server? The text still displays in multiplayer in 1.2.5.}}
+
+In the pause menu, the bottom left would display "Saving level.." for a few seconds as it saved the level. As of [[Java Edition 21w42a|21w42a]], the text "Saving world" shows in the bottom right whenever the game autosaves, regardless of if the player is in the pause menu. This can be toggled in the video settings.
+<gallery>
+1.2.5 Saving Level indicator.png
+</gallery>
+
+=== Nether portal exit animation ===
+Exiting a nether portal originally showed a [[screen effect]] combination, in which the nausea effect would ramp down and stop and the overlay would disappear. It occurred since 12w18a until it was fixed in [[Java Edition 1.20 Pre-release 1|1.20 Pre-release 1]].
+
+As of 12w34a, the nether portal screen effects<ref>{{bug|MC-180}}</ref> and trigger sound<ref>{{bug|MC-193749}}</ref> will play even if the player arrives on the other side of a portal, making the brokenness of this exit animation hard to spot. It is still noticeable given that this wrong animation starts weak and gets more intense as if this were a newly entered portal, rather than beginning at full intensity.
+
+<gallery>
+Nether portal slowdown.png|12w17a and prior
+Nether portal no slowdown.png|12w18a to 12w32a
+</gallery>
+
+The table below demonstrates the historical visual behavior of entering a nether portal, with time passing going to the right. Blank spaces show where the effect does not play, an animated nether portal texture shows when the effect is at full intensity, and a static nether portal texture shows where the portal animation is either accelerating or decelerating. The behavior types shown in the table are used within the following version ranges:
+
+* Type 1: Alpha v1.2.0 &ndash; 12w17a (this behavior is the desirable one)
+* Type 2: 12w18a &ndash; 12w32a
+* Type 3: 12w34a &ndash; 23w18a
+
+{| class="wikitable"
+! Behavior type
+! Before entering a portal
+! colspan="4" | Standing in the entry portal
+! Loading screen
+! colspan="4" | Standing in the exit portal
+! colspan="3" | Stepping out of the portal
+|-
+! Type 1
+| [[File:Blank.png|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:Dirt (texture) JE1 BE1.png|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+|-
+! Type 2
+| [[File:Blank.png|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:Dirt (texture) JE1 BE1.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+| [[File:Blank.png|60px]]
+|-
+! Type 3
+| [[File:Blank.png|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:Dirt (texture) JE1 BE1.png|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:End Portal (inventory) JE4.gif|60px]]
+| [[File:End Portal (inventory) JE5.png|60px]]
+| [[File:Blank.png|60px]]
+|}
+
+=== Ambient darkness effects ===
+At night time, entity shadows would be hidden, the water overlay would be darker and the vignette would show up. In multiplayer however, the variable determining the strength of these effects was not updated even though it is a client-side feature. This was fixed in [[Java Edition 24w40a|24w40a]] where the effects were restored.
+
+Before:
+<gallery>
+Broken1.3-shadow-sp.png
+Broken1.3-water-sp.png
+Broken1.3-vignette-sp.png
+</gallery>
+
+After:
+<gallery>
+Broken1.3-shadow-mp.png
+Broken1.3-water-mp.png
+Broken1.3-vignette-mp.png
+</gallery>
+
+=== Sky instantly reflecting desired time after time change ===
+{{In development|je||26.1|section=1|}}
+Before 12w18a, the sky would instantly change its appearance after the sleeping animation, or after changing time with commands. As of 12w18a there is a noticeable delay before the sky's appearance actually changes as a result of the server only periodically sending time of day updates to clients. Fixed in [[Java Edition 24w44a|24w44a]] for the {{cmd|time}} command and in [[26.1 Snapshot 3]] for beds.
+<gallery>
+1.2.5 sleeping animation.gif|Before 1.3.1
+1.3.1 sleeping animation.gif|After 1.3.1
+</gallery>
+
+== References ==
+{{reflist}}

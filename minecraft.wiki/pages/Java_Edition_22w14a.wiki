@@ -1,0 +1,247 @@
+{{Infobox version
+|title=Minecraft 22w14a
+|image=22w14a.jpg
+|image2=Java Edition 22w14a.png
+|edition=Java
+|type=Snapshot
+|date=April 6, 2022
+|jsonhash=d7a5cb72158d497983a74623b88f0e0cd423d46f
+|clienthash=1d186d967576d4e6043e5b1664da242c1b686a85
+|clientmap=9b86041edb4aa515fc8951f16e3d3be3e0c0533e
+|serverhash=cf4f3a6492c0a84e2e852fe0ea714080923ab6ad
+|servermap=7b9857a6a7f3d7910700528627a8912947512178
+|parent=1.19
+|prevparent=1.18.2
+|prev=22w13a
+|next=22w15a
+|nextparent=1.19.1
+}}<onlyinclude>
+
+'''22w14a''' is the fourth [[snapshot]] for [[Java Edition 1.19]], released on April 6, 2022,<ref>{{snap|22w14a|April 6, 2022}}</ref> which adds [[mangrove tree]]s, [[mangrove swamp]]s, [[echo shard]]s, and [[recovery compass]]es, and fixes some bugs related to [[ancient cities]] and [[warden]]s.
+
+== Additions ==
+=== Items ===
+'''[[File:Echo Shard JE1 BE1.png|32px]] [[Echo shard]]'''
+* Can only be found in loot chests in [[ancient cities]].
+* Can be used to craft recovery compasses.
+
+'''[[File:Recovery Compass JE1 BE1.gif|32px]] [[Recovery compass]]'''
+* A new type of compass which can point to the last place where player died.
+* Randomly spins if not held by a player, the player hasn't died, or when the player is not in the same dimension of the death point.
+* Can be crafted with a [[compass]] surrounded by 8 echo shards.
+
+=== World generation ===
+'''{{BiomeLink|Mangrove swamp}}'''
+* A new swamp [[biome]] with teal water that often generates in warmer clusters, usually next to jungles and deserts.
+* Contains mangrove trees, a new type of tree.
+** Has an unique shape, with a root system of mangrove roots leading up to a forking trunk and mangrove leaves.
+** It has a chance to generate a [[bee nest]].
+** Grows from [[mangrove propagule]]s.
+* Naturally spawns warm [[frog]]s and [[slime]]s, but there are no sheep, cows, pigs or chickens.
+* Does not generate [[witch hut]]s.
+* The floor is coated with a single layer of [[mud]].
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Added two new advancements:
+** You Got a Friend in Me
+*** Have an Allay deliver items to you
+** Birthday Song
+*** Have an Allay drop a cake at a note block
+* Added <code>item_delivered_to_player</code> advancement trigger.
+** Triggered when an allay delivers an item to a player, with following conditions:
+*** {{nbt|list|player}}: a player for which this trigger runs
+* Added <code>allay_drop_item_on_block</code> advancement trigger.
+** Triggered when an allay drops an item on a block, with following conditions:
+*** {{nbt|list|player}}: a player for which this trigger runs
+*** {{nbt|compound|location}}: a predicate for the block that the item was dropped on
+*** {{nbt|compound|item}}: a predicate for the item that was dropped
+
+=== General ===
+'''[[Player.dat format]]'''
+* Added a new {{nbt|compound|LastDeathLocation}} field, which contains a {{nbt|string|dimension}} string and a list of three integers representing the block position of the player's last death called {{nbt|int array|pos}}.
+
+'''[[Tag]]s'''
+* Added following block tags:
+** <code>#dead_bush_may_place_on</code>: {{cd|d=and|#sand|#terracotta|#dirt|mud}}.
+** <code>#mangrove_logs_can_grow_through</code>: {{cd|d=and|mud|muddy_mangrove_roots|mangrove_roots|mangrove_leaves|mangrove_log|mangrove_propagule}}.
+** <code>#mangrove_roots_can_grow_through</code>: {{cd|d=and|mud|muddy_mangrove_roots|mangrove_roots}}.
+* Added following item tag:
+** <code>#compasses</code>: <code>compass</code> and <code>recovery_compass</code>.
+* Added following entity tag:
+** <code>#frog_food</code>: <code>slime</code> and <code>magma_cube</code>.
+* Added following game event tag:
+** <code>#shrieker_can_listen</code>: <code>sculk_sensor_tendrils_clicking</code>
+* Added following cat variant tag (new type):
+** <code>#default_spawns</code>: {{cd|d=and|tabby|black|red|siamese|british|calico|persian|ragdoll|white|jellie}}.
+** <code>#full_moon_spawns</code>: <code>#default_spawns</code> and <code>all_black</code>.
+
+== Changes ==
+=== Blocks ===
+'''[[Dead bush]]'''
+* Can now be placed on [[mud]].
+
+'''[[Mangrove propagule]]'''
+* Now correctly grows into mangrove trees instead of oak trees.
+
+'''[[Mud]]'''
+* Now can convert into [[clay]] by placing mud above a block which has [[pointed dripstone]] underneath.
+
+=== Mobs ===
+'''[[Frog]]s'''
+* Now actually kill their food, using a base attack strength of 10.
+
+'''[[Warden]]'''
+* Now get angry at all mobs that bump into it, not just players.
+* Can no longer spawn on [[water]].
+* Can now pathfind through [[lava]].
+* Shadow is now the appropriate size.
+
+=== World Generation ===
+'''[[Ancient city]]'''
+* Removed {{cd|d=,|small_portal_statue|intact_horizontal_wall_stairs_upward|top_piece|bottom_piece}} and variant structures because they duplicate existing structures.
+* Changed some structures:
+** Slightly changed <code>city_center_2</code> blocks around the chest so that vibrations generated there are always detected by the sculk sensor below.
+** A missing sculk sensor was added for the redstone lamp in <code>bottom_1</code>.
+** Replaced the light blue and blue carpets in <code>ice_box_1</code> with gray carpets, and the [[trapdoor]] there is no longer open by default.
+** <code>entrance_path_5</code> is now able to generate.
+* Changed the loot found in chests:
+** There's now an extra roll of loot for every chest, with one possible loot option being now 1-3 echo shards.
+** Replaced the golden carrot in <code>city_center_2</code> chest with a golden apple.
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* The mangrove swamp is now required to be visited for the "Adventuring Time" advancement.
+* Removed field <code>location</code> from triggers {{cd|d=and|location|slept_in_bed|hero_of_the_village|voluntary_exile}}. It was handled exactly the same as <code>player.location</code>.
+
+=== General ===
+'''[[Entity format]]'''
+* Replaced {{nbt|int|CatType}} field in [[cat]]s' entity format with {{nbt|string|variant}}.
+** Accepted type of value is changed from numeric values to strings IDs. (e.g. <code>5</code> -> <code>minecraft:calico</code>)
+* There's also have a similar change to [[frog]]s' entity format like the cats' one.
+
+'''[[Loot table]]s'''
+* The special case size-dependent loot drops of [[slime]]s and [[magma cube]]s are now data driven and part of their loot tables, using the new sub-predicate types.
+* The loot drops for [[frog]] food are now part of the food's death loot, instead of dropping hard-coded item types.
+
+'''[[Predicate]]s'''
+* {{cd|d=and|player|fishing_hook|lightning_bolt|catType}} fields have been replaced with <code>type_specific</code>.
+* <code>type_specific</code> has field {{nbt|string|type}} (one of {{cd|d=or|player|fishing_hook|lightning_bolt|cat}}) and same fields as removed fields.
+* Example:
+:* Before:
+:::<syntaxhighlight lang="json">
+ "lightning_bolt": {
+   "blocks_set_on_fire": 0
+ }
+</syntaxhighlight>
+:* After:
+:::<syntaxhighlight lang="json">
+  "type_specific": {
+    "type": "lightning",
+    "blocks_set_on_fire": 0
+  }
+</syntaxhighlight>
+* <code>catType</code> has been wrapped to match new format and now uses new cat variant names instead of texture names.
+:* Before:
+:::<syntaxhighlight lang="json">
+"catType": "minecraft:textures/entity/cat/british_shorthair.png"
+</syntaxhighlight>
+:* After:
+:::<syntaxhighlight lang="json">
+ "type_specific": {
+    "type": "cat",
+    "variant": "minecraft:british"
+ }
+</syntaxhighlight>
+* New <code>type_specific</code> options:
+** <code>frog</code> has {{nbt|string|variant}} field matching frog variant ({{cd|d=or|minecraft:warm|minecraft:temperate|minecraft:cold}}).
+** <code>slime</code> applies for slimes and magma cubes, has {{nbt|int|Size}} field matching slime size (smallest is 1).
+
+'''[[Tag]]s'''
+* Mangrove swamp is now part of the {{cd|d=and|#allows_surface_slime_spawns|#has_closer_water_fog|#has_structure/mineshaft|#has_structure/ruined_portal_swamp|#is_overworld|#spawns_warm_variant_frogs|#water_on_map_outlines}} biome tag.
+* Removed <code>#ancient_city_center_replaceable</code> block tag, and merged all its contents into the <code>#ancient_city_replaceable</code> block tag.
+* Renamed <code>#warden_events_can_listen</code> game event tag to <code>#warden_can_listen</code>, then:
+** Removed <code>sculk_sensor_tendrils_clicking</code>.
+** Added <code>#shrieker_can_listen</code>.
+
+== Fixes ==
+{{fixes|fixedin=22w14a
+|;old
+|91364|Mob loot cannot be specified for small magma cube and big/medium slime.
+|176621|Entity spawn packets use integers for yaw and pitch instead of bytes.
+|207289|Sculk sensor wool occlusion has directional bias.
+|207522|Sculk sensors don't react to horses kicking.
+|207635|Sculk sensors react differently to wool occlusion depending on the global direction.
+|209905|Sculk sensors are not activated upon milking entities.
+|228533|Sculk sensors don't detect the feeding of untamed/trusting mobs.
+|;dev
+|249075|Sculk shrieker isn't grouped with other sculk related blocks in the decorations tab of creative inventory.
+|249122|{{cd|block.sculk_catalyst.bloom}} has no subtitle.
+|249124|{{cd|block.sculk_shrieker.shriek}} currently has no subtitle.
+|249254|Frogs eating named slimes or magma cubes isn't logged in console.
+|249255|Sculk catalyst does not spread when a frog kills a slime or a magma cube.
+|249264|Frogs can make eating sounds ("Frog eats") when they can't get close to their target, even without opening their mouths.
+|249369|Frogs instantly kill small slimes regardless of their total health or resistance.
+|249384|Warden can create Light, barriers or structure voids particles when digging.
+|249386|The entity shadows of wardens are too small in relation to the size of their models.
+|249387|Warden's digging sound is the same as its emerging sound.
+|249400|The vertical movement of wardens when they're in liquids is too sensitive.
+|249401|Warden spawn egg isn't alphabetized correctly.
+|249415|Wardens won't pathfind through lava even though they're immune to it.
+|249422|Some subtitles relating to the warden don't contain possessive apostrophes where appropriate.
+|249426|Angered wardens play the "warden takes notice angrily" sound when hit in survival on top of their hurt sound.
+|249430|Wardens remember players in creative mode.
+|249434|The warden indefinitely roars when attacked by multiple entities.
+|249447|Activated sculk shriekers fail to summon the warden if you run away.
+|249451|Warden doesn't appear in spawner.
+|249455|"Not a string" appears in log when serializing angered Warden.
+|249473|Some Warden sounds play in Peaceful difficulty.
+|249476|Warden can spawn in water.
+|249479|Wardens will attack their teammates.
+|249496|Large amounts of wardens cause performance issues.
+|249499|Warden summoned with {{cd|silent}} tag still plays heartbeat sounds.
+|249504|The sounds of wardens groaning angrily aren't controlled by the "Hostile Creatures" sound slider.
+|249509|Warden is invisible for a split second when spawned in by spawner or spawn egg.
+|249517|Warden doesn't detect non-player mobs colliding with them.
+|249526|Sculk shriekers are not activated when the player is riding something.
+|249530|Warden's hitbox shows up in peaceful difficulty.
+|249531|Warden indefinitely roars when the attack target is invulnerable.
+|249646|The warden sniffs excessively after killing a mob.
+|249659|Sculk Catalyst and Sculk Veins only drop when broken by Silk Touch hoe.
+|249674|Wardens forget their targets on world reload.
+|;previous
+|249712|Server hangs and game stops responding when loading a chunk containing a structure with an allay.
+|249714|Z-fighting can be seen on the wings of allays during their death animation.
+|249720|Allay's wings are not attached to its body.
+|249727|Wardens stop sensing vibrations after world reload.
+|249728|Lava can generate in ancient cities and burn wool.
+|249729|Z-fighting can be seen on the underside of allays' heads.
+|249751|Warden UV overlapping.
+|249758|Z-fighting can be seen when the arms of allays intersect their bodies.
+|249761|Trapdoor of Ice Box in Ancient Cities is by default open.
+|249764|Second lamp in the centers of ancient cities is missing its sculk sensor.
+|249768|{{samp|entrance_path_5}} can never generate.
+|249769|Unused structures in ancient cities.
+|249800|Redstone door sculk sensor in the Ancient City center is too far away to consistently detect the player eating.
+|249816|Wardens hitbox doesn't adjust when emerging and digging.
+|249825|Frogs ignore {{cd|doMobLoot}} gamerule.
+|249910|Warden "Nearby Closest" sound is unused.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|FWsIb7WqhCM|tCB5aNBKQkM}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:22w14a]]
+[[es:Java Edition 22w14a]]
+[[fr:Édition Java 22w14a]]
+[[ja:Java Edition 22w14a]]
+[[pt:Edição Java 22w14a]]
+[[ru:22w14a (Java Edition)]]
+[[th:รุ่น Java 22w14a]]
+[[zh:Java版22w14a]]

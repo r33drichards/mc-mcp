@@ -1,0 +1,196 @@
+{{about|functions {{in|JE}}|the corresponding feature {{in|BE}}|Function (Bedrock Edition)|other uses|Function}}
+'''Functions''' are [[data pack]] files, allowing players to run lists of [[commands]].
+
+[[File:TestingFunctions.png|thumb|right|250px|Testing the function system. Three {{cmd|tellraw}} messages and one {{cmd|give}} command were used in this simple function.]]
+
+This page covers how functions are defined and invoked {{in|JE}}.
+
+== Definition ==
+A function is a text file with the file extension <code>.mcfunction</code>. Function files are part of the data pack directory structure, highlighted below:
+{{Data pack directory|function|<nowiki><name>.mcfunction</nowiki>}}
+
+As with all other data pack files, the <code>function</code> folder may also contain subfolders to further organize the function files within a namespace. These subfolders must be referenced when invoking the function.
+
+Within the <code>.mcfunction</code> file, one valid command is placed per line, without the usual forward slash (<code>/</code>). Individual commands in functions can be longer than the 32,500 character limit in command blocks.
+
+Comments can be added within the function text file by beginning a line with <code>#</code>. A line can have tabs and spaces before and after the command.
+
+A single backslash <code>\</code> as the last non-whitespace character of a line allows a command to be continued on the next line, and the leading and trailing whitespace of the following line are stripped before appending.
+
+== Invocation ==
+Functions can be invoked in several different manners from other data pack files.
+
+=== Invocation from commands ===
+Functions can be invoked using the {{cmd|function}} command and {{cmd|execute (if{{!}}unless) function}} command.
+
+A single function can be invoked by specifying its [[resource location]].
+
+Functions are supported by [[Tag (Java Edition)|tags]], allowing them to be grouped together. <code>/function</code> also accepts a function tag, invoking all listed functions.
+
+=== Invocation from function tags ===
+As mentioned above, functions can be grouped together using [[function tag]]s. Functions in a tag get executed in the defined order, but only the first occurrence of the same function if it occurs multiple times.
+
+In addition, there are two function tags within the <code>minecraft</code> namespace that have special behavior:
+
+* Functions listed in the <code>minecraft:load</code> tag run when the world is loaded, or when the server is started. Listed functions also run whenever the data pack is reloaded.
+** These functions run before the player joins the world, meaning any [[target selectors]] do not find players. Therefore, commands like {{cmd|tellraw}} and {{cmd|title}} do not appear for any player.
+* Functions listed in the <code>minecraft:tick</code> tag run at the beginning of each tick, repeating every tick.
+
+=== Invocation from advancements ===
+[[Advancements]] can run a function once as a reward for completing them. The commands in the function are run through the player who completed the advancement.
+
+Reward functions are called within advancement [[JSON]] files using the following format:
+
+<syntaxhighlight lang=json>
+{
+    "rewards": {
+         "function": "test:test"
+    }
+}
+</syntaxhighlight>
+
+=== Invocation from scheduling ===
+The {{cmd|schedule}} command schedules a function to be invoked after a certain amount of time. The function is invoked by the server when the scheduled time arrives.
+
+=== Invocation from enchantments ===
+Enchantment [[Enchantment_definition#run_function|entity effect {{cd|run_function}}]] can run a function once as an enchantment effect.
+<syntaxhighlight lang="json">
+...
+  "type": "run_function",
+  "function": "test:test",
+...
+</syntaxhighlight>
+
+== Behaviors ==
+=== Loading and Parsing ===
+Each time a level or a server is opened, the game loads all the functions in the data pack.
+
+In a running level, if function files are changed, use {{cmd|reload}} to reload them from disk.
+
+When a function is loaded or reloaded, all non-macro lines are parsed as commands, and if any of the lines in a function file is unparseable, the function file cannot be loaded. Macro lines are parsed into commands each time before the function executes.
+
+=== Executing ===
+In a singleplayer or a LAN world, like a [[command block]], a function can run any command that is no more restrictive than permission level 2.
+
+On the default multiplayer software, a function can run any command that is no more restrictive than the permission level prescribed in [[Server.properties#function-permission-level|<code>function-permission-level</code>]] setting in <code>server.properties</code>.
+
+Functions run all their commands in a single [[tick]] and other functions called from within also run their commands in the same tick as their parent. The total number of commands run inside a function obeys {{cmd|gamerule maxCommandChainLength}}, which is 65,536 commands by default; any commands beyond this limit are ignored.
+
+Functions use the execution context of whatever is invoking the function. This includes executing entity, as well as execution position, rotation, dimension, and anchor. Contextual parameters are preserved for every command in the function. An {{cmd|execute}} command can change the context, but that change does not carry through to any following commands in the same function.
+
+For example:
+<syntaxhighlight lang="mcfunction">
+execute as @p at @s run function foo:bar
+</syntaxhighlight>
+Where, the function foo:bar is:
+<syntaxhighlight lang="mcfunction">
+teleport @s ~ ~5 ~
+setblock ~ ~-1 ~ emerald_block
+execute at @s run setblock ~ ~-1 ~ diamond_block
+</syntaxhighlight>
+When invoked, this function teleports the nearest player 5 blocks up, places an [[emerald block]] one block below their original position ''before'' the teleport, and then places a [[diamond block]] one block below their new position ''after'' the teleport.
+
+As seen in the above example, contextual parameters can be changed as usual by their respective {{cmd|execute}} sub-commands.
+
+==== Execution order ====
+The order that functions get executed within a single tick is:
+
+# Functions invoked from advancements.
+# Functions invoked from enchantments.
+# Functions that belong to {{Cd|#minecraft:tick}}, from top to bottom.
+# Functions that are scheduled on that tick, from whichever one was added to the queue first.
+# Functions invoked from command blocks and by players
+
+In addition, upon (re)loading a data pack, {{Cd|#minecraft:load}} is executed before any of the ones above.
+
+=== Macros ===
+Functions can include macro lines, lines preceded by <code>$</code>. Macro lines act similar to normal commands but can reference the compound [[NBT]] tag provided when invoking the function with the {{cmd|function}} command. Values from this compound tag can be referenced with their associated key by using <code>$(<''key''>)</code> anywhere in the macro line.
+
+Macro lines are evaluated each time before the function executes, substituting the variable specifications with the associated values and parsing the resulting command. The compound tag provided must contain one entry for each variable used in the macro function, but may contain entries not referenced by the macro function. If any variables are not provided, or any commands evaluated from macro lines are unparseable, the entire function is not invoked and no commands in it run.
+
+Valid characters for a <code><''key''></code> are:
+* <code>a-z</code>
+* <code>A-Z</code>
+* <code>0-9</code>
+* <code>_</code>
+
+Tags in the compound tag can be of any type. The method in which the values are inserted vary by type:
+
+* For strings, the value of the string is inserted directly. (That is, without the quotes.)
+* For all numeric types, the value is converted to plain text.
+** The type suffix is not included. (For example, <code>10b</code> is converted to <code>10</code>)
+** The number is rounded to a maximum of 15 fraction digits.
+** <code>true</code> and <code>false</code> are equivalent to <code>1b</code> and <code>0b</code>, so they are converted to <code>1</code> and <code>0</code> respectively.
+* For lists, compound tags, and the array types, the canonical SNBT representation is used.
+
+For example, running the command:
+<syntaxhighlight lang="mcfunction">
+function foo:bar {key_1:"Example String", key_2:10}
+</syntaxhighlight>
+With the function foo:bar being:
+<syntaxhighlight lang="mcfunction">
+say This is a normal non-macro command where $(key_1) does not work
+$say This is a macro line, using $(key_1)!
+$teleport @s ~ ~$(key_2) ~
+</syntaxhighlight>
+
+Would teleport you 10 blocks up, as well as show in chat the following: <syntaxhighlight lang="text">
+[Steve] This is a normal non-macro command where $(key_1) does not work
+[Steve] This is a macro line, using Example String!
+</syntaxhighlight>Macro functions can also harness stored [[NBT]] data using the <code>with</code> instruction that may follow the function name. The argument succeeding <code>with</code> must specify a NBT source (a block, entity, or [[command storage]]) followed by the [[NBT path]] of a compound tag. 
+
+For example:
+<syntaxhighlight lang="mcfunction">
+execute as @p run function foo:bar2 with entity @s SelectedItem
+</syntaxhighlight>
+And the function foo:bar2 is:
+<syntaxhighlight lang="mcfunction">
+$say The player running this function is holding $(count) items with ID $(id)!
+</syntaxhighlight>
+
+=== Returning ===
+A function can be forcibly stopped by a {{cmd|return}} command. Following a {{cmd|execute (if<nowiki>|</nowiki>unless) ... run}} or a forking {{cmd|execute}} command that may [[Commands/execute#Subcommands and forking|terminate]], a {{cmd|return}} command can be restricted to only execute under certain conditions. With this, under different conditions a function can stop at different lines, thus achieving more complex behaviors.
+
+After execution, the function can return a '''return value''' and a '''successfulness'''. The return value is an integer, and the successfulness is failure or success. If no {{cmd|return}} command is executed in the function, the function is a '''void function''' that does not return any return value or successfulness. With {{cmd|return}} executed, the function is stopped and its return value and successfulness are set.
+
+If the function is called by a {{cmd|function}} command, its return value and successfulness is returned to the {{cmd|function}} command. See also {{cmd|function}} article for the details.
+
+If the function is called by a {{cmd|execute if function}} command, its return value is checked whether it is not <code>0</code>.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.12|dev=pre1|Added functions.|Added {{cmd|gamerule gameLoopFunction}} which is used to run a given function every tick.}}
+|{{HistoryLine|||dev=pre3|Commands are no longer allowed to begin with a <code>/</code> (forward slash)|Comments can now only be preceded with <code>#</code>; using <code>//</code> is no longer allowed.|Now use a new file extension ".mcfunction" instead of ".txt"}}
+|{{HistoryLine||1.13|dev=17w43a|Custom functions have been moved into [[data pack]]s.}}
+|{{HistoryLine|||dev=17w45a|Functions are now completely parsed and cached on load.}}
+|{{HistoryLine|||dev=17w49b|Removed {{cmd|gamerule gameLoopFunction}}.|Function can now be tagged.|Functions tagged in <code>tick</code> now run every tick in the beginning of the tick.}}
+|{{HistoryLine|||dev=18w01a|Functions tagged in <code>load</code> now run after (re)loading the data pack.}}
+|{{HistoryLine||1.14.4|dev=Pre-Release 4|Added <code>function-permission-level</code> to [[server.properties]].}}
+|{{HistoryLine||1.19.3|dev=22w46a|Functions in tag <code>#load</code> now run before functions in tag <code>#tick</code>.<ref>{{bug|MC-187539|||fixed}}</ref>}}
+|{{HistoryLine||1.20.2|dev=23w31a|A single backslash <code>\</code> as the last non-whitespace character of a line now allows a command to be continued on the next line.
+|Functions can now contain macro lines, making them Function Macros.}}
+|{{HistoryLine|||dev=Pre-release 1|Numbers used as macro arguments are now always inserted without suffixes, regardless of numeric type.}}
+|{{HistoryLine||1.20.3|dev=23w41a|{{cmd|function}} command has been changed to better accommodate new {{cmd|return}} command.|Functions no longer have any result unless they use {{cmd|link=none|return}}.|The previous behavior where every command in a function would perform store if a function was called with {{cmd|link=none|execute store ... run ''function''}} is removed.|Existing limits for functions have been refined to accommodate new execution rules and prevent a wider range of exploits.}}
+|{{HistoryLine||1.21|dev=24w21a|Folder <code>functions</code> in datapack is renamed to <code>function</code>, as well as <code>tags/functions</code> is renamed to <code>tags/function</code>.}}
+}}
+
+== Issues ==
+{{Issue list|function command|function datapack|function pack|function json|function macro|function file|mcfunction|function folder|function comment|function return|function schedule|function execute|function invoke|function call|function run|function parse|function output|function success|function fail|function feedback|-\"functioning\"|-\"functional\"|-\"functionality\"|-\"functionally\"}}
+
+== References ==
+
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Funktion]]
+[[es:Función (Java Edition)]]
+[[fr:Fonction]]
+[[ja:関数 (Java Edition)]]
+[[pl:Funkcja]]
+[[pt:Funções (Edição Java)]]
+[[ru:Функция]]
+[[uk:Функція (Java Edition)]]
+[[zh:Java版函数]]

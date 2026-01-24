@@ -1,0 +1,172 @@
+{{Infobox version
+| title = Minecraft 23w42a
+| image = 23w42a.jpg
+| image2 = Java Edition 23w42a.png
+| edition = Java
+| type = Snapshot
+| date = October 18, 2023
+| jsonhash = 456ef8d0b5c09453a116cdafa94bbe31946919fd
+| clienthash = f187037d38f503ede8c593521b4ea33ce27d2373
+| clientmap = 3c4e5ebb21c2ed066bd80cf7f078abc88f331a2c
+| serverhash = b5f423ba1c4191d133c0284a2b1b36da46f8b5f8
+| servermap = 26d8b312ea92aa6a896181c0382c3ecac9fc3235
+| parent = 1.20.3
+| prevparent = 1.20.2
+| prev = 23w41a
+| next = 23w43a
+| nextparent = 1.20.4
+}}<onlyinclude>
+
+'''23w42a''' is the third [[snapshot]] for [[Java Edition 1.20.3]], released on October 18, 2023,<ref>{{snap|23w42a|October 18, 2023}}</ref> which adds the "[[Java Edition 1.21|Update 1.21]]" experimental toggle and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Experiments]]'''
+* Added the "[[Java Edition 1.21|Update 1.21]]" experimental toggle (<code>update_1_21</code> data pack).
+
+'''[[Game rule]]'''
+* Added <code>playersNetherPortalDefaultDelay</code> to control time (in [[game tick]]s) that a player needs to stand in a [[nether portal]] before changing dimensions, while in Survival and Adventure mode. Defaults to <code>80</code>.
+* Added <code>playersNetherPortalCreativeDelay</code> to control time (in game ticks) that a player needs to stand in a nether portal before changing dimensions, while in Creative mode. Defaults to <code>1</code>.
+* Added <code>projectilesCanBreakBlocks</code>, to control whether impact projectiles destroy blocks that are destructible by them (i.e. [[chorus flower]]s and [[decorated pot]]s), and to control whether [[trident]]s destroys [[pointed dripstone]]s. Defaults to <code>true</code>.
+
+'''[[Loading screen]]'''
+* Added a new screen for handling corrupted level files.
+** It gives the player the option to restore a backup, and a quick link to the bug tracker for reporting a bug about it.
+
+'''[[Options]]'''
+* Added "Hide Splash Texts" in accessibility options, which allows the [[splash]] in the main menu to be hidden.
+
+'''<samp>[[options.txt]]</samp>'''
+* Added <code>hideSplashTexts</code>, defaults to <code>false</code>.
+
+'''[[Particles]]'''
+* Added new <code>white_smoke</code> particle type.
+
+== Changes ==
+=== Blocks ===
+'''[[Decorated pot]]'''
+* Now appears in the "Redstone" tab of the Creative inventory.
+
+=== General ===
+'''[[Custom structure]]'''
+* Changes to structure type definitions (<code>data/minecraft/worldgen/structure</code>):
+** Added optional <code>pool_aliases</code> list to jigsaw structures.
+** Aliases represent the possibility to rewire jigsaw pool connections by redirecting pool references on individual structure instances.
+** Alias variants are represented in <code>type</code> and is one of:
+*** <code>direct</code>: 1:1 mapping from an alias to a new pool.
+**** <code>alias</code>: Pool to replace.
+**** <code>target</code>: Pool to replace with.
+*** <code>random</code>: 1:n mapping where a pool from <code>n</code> is randomly selected for the structure instance.
+**** <code>alias</code>: Pool to replace.
+**** <code>targets</code>: Randomized list of candidate pools to replace <code>alias</code> with.
+*** <code>random_group</code>
+**** <code>groups</code>: Each group is a randomized list of above alias types.
+**** Only one group is selected per structure instance.
+**** This enables modelling selections such as "if pool X is replaced with X1, also replace pool Y with Y1".
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>21</code>.
+* Added <code>white_smoke</code> particle definition.
+* Renamed field {{nbt|short|Fuse}} to {{nbt|short|fuse}} on [[TNT]] entity.
+
+'''[[Entity format]]'''
+* In NBT format for entity type <code>tnt</code>:
+** Added <code>block_state</code>.
+*** This field allows replacement of rendered block model.
+** Renamed <code>Fuse</code> to <code>fuse</code>.
+
+'''[[Raw JSON text format]]'''
+* Changes to chat component serialization:
+** Components of type <code>nbt</code> now have <code>source</code> field with allowed values: {{cd|d=and|entity|block|storage}}.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>19</code>.
+* Added block model, item model and block state definitions for <code>crafter</code>.
+* Added GUI container texture and sprites for <code>crafter</code>.
+
+'''[[Tag]]'''
+* Added <code>firework_rocket</code> into the <code>impact_projectiles</code> entity tag.
+
+== Experimental ==
+These additions and changes only take effect when the [[Update 1.21]] experimental data pack is enabled.
+
+=== Additions ===
+==== Blocks ====
+'''[[File:Crafter JE1.png|32px]] [[File:Crafter Triggered JE1.png|32px]] [[File:Crafter Crafting JE1.png|32px]] [[Crafter]]s'''
+* Can be crafted with five [[iron ingot]]s, a [[crafting table]], two [[redstone dust]]s, and a [[dropper]] in the crafting table.
+* Can be oriented in any direction when placed.
+* A [[pickaxe]] can increase the speed of mining them.
+* Have a user interface similar to crafting table.
+** Have 3×3 interactable crafting grid.
+** Their crafting grid slots are toggleable, meaning that the player can change the behavior of a slot by clicking or pressing on a slot with an empty hand.
+*** A toggled slot cannot hold any items and therefore cannot have items placed into it by other blocks such as [[hopper]]s and [[dropper]]s.
+*** A toggled slot can be toggled off by player, whether clicked directly or holding item(s), pressing slot keys associated with an empty or a not empty hotbar slot.
+** Unlike the crafting table, the slots display a preview of the crafted item which will be crafted and ejected on the next redstone pulse, but cannot be manually taken out by the player.
+** The user interface is shared between all players interacting with them, meaning that multiple players can interact with them at the same time, similar to [[chest]]s and hoppers.
+** The user interface does not have a [[recipe book]] to provide help, so the player must know the recipes.
+* The crafter ejects one crafted item at a time when powered by a new redstone pulse, a redstone signal that is not a continuous signal.
+** Upon receiving this new signal, crafters eject the recipe result from the front face.
+** All the result items are ejected together when the output result has multiple type of items.
+* They can interact with hoppers and droppers, to input/output automatically.
+** Hoppers can be used to both insert and pull items out of them.
+** Droppers can be used to insert items into them.
+** Moving items in from another block with a hopper or a dropper prioritizes filling items into slots, by following these rules:
+*** If there is a toggled slot, skipped.
+*** If there is not a toggled slot, crafters prioritize the first empty slot from left-to-right and top-to-bottom.
+*** If there is not a toggled slot, and there are no empty slots, crafters prioritize the smallest stack of the same item. If there are multiple possible stacks, pick the first from left-to-right and top-to-bottom.
+** If failed to select a slot, hoppers and droppers don't take any action.
+* When read by a [[redstone comparator]], the redstone signal strength is 0 to 9, where each non-empty or toggled slot adds 1 strength.
+
+=== Changes ===
+==== General ====
+'''[[Tag]]'''
+* Added <code>crafter</code> into <code>mineable/pickaxe</code> and <code>needs_stone_tool</code> block tags.
+
+== Fixes ==
+{{fixes|fixedin=23w42a
+|;From released versions before 1.20
+|5820|The game doesn't recognise the ISO 8601 date format.
+|189261|Various Realms buttons and texts are incorrectly capitalized.
+|223774|Firework Rockets can't be used to break Chorus Flowers.
+|225364|Chorus flowers can be destroyed by projectiles in adventure mode.
+|225365|Pointed dripstone can be destroyed by tridents in adventure mode.
+|232719|The scroll bar within the singleplayer menu doesn't reset its position to the top of the list when searching for worlds.
+|234483|Some strange pixels can be seen on the left side of world slot frames within several Realms menus.
+|237009|Incompatible worlds don't have a tooltip in the world list.
+|;From 1.20
+|262888|Clicking "I know what I'm doing!" on the world loading screen when loading a world in a new snapshot is way too loud.
+|;From 1.20.2
+|264966|<code>Signature is missing from Property textures</code> appears in the logs of some Minecraft worlds due to player heads.
+|265515|The "You don't seem to have a Realm" element in the realms menu cannot be selected via the mouse cursor.
+|265517|The "Buy a realm!" button is automatically selected when opening the "Add Realm" interface.
+|265551|"No pending invites!" tooltip in Realms is now untranslatable.
+|;previous
+|265744|Kick during login causes client error.
+|265745|You can’t break decorated pots with fireworks launched from crossbow.
+|265751|Decorated pot subtitles are inconsistent.
+|265758|Decorated pots can be destroyed by projectiles in adventure mode.
+|265761|Decorated pots are missing from the creative inventory's redstone blocks tab.
+|265767|Commands don't show error messages in chat.
+|265773|Functions executed as advancement rewards are executed at the top level.
+|265778|{{cmd|gamerule maxCommandChainLength 0}} prevents subsequent command execution in the world.
+|265789|Realms popup strings consist of inconsistent concluding punctuation.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|d2D-CDsOQvo|nJXFKPm0b-k}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:23w42a]]
+[[es:Java Edition 23w42a]]
+[[fr:Édition Java 23w42a]]
+[[ja:Java Edition 23w42a]]
+[[lzh:二三週四二甲]]
+[[pt:Edição Java 23w42a]]
+[[ru:23w42a (Java Edition)]]
+[[uk:23w42a (Java Edition)]]
+[[zh:Java版23w42a]]

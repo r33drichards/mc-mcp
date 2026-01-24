@@ -1,0 +1,194 @@
+{{Infobox version
+| image = Bedrock 1.19.20.20 PatchNotes.jpg
+| image2 = Bedrock 1.19.20.20.png
+| edition = Bedrock
+| type = Preview
+| internal = '''Windows''': 1.19.2020.0<br>'''Xbox One''': 1.19.2020.70<br>'''Android''': 1.19.20.20<br>'''iOS, iPadOS''': 1.19.20.21
+| date = '''Windows, Android, Xbox''' - June 29, 2022<br>'''iOS, iPadOS''' – June 30, 2022
+| parent = 1.19.20
+| prevparent = 1.19.11
+| prev = 
+| next = Preview 1.19.20.22
+| nextparent = 1.19.21
+}}<onlyinclude>
+
+'''Beta 1.19.20.20''' (Android), '''Preview 1.19.20.20''' (Windows, Xbox) or '''Preview 1.19.20.21''' (iOS, iPadOS)<ref>{{Tweet|JORAX79|1542550175566032897|The iOS version of Minecraft Preview has finally updated! We had to bump the version number once (to 1.19.20.21) but it has the same features and fixes as 1.19.20.20 on other platforms.|June 30, 2022}}</ref> is the first beta/''Preview'' version for [[Bedrock Edition 1.19.20]], released on June 29–30, 2022,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/7285705024909|title=Minecraft Beta & Preview - 1.19.20.20/21|website=Minecraft Feedback|date=June 29, 2022}}</ref> which brought more parity from {{JE}}, and fixed bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[End Portal Frame|End Portal]]'''
+* Renamed to "End Portal Frame" to match {{JE}}.
+
+'''[[Oak Wood Planks]], [[Spruce Wood Planks]], [[Birch Wood Planks]], [[Jungle Wood Planks]], [[Acacia Wood Planks]], and [[Dark Oak Wood Planks]]'''
+* Removed the word "Wood" from their names.
+
+'''[[Oak Wood Stairs]], [[Spruce Wood Stairs]], [[Birch Wood Stairs]], [[Jungle Wood Stairs]], [[Acacia Wood Stairs]], and [[Dark Oak Wood Stairs]]'''
+* Removed the word "Wood" from their names.
+
+'''[[Oak Wood Slab]], [[Spruce Wood Slab]], [[Birch Wood Slab]], [[Jungle Wood Slab]], [[Acacia Wood Slab]], and [[Dark Oak Wood Slab]]'''
+* Removed the word "Wood" from their names.
+
+=== Mobs ===
+'''[[Ravager]]'''
+* Can now destroy [[mangrove leaves]], [[azalea]], [[azalea leaves]], [[cave vine]]s, [[big dripleaves]], [[small dripleaves]], [[spore blossom]]s, and [[hanging roots]].
+
+=== Gameplay ===
+'''Vibration'''
+* Vibration listeners such as [[sculk sensor]]s, [[sculk shrieker]]s and [[warden]]s now listen to the closest vibration instead of the first vibration in the tick.
+
+=== Technical ===
+'''General'''
+* Fixed bugs where client state could get out of sync with server if using an item is cancelled or fails 
+
+'''Blocks'''
+* Server developers can now see checksums of the block registry from the server and client to check for mismatch (search "Block Registry Checksum" in the output logs and compare)
+
+'''Bucket Item'''
+* Releasing a bucketed custom mob now spawns the correct type of mob
+* Fixed the order in which a bucketed mob is created when released, which means any Actor Properties on it will load correctly
+
+'''Dedicated Server'''
+* Added a server property disable-player-interaction which informs clients that they should ignore other players when interacting with the world
+* Added a new dedicated server property, "chat-restriction", that can be modified in the "server.properties" file to restrict the chat for all players connecting to the server. The property's possible values are "None", "Dropped", and "Disabled". See the default file for more information
+
+'''Graphical'''
+* With data-driven block tessellation, geometry box pivot-base rotation now rotates around the correct pivot point
+* Add Content warnings for large icons for texture tessellation (eg. objects in hand)
+
+'''Stability and Performance'''
+* The Client can now generate its own LevelChunks, saving the Server from having to generate and stream over every chunks in view. Server will be limited to generating LevelChunks that are in ticking range and saved on disk
+** Created a new ChunkSource and ChunkViewSource for Client to generate chunks with
+** Added new FeatureRegistryPacket to send contents of FeatureRegistry to Client
+** Added most BiomeComponents into BiomeDefinitionListPacket for proper Client Biome post-processing
+** Added FeatureToggle 'Client Side Generation'
+** Modified existing telemetry to split between Server and Client side LevelChunk generation
+** Added code to fix up client-side lighting so it matches Server side
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Enable GameTest Framework" experimental toggle.
+
+=== Changes === 
+==== Technical ====
+'''Actor Properties'''
+* Added Content Errors for when there are too many properties on the actor (more than 32) or when a string enum name is too long (more than 32 characters)
+* Restored ability to use a Molang expression string for default values of Actor Properties (These are primarily useful for random starting values)
+
+'''GameTest Framework'''
+* Performance Watchdog
+** Added a performance watchdog that monitors GameTests for slow-running scripts
+** Executing a slow-running script will result in content log warnings
+** Additionally, long script hangs (more than 3 seconds in a single tick) will result in an exception
+** Added new properties to propertiesfor watchdog configuration on Dedicated Server
+*** script-watchdog-enable- Enables the watchdog (default = true)
+*** script-watchdog-hang-threshold- Sets the watchdog threshold for single tick hangs (default = 3000 ms)
+*** script-watchdog-spike-threshold- Sets the watchdog threshold for single tick spikes (default = 100 ms)
+*** script-watchdog-slow-threshold- Sets the watchdog threshold for slow scripts over multiple ticks (default = 2ms)
+* Updated mojang-minecraft-uiforms to respond when the client was unable to show a modal form
+** Renamed isCanceledfield to canceled
+** Added cancelationReasonfield
+** Added FormCancelationReasonenum
+* ScoreboardObjectiveDisplayOptions
+** Added 'ScoreboardObjectiveDisplayOptions' class
+** Added read-only property 'Objective: objective'
+** Added read-only property 'ObjectiveSortOrder: sortOrder'
+* Scoreboard
+** Added function 'removeObjective(objectiveId: string | Objective): void' - Untracks an objective
+** Added function 'addObjective(objectiveId: string, displayName: string): Objective' - Creates and objective to be tracked, identified with objectiveId and displayed on the screen with displayName
+** Added function 'getObjectiveAtDisplaySlot(displaySlotId: string): ScoreboardObjectiveDisplayOptions' - Gets objective and sort order contained in the DisplayObjective slot specified by displaySlotId
+** Added function 'setObjectiveAtDisplaySlot(displaySlotId: string, ScoreboardObjectiveDisplayOptions: scoreboardObjectiveDisplayOptions): Objective' - Sets the objective and sort order of the display slot, as specified by displaySlotId
+** Added function 'clearObjectiveAtDisplaySlot(displaySlotId: string): Objective' - Clear's the DisplayObjective of the objective it is currently displaying
+* Block
+** Added Block SignComponent that allows for retrieving of the value of sign text - Accessible from getComponent("sign")on sign blocks
+* BlockSignComponent
+** Added read-only property text: string- Gets the sign text
+
+'''General'''
+* Limit the number of elements in the conditionsfield of the minecraft:part_visibility to 64
+* Renamed minecraft:aim_collisionblock component to minecraft:selection_box 
+* Renamed the 'minecraft:block_light_emission' component to 'minecraft:light_emission' and changed its accepted value type from float to int
+* Renamed 'minecraft:destroy_time' to 'minecraft:destructible_by_mining' and restructured the component to be either defined as a boolean or as an object
+** Setting the component to true will give the block the default destroy time and setting it to false will make the block indestructible by mining
+** Setting the component as an object will let users define the number of seconds needed to destroy the block with base equipment
+* Changed the minecraft:frictioncomponent to represent friction of block instead of movement
+
+== Fixes ==
+'''Vanilla Parity'''
+* Zombies now have a 10% chance to be able to break doors on hard difficulty ({{bug|MCPE-79636}})
+* Removed "Wood" from the names of Mangrove Wood Planks, Stairs, and Slabs ({{bug|MCPE-156791}})
+** This change actually removed the word "Wood" from all the names of the overworld wood planks and their stairs and slabs (excluding mangrove which already didn't include the word "Wood") to match Java Edition.
+* The Wandering Trader's spawning now matches Java Edition and will no longer spawn in water, lava, or underground ({{bug|MCPE-46911}})
+* End Portal Frame Block is now named "End Portal Frame" instead of "End Portal" ({{bug|MCPE-76821}})
+* Tadpoles flopping around while on land now more closely match Java Edition and fishes in speed ({{bug|MCPE-154316}})
+* Polar Bears no longer panic when attacked
+* Piglins will now stop attacking if the player puts on Gold Armor ({{bug|MCPE-65516}})
+
+'''Spectator Mode (Experimental)'''
+* Players can now place blocks where a spectator is hovering
+* Players now have their hands back when they are holding a Map when they have one item in offhand and one in main hand. ({{bug|MCPE-100259}})
+
+'''Audio'''
+* Fixed a bug that caused the new Wild Update music to not play in the Wild Update biomes when in Creative mode
+
+'''Blocks'''
+* Twisting Vines and Weeping Vines with no support now pop even when the random ticking speed is set to 0 ({{bug|MCPE-69305}})
+* Sculk Catalyst now blooms when a mob with no experience dies next to it
+* Hanging Mangrove Propagules no longer drop a Propagule item when Silk Touched if not at max growth ({{bug|MCPE-156821}})
+* Muddy Mangrove Roots can now be placed sideways ({{bug|MCPE-153721}})
+* Hanging Mangrove Propagule no longer changes color when certain blocks are placed nearby ({{bug|MCPE-156570}})
+
+'''Gameplay'''
+* Fixed an issue that could occur when travelling through a nether portal to the overworld ({{bug|MCPE-158167}})
+
+'''VR'''
+* The ‘Toggle Perspective’ hint now shows the player's assignment instead of the default assignment
+
+'''Mangrove & Azalea Leaves'''
+* Mangrove and Azalea Leaves no longer prevent tree growth ({{bug|MCPE-154980}})
+
+'''Mob Effects'''
+* Fixed an issue with extra health from Health Boost not persisting after exiting the world ({{bug|MCPE-153504}})
+* Fixed an issue that caused FOV to stutter when sprinting while the player had a speed effect applied
+
+'''Mobile Controls'''
+* Added support for middle mouse click on iOS and iPadOS
+
+'''Mobs'''
+* Jobless Zombie Villagers are no longer unable to ride Minecarts and Boats ({{bug|MCPE-76831}})
+* Ravager is now able to destroy Mangrove Leaves, Azalea, Azalea Leaves, Cave Vines, Dripleaves, Spore Blossoms, and Hanging Roots ({{bug|MCPE-156551}}, {{bug|MCPE-125322}})
+
+'''Sculk Sensor'''
+* If two vibrations are emitted at the same time, Sculk Sensors will now react to the closest one ({{bug|MCPE-155793}})
+* If two vibrations are emitted at the same time and at the same distance, Sculk Sensors will now react to the one with the highest frequency
+* Sculk Sensors now detect a Creeper exploding with a frequency of 15
+* Sculk Sensors now detect an End Crystal exploding with a frequency of 15 ({{bug|MCPE-153733}})
+* Sculk Sensors now detect a Fish being let out of a Bucket with a frequency of 12
+* Sculk Sensors now detect a TNT being fired out of a Dispenser with a frequency of 12
+
+'''Stability & Performance'''
+* Fixed a crash that could occur when teleporting and killing an entity in the same tick
+* Entities that die completely now have their data removed from the world file ({{bug|MCPE-155283}})
+* Fix potential crash when returning to the Overworld from the Nether or The End
+* The game no longer crashes when entering Coin Starter Bundle Screen
+
+'''User Interface'''
+* Redesigned the toggle switches to make it easier to distinguish between the on and off states
+* Saddled Pig's tooltip changed to "Ride" instead of "Mount" to match other ridable mobs
+
+'''Trades'''
+* Fixed an issue that prevented Fisherman Villagers from offering to buy Boats at max level</onlyinclude>
+
+== Trivia ==
+* The original version of the changelogs contained functionalities not available in the public build.<ref>[https://discord.com/channels/523663022053392405/773669451010146334/991761734987690064 "confirmed that this was accidentally added to the changelog"] − [[Kayla]] on the Bedrock Addons Discord server, June 29, 2022</ref><ref>https://web.archive.org/web/20220629163954/https://feedback.minecraft.net/hc/en-us/articles/7285705024909</ref>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[Category:Bedrock Edition 1.19.20 betas]]
+[[de:Bedrock Edition beta 1.19.20.20]]
+[[es:Bedrock Edition beta 1.19.20.20]]
+[[ja:Bedrock Edition Preview 1.19.20.20]]
+[[pt:Edição Bedrock Preview 1.19.20.20]]
+[[zh:基岩版1.19.20.20]]

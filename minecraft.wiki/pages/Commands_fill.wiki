@@ -1,0 +1,132 @@
+{{Infobox command
+|name=fill
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Fills all or parts of a region with a specific [[block]].
+
+==Syntax==
+
+* '''Java Edition'''
+: <code>fill <from> <to> <block> [outline|hollow|destroy|strict|replace|keep]</code>
+: <code>fill <from> <to> <block> replace <filter> [outline|hollow|destroy|strict]</code>
+
+* '''Bedrock Edition'''
+: <code>fill <from: x y z> <to: x y z> <tileName: Block> <blockStates: block states> [oldBlockHandling: FillMode]</code>
+: <code>fill <from: x y z> <to: x y z> <tileName: Block> [oldBlockHandling: FillMode]</code>
+: The fill command also has an optional alternate syntax for <code>replace</code> mode:
+: <code>fill <from: x y z> <to: x y z> <tileName: Block> <blockStates: block states> replace [replaceTileName: Block] [replaceBlockStates: block states]</code>
+: <code>fill <from: x y z> <to: x y z> <tileName: Block> replace [replaceTileName: Block] [replaceBlockStates: block states]</code>
+
+==Arguments==
+
+{{el|je|short=1}}: {{argument|from|block_pos}} and {{argument|to|block_pos}}<br>
+{{el|be|short=1}}: {{argument|be=1|from: x y z|CommandPosition}} and {{argument|be=1|to: x y z|CommandPosition}}
+: Specifies any two opposing corner blocks of the region to be filled (the "fill region").
+: {{arg desc|je=block_pos|be=CommandPosition}}
+: Block position is the coordinates of the point at the lower northwest corner of a block. Because of this, the lesser coordinates of each axis are on the region boundary, but the greater coordinates are one block from the boundary, and the block volume of the source region is (x<sub>greater</sub> - x<sub>lesser</sub> + 1) × (y<sub>greater</sub> - y<sub>lesser</sub> + 1) × (z<sub>greater</sub> - z<sub>lesser</sub> + 1). For example, <code>0 0 0 0 0 0</code> has a 1-block volume, and <code>0 0 0 1 1 1</code> and <code>1 1 1 0 0 0</code> both identify the same region with an 8-block volume.
+
+{{argument|block|block_state|tileName: Block|enum}}
+: Specifies the block to fill the region with.
+: {{arg desc|je=block_state|be=Block}}
+
+{{el|be|short=1}}: {{argument|be=1|blockStates: block states|BlockStateCommandParam}}
+: Specifies the [[block states]] to use for the block.
+: {{Arg desc|be=BlockStateCommandParam}}
+
+{{el|je|short=1}}: {{cd|d=and|outline{{!}}hollow{{!}}destroy{{!}}strict{{!}}replace{{!}}keep|replace|outline{{!}}hollow{{!}}destroy{{!}}strict}}<br>
+{{el|be|short=1}}: {{argument|be=1|oldBlockHandling: FillMode|enum}}
+: Specifies the handling of the block changes. Must be one of the following:
+:* <code>destroy</code> - Replaces all blocks (including air) in the fill region with the specified block, dropping the existing blocks (including those that are unchanged) and block contents as entities as if they had been mined with an unenchanted diamond [[shovel]] or [[pickaxe]]. (Blocks that can be mined only with [[shear]]s, such as [[vines]], do not drop; neither do liquids.)
+:* <code>hollow</code> - Replaces only the blocks on the outer edge of the fill region with the specified block. Inner blocks are changed to air, dropping their contents as entities but not themselves. If the fill region has no inner blocks (because it is smaller than three blocks in at least one dimension), acts like <code>replace</code>.
+:* <code>keep</code> - Replaces only the air blocks in the fill region with the specified block.
+:* <code>outline</code> - Replaces only the blocks on the outer edge of the fill region with the specified block. Inner blocks are not affected. If the fill region has no inner blocks (because it is smaller than three blocks in at least one dimension), acts like <code>replace</code>.
+:* <code>replace</code> - Replaces all blocks (including air) in the fill region with the specified block, without dropping blocks or block contents as entities. Optionally, block ID and data values may be specified to limit which blocks are replaced.
+:* <code>strict</code> - Place blocks as-is without triggering block updates and shape updates.
+:If not specified, defaults to <code>replace</code>.
+
+{{argument|filter|block_predicate|replaceTileName: Block|enum}}
+: Specifies the ID of the blocks in the fill region to be replaced. If not specified, replaces all blocks in the fill region.
+: {{arg desc|je=block_predicate|be=Block}}
+
+{{el|be|short=1}}: {{argument|be=1|replaceBlockStates: block states|BlockStateCommandParam}}
+: Specifies the [[block states]] to use for the block to be replaced.
+: {{Arg desc|be=BlockStateCommandParam}}
+
+==Result==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|One or both specified positions are unloaded or out of the world.|fail|fail}}
+{{Result table|The volume of the source region is greater than <code>max_block_modifications</code> gamerule value.}}
+{{Result table|cmd=/fill ... hollow<br>/fill ... keep<br>/fill ... outline<br>/fill ... replace ...<br>/fill ... strict|No block is changed.}}
+{{Result table|cmd=/fill ... destroy|There is no block changed in the fill region.}}
+{{Result table|The specified block is [[air]].}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/fill ... hollow<br>/fill ... keep<br>/fill ... outline<br>/fill ... replace ...|On success|1|1|the number of blocks changed in the fill region}}
+{{Output table|cmd=/fill ... destroy|On success|1|1|the number of blocks changed in the fill region}}
+{{Output table|cmd=|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+==Examples==
+
+* <code>/fill <span style="background:rgb(255 192 203 / 50%)">52 63 -1516</span> <span style="background:rgb(221 221 255 / 70%)">33 73 -1536</span> minecraft:gold_block replace minecraft:orange_glazed_terracotta</code>{{only|java}}
+* <code>/fill <span style="background:rgb(255 192 203 / 50%)">52 63 -1516</span> <span style="background:rgb(221 221 255 / 70%)">33 73 -1536</span> gold_block [] replace orange_glazed_terracotta</code>{{only|bedrock}}
+** Replaces all the orange glazed terracotta in the selected area with gold blocks.
+* <code>/fill <span style="background:rgb(255 192 203 / 50%)">~-3 ~-3 ~-3</span> <span style="background:rgb(221 221 255 / 70%)">~3 ~-1 ~3</span> water</code>
+** Replaces the blocks in a 7×3×7 region directly beneath the command execution's location with water.
+* <code>/fill <span style="background:rgb(255 192 203 / 50%)">~-3 ~ ~-4</span> <span style="background:rgb(221 221 255 / 70%)">~3 ~4 ~4</span> stone hollow</code>{{only|java}}
+* <code>/fill <span style="background:rgb(255 192 203 / 50%)">~-3 ~ ~-4</span> <span style="background:rgb(221 221 255 / 70%)">~3 ~4 ~4</span> stone 0 hollow</code>{{only|bedrock}}
+** Creates a house-sized box around the command execution's location, replacing any blocks that would have been inside the box with air.
+* <code>/fill <span style="background:rgb(255 192 203 / 50%)">~-15 ~-15 ~-15</span> <span style="background:rgb(221 221 255 / 70%)">~15 ~15 ~15</span> stone</code>
+** Creates a solid cube of stone centered on the command execution's location.
+* <code>/fill <span style="background:rgb(255 192 203 / 50%)">~-1 ~ ~</span> <span style="background:rgb(221 221 255 / 70%)">~1 ~ ~</span> minecraft:prismarine_brick_stairs[facing=south,waterlogged=true]</code>
+** Replaces the specific blocks around the command execution's location with waterlogged prismarine brick stairs facing south.
+
+== History ==
+{{Expand section}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w03a|Added {{cmd|fill|link=none}}.}}
+|{{HistoryLine||1.11|dev=16w32a|Added [[block state]] support to {{cmd|fill|link=none}}.}}
+|{{HistoryLine||1.19.4|dev=23w03a|Now the limit volume of the fill region is controlled by <code>commandModificationBlockLimit</code> gamerule, instead of a hardcoded value 32768.}}
+|{{HistoryLine||1.21.5|dev=25w02a|The behavior of {{cmd|fill}} command has changed in how it handles block entity data.|The replace option in the fill command is no longer terminal, and can be followed with additional options.|Accepts a new option: <code>strict</code>.|New syntax for commands to use the new strict option, and more flexible use of replace.}}
+|{{HistoryLine||1.21.11|dev=25w44a|All [[game rules]] have now been moved into a registry. Therefore <code>commandModificationBlockLimit</code> has been renamed to <code>max_block_modifications</code>.}}}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|fill|link=none}}.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.210|dev=beta 1.16.210.53|Added [[block state]] support to {{cmd|fill|link=none}}.}}
+|{{HistoryLine||1.19.70|dev=Preview 1.19.70.21|Removed <code>tileData: int</code> and <code>replaceDataValue: int</code> arguments.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/fill?view=minecraft-bedrock-stable|title=<code>/fill</code> Command|website=Microsoft Learn|date=July 17, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/fill]]
+[[es:Comandos/fill]]
+[[fr:Commandes/fill]]
+[[ja:コマンド/fill]]
+[[ko:명령어/fill]]
+[[pt:Comandos/fill]]
+[[ru:Команды консоли/fill]]
+[[uk:Команди консолі/fill]]
+[[zh:命令/fill]]

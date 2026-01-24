@@ -1,0 +1,393 @@
+{{about|the format since [[Bedrock Edition 1.2.13]]|the format in former game versions|Bedrock Edition level format/History}}
+{{exclusive|bedrock}}
+{{cleanup|need to check whether there's anything out of date}}
+
+''Bedrock Edition'' uses a modified version of Google's LevelDB, which uses the Zlib compression format for [[world]] storage. The world storage files are located in a world file in <code>[[com.mojang]]</code>.
+
+== LevelDB based format ==
+=== Mojang variant LevelDB format ===
+Mojang has modified Google's [https://github.com/google/leveldb Original LevelDB] to add Zlib compression and Windows support. The code is available at https://github.com/Mojang/leveldb, and the building instructions are documented by Tommaso at {{tweet|_tomcc|477950809427427328}}.
+
+For a Java implementation of LevelDB + Zlib, see https://github.com/HiveGamesOSS/leveldb-mcpe-java
+
+Google's leveldb library has evolved extensively since Mojang released their version, but the Mojang version still works (as of 2022). The code does require some minor tweaks to compile:
+
+* db/snappy_compressor.cc should refer include <snappy.h> instead of <snappy/snappy.h>
+* table/table_test.cc contains two references to snappy that are unresolvable but irrelevant. port::Snappy_Compress and leveldb::SnappyCompressor. If these are simply commented out, the rest compiles and functions properly.
+
+The database is stored in the db/ subdirectory of a Bedrock Edition world. The database path which is passed to the LevelDB API is this directory path, not the path to any file within it. It seems this is also where terrain generation is stored. This is because you can turn an old world infinite by replacing its db folder with one from an infinite world.
+
+=== Chunk key format ===
+A database key for data regarding a chunk is the concatenation of:
+* Two signed 32-bit little-endian integers (x and z in chunk coordinates, respectively),
+* An optional third 32-bit little-endian integer (1 for the [[Nether]], 2 for the [[End]], omitted for the [[Overworld]]),
+* A one-byte tag specifying the type of record represented by the key (see table), and
+* (for a "SubChunkPrefix" record) a one-byte subchunk index (from 0 to 15).
+
+Accordingly, such a key may be 9, 10, 13 or 14 bytes long. Not all subchunks necessarily exist for a given chunk.
+
+The "BlockEntity", "Entity" and "PendingTicks" records are represented by a sequence of concatenated root tags in a variant of [[NBT]] which stores the lengths and the multi-byte integer types in little-endian format, as opposed to the big-endian format used by {{el|je}} or the original NBT specification.
+
+The value 0 is used in the "Version" record in old style worlds; higher values are used in infinite worlds.
+
+{| class="wikitable" style="text-align:center" data-description=""
+|+ Key type tags
+! colspan=3 | Tag byte
+! rowspan=2 | Name 
+! rowspan="2" |Structure
+! rowspan=2 | Description 
+|-
+! <abbr title="Decimal">Dec</abbr> !! <abbr title="Hexadecimal">Hex</abbr> !! ASCII
+|-
+|43||2B||<code>+</code>||Data3D
+|Heightmap (256×2 bytes)
+Biome data (varying lengths)
+|Biomes are stored as palettes similar to blocks. Exactly 25 palettes are written. Biome IDs are written as integers.
+|-
+|44||2C||<code>,</code>||Version
+|1 byte||A byte
+|-
+|45 ||2D ||<code>-</code>||Data2D
+|Heightmap (256×2 bytes)
+2D biomes (256×1 bytes)
+|Biome IDs are written as 8-bit integers. No longer written since v1.18.0.
+|-
+|46||2E||<code>.</code>||Data2DLegacy
+|Heightmap (256×2 bytes)
+2D biomes (256×4 bytes)
+|Each entry of the biome array contains a biome ID in the first byte, and the final 3 bytes are red/green/blue respectively. No longer written since v1.0.0.
+|-
+|47||2F||<code>/</code>|| SubChunkPrefix
+|Subchunk version (1 byte) Version-dependent data||Terrain for a 16×16×16 subchunk
+|-
+|48||30||<code>0</code>||LegacyTerrain
+|Block IDs (32768 bytes)
+Block meta (32768 nibbles)
+
+Block sky light (32768 nibbles)
+
+Block light (32768 nibbles)
+
+Heightmap (256×1 bytes)
+
+2D biomes (256×4 bytes)
+||Data ordered in XZY order, unlike Java.
+No longer written since v1.0.0.
+
+Biomes are IDs plus RGB colours similar to Data2DLegacy.
+|-
+|49||31||<code>1</code>||BlockEntity 
+|List of NBT compound roots||[[Block entity]] data (little-endian NBT)
+|-
+| 50||32||<code>2</code>||Entity
+|List of NBT compound roots||[[Entity]] data (little-endian NBT)
+|-
+| 51||33||<code>3</code>||PendingTicks
+|NBT compound root||Pending tick data (little-endian NBT)
+|-
+|52||34||<code>4</code>||LegacyBlockExtraData
+|Entry count (4 bytes)
+Entries: Key (4 bytes), Value (2 bytes).
+|Array of blocks that appear in the same place as other blocks. Used for grass appearing inside snow layers prior to v1.2.13. No longer written as of v1.2.13.
+|-
+|53||35||<code>5</code>||BiomeState
+| ||
+|-
+|54||36||<code>6</code>||FinalizedState
+|4 bytes||A 32-bit little endian integer
+|-
+|55||37 ||<code>7</code>||ConversionData
+| ||No longer used
+|-
+|56||38||<code>8</code>|| BorderBlocks
+| ||Education Edition Feature
+|-
+| 57||39||<code>9</code>||HardcodedSpawners
+| ||Bounding boxes for structure spawns stored in binary format
+|-
+|58||3A||<code>:</code>||RandomTicks
+|NBT compound root||Random tick data (little-endian NBT)
+|-
+|59||3B||<code>;</code>||Checksums 
+| ||xxHash checksums of other chunk records. No longer written as of v1.18.0.
+|-
+|61||3D||<code>=</code>||MetaDataHash
+|
+|
+|-
+|61||3E||<code>></code>||GeneratedPreCavesAndCliffsBlending
+|
+| Not used
+|-
+|63||3F||<code>?</code>||BlendingBiomeHeight
+|
+| Not used
+|-
+|64||40||<code>@</code>||BlendingData
+|
+|
+|-
+|65||41||<code>A</code>||ActorDigestVersion
+|
+|
+|-
+|118||76||<code>v</code>||LegacyVersion
+|1 byte||Moved to 44 in v1.16.100
+|-
+|119
+|77
+|<code>w</code>
+|AABBVolumes
+|
+|
+|}
+
+=== Other keys ===
+There's also the special key ~local_player for an entity data entry that holds the local player entity. The value associated with the ~local_player key is NBT encoded and has only a single compound tag at the root level.
+
+There's also a special key for remote players which consists of two parts. The first part is the prefix "player_" (without the quotes) and the second part is the client ID which is contained in the remote player's clientid.txt file. For example, player_-12345678 would be the key for a remote client with an client ID of -12345678. The value associated with the "player_" prefixed key is NBT encoded and has only a single compound tag at the root level.
+
+There's also a special "game_flatworldlayers" key of length 20 for flat worlds. The value associated with this key is a set of numbers in ASCII text format. An example of a value associated with the "game_flatworldlayers" key is "[7,3,3,2]" where the value length for this example is 9.
+
+There are several keys related to villages. Depending on the dimension, the village key is prefixed with VILLAGE_DIMENSION_[0-9a-f\\-]+_, with DIMENSION being replaced with the dimension's name.
+
+* DWELLERS
+**Consists mainly of an entity/mob ID's. Dwellers include villagers, iron golems, and cats.
+*INFO
+**Includes the village bounding box.
+*POI
+**Provides a mapping between villagers and their beds, village center (bell) and work station.
+*PLAYERS
+
+Other keys start with the following strings
+* actorprefix
+* digp
+* map_
+* portals
+* schedulerWT
+* structuretemplate
+* tickingarea
+* DynamicProperties
+* scoreboard
+* Overworld
+* Nether
+* TheEnd
+* AutonomousEntities
+* BiomeData
+* mobevents
+* LevelChunkMetaDataDictionary
+* RealmsStoriesData_
+* DedicatedServerForcedCorruption
+* SST_SALOG
+* SST_WORD
+* SST_WORD_
+An official explanation from Microsoft about how entities (actors) are stored in LevelDB can be found on [https://learn.microsoft.com/en-us/minecraft/creator/documents/actorstorage?view=minecraft-bedrock-stable Microsoft Learn / Minecraft Bedrock Edition].
+
+=== Sample parsers of Bedrock level-db ===
+* An example implementation of a Bedrock level-db parser can be found in [https://github.com/mmccoo/minecraft_mmccoo/blob/master/parse_bedrock.cpp minecraft_mmccoo]. This implementation walks the NBTs of all block, entities/mobs, elevations, and village related items.
+* A TypeScript implementation can be found on the [https://www.npmjs.com/package/mcbe-leveldb mcbe-leveldb] NPM package.
+
+=== NBT structures ===
+The following articles document NBT structures of block entity and entity.
+
+* [[Bedrock Edition level format/Entity format]]
+* [[Bedrock Edition level format/Entity format/Components]]
+* [[Bedrock Edition level format/Block entity format]]
+* [[Bedrock Edition level format/Item format]]
+* [[Bedrock Edition level format/Other data format]]
+
+== level.dat ==
+The level.dat is still in uncompressed NBT format. The file begins with an 8-byte header, consisting of a little-endian 4-byte integer indicating the version of the file, which is currently 10. It is followed by another integer containing the length of the file, minus the header.
+
+=== NBT Structure ===
+<div class="treeview">
+* {{nbt|compound}}: World data.
+** {{nbt|compound|abilities}}: The default permissions for players in the world.
+*** {{nbt|byte|attackmobs}}: 1 or 0 (true/false) - true if the player can attack mobs.
+*** {{nbt|byte|attackplayers}}: 1 or 0 (true/false) - true if the player can attack other players.
+*** {{nbt|byte|build}}: 1 or 0 (true/false) - true if the player can place blocks.
+*** {{nbt|byte|doorsandswitches}}: 1 or 0 (true/false) - true if the player is able to interact with redstone components.
+*** {{nbt|byte|flying}}: 1 or 0 (true/false) - true if the player is currently flying.
+*** {{nbt|float|flySpeed}}: The flying speed, always 0.05.
+*** {{nbt|byte|instabuild}}: 1 or 0 (true/false) - true if the player can instantly destroy blocks.
+*** {{nbt|byte|invulnerable}}: 1 or 0 (true/false) - true if the player is immune to all damage and harmful effects.
+*** {{nbt|byte|lightning}}: 1 or 0 (true/false) - true if the player was struck by lightning.
+*** {{nbt|byte|mayfly}}: 1 or 0 (true/false) - true if the player can fly.
+*** {{nbt|byte|mine}}: 1 or 0 (true/false) - true if the player can destroy blocks.
+*** {{nbt|byte|mute}}: 1 or 0 (true/false) - true if the player messages cannot be seen by other players.
+*** {{nbt|byte|noclip}}: 1 or 0 (true/false) - true if the player can phase through blocks.
+*** {{nbt|byte|op}}: 1 or 0 (true/false) - true if the player has operator commands.
+*** {{nbt|byte|opencontainers}}: 1 or 0 (true/false) - true if the player is able to open containers.
+*** {{nbt|byte|teleport}}: 1 or 0 (true/false) - true if the player is allowed to teleport.
+*** {{nbt|float|verticalFlySpeed}}: The vertical flight speed, always 1. {{info needed}}
+*** {{nbt|float|walkSpeed}}: The walking speed, always 0.1.
+*** {{nbt|byte|worldbuilder}}: 1 or 0 (true/false) - true if the player is a world builder. (Removed 1.21.120 {{info needed}})
+** {{nbt|byte|allowdestructiveobjects}}: The <code>allowdestructiveobjects</code> [[game rule]]. {{info needed}}
+** {{nbt|byte|allowmobs}}: The <code>allowmobs</code> [[game rule]]. {{info needed}}
+** {{nbt|string|baseGameVersion}}: The version of Minecraft that is the maximum version to load resources from. Eg. setting this to <code>1.16.0</code> removes any features that were added after version <code>1.16.0</code>.
+** {{nbt|string|BiomeOverride}}: Makes the world into a [[single biome]] world and the biome set here is the biome of this single biome world.
+** {{nbt|byte|bonusChestEnabled}}: 1 or 0 (true/false) - true if the bonus chest is enabled.
+** {{nbt|byte|bonusChestSpawned}}: 1 or 0 (true/false) - true if the bonus chest has been placed in the world. Turning this to false spawns another bonus chest near the spawn coordinates.
+** {{nbt|byte|codebuilder}}: {{info needed}}
+** {{nbt|byte|CenterMapsToOrigin}}: 1 or 0 (true/false) - true if the maps should be on a grid or centered to exactly where they are created. Default to 0.
+** {{nbt|byte|cheatsEnabled}}: 1 or 0 (true/false) - true if cheats are on.
+** {{nbt|byte|commandblockoutput}}: The <code>commandblockoutput</code> [[game rule]].
+** {{nbt|byte|commandblocksenabled}}: The <code>commandblocksenabled</code> [[game rule]].
+** {{nbt|byte|commandsEnabled}}: {{info needed}}
+** {{nbt|byte|ConfirmedPlatformLockedContent}}: 1 or 0 (true/false) - tells if the world has Platform-Specific texture packs or content. Used to prevent cross play in specific worlds, that use assets allowed only on specific consoles.
+** {{nbt|long|currentTick}}: {{info needed}}
+** {{nbt|int|daylightCycle}}: {{info needed}}
+** {{nbt|int|Difficulty}}: The current difficulty setting. 0 is Peaceful, 1 is Easy, 2 is Normal, and 3 is Hard.
+** {{nbt|int|Dimension}}: The dimension the player is in. 0 is the Overworld, 1 is the Nether, and 2 is the End. {{info needed}}
+** {{nbt|byte|dodaylightcycle}}: The <code>dodaylightcycle</code> [[game rule]].
+** {{nbt|byte|doentitiydrops}}: The <code>doentitiydrops</code> [[game rule]].
+** {{nbt|byte|dofiretick}}: The <code>dofiretick</code> [[game rule]].
+** {{nbt|byte|doimmediaterespawn}}: The <code>doimmediaterespawn</code> [[game rule]].
+** {{nbt|byte|doinsomnia}}: The <code>doinsomnia</code> [[game rule]].
+** {{nbt|byte|dolimitedcrafting}}: The <code>dolimitedcrafting</code> [[game rule]].
+** {{nbt|byte|domobloot}}: The <code>domobloot</code> [[game rule]].
+** {{nbt|byte|domobspawning}}: The <code>domobspawning</code> [[game rule]].
+** {{nbt|byte|dotiledrops}}: The <code>dotiledrops</code> [[game rule]].
+** {{nbt|byte|doweathercycle}}: The <code>doweathercycle</code> [[game rule]].
+** {{nbt|byte|drowningdamage}}: The <code>drowningdamage</code> [[game rule]].
+** {{nbt|int|editorWorldType}}: The [[Editor]] world type. 0 is World, 1 is Project.
+** {{nbt|byte|educationFeaturesEnabled}}: Enables the <code>chemistry</code> resource and behavior packs for the world, containing some features from ''[[Minecraft Education]]''.
+** {{nbt|string|EducationOid}}: A [[UUID]]. {{info needed}}
+** {{nbt|string|EducationProductId}}: {{info needed}}
+** {{nbt|int|eduOffer}}: Marks a world as a ''[[Minecraft Education]]'' world (worlds with this set to 1 do not open on ''[[Bedrock Edition]]''!).
+** {{nbt|compound|eduSharedResource}}
+*** {{nbt|string|buttonName}}: Unused in ''Bedrock Edition'', but is used in ''Education Edition'' as part of the Resource Link feature on the Pause Screen. It defines the Resource Link Button Text. 
+*** {{nbt|string|linkUri}}: Unused in ''Bedrock Edition'', but is used in ''Education Edition'' as part of the Resource Link feature on the Pause Screen. It defines what link opens upon clicking the Resource Link Button. 
+** {{nbt|compound|experiments}}
+*** {{nbt|byte|experiments_ever_used}}: 1 or 0 (true/false) - true if the world is locked on [[experimental gameplay]].
+*** {{nbt|byte|saved_with_toggled_experiments}}: 1 or 0 (true/false) - true if the world has been saved with experiments on before.
+*** ... Additional bytes for each experiment that Minecraft has/had.
+** {{nbt|byte|falldamage}}: The <code>falldamage</code> [[game rule]].
+** {{nbt|byte|firedamage}}: The <code>firedamage</code> [[game rule]].
+** {{nbt|string|FlatWorldLayers}}: JSON that controls generation of flat worlds. The <code>block_layers</code> array must contain at least 2 valid blocks, otherwise the world will generate as void. Default is <code>{"biome_id":1,"block_layers":[{"block_name":"minecraft:bedrock","count":1},{"block_name":"minecraft:dirt","count":2},{"block_name":"minecraft:grass_block","count":1}],"encoding_version":6,"preset_id":"ClassicFlat","structure_options":null,"world_version":"version.post_1_18"}</code>.
+** {{nbt|byte|globalmute}}: The <code>globalmute</code> [[game rule]]. {{info needed}}
+** {{nbt|byte|ForceGameType}}: 1 or 0 (true/false) - true if force the player into the game mode defined in <code>GameType</code>.
+** {{nbt|byte|freezedamage}}: The <code>freezedamage</code> [[game rule]].
+** {{nbt|int|functioncommandlimit}}: The <code>functioncommandlimit</code> [[game rule]].
+** {{nbt|int|GameType}}: The default game mode of the player. 0 is [[Survival]], 1 is [[Creative]], 2 is [[Adventure]], 5 is [[Game mode#Default|Default]], and 6 is [[Spectator]].
+** {{nbt|int|Generator}}: The world type. 0 is [[Old]], 1 is Infinite, 2 is [[Flat]], 5 is [[Void world|Void]], and others are Infinite with the bedrock layer at 0.
+** {{nbt|byte|hasBeenLoadedInCreative}}: Whether the world has [[achievements]] locked. Set to 1 if the default game mode is set to Creative, if [[Commands#Cheats|cheats]] have been enabled, or if a [[add-on|behavior pack]] has been equipped.
+** {{nbt|byte|hasLockedBehaviorPack}}: {{info needed}}
+** {{nbt|byte|hasLockedResourcePack}}: {{info needed}}
+** {{nbt|byte|HasUncompleteWorldFileOnDisk}}: {{info needed}}
+** {{nbt|byte|immutableWorld}}: Is read-only.
+** {{nbt|string|InventoryVersion}}: {{info needed}}
+** {{nbt|byte|isCreatedInEditor}}: 1 or 0 (true/false) - true if it was created from the ''[[Bedrock Editor]]''.
+** {{nbt|byte|isExportedFromEditor}}: 1 or 0 (true/false) - true if exported from the ''Bedrock Editor''.
+** {{nbt|byte|isFromLockedTemplate}}: 1 or 0 (true/false) - true if the world is created from a world template where the world options were intended not to be modified.
+** {{nbt|byte|isFromWorldTemplate}}: 1 or 0 (true/false) - true if the world is created from a [[world template]].
+** {{nbt|byte|IsHardcore}}: 1 or 0 (true/false) - true if the world is in [[Hardcore]] mode.
+** {{nbt|byte|isRandomSeedAllowed}}: 1 or 0 (true/false) - true if the world template generates with a new, random seed.
+** {{nbt|byte|IsSingleUseWorld}}: 1 or 0 (true/false) - (unused) may cause world to not save, or delete after use. Seems to default back to false when a world is loaded.
+** {{nbt|byte|isWorldTemplateOptionLocked}}: 1 or 0 (true/false) - true if the world options cannot be modified until the user accepts that they are changing the map.
+** {{nbt|byte|keepinventory}}: The <code>keepinventory</code> [[game rule]].
+** {{nbt|byte|LANBroadcast}}: Whether the world has been opened with the "Visible to LAN players" world setting enabled.
+** {{nbt|byte|LANBroadcastIntent}}: Whether the "Visible to LAN players" world toggle is enabled.
+** {{nbt|list|lastOpenedWithVersion}}: Five {{nbt|int|int}}s representing the last version with which the world was opened. Eg. for the [[Bedrock Edition Preview 1.20.30.22|beta/''Preview'' 1.20.30.22]] the version is <code>1 20 30 22 1</code>.
+** {{nbt|long|LastPlayed}}: Stores a timestamp of when the world was last played as the number of seconds since the epoch (1/1/1970).
+** {{nbt|string|LevelName}}: Specifies the name of the world.
+** {{nbt|float|lightningLevel}}: Related to the current strength of [[thunderstorms]].{{info needed}}
+** {{nbt|int|lightningTime}}: {{info needed}}Related to the [[weather cycle]] regarding thunderstorms.
+** {{nbt|int|LimitedWorldOriginX}}: The X coordinate where limited (old) world generation started.
+** {{nbt|int|LimitedWorldOriginY}}: The Y coordinate where limited (old) world generation started.
+** {{nbt|int|LimitedWorldOriginZ}}: The Z coordinate where limited (old) world generation started.
+** {{Nbt|int|LimitedWorldWidth}}: The width (in chunks) of the borders surrounding the (old) world generation. Defaults to 16.
+** {{Nbt|int|LimitedWorldDepth}}: The depth (in chunks) of the borders surrounding the (old) world generation. Defaults to 16.
+** {{nbt|byte|locatorbar}}: The <code>locatorbar</code> [[game rule]].
+** {{nbt|int|maxcommandchainlength}}: The <code>maxcommandchainlength</code> [[game rule]].
+** {{nbt|list|MinimumCompatibleClientVersion}}: Five {{nbt|int|int}}s representing the minimum compatible client version that is needed to open the world. Eg. for the [[Bedrock Edition Preview 1.20.30.22|beta/''Preview'' 1.20.30.22]] the minimum compatible version is <code>1 20 30 0 0</code>.
+** {{nbt|byte|mobgriefing}}: The<code>mobgriefing</code> [[game rule]].
+** {{nbt|byte|MultiplayerGame}}: Whether the world has been opened with the "Multiplayer Game" world setting enabled.
+** {{nbt|byte|MultiplayerGameIntent}}: Whether the "Multiplayer Game" world toggle is enabled.
+** {{nbt|byte|naturalregeneration}}: The <code>naturalregeneration</code> [[game rule]].
+** {{nbt|int|NetherScale}}: Defaults to 8. This is used to tell the game how many Overworld blocks go into one nether block (X blocks in the nether = 1 block in the overworld).
+** {{nbt|int|NetworkVersion}}: The protocol version of the version the world was last played on.
+** {{nbt|int|permissionsLevel}}: What permissions a player defaults to, when joining a world.
+** {{nbt|int|Platform}}: Seems to store the platform that the level is created on. Currently observed value is 2.
+** {{nbt|int|PlatformBroadcastIntent}}: {{info needed}}
+** {{nbt|byte|PlayerHasDied}}: 1 or 0 (true/false) - true if a player has died.{{info needed}}
+** {{nbt|int|playerPermissionsLevel}}: What permissions a player has.
+** {{nbt|int|playersleepingpercentage}}: The <code>playersleepingpercentage</code> [[game rule]].
+** {{nbt|string|prid}}: The UUID of the premium world template this world was created with. Used for [[Marketplace#Worlds|Marketplace worlds]].{{info needed}}
+** {{nbt|byte|projectilescanbreakblocks}}: The <code>projectilescanbreakblocks</code> [[game rule]].
+** {{nbt|byte|pvp}}: The <code>pvp</code> [[game rule]].
+** {{nbt|float|rainLevel}}: Related to the current strength of [[rain]].{{info needed}}
+** {{nbt|int|rainTime}}: Related to the [[weather cycle]] regarding rain.{{info needed}}
+** {{nbt|long|RandomSeed}}: Level seed.
+** {{nbt|int|randomtickspeed}}: The <code>randomtickspeed</code> [[game rule]].
+** {{nbt|byte|recipesunlock}}: The <code>recipesunlock</code> [[game rule]].
+** {{nbt|byte|requiresCopiedPackRemovalCheck}}: {{info needed}}
+** {{nbt|byte|respawnblocksexplode}}: The <code>respawnblocksexplode</code> [[game rule]].
+** {{nbt|byte|sendcommandfeedback}}: The <code>sendcommandfeedback</code> [[game rule]].
+** {{nbt|int|serverChunkTickRange}}: Simulation distance.{{info needed}}
+** {{nbt|byte|showbordereffect}}: The <code>showbordereffect</code> [[game rule]].
+** {{nbt|byte|showcoordinates}}: The <code>showcoordinates</code> [[game rule]].
+** {{nbt|byte|showdaysplayed}}: The <code>showdaysplayed</code> [[game rule]].
+** {{nbt|byte|showdeathmessages}}: The <code>showdeathmessages</code> [[game rule]].
+** {{nbt|byte|showrecipemessages}}: The <code>showrecipemessages</code> [[game rule]].
+** {{nbt|byte|showtags}}: The <code>showtags</code> [[game rule]].
+** {{nbt|byte|spawnMobs}}: 1 or 0 (true/false) - true if mobs can spawn.
+** {{nbt|int|spawnradius}}: The <code>spawnradius</code> [[game rule]].
+** {{nbt|byte|SpawnV1Villagers}}: Spawn pre-1.10.0 villagers.
+** {{nbt|int|SpawnX}}: The X coordinate of the player's spawn position. Defaults to 0.
+** {{nbt|int|SpawnY}}: The Y coordinate of the player's spawn position. Defaults to 64.
+** {{nbt|int|SpawnZ}}: The Z coordinate of the player's spawn position. Defaults to 0.
+** {{nbt|byte|startWithMapEnabled}}: 1 or 0 (true/false) - true if new players spawn with a locator map.
+** {{nbt|int|StorageVersion}}: Version of ''Bedrock Edition'' Storage Tool, currently is 10.
+** {{nbt|byte|texturePacksRequired}}: 1 or 0 (true/false) - true if the user must download the texture packs applied to the world to join.
+** {{nbt|long|Time}}: Stores the current "time of day" in ticks. There are 20 ticks per real-life second, and 24000 ticks per Minecraft [[daylight cycle]], making the full cycle length 20 minutes. 0 is the start of [[Daylight cycle#Daytime|daytime]], 12000 is the start of [[Daylight cycle#Sunset/dusk|sunset]], 13800 is the start of [[Daylight cycle#Nighttime|nighttime]], 22200 is the start of [[Daylight cycle#Sunrise/dawn|sunrise]], and 24000 is daytime again. The value stored in level.dat is always increasing and can be larger than 24000, but the "time of day" is always modulo 24000 of the "Time" field value.
+** {{nbt|byte|tntexplodes}}: The <code>tntexplodes</code> game rule.
+** {{nbt|byte|useMsaGamertagsOnly}}: Whether the world is restricted to Microsoft Accounts only (players must be signed in).
+** {{nbt|compound|world_policies}}: {{info needed}}
+** {{nbt|long|worldStartCount}}: Counts how many times the game has been closed since the world was created, with its value decreasing by 1 each time.
+** {{nbt|int|WorldVersion}}: {{info needed}}
+** {{nbt|int|XBLBroadcastIntent}}: The [[multiplayer]] exposure for the Xbox friends system, corresponding to the "Microsoft Account Settings" world setting. 0 is disabled, 1 is "Invite Only," 2 is "Friends Only," and 3 is "Friends of Friends."
+</div>
+
+== LOG ==
+The LOG files are located at the /db path of a level, and are part of the leveldb format, used in between compaction of the LDB files. It is similar to a Log file for a program. The format is:
+
+<span style="color:blue">YYYY/MM/DD-Hour/Minute/Second.StepName "Info"</span>
+
+Example:
+
+<span style="color:blue">2014/07/24-22:20:08.400488 4a3638 Recovering log #3</span>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.1.0|Added a [[/v0.1.0 alpha|raw binary level format]].}}
+|{{HistoryLine||v0.2.0|level.dat is now a NBT formatted file.
+|player.dat information has been moved into level.dat.
+|Added entities.dat.}}
+|{{HistoryLine||v0.3.2|Entities.dat has been extended to store [[tile entity]] information.}}
+|{{HistoryLine||v0.9.0|dev=build 1|Added a new world save format, based on LevelDB 1.17 with Zlib compression support added. Older worlds are automatically converted to the new format when loaded.}}
+|{{HistoryLine|pocket}}
+|{{HistoryLine||1.0.0|dev=alpha 0.17.0.1|Each sub chunk is now stored separately as a different leveldb key.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.2.13|dev=?|Subchunks are now palleted.<ref>https://gist.github.com/Tomcc/a96af509e275b1af483b25c543cfbf37#the-new-subchunk-format</ref>}}
+}}
+
+== See also ==
+* [[Java Edition level format]]
+* Java Edition [[chunk format]]
+
+== References==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Development]]
+
+[[de:Spielstand-Speicherung (Bedrock)]]
+[[es:Formato de nivel de Bedrock Edition]]
+[[ja:Levelフォーマット/Bedrock Edition]]
+[[nl:Bedrockeditie level format]]
+[[pt:Formato de nível da Edição Bedrock]]
+[[zh:基岩版存档格式]]

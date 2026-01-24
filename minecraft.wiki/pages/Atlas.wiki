@@ -1,0 +1,77 @@
+{{Exclusive|java}}
+
+'''Atlases''' are configuration files in [[resource pack]]s, that control which textures are included in the atlases.
+
+== JSON format ==
+Atlases are stored as [[JSON]] files in a resource pack in the <code>assets/''<namespace>''/atlases</code> folder.
+
+<div class="treeview">
+*{{nbt|compound}} The root tag.
+**{{nbt|list|sources}}: Contains a list of sprite sources. Every entry runs in during load, in order of definition, adding or removing new textures to the atlas.
+***{{nbt|compound}} Source element.
+****{{nbt|string|type}}: The type of the sprite source. Can be one of the following:
+*****''directory'': Lists all files in a directory and its subdirectories, across all namespaces.
+******{{nbt|string|source}}: Directory in pack to be listed (relative to {{code|textures}} directory).
+******{{nbt|string|prefix}}: String to be prefixed to the sprite name when loaded.
+*****''single'': Adds a single file.
+******{{nbt|string|resource}}: Location of a resource within the pack (relative to {{code|textures}} directory, implied {{code|.png}} extension).
+******{{nbt|string|sprite}}: Sprite name (optional, defaults to the value of {{code|resource}}).
+*****''filter'': Removes sprites matching the given pattern (only works for entries already in the list).
+******{{nbt|compound|pattern}}
+*******{{nbt|string|namespace}}: {{W|Regular expression}} of the namespace indentificator to be removed, if omitted, any value is matched.
+*******{{nbt|string|path}}: Regular expression of the path to be removed, if omitted, any value is matched.
+*****''unstitch'': Copies rectangular regions from other images.
+******{{nbt|string|resource}}: Location of a resource within the pack (relative to {{code|textures}} directory, implied {{code|.png}} extension).
+******{{nbt|double|divisor_x}}: Used for determining the units used by in the {{code|x}} coordinate of regions.
+******{{nbt|double|divisor_y}}: Used for determining the units used by in the {{code|y}} coordinate of regions.
+******{{nbt|list|regions}}: List of regions to copy from the source image.
+*******{{nbt|string|sprite}}: Specifies the sprite name.
+*******{{nbt|double|x}}: Specifies the {{code|x}} coordinate of the top-left corner of the region.
+*******{{nbt|double|y}}: Specifies the {{code|y}} coordinate of the top-left corner of the region.
+*******{{nbt|double|width}}: Specifies the width of the region.
+*******{{nbt|double|height}}: Specifies the height of the region.
+*****''paletted_permutations'': Dynamically generate textures in-memory with color sets.
+******{{nbt|list|textures}}: A list of namespaced [[resource location]]s of base textures. These textures are used to generate variants of them that have been modified by color palettes.
+******{{nbt|string|separator}}: A value that is used when joining texture and permutation names to produce sprite name. Defaults to {{cd|_}}.
+******{{nbt|string|palette_key}}: A namespaced resource location of a color palette key file. This is used to define the set of key pixel colors to swap out with the color palettes defined.
+******{{nbt|compound|permutations}}: A map of permutations from suffix to a namespaced resource location of a color palette file. The suffix is appended to the resource location of the output variant textures, with the string specified in <code>separator</code> separating the suffix and the base texture name. The number of pixels in each color palette must be the same as that of the palette_key defined for this source. Pixels are compared by RGB value. The alpha channel is ignored for key matching, but in the resulting texture the alpha channel is multiplied with the color palette's alpha channel. Pixels that do not match the palette_key are copied over to the resulting texture as-is.
+</div>
+
+== List of atlases ==
+* <code>armor_trims</code>
+* <code>banner_patterns</code>
+* <code>beds</code>
+* <code>blocks</code>
+* <code>chests</code>
+* <code>decorated_pot</code>
+* <code>gui</code>
+* <code>items</code>
+* <code>map_decorations</code>
+* <code>paintings</code>
+* <code>particles</code>
+* <code>shield_patterns</code>
+* <code>shulker_boxes</code>
+* <code>signs</code>
+* <code>celestials</code>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.19.3|dev=22w46a|Added atlases to [[resource pack]]s.}}
+|{{HistoryLine|||dev=23w04a|Added the sprite source <code>paletted_permutations</code>.}}
+|{{HistoryLine||1.19.4|dev=23w04a|Added the <code>armor_trims</code> atlas.}}
+|{{HistoryLine|||dev=Pre-release 1|Added the <code>decorated_pot</code> atlas.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Added the <code>gui</code> atlas.}}
+|{{HistoryLine||1.20.5|dev=24w12a|Added the <code>map_decorations</code> atlas.}}
+|{{HistoryLine||1.21.5|dev=25w04a|{{cd|minecraft:paletted_permutations}} sprite source has a new field, {{cd|separator}}.}}
+|{{HistoryLine||1.21.6|dev=25w19a|The <code>mob_effects</code> atlas has been removed, all sprites that were previously stitched to this atlas are instead stitched to the <code>gui</code> atlas.}}
+|{{HistoryLine||1.21.11|dev=25w41a|Added the <code>celestials</code> atlas which contains celestial bodies including the sun, moon phases, and end flash.}}
+|{{HistoryLine||1.21.11|dev=25w45a|Added the <code>items</code> atlas.|Removed paletted permutations from the <code>blocks</code> atlas.}}
+}}
+
+== Navigation ==
+{{Navbox resource packs}}
+{{Navbox Java Edition technical|resourcepack}}
+
+[[de:Atlasdaten]]
+[[ja:テクスチャ#テクスチャアトラス]]

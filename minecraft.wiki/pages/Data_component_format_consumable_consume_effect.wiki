@@ -1,0 +1,24 @@
+<div class="treeview"><onlyinclude>
+** {{nbt|string|type}}: The kind of consume effect. Must be one of {{cd|apply_effects|remove_effects|clear_all_effects|teleport_randomly|play_sound|d=or}}.
+**; If '''type''' is <code>apply_effects</code>: Applies effects on the consumer. Additional fields:
+** {{nbt|list|effects}}: A list of [[effect]] instances applied once consumed.
+*** {{nbt|compound}}: A single effect.
+**** {{nbt|string|id}}: The ID of the effect.
+**** {{nbt|byte|amplifier}}: The amplifier of the effect, with level I having value 0. Optional, defaults to 0.
+**** {{nbt|int|duration}}: The duration of the effect in [[tick]]s. Value -1 is treated as infinity. Values 0 or less than -2 are treated as 1. Optional, defaults to 1 tick.
+**** {{nbt|boolean|ambient}}: Whether or not this is an effect provided by a beacon and therefore should be less intrusive on the screen. Optional, defaults to {{cd|false}}.
+**** {{nbt|boolean|show_particles}}: Whether or not this effect produces particles. Optional, defaults to {{cd|true}}.
+**** {{nbt|boolean|show_icon}}: Whether or not an icon should be shown for this effect. Optional, defaults to {{cd|true}}.
+** {{nbt|float|probability}}: The chance for the above effects to be applied once consumed. Must be a positive float between 0.0 and 1.0. Defaults to 1.0.
+**; If '''type''' is <code>remove_effects</code>: Removes a some of effects from the consumer. Additional fields:
+** {{nbt|list}}{{nbt|string|effects}}: A set of effects removed once consumed, as either a single ID or list of IDs.
+**; If '''type''' is <code>clear_all_effects</code>: Clears all effects of the consumer. No additional fields.
+**; If '''type''' is <code>teleport_randomly</code>: Teleports the consumer randomly withing a given range. Additional fields:
+** {{nbt|float|diameter}}: The diameter that the consumer is teleported within. Defaults to 16.0.
+**; If '''type''' is <code>play_sound</code>: Plays a sound. Additional fields:
+** {{nbt|string}}{{nbt|compound|sound}}: {{json_ref|sound event|inline=1}} played once when consumed.
+*** {{nbt inherit/sound event|sounds}}
+</onlyinclude>
+</div><noinclude>
+
+</noinclude>

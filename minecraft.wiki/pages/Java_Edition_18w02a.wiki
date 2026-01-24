@@ -1,0 +1,129 @@
+{{Infobox version
+|title=Minecraft 18w02a
+|edition=Java
+|image=18w02a.png
+|image2=Java Edition 18w02a.png
+|type=Snapshot
+|date=January 10, 2018
+|parent=1.13
+|clienthash=05932046cbefd34e42ba21530b96986435163bda
+|jsonhash=b0ddd29e3ab04729b1948bb50d9431cce420724d
+|serverhash=950b737e9cefc9f91f286190166f062d6b0e0105
+|prevparent=1.12.2
+|prev=18w01a
+|next=18w03a
+|nextparent=1.13.1
+}}<onlyinclude>
+
+'''18w02a''' is the thirteenth [[snapshot]] for [[Java Edition 1.13]], released on January 10, 2018<ref>{{snap|18w02a|January 10, 2018}}</ref>, which changed the {{cmd|teleport}} command.
+
+== Additions ==
+=== General ===
+'''[[Tag]]s'''
+* Added the new block tag <code>minecraft:enderman_holdable</code>.
+
+'''[[Sound]]s'''
+* Added "Cave Sound 19".
+
+== Changes ==
+=== Non-mob entities ===
+'''[[Fishing bobber]]s'''
+* Now have an entity ID, <code>fishing_bobber</code>.
+** This ID can only be used for testing, summoning is not possible.
+
+'''[[Llama spit]]'''
+* Hitbox has been decreased from using the player's hitbox to be 0.25x0.25x0.25 blocks.
+
+'''[[Painting]]s '''
+* Now use a [[resource location]] for their motive.
+
+=== Command format ===
+'''{{cmd|teleport}}'''
+* Has been simplified:
+** {{cmd|teleport <entity>}} does not allow rotation or facing, and teleports to the entity.
+** {{cmd|teleport <x y z>}} does not allow rotation or facing, and teleports to the position.
+** {{cmd|teleport <entity1> <entity2>}} does not allow rotation or facing, and teleports ''entity1'' to ''entity2''.
+** {{cmd|teleport <entity> <x y z> [<yRot> <xRot>]}} teleports ''<entity>'' to that position with optional rotation.
+** {{cmd|teleport <entity> <x y z> facing [<xFacing> <yFacing> <zFacing>]}} teleports ''<entity>'' to that position facing another position.
+** {{cmd|teleport <entity1> <x y z> facing entity <entityFacing> [feet{{!}}eyes]}} teleports ''entity1'' to that position facing ''entityFacing''&#8202;'s feet or eyes (defaults to feet).
+** Teleporting to an entity in another dimension is now allowed.
+
+'''{{cmd|execute}}'''
+* Added new sub-commands to {{cmd|execute}} to allow for more control over commands.
+** <code>facing <x y z></code> runs the command as though the executor is facing <code>x y z</code>.
+** <code>facing entity <entity> (eyes{{!}}feet)</code> runs the command as though the executor is facing the entity's eyes or feet.
+** <code>offset <x y z></code> has been renamed to <code>positioned x y z</code>.
+** <code>positioned as <entity></code> changes the command position (x y z) but nothing else.
+** <code>rotated as <entity></code> or <code>rotated y x</code> runs the command as though the executor is rotated in that direction.
+** <code>in (overworld{{!}}the_end{{!}}the_nether)</code> runs the command as though it's in that dimension.
+** <code>at <entity></code> changes the dimension, position and rotation of the command to match that entity.
+** <code>(if{{!}}unless) score <name> <objective> matches <range></code> tests for a score in a range (ie <code>1</code>, <code>1..5</code>).
+** <code>anchored (feet{{!}}eyes)</code> makes the rest of this command use feet or eyes for ^ ^ ^ coordinates or facing commands.
+* Server commands ([[Commands/function|function]]s, console, rcon) now run from world spawn in the Overworld, instead of at <code>0,0,0</code>.
+
+'''Error messages'''
+* Errors during a command are now a nicer error message (with a tooltip for more info).
+
+=== General ===
+'''Translation files'''
+* Changed from <code>.lang (key=value)</code> to <code>.json ("key": "value")</code>.
+** Now supports newlines.
+
+== Fixes ==
+{{fixes|fixedin=18w02a|prefix=Minecraft
+|;old
+|5461|Block stats does not count red mushrooms, sugar canes, etc.
+|9669|Player renders black in a 1x1 shaft with torch in upper block.
+|63748|Commands with incorrect syntax executed for multiple entities prints error message multiple times.
+|64539|Spreadplayers respectTeams and player arguments have no tab completion.
+|68446|Some entities have missing translations string in the lang files.
+|68809|Held Item renders black when in a 1 x 1 shaft with torch in upper block.
+|73207|Minecraft server list displays "Can't connect to server" on startup.
+|76312|Testfor output doesn't show UUID or team color.
+|81806|worldborder add allows size >{{=}} 0 while world border set only allows size >{{=}} 1.
+|108967|"Selector '<selector>' found nothing" message is missing for /scoreboard teams join/leave.
+|120747|Stairs change hitbox when a piston moves the block.
+|;dev
+|121662|Unhandled exceptions in commands just dump the exception into chat, without the "unknown error" message.
+|121712|advancement command in function file causes game crash.
+|122579|All COLOR_wall_banners are missing translation keys.
+|122608|Minecraft crashes when typing in a block-related command in front of an entity.
+|122610|Giving 0 of any item results in the chat message saying that player got 0 air.
+|122751|{{cmd|data}} doesn't update a block entity's visuals until reload.
+|122893|"{{cmd|execute as}}/<code>at</code>" does not change the dimension of execution.
+|122908|Crash upon world load: {{code|java.lang.NullPointerException}}: Exception in server tick loop.
+|122956|Function paths with invalid characters results in the game freezing.
+|123104|'{{cmd|scoreboard players reset}}' removes name from sidebar of different objective.
+|;previous
+|123764|Single-player menu world version not displaying correctly.
+|123771|Server crashes when an item frame with a map is loaded, and no player has that map in their inventory.
+|123774|Players cannot test for names with name{{=}} anymore.
+|123782|Game crashes if an item has a name that's invalid JSON.
+|123818|{{cmd|teleport <player> facing <entity>}} doesn't work if the entity is not rendered, unlike other {{cmd|teleport}} operations.
+|123832|Crash reports output TextComponent object for entity names rather than its text.
+|123833|Connect/Disconnect messages output TextComponent object rather than the player's name.
+|123891|NullPointerException on empty TextComponent.
+|123931|Using {{cmd|data merge}} on a structure block to change its rotation/mirror does not update the way the structure is loaded until the world is reloaded.
+|123932|Players cannot open locked containers with the Lock nbt anymore.
+|123943|Clicking a player's name in chat dumps raw TextComponent.
+|123974|Command List DataProvider incorrectly labeled as "Item List".
+|124051|Varieties of {{cmd|teleport}} create ambiguities for tab|completion.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|RogLstg-SZA}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:18w02a]]
+[[es:Java Edition 18w02a]]
+[[fr:Édition Java 18w02a]]
+[[ja:Java Edition 18w02a]]
+[[nl:18w02a]]
+[[pt:Edição Java 18w02a]]
+[[ru:18w02a (Java Edition)]]
+[[zh:Java版18w02a]]

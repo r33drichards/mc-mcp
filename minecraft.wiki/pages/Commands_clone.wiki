@@ -1,0 +1,190 @@
+{{Infobox command
+|name=clone
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Clones [[block]]s from one region to another.
+
+== Syntax ==
+
+* '''Java Edition'''
+: <code>clone . . .</code>
+: <code>clone from <sourceDimension> . . .</code>
+:* <code>... <begin> <end> . . .</code>
+:** <code>... <destination> . . .</code>
+:** <code>... to <targetDimension> <destination> . . .</code>
+:*** <code>... [strict] [replace] [force|move|normal]</code>
+:***: Clones all blocks.
+:*** <code>... [strict] masked [force|move|normal]</code>
+:***: Clones non-[[air]] blocks.
+:*** <code>... [strict] filtered <filter> [force|move|normal]</code>
+:***: Clones only blocks with the block id specified by <code><filter></code>.
+
+::'''Syntax displayed in various ways'''
+:::{| class="collapsible collapsed collapse-button-none" data-description="simple_tree"
+|-
+! style="text-align:left" | Simplified tree:
+|-
+|
+: <code>clone <begin> <end> . . .</code>
+: <code>clone from <sourceDimension> <begin> <end> . . .</code>
+:* <code>... <destination> . . .</code>
+:* <code>... to <targetDimension> <destination> . . .</code>
+:** <code>... [strict] [replace|masked] [force|move|normal]</code>
+:** <code>... [strict] filtered <filter> [force|move|normal]</code>
+|}
+:::{| class="collapsible collapsed collapse-button-none" data-description="maximised_tree"
+|-
+! style="text-align:left" | Maximised:
+|-
+|
+: <code>clone <begin> <end> <destination></code>
+: <code>clone from <sourceDimension> <begin> <end> <destination></code>
+: <code>clone <begin> <end> <destination> replace [force|move|normal]</code>
+: <code>clone from <sourceDimension> <begin> <end> <destination> replace [force|move|normal]</code>
+: <code>clone <begin> <end> <destination> masked [force|move|normal]</code>
+: <code>clone from <sourceDimension> <begin> <end> <destination> masked [force|move|normal]</code>
+: <code>clone <begin> <end> <destination> filtered <filter> [force|move|normal]</code>
+: <code>clone from <sourceDimension> <begin> <end> <destination> filtered <filter> [force|move|normal]</code>
+: <code>clone <begin> <end> to <targetDimension> <destination></code>
+: <code>clone from <sourceDimension> <begin> <end> to <targetDimension> <destination></code>
+: <code>clone <begin> <end> to <targetDimension> <destination> replace [force|move|normal]</code>
+: <code>clone from <sourceDimension> <begin> <end> to <targetDimension> <destination> replace [force|move|normal]</code>
+: <code>clone <begin> <end> to <targetDimension> <destination> masked [force|move|normal]</code>
+: <code>clone from <sourceDimension> <begin> <end> to <targetDimension> <destination> masked [force|move|normal]</code>
+: <code>clone <begin> <end> to <targetDimension> <destination> filtered <filter> [force|move|normal]</code>
+: <code>clone from <sourceDimension> <begin> <end> to <targetDimension> <destination> filtered <filter> [force|move|normal]</code>
+|}
+
+* '''Bedrock Edition'''
+: <code>clone <begin: x y z> <end: x y z> <destination: x y z> [maskMode: MaskMode] [cloneMode: CloneMode]</code>
+:: Clones all blocks or only non-air blocks.
+: <code>clone <begin: x y z> <end: x y z> <destination: x y z> filtered <cloneMode: CloneMode> <tileName: Block> [blockStates: block states]</code>
+:: Clones only blocks with the block id specified by <code><tileName: Block></code>.
+
+== Arguments ==
+
+{{el|je|short=1}}: {{argument|sourceDimension|dimension}}
+: Specifies the dimension to clone the blocks from. If unspecified, defaults to current execution dimension.
+: {{arg desc|je=dimension}}
+
+{{el|je|short=1}}: {{argument|begin|block_pos}} and {{argument|end|block_pos}}<br>
+{{el|be|short=1}}: {{argument|be=1|begin: x y z|CommandPosition}} and {{argument|be=1|end: x y z|CommandPosition}}
+: Specifies the coordinates of two opposing corner blocks of the source region.
+: {{arg desc|je=block_pos|be=CommandPosition}}
+: Block position is the coordinates of the point at the lower northwest corner of a block. Because of this, the lesser coordinates of each axis falls right on the region boundary, but the greater coordinates are one block from the boundary, and the block volume of the source region is (x<sub>greater</sub> - x<sub>lesser</sub> + 1) × (y<sub>greater</sub> - y<sub>lesser</sub> + 1) × (z<sub>greater</sub> - z<sub>lesser</sub> + 1). For example, <code>0 0 0 0 0 0</code> has a 1-block volume, and <code>0 0 0 1 1 1</code> and <code>1 1 1 0 0 0</code> both identify the same region with an 8-block volume.
+
+{{el|je|short=1}}: {{argument|targetDimension|dimension}}
+: Specifies the dimension to clone the blocks to. If unspecified, defaults to current execution dimension.
+: {{arg desc|je=dimension}}
+
+{{argument|destination|block_pos|destination: x y z|CommandPosition}}
+: Specifies the lower northwest corner of the destination region.
+: {{arg desc|je=block_pos|be=CommandPosition}}
+
+{{el|je|short=1}}: {{code|replace}} and {{code|masked}}<br>
+{{el|be|short=1}}: {{argument|be=1|maskMode: MaskMode|enum}}
+: Specifies whether to filter the blocks being cloned. Must be one of the following:
+:* <code>replace</code> — Copy all blocks, overwriting ''all'' blocks of the destination region with the blocks from the source region.
+:* <code>masked</code> — Copy only non-air blocks. Blocks in the destination region that would otherwise be overwritten by air are left unmodified.
+: If unspecified, defaults to <code>replace</code>.
+
+{{el|je|short=1}}：{{cd|strict}}
+: Makes the command place blocks as-is without triggering block updates and shape updates.
+
+{{el|je|short=1}}: {{code|force{{!}}move{{!}}normal}}<br>
+{{el|be|short=1}}: {{argument|be=1|cloneMode: CloneMode|enum}}
+: Specifies how to treat the source region. Must be one of the following:
+:* <code>force</code> — Force the clone even if the source and destination regions overlap.
+:* <code>move</code> — Clone the source region to the destination region, then replace the source region with air. When used in filtered mask mode, only the cloned blocks are replaced with air.
+:* <code>normal</code> — Don't move or force.
+: If unspecified, defaults to <code>normal</code>.
+
+{{argument|filter|block_predicate|tileName: Block|enum}}
+: Specifies the block id to copy in <code>filtered</code> mode.
+: {{arg desc|je=block_predicate|be=Block}}
+
+{{el|be|short=1}}: {{argument|be=1|blockStates: block states|BlockStateCommandParam}}
+: Specifies the [[block states]] to use for the block.
+: {{Arg desc|be=BlockStateCommandParam}}
+
+== Result ==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|One or both specified regions are unloaded or out of the world.|fail|fail}}
+{{Result table|The volume of the source region is greater than <code>commandModificationBlockLimit</code> gamerule value.||N/A}}
+{{Result table|The volume of the source region is greater than 655360.|N/A|fail}}
+{{Result table|cmd=/clone ... normal ...|The source and destination region overlap.|fail}}
+{{Result table|cmd=/clone ... replace move ...|The source region and destination region overlap.|succeed}}
+{{Result table|cmd=/clone ... filtered ...|There is no specified block in the source region.|fail}}
+{{Result table|cmd=/clone ... replace ...|All the blocks in the source region are barriers.<ref name="barrier">{{bug|MC-231566}}</ref>|fail|N/A}}
+{{Result table|cmd=/clone ... masked ...|There is no non-air and non-barrier block<ref name="barrier"/> in the source region.}}
+{{Result table|cmd=/clone ... filtered ...|The specified block is barrier.<ref name="barrier"/>}}
+{{Result table|cmd=/clone ... masked ...|There is no non-air block in the source region.|N/A|fail}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of blocks that are successfully cloned.}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== History ==
+{{Expand section}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w03a|Added {{cmd|clone|link=none}}.}}
+|{{HistoryLine|||dev=14w10a|Added {{cd|force}} option.}}
+|{{HistoryLine|||dev=14w20a|Added {{cd|move}} option.}}
+|{{HistoryLine||1.13|dev=17w45a|
+The syntax of /clone has been changed.|
+ {{cmd|clone <begin> <end> <destination> filtered [force{{!}}move{{!}}normal] [<block>] [<data>]|link=none}} becomes {{cmd|clone <begin> <end> <destination> filtered [<block>] [force{{!}}move{{!}}normal].|link=none}}|
+ {{cmd|clone <begin> <end> <destination> [replace{{!}}masked] [force{{!}}move{{!}}normal] [<block>] [<data>]|link=none}} becomes {{cmd|clone <begin> <end> <destination> [replace{{!}}masked] [force{{!}}move{{!}}normal].|link=none}}}}
+|{{HistoryLine||1.19.4|dev=23w03a|Added {{cd|dimension}} argument.
+|Now the limit volume of the clone region is controlled by <code>commandModificationBlockLimit</code> gamerule, instead of a hardcoded value 32768.}}
+|{{HistoryLine||1.21.5|dev=25w02a|Accepts a new option: <code>strict</code>.|New syntax for commands to use the new strict option.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|clone|link=none}}.|Functionality is almost equivalent to [[Java Edition 1.10]] usage, except {{cmd|clone|link=none}} cannot use {{cd|forced}} cloneMode.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.210|dev=beta 1.16.210.53|Added [[block state]] support to {{cmd|clone|link=none}}.}}
+|{{HistoryLine|||dev=beta 1.16.210.57|Cloning a block of the same type is no longer treated as a failed operation.}}
+|{{HistoryLine||1.18.0|dev=?|The limit volume of {{cmd|clone|link=none}} is 655360 now, instead of 524288.}}
+|{{HistoryLine||1.19.70|dev=Preview 1.19.70.21|Removed <code>tileData: int</code> argument.}}
+|{{HistoryLine||1.21.0|dev=Preview 1.21.0.20|Containers being cloned over no longer keep their container screens open.}}
+}}
+
+== References ==
+<references/>
+
+== See also ==
+: {{cmd|fill}} – fill a region with a block.
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/clone?view=minecraft-bedrock-stable|title=<code>/clone</code> Command|website=Microsoft Learn|date=July 17, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/clone]]
+[[es:Comandos/clone]]
+[[ja:コマンド/clone]]
+[[ko:명령어/clone]]
+[[pt:Comandos/clone]]
+[[ru:Команды консоли/clone]]
+[[uk:Команди консолі/clone]]
+[[zh:命令/clone]]

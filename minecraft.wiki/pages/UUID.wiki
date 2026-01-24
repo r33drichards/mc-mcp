@@ -1,0 +1,119 @@
+'''Universally Unique Identifier''' ('''UUID''') is a 128-bit long number that is used by ''Minecraft'' as a {{w|Nominal number|label}} to distinguish between separate instances.
+
+==Representation==
+* '''Hyphenated hexadecimal''': The RFC 9562 standard string representation of UUID<ref>https://datatracker.ietf.org/doc/html/rfc9562#section-4</ref>. A hexadecimal representation of the UUID, with hyphens separating the different sections into individual numbers.<br> The hyphen is set to split the UUID into numbers of the format <code>8-4-4-4-12</code> with each number marking the number of hexadecimal digits fitting into the corresponding section. Further detail follows in the [[Universally unique identifier#Technical aspects|Technical aspects]] section.<br> An example of this representation would be <code>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</code>.
+** Because every part is evaluated as an individual number, empty digits at the start of a section can be ignored.<br>  For example, <code>00000001-0002-0003-0004-000000000005</code> can be evaluated as the same as <code>1-2-3-4-5</code>.
+* '''Hexadecimal''': The same as the hyphenated hexadecimal representation, but without the separation of the different sections.<br> An example for this representation would be <code>00000001000200030004000000000005</code>, where it is impossible for the majority of empty digits to be removed as opposed to the hyphenated hexadecimal representation.
+* '''Most/Least''': A separation of the 64 most significant bits from the 64 least significant bits. Each of the two numbers is stored separately and uses the <code>Long</code> data type in the game.<br>This format is deprecated as it was used before [[20w12a]] ([[Java Edition 1.16|1.16]]) and was entirely replaced by the Int-array format.<br>An example of this representation would be <code>UUIDMost:-568210367123287600</code> paired with <code>UUIDLeast:-6384696206158828554</code>.
+* '''Int-array''': A separation into four 32-bit numbers. Each part is stored in an integer array ordered from most significant to least significant.<br> An example of this representation would be <code>[I;-132296786,2112623056,-1486552928,-920753162]</code>
+
+==Occurences==
+The following table represents the situations in which UUIDs are used in places accessible by a player:
+{| class="wikitable"
+|-
+! Location (general) !! Location (path) !! Format !! Use
+|-
+| [[Chunk format/Entity|All entities]] (NBT) || <code>UUID</code> || int-array || Own UUID
+|-
+| [[Chunk format/Tameable|Tameable mobs]] (NBT) || <code>Owner</code> || int-array || Owner
+|-
+| [[Chunk format#Projectiles|Projectiles]] (NBT) || <code>Owner</code> || int-array || Entity that shot the projectile
+|-
+| [[Item (entity)|Item entities]] (NBT) || <code>Owner</code> || int-array || Target player for {{Command|give}} command
+|-
+| [[Item (entity)|Item entities]] (NBT) || <code>Thrower</code> || int-array || Player who dropped the item
+|-
+| [[Shulker#Shulker bullet|Shulker bullets]] (NBT) || <code>Target</code> || int-array || Entity targeted for attack
+|-
+| [[Conduit]]s (NBT) || <code>Target</code> || int-array || Entity targeted for attack
+|-
+| [[Mob head#Player skins|Player heads]] (NBT) || <code>profile.</code> || int-array || Owner of the skin
+|-
+| [[Mob head#Player skins|Player heads]] (NBT) || <code>SkullOwner.Properties.textures[].Value.ProfileId</code> || hexadecimal || Owner of the skin
+|-
+| [[Chunk format#Mobs|Mobs]] (NBT) || <code>Leash.UUID</code> || int-array || Entity that leashed the mob
+|-
+| [[Chunk format/Breedable|Breedable mobs]] (NBT) || <code>LoveCause</code> || int-array || Player who fed the mob
+|-
+| [[Warden/ED|Warden]]s (NBT) || <code>anger.suspects[].uuid</code> || int-array || Target associated with the anger level
+|-
+| [[Zombie Villager]]s (NBT) || <code>ConversionPlayer</code> || int-array || Player who is converting the Zombie Villager
+|-
+| Most of the neutral mobs (NBT) || <code>AngryAt</code> || int-array || Entity that hurt the neutral mob
+|-
+| [[Villagers]] (NBT) || <code>Gossips[].Target</code> || int-array || Player who caused the gossip
+|-
+| [[Player]]s (NBT) || <code>RootVehicle.Attach</code> || int-array || Identifier of the entity that the player is riding
+|-
+| [[Argument types#minecraft:entity|Target selectors]] (Commands) || - || Hyphenated hexadecimal || Selected entity
+|-
+| [[Server.properties#Keys|server.properties]] || <code>resource-pack-id</code> || Hyphenated hexadecimal || Identifies the server resource pack with clients
+|}
+
+===Player UUID===
+A [[player]] UUID is generated when the user purchases and registers a new ''Minecraft: Java Edition'' account. For ''Bedrock Edition'', the ''Xbox User ID''<ref>https://learn.microsoft.com/en-us/gaming/gdk/docs/reference/live/rest/uri/presence/uri-usersxuidget</ref> (XUID, or ''Xbox services ID''<ref>https://learn.microsoft.com/en-us/gaming/gdk/docs/features/common/user/player-identity-xuser</ref>) is used instead as the unique identifier. Users can also play ''Java Edition'' in offline mode with a specified [[username]]; the unique identifier chosen for offline mode players is [[w:Universally_unique_identifier#Versions_3_and_5_(namespace_name-based)|UUID version 3]], generated from the MD5 hash of {{cd|OfflinePlayer:''<username>''}}.
+
+{{Calculator|playerUuid}}
+
+==Technical aspects==
+===Value range===
+A UUID can be expressed as a 128-bit number, which means that it supports all integer values from <code>-(2^127)</code> to <code>(2^127)-1</code>. It is important to note that this evaluation does not refer to the range of values generated by the game but instead focuses on the capacity of the format.
+===Hyphenated hexadecimal format section names===
+Hyphenated hexadecimal format UUIDs follow the pattern <code>xxxxxxxx-xxxx-Axxx-Bxxx-xxxxxxxxxxxx</code>.
+{| class="wikitable"
+|-
+! Section name !! colspan="4" | Bit range
+|-
+!  !! From !! To !! Size !! Characters
+|- style="text-align:right;"
+| style="text-align:left;" | time-low|| 96 || 127 || 32 || 8
+|- style="text-align:right;"
+| style="text-align:left;" | time-mid || 80 || 95 || 16 || 4
+|- style="text-align:right;"
+| style="text-align:left;" | time-high-and-version || 54 || 79 || 16 ||4
+|- style="text-align:right;"
+| style="text-align:left;" | clock-seq-and-reserved  || 36 || 53 || 8 || 2
+|- style="text-align:right;"
+| style="text-align:left;" | clock-seq-low  || 48 || 45 || 8 || 2
+|- style="text-align:right;"
+| style="text-align:left;" | node || 0 || 47 || 48 || 12
+|}
+(The names make sense only for version 1 and 2 UUIDs, but it has been passed onto all forms of UUIDs used.)
+
+=== Versions and variants ===
+There are five versions of UUIDs. Versions 1 and 2 are based on current time and MAC address; versions 3 and 5 are based on hashing a string; version 4 is based on completely random generation. The "version" value occupies four bits, and is located in the UUID string format at the position indicated by an "A".
+
+The "B" position is the variant (format) of the UUID. Depending on the specific variant, it may occupy the high 1 to 3 bits:
+* 0xx is the "variant 0" of Apollo NCS 1.5, an old type of UUID.
+* 10x is the "variant 1" of IETF RFC 4122 (Leach-Salz). It's referred to as "variant 2" by Java.
+* 110 is the "variant 2" of old Microsoft products. It's referred to as "variant 6" by Java.
+* 111 is the "reserved variant". It's referred to as "variant 7" by Java.
+
+=== In Minecraft ===
+Minecraft uses version 4, variant 1 (RFC) UUIDs, which means that the entire number with the exception of the bits used for metadata (version and variant) is randomly generated. Java's {{code|UUID.randomUUID()}} function performs this exact task.
+
+A table with the locations and values of the metadata:
+{{Collapse|title='''Bitwise version'''|content={{/metadata}}}}
+{{Collapse|title='''Collapsed version'''|content={{/metadata1}}}}
+
+==References==
+{{Reflist}}
+
+==External links==
+* [https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html UUID Java class documentation]
+* [https://www.uuidtools.com/generate/minecraft Generate UUIDs in hyphenated hexadecimal format]
+* [https://www.soltoder.com/mc-uuid-converter/ Convert between and generate all different formats, with the exception that the non-hyphenated hexadecimal format is only accepted as input]
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{Navbox Bedrock Edition}}
+
+[[Category:Game terms]]
+
+[[de:UUID]]
+[[fr:Identifiant unique universel]]
+[[ja:Universally unique identifier]]
+[[pt:UUID]]
+[[ru:Универсальный уникальный идентификатор]]
+[[uk:UUID]]
+[[zh:通用唯一识别码]]

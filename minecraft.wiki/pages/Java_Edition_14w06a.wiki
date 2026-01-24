@@ -1,0 +1,240 @@
+{{Infobox version
+|edition=Java
+|image=14w06a Banner.png
+|image2=Java Edition 14w06a.png
+|type=Snapshot
+|date=February 6, 2014
+|parent=1.8
+|clienthash=e6dd656dd57666a500079d6545a77b07b45d5a1b
+|jsonhash=0bc79bdfdf67e18e5786f701f460b19ee4af50a4
+|serverhash=a6a41979ed198086f2c8ae638f26286b2dc931db
+|exehash=17eb137856874f1c6155dd697cf6a17ae35a48ae
+|prevparent=1.7.10
+|prev=14w05b
+|next=14w06b
+|nextparent=1.8.1
+}}<onlyinclude>
+
+'''14w06a''' is the tenth [[snapshot]] for [[Java Edition 1.8]], released on February 6, 2014,<ref>{{cite|url=https://web.archive.org/web/20140207055427/https://mojang.com/2014/02/minecraft-snapshot-14w06a/|title=Minecraft snapshot 14w06b|website=Mojang.com|author=[[Dinnerbone]]}}</ref> which adds {{cmd|trigger}} and the <code>CanPlaceOn</code> tag.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|trigger}}'''
+* Syntax: {{cmd|trigger <objective> <add:set> <value>}}.
+* Functions the same way as {{cmd|scoreboard players set}} or {{cmd|scoreboard players add}}, but can only modify objectives with the <code>trigger</code> criteria (referred to as "triggers") and can only modify the score of the player running the command.
+* Can be used by non-operator players.
+* For a player to run this command, the trigger must be enabled for that player.
+** {{cmd|scoreboard players enable <player> <trigger>}} enables the specified player to use the specified trigger objective.
+** Trigger availability is stored per player, per trigger.
+*** One trigger may be disabled for a player, but that player can use a different trigger.
+*** One player may be unable to use a trigger, but another player can use the same trigger.
+** Disabled after the trigger has been used (must be re-enabled to use the trigger again).
+* Mostly for use with {{cmd|tellraw}}.
+
+'''[[NBT format]] '''
+* <code>CanPlaceOn</code> 
+** Allows placing of certain blocks against other blocks in [[Adventure mode]].
+** Example: {{cmd|give @p minecraft:stone 16 0 {CanPlaceOn:[minecraft:diamond_block]} }}.
+* <code>HideFlags</code>.
+** Allows hiding of certain parts of the tooltip.
+** Bit field of <code>1/enchantments, 2/modifiers, 4/unbreakable, 8/candestroy, 16/canplace</code>.
+* <code>ShowParticles</code>
+** Option to show or hide all particles for a potion effect, while the 'Ambient' tag only shows fewer particles. Set to true to show, false to hide.
+* <code>PickupDelay</code>
+** The number of ticks before an item entity can be picked up.
+** Setting to 32767 prevents the duration from decreasing, thus making the item incapable of being picked up.
+
+'''[[Scoreboard]] '''
+* A new argument for {{cmd|scoreboard}}: <code>[objective]</code>.
+* Allows objectives to be reset one by one.
+** Example: {{cmd|scoreboard players reset <player> [objective]}}.
+* New objective criteria for team-specific kills, e.g.: <code>teamkill.red, killedByTeam.blue</code>.
+* New objective criteria: <code>trigger</code>.
+* Acts like the <code>dummy</code> criteria.
+* Mostly for use with {{cmd|tellraw}}.
+* The ability to iterate over every scoreboard player with <code>*</code>.
+
+=== Gameplay ===
+'''[[Achievement]] '''
+* New achievement ''Overpowered''.
+* Obtained by crafting an [[enchanted golden apple]].
+** Requires obtaining ''Getting an Upgrade'' first.
+
+=== General ===
+'''[[Splash]] '''
+* Added "Yay, puppies for everyone!"
+
+== Changes ==
+=== Blocks ===
+'''[[Barrier]]'''
+* Now becomes visible when a player in Creative mode is holding a barrier in their hand.
+** The block itself is not rendered, a particle appears in its place.
+* Now uses [[block of redstone]] breaking particles instead of lava.
+
+'''[[Ender crystal]]s'''
+* Now generate one block lower, without bedrock underneath.
+
+=== Items ===
+'''Animation'''
+* When items are collected, rather than "zooming" into the player's chest, it appears to move to the player's feet instead.
+
+=== Mobs ===
+'''General'''
+* All mobs now use the 'new' AI.<ref>{{tweet|jeb_|428840815549747200|Updating all mobs to the "new" AI system (the one introduced in 2012). Expect some minor mob behaviour changes... such as slimes swimming|January 30, 2014}}</ref>
+* Mobs now show a glow of a slightly different color when hurt.
+* Mobs that can ride boats can now control the boats.
+** Except for ghasts and bats.
+
+'''[[Blaze]]s'''
+* Now shoot the player even if there are solid blocks between them.
+
+'''[[Cave spider]]s and [[spider]]s'''
+* Can no longer draw its line of sight through opaque blocks.
+
+'''[[Chicken]]s'''
+* Are slightly taller (0.4 blocks tall rather than 0.3).
+
+'''[[Endermen]]'''
+* Now pathfind to the player when aggravated.
+
+'''[[Giant]]s'''
+* Worn armor is now rendered.
+* AI is removed.
+* Are slightly taller (11.7 blocks tall rather than 10.8).
+
+'''[[Mob (entity)|Mobs]]'''
+* Leftover AI is removed.
+
+'''[[Monster (entity)|Monsters]]'''
+* Leftover AI is removed.
+
+'''[[Magma cube]]s and [[slime]]s'''
+* Now swim, and randomly change direction every so often, reducing the chance of them getting stuck at walls or corners.
+* Now randomly despawn over time if no player is within a 32-meter range.
+* Are slightly smaller (smallest variant is 0.51 blocks tall rather than 0.6).
+
+'''[[Ocelot]]s'''
+* Are slightly shorter (0.7 blocks tall rather than 0.8).
+
+'''[[Silverfish]]'''
+* Are significantly smaller (0.3 blocks tall and 0.4 blocks wide rather than 0.7 blocks tall and 0.3 blocks wide).
+
+'''[[Skeleton]]s, [[witch]]es, [[zombie]]s and [[zombie villager]]s'''
+* Are slightly taller (1.95 blocks tall rather than 1.8)
+
+'''[[Snow golem]]s'''
+* Are significantly larger (1.9 blocks tall and 0.7 blocks wide rather than 1.8 blocks tall and 0.4 blocks wide).
+
+'''[[Wither]]s'''
+* Are slightly shorter (3.5 blocks tall rather than 4.0)
+
+'''[[Wither skeleton]]s'''
+* Are slightly taller (2.353 blocks tall rather than 2.34)
+
+'''[[Zombie pigmen]]'''
+* Now pathfind to the player when aggravated.
+* Are slightly taller (1.95 blocks tall rather than 1.8).
+
+=== Command format ===
+'''{{cmd|effect}}'''
+* Can now also specify whether particles are to be shown: 
+* Usage: {{cmd|effect <player> <effect> [seconds] [amplifier] [hideParticles]}}.
+** Use 'true' to hide particles and 'false' to show; if value not given, defaults to false.
+
+'''{{cmd|particle}}'''
+* Added the <code>barrier</code> particle.
+** Uses the barrier item texture.
+** Used for indicating barrier blocks.
+
+'''Data Tags'''
+* <code>Age</code>
+** Setting Age to a value of -32768 makes items which never expire
+
+=== Gameplay ===
+'''[[Spectator mode]]'''
+* An optional hotkey to show outlines on players whilst spectating.
+** Can be color coded to teams.
+** Can be set/canceled in Controls option.
+** Outline seen when the key is held down (like sneaking when Shift is held down).
+
+=== General ===
+'''Block IDs'''
+* Statistics for items/blocks can now be referenced per name, instead of ID.
+** Example: <code>stat.mineBlock.minecraft.stone</code>.
+
+'''[[Debug screen]]'''
+* X, Y, and Z title has been changed from 'Feet' in the previous snapshot, to 'XYZ'.
+* Day counter added. 
+** Increases by 1 every dawn.
+* Now displays difficulty.
+** Peaceful- 0.00, Easy- 0.75, Normal- 1.50, Hard 2.25 (but numbers slowly increase the longer you are in an area).
+* Now displays player rotation again.
+** However now it displays it in degrees and quadrants.
+
+'''F3 hotkeys'''
+* Now display entity eye level in red.
+
+'''[[Resource pack]]s'''
+* Block models in resource packs can now be customized.
+* Replaces the files in /assets/minecraft/models/.
+* After loading the resource pack, the game may have to be reloaded.
+
+'''[[Splash]]'''
+* Splash changed - "OpenGL 1.2!" changed to "OpenGL 2.1 (if supported)!"
+
+== Fixes ==
+{{fixes|fixedin=14w06a|prefix=Minecraft
+|;old
+|2947|Ghasts and witches do not aim properly.
+|4222|While under the effect of a night vision potion, enemies no longer flash red upon taking damage.
+|10099|Angry Zombie pigmen usually won't jump over 1-high transparent blocks to get to enemies.
+|12061|Witch hitbox is shorter than the witch mob itself.
+|12730|TNT placed on fence / nether fence/cobble wall/mossy wall and ignited has TNT fall through floor.
+|19886|Plants don't cause an update when the block beneath is broken/light level changed.
+|32579|Attribute "<code>followRange</code>" not working thoroughly.
+|33110|Spiders (and some other mobs) are not affected by speed effects or <code>movementSpeed</code> attributes.
+|36151|<code>stat.leaveGame</code> does not increment when game is closed.
+|39139|<code>walkOneCm</code> stat doesn't accurately measure distance.
+|41839|Chicken jockeys with baby zombie pigmen do not work.
+|47705|Blaze mobs attack creative mode player.
+|56363|Crash on auto-complete name of scoreboard objective.
+|;dev
+|44688|{{cmd|clear}} fails on strings containing spaces.
+|45261|Sneaking while teleporting changes player position to face -z.
+|46404|Hearts, food, armor and crosshair are the wrong color (overlay) when holding certain items.
+|46427|Breaking barriers create lava and water particles.
+|46435|Reticle (now hitbox) appears on tile entities in spectator mode.
+|46473|Cannot open minecart with chest in spectator mode.
+|46492|Texture issues with invisible slime.
+|46535|Can control minecarts in spectator mode.
+|46550|The head of the sheep is bugged.
+|46560|When certain mobs take damage, the red damage indicator is not displayed properly.
+|46599|Trapped chests display triple chests in spectator mode.
+|;prev
+|46694|Item frames, knots and paintings displaying void particle.
+|46695|"<code>flyingSpeed</code>" flood in the dev console when flying in gamemode 1 and 3.
+|46711|Spectating baby zombies has wrong eye level.
+|46715|Item repair duplicating item.
+|46751|Cardinal direction in debug screen change with mouse while spectating a mob.
+|46761|Zombies and zombie pigmen do not show holding items.
+|46950|Can see the item name when pressing hotbar shortcut key in spectator mode.
+|47268|Attempting to use a post-processing effect crashes on old Mac hardware.
+}}</onlyinclude>
+
+== Trivia ==
+* 14w06a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:14w06a]]
+[[es:Java Edition 14w06a]]
+[[fr:Édition Java 14w06a]]
+[[ja:Java Edition 14w06a]]
+[[pt:Edição Java 14w06a]]
+[[ru:14w06a (Java Edition)]]
+[[uk:14w06a (Java Edition)]]
+[[zh:Java版14w06a]]

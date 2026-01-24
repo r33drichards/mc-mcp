@@ -1,0 +1,155 @@
+{{Infobox version
+|title=Minecraft 25w17a
+|image=25w17a.jpg
+|image2=Java Edition 25w17a.png
+|edition=Java
+|type=Snapshot
+|date=April 22, 2025
+|jsonhash=b0b639d40ca10ef21f714eb801222e033680e17d
+|clienthash=213e49c5ad5361ba89e4e35529fb36ec46617fc3
+|clientmap=abbf58ef2c8c9400a40b8ad6272aba27f9a4f6ea
+|serverhash=575756f90e54e5c2cd78997dd9e3579936aa9d6d
+|servermap=78bbaacb166117d8b2f3afad82fccf8448602193
+|parent=1.21.6
+|prevparent=1.21.5
+|prev=25w16a
+|next=25w18a
+|nextparent=1.21.7
+}}<onlyinclude>
+
+'''25w17a''' is the third [[snapshot]] for [[Java Edition 1.21.6]] released on April 22, 2025,<ref>{{snap|25w17a|id=a|April 22, 2025}}</ref> which makes the [[locator bar]] available in normal gameplay and fixes bugs.
+
+== Additions ==
+=== Gameplay ===
+'''[[Locator bar]]'''
+* Added [[waypoint style]] for changing waypoints' icon on specific distances in a [[resource pack]].
+** Setting the style of a waypoint is possible using the new {{cmd|waypoint modify ... style}} arguments.
+** The default implementation is as such:<br><syntaxhighlight lang="json">{
+  "near_distance": 128,
+  "far_distance": 332,
+  "sprites": [
+    "minecraft:default_0",
+    "minecraft:default_1",
+    "minecraft:default_2",
+    "minecraft:default_3"
+  ]
+}</syntaxhighlight>
+** {{cd|near_distance}} and {{cd|far_distance}} are optional and default to the values {{cd|128}} and {{cd|332}} respectively.
+*** {{cd|far_distance}} distance must be greater than {{cd|near_distance}}
+** Each sprite is searched within the prefix of {{cd|hud/locator_bar_dot/}} (the directory {{cd|textures/gui/sprites/hud/locator_bar_dot}}).
+
+=== General ===
+'''[[Options]]'''
+* Added new video setting "Cloud Distance" to reduce the cloud range.
+
+'''[[Tag]]'''
+* Added the {{cd|#happy_ghast_avoids}} block tag.
+** Contains blocks that happy ghasts avoid getting close to.
+* Added the {{cd|#triggers_ambient_dried_ghast_block_sounds}} block tag.
+** Contains blocks that can trigger ambient [[dried ghast]] sounds to play when a dried ghast block is placed on them.
+
+== Changes ==
+=== Blocks ===
+'''[[Dried Ghast]]'''
+* Dried ghast's [[rarity]] has been changed from Uncommon to Common.
+
+=== Items ===
+'''[[Harness]]'''
+* Can now be equipped on a [[happy ghast]] using a [[dispenser]].
+
+=== World generation ===
+'''[[Woodland Mansion]]'''
+* The room "{{cd|1x1_b5.nbt}}" generates again.
+
+=== Command format ===
+'''{{cmd|waypoint}}'''
+* Replaced {{cd|fade}} argument by {{cd|style}}: For changing the icon spriteset and selection distances.
+** {{cd|set <waypoint_style/resource>}} changes the style to a specific asset under {{cd|waypoint_style/}}
+** {{cd|reset}} will restore the default icon behavior of the Locator Bar.
+
+=== Gameplay ===
+'''[[Locator Bar]]'''
+* Waypoints' icon now use different sprites based on how far away the player is to their locations instead of the fade effects previously implemented.
+
+=== General ===
+'''[[Game rule]]'''
+* Renamed game rule {{cd|useLocatorBar}} to {{cd|locatorBar}}, consistent with {{BE}}.
+
+'''[[Realms]]'''
+* Changed the layout of the Realms configuration screen to use tabs.
+** A Worlds tab containing changes to any of the world slots, creating new worlds and changing their settings.
+** A Players tab to manage the players that have access and their level of access to the Realm.
+** A Subscription tab to manage the Realms subscription.
+** A Settings tab to change the settings of the Realm.
+* Introduced a Region Preference setting that allows for more granular control over what region a Realm is started.
+* Changed the wording for Close/Open Realm to Temporarily close/Reopen Realm.
+
+== Technical ==
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|74}}.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now {{cd|58}}.
+
+'''[[Shader]]s'''
+* Added two new core shaders; <code>stars</code>, and <code>sky</code> which are used to render the stars and upper portion of the sky respectively.
+* Post-process effects
+** {{cd|Fog}} uniform block.
+*** {{cd|FOG_IS_SKY}} has been removed in favor of splitting up the sky shader.
+
+== Experimental ==
+All features previously behind the "Locator Bar" [[experimental toggle]] have been de-experimentified and are now available during normal gameplay.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w17a
+|;From released versions before 1.21
+|240121|"{{cd|1x1_b5.nbt}}" piece does not generate in woodland mansions.
+|;dev
+|296369|Dispensers cannot equip harnesses onto happy ghasts.
+|296421|Right-clicking a happy ghast equipped with a harness while crouching will play hand animation.
+|296438|The "{{cd|display}}" field on Attribute Modifiers is not optional, despite the changelog saying it is.
+|296443|Happy ghasts don’t avoid pathfinding into dangerous blocks.
+|296511|Gamemode Switcher icons become invisible when using resource pack with opaque or translucent {{cd|selection.png}}.
+|296516|Tooltips are incorrectly rendered below nearby elements when holding your mouse cursor over players that are online on realms.
+|296538|Rarity of Dried Ghast is inconsistent with its crafting ingredients.
+|296542|Waypoints on locator bar do not adjust to 3rd person front camera.
+|296567|Waypoints on locator bar do not respect team colors.
+|296583|Applying the {{cd|waypoint_transmit_range}} attribute to an entity at the same time it is summoned makes it not show on the locator bar.
+|;prev
+|296750|The game crashes after startup on some systems (predominantly Linux systems) with AMD graphics.
+|296755|Resource Packs: The panorama overlay now renders in front of everything in the title screen.
+|296756|Clouds do not render at render distance 2 & 3.
+|296764|The text cursor renders behind command auto-complete text.
+|296766|GUIs of rideable mobs are missing their slots as of 25w16a.
+|296770|Strikethrough text in the villager interface is rendered behind characters.
+|296774|Player messages within the "Select Chat Messages to Report" menu aren’t rendered while selected.
+|296775|Some elements within the "Select Chat Messages to Report" menu are rendered darker while player messages are selected.
+|296777|Lead shift right-clicking doesn't work on Boats with Chests.
+|296779|The social interactions menu is rendered darker than normal.
+|296782|Player models within the “Report Player Skin” menu are rendered darker and lower than normal.
+|296794|Furnaces, blast furnaces, and smokers sometimes do not show the burn progress and lit progress animations.
+|296805|The game crashes when holding your mouse cursor over players that are online on realms.
+|296806|Cloud rendering has a considerable impact on performance as of 25w16a.
+|296807|The titles of selected tabs within the "Create New World" menu are rendered behind the background.
+|296808|The titles of lists within the resource pack and data pack menus are rendered behind the background.
+|296984|The "No pending invites!" text within the realms invitation menu is rendered behind the background.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|Vz0NtmXAFaY}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w17a]]
+[[es:Java Edition 25w17a]]
+[[fr:Édition Java 25w17a]]
+[[ja:Java Edition 25w17a]]
+[[lzh:二五週一七甲]]
+[[pt:Edição Java 25w17a]]
+[[ru:25w17a (Java Edition)]]
+[[uk:25w17a (Java Edition)]]
+[[zh:Java版25w17a]]

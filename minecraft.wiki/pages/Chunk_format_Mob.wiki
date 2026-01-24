@@ -1,0 +1,93 @@
+<div class="treeview"><onlyinclude>
+**{{nbt|float|AbsorptionAmount}}: number of extra health added by Absorption effect.
+** {{nbt|list|active_effects}}: The list of potion effects on this mob. May not exist.
+*** {{nbt|compound}} A potion effect
+**** {{nbt|bool|ambient}}: 1 or 0 ({{cd|true|false|d=/}}) - if {{cd|true}}, this effect is provided by a Beacon and therefore should be less intrusive on screen.
+****{{nbt|byte|amplifier}}: The potion effect level. 0 is level 1.
+****{{nbt|int|duration}}: The number of [[game tick]]s before the effect wears off. -1 when infinite.
+****{{nbt|compound|hidden_effect}}: Lower amplifier effect of the same type, this replaces the above effect when it expires. (The duration of the effect still decreases in here too)
+****{{nbt|string|id}}: The [[Status effect#Effect list|effect name]].
+****{{nbt|bool|show_icon}}: 1 or 0 ({{cd|true|false|d=/}}) - if {{cd|true}}, effect icon is shown; if {{cd|false}}, no icon is shown.
+****{{nbt|bool|show_particles}}: 1 or 0 ({{cd|true|false|d=/}}) - if {{cd|true}}, particles are shown (affected by {{cd|ambient}}); if {{cd|false}}, no particles are shown.
+**{{nbt|list|attributes}}:{{Anchor|Attributes}} A list of [[Attribute]]s for this mob. These are used for many purposes in internal calculations, and can be considered a mob's "statistics". Valid attributes for a given mob are listed in the [[Attribute|main article]].
+*** {{nbt|compound}} An individual attribute.
+****{{nbt|string|id}}: The name of this attribute.
+****{{nbt|double|base}}: The base value of this attribute.
+****{{nbt|list|modifiers}}:{{Anchor|Modifiers}} A list of [[Attribute#Modifiers|Modifiers]] acting on this attribute. Modifiers alter the base value in internal calculations, without changing the original copy. Note that a modifier never modifies base to be higher than its maximum or lower than its minimum for a given attribute.
+*****{{nbt|compound}} An individual modifier.
+******{{nbt|double|amount}}: The amount by which this modifier modifies the base value in calculations.
+******{{nbt|string|id}}: A [[Resource location]] unique to this modifier. Used to identify the modifier so that the correct modifier can be added or removed.
+******{{nbt|string|operation}}: {{cd|add_value|add_multiplied_base|add_multiplied_total|d=,}}. Defines the operation this modifier executes on the attribute's base value.
+*******<code>add_value</code>: Increment {{cd|X|Amount|d= by }}.
+*******<code>add_multiplied_base</code>: Increment {{cd|Y|X*Amount|d= by }}.
+*******<code>add_multiplied_total</code>: Set <code>Y = Y * (1 + Amount)</code> (equivalent to Increment {{cd|Y|Y * Amount|d= by }}).
+***** The specified modifiers are applied to the attribute, probably whenever the attribute is modified.{{info needed}} To compute the effective value of the attribute, the game:
+*****# Sets <code>X = Base</code>.
+*****# Executes all add_value modifiers.
+*****# Sets <code>Y = X</code>.
+*****# Executes all add_multiplied_base modifiers.
+*****# Executes all add_multiplied_total modifiers.
+****** The value Y is the final effective value of the attribute.{{info needed}}
+**{{nbt|compound|Brain}}:{{Anchor|Brain}} Everything this entity has to keep in mind.
+***{{nbt|compound|memories}}: Used for complex behaviors.{{info needed}} The only mobs that have this tag are described below.
+****{{nbt inherit/allay memories|indent=**}}
+****{{nbt inherit/axolotl memories|indent=**}}
+****{{nbt inherit/camel memories|indent=**}}
+****{{nbt inherit/copper golem memories|indent=**}}
+****{{nbt inherit/frog memories|indent=**}}
+****{{nbt inherit/goat memories|indent=**}}
+****{{nbt inherit/piglin memories|indent=**}}
+****{{nbt inherit/piglin brute memories|indent=**}}
+****{{nbt inherit/sniffer memories|indent=**}}
+****{{nbt inherit/villager memories|indent=**}}
+****{{nbt inherit/warden memories|indent=**}}
+**{{nbt|bool|CanPickUpLoot}}: 1 or 0 ({{cd|true|false|d=/}}) - if {{cd|true}}, the mob can pick up loot (wear armor it picks up, use weapons it picks up).
+**{{nbt inherit/DeathLootable|indent=**}}
+**{{nbt|short|DeathTime}}: Number of ticks the mob has been dead for. Controls death animations. 0 when alive.
+**{{nbt|compound|drop_chances}}: A map between equipment slot type and chance value. Each entry specifies the chance that the item in that slot is dropped when the mob dies. If not specified or removed, chance is assumed as default (0.085f). A chance value between 0.0f and 1.0f applies a [[Drops#Equipped_items|random]] damage value if dropped and it's only drops if the mob is killed by a player or a tamed wolf. For values higher than 1.0f, the item damage is preserved and it's always dropped. Equipment picked up by mobs is set to 2.0f. Each entry is also used to calculate the chance the item in dropped when swap for a more preferred one<ref>{{bug|MC-279832|resolution=WAI}}</ref>, but not directly. If the value is 0.0f or less, the drop chance is 0%, if the value is greater than 0.0f, the drop chance is the value +10% and the item damage is preserved.  
+***{{nbt|float|head}} : Chance value for the head item to drop.
+***{{nbt|float|chest}} : Chance value for the chest item to drop.
+***{{nbt|float|legs}} : Chance value for the legs item to drop.
+***{{nbt|float|feet}} : Chance value for the feet item to drop.
+***{{nbt|float|mainhand}} : Chance value for the mainhand item to drop.
+***{{nbt|float|offhand}} : Chance value for the offhand item to drop.
+***{{nbt|float|body}} : Chance value for the body item to drop.
+***{{nbt|float|saddle}} : Chance value for the saddle item to drop.
+**{{nbt|compound|equipment}}: Map between equipment slot type and item stack. Does not exist if the inventory is empty.
+***{{nbt|compound|head}}: The item being held in mob's head slot.
+***{{nbt|compound|chest}}: The item being held in the mob's chest slot.
+***{{nbt|compound|legs}}: The item being held in the mob's legs slot.
+***{{nbt|compound|feet}}: The item being held in the mob's feet slot.
+***{{nbt|compound|mainhand}}: The item being held in the mob's main hand.
+***{{nbt|compound|offhand}}: The item being held in the mob's off hand.
+***{{nbt|compound|body}}: The item being held in the mob's body slot.
+***{{nbt|compound|saddle}}: The item being held in the mob's saddle slot.
+****{{nbt inherit/itemnoslot|indent=****}}
+**{{nbt|byte|FallFlying}}: Setting to 1 for non-player entities causes the entity to glide as long as they are wearing elytra in the chest slot. Can be used to detect when the player is gliding without using scoreboard statistics.
+**{{nbt|float|Health}}: number of health the entity has.
+**{{nbt|int-array|home_pos}}: The mob's "home" position. Mobs will limit their pathfinding to stay within the indicated area. Some mobs, like bats, slimes, magma cubes, phantoms and ender dragons may ignore it. Interacting with leashes or riding may change the home position of the mob. For [[creaking]]s, this is the position of their [[creaking heart]].
+**{{nbt|int|home_radius}}: Max radius of the data {{cd|home_pos}}.
+** {{nbt|integer|HurtByTimestamp}}: The last time the mob was damaged, measured in the number of ticks since the mob's creation. Updates to a new value whenever the mob is damaged, then updates again 101 ticks later for reasons unknown. Can be changed with [[commands]], but the specified value does not affect natural updates in any way, and is overwritten if the mob receives damage.
+**{{nbt|short|HurtTime}}: Number of ticks the mob turns red for after being hit. 0 when not recently hit.
+**{{nbt|compound}}{{nbt|int-array|leash}}: Information about where this leash connects to. Does not exist if the entity is not leashed. 
+***; The int array form ({{nbt|int array}}) represents the block location of the fence post that the leash is attached to (3 integers representing the X, Y, and Z coordinates respectively), or a compound containing information about the entity the leash is attached to.
+***; The compound form ({{nbt|compound}}) contains the UUID of the entity that the leash is attached to.
+***{{nbt|int-array|UUID}}: This [[Universally Unique IDentifier]] of the entity that the leash is attached to.
+**{{nbt|bool|LeftHanded}}: 1 or 0 ({{cd|true|false|d=/}}) - if {{cd|true}}, the mob renders the main hand as being left.
+** {{nbt|compound|locator_bar_icon}}: The waypoint's icon visual data in the [[locator bar]].
+*** {{nbt|int|color}}: The waypoint's color stored as 32-bit signed integer using {{w|two's complement}}, assuming the color is fully opaque.
+*** {{nbt|string|style}}: The waypoint's style name from {{cd|[[waypoint_style]]}} directory in a [[resource pack]].
+**{{nbt|bool|NoAI}}: 1 or 0 ({{cd|true|false|d=/}}) - Setting to {{cd|true}} disables the mob's AI. The mob does not and cannot move, to the extent of not falling when normally able.
+**{{nbt|bool|PersistenceRequired}}: 1 or 0 ({{cd|true|false|d=/}}) - if {{cd|true}}, the mob must not despawn naturally.
+**{{nbt|int-array|sleeping_pos}}: The coordinate of where the entity is sleeping, absent if not sleeping.
+**{{nbt|string|Team}}: This tag is actually not part of the NBT data of a mob, but instead used when spawning it, so it cannot be tested for. It makes the mob instantly join the [[scoreboard]] team with that name.
+</onlyinclude></div><noinclude>
+[[Category:Top-level data pages]]
+[[fr:Format de chunk/Créature]]
+[[ja:Chunkフォーマット/Mob]]
+[[ko:청크 형식/몹]]
+[[pt:Formato de chunk/Criatura]]
+[[ru:Формат чанка/Моб]]
+[[th:Chunk format/Mob]]
+[[uk:Формат чанку/Моб]]
+</noinclude>

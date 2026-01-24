@@ -1,0 +1,373 @@
+{{about|data pack contents|the game mechanic|Damage}}{{exclusive|java}}
+'''Damage types''' are [[JSON]] files located in [[Data pack|data packs]] that define different kinds of damage that entities can take. They control which attributes the damage has as well as which death message is used when an entity dies due to that type of damage.
+
+Additionally, the built-in [[Damage type tag (Java Edition)|damage type tags]] control many aspects of how damage is applied by the game.
+
+Custom damage types can be applied only by using the {{cmd|damage}} command.
+
+== JSON format ==
+Damage types are stored as [[JSON]] files within a [[data pack]], at the path <code>data/<namespace>/damage_type/<name>.json</code>.<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|message_id}}: Used as part of the [[death message]] translation key if {{nbt|string|death_message_type}} is set to {{cd|default}}, as shown [[Damage type#Default message type|below]].
+** {{nbt|float|exhaustion}}: The amount of hunger [[exhaustion]] caused by this damage type.
+** {{nbt|string|scaling}}: Whether this damage type scales with [[difficulty]]. Possible values: {{cd|never}}, {{cd|always}}, or {{cd|when_caused_by_living_non_player}}. See [[Damage type#Scaling|below]] for more detail.
+** {{nbt|string|effects}}: Optional field controlling how incoming damage is shown to the player. Possible values: {{cd|hurt}} (default), {{cd|thorns}}, {{cd|drowning}}, {{cd|burning}}, {{cd|poking}}, {{cd|freezing}}. See [[Damage type#Effects|below]] for more detail.
+** {{nbt|string|death_message_type}}: Optional field that controls the kind of death messages to use. Possible values: {{cd|default}} (default), {{cd|fall_variants}}, {{cd|intentional_game_design}}. See [[Damage type#Death messages|below]] for more detail.
+</div>For example, here is JSON for the built-in {{cd|minecraft:arrow}}:<syntaxhighlight lang="json">
+{
+	"exhaustion": 0.1,
+ 	"message_id": "arrow",
+	"scaling": "when_caused_by_living_non_player"
+}
+</syntaxhighlight>
+
+== List of damage types ==
+{| class="wikitable"
+!Damage type
+!Sources
+|-
+|{{cd|arrow}}
+|
+* Any kind of [[arrow]] hitting something
+* A spectral arrow or tipped arrow hitting something
+|-
+|{{cd|bad_respawn_point}}
+|
+* A bed or respawn anchor exploding
+|-
+|{{cd|cactus}}
+|
+* Touching a [[cactus]]
+|-
+|<code>campfire</code>
+|
+* Touching a [[campfire]] or [[soul campfire]]
+|-
+|{{cd|cramming}}
+|
+* When too many mobs are in one place
+|-
+|{{cd|dragon_breath}}
+|
+* Unused<ref>{{bug|MC-84595||"Roasted in dragon's breath" death message does not appear when player is killed by dragon's breath}}</ref>
+|-
+|{{cd|drown}}
+|
+* Ticking damage while [[drowning]]
+* [[Snow golem]]s, [[blazes]]s, [[endermen]], and [[strider]]s in water/rain
+* [[Bee]]s underwater
+* [[Fish]], [[tadpole]]s, [[dolphin]]s and [[squid]] are out of water for too long
+|-
+|{{cd|dry_out}}
+|
+* When [[nautilus]]es, [[dolphin]]s, and [[axolotl]]s are out of water for too long
+|-
+|{{cd|ender_pearl}}
+|
+* Teleporting with an [[ender pearl]]
+|-
+|{{cd|explosion}}
+|
+* When an [[end crystal]] takes damage and blows up
+* Damage to the [[ender dragon]] when the healing end crystal is destroyed
+* A [[wither]] fight starting
+* A [[minecart with TNT]] exploding, either from a flaming arrow or another reason
+* [[TNT]] exploding when its fuse runs out
+* A [[creeper]] exploding when its fuse runs out
+* An explosion caused by a [[ghast fireball]] or [[Wither#Wither Skull|wither skull]]
+* Explosions from the [[Ender Dragon#Re-summoning|dragon respawn animation]]
+|-
+|{{cd|fall}}
+|
+* Any entity taking fall damage
+* Riding an entity that took fall damage
+|-
+|{{cd|falling_anvil}}
+|
+* A falling [[anvil]] hitting something
+|-
+|{{cd|falling_block}}
+|
+* A non-anvil, non-dripstone [[falling block]] hitting an entity
+|-
+|{{cd|falling_stalactite}}
+|
+* Falling [[pointed dripstone]] hitting something
+|-
+|{{cd|fireball}}
+|
+* A ghast or blaze [[fireball]] with an owner hitting an entity directly
+|-
+|{{cd|fireworks}}
+|
+* A firework exploding
+|-
+|{{cd|fly_into_wall}}
+|
+* Hitting a wall or world border while flying using elytra, i.e. "kinetic energy"
+|-
+|{{cd|freeze}}
+|
+* Ticking damage while freezing in [[powder snow]]
+|-
+|{{cd|generic}}
+|
+* [[Bee|Bees]] dying after stinging
+* Simulating the [[Advancement/JSON format#minecraft:player hurt entity|{{cd|player_hurt_entity}}]] trigger when punching an [[interaction]] entity
+* Used in a {{cd|DamageEvent}} package
+* When reporting an end crystal killed by {{cmd|kill}} to the dragon fight
+* An entity achieving a death that is not assigned to any damage type or is assigned to generic damage type
+|-
+|{{cd|generic_kill}}
+|
+* Using {{cmd|kill}}
+|-
+|{{cd|hot_floor}}
+|
+* Standing on a [[magma block]]
+|-
+|{{cd|in_fire}}
+|
+* Ticking damage while standing in a [[fire]] or [[soul fire]] block
+* Ticking damage while standing on a lit [[campfire]] or [[soul campfire]]
+|-
+|{{cd|in_wall}}
+|
+* Ticking damage while stuck in a solid block
+|-
+|{{cd|indirect_magic}}
+|
+* Instant damage from a [[harming]]/[[healing]] potion (drink, splash, or lingering)
+* Extra damage from a [[guardian]]'s beam attack
+* [[Evoker fangs]] with an owner dealing damage
+* Damage dealt to [[snow golem]]s, [[blaze]]s, [[endermen]], and [[strider]]s from splash water bottles
+|-
+|{{cd|lava}}
+|
+* Ticking damage while in [[lava]]
+|-
+|{{cd|lightning_bolt}}
+|
+* When struck by [[lightning]]
+|-
+|{{cd|mace_smash}}
+|
+* Extra damage by attacking using [[mace]]
+|-
+|{{cd|magic}}
+|
+* Simulating a kill with {{cmd|loot kill}}
+* Ticking damage from a [[Harming]]/[[Healing]] effect (i.e. not initial contact)
+* Ticking damage from a [[Poison]] effect
+* [[Evoker fangs]] with no owner dealing damage
+* A [[Wither#Wither Skull|wither skull]] with no owner hitting something
+* A [[conduit]] attack
+* A arrow of harming hitting something
+|-
+|{{cd|mob_attack}}
+|
+* Melee attack dealt by most mobs
+* Touching a [[pufferfish]]
+* The [[ender dragon]] pushing entities away
+* A [[guardian]]'s beam attack
+* A [[ravager]] roaring
+* Touching a blaze
+|-
+|{{cd|mob_attack_no_aggro}}
+|
+* A [[goat]] ramming
+|-
+|{{cd|mob_projectile}}
+|
+* A [[shulker bullet]] hitting something
+|-
+|{{cd|on_fire}}
+|
+* An entity burning
+* [[Snow golem|Snow golems]] melting or burning
+|-
+|{{cd|out_of_world}}
+|
+* Ticking damage in the [[void]]
+|-
+|{{cd|outside_border}}
+|
+* Ticking damage while outside the [[world border]]
+|-
+|{{cd|player_attack}}
+|
+* A player hitting a mob
+* A player dealing a sweeping attack
+* Feeding a [[parrot]] a [[cookie]]
+* A player breaking a non-mob entity
+* When granting the {{cd|kill_mob_near_sculk_catalyst}} criteria if the actual damage type couldn't be found
+|-
+|{{cd|player_explosion}}
+|
+* Anything in {{cd|explosion}}, when it can be determined a player was directly responsible
+|-
+|{{cd|sonic_boom}}
+|
+* A [[warden]] booming
+|-
+|{{cd|spit}}
+|
+* A [[llama spit]]ting
+|-
+|{{cd|stalagmite}}
+|
+* Falling too far onto [[pointed dripstone]]
+|-
+|{{cd|starve}}
+|
+* A [[vex]] summoned by an [[evoker]] dying after it's time ran out
+* Ticking damage from having no food
+|-
+|{{cd|sting}}
+|
+* A [[bee]] stinging
+|-
+|{{cd|sweet_berry_bush}}
+|
+* Ticking damage while moving in a [[berry bush]] block
+|-
+|{{cd|thorns}}
+|
+* Attacking a [[guardian]] or [[elder guardian]]
+* Attacking an entity wearing armor enchanted with [[thorns]]
+|-
+|{{cd|thrown}}
+|
+* A [[snowball]], [[egg]], or [[ender pearl]] hitting something
+|-
+|{{cd|trident}}
+|
+* A [[trident]] hitting something
+|-
+|{{cd|unattributed_fireball}}
+|
+* A ghast or blaze [[fireball]] without an owner hitting an entity directly
+|-
+|<code>wind_charge</code>
+|
+* A [[wind charge]], thrown or fire from a [[breeze]], hitting something
+|-
+|{{cd|wither}}
+|
+* Ticking damage from a [[Wither (effect)|Wither]] effect
+|-
+|{{cd|wither_skull}}
+|
+* A [[Wither#Wither Skull|wither skull]] with an owner hitting something
+|-
+|}
+
+== Scaling ==
+Damage types control whether damage scales with [[difficulty]].{{info needed|how exactly does damage scale?}}
+
+Possible values of {{nbt|string|scaling}}:
+
+* {{cd|never}}: Damage is always the same.
+* {{cd|always}}: Damage always scales with difficulty.
+* {{cd|when_caused_by_living_non_player}}: Damage scales with difficulty if the attacker<ref name="attacker2" group="note">The entity that was responsible for the damage. Also known as the "source entity". For example, if a player is shot by a skeleton, the skeleton is the attacker. If a player is shot by a [[dispenser]], the arrow itself is the attacker. If the player is pricked by a cactus, there is no attacker.</ref> was a living entity<ref name="living2" group="note">This includes [[Armor stand|armor stands]].</ref> and was not a player.
+
+== Effects ==
+Damage types control how incoming damage is shown to the player.
+
+Possible values of {{nbt|string|effects}}:
+
+* {{cd|hurt}} (default): The default hurt sound.{{Sound||Player hurt1.ogg|Player hurt2.ogg|Player hurt3.ogg}}
+* {{cd|thorns}}: [[Thorns]] hurt sound.{{Sound||Thorns1.ogg|Thorns2.ogg|Thorns3.ogg|Thorns4.ogg}}
+* {{cd|drowning}}: [[Drowning]] sound.{{Sound||Player hurt drowning1.ogg|Player hurt drowning2.ogg|Player hurt drowning3.ogg|Player hurt drowning4.ogg}}
+* {{cd|burning}}: A single tick of [[Burn|burning]] sound.{{Sound||Player hurt fire1.ogg|Player hurt fire2.ogg|Player hurt fire3.ogg}}
+* {{cd|poking}}: [[Berry bush]] poke sound.{{Sound||Player hurt sweet berry bush1.ogg|Player hurt sweet berry bush2.ogg}}
+* {{cd|freezing}}: [[Freezing]] tick sound.{{Sound||Player hurt freeze1.ogg|Player hurt freeze2.ogg|Player hurt freeze3.ogg|Player hurt freeze4.ogg|Player hurt freeze5.ogg}}
+
+== Death messages ==
+Damage types control the [[death messages]] displayed when players or pets die.
+
+Possible values of {{nbt|string|death_message_type}}:
+
+* {{cd|default}} (default): Use the standard death message logic.
+* {{cd|fall_variants}}: Use the fall damage death messages, e.g. <code>death.fell.assist.item</code>.
+* {{cd|intentional_game_design}}: Show the "intentional game design" death message.
+
+=== Default message type ===
+When standard death message logic is being used, messages are generated as follows, making use of the {{nbt|string|message_id}} tag:
+
+* If the killing blow was caused by an attacker<ref name="attacker2" group="note" /> and the attacker was holding a named [[item]] in their main hand at the time of death, this is categorized as an item death. A [[Raw JSON text format#Translated Text|translated message]] is displayed using the translation key <code>death.attack.<message_id>.item</code> with the following insertions available:
+*# The name of the dying entity.
+*# The name of the attacker.
+*# The name of the item.
+* If the killing blow was not caused by an attacker<ref name="attacker2" group="note" />, but the dying entity had recently{{info needed|how recently?}} taken damage that ''was'' caused by a living entity<ref name="living2" group="note" />, this is categorized as an assisted death. A [[Raw JSON text format#Translated Text|translated message]] is displayed using the translation key <code>death.attack.<message_id>.player</code> with the following insertions available:
+*# The name of the dying entity.
+*# The name of the recent attacker.
+* If neither of the above apply, this is categorized as a normal death. A [[Raw JSON text format#Translated Text|translated message]] is displayed using the translation key <code>death.attack.<message_id></code> with the following insertions available:
+*# The name of the dying entity.
+*# The name of the attacker<ref name="attacker2" group="note" />, if there was one.
+
+=== Design ===
+Because of how the default death messages are set up, most vanilla damage types are divided into ones that always have an attacker<ref name="attacker2" group="note" /> and ones that never have an attacker. Depending on whether there was an attacker, the translation for normal deaths (<code>death.attack.<message_id></code>) has either one or two available insertions. Translations have no safe way to access an insertion that may or may not be there, so the primary options are:
+
+The death type is planned to always have an attacker.
+
+* The translation looks like<syntaxhighlight lang="json">
+"death.attack.mob": "%s was slain by %s",
+"death.attack.mob.item": "%s was slain by %s using %s",
+</syntaxhighlight>
+* The translation key <code>death.attack.<message_id>.player</code> is not provided, since assisted deaths are impossible.
+
+The death type is planned to never have an attacker.
+
+* The translation looks like<syntaxhighlight lang="json">
+"death.attack.drown": "%s drowned",
+"death.attack.drown.player": "%s drowned whilst trying to escape %s",
+</syntaxhighlight>
+* The translation key <code>death.attack.<message_id>.item</code> is not provided, since item deaths are impossible.
+
+The death type may or may not have an attacker.
+
+* The translation looks like<syntaxhighlight lang="json">
+"death.attack.electricity": "%s was electrocuted",
+"death.attack.electricity.item": "%s was electrocuted by %s using %s",
+"death.attack.electricity.player": "%s was electrocuted whilst trying to escape %s",
+</syntaxhighlight>
+* The translation key <code>death.attack.<message_id></code> avoids using the second insertion, since it may or may not be present.
+* The translation is a little awkward, because the death message when killed by a player mention them only if they're holding a named weapon.
+
+To avoid the awkwardness of the third option there can be two different damage types, one for use with an attacker, and one for use without an attacker:<syntaxhighlight lang="json">
+"death.attack.active_electricity": "%s was electrocuted by %s",
+"death.attack.active_electricity.item": "%s was electrocuted by %s using %s",
+"death.attack.passive_electricity": "%s was electrocuted",
+"death.attack.passive_electricity.player": "%s was electrocuted whilst trying to escape %s",
+</syntaxhighlight>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.19.4|dev=23w06a|Added damage types to [[data pack]]s.}}
+|{{HistoryLine||1.20|dev=pre1|Added {{cd|d=and|outside_border|generic_kill}}.}}
+|{{HistoryLine||1.20.5|dev=23w51a|Added {{cd|spit}}.}}
+|{{HistoryLine||1.21|dev=24w18a|Added {{cd|wind_charge}}.}}
+|{{HistoryLine|||dev=24w19b|Added {{cd|campfire}}.}}
+|{{HistoryLine||1.21.2|dev=24w33a|Added {{cd|mace_smash}} and {{cd|ender_pearl}}.}}
+|{{HistoryLine||1.21.11|dev=25w41a|Added a new <code>minecraft:spear</code> damage type.}}
+}}
+
+== External links ==
+
+* [https://misode.github.io/damage-type/ Damage type Generator on misode.github.io]
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+[[de:Schadensarten]]
+[[fr:Type de dégâts]]
+[[ja:ダメージの種類]]
+[[pt:Tipo de dano]]
+[[zh:伤害类型]]

@@ -1,0 +1,221 @@
+{{exclusive|bedrock}}{{outdated}}
+Bedrock Edition uses a modified version of Google's LevelDB, which uses the Zlib compression format for level storage.
+==LevelDB based format==
+
+When the LevelDB format was initially introduced in [[Pocket Edition v0.9.0 alpha]], the terrain of each chunk was stored under one key (the "LegacyTerrain" record). This was replaced in [[Pocket Edition 1.0.0]] by the "SubChunkPrefix" record, storing each 16×16×16 subchunk separately as a different leveldb key, analogous to an [[Anvil file format|Anvil]] "section".<ref>https://www.reddit.com/r/MCPE/comments/5cw2tm/level_format_changes_in_mcpe_0171_100/d9zv9s8/</ref> A new version of the subchunk format enclosing "Block Storage" records was introduced in [[Bedrock Edition 1.2.13]].<ref>https://gist.github.com/Tomcc/a96af509e275b1af483b25c543cfbf37#the-new-subchunk-format</ref>
+
+=== SubChunkPrefix record (1.0 and 1.2.13 formats) ===
+The original version of the subchunk format is as follows:
+* '''Version:''' 1 byte (may be 0, 2, 3, 4, 5, 6 or 7; the game itself writes 0)
+* '''Block IDs:''' 4kb, 8 bits per block
+* '''Block Data:''' 2kb, 4 bits per block, packed least-significant nibble first
+* '''Sky Light:''' 2kb, 4 bits per block
+* '''Block Light:''' 2kb, 4 bits per block
+
+The light information may be omitted in chunks saved by more recent versions. If present, it is ignored by the current version.<ref>https://gist.github.com/Tomcc/a96af509e275b1af483b25c543cfbf37#the-new-subchunk-format</ref>
+
+A new format was introduced in [[Bedrock Edition 1.2.13]] to allow the representation of blocks with IDs outside the 0–255 range, although the old format may remain in existing chunks until they are re-saved. It is as follows:
+* '''Version:''' 1 byte (may be 1 or 8)
+* '''Storage count:''' 1 byte (omitted if version is set to 1)
+* Zero or more concatenated '''Block Storage''' records, as specified by the count (or 1 if version is set to 1).
+**In the majority of cases, there is only one storage record. A second record may be present to indicate block water-logging. Blocks that are not water-logged are given the "air" block.
+
+The Block Storage format, as used in level files (as opposed to the server protocol) is as follows:
+* '''Storage version:''' 1 byte. The least significant bit is used as a flag (which should be zero for the format used in save files), while the remainder is used for the '''bits per block''' (i.e. <code>bitsPerBlock = storageVersion >> 1</code>). Valid values are 1, 2, 3, 4, 5, 6, 8 and 16. Used to calculate the number of blocks per 32-bit integer (blocks per word), where <code>blocksPerWord = floor(32 / bitsPerBlock)</code>.
+* The block states as indices into the palette, packed into <code>ceil(4096 / blocksPerWord)</code> 32-bit little-endian unsigned integers. For the <code>blocksPerWord</code> values which are not factors of 32, each 32-bit integer contains two (high) bits of padding. Block state indices are not split across words.
+* '''Palette size:''' A 32-bit little-endian integer specifying the number of block states in the palette.
+* The specified number of block states in little-endian NBT format, concatenated.
+
+Blocks are stored column-by-column (incrementing Y first, incrementing Z at the end of the column, incrementing X at the end of the cross-section). This is the opposite order of axes to the one used by the Java Edition formats. Each block state contains a "name" tag specifying the [[resource location]] of the block, and either a "states" tag listing the [[block state|block state properties]] or (if the chunk was last saved by [[Bedrock Edition 1.12.1]] or lower) a "val" tag giving the block metadata value.
+
+=== LegacyTerrain record (0.9.0 format) ===
+The 0x30 terrain data entry appears to contain block data for an x*z*y = 16×16×128 block chunk. The value associated with the 0x30 terrain data key is always of length 83,200 and seems to consist of the following data:
+* 32,768 bytes of block data which appears to be a x*z*y = 16×16×128 block chunk.
+* 16,384 bytes of regular data (one nibble for each byte of block data above).
+* 16,384 bytes of skylight data (one nibble for each byte of block data above).
+* 16,384 bytes of block light data (one nibble for each byte of block data above).
+* 256 bytes of additional data which appears to be a z*x = 16×16 byte array (one  byte for each vertical y column of 128 bytes of block data above) containing dirty column info.
+* 1,024 bytes of additional data which appears to be a 16×16×4 byte array (four bytes for each vertical y column of 128 bytes of block data above) containing grass color info.
+
+The following definitions are provided to clarify the mapping between the location of a block within a LevelDB entry containing a chunk of 32,768 blocks and the corresponding location of the block within the entire world:
+* Let X and Z be the values contained within the LevelDB key.
+* Let C [] be a three dimensional array of the chunk of 32,768 blocks contained within the LevelDB entry. The first two indices i and j range from 0 to 15, and the third index y ranges from 0 to 127.
+* Let W [] be a three dimensional array of the blocks contained within the entire world.
+** For old style worlds, the first two indices x and z both range from 0 to 255. For infinite worlds, the first two indices x and z both range over the values of a four byte integer and may be negative as well as positive.
+** The third index y ranges from 0 to 127 for both old style and infinite worlds.
+Assuming the definitions above, the location of a block with a LevelDB entry with key values X and Z maps to the corresponding location of the block within the entire world as follows:
+* C [i, j, y]  <->  W [x, z, y] where x = 16*X + i and z = 16*Z + j
+The x index specifies the North to South location where a smaller value of x is farther North than a larger value of x. The z index specifies the East to West location where a smaller value of z is farther East than a larger value of z. The y index specifies the vertical location where a smaller value of y is at a lower height than a larger value of y. For an old style world, the block at the bottom of the North-East corner of the world is W [0, 0, 0].
+
+== 0.8.1 and below ==
+
+=== level.dat ===
+The level.dat file is in NBT format, based on the format of level.dat in a Desktop world. level.dat is an uncompressed little-endian NBT file that stores environmental data (time of day, for example) and player health, inventory, velocity, and position within the map.
+
+The file begins with an 8-byte header, consisting of a little-endian 4-byte integer indicating the storage version. It is followed by another integer containing the length of the file, minus the header.<ref>https://github.com/TkTech/PyNBT/blob/efc10fd3c9917607cec22f9fbb173bff6244f65e/opennbt/helpers.py<nowiki/></ref>
+
+==== NBT Structure ====
+<div class="treeview">
+* {{nbt|compound}} World data.
+** {{nbt|int|GameType}}: Whether in survival (0) or in creative (1) mode.
+** {{nbt|long|LastPlayed}}: Stores the Unix time stamp (in seconds) when the player saved the game.
+** {{nbt|string|LevelName}}: Specifies the name of the level.
+** {{nbt|int|Platform}}: Seems to store the platform that the level is created on. Currently observed value is 2.
+** {{nbt|compound|Player}}: Player entity information. See [[#Entity Format|Entity Format]] and Mob Entity Format for details. It is missing the id tag and has additional elements:
+*** {{nbt|list|Armor}}: Each TAG_Compound in this list defines a piece of armor that the player is wearing. This is a list with length 4 - for helmet, chestplate, leggings, and boots.
+**** {{nbt|compound}} Inventory item data
+***** {{nbt|short|id}}: [[Bedrock Edition data values|Item or Block ID.]]
+***** {{nbt|byte|Count}}: Number of items stacked in this inventory slot. Any item can be stacked, including tools. Range is 1-255. Values above 255 are not displayed in-game.
+***** {{nbt|short|Damage}}: For armor, the amount of wear they have suffered. The maximum durability of the armor means undamaged. When the Damage reaches 0, it breaks and disappears.
+*** {{nbt|int|Dimension}}: The dimension the player is in. 0 is the Overworld.
+*** {{nbt|list|Inventory}}: Each TAG_Compound in this list defines an item the player is carrying or holding.
+**** {{nbt|compound}} Inventory item data
+***** {{nbt|byte|Slot}}: Indicates which inventory slot this item is in.
+***** {{nbt|short|id}}: [[Bedrock Edition data values|Item or Block ID.]]
+***** {{nbt|byte|Count}}: Number of items stacked in this inventory slot. Any item can be stacked, including tools. Range is 1-255. Values above 255 are not displayed in-game.
+***** {{nbt|short|Damage}}: For tools, the amount of wear they have suffered. The maximum durability of the tool (for example, 33 for golden tools) means undamaged. When the Damage reaches 0, it breaks and disappears.
+*** {{nbt|int|Score}}: The score of the player.
+*** {{nbt|byte|Sleeping}}: 1 or 0 (true/false) - true if the player was in a bed when this tag was saved; has no effect on whether the player is in a bed when they log in.
+*** {{nbt|short|SleepTimer}}: The number of ticks the player had been in bed when this tag was saved. No effect.
+*** {{nbt|int|SpawnX}}: X coordinate of the player's spawn position. Default is 0.
+*** {{nbt|int|SpawnY}}: Y coordinate of the player's spawn position. Default is 64.
+*** {{nbt|int|SpawnZ}}: Z coordinate of the player's spawn position. Default is 0.
+*** {{nbt|compound|abilities}}: The abilities this player has.
+**** {{nbt|byte|mayfly}}: 1 or 0 (true/false) - true if the player can fly.
+**** {{nbt|byte|flying}}: 1 or 0 (true/false) - true if the player is currently flying.
+**** {{nbt|byte|invulnerable}}: 1 or 0 (true/false) - true if the player is immune to all damage and harmful effects except for [[The Void|void]] damage.
+**** {{nbt|byte|mayBuild}}: 1 or 0 (true/false) - true if the player can place and destroy blocks.
+**** {{nbt|byte|instabuild}}: 1 or 0 (true/false) - true if the player can instantly destroy blocks.
+** {{nbt|long|RandomSeed}}: Random number providing the Random Seed for the terrain.
+** {{nbt|long|SizeOnDisk}}: Estimated size of the entire world in bytes.
+** {{nbt|int|SpawnX}}: X coordinate of the world's spawn position. Default is 0.
+** {{nbt|int|SpawnY}}: Y coordinate of the world's spawn position. Default is 64.
+** {{nbt|int|SpawnZ}}: Z coordinate of the world's spawn position. Default is 0.
+** {{nbt|int|StorageVersion}}: Version of Bedrock Edition NBT, is 3.
+** {{nbt|long|Time}}: Stores the current "time of day" in ticks. There are 20 ticks per real-life second, and 19200 ticks per Minecraft [[daylight cycle]], making the full cycle length 16 minutes—4 minutes shorter than the standard 20 minute daylight cycle. 0 is the start of [[Daylight cycle#Daytime|daytime]], 9600 is the start of [[Daylight cycle#Sunset/dusk|sunset]], 11040 is the start of [[Daylight cycle#Nighttime|nighttime]], 17760 is the start of [[Daylight cycle#Sunrise/dawn|sunrise]], and 19200 is daytime again. The value stored in level.dat is always increasing and can be larger than 19200, but the "time of day" is always modulo 19200 of the "Time" field value.
+** {{nbt|long|dayCycleStopTime}}: Determines the tick the daylight cycle is paused at. Values at or above 2,147,483,648 (2<sup>31</sup>) result in the daylight cycle not being paused. Default value is 5,000 in creative mode, and 18,446,744,073,709,551,615 (2<sup>64</sup>-1) in survival mode.
+** {{nbt|int|spawnMobs}}: Disable (0) or enable (1) mob spawning.
+</div>
+
+=== chunks.dat ===
+This file stores all the terrain data that makes up a world. It is comprised of chunks which are 16×16×128 (XZY) block sections of the terrain. It can store a maximum of 1024 chunks (32×32) and 512×512×128 (33,554,432) blocks, however, the game only generates 256 chunks (16×16) and 256×256×128 (8,388,608) blocks by default.
+
+The file is separated into 4kb sectors (4,096 bytes). The first sector is the "chunk index" which defines where in the file and world a specific chunk is located. Every 4 bytes of the chunk index represents 1 chunk. Every 128 bytes of the chunk index represents a column of 32 chunks along the X axis (West to East). Each subsequent 128 byte section represents 1 row of chunks along the Z axis (North to South). But in a default world generated by the game, only 16 chunks are defined for each column and row.
+
+The format of each chunk in the chunk index is only 4 bytes. Ex: <code>15 51 01 00 </code>. The first byte describes how many 4kb sectors make up the chunk's data. In practice, this is always 21 (0x15). The next three bytes is a little-endian number describing how many 4kb sectors from the start of the file exist before the chunk data begins. If a chunk is not present, all 4 bytes will be zero <code>00 00 00 00</code>.
+
+As an example, if a chunk in the chunk index at 1,0 (X,Z) reads <code>15 51 01 00 </code> we can locate the chunk data within the file. First we get the decimal representation of the last three bytes which are in little-endian <code>51 01 00</code> equals <code>337</code> in decimal. Next we calculate the offset by multiplying our result by the size of a sector <code>337 * 4,096</code>. Last we get the decimal representation of the first byte which is always 21 (0x15) and multiply it by the size of a sector <code>21 * 4,096</code>. As a result, we know this chunk is located at the decimal offset of <code>1,380,352</code> and is <code>86,016</code> bytes in size.
+
+The actual chunk data stores all the terrain data. This includes blocks, data, skylight, blocklight, and biomes.
+
+The first 4 bytes of the chunk data which are in little-endian represent its length in bytes. In Minecraft-generated world files it is always 82180 bytes (chunk data header: 4, actual chunk data: 82176), however in worlds created by third-party programs it may not be, yet the file remains valid if it's at least 82180. If it's less, in-game, the chunk data will be uninitialized.
+
+The next 32,768 bytes contains the block data. The block order is YZX. Every 1 byte is equivalent to going up vertically along the Y axis. After 128 bytes, the height limit of the world is reached, so we move South 1 block along the Z axis and repeat. After 2,048 bytes (128×16) 1 column of the chunk is finished, so we move East 1 block along the X axis and repeat. In most programming languages, this is just a basic 3d array <code>blocks[16][16][128]</code> ([x][z][y]). To reiterate, every 128 blocks is a column on the Z axis, every 16 columns is a row on the X axis.
+
+The next 16,384 bytes contains the "data" data. Otherwise known at damage, meta, or auxiliary data. It's what gives wool its color and chests their direction etc. Just like the block data, the order is YZX. Since data values only range from 0-15, only half a byte is needed to represent 1 block. So, 1 byte actually represents 2 blocks. Hence why the data section is half as big as the block section. This data is big-endian, so a byte like <code>2f</code> actually means the first block at this location has a data value of f, and the second block at this location has a data value of 2. 
+
+The next 16,384 bytes contains the skylight data. The format is identical to the previous "data" format. If a skylight value is f, that means the sunlight is fully lighting that block (like air or glass). The less sunlight is present in that block, the lower the value (like semi-transparent blocks such as leaves or water). And when the skylight value is 0, no sunlight is present in that block (like stone or dirt). Because the game automatically generates lighting, it is unimportant to modify this part of the file when generating a world via an outside program.
+
+The next 16,384 bytes contains the blocklight data. The format is identical to the previous skylight format. If a blocklight value is f, that means the block is emitting the max amount of light (like glowstone). The less light a block emits, the lower the value (like powered redstone). And when the blocklight value is 0, no light is being emitted from that block. Because the game automatically generates lighting, it is unimportant to modify this part of the file when generating a world via an outside program.
+
+The last 256 bytes contains the biome data. Each byte corresponds to a specific biome type. The order is XZ. Every 16 bytes is a new row.
+
+=== entities.dat ===
+This file uses the modified little endian uncompressed NBT format. It appears to store entity information using a format based on the Alpha Level Chunk Format. It also stores [[tile entity]] information as well.
+
+The file has a 12 byte header. It begins with the ASCII Characters "ENT", then one zero byte, then a little-endian integer with the value 1, followed by another little endian integer stating the length of the file in bytes, not counting the header.<ref>https://github.com/TkTech/PyNBT/blob/efc10fd3c9917607cec22f9fbb173bff6244f65e/opennbt/helpers.py<nowiki/></ref>
+
+==== NBT Structure ====
+<div class="treeview">
+* {{nbt|compound}} Root compound tag.
+** {{nbt|list|Entities}}: Each TAG_Compound in this list defines an entity in the world. See [[#Entity Format|Entity Format]] below.
+** {{nbt|list|TileEntities}}: Each TAG_Compound in this list defines a [[Tile entity]], such as a [[furnace]], in the world. See [[#Tile Entity Format|Tile Entity Format]] below.
+</div>
+
+==== Entity Format ====
+
+Every entity is an unnamed TAG_Compound contained in the Entities list of a chunk file. The sole exception is the Player entity, stored in level.dat.
+
+All entities share this base:
+
+<div class="treeview">
+* {{nbt|compound}} Entity data
+** {{nbt|int|id}}: [[Bedrock Edition data values#Entity IDs|Entity Type ID]]. Known values are 13 for Sheep, 32 for Zombie, and 64 for item drops.
+** {{nbt|list|Pos}}: 3 TAG_Floats describing the current X,Y,Z position of the entity.
+** {{nbt|list|Motion}}: 3 TAG_Floats describing the current dX,dY,dZ velocity of the entity. (Note: 0,0,0 is no motion.)
+** {{nbt|list|Rotation}}: Two TAG_Floats representing rotation in degrees.
+*** {{nbt|float}}: The entity's rotation clockwise around the Y axis (called yaw). Due west is 0. Can have large values because it accumulates all of the entity's lateral rotation throughout the game.
+*** {{nbt|float}}: The entity's declination from the horizon (called pitch). Horizontal is 0. Positive values look downward. Does not exceed positive or negative 90 degrees.
+** {{nbt|float|FallDistance}}: Distance the entity has fallen. Larger values cause more damage when the entity lands.
+** {{nbt|short|Fire}}: Number of ticks until the fire is put out. Negative values reflect how long the entity can stand in fire before burning.
+** {{nbt|short|Air}}: How much air the entity has, in ticks. Fills to a maximum of 300 in air. Decreases while underwater.
+** {{nbt|byte|OnGround}}: 1 if the entity is touching the ground.
+</div>
+
+==== [[File:ZombieFace.png|16px]] Mobs ====
+
+<div class="treeview">
+*Additional fields for mobs:
+
+** {{nbt|short|AttackTime}}: Number of ticks the entity's "invincibility shield" is lasting after the entity was last struck.
+** {{nbt|short|DeathTime}}: Number of ticks the entity has been dead for. Controls death animations.
+** {{nbt|short|Health}}: Amount of health the entity has. Players and enemies normally have up to 20 health. Livestock has up to 10 health.
+** {{nbt|short|HurtTime}}: Unknown, maybe time invincible after being hit
+
+* Additional field for animals such as Sheep:
+
+** {{nbt|int|Age}}: Age of the animal.
+
+[[File:SheepFace.png|16px]] '''Sheep''' has two additional fields:
+
+** {{nbt|byte|Sheared}}: 1 or 0 (true/false) - true if the sheep has been shorn.
+** {{nbt|byte|Color}}: 0 to 15 - see [[Data values#Wool|wool data values]] for a mapping to colors. There is evidence that this value does not affect sheep rendering, on versions prior to [[Pocket Edition v0.6.0 alpha]], but does affect wool drops.<ref>http://www.minecraftforum.net/topic/1035251-sheep-wool/</ref>
+
+* [[File:Cobblestone.png|16px]] Additional fields for '''Item''':
+
+** {{nbt|short|Health}}: Starts at 5, and currently only decreases as the item takes fire damage. When health reaches 0, the item is destroyed.
+** {{nbt|short|Age}}: The amount of time an item has been "untouched" on the ground. After 2400 'ticks', or 2 minutes, the item is destroyed.
+** {{nbt|compound|Item}}: Item data
+*** {{nbt|short|id}}: [[bedrock Edition data values|Item or Block ID]].
+*** {{nbt|short|Damage}}: The amount of wear each item has suffered. 0 means undamaged. When the Damage exceeds the item's durability, it breaks and disappears. Only tools and armor accumulate damage normally.
+*** {{nbt|byte|Count}}: Number of [[item]]s contained in this item drop entity. Any item can be stacked, including tools, armor, and vehicles. Range is 1-255.
+</div>
+
+====  Tile Entity Format ====
+<div class="treeview">
+* {{nbt|compound}} Tile Entity data
+** {{nbt|string|id}}: Tile Entity ID. Known values are "Chest", "Furnace" and "Sign".
+** {{nbt|int|x}}: X coordinate of the tile entity.
+** {{nbt|int|y}}: Y coordinate of the tile entity.
+** {{nbt|int|z}}: Z coordinate of the tile entity.
+[[File:Chest.png|16px]] '''Containers''' have one additional field that goes first in the compound if present:
+** {{nbt|list|Items}}:
+*** {{nbt|compound}} Container item data
+**** {{nbt|byte|Count}}:
+**** {{nbt|short|Damage}}:
+**** {{nbt|short|id}}:
+**** {{nbt|byte|Slot}}:
+[[File:Furnace.png|16px]] '''Furnaces''' have two additional fields that go after Items:
+** {{nbt|short|BurnTime}}: 
+** {{nbt|short|CookTime}}:
+[[File:Oak_Sign.png|16px]] '''Signs''' have four additional fields that go after id:
+** {{nbt|string|Text1}}: First line of the sign text
+** {{nbt|string|Text2}}: First line of the sign text
+** {{nbt|string|Text3}}: First line of the sign text
+** {{nbt|string|Text4}}: Fourth line of the sign text
+These fields can be blank. It seems there is no set limit to their length.
+
+</div>
+
+== 0.1.3 and below ==
+{{main|Bedrock Edition level format/v0.1.0 alpha}}
+Prior to [[Pocket Edition v0.2.0 alpha]], level.dat used a raw binary format instead of the NBT format, and player data was stored in a separate file named player.dat. These versions also did not have an entities.dat file, so it was not possible for the game to save any entities besides the player.
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Development]]
+[[pt:Formato de nível da Edição Bedrock/Histórico]]

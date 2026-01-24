@@ -1,0 +1,65 @@
+{{exclusive|java}}
+{{debug warning}}
+{{Infobox command
+|name=raid
+|oplevel=3
+|others=<code>-DMC_DEBUG_DEV_COMMANDS</code> [[debug property]]
+}}
+
+'''/raid''' is a command that can be enabled with the [[debug property]] <code>-DMC_DEBUG_DEV_COMMANDS</code>. It controls [[raid]]s.
+
+== Syntax ==
+<code>raid start <omenlvl></code>
+: Starts a raid of the specified level if there is a village near the execution position and there is no ongoing raid.
+<code>raid stop</code>
+: Stops a raid if there is one at a village near the execution position.
+<code>raid check</code>
+: Checks if there is a raid at a village near the execution position, and prints information about it if there is. The information includes the number of waves spawned as of yet, the level of the raid, the number of raiders left in the current wave, and the total health of all raiders left in the current wave.
+<code>raid sound <type></code>
+: If the specified [[text component]] evaluates to the string {{cd|local}} (without resolution), plays a raid horn sound 5 blocks on the X axis away from the execution position. Otherwise, does nothing.
+<code>raid spawnleader</code>
+: Spawns a [[pillager]] as a [[raid captain]] at the execution position.
+<code>raid setomen <level></code>
+: Sets the level of an ongoing raid at a village near the execution position to the specified level.
+<code>raid glow</code>
+: Applies the [[Glowing]] effect to all current raiders for 50 seconds.
+
+== Arguments ==
+{{argument|omenlvl|integer}}
+: Specifies the [[Bad Omen]] level to start a raid with.
+: {{arg desc|je=integer|min=0}}
+{{argument|type|component}}
+: Specifies the text component whose string value should be {{cd|local}} for a raid horn sound to be played.
+: {{arg desc|je=component}}
+{{argument|level|integer}}
+: Specifies the [[Bad Omen]] level to set a raid's level to.
+: {{arg desc|je=integer|min=0}}
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|succeed}}<!-- even though there are failure messages in the code, the command actually succeeds when sending them -->
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|cmd=/raid start &lt;omenlvl&gt;|On success|1|1|-1 if a raid already exists nearby, 1 otherwise}}
+{{Output table|cmd=/raid stop|On success|1|1|-1 if there is no raid nearby, 1 otherwise}}
+{{Output table|cmd=/raid check|On success|1|1|0 if there is no raid nearby, 1 otherwise}}
+{{Output table|cmd=/raid sound &lt;type&gt;|On success|1|1|1}}
+{{Output table|cmd=/raid spawnleader|On success|1|1|0 if the pillager fails to spawn, 1 otherwise}}
+{{Output table|cmd=/raid setomen &lt;level&gt;|On success|1|1|1}}
+{{Output table|cmd=/raid glow|On success|1|1|1}}
+{{Output table}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.9|dev=Pre-Release 1|Added [[debug property]] <code>-DMC_DEBUG_DEV_COMMANDS</code>, making the command accessible in the vanilla game.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/raid]]
+[[zh:命令/raid]]

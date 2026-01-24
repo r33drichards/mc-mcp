@@ -1,0 +1,80 @@
+A '''test environment''' is a way to group up [[GameTest]]s and give them the right preconditions to run.
+
+== Definition ==
+
+Test environments can be defined in [[data pack]]s, as part of the directory structure below.
+
+{{Data pack directory|test_environment|<nowiki><name>.json</nowiki>}}
+
+== JSON Format ==
+Test environments are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|type}}: Indicates how to set up the test. See below.
+** Other additional fields depend on the value of {{Nbt|string|type}}, described below.
+</div>
+
+== Environment types ==
+=== all_of ===
+Applies multiple environments
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|type}}: {{cd|all_of}}
+** {{nbt|list|definitions}}
+*** {{nbt|string}}{{nbt|compound}}: {{json ref|test environment|test environment definition|inline=1}} &mdash; Another test environment.
+</div>
+
+=== function ===
+Uses [[function (Java Edition)|function]]s to set up and tear down the test.
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|type}}: {{cd|function}}
+** {{nbt|string|setup}}: (optional) {{json_ref|function|function (Java Edition)}} &mdash; the function to use for setup.
+** {{nbt|string|teardown}}: (optional) {{json_ref|function|function (Java Edition)}} &mdash; the function to use for teardown.
+</div>
+
+=== game_rules ===
+Applies [[game rule]]s during the test, and resets them after tests have completed.
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|type}}: {{cd|game_rules}}
+** {{nbt|list|bool_rules}}: A list of boolean game rules to set and the value to set.
+*** {{nbt|compound}}: A map of boolean game rule.
+**** {{nbt|string|rule}}: Name of the game rule.
+**** {{nbt|boolean|value}}: Value to set.
+** {{nbt|list|int_rules}}: A list of integer game rules to set and the value to set.
+*** {{nbt|compound}}: A map of integer game rule.
+**** {{nbt|string|rule}}: Name of the game rule.
+**** {{nbt|integer|value}}: Value to set.
+</div>
+
+=== weather ===
+Applies specific [[weather]] during the test, and resets it after tests have completed.
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|type}}: {{cd|weather}}
+** {{nbt|string|weather}}: The weather to set. Must be one of {{cd|clear}}, {{cd|rain}} and {{cd|thunder}}.
+</div>
+
+=== time_of_day ===
+Changes the [[time]] to the specified value, and resets it after tests have completed.
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|type}}: {{cd|time_of_day}}
+** {{nbt|integer|time}}: The time of day to set in number of ticks, as a non-negative integer.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|Java Edition}}
+|{{HistoryLine||1.21.5|dev=25w03a|Added test environment definition to [[data pack]]s.}}
+|{{HistoryLine|||dev=25w04a|Renamed {{cd|raining}} environment type to {{cd|weather}}}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Testumgebungsdefinition]]
+[[fr:Définition d'environnement de test]]
+[[pt:Definição do ambiente de teste]]
+[[zh:测试环境定义格式]]

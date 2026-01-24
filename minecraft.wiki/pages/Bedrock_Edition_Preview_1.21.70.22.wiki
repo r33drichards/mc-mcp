@@ -1,0 +1,278 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.7022.0<br />'''Android''': 1.21.70.22
+| image = Bedrock 1.21.70.22 PatchNotes.jpeg
+| image2 = Bedrock 1.21.70.22.png
+| build = 30852501
+| editorver = 0.8.7
+| versioncode = '''Android''':<br />
+952107022 (armeabi-v7a, 34)<br />
+962107022 (x86, 34)<br />
+972107022 (arm64-v8a, 34)<br />
+982107022 (x86_64, 34)
+| date = February 5, 2025
+| server = 1.21.70.22
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.70.22.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.70.22.zip Linux]<br>
+| parent = 1.21.70
+| prevparent = 1.21.62
+| prev = Preview 1.21.70.20
+| next = Preview 1.21.70.23
+| nextparent = 1.21.71
+}}<onlyinclude>
+'''Beta 1.21.70.22''' (ChromeOS, Android) or '''Preview 1.21.70.22''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the second beta/''Preview'' version for [[Bedrock Edition 1.21.70]], released on February 5, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/34063162910093-Minecraft-Beta-Preview-1-21-70-22|title=Minecraft Beta & Preview - 1.21.70.22|website=Minecraft Feedback|date=February 5, 2025}}</ref> which adds new [[chicken]] variants, [[Cactus Flower|cacti flowers]], [[Short Dry Grass|short]] and [[tall dry grass]], and fixes bugs.
+
+== Changes ==
+=== General ===
+'''UI'''
+*Screen Safe Area Settings: Disables Horizontal and Vertical Screen Position sliders if the Safe area is set to 100% 
+*Stops Screen Position from displaying -0.0 due to a rounding error.
+*Long splash texts on the start screen will break into two lines to be more readable. 
+*The invite button on the pause screen is moved up a bit and now has an icon.
+*Scaled and moved the title logo to make room for the friends drawer button. 
+*Added new loading tips for creative mode.
+
+'''{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/34063162910093-Minecraft-Beta-Preview-1-21-70-22#:~:text=for%20creative%20mode.-,Player%20Permissions,-The%20Player%20Permissions|title=Player Permissions}}'''
+*The Player Permissions screen has been upgraded to the new Ore UI, bringing a fresh look and a more intuitive and user friendly experience.
+[[File:New UI - Player Permissions Screen Menu (Bedrock Preview 1.21.70.22).png|380px|thumb|New Player Permissions Screen.]]
+
+'''{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/34063162910093-Minecraft-Beta-Preview-1-21-70-22#:~:text=Friends%20Drawer%20Improvements|title=Friends Drawer Improvements}}'''
+*Players can now also find the Friends Drawer in the Main Menu and Game Menu, in addition to the Play Screen, in the top right of the screen.
+
+=== Technical ===
+'''API'''
+*Component {{cd|minecraft:fluidContainer}} has been renamed to {{cd|minecraft:fluid_container}} in V2.
+
+'''Commands'''
+*Moved the {{cd|place feature}} and {{cd|place featurerule}} subcommands out of the Upcoming Creator Features experiment.
+
+'''Components'''
+*Added the {{cd|minecraft:is_collidable}} component
+**This component allows other mobs to have vertical and horizontal collisions with the component's owner.
+***For a collision to occur, both mobs must have a {{cd|minecraft:collision_box}} component.
+***This component can only be used on mobs and enables collisions exclusively between mobs.
+**Please note that this type of collision is unreliable for moving mobs.
+***It is recommended to use this component only in scenarios where the mob remains stationary.
+**Collidable behavior is closely related to stackable behavior.
+***While the {{cd|minecraft:is_collidable}} component governs how other mobs interact with the component's owner, the {{cd|minecraft:is_stackable}} component describes how an entity interacts with others of its own kind.
+*The {{cd|entity_sensor}} component now has two additional fields: 
+**{{cd|y_offset}}, applies a vertical offset to the entity's position when calculating distances to other entities.
+**{{cd|find_players_only}}, restricts the search to Players only, affecting all subsensors.
+*Added the {{cd|minecraft:body_rotation_axis_aligned}} component, that causes the entity's body to automatically rotate to align with the nearest cardinal direction based on its current facing direction.
+**Combining this with the {{cd|minecraft:body_rotation_blocked}} component will cause the entity to align to the nearest cardinal direction and remain fixed in that orientation, regardless of future changes in its facing direction.
+
+'''Entity Components'''
+*Added {{cd|on_spawn}} trigger to {{cd|spawn_chance}} on {{cd|hit}} sub-component, triggered on the newly spawned entity with other set to the owning entity.
+*Added {{cd|particle_item_name}} map to {{cd|particle_on_hit}} on {{cd|hit}} sub-component, maps an item name to an actor filter to determine what the name of the item used in the particle should be. Falls back to the name of the entity itself as before.
+
+'''Goals'''
+*{{cd|minecraft:behavior.float_wander}} AI goal will now restrict mobs to their home position if they have the {{cd|minecraft:home}} component.
+
+'''Mobs'''
+*Added maximum value of {{cd|100000000.0}} and minimum value of {{cd|-100000000.0}} to {{cd|minecraft:collision_box}} component.
+
+'''Network Protocol'''
+*Added {{cd|ActorFlags::COLLIDABLE}}.
+*Added {{cd|ActorFlags::BODY_ROTATION_AXIS_ALIGNED}}.
+
+'''Sounds'''
+*Sound effects found in animations and animation controllers can now include an optional {{cd|locator}} field similar to particle effects allowing them to originate from the locator on the entity rather than the origin.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Drop 1 2025" experimental toggles.
+=== Additions ===
+==== Blocks ====
+'''[[File:Cactus Flower JE1.png|32px]] [[Cactus Flower]]'''
+* A new type of flower which has a chance of generating on cactuses in [[desert]]s and [[badland]]s.
+* Can be placed on cactus blocks or any block which has center support at the top of the block.
+* Has a chance of growing on cactus blocks.
+** If a cactus is one or two blocks high the flower has a 10% chance to grow instead of the cactus getting higher.
+** If a cactus is three blocks or higher the flower has a 25% chance to grow.
+** Cactus flowers will only grow if they have space on all four sides.
+* Can be used in the [[composter]].
+* Can be used to craft 1 [[pink dye]].
+
+'''[[File:Short Dry Grass.png|32px]] [[Short Dry Grass]]''' 
+* Is one block high.
+* Generates in the [[desert]] and [[badlands]].
+* Can be placed on types of [[sand]], [[terracotta]] and [[dirt block]]s like the [[dead bush]].
+* Can be bone mealed.
+* Using [[bone meal]] on short dry grass grows it into a tall dry grass.
+* Can be used in the [[composter]].
+* Sheep can eat short dry grass to regrow its wool.
+* Can be used as fuel for smelting.
+
+'''[[File:Tall Dry Grass.png|32px]] [[Tall Dry Grass]]'''
+* Is one block high.
+* Generates in the [[desert]] and [[badlands]].
+* Can be placed on types of [[sand]], [[terracotta]] and [[dirt block]]s like the [[dead bush]].
+* Can be bone mealed.
+* Using [[bone meal]] on tall dry grass places a neighbouring short dry grass next to the block if possible.
+* Can be used in the [[composter]].
+* Sheep can eat tall dry grass to regrow its wool.
+* Can be used as fuel for smelting.
+
+==== Items ====
+'''[[File:Blue Egg.png|32px]] [[Blue Egg]]'''
+* A variant of the [[egg]] laid by the cold chicken variant.
+* Spawns the cold chicken variant when hatched.
+
+'''[[File:Brown Egg.png|32px]] [[Brown Egg]]'''
+* A variant of the [[egg]] laid by the warm chicken variant.
+* Spawns the warm chicken variant when hatched.
+
+==== Mobs ====
+'''{{Animate|Chicken JE2 BE2.png; Cold Chicken.png; Warm Chicken.png|32px}} [[Chicken]]'''
+* New Chicken variants have been added.
+**{{EntityLink|Chicken|Temperate Chicken}}: The pre-existing chicken variant.
+***Spawns by default where the cold and warm chicken variants do not spawn.
+**{{EntityLink|Cold Chicken}}: A variant that spawns in the following biomes:
+*** {{BiomeLink|Old Growth Pine Taiga}}
+*** {{BiomeLink|Old Growth Spruce Taiga}}
+*** {{BiomeLink|Taiga}}
+*** {{BiomeLink|Snowy Taiga}}
+*** {{BiomeLink|Windswept Hills}}
+*** {{BiomeLink|Windswept Gravelly Hills}}
+*** {{BiomeLink|Windswept Forest}}
+**{{EntityLink|Warm Chicken|Warm Chicken}}: A variant that spawns in the following biomes:
+*** {{BiomeLink|Savanna Plateau}}
+*** {{BiomeLink|Windswept Savanna}}
+*** {{BiomeLink|Jungle}}
+*** {{BiomeLink|Sparse Jungle}}
+*** {{BiomeLink|Bamboo Jungle}}
+*** {{BiomeLink|Eroded Badlands}}
+*** {{BiomeLink|Wooded Badlands}}
+*** {{BiomeLink|Badlands}}
+* Rotated the torso 90°.<ref>{{bug|MCPE-190396}}</ref>
+
+==== Technical ====
+'''API'''
+*{{cd|World}}
+**Added {{cd|getDifficulty(): Difficulty}} method to {{cd|beta}}. This method gets the worlds current game difficulty.
+**Added {{cd|setDifficulty(difficulty: Difficulty): void}} method to {{cd|beta}}. This method sets the worlds current game difficulty. 
+*{{cd|ActionFormData}}
+**Added method {{cd|header(text: minecraftserver.RawMessage): ActionFormData;}}. It adds a header into the form.
+**Added method {{cd|label(text: minecraftserver.RawMessage): ActionFormData;}}. It adds a label into the form.
+*{{cd|ModalFormData}}
+**Added method {{cd|header(text: minecraftserver.RawMessage): ModalFormData;}}. It adds a header into the form.
+**Added method {{cd|label(text: minecraftserver.RawMessage): ModalFormData;}}. It adds a label into the form.
+*Added new script module {{cd|@minecraft/diagnostics}} version {{cd|1.0.0-beta}}. This module is dedicated server only for now and allows script modules to connect their script packs to Sentry. This enables remote error tracking and monitoring for script packs.
+
+=== Changes ===
+==== Blocks ====
+'''[[Firefly Bush]]'''
+*Added ambient sounds to the firefly bush that will play when the moon is visible to the block.
+
+'''[[Leaf Litter]]'''
+*Leaf litter can now be placed on any block which provides center support. 
+*Changed leaf litter map colour to be brown. 
+
+==== Mobs ====
+'''Animal Variants'''
+*Applied the warm and cold animal variant tags to all appropriate biomes, so that animals spawned in these biomes by spawn eggs or commands are an appropriate variant even if they still do not spawn in the biome naturally
+*Cold farm animal biomes:
+{{columns-list|colwidth=15em|**{{BiomeLink|Deep Frozen Ocean}}
+**{{BiomeLink|Frozen Ocean}}
+**{{BiomeLink|Frozen Peaks}}
+**{{BiomeLink|Frozen River}}
+**{{BiomeLink|Grove}}
+**{{BiomeLink|Ice Spikes}}
+**{{BiomeLink|Jagged Peaks}}
+**{{BiomeLink|Snowy Beach}}
+**{{BiomeLink|Snowy Plains}}
+**{{BiomeLink|Snowy Slopes}}
+**{{BiomeLink|Snowy Taiga}}
+**{{BiomeLink|The End|link=The End (biome)}}
+**{{BiomeLink|Cold Ocean}}
+**{{BiomeLink|Deep Cold Ocean}}
+**{{BiomeLink|Deep Dark}}
+**{{BiomeLink|Stony Peaks}}
+**{{BiomeLink|Old Growth Pine Taiga}}
+**{{BiomeLink|Old Growth Spruce Taiga}}
+**{{BiomeLink|Taiga}}
+**{{BiomeLink|Windswept Forest}}
+**{{BiomeLink|Windswept Gravelly Hills}}
+**{{BiomeLink|Windswept Hills}}}}
+*Warm farm animal biomes:
+{{columns-list|colwidth=15em|**{{BiomeLink|Mangrove Swamp}}
+**{{BiomeLink|Badlands}}
+**{{BiomeLink|Bamboo Jungle}}
+**{{BiomeLink|Basalt Deltas}}
+**{{BiomeLink|Crimson Forest}}
+**{{BiomeLink|Desert}}
+**{{BiomeLink|Eroded Badlands}}
+**{{BiomeLink|Jungle}}
+**{{BiomeLink|Nether Wastes}}
+**{{BiomeLink|Savanna Plateau}}
+**{{BiomeLink|Savanna}}
+**{{BiomeLink|Soul Sand Valley}}
+**{{BiomeLink|Sparse Jungle}}
+**{{BiomeLink|Warm Ocean}}
+**{{BiomeLink|Warped Forest}}
+**{{BiomeLink|Windswept Savanna}}
+**{{BiomeLink|Wooded Badlands}}
+**{{BiomeLink|Deep Lukewarm Ocean}}
+**{{BiomeLink|Lukewarm Ocean}}}}
+*Temperate farm animal biomes:
+{{columns-list|colwidth=15em|**{{BiomeLink|Swamp}}
+**{{BiomeLink|Beach}}
+**{{BiomeLink|Birch Forest}}
+**{{BiomeLink|Cherry Grove}}
+**{{BiomeLink|Dark Forest}}
+**{{BiomeLink|Dripstone Caves}}
+**{{BiomeLink|Flower Forest}}
+**{{BiomeLink|Forest}}
+**{{BiomeLink|Lush Caves}}
+**{{BiomeLink|Meadow}}
+**{{BiomeLink|Mushroom Fields}}
+**{{BiomeLink|Ocean}}
+**{{BiomeLink|Old Growth Birch Forest}}
+**{{BiomeLink|Plains}}
+**{{BiomeLink|River}}
+**{{BiomeLink|Stony Shore}}
+**{{BiomeLink|Sunflower Plains}}
+**{{BiomeLink|Lukewarm Ocean}}
+**{{BiomeLink|Pale Garden}}}}
+
+==== Technical ====
+'''General'''
+*In Server Authoritative movement, the Player will not constantly bop up and down if flying state change during small loss of connection with the server. 
+*Removing experimental files {{cd|cold_taiga}}, {{cd|cold_taiga_hills}}, and {{cd|cold_taiga_mutated}} from behavior packs. These files were only loaded with the custom biomes experiment enabled, and this change does not remove the biomes themselves. 
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.70.22 Preview
+|;old
+|147815|Spaces before the command prevent the command from being executed
+|186358|Minecraft Encyclopedia uses outdated info/wording (English)
+|188401|Blocks with {{cd|item_specific_speeds}} cannot be destroyed
+|187461|The phrase "Chat e Comandos" on Minecraft is starting with small letter
+|188795|Riptide does not go as far vertically as previously.
+|189895|dropper or dispenser may not work every 4gt, even though it is activated by a 4gt frequency signal
+|;previous
+|190210|New items added in 1.21.70.20 preview have extra spaces in their names
+|190215|Some cross models have Z-fighting with their old models
+|190217|Unable to access world with non marketplace type activated packs
+|190222|Bush has a light level of 2
+|190227|Placeholder text is shown when importing and exporting a world
+|190248|Firefly Bush item texture is different from Java Edition
+|otherissuescount=5}}
+'''Other'''
+*Fixed Leaf Litter step sound being in the block audio category not player.
+*Fixed a crash that would sometimes happen when entities with an excessively large hitbox entered liquid.
+*Fixed placement of Jigsaw structures that contain blocks with {{cd|minecraft:tick}} component.
+*Fixed a bug that caused water to render through the bottom of boats in the Deferred Technical Preview. 
+*Fixed a bug that caused weather (rain, snow, etc...) to appear brighter than it should be at night in the Deferred Technical Preview.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.70 betas]]
+
+[[de:Bedrock Edition beta 1.21.70.22]]
+[[pt:Edição Bedrock Preview 1.21.70.22]]
+[[ru:Preview 1.21.70.22 (Bedrock Edition)]]
+[[uk:Preview 1.21.70.22 (Bedrock Edition)]]
+[[zh:基岩版1.21.70.22]]

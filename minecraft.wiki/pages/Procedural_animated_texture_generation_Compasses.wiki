@@ -1,0 +1,48 @@
+{{exclusive|java|console|section=1}}
+
+Compasses simply draw two lines over the item sprite to form the needle.
+
+Much like clocks, the code responsible for moving the needle is also present with the "setup" code, however it is omitted here as it is not pertinent to the actual drawing of the sprite. Also like clocks, an oversight in how the compass sprite is set to be loaded prevents texture packs from overriding the compass's base sprite.
+<gallery style="text-align:center">
+Compass (texture) JE1 BE1.png|The base sprite for the compass
+</gallery>
+<syntaxhighlight lang="python3" line="1">
+def setup_compass_sprite (item: Image, angle: float, output: Image):
+	NX      = 8.5
+	NY      = 7.5
+	SCALE_X = 0.3
+	SCALE_Y = SCALE_X * 0.5
+	
+	# copy the item's texture into the output
+	for i, pix in enumerate(item):
+		output.set_pixeli(i, pix)
+	
+	rx = sin(angle)
+	ry = cos(angle)
+	
+	# draw the smaller horizontal spurs of the needle
+	# 1 is added to the endpoint, as `range` here is
+	# end-exclusive. The original loops did `i <= 4`
+	for i in range(-4, 4 + 1):
+		x = int(NX + ry * i * SCALE_X)
+		y = int(NY - rx * i * SCALE_Y)
+		output.set_pixel(x, y, '#646464')
+	
+	# draw the main part needle
+	for i in range(-8, 16 + 1):
+		x = int(NX + rx * i * SCALE_X)
+		y = int(NY + ry * i * SCALE_Y)
+		if i >= 0:
+			# Main red pointer
+			output.set_pixel(x, y, '#FF1414')
+		else:
+			# Grey back half
+			output.set_pixel(x, y, '#646464')
+</syntaxhighlight>
+The generated compass sprite has 102 possible unique frames, while the pre-rendered compass has significantly less, at only 32 frames.
+<gallery style="text-align:center">
+Compass JE1.gif|Procedurally generated
+Compass JE2 BE2.gif|Prerendered frames
+Compass Proctex Needle Points.gif|Visualization of all of the points that are plotted in drawing the needle
+</gallery>
+<noinclude>[[Category: Textures]]</noinclude>

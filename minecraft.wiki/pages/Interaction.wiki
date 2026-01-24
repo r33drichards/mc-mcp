@@ -1,0 +1,75 @@
+{{Work in progress}}
+{{exclusive|java}}
+{{Infobox entity
+| image = Blank.png
+| health = None
+| behavior = None
+| size = Customizable
+}}
+'''Interaction''' entities are a technical [[entity]], useful for map or data pack creators to see who the last player to click on a certain spot is. They can only be created with the {{cmd|summon}} or {{cmd|execute summon}} commands.
+Interaction entities are invisible, invincible and of a custom size. Their [[bounding box]] can be viewed via the {{key|F3}} + {{key|B}} debug shortcut.
+
+== Behavior ==
+Interaction entities record the [[UUID]] of the last player that left-clicked and right-clicked them, and the time at which the interaction happened. If <code>response</code> is set to true, left-clicking an interaction entity plays a punching sound, and right-clicking it makes the player's arm swing.
+
+== Usage ==
+You can check information on who last left-clicked and right-clicked on the interaction entity with the {{cmd|data get entity}} command. This information can be useful in datapack and map creation. You can also change their size to match the area you want to be checked.
+
+=== Advancement triggers ===
+* Interacting with (right-clicking) an interaction entity triggers <code>[[Custom advancement#minecraft:player_interacted_with_entity|player_interacted_with_entity]]</code>.
+* Attacking (left-clicking) an interaction entity triggers <code>[[Custom advancement#minecraft:player_hurt_entity|player_hurt_entity]]</code>.
+
+=== Commands ===
+The interaction entity targets the player who last interacted with it. That makes the following possible:
+* {{cmd|execute on attacker}} execute as the last player who attacked (left-clicked) the entity.
+* {{cmd|execute on target}} execute as the last player who interacted with (right-clicked) the entity.
+
+== Data values ==
+=== ID ===
+{{ID table
+|edition=java
+|firstcolumnname=Entity
+|generatetranslationkeys=y
+|displayname=Interaction
+|nameid=interaction
+|translationkey=entity.minecraft.interaction
+|spritetype=block
+|spritename=air
+|foot=1
+}}
+
+=== Entity data ===
+{{see also|Entity format}}
+
+Interaction entities have entity data associated with them that contain various properties of the [[entity]].
+
+<section begin="entity data"/><div class="treeview">
+* {{nbt|compound}} Entity data
+** {{nbt inherit/entity}}
+** {{nbt|float|width}}: The width of the entity's bounding box. Defaults to 1.
+** {{nbt|float|height}}: The height of the entity's bounding box. Defaults to 1.
+** {{nbt|byte|response}}: 1 or 0 (true/false). Specifies whether an interaction should trigger a response (hand animation). Defaults to 0 (false).
+** {{nbt|compound|attack}}: The last attack (left click) to hit the entity.
+*** {{nbt|int array|player}}: The UUID of the player that attacked the entity. The 128-bit UUID is stored as four 32-bit integers, ordered from most to least significant.
+*** {{nbt|long|timestamp}}: When the attack took place.
+** {{nbt|compound|interaction}}: The last interaction (right click) to hit the entity.
+*** {{nbt|int array|player}}: The UUID of the player that interacted with the entity. The 128-bit UUID is stored as four 32-bit integers, ordered from most to least significant.
+*** {{nbt|long|timestamp}}: When the interaction took place.
+</div><section end="entity data"/>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.19.4|dev=23w07a|Added interaction entities.}}
+}}
+
+== Navigation ==
+{{Navbox entities|Other}}
+
+[[de:Interaktionsobjekt]]
+[[fr:Interaction]]
+[[ja:操作記録エンティティ]]
+[[lzh:交互]]
+[[pt:Entidade-interação]]
+[[zh:交互实体]]
+[[ru:Взаимодействие]]

@@ -1,0 +1,149 @@
+{{Infobox version
+|title=Minecraft 25w43a
+|image=25w43a.jpg
+|image2=Java Edition 25w43a.png
+|edition=Java
+|type=Snapshot
+|date=October 21, 2025
+|jsonhash=43cba33b0e7bc673fb6eb6ba042c022bdaf6cf9e
+|clienthash=be2ec6160a466eb16ae9ce9ee7261622f4efdd06
+|clientmap=f223a23f98f167149950334ac406b73565da99a1
+|serverhash=dac322a1091905430e2a6ade129a4915552455d0
+|servermap=2f4b171bcf237fb46692f4dc26639bf82665bea5
+|parent=1.21.11
+|prevparent=1.21.10
+|prev=25w42a
+|next=25w44a
+|nextparent=26.1
+}}<onlyinclude>
+'''25w43a''' is the third [[snapshot]] for [[Java Edition 1.21.11]], released on October 21, 2025, which makes some tweaks to [[spear]] mechanics.<ref>{{snap|25w43a|id=a|October 21, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Loot functions]]'''
+* {{cd|minecraft:discard}}
+** Replaces any item stack with empty one.
+** No fields.
+
+== Changes ==
+=== Items ===
+'''[[Spear]]'''
+* Spears now deal more damage through charge attacks dealt by players, but also mobs. This is because the spear's charge attacks now deal the attack damage [[attribute]]'s base value on top of their formula.
+* The spear model is now slightly larger.
+* Spears now provide visual feedback when they hit a target in the charge attack.
+
+=== Mobs ===
+'''[[Nautilus]]'''
+* Can no longer enter [[boat]]s.
+
+'''[[Zombie nautilus]]'''
+* Can no longer enter [[boat]]s.
+* No longer suffocates outside water.
+
+=== Command format ===
+'''{{cmd|worldborder}}'''
+* The {{cd|time}} argument is now given in ticks instead of seconds.
+
+=== Gameplay ===
+'''[[Enchantment]]s'''
+* Using [[Lunge]] no longer causes durability damage to the [[spear]].
+* Using Lunge now consumes hunger points by exhausting the player, similar to sprinting or jumping.
+** Level I consumes {{hunger|3}}, level II consumes {{hunger|4}}, and level III consumes {{hunger|5}}.
+** Lunge can only be used if the player has at least {{hunger|6}} hunger points in their hunger bar.
+
+'''[[World border]]'''
+* World border interpolation is now dependent on game ticks instead of real time.
+** This means the world border will no longer move when the game is paused.
+** It will also respect any changes made by the {{cmd|tick}} command.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|91.0}}.
+
+'''[[Enchantment definition]]'''
+* Entity Effects
+** {{cd|minecraft:apply_exhaustion}}: applies exhaustion to the targeted entity.
+*** {{cd|amount}} - Level-Based Value indicating the amount of exhaustion to apply.
+*** Effective only on players.
+
+'''[[Loot functions]]'''
+* {{cd|minecraft:filtered}}
+** The field {{cd|modifier}} has been replaced with two fields:
+*** {{cd|on_pass}} - function or a list of functions to run when {{cd|item_filter}} predicate passes.
+*** {{cd|on_fail}} - function or a list of functions to run when {{cd|item_filter}} predicate fails.
+
+'''[[LWJGL]]'''
+* Updated the LWJGL library to version 3.3.6.{{cn}}
+
+'''[[Resource pack]]'''
+* The version is now {{cd|71.0}}.
+
+'''[[Sounds]]'''
+* Added new sound event for the [[Nautilus]]:
+** {{cd|item.underwater_saddle.equip}}
+
+'''[[Tag]]s'''
+* Added {{cd|d=and|nautilus|zombie_nautilus}} to {{cd|#cannot_be_pushed_onto_boats}} entity tag.
+
+'''[[Textures]]'''
+* The {{cd|darkened_cutout_mipmap}} field of the texture section of <samp>*.mcmeta</samp> files has been replaced by a new field {{cd|mipmap_strategy}} with the following supported values:
+** {{cd|mean}} averages both color and alpha between groups of four pixels for the current mipmap level to generate the next mipmap level pixel. This was and stays the default strategy for most solid or translucent full block textures.
+** {{cd|dark_cutout}} is similar to {{cd|mean}}, but blends colors in a way that makes the pixels bordering cutout pixels darker. This was and stays the strategy for leaves and mangrove roots. It simulates dark interior of the blocks.
+** {{cd|cutout}} is a new strategy that always generates a mipmap based on the original texture instead of the previous mipmap. Used for most cutout blocks that became mipmapped in this version.
+** {{cd|strict_cutout}} is a modification of {{cd|cutout}} that uses stricter alpha cutoff value leading to the textures using this value disappearing at higher mipmap levels. Is used for flowers and similar blocks to avoid artifacts.
+** {{cd|auto}} is the default value and will make the game to pick {{cd|mean}} for textures that do not contain fully transparent pixels and {{cd|cutout}} for those that do.
+* All mipmap levels are once again animated for block animated textures.
+* Beacon and redstone dust now support translucent textures.
+
+== Fixes ==
+{{fixes|fixedin=25w43a
+|;From released versions before 1.21
+|53491|The world border can change in size when the game is paused.
+|;From 1.21.10
+|302695|Can use the game mode switcher while the game is paused, and doing so unpauses the game.
+|302854|Glass is less transparent when viewed from far away.
+|303381|Game crashes when serializing a world spawn point with yaw or pitch values outside of rotation bounds.
+|303382|Player spawn points with rotation values outside of bounds aren't serialized.
+|;dev
+|302669|Banners sometimes show incorrect textures when viewed from some angles.
+|302675|Some item frames do not render their item correctly after world upgrade.
+|302691|Held and dropped items sometimes fail to render correctly when banners exist in the world.
+|302719|Debug key binds text is improperly capitalized.
+|302724|The {{cd|debug.entry.overlay}} string is improperly capitalized.
+|302737|After using the game mode switcher, you need to press {{key|F3}} twice to toggle the debug overlay.
+|302769|Several blocks now turn invisible at short distances.
+|302790|The {{cd|minecraft:apply_impulse}} effect cannot be used in {{cd|minecraft:location_changed}}.
+|302849|Mobs with spears deal too little damage.
+|302872|Severe color contrast between lava mip levels.
+|302912|Zombie nautiluses suffocate out of water, unlike other undead mobs.
+|302915|Mipmapping on cutout textures can cause them to appear larger than they should.
+|;prev
+|302963|Killing a player's mounted nautilus will cause that player to briefly glide upward, unaffected by gravity.
+|302984|Holding a spear in the off hand and attacking an entity adds the spear's attack damage to the attack.
+|303032|Nautiluses can still be controlled normally even when they are babies or untamed.
+|303138|Piglins and hoglins can zombify in the nether.
+|303150|Can't lay in bed during the day even with {{cd|can_sleep}} set to {{cd|always}} and {{cd|playerSleepPercentage}} set to {{cd|101+}}.
+|303157|{{cd|remove_binomial}} enchantment effect has a chance of producing out-of-range values.
+|303166|{{cmd|stopwatch create}} suggests existing stopwatches.
+|303181|Spears have an attribute modifier for {{cd|attack_damage}} for both hands, even though the charge attack does not use it.
+|303201|Zombified piglins attack players in Creative mode.
+|303266|Nautiluses and zombie nautiluses can enter boats.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|-Lyn7aBevNc|Rg52DxX0_t0}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w43a]]
+[[es:Java Edition 25w43a]]
+[[fr:Édition Java 25w43a]]
+[[ja:Java Edition 25w43a]]
+[[lzh:二五週四三甲]]
+[[pt:Edição Java 25w43a]]
+[[ru:25w43a (Java Edition)]]
+[[zh:Java版25w43a]]

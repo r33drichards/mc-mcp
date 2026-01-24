@@ -1,0 +1,191 @@
+{{Infobox version
+|title=Minecraft 25w05a
+|image=25w05a.jpg
+|image2=Java Edition 25w05a.png
+|edition=Java
+|type=Snapshot
+|date=January 29, 2025
+|jsonhash=af26a4b3605f891007f08000846909840e80784a
+|clienthash=5bc08371cd4da86bcd5afd12bea91c890a3c63bb
+|clientmap=98c9a121ce9d560fd9d5aa2ea576f117c0950c26
+|serverhash=2c873903a90c9633dd6bd2e3501046100daceafd
+|servermap=bed2cd62c9c5cf4c173360647c577aedb65c8a1c
+|parent=1.21.5
+|prevparent=1.21.4
+|prev=25w04a
+|next=25w06a
+|nextparent=1.21.6
+}}<onlyinclude>
+
+'''25w05a''' is the fourth [[snapshot]] for [[Java Edition 1.21.5]], released on January 29, 2025,<ref>{{snap|25w05a|id=a|January 29, 2025}}</ref> which adds the [[bush]], [[Firefly Bush|firefly bush]], new cow variants and fixes various bugs.
+
+== Additions ==
+=== Blocks ===
+'''[[File:Bush JE1.png|32px]] [[Bush]]'''
+* Generates in the following biomes:
+**{{BiomeLink|Plains}}
+**{{BiomeLink|Windswept Hills}}
+**{{BiomeLink|Windswept Gravelly Hills}}
+**{{BiomeLink|Windswept Forest}}
+**{{BiomeLink|River}}
+**{{BiomeLink|Frozen River}}
+**{{BiomeLink|Forest}}
+**{{BiomeLink|Birch Forest}}
+**{{BiomeLink|Old Growth Birch Forest}}
+* They are tinted by the grass color of the biome they are placed in.
+* Can be used in the [[composter]], with a 30% chance to add a layer.
+* Using [[bone meal]] on a bush will generate a neighboring bush next to it if possible.
+* Can be instantly broken without any particular tool.
+
+'''[[File:Firefly Bush JE1.png|32px]] [[Firefly bush]]'''
+* Generates in [[swamp]]s and near [[river]]s.
+* When it's dark, glowing firefly particles appear around the firefly bush, up to 5 blocks away.
+* Can be used in the [[Composter]], with a 30% chance to add a layer.
+* Using [[bone meal]] on a firefly bush will spawn another firefly bush item.
+* Emits a light level of 2.
+* Can be instantly broken without any particular tool.
+
+=== Mobs ===
+'''{{Animate|Cow JE6.png;Warm Cow.png;Cold Cow.png|40px}} [[Cow]]'''
+* Nose now extrudes from model.
+* New cow variants have been added.
+**{{EntityLink|Cow|Temperate Cow}}: The pre-existing cow variant.
+***Spawns by default where the cold and warm cow variants do not spawn.
+**{{EntityLink|Cold Cow}}: A variant that spawns in the following biomes:
+*** {{BiomeLink|Old Growth Pine Taiga}}
+*** {{BiomeLink|Old Growth Spruce Taiga}}
+*** {{BiomeLink|Taiga}}
+*** {{BiomeLink|Snowy Taiga}}
+*** {{BiomeLink|Windswept Hills}}
+*** {{BiomeLink|Windswept Gravelly Hills}}
+*** {{BiomeLink|Windswept Forest}}
+**{{EntityLink|Warm Cow}}: A variant that spawns in the following biomes:
+*** {{BiomeLink|Savanna}}
+*** {{BiomeLink|Savanna Plateau}}
+*** {{BiomeLink|Windswept Savanna}}
+*** {{BiomeLink|Jungle}}
+*** {{BiomeLink|Sparse Jungle}}
+*** {{BiomeLink|Bamboo Jungle}}
+*** {{BiomeLink|Eroded Badlands}}
+*** {{BiomeLink|Wooded Badlands}}
+*** {{BiomeLink|Badlands}}
+* When bred by a [[player]], a baby cow variant will not be chosen by the current biome, but instead randomly selected from one of the parents' variants.
+
+=== General ===
+'''[[Sound]]'''
+* [[Dead bush]]es have a chance of playing ambient sounds when placed on top of two blocks that are any color of terracotta, sand or red sand blocks in any biome.
+
+* [[Sand]], [[red sand]] and [[terracotta]] of any color have a chance of playing ambient sounds when surrounded by any one of them on at least 3 sides 8 blocks away.
+** {{cd|block.sand.idle}} can be played in any biome.
+** {{cd|block.sand.wind}} only plays when in [[desert]] or [[badlands]] biomes.
+
+'''[[Tag]]'''
+* Added the {{cd|#plays_ambient_desert_block_sounds}} block tag.
+** Contains blocks that will play ambient desert block sounds.
+
+== Changes ==
+=== Blocks ===
+'''[[Beacon]]'''
+* Beacons and their beams now render beyond 16 chunks up to the client render distance.
+** To keep it easily visible at large distances, the beam is rendered thicker the further away it is from the player.
+** The beam now renders up to 2048 blocks high, up from 1024.
+
+'''[[Powder snow]]'''
+* Landing on powder snow with [[leather boots]] equipped after falling further than 2.5 blocks will now make entities fall through the snow.
+** Jumping or falling less than 2.5 blocks allows the entity to land on top of the snow like before.
+
+=== Mobs ===
+'''[[Pig]]'''
+* Warm pigs now properly spawn in [[windswept savanna]]s.
+
+=== Command format ===
+'''{{cmd|bossbar}}, {{cmd|scoreboard}} and {{cmd|team}}'''
+* Text component arguments are now resolved before use in context of entity held in {{cd|@s}}.
+
+=== General ===
+'''[[Data component format]]'''
+* {{cd|blocks_attacks}}
+** Added the {{cd|bypassed_by}} field - hashtagged damage type tag (optional)
+*** If specified, blocking is bypassed by these damage types.
+** The objects within the {{cd|damage_reductions}} list now have a new field:
+*** {{cd|horizontal_blocking_angle}}- angle in degrees as a positive float 
+*** Default: {{cd|90}}
+**** The maximum angle between the user's facing and the incoming attack for the block to be effective.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|65}}.
+
+'''Entity variant components'''
+* Cow variants can be data-driven adding entries to <code>data/<namespace>/cow_variant/<id>.json</code>.
+** This feature is experimental.
+** Fields in file:
+*** <code>model</code> - one of: <code>normal</code>, <code>cold</code>, <code>warm</code>.
+*** <code>asset_id</code> - namespaced id for this variant asset, resolves to <code>assets/<namespace>/textures/<path>.png</code>.
+*** <code>spawn_conditions</code> - field described in uniform variant selection above.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now {{cd|50}}.
+* Added new textures for cow variants.
+** <code>cold_cow</code>
+** <code>warm_cow</code>
+* Changed the size of <code>temperate_cow</code> texture.
+* Changed the size of <code>red_mooshroom</code> and <code>brown_mooshroom</code> textures.
+* The temperate Cow has an updated model and texture.
+** Cow models now have a snout.
+** Cow models now have their legs mirrored.
+* The texture <code>cow</code> has been renamed to <code>temperate_cow</code>.
+* The texture <code>pig</code> has been renamed to <code>temperate_pig</code>.
+
+'''[[Tag]]'''
+* Renamed the {{cd|#bypasses_blocking}} damage type tag back to {{cd|#bypasses_shield}}.
+* Replaced {{cd|windswept_hills}} with {{cd|windswept_savanna}} in the {{cd|#spawns_warm_variant_farm_animals}} biome tag.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w05a
+|;From released versions before 1.21
+|108495|Non-LivingBase entities can be on a team (and show color) but can't be targeted using {{cd|team{{=}}}}.
+|165711|Eye of ender hitbox always lags behind the animation.
+|; From 1.21.2
+|279390|Baby zombified piglin helmet clipping.
+|; From 1.21.4
+|279857|Piglins summoned by the {{cmd|/summon}} command do not pick up gold items.
+|;dev
+|279257|{{cd|crafting_transmute}} recipes don't give output if the resulting item has the same ID as the input item.
+|279280|{{cd|windswept_hills}} is in both the warm and cold variant farm animal biome tags.
+|279315|Warm pigs do not spawn in windswept savannas.
+|279353|The {{cd|minecraft:fall_damage_multiplier}} attribute doesn't function when riding specific rideable mobs.
+|279497|Structure preview outline breaks for max integer-length sizes.
+|279531|GameTest entrypoint doesn't report failures to spawn the structure.
+|279534|Display entities use interpolation duration value for teleport duration.
+|279543|Neutral Mobs don't attack the player back when attacked under certain conditions.
+|279556|The "{{cmd|/execute on attacker}}" command does not target an entity previously targeted by the "{{cmd|/data}}" command.
+|279577|Test blocks are restricted to one within a block-based structure.
+|;prev
+|279684|Shield blocking animation no longer plays when blocking an attack.
+|279685|Shields no longer consume durability when blocking attacks.
+|279688|Sprinting is canceled upon flying with elytra.
+|279692|Instrument component crashes the game.
+|279693|Summoned lingering potions render as splash potions.
+|279697|Llamas show a non-interactive saddle slot.
+|279698|{{cd|provides_banner_pattern}} component does not use hash prefix.
+|279760|Typing an inline definition in the {{cd|provides_trim_material}} component crashes the game.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|YENEOYKT_PI|fsJKsxXXWvU}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w05a]]
+[[es:Java Edition 25w05a]]
+[[fr:Édition Java 25w05a]]
+[[ja:Java Edition 25w05a]]
+[[ko:Java Edition 25w05a]]
+[[pt:Edição Java 25w05a]]
+[[ru:25w05a (Java Edition)]]
+[[uk:25w05a (Java Edition)]]
+[[zh:Java版25w05a]]

@@ -1,0 +1,156 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.12024.0<br>
+'''Android''': 1.21.120.24
+| image = Bedrock 1.21.120.24.png
+| build = 37440161
+| versioncode = '''Android''':<br />
+952112024 (armeabi-v7a, 35)<br />
+962112024 (x86, 35)<br />
+972112024 (arm64-v8a, 35)<br />
+982112024 (x86_64, 35)
+| editorver = 1.1.5
+| date = October 1, 2025
+| server = 1.21.120.24
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.120.24.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.120.24.zip Linux]
+| parent = 1.21.120
+| prevparent = 1.21.114
+| prev = Preview 1.21.120.23
+| next = Preview 1.21.120.25
+| nextparent = 1.21.121
+}}
+<onlyinclude>
+
+'''Beta 1.21.120.24''' (ChromeOS, Android) or '''Preview 1.21.120.24''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fifth beta/''Preview'' version for [[Bedrock Edition 1.21.120]], released on October 1, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/40008177570061-Minecraft-Beta-Preview-1-21-120-24|title=Minecraft Beta & Preview - 1.21.120.24|website=Minecraft Feedback|date=October 1, 2025}}</ref> which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Copper Chest]]'''
+* Double copper chest textures' diagonal glint direction now match its single chest counterpart.
+* Bolts on single and double copper chests are now shaded in the same way.
+* Double and single copper chests now have consistent shading.
+* Weathered double copper chest bottom textures are now consistent with other double copper chests.
+
+'''[[Water]]'''
+* Water now reduces the light level by one instead of two units per block.
+
+=== General ===
+'''[[Marketplace]]'''
+* Marketplace content can now be searched for using graphics filters for RTX and [[Vibrant Visuals]].
+
+'''[[Settings#General 2|General Settings]] Screen'''
+* Updated the General settings tab with [[Ore UI]].
+[[File:New UI - General Settings Screen Menu (Bedrock Preview 1.21.120.24).png|thumb|New General Settings Screen.]]
+
+'''Storage'''
+* Shifted download storage on PlayStation 4 to new location. Players may need to redownload Marketplace content.
+
+=== Technical ===
+'''[[API]]'''
+* {{cd|ContainerRulesError}}
+** Moved property {{cd|reason: ContainerRulesErrorReason}} from {{cd|beta}} to {{cd|v2.3.0}}.
+* Moved enum {{cd|ContainerRulesErrorReason}} from {{cd|beta}} to {{cd|v2.3.0}}.
+* Moved interface {{cd|ContainerRules}} from {{cd|beta}} to {{cd|v2.3.0}}.
+* {{cd|Container}}
+** Moved property {{cd|readonly containerRules?: ContainerRules}} from {{cd|beta}} to {{cd|v2.3.0}}.
+** Moved property {{cd|readonly weight: number}} from {{cd|beta}} to {{cd|v2.3.0}}.
+** Moved property {{cd|readonly weight: number}} from {{cd|beta}} to {{cd|v2.3.0}}.
+* Moved class {{cd|ItemInventoryComponent}} from {{cd|beta}} to {{cd|v2.3.0}}.
+
+'''Biome Components'''
+* Added {{cd|underwater_addition}}, {{cd|underwater_loop}}, and {{cd|underwater_mood}} fields to {{cd|minecraft:ambient_sounds}}. They will be played when the audio listener position is inside of water.
+** {{cd|underwater_addition}} and {{cd|addition}} now take both an asset and chance, the chance determines the chance for the sound to be played.
+** Format versions before {{cd|1.21.120}} will automatically set the underwater versions to the same as the normal ones, and the chance to the previously hardcoded chance of {{cd|0.0111}}.
+
+'''[[Block]]s'''
+* Removed Upcoming Creator Features toggle requirement from the {{cd|minecraft:redstone_producer}} component.
+* Component {{cd|minecraft:embedded_visual}} no longer requires the "Upcoming Creator Features" toggle.
+* Component {{cd|minecraft:flower_pottable}} no longer requires the "Upcoming Creator Features" toggle.
+
+'''Entity Components'''
+* Added {{cd|apply_knockback_to_blocking_targets}} property to {{cd|impact_damage}} in {{cd|minecraft:projectile}}.
+
+'''[[Mob]]s'''
+* The dophin's bubble particle emissions have been updated and are now emitted through its animation controller.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Upcoming Creator Features" and "Experimental Creator Cameras Features" [[experimental]] toggle.
+
+=== Additions ===
+
+==== Techincal ====
+'''[[API]]'''
+* Added the {{cd|BlockComponentBlockBreakEvent}} Custom Component Event to {{cd|beta}}. This event is called when a specific block is broken by either the player or other entity, a block (such as fire or water), or from a script or command that removes or destroys the block.
+** Added {{cd|entitySource}} read-only property. This contains the entity that caused the block's destruction.
+** Added {{cd|blockDestructionSource}} read-only property. This contains the block that caused the block's destruction.
+** Added {{cd|brokenBlockPermutation}} read-only property. This contains the block permutation this custom component exists on.
+* Added the ability for the custom creator camera to move on a spline.
+** Added method {{cd|playAnimation(splineType: CatmullRomSpline | LinearSpline, cameraAnimationOptions: AnimationOptions): void}} to {{cd|beta}} to play an animation curve. Only works when used on the {{cd|minecraft:free}} camera preset.
+** Added class {{cd|CatmullRomSpline}} to {{cd|beta}} to create catmullrom splines for {{cd|minecraft:free}} camera preset.
+** Added class {{cd|LinearSpline}} to {{cd|beta}} to create linearly interpolated splines for {{cd|minecraft:free}} camera preset.
+** Added interface {{cd|AnimationOptions}} to {{cd|beta}} for creating and playing a spline on the {{cd|minecraft:free}} camera preset.
+** Added interface {{cd|ProgressKeyFrame}} to {{cd|beta}} for setting progress key frames on a spline.
+** Added interface {{cd|RotationKeyFrame}} to {{cd|beta}} for setting rotation key frames on a spline.
+** Added interface {{cd|SplineAnimation}} to {{cd|beta}} for storing spline key frames.
+
+'''Blocks'''
+* Added boolean field {{cd|alpha_masked_tint}} to materials in {{cd|minecraft:material_instances}} component.
+** Defaults to {{cd|false}}.
+** When true, the alpha channel of the texture will be used to multiply the tint to the albedo of the texture.
+** Requires {{cd|format_version}} >= 1.21.120
+** Requires "Upcoming Creator Features" toggle.
+** Requires {{cd|tint_method}} other than {{cd|none}}.
+** Requires {{cd|render_method}} to be {{cd|opaque}}.
+
+'''[[Commands]]'''
+* Added {{cd|attach_to_entity}} and {{cd|detach_from_entity}} camera commands for {{cd|minecraft:fixed_boom}} and {{cd|minecraft:follow_orbit}} presets.
+** Accessible under the Experimental Creator Cameras experimental toggle.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.120.24 Preview
+|;old
+|43953|Item outlines in some UIs still use old textures.
+|55449|[[Golden Apples]] give 8 Absorption hearts if eaten after [[Enchanted Golden Apple]].
+|79532|Ambience sounds missing in [[the nether]] and [[water]].
+|82082|Issue with the [[drowned]] model.
+|108989|"score" text component does not accept names containing non-alphanumeric characters.
+|154327|[[llama]] uses pre-texture update chest texture.
+|165390|Skeleton/Zombie Horse's & Donkey/Mule's saddles and chests are outdated or errors.
+|166776|The ears of donkeys have a miscoloured top and bottom.
+|169440|[[Drowned]] has an transparent pixels in inner body texture.
+|190339|[[Shield]] loses 2 durability after breaking a block.
+|219845|Stencil state causes glitches with Vibrant Visuals enabled.
+|220733|[[Skeletons]] with [[Punch]] bows can knock players back while blocking with a shield.
+|226433|Vibrant Visual: Gray Dye and Light Blue Dye have incorrect MERS texture.
+|;dev
+|227624|All lantern types, all torches, and end rod no longer have point lights.
+|227839|Loading into a world and then unfocusing the game window will cause every keybind to stop working.
+|227855|World templates can no longer be created from the Play menu in the Preview.
+|228169|Top texture of grass blocks appears pitch black in the Dark Forest biome when Smooth Lighting is disabled.
+|228289|Pressing 1-9 hotkeys while hovering on an empty inventory or offhand slot does not swap the items.
+|228283|Vibrant Visuals: The temperature colors of hot and cold biomes have been reversed.
+|228288|GDK: Switching to another window while loading a world will cause the cursor to stay at the center after the world is loaded.
+|otherissuescount=6}}
+'''Other'''
+* Fixed missing pixels on [[Copper Horse Armor|copper]], [[Iron Horse Armor|iron]], [[Golden Horse Armor|gold]], and [[Diamond Horse Armor|diamond]] horse armor textures.
+* Fixed an issue that could cause excess critical hit particles to spawn.
+* Fixed [[structure block]] preview GUI misplacing custom blocks.
+* Fixed an issue where the replacement [[biome]]s were not read for client side chunk generation.
+* Fixed a crash that occurs when selecting Vibrant Visuals panel settings.
+* Fixed ambient occlusion for custom blocks displayed in HUD.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.120 betas]]
+
+[[de:Bedrock Edition beta 1.21.120.24]]
+[[es:Bedrock Edition Preview 1.21.120.24]]
+[[ko:Bedrock Edition 프리뷰 1.21.120.24]]
+[[pt:Edição Bedrock Preview 1.21.120.24]]
+[[uk:Preview 1.21.120.24 (Bedrock Edition)]]
+[[zh:基岩版1.21.120.24]]

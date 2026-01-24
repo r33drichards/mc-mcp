@@ -1,0 +1,84 @@
+{{distinguish|Commands/script}}
+{{exclusive|bedrock|education}}
+{{Infobox command
+| name = scriptevent
+| oplevel = 1
+| cheat = y
+}}
+Triggers a script event with an ID and message.
+
+==Syntax==
+:<code>scriptevent <messageId: string> <message: message></code>
+
+==Arguments==
+{{argument|be=1|messageId: string|basic_string}}
+:Must be a string. Must be namespaced and use of the minecraft namespace is invalid (e.g. {{Command|scriptevent give:coal}}, {{Cmd|scriptevent my_scripts:spawn_sheep}})
+
+{{argument|be=1|message: message|CommandMessage}} 
+:Optional argument. Maximum length is the C++ max string length. {{arg desc|be=CommandMessage}}
+
+==Result==
+{{Result table|onlybe=1}}
+{{Result table|the arguments are not specified correctly||unparseable}}
+{{Result table|succeed}}
+{{Result table}}
+
+The command by itself does not directly affect anything in the game, but can trigger an event in any add-ons applied to the world/server.
+
+==Output==
+{| class="wikitable"
+! Command 
+!Edition
+!Situation
+!Success Count
+|-
+| rowspan="2" |any
+| rowspan="2" |''[[Bedrock Edition]]''
+|On fail 
+|0
+|-
+| On success
+|1
+|}
+
+==Example==
+
+*To evoke an event handler with the ID wiki:example and the message "Example Message":
+**{{Code|code=/scriptevent wiki:example Example Message}}
+*Example JavaScript code for use in the scripting API:
+<syntaxhighlight lang="javascript" line="1">
+import { system } from "@minecraft/server";
+
+system.afterEvents.scriptEventReceive.subscribe((event) => {
+  const {
+  	id,           // returns string (wiki:example)
+  	initiator,    // returns Entity
+    message,      // returns string (Example Message)
+    sourceBlock,  // returns Block
+    sourceEntity, // returns Entity
+    sourceType,   // returns MessageSourceType
+  } = event;
+});
+</syntaxhighlight>[https://wiki.bedrock.dev/scripting/script-server.html Code source]
+
+==History==
+
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||Beta APIs<br>(Experimental)|link=Bedrock Edition 1.19.60|dev=Preview 1.19.60.22|Added {{cmd|scriptevent|link=none}} behind the "Beta APIs" experimental toggle.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.20.20|{{cmd|scriptevent|link=none}} is no longer behind "Beta APIs" experimental toggle.}}
+}}
+
+==See also==
+
+*{{Cmd|script}}— debugging options for GameTest Framework
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/scriptevent?view=minecraft-bedrock-stable|title=<code>/scriptevent</code> Command|website=Microsoft Learn|date=December 12, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/scriptevent]]
+[[zh:命令/scriptevent]]

@@ -1,0 +1,232 @@
+{{outdated|In [[Java Edition 1.20.5]], this format has been replaced with the [[data component format]].|edition=java}}
+
+[[Item]]s are used both in the [[Player.dat format|player's inventory]] and ender chest, in container [[Block entity format|block entities]], in some [[Entity format|item entities]], and in [[structure file]]s.
+
+== NBT structure ==
+Items are stored in the [[NBT format]]. Sometimes a {{nbt|byte|Slot}} tag is used to specify the slot the item is in, such as with chests; other times there is no {{nbt|byte|Slot}} tag, such as with dropped items.
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|byte|Count}}: Number of [[Item|items]] stacked in this inventory slot. Any item can be stacked, even if unstackable through normal means. Values below 0 cause the item to be treated as air, resulting in the item being removed.
+** {{nbt|byte|Slot}}: The inventory slot the item is in.
+** {{nbt|string|id}}: [[Data values|Item/Block ID]]. If not specified, gets treated as air, resulting in the item being removed.
+** {{nbt|compound|tag}}: Additional information about the item; see below. This tag is optional for most items. Unlike other entity or block NBT, this tag is never deserialized and can hold user defined tags that are not used by the game by standard.
+</div>
+
+=== Display Properties ===
+
+All items can have custom display names and lore, as well as a custom model data. Various tooltips can also be hidden.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Display Properties}}
+</div>
+
+=== Attribute Modifiers ===
+
+All items can be given [[Attribute#Modifiers|Modifiers]] which affect various [[Attribute]]s of the player or mob wearing or holding them. Note that if an item has default attribute modifiers, these cease to exist if this tag is added (e.g. a diamond sword given an empty '''AttributeModifiers''' list no longer provides a boost to damage). Also note that default attribute modifiers do not use this tag, and as such, it does not appear on a natural item.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Attribute Modifiers}}
+</div>
+
+=== Enchantments ===
+
+There are two ways enchantments are associated with items; the first way is that the item is actually enchanted and the enchantment affects the behavior of the item, and the second way is that the item is an [[enchanted book]] which simply stores the enchantments without actually affecting the behavior of the item. There is also the '''RepairCost''' tag which tracks [[anvil]] usage for items, making them more costly with every use of the anvil.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Enchantments}}
+</div>
+'''StoredEnchantments''' tooltips are not displayed if edited onto an item other than an enchanted book. Enchantments stored in '''Enchantments''', however, are always displayed in the tooltip and cause the item to glow, even if they cannot have any effect.
+
+=== Block Tags ===
+
+All items can have specifications for [[Adventure]] mode, to describe which blocks may be broken with them. Block items can also be given tags to specify what blocks they may be placed against in Adventure mode, and to specify what Tile Entity NBT tags to apply to them when placed.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag
+{{:Item_format/Block Tags}}
+</div>
+
+=== Durability ===
+
+Items with durability ([[tool]]s and [[armor]]s) can be made unbreakable and never lose any durability.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Durability}}
+</div>
+
+=== Potion Effects ===
+
+[[Potion]]s, [[splash potion]]s, [[lingering potion]]s, and [[tipped arrow]]s can have multiple, customized effects via the <code>custom_potion_effects</code> tag. These effects are added to the default effect under the <code>Potion</code> tag if present. In addition the color can be overridden with the <code>CustomPotionColor</code> tag.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Potion}}
+</div>
+
+{{Calculator|decimalColor}}
+
+=== Armors ===
+
+Every [[armor]] can be trimmed. Additionally, [[leather armor]] can be colored.
+<div class="treeview"><onlyinclude>
+* {{nbt|compound|tag}}: Parent Tag.
+{{:Item_format/Armor}}
+</onlyinclude></div><noinclude>
+
+{{Calculator|decimalColor}}
+
+=== Armor Stands, Spawn Eggs, Item Frames and Paintings ===
+
+[[Armor stand]]s, [[spawn egg]]s, [[Item Frame|item frames]] and [[painting]]s may contain potential entity data.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Entity Spawners}}
+</div>
+
+=== Book and Quills ===
+
+[[Book and quill]]s use NBT data to save their contents.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Writable Books}}
+</div>
+
+=== Written Books ===
+
+[[Written book]]s use NBT data to save their contents as well as miscellaneous extra information.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Written Books}}
+</div>
+
+=== Knowledge Books ===
+
+[[Knowledge book]]s use NBT data to indicate the recipes they contain.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Knowledge Book}}
+</div>
+
+=== Buckets of Aquatic Mob ===
+
+[[Bucket of aquatic mob|Buckets of aquatic mob]] may contain potential entity data.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Bucket of Aquatic Mob}}
+</div>
+
+=== Bundle ===
+[[Bundle]]s use NBT data to save what item is stored.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Bundle}}
+</div>
+
+=== Compasses ===
+When used as a lodestone compass, [[compass]]es store information about their targeted [[lodestone]].
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Compasses}}
+</div>
+
+=== Crossbows ===
+
+[[Crossbow]]s use NBT data to save what item is charged in the crossbow
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Crossbow}}
+</div>
+
+=== Debug Sticks ===
+
+[[Debug stick]]s use the NBT to save the block state to edit for each block.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Debug Sticks}}
+</div>
+
+=== Firework Rockets ===
+
+[[Firework rocket]]s use the '''tag''' tag to store information about their effects.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Firework Rockets}}
+</div>
+
+=== Firework Stars ===
+
+[[Firework star]]s use the '''tag''' tag to store information about their effects.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Firework Stars}}
+</div>
+
+=== Goat Horns ===
+
+[[Goat horn]]s use the '''instrument''' tag to control which sound can be played when using them.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Goat Horn}}
+</div>
+
+=== Maps ===
+
+[[Map]]s may be scaled, locked and contain icons.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Maps}}
+</div>
+
+=== Player Heads ===
+
+[[Head]]s of the player variety can be associated with a specific username to take on the skin of that player when placed. The hand-held item is also updated with the new skin. Within this section, the "owner" of a head means the player whose head it is a copy of, and a player whose inventory contains a head is called the "holder".
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Player Heads}}
+</div>
+
+=== Suspicious Stew ===
+
+[[Suspicious stew]]s store their [[potion effect]]s.
+<div class="treeview">
+* {{nbt|compound|tag}}: Parent tag.
+{{:Item_format/Suspicious Stew}}
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.4.2|dev=12w40a|Added <code>Name</code> and <code>Lore</code> tags. They use plain text rather than text components.}}
+|{{HistoryLine||1.7.2|dev=13w37a|Added {{code|Unbreakable}} tag for tools.}}
+|{{HistoryLine||1.8|dev=14w02a|Added <code>CanDestroy</code> for tools.}}
+|{{HistoryLine|||dev=14w06a|Added <code>HideFlags</code> to items.
+|Added {{cd|CanPlaceOn}} for blocks.
+|Added {{cd|ShowParticles}} for potion effect.}}
+|{{HistoryLine|||dev=14w07a|Added <code>BlockEntityTag</code> for all blocks.}}
+|{{HistoryLine|||dev=14w10a|Added a 5th bit (value of 32) to <code>HideFlags</code> that hides potion effects.}}
+|{{HistoryLine||1.11|dev=16w39a|Added <code>LocName</code> to the <code>display</code> tag. If present, the item tooltip displays translated text for the item name.{{info needed|which of Name and LocName takes precedence?}}}}
+|{{HistoryLine||1.13|dev=18w01a|<code>Name</code> tag is now a text component.
+|Removed the <code>LocName</code> tag.  Instead of <code>LocName:"gui.toTitle"</code>, use <code>Name:"{\"translate\":\"gui.toTitle\"}"</code>.}}
+|{{HistoryLine|||dev=18w21a|{{code|ench}} tag has been renamed {{code|Enchantments}}.}}
+|{{HistoryLine||1.14|dev=18w43a|{{code|Lore}} tag is now a text component.
+|Added {{code|CustomModelData}} tag to set custom item model with resource packs.}}
+|{{HistoryLine|||dev=19w06a|Added {{code|BlockStateTag}} for item forms of blocks.}}
+|{{HistoryLine||1.16.2|dev=20w27a|Added Flag 64 to {{code|HideFlags}} to hide "Dyed" on [[leather armor]].<ref>{{bug|MC-49476|||Fixed}}</ref>}}
+|{{HistoryLine||1.17.1|dev=Pre-release 1|{{code|Enchantments[].lvl}} tag is now read as short and clamped between 0 and 255.<ref>{{bug|MC-131290|||Fixed}}</ref>}}
+|{{HistoryLine||1.19.4|dev=23w04a|Added flag 128 to {{cd|HideFlags}} to hide [[armor trim]] tooltips.}}
+|{{HistoryLine||1.20.2|dev=23w32a|In NBT format for item type {{cd|d=and|potion|lingering_potion|splash_potion|tipped_arrow}}, renamed {{cd|CustomPotionEffects}} to {{cd|custom_potion_effects}}.
+|In NBT format for item type {{cd|suspicious_stew}}, renamed {{cd|Effects}} to {{cd|effects}}, also changed following fields in this field: {{cd|EffectId}} (integer) -> {{cd|id}} (string, resource location), {{cd|EffectDuration}} -> {{cd|duration}}}}
+|{{HistoryLine||1.20.5|dev=24w09a|Unstructured NBT data attached to stacks of items (<code>tag</code> field) has been replaced with structured 'components'.}}
+}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:Gegenstandsdaten/Vor 1.20.5]]
+[[fr:Format d'objet]]
+[[ja:アイテムフォーマット/1.20.5以前]]
+[[pt:Formato de item]]
+[[zh:物品格式/Java版1.20.5前]]

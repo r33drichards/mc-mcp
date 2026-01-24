@@ -1,0 +1,162 @@
+{{about|the customizable border|the command|commands/worldborder|other uses|Border (disambiguation)}}
+{{see also|Distance effects}}
+{{Cleanup|
+* (Various) grammatical mistakes make parts of the page difficult to read.}}
+{{more images|Screenshots of shrinking (red) and expanding (green) world borders}}
+{{missing info|exact color (hex code) of still, shrinking, and expanding world border}}
+{{Exclusive|Java}}
+[[File:Worldborderanimation.gif|A world border|thumb|290px]]
+{{relevant tutorial|Getting to the world border}}
+The '''world border''' is the horizontal boundary of a [[dimension]].
+
+== Features ==
+[[File:Minecraft world border.png|thumb|The world border as seen from the outside using the {{cmd|tp}} command.]]
+World borders are square, with faces 29,999,984 blocks away from the [[Coordinates#Coordinate system|world origin]] of their dimensions by default. They are animated with narrow, diagonal stripes that slowly shift up and to the right from the perspective of the inside.
+
+The world border is [[tint]]ed depending on if its size is changing and how. By default, when the border is not changing, the stripes are a translucent aqua color. If the border is expanding, the stripes appear green, and if the border is shrinking, they appear red.
+
+The world border appears different depending on [[graphics settings]]. On the Fast and Fancy settings, it appears as light and translucent, but with the Improved Transparency option enabled, it appears considerably darker.<ref>{{bug|MC-187669}}</ref>
+
+The world border does not visually continue below [[altitude]] Y=-1024 nor above Y=1024, but it does continue function as a boundary.
+=== Size ===
+The world border is essentially a giant bounding box. By default, its center lies ''above'' Y=255.{{More information needed}}
+
+With [[#Commands|commands]], the center and width of the world border can be modified. The world border's physical barrier (as opposed to its appearance) always behaves in full-block increments from its origin. If the world border's width is set to a odd or non-whole number, the physical barrier's coordinates are rounded up to the next integer.
+
+If the player uses an unlinked [[Nether portal]] at the world border in the Nether, the resulting portal will not be placed further than the world border in the [[Overworld]], although part of the obsidian frame may generate past it.
+
+== Effects ==
+=== On entities ===
+All [[entities]] are unable to move through the world border.
+
+If a [[dispenser]] or [[dropper]] is placed so that it directly faces the edge of the border, then items, projectiles, TNT, etc. can be fired outside of the edge of the border. Any items fired out of a dispenser float in midair; if an item is dropped from the player inventory, the item falls normally.
+
+If a [[mob]] is spawned from a dispenser via a spawn egg, the mob behaves normally. [[Spider]]s can climb the world border, and [[endermen]] can teleport outside of it and [[Pillager|Pillagers]] can walk through it.
+
+Any [[player]]s on the outside of the world border (with exception to those in [[Creative]] or [[Spectator]] mode) take constant damage as long as they are outside the border. The amount of damage depends on the distance to the border, with damage being inflicted when the player is outside an area that is 5 blocks wider than the world border on each side. Players typically cannot interact with blocks or entities outside the world border.
+
+Additionally, while [[sneaking]] if they are less than one block outside the world border, some of the effects that occur while sneaking are changed or removed. These are:
+*Being prevented from walking off edges
+*Having movement slowed
+*Decreased eye level and {{control|third-person view}}, character model bending over slightly
+*Shorter hitbox
+*Fainter name tag in [[multiplayer]]{{verify}}
+*Moving through [[scaffolding]]: the player instead falls through it as if it were air
+
+If the player was already sneaking before entering this area, their eye level and third-person view remains decreased.
+
+While players themselves cannot move through the world border, even if they manage to go ahead of chunk loading, they can reach the other side of the world border through other means, including: 
+*Letting the world border pass them as it is shrinking
+*Throwing an ender pearl through the world border
+*Consuming [[chorus fruit]] near the world border and being teleported beyond it
+*Dying and respawning, if the spawn point is outside the world border
+
+Oddly, while standing inside the world border while close to it and looking at it at a negative angle, trying to {{control|use item}} (such as throwing [[projectile]]s, eating [[food]], or shooting a [[bow]]) results in nothing happening.
+
+Entities cannot spawn naturally outside the world border. They persist without taking damage if they spawned before the world border gets shrunk by a command.
+
+=== On blocks ===
+Players cannot normally place and destroy blocks, nor interact with objects outside of the world border, as there are no hitboxes. It ''is'' possible to place blocks outside of the world border, either by placing the block against one that is inside the world border or by using commands.
+
+Most blocks still function outside the world border, and most [[redstone]] contraptions still function as well. Exceptions include falling blocks (such as [[sand]] and [[gravel]]), which drop as an [[Item (entity)|item]], and [[piston]]s or [[hopper]]s, which simply don't function. [[Explosion]]s from [[TNT]] and other sources also work normally, destroying terrain outside of the border. [[Light]] from [[torch]]es and other sources also remain unaffected.
+
+[[File:Liquids flow through border.png|thumb|200px|Liquids flow through the world border, so long as they are placed ''inside'' the border.]]
+
+[[Liquid]]s can flow through the border and continue flowing until reaching their flow limit. Liquids cannot be placed on the outside of the border.<ref>Due to {{bug|MC-54119}}, this appeared possible, but it did not actually take effect. The said bug was fixed on 1.18</ref> Liquids placed via a [[dispenser]] flow as normal. Mixing [[water]] and [[lava]] with a dispenser results in the flow of each liquid abruptly ending, presumably because the [[stone]], [[cobblestone]], or [[obsidian]] that would normally generate does not.
+
+=== When set to invalid values ===
+The world border size can be changed by manually editing the <samp>[[Java Edition level format#level.dat format|level.dat]]</samp> file. In any case, there remains a [[world boundary]] at 30 million blocks on both the X and Z axes. 
+*When set to 0 or a negative number, the entire world is treated as outside the world border, and the border warning overlay appears throughout the world. No blocks can be mined and entities take damage unless they are within the border safe zone.
+*When set to NaN (Not a Number), the entire world is treated as outside the world border, but no border warning appears. No blocks can be mined, even in Creative mode, although entities do not take damage.
+*When set to Infinity or a number greater than 30 million, the border occurs normally.
+
+== Commands ==
+{{main|Commands/worldborder}}
+The {{cmd|worldborder}} command can modify the size, center, damage and buffer of the world border, and can also make it grow or shrink gradually.
+
+== Data values ==
+=== World data ===
+{{edition|java}}:
+<div class="treeview">
+*<samp>[[Java Edition level format#level.dat format|level.dat]]</samp>
+**{{nbt|compound|Data}}
+***{{nbt|double|BorderCenterX}}: Center of the world border (X-axis).
+***{{nbt|double|BorderCenterZ}}: Center of the world border (Z-axis).
+*** {{nbt|double|BorderDamagePerBlock}}: Damage taken per block moved outside the world border,
+***{{nbt|double|BorderSafeZone}}: Distance in blocks of the buffer zone where damage is not taken when outside the world border.
+***{{nbt|double|BorderSize}}: World border diameter.
+***{{nbt|double|BorderSizeLerpTarget}}: The border size after it has been changed. "Lerp" stands for [[wikipedia:Linear Interpolation|Linear Interpolation]], as the border changes its size in a linear fashion.
+***{{nbt|long|BorderSizeLerpTime}}: The time in milliseconds until the border size interpolation reaches the target size.
+***{{nbt|double|BorderWarningBlocks}}: Maximum distance away from the border until the border warning overlay appears on the player's HUD.
+***{{nbt|double|BorderWarningTime}}: Maximum time in seconds a contracting border is away from the player until the border warning overlay appears.
+</div>
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable|
+{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=April 24, 2014|slink={{tweet|Dinnerbone|459327931492605952}}|[[Dinnerbone]] tweets a previews of the "shimmery" world border textures, which were made by [[Ryan Holtz]].}}
+|{{HistoryLine|||dev=14w17a|Added the customizable world border.}}
+|{{HistoryLine|||dev=14w18a|Players cannot interact with blocks outside the world border anymore.}}
+|{{HistoryLine|||dev=14w19a|"Warning" and "damage" commands added.
+|A red-colored warning aura is seen when within a certain distance of the world border.
+|The border in the Nether is now the same size as that of the Overworld.
+|Traveling to the Nether no longer creates new portals outside the boundary.}}
+|{{HistoryLine|||dev=14w20a|If the player is stuck outside the world border, they can freely fly/walk around, though they gradually lose hearts. Not possible to freely walk through the border from the inside.}}
+|{{HistoryLine|||dev=14w26a|"Add" command added.}}
+|{{HistoryLine|||dev=14w29a|"Get" command added, which shows the current size of the border.
+|Command blocks no longer work outside of the border. Unclear if this is a bug or intended.}}
+|{{HistoryLine|||dev=14w30a|[[Hopper]]s outside of the world border no longer function.}}
+|{{HistoryLine|||dev=14w31a|The time parameter of the world border size-changing can now be larger.
+|Only players take damage outside of the world border.}}
+|{{HistoryLine||?|The world border can be set to 60 million, but is visually and functionally clamped to a value below that.}}
+|{{HistoryLine||1.17|dev=20w48a|The world border now follows the player vertically.<ref>{{bug|MC-198864}}</ref>}}
+|{{HistoryLine|||dev=?|The world border no longer follows the player vertically, but is still correctly displayed outside of the world height bounds.}}
+|{{HistoryLine|||dev=21w13a|The world border's faces are now all identically oriented, resulting in no V or ^ shapes forming at two corners.<ref>{{bug|MC-212736}}</ref>}}
+|{{HistoryLine|||dev=21w17a|The world border size is now stored as a double instead of a float.<ref>{{bug|MC-187664}}</ref>
+|The max world border size has been shrunk to the value it would always maximally appear at, and cannot be set above that value with commands.}}
+|{{HistoryLine||1.21.2|dev=24w34a|Projectiles such as [[arrow]]s, [[trident]]s and [[Fishing rod#Fishing bobber|fishing bobbers]] now bounce on the world border if hit.}}
+|{{HistoryLine||1.21.9|dev=25w36a|The world border is now dimension-specific.|This means that each dimension can have its own world border size, position, etc.}}
+|{{HistoryLine||1.21.11|dev=25w43a|The world border interpolation is now dependent on game ticks instead of real time.|This means the world border will no longer move when the game is paused.|It will also respect any changes made by the /tick command.}}
+}}
+<gallery>
+World Border.png|First image of the world border.
+</gallery>
+
+== Issues ==
+{{issue list|projects=MC}}
+
+== Trivia ==
+*The reason the default world border is at X/Z ±29,999,984 is due to the fact that Dinnerbone put it 1 chunk (16 blocks) short of the edge so that there isn't a sudden "drop" off the edge of the world.<ref>{{bug|MC-53390#comment-155580}}</ref>
+*Were a ''Minecraft'' world somehow wrapped around into a sphere, the resulting planet has a circumference of 60,000 kilometers or 9,549 kilometers in radius, twice as large as Earth.
+
+== Gallery ==
+=== Screenshots ===
+<gallery>
+File:No hitboxes worldborder.png|There are no hitboxes outside of the world border and a red vignette appears on the screen.
+File:Floating entities worldborder.png|Mobs and items float outside the border.
+File:Border suffocation.png|Before 1.20, dying from border damage resulted in the death message: "[Player] suffocated in a wall". The red vignette also covers the entire screen upon death.
+File:Blocks both sides worldborder.png|Blocks can be placed on both sides of the world border.
+File:Eroded badlands.png|Eroded badlands biome, found at the edge of the world. Check the image for seed and coordinates.
+File:High distance worldborder Y.png|The world border is completely vertical and in white stripes in high height.
+</gallery>
+
+== References ==
+{{reflist}}
+
+== See also ==
+* [[Invisible bedrock]], the invisible solid block that surrounds old worlds
+* [[Border]], the {{el|ee}} exclusive block that prohibits movement
+
+== Navigation ==
+{{Navbox environment}}
+
+[[de:Weltbarriere]]
+[[es:Borde del mundo]]
+[[fr:Bordure du monde]]
+[[ja:ワールドボーダー]]
+[[ko:세계 경계]]
+[[pl:Granica świata]]
+[[pt:Barreira do mundo]]
+[[ru:Граница мира]]
+[[zh:世界边界]]

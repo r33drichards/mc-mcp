@@ -1,0 +1,226 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.5026.0<br>'''Android, iOS, iPadOS''': 1.21.50.26<br>
+| image = Bedrock 1.21.50.26 PatchNotes.jpeg
+| image2 = Bedrock 1.21.50.26.png
+| build = 28879732
+| editorver = 0.7.7
+| versioncode = '''Android''':<br />
+952105066 (armeabi-v7a, 34)<br />
+962105066 (x86, 34)<br />
+972105066 (arm64-v8a, 34)<br />
+982105066 (x86_64, 34)<br />
+| date = October 30, 2024
+| server = 1.21.50.26
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.50.26.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.50.26.zip Linux]
+| parent = 1.21.50
+| prevparent = 1.21.44
+| prev = Preview 1.21.50.25
+| next = Preview 1.21.50.28
+| nextparent = 1.21.51
+}}
+<onlyinclude>
+
+'''Beta 1.21.50.26''' (ChromeOS, Android) or '''Preview 1.21.50.26''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fifth beta and fourth ''Preview'' version for [[Bedrock Edition 1.21.50]], released on October 30, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/31476211695501-Minecraft-Beta-Preview-1-21-50-26|title=Minecraft Beta & Preview - 1.21.50.26|website=Minecraft Feedback|date=October 30, 2024}}</ref> which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Creaking Heart]]'''
+*Reduced the distance by which the creaking heart can spread resin clumps by one block.
+*Resin clumps can now only spread onto pale oak log, stripped pale oak log, pale oak wood, and stripped pale oak wood.
+
+'''[[Eyeblossom]]s'''
+*Eyeblossoms now play sounds when opening and closing.
+*Open eyeblossoms now emit ambient sounds when placed on a pale moss block.
+*Eyeblossoms placed in world and in [[flower pots]] now emit a particle when opening/closing.
+*Open and closed eyeblossoms can now be used on mooshrooms to obtain their respective suspicious stews when milking.
+
+'''[[Glow Lichen]]'''
+*Glow lichen now play their step sound when on top of a block an actor is walking on.
+
+'''[[Jigsaw]]'''
+*Dimension padding is now taken into account when placing the start piece of a jigsaw structure.
+
+'''[[Pale Moss]], [[Pale Moss Carpet]], and [[Pale Hanging Moss]]'''
+*They now burn more quickly but take longer to catch on fire.
+*They can now be ignited by lava.
+
+'''[[Pale Oak Leaves]]'''
+*They now emit falling leaf particles.
+
+'''[[Resin Bricks]]'''
+*Recipes for resin brick slabs, stairs, and walls now give the same amount of blocks as the nether brick ones.
+
+'''[[Resin Clump]]'''
+*Mobs now correctly pathfind over resin clumps.
+*Resin clumps now play their step sound when on top of a block an actor is walking on.
+
+'''[[Slime Block]]'''
+*Sneaking while landing on a slime block no longer causes fall damage.
+
+'''[[Trial Spawner]]'''
+*Some trial spawners did not have an extra breeze out at once when ominous.
+
+'''[[Vine]], [[Cave Vines]], [[Twisting Vines]], and [[Weeping Vines]]'''
+*They now play their correct sounds instead of the [[nether wart]] sound.
+
+=== General ===
+'''UI'''
+*Enables selecting disabled buttons on the "join friends" menu while crossplay is turned off.
+*Dualsense gamepads now have correct tooltip icons on mobile devices.
+*Added an option to enable a "[[pick block]]" button for touch controls in Creative mode.
+
+'''[[Title screen]]'''
+*The [[panorama]] was changed to showcase [[pale gardens]].
+
+=== Sounds ===
+'''[[Pale Garden]]'''
+* Music volume now gradually lowers to zero when entering a Pale Garden and gradually resumes when leaving it.
+
+=== Mobs ===
+'''[[Creaking]]'''
+* The volume and pitch of the creaking's step sounds have been adjusted.
+* The attenuation drop-off rate for some of the creaking's sounds is now linear, allowing them to be heard from greater distances.
+* Reduced the speed of non-hostile creakings.
+* Tamed wolves' attacks no longer prevent creakings from attacking the player.
+* Creakings can no longer move when only their feet are observed, and their feet are in soul sand or mud.
+* Creakings can now approach a player which is looking downward, stopping only once they enter the player's field of view.
+* The creaking now sways when hit by a projectile.
+* The creaking's attack animation has been smoothed out for a more natural motion.
+
+'''[[Wandering Trader]]'''
+* Can now sell [[pale oak sapling]]s, [[open eyeblossom]]s, [[pale moss block]]s, and [[pale hanging moss]].
+
+=== World generation ===
+'''[[Tall Grass]]'''
+*Tall grass generates properly with its top part in the pale garden biome.
+*Tall grass generates properly with its top part in the lush caves biome.
+
+'''[[Tree]]s'''
+* All trees can now grow through leaves, with the exception of cherry trees, which cannot grow through their own leaves.
+* All trees can grow on dirt-like blocks
+
+=== Technical ===
+'''API'''
+*Vanilla trial spawner NBT {{cd|normalConfig}} and {{cd|ominousConfig}} tags values now support references to common configurations as an alternative to inline configuration.
+
+'''[[Audio]]'''
+*Per-biome ambient sounds are now defined in {{cd|client_biome}} JSON components
+**This uses the new {{cd|minecraft:ambient_sounds}} component
+**Named sounds must be defined in {{cd|individual_named_sounds}} in {{cd|sounds.json}} files.
+
+'''[[Biome]]s'''
+*Client biome JSON files now support a {{cd|minecraft:biome_music}} component with a {{cd|volume_multiplier}} field which will gradually affect music volume when the audio listener is inside the corresponding biome.
+**The gradual volume change will take roughly ten seconds and will linearly increase but exponentially decrease.
+
+'''[[Block]]s'''
+*Added the {{cd|minecraft:liquid_detection}} component which controls the basic liquid detection properties of a block, such as liquidlogging, liquid blocking, and being broken or popped by liquid spread. The only liquid currently supported by the component is water.
+*Using the {{cd|minecraft:block_placer}} item component to render the referenced block as the item icon no longer requires the "Upcoming Creator Features" toggle.
+
+'''Entity Components'''
+*The {{cd|minecraft:looked_at}} component's {{cd|look_at_locations}} field now accepts a list of objects as a parameter, each containing two fields
+**{{cd|location}}, the location of the entity that must be visible
+***Valid values: {{cd|head}}, {{cd|body}}, {{cd|feet}}
+**{{cd|vertical_offset}}, an optional vertical offset applied to the entity's location
+
+'''[[Molang]]'''
+*Moved {{cd|query.client_memory_tier}} to {{cd|stable}}.
+**Removed {{cd|Undetermined}}. It returns a number representing the client RAM memory tier, 0 = {{cd|SuperLow}}, 1 = {{cd|Low}}, 2 = {{cd|Mid}}, 3 = {{cd|High}}, or 4 = {{cd|SuperHigh}}. Available on the Client (Resource Packs) only.
+*Moved {{cd|query.server_memory_tier}} to {{cd|stable}}.
+**Removed {{cd|Undetermined}}. It returns a number representing the server RAM memory tier, 0 = {{cd|SuperLow}}, 1 = {{cd|Low}}, 2 = {{cd|Mid}}, 3 = {{cd|High}}, or 4 = {{cd|SuperHigh}}. Available on the server side (Behavior Packs) only.
+*Moved {{cd|query.client_max_render_distance}} to {{cd|stable}}.
+
+'''Network Protocol'''
+*New level sound events added: {{cd|Open}}, {{cd|OpenLong}}, {{cd|Close}}, and {{cd|CloseLong}}
+*New Particle Type added: {{cd|EyeblossomOpen}}
+*New Particle Type added: {{cd|EyeblossomClose}}
+*New particle type added: {{cd|PaleOakLeaves}}
+
+'''Scripting API'''
+*Moved {{cd|ClientSystemInfo}} from {{cd|beta}} to {{cd|1.16.0}}.
+*Moved {{cd|MemoryTier}} from {{cd|beta}} to {{cd|1.16.0}}.
+*Moved {{cd|PlatformType}} from {{cd|beta}} to {{cd|1.16.0}}.
+*Moved {{cd|SystemInfo}} from {{cd|beta}} to {{cd|1.16.0}}.
+*Enum {{cd|MemoryTier}}.
+**Removed {{cd|Undetermined}} entry.
+
+'''Stability and Performance'''
+*Some stats for packs discovered on launch are stored locally to enable faster future launches on some platforms.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Upcoming Creator Features", "Data-Driven Jigsaw Structures", and "Aim Assist" experimental toggles.
+=== Additions ===
+==== Command format ====
+'''{{cmd|place}}'''
+*Added {{cmd|place|link=none}}.
+
+==== Technical ====
+'''Blocks'''
+*Added {{cd|minecraft:item_visual}} block component. This component takes nested {{cd|minecraft:geometry}} and {{cd|minecraft:material_instances}} components to configure the item representation of a block
+**{{cd|geometry}} and {{cd|material_instances}} fields are required. They utilize the same fields/requirements as {{cd|minecraft:geometry}} and {{cd|minecraft:material_instances}} respectively
+**Block must include {{cd|minecraft:geometry}} and {{cd|minecraft:material_instances}} components alongside the {{cd|minecraft:item_visual}} component
+**Requires the "Upcoming Creator Features" toggle
+*Cobwebs now obey {{cd|blockshape}} and {{cd|textures}} properties set in {{cd|blocks.json}}
+**Requires the "Upcoming Creator Features" toggle
+
+'''API'''
+*Added access to the composting chance for existing Vanilla items via the {{cd|ItemStack}} API
+*Added access to the composting chance for items with {{cd|CompostableItemComponent}} via the Item Component API
+
+'''Camera'''
+*Added the rotation to the camera command for the {{cd|fixed_boom}} camera
+
+'''Component'''
+*Added the {{cd|minecraft:compostable}} item component to Upcoming Creator Features experimental toggle
+
+'''Scripting'''
+*Added support for input glyph replacement for server forms ({{cd|ActionFormData}}, {{cd|MessageFormData}}, and {{cd|ModalFormData}}).
+
+'''Structures'''
+*Expose "Data-Driven [[Jigsaw Structure]]s" experiment toggle to Creators
+**Creators will be able to modify structure generation rules around placement (location and frequency), layout (how structure pieces are placed relative to one another), and customization (how blocks within a structure piece are modified or replaced).
+**There are 4 new JSON files comprising Jigsaw Structure data:
+***Jigsaw Structures: These are structures that can be constructed throughout the world with various structure pieces. The connection block is a jigsaw block.
+***Processors: A processor can add custom behaviors to the structure that affects how it looks.
+***Structure Sets: Structure sets are JSON that indicate where and how a structure is placed throughout the world.
+***Template Pools: A template pool contains the structure pieces that make up a structure.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.50.26 Preview
+|;old
+|71859|Blackstone cannot be used to repair stone tools and weapons in an anvil
+|90625|Sky color transitions abruptly between biomes
+|112420|Blocks sometimes disappear when placed
+|171001|{{cd|rawtext %%%%1}} cannot be escaped correctly
+|178520|Crash with crafting recipe mod
+|180725|Cherry Leaves count as custom blocks
+|184404|Player can interact with the world while customizing controls
+|185354|Jumping when falling onto a slime block no longer cancels the bounce effect
+|;previous
+|186963|Wrong effect seconds is displayed when using {{cmd|/effect}}
+|187301|Pale oak leaves stop any sapling but pale oak saplings from growing up
+|187302|Some tree leaves stop pale oak saplings from growing up
+|187326|Pale garden ambient sounds are too quiet and rare
+|187397|Pale hanging moss model does not match cave vines model
+|187456|Wandering traders don't sell pale oak saplings
+|187514|Mangrove swamps spawn many incorrect animals
+|otherissuescount=5}}
+'''Other'''
+*Resin clump and resin brick items no longer float in the player's hand in 3rd person view.
+*Fixed a bug where loading screens while loading a realm were not showing Realms UI elements.
+*Improved game loading stability.
+*Fixed spacing on Realms Stories and Timeline pages.
+*Fixed a bug where the death screen and new bed screen would sometimes have incorrect textures applied when resource packs were used.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.50 betas]]
+[[de:Bedrock Edition beta 1.21.50.26]]
+[[pt:Edição Bedrock Preview 1.21.50.26]]
+[[uk:Preview 1.21.50.26 (Bedrock Edition)]]
+[[zh:基岩版1.21.50.26]]

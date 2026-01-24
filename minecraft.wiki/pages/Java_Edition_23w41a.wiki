@@ -1,0 +1,154 @@
+{{Infobox version
+| title = Minecraft 23w41a
+| image = 23w41a.jpg
+| image2 = Java Edition 23w41a.png
+| edition = Java
+| type = Snapshot
+| date = October 11, 2023
+| jsonhash = 15f2ab1b8cc194afcf299a3703e8350a88bf3136
+| clienthash = da1852dc65305e01db8262bad7450eddca55a5d0
+| clientmap = a595f60b4582fe7e27436b2d699e5a4c2d253999
+| serverhash = e3e4c46324ac42b1789f7ff6e895ae3c843a9819
+| servermap = 725b2f657007e6d38d42b1a016155bb6c2a38245
+| parent = 1.20.3
+| prevparent = 1.20.2
+| prev = 23w40a
+| next = 23w42a
+| nextparent = 1.20.4
+}}<onlyinclude>
+
+'''23w41a''' is the second [[snapshot]] for [[Java Edition 1.20.3]], released on October 11, 2023,<ref>{{snap|23w41a|October 11, 2023}}</ref> which adds [[Realms]] support for all versions, new functionality for [[decorated pot]]s, reintroduces function-related commands, improves command limits, and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Particles (Java Edition)|Particles]]'''
+* Added new <code>dust_plume</code> particle type.
+
+== Changes ==
+=== Blocks ===
+'''[[Decorated pot]]'''
+* Now can store items, up to a single stack.
+** [[Hopper]]s, [[minecart with hopper]]s and [[dropper]]s can now insert and/or extract items from them.
+** [[Comparator]]s can now read the number of items in them.
+** [[Player]]s can interact with them and insert items into them.
+*** Player interactions cause pots to wobble and trigger a vibration frequency of 11.
+** They have no GUI, and need to be broken to retrieve their content by players.
+* Now can be smashed by projectiles, which cause them to shatter and drop their contents.
+* Now can stack up to 64.
+
+=== Non-mob entities ===
+'''General'''
+* The name of them is now shown if looked at and a <code>CustomName</code> is set, or always displayed if <code>CustomNameVisible</code> is set, similar to living entities.
+
+=== Command format ===
+'''[[Function (Java Edition)|Function]]'''
+* {{cmd|function}} command has been changed to better accommodate new {{cmd|return}} command.
+* Functions no longer have any result unless they use {{cmd|link=none|return}} or there was an error during lookup or instantiation.
+** That means {{cmd|link=none|function}} command no longer returns (or even displays) the number of commands run during execution.
+** Error conditions:
+*** Calling non-existent function.
+*** Calling empty function tag.
+*** Macro instantiation failure.
+* "Result" in this context means values that would be stored with {{cmd|execute store}}.
+* The previous behavior where every command in a function would perform store if a function was called with {{cmd|link=none|execute store ... run ''function''}} is removed.
+** That means that a single call to <code>''function''</code> stores at most once (zero times if {{cmd|link=none|return}} was not called).
+** For function tags with multiple entries, function results are accumulated, but partial results are stored at the end of every function.
+* Existing limits for functions have been refined to accommodate new execution rules and prevent a wider range of exploits:
+** Limits apply even if run from command line (so it now always behaves as if they were placed in a function).
+*** For example, all functions called by {{cmd|link=none|execute as @e run ''function''}} count towards the same limit.
+*** Executions from command blocks still count as separate ones.
+** Limit <code>maxCommandChainLength</code> for functions now counts "operations" like:
+*** Execution of command for a single context.
+*** Execution of a stage in {{cmd|link=none|execute}} (no matter how many contexts were modified).
+*** Invocation of function.
+** A new limit with game rule <code>maxCommandForkCount</code> now restricts the total amount of context that can be created by single state of functions like {{cmd|link=none|execute}}.
+*** Example: if there are 5 entities in world, {{cmd|link=none|execute as @e}} creates 5 contexts, while {{cmd|link=none|execute as @e at @e}} creates 5*5 = 25 contexts.
+
+'''{{cmd|execute}}'''
+* Re-added <code>(if|unless) function</code> subcommand.
+** A new execute sub-command that runs a function or function tag and matches the return value(s). If a tag is given, all functions run regardless of the results of prior functions.
+** Syntax: {{cmd|link=none|execute (if{{!}}unless) function <function> -> [''execute'']}}
+** Arguments:
+*** <code>function</code>: The function or tag to run.
+** The matching of the result value of the function(s) that run:
+*** At least one of the functions must succeed for the match to succeed.
+*** A successful call is defined as a function that:
+**** Uses the {{cmd|link=none|return}} command to return a value.
+**** The return value is not 0.
+*** If no functions exited with {{cmd|link=none|return}}, neither <code>if</code> nor <code>unless</code> runs.
+
+'''{{cmd|return}}'''
+* Re-added <code>run</code> subcommand: {{cmd|link=none|return run <command>}}.
+** This takes the result value from running the specified <code>command</code> and returns that as the return value of the function.
+*** If command did not return any value (like, for example, call to a function without {{cmd|link=none|return}}), {{cmd|link=none|return}} doesn't execute and function continues execution.
+*** If the given command fails, the return value is <code>0</code>.
+*** In all other aspects, it works like {{cmd|link=none|return}} with a specified <code>return</code> value.
+*** In case of fork (for example {{cmd|link=none|return run execute as @e run ''some_command''}}), the first execution of the command returns.
+**** If there are no executions (for example in {{cmd|link=none|return run execute if @e[''something_impossible''] run ''some_command''}}), function doesn't return and continues execution.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>20</code>.
+
+'''[[Realms]]'''
+* Are now available in snapshots, pre-releases, and release candidates.
+** Any player who has an active Realms subscription is eligible to create a free snapshot realm.
+** Snapshot realms are separate from the regular realms to prevent any issues from impacting regular realms.
+* The version of the last played world on a realm is displayed in the realms list.
+* Experiments are available for newly created worlds.
+
+== Fixes ==
+{{fixes|fixedin=23w41a
+|;From released versions before 1.20
+|16937|Shooting an arrow into the nether portal can hurt anybody when PvP is disabled.
+|50319|Player owned projectiles lose their player ownership when exiting portals.
+|81656|Field determining whether or not a wither skull is blue is not saved to and read from NBT.
+|118403|Vexes summoned by evoker do not have evoker team applied.
+|143266|Nested function calls reevaluate <code>maxCommandChainLength</code> before queueing commands.
+|143269|Nested intermediate functions are skipped when <code>maxCommandChainLength</code> commands are already queued.
+|189227|First time tutorial uses old textures.
+|198113|Incomplete commands do not prevent functions from loading.
+|233276|You can feed adult donkeys, horses, llamas or mules with maximum Temper value, and hand animation is not played.
+|234323|Performance issue with text parsing.
+|236341|You can feed hay bales to adult donkeys, horses or mules, and animal eating animation/sounds are not played.
+|236501|Renamed minecarts and boats don't show their name tag in the world.
+|249408|Boats with Chests lose their name when placed.
+|260576|Incomplete {{cmd|execute summon}} command still runs.
+|261395|When in {{cd|mcfunction}} files, the {{cmd|damage}} command does not trigger {{cd|player_hurt_entity}} and {{cd|player_killed_entity}} advancements the correct number of times.
+|262105|Entities can block brushing actions when players look very close to their hitboxes.
+|262027|Result consumer created by {{cmd|execute store}} is invoked for every command within a function.
+|;From 1.20
+|261682|Brushing can continue when block goes out of range.
+|;From 1.20.1
+|263575|When an item is extracted from suspicious sand/gravel, gravity does not work on this block.
+|263660|"Sign wobbles" subtitle is the same for signs and hanging signs, causing translation issues.
+|;From 1.20.2
+|264595|{{cmd|return}} command cannot run function when inside another function.
+|264699|Functions return the output of commands only if the command doesn't start with {{cmd|return run}}.
+|264710|{{cmd|execute if function}} always fails and {{cmd|execute unless function}} always succeeds if run from a function.
+|264880|GUI slider uses new texture with programmer art.
+|265516|The "Cancel" button within some realms menus can be deselected using keyboard navigation despite it being the only element within the said menu.
+|265814|Minecart with TNT explodes or just dies depending on the type of explosion that hits it.
+|;previous
+|265647|Shield arm position is incorrect while in a boat.
+|265656|Pumpkins can no longer be sheared.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|-y9pXiTTs2Y|wq_AlcDQuCA}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:23w41a]]
+[[es:Java Edition 23w41a]]
+[[fr:Édition Java 23w41a]]
+[[ja:Java Edition 23w41a]]
+[[lzh:二三週四一甲]]
+[[pt:Edição Java 23w41a]]
+[[ru:23w41a (Java Edition)]]
+[[uk:23w41a (Java Edition)]]
+[[zh:Java版23w41a]]

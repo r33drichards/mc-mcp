@@ -1,0 +1,194 @@
+{{Infobox version
+| edition = bedrock
+| editorver = 1.1.9
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.13026.0<br>
+'''Android''': 1.21.130.26
+| image = Bedrock 1.21.130.26 PatchNotes.jpg
+| image2 = Bedrock 1.21.130.26.png
+| build = 38581878
+| versioncode = '''Android''':<br />
+952113026 (armeabi-v7a, 35)<br />
+962113026 (x86, 35)<br />
+972113026 (arm64-v8a, 35)<br />
+982113026 (x86_64, 35)
+| date = November 4, 2025
+| server = 1.21.130.26
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.130.26.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.130.26.zip Linux]
+| parent = 1.21.130
+| prevparent = 1.21.124
+| prev = Preview 1.21.130.25
+| next = Preview 1.21.130.27
+| nextparent = 1.21.131
+}}<onlyinclude>
+'''Beta 1.21.130.26''' (ChromeOS, Android) or '''Preview 1.21.130.26''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fourth beta and fifth ''Preview'' version for [[Bedrock Edition 1.21.130]], released on November 4, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/40853509126541-Minecraft-Beta-Preview-1-21-130-26|title=Minecraft Beta & Preview - 1.21.130.26|website=Minecraft Feedback|date=November 4, 2025}}</ref> which adds [[netherite horse armor]], a coral [[zombie nautilus]] variant, and fixes bugs.
+
+== Additions ==
+=== Mobs ===
+[[File:Coral Zombie Nautilus.png|36px]] '''[[Coral Zombie Nautilus]]'''
+* A new variant of the [[zombie nautilus]].
+* Spawns in [[warm ocean]]s, replacing the normal zombie nautilus.
+
+=== Items ===
+[[File:Netherite Horse Armor (item).png|32px]] '''[[Netherite Horse Armor]]'''
+* Can be obtained by upgrading diamond horse armor with a smithing table.
+{{Smithing|Netherite Upgrade|Diamond Horse Armor|Netherite Ingot|Netherite Horse Armor}}
+
+== Changes ==
+=== Blocks ===
+[[File:Water.png|32px]] '''[[Water]]'''
+* Light absorption in water has been changed from 2 to 1 units, to match ''Java Edition''.
+
+=== General ===
+'''[[Settings]]'''
+* Accessibility option "Enable Open Chat Message" has been renamed to "Chat Instructions on Join".
+
+'''[[UI]]'''
+* Added a new joystick for touch [[controls]] when using the control schemes {{cd|'player_relative_strafe'}} or {{cd|'camera_relative_strafe'}}.
+** The new joystick is only available with "Joystick & tap to interact" and "Joystick & aim crosshair" control modes.
+** Players who are using "D-Pad & tap to interact" when entering into one of the two control schemes will be put into "Joystick & tap to interact" and then returned to "D-Pad & tap to interact" after they stop using one of the two control schemes.
+* Implemented the same HUD icon for ambient mob [[effect]]s as {{JE}}.
+* All items now show the "Hit" attack prompt when aiming at a mob.
+* Items with dedicated interaction prompts now show when aiming at a mob if there is no other special mob interaction prompt.
+* [[Camel husks]] are now the appropriate size in their Pocket UI screen.
+* The mob's inventory panel is now hidden for all unchested mobs in the default UI.
+
+'''[[Panorama]]'''
+* Updated the panorama to reflect [[Mounts of Mayhem]].
+
+'''Performance'''
+* Improved loading times when exiting worlds.
+* Improved loading times when using the {{cmd|/reload all}} command.
+* Improved loading times when re-entering similar worlds.
+* Improved loading times when transferring between servers.
+
+=== Graphical ===
+* [[Kelp]] is now affected by block dithering when near the camera.
+
+=== Items ===
+[[File:Zombie Horse Spawn Egg JE3.png|32px]] '''[[Spawn Egg]]s'''
+* Changed zombie horse spawn egg texture to reflect the updated texture of the zombie horse.
+
+=== Spawn events ===
+{{cd|spawn_adult}}
+* Can now be applied when summoning [[zombified piglins]], spawning as an adult.
+{{cd|spawn_baby}}
+* Can now be applied when summoning [[zombified piglins]], spawning as a baby.
+
+=== Mobs ===
+[[File:Dolphin.png|32px]] '''[[Dolphin]]'''
+* No longer spawn in [[cold ocean]] or [[deep cold ocean]] biomes to match ''Java Edition''.
+
+[[File:Zombie Horse BE3.png|32px]] '''[[Zombie Horse]]'''
+* Zombie horses now spawn less frequently on [[Peaceful]] difficulty.
+
+=== Technical ===
+'''AI Goals'''
+* Added a new field to {{cd|behavior.nearest_attackable_target}} to enable a probability of target being chosen by {{cd|behavior.nearest_attackable_target}} goal:
+** {{cd|target_acquisition_probability:}} Probability (0.0 to 1.0) that a entity will accept a found target.
+*** The default value unless specified is 1.0.
+* Modified {{cd|behavior.nearest_attackable_target}}'s {{cd|attack_interval}} field to support a range of value:
+** {{cd|range_min}}: Minimum time in seconds before the entity searches for a attack target, can now be set to other values than just 0.
+** {{cd|range_max}}: Maximum time in seconds before the entity searches for a attack target.
+* Added the {{cd|"hijack_mount_navigation"}} field to the {{cd|"minecraft:behavior.use_kinetic_weapon"}} AI goal.
+** Allows a mob to override its mount’s navigation behavior with the one defined by this goal.
+*** Requires the mount to be running the {{cd|"minecraft:behavior.mount_pathing"}} goal, whose default behavior will be ignored.
+
+'''API'''
+* Released {{cd|BlockComponentBlockBreakEvent}} from {{cd|beta}} to {{cd|v2.4.0}}.
+* {{cmd|/structure}} and {{cmd|/place}} commands and {{cd|StructureManager}} API Place function now trigger {{cd|onBreak}} beta API event for custom blocks when overidden.
+
+'''[[Block]]s'''
+* Moved the {{cd|minecraft:precipitation_interactions}} i.e. {{cd|Block Precipitations Interactions}} component from experimental to stable.
+* Extended {{cd|"minecraft:collision_box"}} height to 24 when using a format version of 1.21.130 or higher and the Upcoming Creator Features toggle is enabled.
+* {{cd|"minecraft:collision_box"}} now supports arrays of boxes when using a format version of 1.21.130 or higher and the Upcoming Creator Features toggle is enabled.
+
+'''Components'''
+* Added {{cd|is_controlling_passenger_family}} entity filter to check if the passenger controlling a mount is of the specified family.
+* Added {{cd|has_item_with_component}} entity filter to check if the entity has equipped an item with the designated component name.
+
+'''Entity Components'''
+*Added the {{cd|ambient}} field to {{cd|minecraft:mob_effect}} component.
+** Causes the effect to render with the ambient effect background.
+** Causes the effect to not pulse for timing out.
+
+'''Network'''
+* Added {{cd|Ambient}} boolean field to {{cd|MobEffectPacket}}, defines if the effect is considered ambient.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Upcoming Creator Features" [[experimental]] toggles.
+=== Additions ===
+==== Technical ====
+'''API'''
+* World:
+** Added property {{cd|readonly}} {{cd|tickingAreaManager: TickingAreaManager}} to {{cd|beta}}.
+*Added class {{cd|TickingAreaManager}} to {{cd|beta}}.
+* Added interface {{cd|TickingArea}} to {{cd|beta}}.
+* Added interface {{cd|TickingAreaOptions}} to {{cd|beta}}.
+* Added class {{cd|TickingAreaError}} to {{cd|beta}}.
+* Added enum {{cd|TickingAreaErrorReason}} to {{cd|beta}}.
+
+=== Changes ===
+==== Technical ====
+'''[[Block]]s'''
+* Blocks that use the {{cd|minecraft:placement_position}} block trait with the state {{cd|minecraft:vertical_half}} and {{cd|minecraft:placement_direction}} with the state {{cd|minecraft:corner_and_cardinal_direction}} now update the corner state immediately instead of a tick later.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.130.26 Preview
+|;old
+|168996|Cherry trees can generate inside other trees by very replacing their foliage.
+|176018|Wolf's model has an offset to the left against their shadow.
+|178232|Some sounds of goats aren't controlled by the "Friendly Creatures" sound slider.
+|179847|{{cmd|/clone...filtered|link=none}} does not filter out water from waterlogged blocks, and will waterlog any block in target area.
+|222444|Other players' skins appear as Steve/default skin on Android.
+|226509|Holding up on the D-pad no longer continuously scrolls up in JSON UI menus.
+|227846|Preview with the latest GDK does not use a dark titlebar when the system theme is set to "Dark".
+|227849|Preview with the latest GDK is missing its unique window/titlebar icon.
+|228041|Loading all dimension types on load sets the world-spawn to 0,0.
+|228101|Some options are missing from the new accessibility settings.
+|228233|Paste Coordinates button pastes coordinates twice in the chat.
+|228584|On-screen keyboard displays when trying to type if controller is also connected.
+|229549|GDK - Resuming the game while another window is set to “Always on top” locks the mouse cursor to the center of the screen.
+|229848|Pressing any mouse button after moving the cursor and closing a GUI often causes the Player's camera to snap to a random direction.
+|;dev
+|229431|Left clicking/interacting on a tamed nautilus without a saddle opens the player inventory.
+|229436|Several sounds of the Zombie Nautilus and Nautilus do not match Java.
+|229453|Wooden spears oftentimes don't play jabbing sounds.
+|229476|Custom biome using partial biome replacement can no longer generate
+|229509|Piglin spams interfering sounds while holding a golden item.
+|229548|GDK - Game continues to track mouse cursor movement when the cursor is in another window.
+|229792|One of the baby nautilus' shell piece has been moved by 1 pixel. causing it to be different compared to Java edition's model.
+|229868|Zombified Piglin Entity File does not load.
+|230280|Zombie Horse Spawn Egg texture doesn't match Java.
+|otherissuescount=17}}
+'''Other'''
+* Fixed a visual issue in the [[nautilus]] model that caused the top part of the shell to protrude.
+* Fixed the [[parched]] being able to hit the [[husk]] driver when riding a [[camel husk]].
+* Fixed the parched being able to hit the camel husk it is riding.
+* Fixed a visual issue in the [[zombie nautilus]] model that caused the top part of the shell to protrude.
+* Fixed [[water]] being rendered opaque.
+* Fixed an issue where blocks moved by [[piston]]s are too dark.
+* Fixed blocks flashing yellow when pushed with a piston with [[Vibrant Visuals]] enabled.
+* Fixed damage particles sometimes rendering as black with vanilla renderer.
+* Fixed archaeology items sometimes rendering as nearly black.
+* Fixed an issue where players could get temporarily stuck when adding members to a newly purchased [[Realm]].
+* Fixed a crash from using a data driven renderer.
+* Fixed ambient mob effects constantly flashing like they are timing out.
+* Fixed {{cd|"ambient_occlusion"}} field in {{cd|"minecraft:material_instances"}} block component.
+* Fixed content warning that incorrectly occurred for {{cd|format_version}} field in entity json in versions before 1.8.0.
+* Fixed an issue where {{cd|DebugShape}} objects were not cleaned up properly after running {{cmd|/reload}}.
+* Fixed an issue where {{cd|DebugText}} would not be affected by the scale property.
+* Reduced flickering and fixed incorrect reflections on low roughness materials with height maps in Vibrant Visuals.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.130 betas]]
+
+[[de:Bedrock Edition beta 1.21.130.26]]
+[[es:Bedrock Edition Preview 1.21.130.26]]
+[[pt:Edição Bedrock Preview 1.21.130.26]]
+[[zh:基岩版1.21.130.26]]

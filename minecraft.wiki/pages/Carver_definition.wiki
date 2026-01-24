@@ -1,0 +1,97 @@
+{{exclusive|java}}
+'''Configured carvers''' are used to add [[cave]]s and [[canyon]]s. They are referenced in [[biome definition|biomes]].
+
+== Definition ==
+Configured carvers can be defined in [[data pack]]s, as part of the directory structure below.
+
+{{Data pack directory|configured_carver|<nowiki><name>.json</nowiki>|worldgen=1}}
+
+== JSON format ==
+<div class="treeview">
+*{{Nbt|compound}}: The root object.
+**{{Nbt|string|type}}: The ID of carver type; see below.
+**{{Nbt|compound|config}}: Configuration values for the carver.
+***{{Nbt|float|probability}}: The probability that each chunk attempts to generate carvers. Value between 0 and 1 (both inclusive).
+***{{Nbt|compound|y}}: The height at which this carver attempts to generate.
+**** {{nbt inherit/height_provider}}
+***{{Nbt|compound|lava_level}}: The Y-level below or equal to which the carved areas are filled with lava. Doesn't affect {{cd|nether_cave}} (where lava level is always {{cd|bottom_y + 31}}). Note that the carver is also filled with the fluid from [[aquifers]], which always include lava below {{cd|-54}}.
+**** {{nbt inherit/vertical_anchor}}
+***{{Nbt|string}}{{Nbt|list|replaceable}}: Blocks that can be carved. Can be a block ID, a block tag, or a list of block IDs.
+***{{Nbt|compound|debug_settings}}: (optional) Replaces blocks in the carved areas for debugging.
+****{{Nbt|bool|debug_mode}}: (optional, defauts to false) Enable debug mode for this carver.
+****{{Nbt|compound|air_state}}: (optional, defaults to acacia button's default state) Replaces air blocks.
+***** {{Nbt inherit/block state}}
+****{{Nbt|compound|water_state}}: (optional, defaults to acacia button's default state) Replaces water blocks and then waterlogs these blocks.
+***** {{Nbt inherit/block state}}
+****{{Nbt|compound|lava_state}}: (optional, defaults to acacia button's default state) Replaces lava blocks.
+***** {{Nbt inherit/block state}}
+****{{Nbt|compound|barrier_state}}: (optional, defaults to acacia button's default state) Replaces barriers of aquifers.
+***** {{Nbt inherit/block state}}
+*** Additional fields based on {{Nbt|string|type}}; see below.</div>
+
+== Carver Type ==
+The '''carver type''' determines the shape of the carving.
+
+=== {{cd|cave}} and {{cd|nether_cave}} ===
+Carves a cave. A cave is a long tunnel that sometimes branches. Sometimes one or more tunnels start from a circular void.
+
+Nether caves are similar to caves, but with a less frequency and wider tunnels {{verify|is this not just a difference in configuration?}}. Also, [[aquifer]] doesn't work: The carved blocks below {{cd|bottom_y + 32.0}} are filled with lava.
+
+Additional fields:
+<div class="treeview">
+**{{Nbt|float}}{{Nbt|compound|yScale}}: Vertically scales circular voids.
+*** {{nbt inherit/float_provider}}
+**{{Nbt|float}}{{Nbt|compound|horizontal_radius_multiplier}}: Horizonally scales cave tunnels. Doesn't affect the length of tunnels.
+*** {{nbt inherit/float_provider}}
+**{{Nbt|float}}{{Nbt|compound|vertical_radius_multiplier}}: Vertically scales cave tunnels. Doesn't affect the length of tunnels.
+*** {{nbt inherit/float_provider}}
+**{{Nbt|float}}{{Nbt|compound|floor_level}}: Value between -1.0 and 1.0 (both inclusive). Change the shape of the cave's horizontal floor. If 0.0, carves the terrain with ellipsoids. If 1.0, carves with upper semi-ellipsoids, resulting in a level floor.
+**** {{nbt inherit/float_provider}}</div>
+
+=== {{cd|canyon}} ===
+Carves a canyon.
+
+Additional fields:
+<div class="treeview">
+**{{Nbt|float}}{{Nbt|compound|yScale}}: Vertically scales canyons.
+*** {{nbt inherit/float_provider}}
+**{{Nbt|float}}{{Nbt|compound|vertical_rotation}}: Vertical rotation as a canyon extends.
+*** {{nbt inherit/float_provider}}
+**{{Nbt|compound|shape}}: The shape to use for the ravine.
+***{{Nbt|float}}{{Nbt|compound|distance_factor}}: Scales the length of canyons. Higher values make canyons longer.
+**** {{nbt inherit/float_provider}}
+***{{Nbt|float}}{{Nbt|compound|thickness}}: Scales the breadth and height of canyons.
+**** {{nbt inherit/float_provider}}
+***{{Nbt|float}}{{Nbt|compound|horizontal_radius_factor}}: Scales the breadth of canyons. Higher values make canyons wider.
+**** {{nbt inherit/float_provider}}
+***{{Nbt|float|vertical_radius_default_factor}}: Vertically scales canyons. Higher values make canyons deeper.
+***{{Nbt|float|vertical_radius_center_factor}}: Scales the height based on the horizontal distance from the canyon's center, resulting in deeper center.
+***{{Nbt|int|width_smoothness}}: Higher values smooth canyon walls on the vertical axis. Must be greater than 0.</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.16.2|dev=20w28a|Added experimental support for configured carvers in data packs.}}
+|{{HistoryLine||1.17|dev=21w06a|Removed carvers {{cd|underwater_canyon}} and {{cd|underwater_cave}}.}}
+|{{HistoryLine|||dev=21w08a|Added configuration for the canyon carver.
+|Added optional carver field {{cd|debug_settings}}. When enabled with {{cd|debug_mode}}, can place blocks from {{cd|air_state}}.}}
+|{{HistoryLine|||dev=21w11a|Renamed canyon carver field {{cd|distanceFactor}} to {{cd|distance_factor}}.}}
+|{{HistoryLine|||dev=21w13a|Added configuration for the cave carver.
+|Replaced carver field {{cd|bottom_inclusive}} and {{cd|top_inclusive}} with field {{cd|y}}, which is a height provider. Added field {{cd|yScale}}.
+|Moved canyon carver shape fields into sub-object {{cd|shape}}.}}
+|{{HistoryLine|||dev=21w16a|Added field {{cd|aquifers_enabled}}.
+|Added fields {{cd|water_state}}, {{cd|lava_state}}, and {{cd|barrier_state}} in the {{cd|debug_settings}} object.}}
+|{{HistoryLine||1.18|dev=21w38a|Removed field {{cd|aquifers_enabled}}.}}
+|{{HistoryLine||1.19|dev=22w15a|Added field {{cd|replaceable}} to carver configuration.}}
+}}
+
+== External links ==
+* [https://misode.github.io/worldgen/carver/ Configured carver Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Erosionsdefinition]]
+[[fr:Définition de sculpteur de terrain]]
+[[pt:Definição de cavernas]]
+[[zh:雕刻器定义格式]]

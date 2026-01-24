@@ -1,0 +1,166 @@
+{{Infobox version
+|title=Minecraft 22w18a
+|image=22w18a.jpg
+|image2=Java Edition 22w18a.png
+|edition=Java
+|type=Snapshot
+|date=May 4, 2022
+|jsonhash=9f2303ee66c417d52aed26c02bd0e8fe5b374687
+|clienthash=85ab5e9725b6fa8078c6bd9df2697221fbe34b40
+|clientmap=798b951eeff3b86e5a0cd4a81f415b5f465808f2
+|serverhash=d3259a8939a724c78ebbb995dfc31c1c364464e3
+|servermap=001ab71a16b49623990eaecbb02ac43140cf7827
+|parent=1.19
+|prevparent=1.18.2
+|prev=22w17a
+|next=22w19a
+|nextparent=1.19.1
+}}<onlyinclude>
+
+'''22w18a''' is the ninth [[snapshot]] for [[Java Edition 1.19]], released on May 4, 2022,<ref>{{snap|22w18a|May 4, 2022}}</ref> which adds the {{cmd|place}} command, makes tweaks to [[allay]]s, and fixes bugs.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|place}}'''
+* A new command which replaces {{cmd|placefeature}} and can place features, jigsaws and structures at a given location, with following syntaxes:
+** {{cmd|place feature <feature> [<pos>]|link=none}}
+*** Works like the removed {{cmd|placefeature}}.
+*** <code>feature</code>: The namespaced ID of a feature to try to place.
+** {{cmd|place jigsaw <pool> <start> <depth> [<pos>]|link=none}}
+*** Works as hitting the "generate" button inside the user interface of a [[jigsaw block]]: it generates a jigsaw structure starting in a certain template pool at a given jigsaw anchor, then does a given number of levels of expansion from there.
+*** <code>pool</code>: The namespaced ID of a template pool to start generating.
+*** <code>start</code>: The namespaced ID name of a jigsaw to use as the starting anchor.
+*** <code>depth</code>: The maximum number of jigsaw connections to traverse during placement.
+** {{cmd|place structure <structure> [<pos>]|link=none}}
+*** Works by placing an entire structure just like it is done in world generation.
+*** <code>structure</code>: The namespaced ID of a structure to try to generate.
+*** <code>pos</code>: The position to use as the origin for the generation. (if omitted, <code>~ ~ ~</code> is used)
+
+=== General ===
+'''[[Chat]]'''
+* Chat from the {{cmd|say}}, {{cmd|msg}}, {{cmd|teammsg}}, and {{cmd|me}} commands are now all also cryptographically signed.
+* Servers can now define different chat style formats for clients, which can now be controlled by the server through the <code>chat_type</code> registry (found under the worldgen folder in the vanilla report).
+** These are synchronized to clients when they join the server.
+** The translation key or translation format can be defined, like <code>chat.type.text</code> or <code>%s says: "%s"</code>.
+*** Chat can be similarly optionally narrated with a custom translation key or format.
+** The entire message can have formatting applied, such as italics or a specific color (but currently not click or hover events).
+
+'''[[Item modifier]]'''
+* Added the item function <code>set_instrument</code>, to sets item tags needed for instrument items to a random value selected from a tag, with following parameter:
+** <code>options</code>: a tag reference specifying the instrument options to randomly pick from.
+
+'''[[Tag]]s'''
+* Added following block tags:
+** <code>#snow_layer_can_survive_on</code>: {{cd|d=and|honey_block|soul_sand|mud}}.
+** <code>#snow_layer_cannot_survive_on</code>: {{cd|d=and|ice|packed_ice|barrier}}.
+* Added following banner pattern tags (new type):
+** <code>#no_item_required</code>: {{cd|d=and|square_bottom_left|square_bottom_right|square_top_left|square_top_right|stripe_bottom|stripe_top|stripe_left|stripe_right|stripe_center|stripe_middle|stripe_downright|stripe_downleft|small_stripes|cross|straight_cross|triangle_bottom|triangle_top|triangles_bottom|triangles_top|diagonal_left|diagonal_up_right|diagonal_up_left|diagonal_right|circle|rhombus|half_vertical|half_horizontal|half_vertical_right|half_horizontal_bottom|border|curly_border|gradient|gradient_up|bricks}}.
+*** Defines banner patterns which can be made on [[loom]] and do not need a pattern item.
+** <code>#pattern_item/creeper</code>: <code>creeper</code>
+** <code>#pattern_item/flower</code>: <code>flower</code>
+** <code>#pattern_item/globe</code>: <code>globe</code>
+** <code>#pattern_item/mojang</code>: <code>mojang</code>
+** <code>#pattern_item/piglin</code>: <code>piglin</code>
+** <code>#pattern_item/skull</code>: <code>skull</code>
+* Added following instrument tags (new type):
+** <code>#goat_horns</code>: <code>#regular_goat_horns</code> and <code>#screaming_goat_horns</code>.
+** <code>#regular_goat_horns</code>: {{cd|d=and|ponder_goat_horn|sing_goat_horn|seek_goat_horn|feel_goat_horn}}.
+** <code>#screaming_goat_horns</code>: {{cd|d=and|admire_goat_horn|call_goat_horn|yearn_goat_horn|dream_goat_horn}}.
+
+== Changes ==
+=== Blocks ===
+'''[[Sculk catalyst]]'''
+* No longer spreads sculk upon death of mobs that do not drop experience (such as baby animals).
+
+=== Mobs ===
+'''[[Allay]]'''
+* Now follow their liked player even if they can't see them.
+* Now only lose track of a player if they are more than 64 blocks away.
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Changed the description for the "Sneak 100" advancement from "Sneak near a Sculk Sensor, Sculk Shrieker or Warden to prevent it from hearing you" to "Sneak near a Sculk Sensor or Warden to prevent it from detecting you".
+
+'''Vibration'''
+* Vibration listeners such as [[sculk sensor]]s, [[sculk shrieker]]s and [[warden]]s now listen to the closest vibration instead of the first vibration in the tick.
+
+=== Command format ===
+'''{{cmd|placefeature}}'''
+* Merged into the new {{cmd|place}} command.
+
+=== General ===
+'''[[Data pack]]'''
+* The built-in vanilla pack, the report generated by the game, and the vanilla world generation reference pack now store their object keys sorted alphabetically (with the exception of type fields and parent fields, which get listed first).
+** This makes diffing the files easier after changes, and avoids false positive changes from fields moving around.
+
+'''[[Item modifier]]'''
+* Removed the item function <code>set_goat_horn_sound</code>.
+
+'''[[Particles (Java Edition)|Particles]]'''
+* Changed the texture of the sonic boom particle.
+
+'''[[Tag]]s'''
+* Removed <code>flap</code> game event from the <code>#vibrations</code> and <code>#warden_can_listen</code> game event tag.
+
+'''General'''
+* The bundled Java runtime has been upgraded to 17.0.3.
+
+== Fixes ==
+{{fixes|fixedin=22w18a
+|;old
+|179447|More than six banner patterns can be added to a banner.
+|207935|Simultaneous vibrations don't trigger as expected.
+|229295|JVM crash when starting Minecraft ({{cd|java.util.jar.Attributes.read}}).
+|232009|Minecraft does not resolve SRV records correctly.
+|249021|The invitation and news buttons aren't consistently displayed within the realms menu.
+|;dev
+|249129|The walking animation of frogs doesn't change in relation to their movement speed.
+|249175|Only one sculk vein drops when using a Silk Touch hoe on multiple in a single block space.
+|249454|Sculk Catalysts will spread sculk if a baby mob that does not drop experience dies around it.
+|249527|Sky effects are visible through Darkness.
+|249562|When the warden is stuck in the bubble column, it won't try to find its way out.
+|249732|Allays lose picked up items on world restart.
+|249739|Parity: Allay flies far slower on Java Edition.
+|249740|Allays leashed to a fence do not move and refuse to pick up items.
+|249857|Parity Issue: Allays don't follow the player / note blocks as closely on Java.
+|250139|Snow layers cannot be placed on top of mud.
+|250143|Improper advancement description for "Sneak 100".
+|250144|"Sneak 100" advancement includes sculk shriekers as a block that can "hear" the player.
+|250145|Warden/frogs continue animations when the game is paused.
+|250163|Warden can still detect things after it dies.
+|250183|Warden continues to roar when angered by an ignited creeper.
+|250198|Warden continues to roar when the target of the enraged warden suffers an unnatural death.
+|250207|Warden continues to roar at disconnected players.
+|250216|Warden continues to roar at targets in unloaded chunks.
+|250218|Warden continues to roar at despawned target.
+|250244|Warden continues to roar when the target enters the nether portal, end portal or end gateway.
+|250245|Warden sonic boom attacks can hit player even if the player has entered another dimension.
+|250292|Wardens can sometimes freeze when overwhelmed with enemies/attacks/sounds.
+|250506|Mangrove leaves can appear at a higher altitude when grown below y {{=}} 0.
+|250557|Allay permanently stuck trying to pick up item stack if its slots contain stack of the same type with differing NBT (and vice versa).
+|250662|{{cd|minecraft:sonic_boom particle}} frames are misordered during animation.
+|250864|Game fails to load worldgen settings when {{samp|.DS_Store}} files are present in datapack.
+|;previous
+|250926|There is a goat horn in the creative Destroy Item slot / all tabs within the creative inventory contain goat horns.
+|250937|User skins don't load in singleplayer.
+|250939|Game crashes when a goat horn with an invalid sound variant is used / {{cd|java.lang.ArrayIndexOutOfBoundsException: Index <index> out of bounds for length 8}}.
+|250954|Player is assigned a new UUID in singleplayer.
+|250974|{{cd|MinecraftClientHttpException}} when opening/creating a world.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|YNof0dtnpZ0|U-Xd_qvLFNU}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:22w18a]]
+[[es:Java Edition 22w18a]]
+[[fr:Édition Java 22w18a]]
+[[ja:Java Edition 22w18a]]
+[[pt:Edição Java 22w18a]]
+[[ru:22w18a (Java Edition)]]
+[[zh:Java版22w18a]]

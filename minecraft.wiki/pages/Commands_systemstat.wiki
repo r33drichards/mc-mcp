@@ -1,0 +1,99 @@
+{{Outdated feature}}
+{{exclusive|bedrock}}
+{{Infobox command
+| name = systemstat
+| oplevel = 3
+| others = [[Cheat]] only
+}}
+
+Return or sets video settings and runtime statistics of the game.
+
+==Syntax==
+<code>/systemstat <stat: SettableIntStat> [value: int]</code>
+
+* Return or sets specific video settings
+
+<code>/systemstat <stat: SystemStat></code>
+
+* Returns system runtime variables
+
+<code>/systemstat brightness [value: float]</code>
+
+* Sets the brightness of the game. Similar to gamma in [[options.txt]] in Java edition
+
+==Arguments==
+
+{{Argument|stat: SettableIntStat|be=1|Enum}}
+
+Specifies the video setting to return or set. Must be one of the following:
+
+* <code>guiscale</code> for changing GUI scale modifier
+* <code>viewdistance</code> for changing rendering distance
+
+{{Argument|value|be=1|int}}
+
+The value to set the setting to.
+
+{{Arg desc|be=int}} Any number outside what the setting allows will be clamped internally.
+
+If not specified, defaults to returning the variable instead.
+
+{{Argument|stat: SystemStat|be=1|Enum}}
+
+The system and game parameters to return. Must be one of the following:
+
+* <code>avgendframetime</code> for average frame time
+* <code>avgremaindertimepercent</code> for average remaining time percentage
+* <code>avgrendertime</code> for average rendering time
+* <code>avgticktime</code> for average ticking time
+* <code>avgunaccountedtimepercent</code> for average unaccounted time percentage
+* <code>chunkdirtycount</code> for dirty chunk count (number of modified chunks before game ticks)
+* <code>chunkrebuildcount</code> for number of chunks to rebuild
+* <code>cpu</code> for your system's CPU name
+* <code>fps</code> for current FPS
+* <code>gpu</code> for your system's GPU name
+* <code>gpumemory</code> for allocated GPU memory in megabytes
+* <code>msaalevel</code> for your current MSAA level
+* <code>os</code> for your system's OS name and version
+* <code>paths</code> to display directories used by the game. Including:
+** Root path: Internal LocalState/[https://learn.microsoft.com/en-us/uwp/api/windows.storage.applicationdata.localfolder ApplicationData.LocalFolder] path, two levels above [[com.mojang|com.mojang]]
+** Package path: Installed game path
+** Home path: [[com.mojang|com.mojang]] path
+** Settings path: <code>minecraftpe</code> directory within [[com.mojang|com.mojang]]
+** World path: <code>minecraftWorlds</code> directory within [[com.mojang|com.mojang]]
+** Resource Packs Path: ''(See [[resource packs#Bedrock_Edition|resource packs]])''
+** Data URL: [https://learn.microsoft.com/en-us/windows/uwp/app-resources/uri-schemes#ms-appx-and-ms-appx-web Internal URI for UWP applications]
+** External file path: External [[com.mojang|com.mojang]] path for Android. ''(See [[com.mojang#Android_quirks|Android quirks]])''
+** User data path: Same as home path
+** Temporary file path: Same as settings path
+* <code>profilersecondsperupdate</code> for time spent on profiling per tick
+* <code>resolution</code> for current resolution of the game window
+* <code>systeminfo</code> to display your OS, memory usage, CPU, resolution, GPU name, maximum GPU memory, MSAA level and render distance
+* <code>systemmem</code> for allocated memory in megabytes
+* <code>xbl</code> to display the player's Xbox live profile
+
+{{Argument|value|be=1|float}}
+
+The value to set the brightness to.
+
+{{Arg desc|be=float|min=0|max=1}} Valid values are between 0 and 1 (inclusive). Any number outside this range will be clamped internally.
+
+If not specified, defaults to returning the current brightness instead.
+
+==Result==
+{{Result table|onlybe=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.||unparseable}}
+{{Result table|succeed}}
+{{Result table}}
+
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.2.13|dev=release|Accidentally added developer commands to iOS, including {{cmd|link=none|systemstat}}.}}
+|{{HistoryLine||1.2.14|Removed all developer commands.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}

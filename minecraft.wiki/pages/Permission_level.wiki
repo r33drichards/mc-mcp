@@ -1,0 +1,277 @@
+'''Permission level''' is used to describe the permissions a player or a command executor has.
+
+For example, {{in|bedrock}}, {{cmd|setmaxplayers}} can't be executed in a command block, because this command requires the executor to have a permission level of 3, while command blocks have a permission level of only 2.
+
+== Description ==
+Levels are incremental, meaning level ''n'' allows anything that any level less than ''n'' allows.
+
+=== ''Java Edition'' ===
+{{IN|java}}, the permission levels may allow players to configure certain game settings:
+
+'''Level 0 &ndash; All'''
+* No permission.
+
+'''Level 1 &ndash; Moderator'''
+* The player can bypass [[spawn protection]].
+
+'''Level 2 &ndash; Gamemaster'''
+* More [[command]]s are available.
+* The player can use [[command block]]s.
+* The player can copy the server-side NBT data of an entity or a block entity when pressing the {{key|F3+I}} [[debug hotkey]], and copy the client-side NBT data when pressing {{key|shift+F3+I}}.
+* The player can use {{key|F3+F4}} ([[game mode switcher]]) and {{key|F3+N}} debug hotkey (toggle between [[Spectator]] and the previous [[game mode]]).
+* The player can change or lock [[difficulty]] in [[Options]] screen. Note that the player in a singleplayer world or the owner of a LAN world can change or lock difficulty without a permission level of 2.
+* With "Operator Items Tab" [[option]] turned on, the player can find operator items and an "Operator Utilities" tab in the [[creative inventory]]. 
+* [[Target selector]]s can be used in commands like {{cmd|tell}} and [[raw JSON text]]s.
+
+'''Level 3 &ndash; Admin'''
+* Commands related to multiplayer management are available.
+
+'''Level 4 &ndash; Owner'''
+* All commands are available, including commands related to server management.
+
+=== ''Bedrock Edition'' ===
+{{IN|bedrock}}, permission levels mostly dictate which commands a [[player]] may use. In different levels, certain commands are available, and a level inherits commands from levels less than it.
+
+The permission levels and their available commands are:{{note|The first names and commands are from [https://learn.microsoft.com/en-us/minecraft/creator/commands/commands the official documentation]. The second names are from the debug information of [[Bedrock Dedicated Server]].}}
+
+'''Level 0 &ndash; Any / Normal'''
+
+All commands available to non-privileged players:
+* {{cmd|help}}
+* {{cmd|list}}
+* {{cmd|me}}
+* {{cmd|tell}}
+
+'''Level 1 &ndash; Game Directors / Operator'''
+
+Mostly commands that affect gameplay and entities:
+{{Collapse|title='''List of commands'''|content=
+* {{cmd|aimassist}}
+* {{cmd|camera}}
+* {{cmd|camerashake}}
+* {{cmd|clear}}
+* {{cmd|clearspawnpoint}}
+* {{cmd|clone}}
+* {{cmd|controlscheme}}
+* {{cmd|damage}}
+* {{cmd|daylock}}
+* {{cmd|dialogue}}
+* {{cmd|difficulty}}
+* {{cmd|effect}}
+* {{cmd|enchant}}
+* {{cmd|event}}
+* {{cmd|execute}}
+* {{cmd|fill}}
+* {{cmd|fog}}
+* {{cmd|function}}
+* {{cmd|gamemode}}
+* {{cmd|gamerule}}
+* {{cmd|gametest}}
+* {{cmd|give}}
+* {{cmd|hud}}
+* {{cmd|inputpermission}}
+* {{cmd|kick}}
+* {{cmd|kill}}
+* {{cmd|locate}}
+* {{cmd|loot}}
+* {{cmd|mobevent}}
+* {{cmd|music}}
+* {{cmd|particle}}
+* {{cmd|playanimation}}
+* {{cmd|playsound}}
+* {{cmd|project}}
+* {{cmd|recipe}}
+* {{cmd|reload}}
+* {{cmd|replaceitem}}
+* {{cmd|ride}}
+* {{cmd|say}}
+* {{cmd|schedule}}
+* {{cmd|scoreboard}}
+* {{cmd|script}}
+* {{cmd|scriptevent}}
+* {{cmd|setblock}}
+* {{cmd|setworldspawn}}
+* {{cmd|spawnpoint}}
+* {{cmd|spreadplayers}}
+* {{cmd|stopsound}}
+* {{cmd|structure}}
+* {{cmd|summon}}
+* {{cmd|tag}}
+* {{cmd|teleport}}
+* {{cmd|tellraw}}
+* {{cmd|testfor}}
+* {{cmd|testforblock}}
+* {{cmd|testforblocks}}
+* {{cmd|tickingarea}}
+* {{cmd|time}}
+* {{cmd|title}}
+* {{cmd|titleraw}}
+* {{cmd|toggledownfall}}
+* {{cmd|weather}}
+* {{cmd|xp}}
+}}
+
+'''Level 2 &ndash; Admin / Host'''
+
+Server [[operator]] commands:
+* {{cmd|deop}}
+* {{cmd|op}}
+* {{cmd|place}}
+* {{cmd|setmaxplayers}}
+* {{cmd|wsserver}}
+
+'''Level 3 &ndash; Host / Automation'''
+
+No commands explicitly listed with this permission level from the [https://learn.microsoft.com/en-us/minecraft/creator/commands/commands documentation], but this level inherits all commands from lower levels.
+
+'''Level 4 &ndash; Owner / Admin'''
+
+Server administrator commands:
+* {{cmd|allowlist}}
+* {{cmd|changesetting}}
+* {{cmd|permission}}
+* {{cmd|reloadconfig}}
+* {{cmd|save}}
+* {{cmd|sendshowstoreoffer}}
+* {{cmd|stop}}
+* {{cmd|transfer}}
+
+{{notelist}}
+
+== Player Permissions ==
+{{Exclusive|Bedrock|section=1}}
+[[File:Ore UI - Pause Menu - Player Permissions Screen Menu (Bedrock).png|380px|thumb|The Player Permissions menu {{in|be}}.]]
+<!-- Used for [[Tutorial:Menu_screen/Bedrock_Edition#Player_Permissions]] transclusion --> <section begin="player-permissions"/>
+Player permissions dictate what the player can and cannot do in a multiplayer game. For example, actions such as building, [[mining]], attacking mobs or players can be disabled or restricted by each of their own permissions. They can be configured individually or by preset roles on a separate [[Tutorial:Menu_screen/Bedrock_Edition#Player_Permissions|screen]] accessible in the [[pause menu]].
+
+There are four roles which can set specific permissions for players:
+* '''Operator''', which enables all permissions, including operator commands, world settings, teleportation, and all of member permissions.
+* '''Member''', which enables mining, building, world and entities interactions.
+* '''Visitor''', which only lets players view or observe the world only, with none of the permissions enabled.
+* '''Custom''', which enables specific permissions set by operators. Following permissions can be applied for custom role:
+
+{| class="wikitable"
+|+
+!Option
+!Description
+!Default
+|-
+|Build
+|Allows the player to place blocks and entities in the world.
+|[[File:Ore UI - Toggle ON Button (Bedrock).png|link=|55px]]
+|-
+|Mine
+|Allows the player to break blocks in the world.
+|[[File:Ore UI - Toggle ON Button (Bedrock).png|link=|55px]]
+|-
+|Use doors and switches
+|Allows the player to use [[door]]s, [[lever]]s, and [[button]]s.
+|[[File:Ore UI - Toggle ON Button (Bedrock).png|link=|55px]]
+|-
+|Open containers
+|Allows the player to open the GUI of [[containers]] ([[chest]]s, [[hopper]]s, [[crafter]]s, etc).
+|[[File:Ore UI - Toggle ON Button (Bedrock).png|link=|55px]]
+|-
+|Attack Players
+|Allows the player to deal damage to [[player]]s.
+|[[File:Ore UI - Toggle ON Button (Bedrock).png|link=|55px]]
+|-
+|Attack Mobs
+|Allows the player to deal damage to [[mob]]s.
+|[[File:Ore UI - Toggle ON Button (Bedrock).png|link=|55px]]
+|-
+|Operator Commands
+|Allows the player to execute operator [[commands]]. Also sets the player's permission level depending on the environment, see below.
+|'''Member:''' [[File:Ore UI - Toggle OFF Button (Bedrock).png|link=|55px]]
+'''Operator:'''
+[[File:Ore UI - Toggle ON Button (Bedrock).png|link=|55px]]
+|-
+|Teleport
+|Allows the player to use the {{cmd|tp}} command.
+|'''Member:''' [[File:Ore UI - Toggle OFF Button (Bedrock).png|link=|55px]]
+'''Operator:'''
+[[File:Ore UI - Toggle ON Button (Bedrock).png|link=|55px]]
+|}
+The owner of the world can change any player permissions, regardless of its own permissions. Other players can't change any player permissions unless if they are [[operator]]s, but they can still view them for themselves and other joined players.
+
+Player permissions differ from [[permission level]], the latter enables and restricts specific commands, requiring different level for each command. Additionally, the "Operator Commands" permission if enabled sets the player's permission level to 3 in singleplayer or [[LAN]] world. In [[Bedrock Dedicated Server]], it sets the permission level to 1.<section end="player-permissions"/>
+
+== Situations ==
+=== ''Java Edition'' ===
+* For a function:
+** When [[Function_(Java_Edition)#Loading and Parsing|parsing]] a [[Function_(Java_Edition)|function]] (including macro line parsing), the permission level defaults to 2 (but it can be changed in [[server.properties]]).
+** When calling a [[Function_(Java_Edition)|function]], see [[command context]] for details.
+* For a player:
+** If the player is an operator in a dedicated server, their permission level can be specified in the [[ops.json format|ops.json]] file. and its default value is specified in [[server.properties]].
+** If the player is the owner or another operator in a [[Realms|Realm]], their permission level is 2.
+*** Unless the Realm is playing a ''minigame'': then the owner's permission level is 0, and no one else can be operators.<ref>https://atlas.minecraft.net/guidelines</ref>
+** If the player is in a singleplayer world, and [[cheats]] were enabled when creating the world, their permission level is 4.
+** If the player is the owner of a LAN world, and [[cheats]] were enabled when creating the world, their permission level is 4.
+** All players in a [[Cheats|command-allowed]] LAN world have a permission level of 4.
+** Otherwise, the player's permission level is 0.
+* For other command executors, see [[command context]] for details.
+* For raw JSON text resolution executors, see [[command context]] for details.
+
+=== ''Bedrock Edition'' ===
+* For a function:
+** When [[Function_(Bedrock_Edition)#Loading and Parsing|parsing]] a [[Function (Bedrock_Edition)|function]], the permission level is 1.
+** When calling a [[Function_(Bedrock_Edition)|function]], see [[command context]] for details.
+* For a player:
+** In a [[BDS|dedicated server]], if the player's '''"Operator Commands"''' option is enabled in the "Player Permission" screen, their permission level is 1.
+** In a singleplayer world or a LAN world, if the player's '''"Operator Commands"''' option is enabled in the "Player Permission" screen, permission level is 3.
+** Otherwise, the player's permission level is 0.
+* For other command executors, see [[command context]] for details.
+
+== History ==
+{{expand section}}
+{{Incomplete section|release versions, Old PE / BE versions}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.14.4|dev=Pre-Release 4|Added the <code>function-permission-level</code> option that controls what permission level [[Function (Java Edition)|functions]] have.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.21.70|dev=Preview 1.21.70.22|[[File:New UI - Player Permissions Screen Menu (Bedrock Preview 1.21.70.22).png|53px]] Player Permissions screen in [[Pause menu]] screen has been updated to match [[Ore UI]], available in [[Minecraft Preview|preview]] only.}}
+|{{HistoryLine|||dev=release|Player Permissions screen in [[Pause menu]] screen is released to the public and no longer in [[Minecraft Preview|preview]] only.}}
+}}
+
+== Issues ==
+{{issue list|permission}}
+
+== Gallery ==
+=== ''Bedrock Edition'' ===
+<gallery>
+Ore UI - Pause Menu - Player Permissions Screen Menu (Bedrock).png|The "Player Permissions" screen.
+Ore UI - Pause Menu - Player Permissions (Other Player) Screen Menu (Bedrock).png|The "Player Permissions" screen from other players.
+Ore UI - Multiplayer Pause Menu - Player Permissions Locked Screen Menu (Bedrock).png|The "Player Permissions" screen when all options are locked, in a server.
+</gallery>
+
+=== ''Minecraft Education''===
+<gallery>
+Pause menu - Player permissions screen menu (Education).png|The "Player Permissions" screen.
+</gallery>
+
+== See also ==
+* [[Commands]] are mainly what dictated by permission level.
+* [[Server.properties]] has a related property for setting operators' permission level.
+* [[Commands/op]] sets player's operator status, granting or revoking them of operator permissions.
+* [[Commands/permission]] sets player's specific permission level.
+* [[Ore UI]], the {{BE}} UI refresh.
+
+== References ==
+<references />
+
+== Navigation ==
+{{Navbox commands}}
+
+[[Category:Server]]
+
+[[ja:権限レベル]]
+[[pt:Nível de permissão]]
+[[ru:Уровень доступа]]
+[[uk:Рівень дозволу]]
+[[zh:权限等级]]

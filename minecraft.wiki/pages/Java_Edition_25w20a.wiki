@@ -1,0 +1,462 @@
+{{Infobox version
+|title=Minecraft 25w20a
+|image=25w20a.jpg
+|image2=Java Edition 25w20a.png
+|edition=Java
+|type=Snapshot
+|date=May 13, 2025
+|jsonhash=2ac958bedcf677c9e975200e8a020cbf54627717
+|clienthash=a6e694c5c5468b2aa7fbd86b20496428d9248dd8
+|clientmap=2614f23565992de85a5cd4cf3032e7fd3329afc9
+|serverhash=4b7a074f7813de85698c185100736fae64f9b4fa
+|servermap=c0eea925ff78036b5d63cc64ffe35d566dbf5e92
+|parent=1.21.6
+|prevparent=1.21.5
+|prev=25w19a
+|next=25w21a
+|nextparent=1.21.7
+}}
+<onlyinclude>
+
+'''25w20a''' is the sixth [[snapshot]] for [[Java Edition 1.21.6]], released on May 13, 2025.<ref>{{snap|25w20a|id=a|May 13, 2025}}</ref>
+
+== Additions ==
+=== Items ===
+'''[[Music disc]]'''
+* [[File:Music Disc Tears JE1 BE1.png|width=32x32]] Added the [[Music Disc Tears|"Tears" music disc]] by [[Amos Roddy]].
+** Obtained by killing a ghast with a [[fireball]] deflected by a player.
+** Has a [[comparator]] output of 10 when played in a [[jukebox]].
+
+=== Command format ===
+'''{{cmd|dialog}}'''
+* A new command that shows dialog to clients.
+* Syntax:
+** {{cmd|dialog show <targets> <dialog>}}
+*** Show dialog to player(s).
+*** {{cd|<targets>}} - player name, UUID or a player selector.
+*** {{cd|<dialog>}} - a namespaced ID from {{cd|minecraft:dialog}} registry or inline dialog value as described above.
+*** Returns number of players in targets argument.
+** {{cmd|dialog clear <targets>}}
+*** Clean dialog for player(s), if they have any visible.
+*** {{cd|<targets>}} - player name, UUID or a player selector.
+*** Returns number of players in targets argument.
+
+=== Gameplay === 
+'''[[Music]]'''
+* Added 5 new [[music|background music]] tracks by [[Amos Roddy]] to [[cherry grove]]s, [[forest]], [[desert]], [[grove]], and [[lush caves]] biomes:
+** "[[Below and Above]]"
+** "[[Broken Clocks]]"
+** "[[Fireflies (song)|Fireflies]]"
+** "[[Lilypad (song)|Lilypad]]"
+** "[[O's Piano]]"
+* The same songs have been added to the [[menu screen]] music rotation.
+
+=== General ===
+'''[[Dialog]]s'''
+* Added a way to display simple modal dialogs to a user.
+* Dialogs are stored in a {{cd|minecraft:dialog}} registry, but can also be defined inline
+* Dialogs are an experimental feature.
+* To avoid user confusion, dialog screens are marked with a warning sign next to the title.
+** Clicking on this warning leads to a dialog that explains to user that this screen is provided by custom content.
+** It also gives user an option to leave current world to avoid them being locked in infinite loop of dialogs.
+* Dialogs can be displayed by server in {{cd|play}} and {{cd|configuration}} connection phases.
+** However, only inline registries are allowed in {{cd|configuration}}, since registries are not yet available in that phase.
+* Dialogs always close after user selects any action.
+* Dialogs by default will also close after {{key|Escape}} key is pressed.
+** When this happens, dialog will run action specific to dialog type described as "exit action" below.
+** This behavior is configurable.
+* When dialog screen is closed, game goes back to previously displayed non-dialog screen or back to gameplay.
+** That means that new dialogs always replace already opened ones, if any.
+* Dialogs screens will pause the game in singleplayer mode.
+* Dialogs can be configured to be accessible from Pause menu.
+** This replaces and expands "Server Links" button added in previous versions.
+* Most dialogs follow a common layout, however exact contents depend on type:
+** Header with title and warning button.
+** Body elements (labels, inputs, buttons and submit actions), scrollable if needed.
+** Optional footer, contains main buttons and submit actions.
+
+'''[[Dialog Description Format]]'''
+* Dialogs are stored in {{cd|minecraft:dialog}} registry that can be provided by a datapack
+** Fields:
+*** {{cd|type}} - one of dialog types from minecraft:dialog_type registry
+*** {{cd|<type-specific>}} - see below.
+* Common dialog fields
+** Most dialog types share some fields.
+** Fields:
+*** {{cd|title}}
+**** Screen title, text component.
+***** Should be always visible on screen, no matter the specific type.
+*** {{cd|external_title}}
+**** Name to be used for a button leading to this dialog (for example from pause screen), optional text component.
+***** If not present, {{cd|title}} will be used instead.
+*** {{cd|body}} 
+**** Optional list of body elements or a single element.
+*** {{cd|can_close_with_escape}}
+**** Can dialog be dismissed with {{key|Escape}} key, default {{cd|true}}.
+* Common button data
+** Most actions in dialog types share following fields that describe appearance of a button associated with that action:
+*** {{cd|label}}- text component.
+*** {{cd|tooltip}} - optional text component to display when button is highlighted or hovered over.
+*** {{cd|width}} - width of the button, positive integer with default {{cd|150}}.
+* Click action
+** Common object used in dialogs to represent clickable action on a dialog.
+*** Fields:
+**** Common button data.
+**** {{cd|on_click}} - optional click event (same format as {{cd|click_event}} on text components).
+***** If not present, clicking button will simply close screen without any action.
+* Dialog types
+** {{cd|minecraft:notice}}
+*** A simple screen with one action in footer.
+*** Exit action: same as {{cd|action}}.
+*** Fields:
+**** Common dialog fields
+**** {{cd|action}} - click action, defaults to button with {{cd|gui.ok}} label and no action or tooltip.
+** {{cd|minecraft:confirmation}}
+*** A simple screen with two actions in footer.
+*** Exit action: same as {{cd|no}} action.
+*** Fields:
+**** Common dialog fields
+**** {{cd|yes}} - click action for positive outcome.
+**** {{cd|no}} - click action for negative outcome.
+** {{cd|minecraft:multi_action}}
+*** A scrollable list of actions arranged in columns.
+*** Screen also has button in footer that runs exit action and closes the screen.
+**** Label will be {{cd|gui.cancel}} if dialog has defined exit action and {{cd|gui.back}} if it has no side effects.
+*** Exit action: defined in {{cd|on_cancel}} field.
+*** Fields:
+**** Common dialog fields
+**** {{cd|actions}} - non-empty list of click actions.
+**** {{cd|on_cancel}} - optional click event (same format as {{cd|click_event}} on text components).
+**** {{cd|columns}} - positive integer describing number of columns, default: {{cd|2}}.
+** {{cd|minecraft:server_links}}
+*** A scrollable list of links received from server in {{cd|minecraft:server_links}} packet, arranged in columns.
+*** Screen also has button in footer that runs exit action and closes the screen.
+**** Label will be {{cd|gui.cancel}} if dialog has defined exit action and {{cd|gui.back}} if it has no side effects.
+*** Note: this is a replacement for previous "Server Links" screen, but now with an additional body.
+*** Exit action: defined in {{cd|on_cancel}} field.
+*** Fields:
+**** Common dialog fields.
+**** {{cd|on_cancel}} - optional click event (same format as {{cd|click_event}} on text components).
+**** {{cd|columns}} - positive integer describing number of columns, default: {{cd|2}}.
+**** {{cd|button_width}} - width of buttons in the list, positive integer with default {{cd|150}}.
+** {{cd|minecraft:dialog_list}}
+*** A scrollable list of buttons leading directly to other dialogs, arranged in columns.
+**** Titles of those buttons will be taken from {{cd|external_title}} fields of targeted dialogs.
+*** Screen also has button in footer that runs exit action and closes the screen.
+**** Label will be {{cd|gui.cancel}} if dialog has defined exit action and {{cd|gui.back}} if it has no side effects.
+*** Exit action: defined in {{cd|on_cancel}} field.
+*** Fields:
+**** Common dialog fields.
+**** {{cd|dialogs}} - dialog, a list of dialogs or a dialog tag.
+**** {{cd|on_cancel}} - optional click event (same format as {{cd|click_event}} on text components).
+**** {{cd|columns}} - positive integer describing number of columns, default: {{cd|2}}.
+**** {{cd|button_width}} - width of buttons in the list, positive integer with default {{cd|150}}.
+** {{cd|minecraft:simple_input_form}}
+*** A screen that accepts user inputs.
+*** Has a single submit action with in a footer.
+*** Exit action: none (submitting data closes screen, but does not run any action outside of sending data to server).
+*** Fields:
+**** Common dialog fields
+**** {{cd|inputs}} - non-empty list of inputs controls.
+**** {{cd|action}} - submit action.
+** {{cd|minecraft:multi_action_input_form}}
+*** A screen that accepts user inputs.
+*** Can have multiple submit actions.
+*** Has no footer, submit actions are appended to a body.
+*** Exit action: none (submitting data closes screen, but does not run any action outside of sending data to server).
+*** Fields:
+**** Common dialog fields.
+**** {{cd|inputs}} - non-empty list of inputs controls.
+**** {{cd|actions}} - non-empty list of submit actions.
+* Dialog body types
+** All dialogs have a list of body elements describing contents between title and actions or inputs.
+** Fields:
+*** {{cd|type}} - one of dialog body types from {{cd|minecraft:dialog_body_type}} registry.
+*** {{cd|<type-specific>}} - see below.
+** {{cd|minecraft:plain_message}}
+*** A multiline label.
+*** Fields:
+**** {{cd|contents}} - text component.
+**** {{cd|width}} - maximum width of message, positive integer with default {{cd|200}}.
+** {{cd|minecraft:item}}
+*** Item with optional description.
+**** If description is present, it will be rendered to the right of item.
+*** Item will be rendered as if it was in inventory slot.
+*** Item is not scaled even if {{cd|width}} and {{cd|height}} are set to values other than default.
+*** Fields:
+**** {{cd|item}} - item stack with count.
+**** {{cd|description}} - optional object with fields:
+***** {{cd|contents}} - text component.
+***** {{cd|width}} - maximum width of contents, positive integer with default {{cd|200}}.
+***** Can also be just be text component.
+**** {{cd|show_decorations}} - if {{cd|true}}, count and damage bar will be rendered over the item, default: {{cd|true}}.
+**** {{cd|show_tooltip}} - if {{cd|true}}, item tooltip will show up when item is hovered, default: {{cd|true}}.
+**** {{cd|width}} - horizontal size of element, default: {{cd|16}}.
+**** {{cd|height}} - vertical size of element, default: {{cd|16}}.
+* Input control types
+** Input dialog uses a set of controls to accept user input.
+** When submitted, current value of input will be converted to a string and sent to the server as described by submit action section below.
+** Fields:
+*** {{cd|type}} - one of input control types from {{cd|minecraft:input_control_type}} registry.
+*** {{cd|key}} - string identifier of value used when submitting data, must be a valid template argument (letters, digits and {{cd|_}}).
+*** {{cd|<type-specific>}} - see below.
+** {{cd|minecraft:text}}.
+*** Simple text input.
+*** Sends current contents without modification.
+*** Fields:
+**** {{cd|width}} - width of input, positive integer with default: {{cd|200}}.
+**** {{cd|label}} - a text component to be displayed to the left of control.
+**** {{cd|label_visible}} - controls label visibility, default: {{cd|true}}.
+**** {{cd|initial}} - initial contents, default: {{cd|""}} (empty).
+** {{cd|minecraft:boolean}}
+*** A plain checkbox with a label.
+*** Fields:
+**** {{cd|label}} - a text component to be displayed to the right of control.
+**** {{cd|initial}} - an initial value, default: {{cd|false}} (i.e. unchecked).
+**** {{cd|on_true}} - a string value to send when control is checked, default: {{cd|true}}.
+**** {{cd|on_false}} - a string value to send when control is unchecked, default: {{cd|false}}.
+** {{cd|minecraft:single_option}}
+*** A button that cycles between a set of options when clicked.
+*** Sends value associated with currently selected preset.
+*** Fields:
+**** {{cd|label}} - a text component to be displayed on the button.
+**** {{cd|label_visible}} - if true, label will be incorporated into button text, default: {{cd|true}}.
+**** {{cd|width}} - width of button, positive integer with default: {{cd|200}}.
+**** {{cd|options}} - a list of objects with fields:
+***** {{cd|id}} - a string value to send on submit.
+***** {{cd|display}} - a text component to display on button, optional (if not present, id is used).
+***** {{cd|initial}} - an optional boolean flag that selects initial option (only one option can have it set to true).
+***** Additionally list might also contain plain string - in that case it's equivalent to a single entry with field {{cd|id}} set to that string and other fields set to default.
+** {{cd|minecraft:number_range}}
+*** A slider for picking a numeric value out of some range.
+*** Sends currently selected value.
+**** Whole numbers will be sent without decimal point.
+*** Fields:
+**** {{cd|label}} - a text component to be used as a slider label.
+**** {{cd|label_format}} - a translation key to be used for building label (first argument is contents of {{cd|label}} field, second argument is current value), default: {{cd|options.generic_value}}.
+**** {{cd|width}} - width of input, positive integer with default: {{cd|200}}.
+**** {{cd|start}} - start value (when slider is in leftmost position) (inclusive), float.
+**** {{cd|end}} - end value (when slider is in rightmost position) (inclusive), float.
+**** {{cd|steps}} - number of increments, positive integer.
+***** Note: value of {{cd|1}} means that slider will have two positions (start and end).
+**** {{cd|initial}} - initial value of slider, rounded down nearest step, must be within range, defaults to {{cd|min}}.
+* Submit actions
+** Every submit action on input dialog has a button associated with it.
+** When one of those buttons is clicked, values of all inputs will be collected and sent to a server using one of methods described below.
+** {{cd|id}} field of a submit action will be included as an input with key {{cd|action}}.
+** Submit action fields:
+*** Common button data.
+*** {{cd|id}} - string identifier of an action.
+*** {{cd|on_submit}} - submit method to run when button is clicked, object with following fields:
+**** {{cd|type}} - one of submit method types from {{cd|minecraft:submit_method_type}} registry.
+**** {{cd|<type-specific>}} - see below.
+*** Note: server does not validate individual values as they arrive as filled commands or custom payloads.
+* Submit method types
+** {{cd|minecraft:command_template}}
+*** This method will build a command using a provided macro template and request the server to run it (same as {{cd|minecraft:run_command}} click event).
+*** If the command requires permission higher than {{cd|0}} (when any operator permissions are required), a confirmation dialog will be shown.
+*** Macro will be expanded with values from input.
+**** For example, if macro is {{cd|some_command $(action), action parameter}} will be expanded to {{cd|id}} field of a submit action.
+**** Inputs not used in macro will be ignored, while macro parameters not matching any inputs will be replaced with an empty string.
+*** Fields:
+**** {{cd|template}} - a string with a macro template to be interpreted as a command.
+** {{cd|minecraft:custom_template}}
+*** This method will build a custom server click action using a provided macro template and send it to the server (same as {{cd|minecraft:custom}} click event).
+*** Macro will be expanded with values from input.
+**** Inputs not used in macro will be ignored, while macro parameters not matching any inputs will be replaced with an empty string.
+*** Fields:
+**** {{cd|template}} - a string with a macro template to be used as a payload.
+**** {{cd|id}} - namespaced ID.
+** {{cd|minecraft:custom_form}}
+*** This method will build a custom server click action from all values and request the server to run it (same as {{cd|minecraft:custom}} click event).
+*** Format:
+**** keys are separated from values with horizontal tabulation ({{cd|U+0009}}) character.
+**** key-value entries are separated with line feed ({{cd|U+000A}}) character.
+**** If characters {{cd|U+0009}} and {{cd|U+000A}} are present in any key or value, they will be escaped to {{cd|\t}} and {{cd|\n}}.
+*** Fields:
+**** {{cd|id}} - namespaced ID.
+* Built-in dialogs
+** The built-in datapack contains some custom dialogs to provide customization of specific screens used by client.
+** {{cd|minecraft:server_links}}
+*** Replacement for previously existing "Server Links" screen.
+*** Meant to simplify migration for servers that used this feature previously.
+** {{cd|minecraft:custom_options}}
+*** Shows contents of {{cd|minecraft:pause_screen_additions}} tag (see below).
+*** Lets user select a specific dialog if this tag contains multiple entries.
+*** Note: Since this tag is meant for interoperability, any content that replaces this dialog should be careful to not hide other dialog providers.
+
+'''[[Tags]]'''
+* Added the {{cd|#pause_screen_additions}} dialog tag.
+** Dialogs in this tag replaces the "Report Bugs" button or the "[[Pause_menu#Server_links|Server Links]]" button on the pause screen.
+
+== Changes ==
+=== Blocks ===
+'''[[Dried ghast]]'''
+* No longer breaks if water flows into it.
+
+=== Items ===
+'''[[Leather]]'''
+* Can now be found in [[monster room]], [[ancient city]], [[desert temple]], [[jungle temple]] and [[stronghold]] altar chests in quantities 1-5.
+
+'''[[Saddle]]'''
+* Can be removed from mobs wearing them by {{ctrl|using}} [[shears]] on the mob.
+** Cannot be removed this way from [[ravager]]s or mobs with riders.
+** Shears in a dispenser don't work.
+* Saddles can now be crafted with 3 [[leather]] and 1 [[iron ingot]].
+** The recipe unlocks when a player picks up their first leather.
+{{Crafting
+|B1 = Leather
+|A2 = Leather
+|B2 = Iron Ingot
+|C2 = Leather
+|Output = Saddle
+|ignoreusage = 1
+}}
+* No longer found in chests in [[monster room]]s, [[ancient cities]], [[desert temple]]s, [[jungle temple]]s and in [[stronghold]] altar chests.
+
+'''[[Shears]]'''
+* Can now remove [[saddle]]s, [[horse armor]], [[harness]]es and [[carpet]]s from mobs.
+** They cannot be removed if the mob has a rider.
+** They cannot be removed if the player is crouching.
+* Saddles cannot be removed from ravagers.
+* Dispensers with shears cannot remove saddles, horse armor, harnesses and carpets equipped on mobs.
+
+=== Mobs ===
+'''[[Ghast]]'''
+* Now drop a [[Music Disc Tears|”Tears” music disc]] when killed by a player-deflected [[fireball]].
+
+=== Gameplay ===
+'''[[Fog]]'''
+* Fog is now applied to 3d HUD elements such as first person player hands and items in hands.
+* Rain and thunder weather is somewhat less foggy now.
+* Rain fog affects interiors less.
+
+'''[[Music]]'''
+* Music now plays even when the game is paused.
+* Added an option to the Music & Sound settings, "Music Frequency", that allows players to change how frequently music plays while in a game world.
+** Settings are Default, Frequent and Constant.
+** Default is the normal delay between 10 - 20 minutes
+** Frequent halves the delay to 5 minutes and Constant sets the delay to 5 seconds. 
+* Added an option to the Music & Sound settings, "Show Music Toast", that enables a music toast to be shown whenever a song starts playing.
+** With this option enabled, the song that is currently playing will be seen at all times in the top left corner of the in-game [[pause menu]].
+** Default setting is Off.
+
+=== General ===
+'''[[Attribute]]s'''
+* {{cd|flying_speed}}
+** Ghasts now have a {{cd|flying_speed}} attribute that affects their flying speed.
+
+'''[[Credits]]'''
+* The credits have been updated.
+
+'''[[Data component format]]'''
+* {{cd|equippable}}
+** Added new optional field: {{cd|can_be_sheared}} (boolean).
+*** If true, players can use Shears to remove this equippable item from a target mob by right-clicking, provided all other shearing conditions are satisfied.
+*** If not specified, it defaults to false.
+** Added new optional field: {{cd|shearing_sound}} (sound event).
+*** It's a sound event that plays when the equippable item is sheared.
+*** If not specified, it defaults to the {{cd|item.shears.snip}} sound event.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|77}}.
+* "Command Syntax" report now contains information about required permission level.
+* Users will now be prompted for confirmation before executing a command from the {{cd|run_command}} click action in books and chat if the command can't be parsed or requires elevated permissions (i.e. higher than 0).
+
+'''[[Panorama]]'''
+* Updated the panorama to show a scene with happy ghasts flying next to a mountain side.
+
+'''[[Pause menu]]'''
+* A data pack can request some of the available dialogs to be accessible from Pause screen
+* This feature replaces "Server Links" button and is placed on Pause screen according to the same rules
+* Buttons leading to dialogs exposed in this way will use label described in {{cd|external_title}} field
+* This feature is configured by {{cd|minecraft:pause_screen_additions}} dialog tag:
+** If this tag is not specified or is empty but the server has sent {{cd|server_links}} packet, tag will be handled as if it contained {{cd|minecraft:server_links}} dialog
+*** Note: this matches previous Server Links feature behavior
+*** If this dialog is removed, the tag remains empty
+** If this tag is still empty, button is not visible ("Send Feedback" and "Report Bugs" buttons are visible instead)
+** If this tag has a single element, Pause screen button will lead directly to this dialog
+** If this tag has multiple elements, Pause screen button will lead to {{cd|minecraft:custom_options}} which (by default) lets user select one of the tag elements
+*** If this dialog is removed, button is not visible
+
+'''[[Realms]]'''
+* Added the Realms logo to the Realms loading screens.
+* Added region information when connecting to a Realm.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|61}}.
+
+'''[[Splash]]'''
+* Removed "Minors welcome!"
+* Changed "Pumpa kungen!" to "Pumpakungen!"
+* Changed "10 years of Mining and Crafting!" to "15 years of Mining and Crafting!"
+* 5 splashes are added:
+** "Music by Aaron Cherof!"
+** "Music by Kumi Tanioka!"
+** "Music by Amos Roddy!"
+** "Flint and Steel!"
+** "Chicken Jockey!"
+
+'''[[Text component format]]'''
+* Click Events
+** New click action {{cd|minecraft:custom}} has been added.
+*** When user clicks a component with this click action, client will send a dedicated packet {{cd|minecraft:custom_click_action}} to a server.
+*** The intended use is as an alternative for run_command to be used by modded servers without worrying about having to add custom commands.
+*** This packet has no functionality on vanilla servers.
+*** Fields:
+**** {{cd|id}} - namespaced ID.
+**** {{cd|payload}} - optional string field.
+
+* Dialog Click Event
+** New action {{cd|show_dialog}} has been added.
+*** When user clicks this component, a dialog will be opened for them.
+*** Fields:
+**** {{cd|dialog}} - a namespaced ID from {{cd|minecraft:dialog}} registry or inline dialog value as described above.
+
+'''UI sprites'''
+* Added {{samp|icon/music_notes}} and {{samp|toast/now_playing}} sprites.
+
+== Fixes ==
+* The fix to [[bugtracker:MC-3697|MC-3697]] has been partially reverted. Decorative hanging entities such as paintings and item frames are now immune to explosions from submerged TNT while items and armor stands are once again vulnerable to them.
+{{fixes|project=MC|fixedin=25w20a
+|;From released versions before 1.21
+|97423|Horse temporarily stuck in jump animation if dismounted.
+|103511|Sound/Song stops playing after adjusting the volume.
+|118081|Sounds don't pause when game is paused on some UI screens.
+|224704|Block cracks are not affected by the fog from powder snow or lava.
+|248682|Translucent blocks moved by pistons aren't affected by fog correctly.
+|248688|Falling translucent blocks aren't affected by fog correctly.
+|269744|Out of memory crash when using a preset with a large layer.
+|;From 1.21.1
+|276665|Music is never turning on when it's toggled in the menu.
+|;From 1.21.3
+|277991|The 2 brightest pixel colors on pale oak boat items are still switched.
+|;From 1.21.5
+|296311|TNT touching water will destroy blocks and damage entities but will ignore decorative entities.
+|297524|Connection with realm gives weird HTML text.
+|;dev
+|296836|Happy ghast saddle model doesn't change when lead is broken by exceeding max range.
+|296843|Clouds are rendered incorrectly on some Mac systems.
+|;prev
+|297535|The enchantment glint doesn't render in first person or the inventory.
+|297544|Rain screen overlay does not affect 1st person hand or items.
+|297570|Block breaking overlay not affected by environmental fog.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|RchCqaJT85I|5_581LBZU74}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w20a]]
+[[es:Java Edition 25w20a]]
+[[fr:Édition Java 25w20a]]
+[[ja:Java Edition 25w20a]]
+[[pt:Edição Java 25w20a]]
+[[ru:25w20a (Java Edition)]]
+[[uk:25w20a (Java Edition)]]
+[[zh:Java版25w20a]]

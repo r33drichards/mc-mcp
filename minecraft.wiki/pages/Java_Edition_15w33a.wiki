@@ -1,0 +1,145 @@
+{{Infobox version
+|title=Minecraft 15w33a
+|image=Java Edition 15w33a.png
+|edition=Java
+|type=Snapshot
+|date=August 12, 2015
+|parent=1.9
+|clienthash=337da43d1f130f57b69f295ad8a24b6851e111bf
+|jsonhash=a31c9b43de60bdc2410d63716f522b2242843b38
+|serverhash=b2f50a0daf6fd2e70dac4d7da302524566b57a55
+|exehash=44092fc0d5489a9cc448450cf85f55cef970c18b
+|prevparent=1.8.9
+|prev=15w32c
+|next=15w33b
+|nextparent=1.9.1
+}}<onlyinclude>
+
+'''15w33a''' is the seventh [[snapshot]] for [[Java Edition 1.9]], released on August 12, 2015,<ref>{{cite|url=https://www.mojang.com/2015/08/minecraft-snapshot-15w33a|archive=y|title=Minecraft snapshot 15w33b|website=Mojang.com|author=[[Dinnerbone]]|date=August 12, 2015}}</ref> which adds [[dragon's breath]] and [[lingering potion]]s.
+
+== Additions ==
+=== Items ===
+'''[[Dragon's breath]]'''
+* Found in the brewery section of the [[Creative inventory]].
+* Can be used to brew lingering potions by brewing it with a [[splash potion]].
+* Can be obtained by right clicking with a [[glass bottle]] while the [[ender dragon]] breathes the homonymous attack.
+* Stacks to 64.
+
+'''[[Lingering potion]]'''
+* Thrown like a [[splash potion]].
+* Leaves a particle cloud made of the effect particles of the corresponding potion.
+** Entities that walk into the cloud get the corresponding [[effect]].
+* Has variants for every [[potion]] type, and works with potions whose effect are instant, like [[Potion of Harming|Harming]].
+* [[Brewing|Brewed]] with dragon's breath and the corresponding splash potion.
+** The only way to do this is to brew the splash potions from normal potions and leave them in the slots of the [[brewing stand]]. Then add the dragon's breath.
+* The cloud duration can be controlled through a data tag.
+
+=== Command format ===
+'''[[NBT format]]'''
+* Added entity <code>AreaEffectCloud</code> (ID 3), child of <code>Entity</code>.
+* Added tags <code>Age</code>, <code>Duration</code>, <code>WaitTime</code>, <code>ReapplicationDelay</code>, <code>DurationOnUse</code>, <code>RadiusOnUse</code>, <code>RadiusPerTick</code>, <code>Radius</code>, <code>OwnerUUIDLeast</code>, <code>OwnerUUIDMost</code>, <code>Particle</code>, <code>Color</code>, and <code>Effects</code> to <code>AreaEffectCloud</code>.
+* Added <code>ExactTeleport</code> to <code>EndGateway</code>.
+* Added <code>Linger</code> to <code>ThrownPotion</code>.
+
+'''[[Scoreboard]]'''
+* New objective types: [[armor]] and level.
+** "armor" tracks the armor bar, that indicates the total protection from all currently worn armor pieces.
+** "level" tracks the level of the player which is the number above the [[experience]] bar and not the amount of xp points.
+
+=== General ===
+'''[[Statistics]]'''
+* Per-item statistics for number dropped and number picked up.
+** <code>stat.pickup</code> and <code>stat.drop</code>.
+
+'''[[Splash]]es'''
+* Added "More Digital!"
+
+== Changes ==
+=== Blocks ===
+'''[[Command block]]'''
+* The character limit is now 32500 instead of 32767.
+
+'''[[End gateway block]]'''
+* Changed texture to be both angle and face independent.
+** The footprint of the visible faces always displays the same texture without deforming due to perspective.
+*** Therefore any edges of the block that are not part of the footprint are invisible.
+* Changed the beam texture to be unique.
+
+=== Items ===
+'''[[Potion]]s'''
+* Extended potion of Poison, potion of Poison II, and extended potion of Regeneration had their duration reduced.
+* Potion of Strength changed from 130% bonus to damage to {{hp|3}} of bonus damage (from relative to absolute).
+* Potion of Weakness changed from {{hp|0.5}} reduction to damage to {{hp|4}}.
+* Throwable potions now behave like other projectiles when used in [[dispenser]]s.
+** They travel a much greater distance.
+
+'''[[Spawn egg]]s'''
+* Can no longer address spawn eggs by numeric data ID, like: <code>give @p spawn_egg 1 50</code>.
+** The spawnable item from a spawn egg is now addressed by a datatag: <code>give @p spawn_egg 1 {EntityTag:{id:"Creeper"}}</code>.
+
+=== Mobs ===
+'''General'''
+* The <code>HealF</code> float tag has been renamed to <code>Health</code>.
+** As a result, the original <code>Health</code> tag is now a float type rather than short.
+
+'''[[Ender dragon]]'''
+* Now shoots the previously added ender acid entities.
+** A [[fireball]]-like projectile.
+** On impact it spawns dragon breath and lights the ground on [[fire]].
+*** The dragon breath acts like a [[lingering potion]], creating a special entity cloud.
+**** Players in the cloud get damaged.
+* [[Arrow]]s get deflected and set on fire while the dragon is on top of the portal.
+
+=== Command format ===
+'''NBT format'''
+* <code>CommandStats</code> can be used to obtain the number of scoreboard tags an entity has via <code>QueryResult</code>.
+** Example: {{cmd|scoreboard players tag <targetname> list}} will return the number of "scoreboard tags" applied to the target. 
+*** If the target previously had 3 tags added, a score of "3" is returned.
+* Removed <code>DataVersion</code> from <code>Entity</code>. It is now only applied to <code>Player</code> only, child of <code>LivingBase</code>.
+* <code>HealF</code> under <code>LivingBase</code> has become deprecated.
+* <code>Health</code> under <code>LivingBase</code> has changed from type "Short" to "Float".
+* <code>Life</code> renamed to <code>Age</code> for <code>EndGateway</code> entity.
+* <code>Equipment</code> removed from <code>ArmorStand</code> and <code>Living</code> entity, its usage replaced by <code>HandItems</code> and <code>ArmorItems</code> which were added earlier.
+
+=== General ===
+'''[[Pick block]]'''
+* In Survival, pick block now works on items outside of the hotbar but inside the player's inventory.
+* In Creative, using pick block normally gives the player a new one instead of existing ones with NBT.
+* {{key|ctrl}}+{{key|middle click}} no longer replaces items.
+** Existing items are put into the inventory instead of being deleted.
+
+'''Tooltips'''
+* Now show absolute damage instead of damage increase.
+
+== Fixes ==
+{{fixes|fixedin=15w33a|prefix=Minecraft
+|;dev
+|82945|UUID error: <code>Tried to add entity with duplicate UUID</code> spam.
+|83731|Using {{cmd|kill}} on the ender dragon doesn't end the fight.
+|84509|End gateway block effect looks weird in third person.
+|85288|"Save World" and "Cancel" button have been switched.
+|85382|Attempting to use a spawn egg on a block thats out of range throws error.
+|85542|Ender dragon can destroy <code>end_portal</code> and <code>end_gateway</code> blocks.
+|;previous
+|85397|Adult mobs spawned with mob eggs are "invalid", they can't be selected with <code>@e</code>.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|3ic5JA3Fmkk}}
+
+== Trivia ==
+* 15w33a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:15w33a]]
+[[es:Java Edition 15w33a]]
+[[fr:Édition Java 15w33a]]
+[[ja:Java Edition 15w33a]]
+[[pt:Edição Java 15w33a]]
+[[ru:15w33a (Java Edition)]]
+[[zh:Java版15w33a]]

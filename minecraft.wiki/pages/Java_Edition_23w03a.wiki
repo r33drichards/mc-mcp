@@ -1,0 +1,233 @@
+{{Infobox version
+| title = Minecraft 23w03a
+| image = 23w03a.jpg
+| image2 = Java Edition 23w03a.png
+| edition = Java
+| type = Snapshot
+| date = January 18, 2023
+| jsonhash = b958db10f1540e51b61f70dbaf0be86b40def147
+| clienthash = dd6cb06d65063769f7581ac2f5f800fe9531e28a
+| clientmap = f7de4f767c3d8d9c5c4779933f175eeb738d7f65
+| serverhash = b033d57035b293a9eda548db0615c1c89c21ea28
+| servermap = 030aa6a26885d62a55864b16e1a2000ba91de726
+| parent = 1.19.4
+| prevparent = 1.19.3
+| prev = 
+| next = 23w04a
+| nextparent = 1.20
+}}<onlyinclude>
+
+'''23w03a''' is the first [[snapshot]] for [[Java Edition 1.19.4]], released on January 18, 2023,<ref>{{snap|23w03a|January 18, 2023}}</ref> which adds the {{cmd|ride}} command and new interaction methods in [[options]] screen, makes technical changes, and fixes bugs. This is the first snapshot released in 2023.
+
+== Additions ==
+=== Command format ===
+'''[[Game rule]]'''
+* Added <code>commandModificationBlockLimit</code>, defaults to 32768.
+** Controls the maximum number of blocks changed in one execution of {{cmd|clone}}, {{cmd|fill}}, and {{cmd|fillbiome}} commands.
+
+'''{{cmd|ride}}'''
+* A new command to allow entities to start or stop riding other entities, syntaxes:
+** {{cmd|link=none|ride <target> mount <vehicle>}}: makes a single target mount a single vehicle, fails if:
+*** <code>vehicle</code> is a player;
+*** <code>target</code> is already riding a vehicle;
+*** <code>target</code> and <code>vehicle</code> are the same entity;
+*** <code>vehicle</code> is already a passenger (direct or indirect) of <code>target</code>.
+** {{cmd|link=none|ride <target> dismount}}: dismounts <code>target</code> from any vehicle it is riding, fails if <code>target</code> is not riding anything.
+
+=== General ===
+[[File:Accessibility Onboarding Screen 23w03a.png|thumb|Accessibility onboarding screen]]
+'''[[Title screen]]'''
+* Added an accessibility onboarding screen for players launching the game for the first time.
+* Added arrow key navigation.
+** Menu screens can now be navigated by using the arrow keys.
+** When navigating with arrow keys, sliders need to be activated by pressing {{key|Enter}} or {{key|Space}} to start changing the value.
+
+'''[[Options]]'''
+* Added a new "Notification Display Time" accessibility option, to change how long the notifications such as unlocked recipes, advancements, subtitles and selected item names are visible.
+
+'''Protocol'''
+* Added a network protocol feature for forcing bundle of packets to be processed within same client tick.
+** Added new delimiter packet to clientbound game protocol.
+** All packets between two delimiters are guaranteed to be processed within same tick.
+** For security reasons this feature is not supported in serverbound direction.
+
+'''[[Tag]]'''
+* Added following biome tags:
+** <code>#increased_fire_burnout</code>: contains {{cd|d=and|bamboo_jungle|mushroom_fields|mangrove_swamp|snowy_slopes|frozen_peaks|jagged_peaks|swamp|jungle}}.
+*** Fire burns out faster in these defined biomes.
+** <code>#snow_golem_melts</code>: contains {{cd|d=and|badlands|basalt_deltas|crimson_forest|desert|eroded_badlands|nether_wastes|savanna|savanna_plateau|soul_sand_valley|warped_forest|windswept_savanna|wooded_badlands}}.
+*** Snow golems melt in these defined biomes.
+** <code>#spawns_snow_foxes</code>: contains {{cd|d=and|snowy_plains|ice_spikes|frozen_ocean|snowy_taiga|frozen_river|snowy_beach|frozen_peaks|jagged_peaks|snowy_slopes|grove}}.
+*** Snow foxes spawn in these defined biomes.
+** <code>#spawns_white_rabbits</code>: contains {{cd|d=and|snowy_plains|ice_spikes|frozen_ocean|snowy_taiga|frozen_river|snowy_beach|frozen_peaks|jagged_peaks|snowy_slopes|grove}}.
+*** White rabbits spawn in these defined biomes.
+
+== Changes ==
+=== Mobs ===
+'''[[Donkey]]s, [[mule]]s, [[skeleton horse]]s, and [[zombie horse]]s'''
+* Changed their textures.
+
+'''[[Vex]]es'''
+* Now use a separate charging animation when empty-handed.
+
+=== Non-mob entities ===
+'''[[Armor stand]]'''
+* Now preserve custom names when placed and broken.
+
+'''[[Minecart with hopper]]'''
+* No longer have <code>TransferCooldown</code> data.
+
+=== Command format ===
+'''[[Chat]] component'''
+* Added an optional <code>fallback</code> field to <code>translate</code> text components.
+** The new field is a string that is used in place of translation if it is missing.
+** If <code>fallback</code> is missing, the old behavior (i.e. using the key itself as the translation) is preserved.
+* Out-of-bound arguments in <code>translate</code> formats are no longer silently ignored.
+
+'''{{cmd|clone}}'''
+* Now supports specifying the source and target dimensions, new syntax:
+** {{cmd|link=none|clone [from <sourceDimension>] <begin> <end> [to <targetDimension>] <destination> ...}}
+*** <code>sourceDimension</code>: ID of dimension to clone from.
+*** <code>targetDimension</code>: ID of dimension to clone to.
+
+'''{{cmd|data}}'''
+* New source <code>string</code> available, to read a value as text and resulting in a string value, syntax:
+** <code>... ''(insert <index>|prepend|append|set|merge)'' string (block <sourcePos>|entity<nowiki> <source></nowiki>|storage <nowiki><source></nowiki>) [<sourcePath>] [<start>] [<end>]</code>
+*** <code>start</code>: index of first character to include at the start of the string.
+*** <code>end</code>: index of the first character to exclude at the end of the string.
+
+'''{{cmd|execute}}'''
+* On <code>(if|unless)</code>, new conditions available:
+** <code>... loaded <pos></code>: checks if the position given is fully loaded (in regard to both blocks and entities).
+*** <code>pos</code>: block position to check.
+** <code>... dimension <dimension></code>: checks if the execution is in a matching dimension.
+*** <code>dimension</code>: a dimension ID.
+* New sub-command: <code>on</code>, for selecting entities based on relation to the current executing entity, syntax:
+** <code>... on (attacker|controller|leasher|owner|passengers|target|vehicle) -> execute</code>
+*** <code>attacker</code>: last entity that damaged the executing entity in the previous 5 seconds.
+*** <code>controller</code>: entity that is controlling the executing entity (for example: first passenger in a boat).
+*** <code>leasher</code>: entity leading the executing entity with a leash (might be a leash knot in case of being attached to a fence).
+*** <code>owner</code>: owner of the executing entity, if it is a tameable animal (like cats, wolves or parrots).
+*** <code>passengers</code>: all entities directly riding the executing entity (no sub-passengers).
+*** <code>target</code>: attack target for the executing entity.
+*** <code>vehicle</code>: entity that the executing entity is riding.
+** If the relation is not applicable to the executing entity or there are no entities matching it, selector returns zero elements.
+
+'''{{cmd|title}}'''
+* All time arguments to {{cmd|link=none|title times}} are now time durations and work with {{cd|d=and|t|s|d}} suffixes.
+
+'''{{cmd|weather}}'''
+* The duration of the weather change now matches the game's regular weather cycle if not specified.
+* The <code>duration</code> parameter is now a time duration in ticks and works with {{cd|d=and|t|s|d}} suffixes.
+** To retain existing functionality, you need to add an <code>s</code> suffix to pre-existing commands.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>11</code>.
+
+'''[[Custom biome]]'''
+* Removed <code>precipitation</code> precipitation type field.
+* Added <code>has_precipitation</code> boolean field.
+
+'''[[Options]]'''
+* Auto-jump is now off by default.
+* The resource pack screen is now keyboard-navigatable.
+
+'''Protocol'''
+* Clients now reset their secure chat session state when receiving the login packet.
+
+'''[[Tag]]'''
+* Added <code>#animals_spawnable_on</code> to the <code>#goats_spawnable_on</code> block tag.
+* Renamed <code>#only_allows_snow_and_gold_rabbits</code> biome tag to the <code>#spawns_gold_rabbits</code>.
+
+'''UI'''
+* Slightly moved the search icon on the recipe book UI.
+* Sliders can now be textured individually from buttons.
+
+== Experimental ==
+These additions and changes only take effect when the 1.20 experimental data pack is enabled.
+
+=== Additions ===
+==== General ====
+'''[[Tag]]'''
+* Added following item tag:
+** <code>#noteblock_top_instruments</code>: contains {{cd|d=and|zombie_head|skeleton_skull|creeper_head|dragon_head|wither_skeleton_skull|piglin_head|player_head}}.
+
+=== Changes ===
+==== Blocks ====
+'''[[Head]]'''
+* They can be placed on top of note blocks without sneaking now.
+
+== Fixes ==
+{{fixes|fixedin=23w03a
+|;From released versions before 1.19
+|26678|Damage wobble no longer shows direction of incoming damage.
+|30403|Sprinting isn't canceled when dismounting rideable entities while sprinting.
+|120488|Sprint particles may be visible while the player is riding an entity and pressing the sprint keys.
+|121048|When an entity dies, the combat tracker only records the killing blow.
+|122595|{{cmd|weather}} command with duration 0 has the same weather for longer time.
+|136534|All command blocks think they're facing south with caret notation.
+|146605|Cannot (de-)select or reorder data and resource packs using the keyboard only.
+|147939|It's possible to select multiple buttons in command block and structure block.
+|149144|Multiple buttons can be selected by pressing another button and {{key|Tab}}.
+|155433|Minecart with hopper not picking matching items from a mixed pile.
+|163266|When the target in {{cmd|spectate}} command is too far, the player's movement will not be restricted at client-side.
+|165595|Guardian beam does not render when over a certain {{cd|Time}} in {{samp|level.dat}}.
+|181832|The {{cmd|spreadplayers}} command doesn't spread entities in the specified dimension.
+|184029|Clicking into the language list does not remove focus from the focused button.
+|184030|Clicking into the language list does not set focus for the purpose of navigating using the {{key|tab}} key.
+|187458|World outline on the menu screen rendered completely white when clicking away.
+|189692|Dying by other means than mobs when knocked back by a bee sting does not mention the bee in the death message.
+|191942|The buttons in the multiplayer menu are not evenly spaced.
+|222518|Skeleton/Zombie Horse's & Donkey/Mule's saddles and chests are outdated/have errors.
+|224960|The {{cmd|spectate}} command does not work between dimensions.
+|230678|Cauldron fills with powder snow in frozen ocean biome while it's visually raining.
+|233893|Burning mobs won't get extinguished by rain in warm patches of Frozen Ocean biome.
+|235260|Hopper minecart at (0, 0, 0) transfers items slower than normal.
+|238904|Rain is silent in Frozen Oceans.
+|247836|Riptide doesn't work in rain within a frozen ocean biome.
+|254132|Wolves do not get wet when raining in Frozen Oceans.
+|257082|Sprinting whilst riding an entity or flying with elytra changes your field of view.
+|;From 1.19
+|252461|Goat not shown in extended death message.
+|252773|Goat Horn without {{cd|instrument}} NBT and with other NBT data (such as text) does not play.
+|254615|First-person fire renders behind water.
+|;From 1.19.2
+|255545|Magma Cube shadows do not change with size.
+|255811|{{cd|Level#isRainingAt(BlockPos)}} always returns false for snowy and frozen biomes, even when it is raining.
+|256292|Goats don't spawn on grass after initial world generation.
+|257028|Eating chorus fruit and looking down in a boat desynchronizes player position.
+|257755|Elements within the Realms menu are not selected in order when using the {{key|Tab}} key if you're not currently a member of any realm.
+|;From 1.19.3
+|256555|Camel sits down for a split second when spawned.
+|256576|Players become the controlling passengers of unsaddled camels when mounting them while other players are already riding them.
+|256838|The facing direction of the camel doesn't match.
+|257346|Vexes with empty hand make obscene gesture.
+|257418|Camels sometimes sit down for a split second when receiving damage.
+|257875|Fire charges aren't consumed when igniting creepers using them in survival or adventure mode.
+|258163|{{cd|ClientboundSectionBlocksUpdatePacket}} serialization breaks after 2^19 block states.
+|258173|Entering an End Portal whilst sleeping causes the bed to be occupied permanently.
+|258246|"Telemetry Data" button is missing an ellipsis.
+|258295|Villager AI broken when workstation is nearby.
+|258430|Camels with large {{cd|LastPoseTime}} values offset the player view model strangely.
+|258592|You can select multiple text fields inside the gamerules menu.
+|258625|Client-side death messages disappear as soon as the "Respawn" button is pressed even if the player remains on the death screen due to lag.
+|258953|Out of memory screen has raw message in the title.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|BY_XHLOfFok}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:23w03a]]
+[[es:Java Edition 23w03a]]
+[[fr:Édition Java 23w03a]]
+[[ja:Java Edition 23w03a]]
+[[pt:Edição Java 23w03a]]
+[[ru:23w03a (Java Edition)]]
+[[zh:Java版23w03a]]

@@ -1,0 +1,191 @@
+{{Infobox version
+| title = Minecraft 23w16a
+| image = 23w16a.jpg
+| image2 = Java Edition 23w16a.png
+| edition = Java
+| type = Snapshot
+| date = April 20, 2023
+| jsonhash = 96a0990716c0c77a40e160549d2d97dc0d71c642
+| clienthash = 10eb5a16d52959140ea2dba2fc4fb4bf177cacfa
+| clientmap = 1bd8cf2208a00a93b2a02b1ebcf1e3b537865f33
+| serverhash = 4a8487f877eb4f3506978fb85faf41a08b570398
+| servermap = c01d9d4ad256275dead34e819678db1e04256e08
+| parent = 1.20
+| prevparent = 1.19.4
+| prev = 23w14a
+| next = 23w17a
+| nextparent = 1.20.1
+}}
+<onlyinclude>
+'''23w16a''' is the fourth [[snapshot]] for [[Java Edition 1.20]], released on April 20, 2023,<ref>{{snap|23w16a|April 20, 2023}}</ref> which adds a new command and fixes bugs.
+
+== Additions ==
+=== Command format === 
+'''{{cmd|return}}'''
+* A new command that can be used to control execution flow inside functions and change their return value. Effects:
+** Skip remaining separate top-level commands in the currently executing function (if any).
+** The result value of the function command that triggered the execution is changed from the number of commands executed to the value.
+** The result value of the return command is also the value.
+* Syntax: {{cmd|link=none|return <value>}}
+** <code>value</code>: An integer return value.
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Added <code>recipe_crafted</code> advancement trigger; triggered when crafting a recipe.
+** Conditions:
+*** <code>recipe_id</code>: The resource location of the recipe crafted.
+*** <code>ingredients</code>: An array of predicates for the item stacks used in the recipe.
+**** A single item stack can only be used to fulfill one predicate.
+**** Each predicate needs to be fulfilled to trigger the advancement. This allows for seperation between recipes that have same identifier but use different ingredients.
+**** This field is optional. When not provided, or left empty, only the <code>recipe_id</code> dictates the success of the trigger.
+
+=== General ===
+'''[[Splash]]es'''
+* Added splashes: 
+** This sand is sus
+** Remember to brush your... ...teeth
+** Has working bookshelves!
+** Sniff sniff...
+** Place hanging sign here
+
+'''[[Tag]]s'''
+* Added block tags:
+** <code>#maintains_farmland</code>: contains {{cd|d=and|pumpkin_stem|pumpkin|attached_pumpkin_stem|melon_stem|melon|attached_melon_stem|beetroots|carrots|potatoes|torchflower_crop|torchflower|pitcher_crop|wheat}}
+*** Blocks that don't cause farmland to be converted into dirt when placed on top of it.
+* Added item tags:
+** <code>#villager_plantable_seeds</code>: contains {{cd|d=and|wheat_seeds|potato|carrot|beetroot_seeds|torchflower_seeds|pitcher_pod}}.
+*** Seeds that villagers use to farm.
+* Added block and item tags:
+** <code>#stone_buttons</code>: contains <code>stone_button</code> and <code>polished_blackstone_button</code>.
+
+== Changes ==
+=== Blocks ===
+[[File:Polished Blackstone Button JE2.png|width=32x32]] '''[[Polished Blackstone Button]]'''
+* Now breaks in the same time as other buttons.
+
+[[File:Calibrated Sculk Sensor JE2.gif|width=32x32]] '''[[Calibrated Sculk Sensor]]'''
+* The model has been changed from [[File:Calibrated Sculk Sensor JE1.gif|width=32x32]]: the top of the amethyst is now unshadowed and stretched to match the model of the [[amethyst cluster]].
+
+[[File:Pitcher Crop Age 4 JE1 BE1.png|width=42x42]] '''[[Pitcher Pod|Pitcher Crop]]'''
+* Hitbox shape has been changed for each stage of its growth.
+
+[[File:Pitcher Plant JE1 BE1.png|width=62x62]] '''[[Pitcher Plant]]'''
+* Is now flammable.
+
+[[File:Sculk Sensor JE1.gif|width=32x32]] [[File:Sculk Shrieker JE2 BE3.gif|width=32x32]] '''[[Sculk Sensor]] and [[sculk Shrieker]]'''
+* If a vibration is scheduled to be received by a sculk sensor or sculk shrieker, they stay queued until all adjacent chunks are loaded and ticking.
+** This prevents vibration resonance setups from breaking when unloading their chunks from a distance.
+
+[[File:Torchflower JE1 BE1.png|width=32x32]] '''[[Torchflower]]'''
+* No longer makes [[farmland]] turn into [[dirt]].
+* Is now flammable.
+
+[[File:Decorated Pot (N) JE2 BE2.png|width=32x32]] '''[[Decorated Pot]]'''
+* Tag for pot decorations renamed from <code>shards</code> to <code>sherds</code> (to match items).
+
+=== Items ===
+[[File:Archer Pottery Sherd JE2 BE2.png|width=32x32]] '''[[Pottery Sherd]]'''
+* Renamed from "Pottery Shard".
+
+=== Mobs ===
+[[File:Sniffer JE1 BE1.png|width=50x50]] '''[[Sniffer]]s'''
+* No longer sniff while panicking.
+* No longer dig while having the [[Levitation]] effect.
+* Can now enter [[minecart]]s.
+
+[[File:Plains Villager Base JE2.png|width=43x43]] '''[[Villager]]s'''
+* Can now plant [[torchflower seeds]] and [[pitcher pod]]s.
+
+=== Non-mob entities ===
+'''[[Display]]'''
+* <code>item_display</code> items have been rotated 180 degrees around Y axis to better match transformation applied when rendering items on armor stand head and in item frames.
+** For reference, order of transformations applied to model (starting from innermost) is <code>item_transform</code>, rotate Y 180, <code>transformation</code> field, entity orientation (<code>billboard</code> option + <code>Rotation</code> field + <code>Pos</code> field).
+
+=== World generation ===
+[[File:Trail Ruins.png|width=82x82]] '''[[Trail Ruins]]'''
+* Reworked and added more variants.
+* No longer generates with [[sand]] and [[suspicious sand]].
+* Tweaked the amount of [[gravel]], [[dirt]], and [[suspicious gravel]].
+* Split the archaeological loot tables for the suspicious gravel within the structure.
+** Rare loot items and common loot items now each have their own dedicated archaeological loot table.
+
+=== General ===
+'''[[Data pack]]s'''
+* Version is now <code>14</code>.
+
+'''[[Loading world screen]]'''
+* Changed chunk colormap a little.
+
+'''[[Tag]]s'''
+* Removed <code>stone_button</code> and <code>polished_blackstone_button</code> from the <code>#buttons</code> block and item tags, newly added <code>#stone_buttons</code> is used instead.
+* Removed <code>stone_button</code> from the <code>#mineable/pickaxe</code> block tag, newly added <code>#stone_buttons</code> is used instead.
+* Removed {{cd|d=and|sand|dirt|coarse_dirt}} from the <code>#trail_ruins_replaceable</code> block tag.
+* Renamed <code>#decorated_pot_shards</code> item tag to <code>#decorated_pot_sherds</code>, and renamed all its members accordingly.
+
+'''General'''
+* The game's application icon has been changed from [[crafting table]] to [[grass block]].
+** Uses dirt icon for snapshots.
+* Added native support for ARM64 machine architecture on Windows.
+** Needs to manually specify a native Java Executable in the launcher currently.
+
+== Fixes ==
+{{fixes|fixedin=23w16a
+|;old
+|117125|Narrator still crashes on Linux, flite installed.
+|128011|{{key|F3}} toggles debug menu while viewing inventory.
+|151882|Favicon in game window shows old crafting table texture.
+|162253|Lag spike when crossing certain chunk borders.
+|169498|Empty top subchunks don't update skylight in some cases.
+|170010|Sky-lightmaps not properly initialized.
+|170012|Lightmaps are missing for initial skylight.
+|188295|Placing fallling blocks using {{cmd|setblock}} can cause a client-side lag spike in some circumstances.
+|199752|Polished Blackstone Button takes longer to break than other buttons.
+|207251|Sculk sensors and shriekers do not work correctly when cloned, generated on superflat worlds or placed with custom structures.
+|249450|Sculk shriekers placed with NBT don't receive signals from nearby sculk sensors.
+|252786|SculkSensorBlockEntity and SculkShriekerBlockEntity leak VibrationListeners on update.
+|254410|{{cmd|setidletimeout}} set to a timer longer than 35791 disconnects idle player immediately.
+|257178|Chiseled Bookshelf redstone behavior is inconsistent.
+|260038|Sniffer does not have smooth animation transitions for some of its animations, like sniffing.
+|260219|Sniffer eating sounds aren't played when feeding them the last item of torchflower seeds within a stack.
+|260221|Sniffers can still dig when floated by levitation status effect.
+|260237|Sniffers can sniff while panicking.
+|260466|Torchflower doesn't maintain farmland used to grow it.
+|260849|Sniffer can't get into minecart.
+|261804|Expired Key preventing players from logging in on servers.
+|261857|Using the "{{cmd|setblock}}", "{{cmd|fill}}", or "{{cmd|clone}}" commands to create little amounts of blocks in completely isolated areas causes large client-side stutters.
+|;dev
+|261214|Amethyst in calibrated sculk sensor is shaded and not stretched.
+|261286|Walking near liquids causes stone footstep sounds to play.
+|261515|You can't brush blocks if a dropped item is between you and the block.
+|;previous
+|261605|Splash text sometimes covers several letters of "Java Edition".
+|261608|Sculk sensors and calibrated sculk sensors lack a cooldown state.
+|261609|The subtitle '{{cd|subtitles.block.sign.waxed_interact_fail}}' isn't displayed
+|261620|Crash when modifying age property of a pitcher crop.
+|261625|"Programmer Art" and "High contrast" built-in Resource Packs are incompatible.
+|261643|Villagers can't plant torchflower seeds or pitcher plant pods, despite picking them up.
+|261646|Subtitle for Sniffers laying eggs is "Chicken plops".
+|261740|Feeding a Sniffer while it is digging causes it to lay motionless for a while then dig again with no animation.
+|261746|Incorrect sound event ID spelling for "{{cd|block.sniffer.egg_crack}}" and "{{cd|block.sniffer.egg_hatch}}".
+|;hotfix
+|261981|Click any buttons on the Accessibility Onboarding Screen crashes the game.
+|261984|Clicking the Narrator button on the Accessibility settings menu causes crash.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|eBJzB35BBhk}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:23w16a]]
+[[es:Java Edition 23w16a]]
+[[fr:Édition Java 23w16a]]
+[[ja:Java Edition 23w16a]]
+[[pt:Edição Java 23w16a]]
+[[ru:23w16a (Java Edition)]]
+[[uk:23w16a (Java Edition)]]
+[[zh:Java版23w16a]]

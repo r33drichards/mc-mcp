@@ -1,0 +1,37 @@
+{{exclusive|java|console|section=1}}
+
+To generate its appearances, the clock combined 2 textures, one being the actual clock, and the other being the dial. 
+
+<gallery style="text-align:center">
+Clock (texture) JE1 BE1.png|Clock texture file
+Dial.png|{{code|dial.png}}
+</gallery>
+
+The logic solely for mixing the two (as there is additional logic for moving the dial in a wobbly fashion that isn't pertinent here) is as follows:
+[[File:Proctex Clocks Comparisons.gif|300px|thumb|The procedural and pre-rendered clocks compared. The difference in precision is far more obvious in-game.
+If the modern clock sprite were to be procedurally generated it would have only 218 unique frames, as the window to the dial is slightly different.]]
+<syntaxhighlight lang="python3" line="1">
+# Assume RGBA values are handled as 0.0 to 1.0 float values
+def setup_clock_sprite (item: Image, dial: Image, dial_angle: float, output: Image):
+	rx = sin(-dial_angle)
+	ry = cos(-dial_angle)
+	for y in range(item.height):
+		for x in range(item.width):
+			pix = item.get_pixel(x, y)
+			if pix.r == pix.b and pix.g == 0 and pix.b > 0:
+				u: float = -(x / (item.width  - 1) - 0.5)
+				v: float =   y / (item.height - 1) - 0.5
+				dial_pix = dial.get_pixel(
+					int(((u * ry + v * rx + 0.5) * dial.width)) % dial.width,
+					int(((v * ry - u * rx + 0.5) * dial.height)) % dial.height
+				)
+				dial_pix.rgb *= pix.r
+				pix = dial_pix
+			output.set_pixel(x, y, pix)
+</syntaxhighlight>
+This results in the item and dial sprites being mixed by fuchsia areas of the clock sprite, as well as being shaded by them (contrary to the popular belief that they were mixed solely on the two shades found on the vanilla sprite).
+This allowed for the clock to be animated precisely, having 230 visually distinct frames, in an era where block and item sprites couldn't be animated individually without mods. The pre-rendered animated approach, used in 1.5 onward, is far less precise, with only 64 different frames.
+
+[[File:Weirdo_Clock_Example_.gif|320px|thumb|A valid albeit silly clock sprite, showing how the fuchsia areas are used to mix the sprite and dial; Note how the dial gets flipped horizontally.]]
+Due to an oversight with how assets were loaded however, the item sprite for clocks couldn't be overridden by texture packs (as they are set to always load from the vanilla {{code|gui/items.png}} atlas, stored in {{code|minecraft.jar}}, rather than the one of the currently active texture pack.
+<noinclude>[[Category: Textures]]</noinclude>

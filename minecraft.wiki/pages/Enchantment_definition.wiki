@@ -1,0 +1,595 @@
+{{Exclusive|java}}
+
+[[Enchantment]]s are stored as [[JSON]] files within a [[data pack]] in the path {{cd|data/<namespace>/enchantment}}.
+{{TOC|right}}
+
+== JSON format ==
+<div class="treeview">
+* {{nbt|compound}}: The root object.
+** {{nbt|compound|description}}: A [[text component]] that is used to display the enchantment on items.
+** {{nbt|string}}{{nbt|list|exclusive_set}}: {{json_ref/enchantment|tag=1}} &mdash; Enchantments that are incompatible with this enchantment. &mdash; Defaults to an empty list.
+** {{nbt|string}}{{nbt|list|supported_items}}: {{json_ref/item|tag=1}} &mdash; Items on which this enchantment can be applied using an anvil or using the [[Commands/enchant|{{cd|/enchant}}]] command.
+** {{nbt|string}}{{nbt|list|primary_items}}: (Optional) {{json_ref/item|tag=1}}; has to be a subset of {{nbt|string}}{{nbt|list|supported_items}} &mdash; Items for which this enchantment (if present in {{tag link|enchantment|in_enchanting_table}}) appears in an [[enchanting table]]. If unspecified, defaults to being the same as {{nbt|string}}{{nbt|list|supported_items}}.
+** {{nbt|int|weight}}: Value between 1 and 1024 (inclusive) &mdash; Controls the probability of this enchantment when enchanting. The probability is determined {{cd|weight/total_weight * 100%}}, where {{cd|total_weight}} is the sum of the weights of all available enchantments.
+** {{nbt|int|max_level}}: Value between 1 and 255 (inclusive) &mdash; The maximum level of this enchantment.
+** {{nbt|compound|min_cost}}: The minimum base cost of this enchantment in levels. The base cost range will be [[Enchanting mechanics#How enchantments are chosen|modified]] before use.
+*** {{nbt|int|base}}: The minimum cost for a level I enchantment.
+*** {{nbt|int|per_level_above_first}}: The amount of levels added to the minimum for each level above level I.
+** {{nbt|compound|max_cost}}: The maximum base cost of this enchantment in levels. The base cost range will be [[Enchanting mechanics#How enchantments are chosen|modified]] before use.
+*** same fields as above
+** {{nbt|int|anvil_cost}}: The base cost when applying this enchantment to another item using an [[anvil]]. Halved when adding using a book, multiplied by the level of the enchantment.
+** {{nbt|list|slots}}: List of equipment slots that this enchantment works in.
+*** {{nbt|string}}: one of {{cd|any}}, {{cd|hand}}, {{cd|mainhand}}, {{cd|offhand}}, {{cd|armor}}, {{cd|feet}}, {{cd|legs}}, {{cd|chest}}, {{cd|head}}, {{cd|body}}, {{cd|saddle}} &mdash; a slot 
+** {{nbt|compound|effects}}: Effect components &mdash; Controls the effect of the enchantment.
+*** {{nbt|list}}{{nbt|compound|<component ID>}}: An [[#Effect components|effect component]]
+**** Fields depending on the component
+</div>
+
+== Effect components ==
+=== Components with value effects ===
+These components use a [[#Value effects|value effect]] to change a value and an optional condition to check beforehand. The general format for them is:
+<div class="treeview">
+* {{nbt|list|<component ID>}}
+** {{nbt|compound}}
+*** {{nbt|compound|effect}}: [[#Value effects|value effect]] &mdash; Determines how to modify the value.
+*** {{nbt|compound|requirements}}: Optional [[predicate]] &mdash; Determines when the effect is active. Cannot be of type <code>minecraft:reference</code>; all predicates must be in-lined.<ref name=":0">[https://www.minecraft.net/en-us/article/minecraft-1-21-pre-release-1 Minecraft 1.21 Pre-release 1] – minecraft.net, May 29, 2024.</ref>
+***; Additional fields of the {{cd|minecraft:equipment_drops}} component<nowiki>:</nowiki>
+*** {{nbt|string|enchanted}}: One of {{cd|attacker}}, or {{cd|victim}}. &mdash; which entity has to have the enchantment
+</div>
+
+{| class="wikitable" style="min-width:calc(min(80rem, 100%))"
+! Component ID !! Value changed !! [[Loot context]] for predicate
+|-
+| {{cd|minecraft:armor_effectiveness}} || Effectiveness of the armor on the target of the attack. {{cd|0}} completely ineffective; {{cd|1}} completely effective ||rowspan="6"|
+{{cd|enchanted_damage}}:
+* <b>{{cd|this}} entity</b>: The attacked entity
+* <b>{{cd|attacker}} entity</b>: the attacking entity
+* <b>{{cd|direct_attacker}} entity</b>: the projectile entity
+* <b>Enchantment level</b>
+* <b>Origin</b>: The position of the attacked entity
+* <b>Damage source</b>
+|-
+| {{cd|minecraft:damage}} || Amount of damage dealt by an attack
+|-
+| {{cd|minecraft:damage_protection}} || Amount of protection from incoming damage (specifically, from the portion of the damage that remains after accounting for armor). Each point of {{cd|damage_protection}} reduces this damage by 4%, up to a maximum of 80% per damaged entity.
+|-
+| {{cd|minecraft:smash_damage_per_fallen_block}} || Amount of damage added to the smash attack of a [[mace]], per block fallen
+|-
+| {{cd|minecraft:knockback}} || Knockback caused by the attack
+|-
+| {{cd|minecraft:equipment_drops}} || Chance of equipment dropping from the killed entity. Value between {{cd|0}} and {{cd|1}}
+|-
+| {{cd|minecraft:ammo_use}} || Amount of ammunition used when firing a [[bow]] or [[crossbow]] ||rowspan="5"|
+{{cd|enchanted_item}}:
+* <b>Tool</b>: The enchanted item
+* <b>Enchantment level</b>
+|-
+| {{cd|minecraft:projectile_piercing}} || Count of pierced entities by fired projectiles
+|-
+| {{cd|minecraft:block_experience}} || Amount of experience awarded for breaking a block
+|-
+| {{cd|minecraft:repair_with_xp}} || Damage to repair per [[XP]] collected
+|-
+| {{cd|minecraft:item_damage}} || Amount of durability to lose when damaged
+|-
+| {{cd|minecraft:projectile_count}} || Amount of projectiles spawned when firing ||rowspan="2"|
+{{cd|enchanted_entity}}:
+* <b>{{cd|this}} entity</b>: The projectile
+* <b>Enchantment level</b>
+* <b>Origin</b> The position of the projectile
+|-
+| {{cd|minecraft:trident_return_acceleration}} || Used for [[trident]]s returning to their owner {{more info}}
+|-
+| {{cd|minecraft:projectile_spread}} || Maximum spread of projectiles in degrees from firing direction ||rowspan="3"|
+{{cd|enchanted_entity}}:
+* <b>{{cd|this}} entity</b>: The player / attacking entity
+* <b>Enchantment level</b>
+* <b>Origin</b> The position of the attacking entity
+|-
+| {{cd|minecraft:fishing_time_reduction}} || Time saved during [[fishing]] in seconds. A higher number means shorter total fishing time.
+|-
+| {{cd|minecraft:fishing_luck_bonus}} || Added [[luck]] used in the fishing [[loot table]]
+|-
+| {{cd|minecraft:mob_experience}} || Amount of experience awarded for killing a mob ||
+{{cd|enchanted_entity}}:
+* <b>{{cd|this}} entity</b>: The killed mob
+* <b>Enchantment level</b>
+* <b>Origin</b> The position of the killed mob
+|}
+
+Some components don't check a predicate and always modify a value when applied. Their format is:
+<div class="treeview">
+* {{nbt|compound|<component ID>}}: [[#Value effects|value effect]] &mdash; Determines how to modify the value.
+</div>
+
+{| class="wikitable"
+! Component ID !! Value changed
+|-
+| {{cd|minecraft:crossbow_charge_time}} || Time of crossbow charging in seconds
+|-
+| {{cd|minecraft:trident_spin_attack_strength}} || Strength of the spin attack of a [[trident]].{{more info}} Any value larger than {{cd|0}} causes the trident to not be thrown.
+|}
+
+=== Components with entity effects ===
+These components use an [[#Entity effects|entity effect]] to change a value and an optional condition to check beforehand. The general format for them is:
+<div class="treeview">
+* {{nbt|list|<component ID>}}
+** {{nbt|compound}}
+*** {{nbt|compound|effect}}: [[#Entity effects|entity effect]] &mdash; The entity effect to apply
+*** {{nbt|compound|requirements}}: Optional [[predicate]] &mdash; Determines when the effect is active. Cannot be of type <code>minecraft:reference</code>; all predicates must be in-lined.
+***; Additional fields of the {{cd|minecraft:post_attack}} component<nowiki>:</nowiki>
+*** {{nbt|string|enchanted}}: One of {{cd|attacker}}, {{cd|victim}}, or {{cd|damaging_entity}}. &mdash; which entity has to have the enchantment
+*** {{nbt|string|affected}}: One of {{cd|attacker}}, {{cd|victim}}, or {{cd|damaging_entity}}. &mdash; which entity is affected by the {{nbt|compound|effect}}.
+</div>
+
+{| class="wikitable"
+! Component ID !! Effect applied !! [[Loot context]] for predicate
+|-
+| {{cd|minecraft:hit_block}} || After an entity hits a block using the enchanted item ||
+{{cd|hit_block}}: 
+* <b>Enchantment level</b>
+* <b>{{cd|this}} entity</b>: the entity hitting the block (the projectile if applicable)
+* <b>Origin</b>: if hit with a [[melee attack]], the center of the hit block; if hit with a [[projectile]], the position the projectile hit the block at.<ref group="note">Unlike the projectile, the origin will always be within the bounds of the hit block. In other words, its [[Coordinates#Block_position|block position]] always matches that of the hit block.</ref>
+* <b>Block state</b>: the block state of the hit block
+|-
+| {{cd|minecraft:tick}} || Every tick ||
+{{cd|enchanted_entity}}: 
+* <b>Enchantment level</b>
+* <b>{{cd|this}} entity</b>: the owner of the enchanted item
+* <b>Origin</b>: the position of the owner
+|-
+| {{cd|minecraft:projectile_spawned}} || After a projectile entity has been spawned from a [[bow]], [[crossbow]], [[snowball]], [[trident]], [[splash potion]], [[lingering potion]], [[ender pearl]], [[firework rocket]], [[wind charge]], or [[egg]]. ||
+{{cd|enchanted_entity}}: 
+* <b>Enchantment level</b>
+* <b>{{cd|this}} entity</b>: the projectile that spawned
+* <b>Origin</b>: the position of the projectile
+|-
+| {{cd|minecraft:post_attack}} || After an attack damages an entity ||
+{{cd|enchanted_damage}}:
+* <b>{{cd|this}} entity</b>: the attacked entity
+* <b>{{cd|attacker}} entity</b>: the attacking entity
+* <b>{{cd|direct_attacker}} entity</b>: the projectile entity
+* <b>Enchantment level</b>
+* <b>Origin</b>: the position of the attacked entity
+* <b>Damage source</b>
+|-
+| {{cd|minecraft:post_piercing_attack}} || After a piercing attack is made, regardless of whether it hits anything ||
+{{cd|enchanted_entity}}: 
+* <b>Enchantment level</b>
+* <b>{{cd|this}} entity</b>: the owner of the enchanted item
+* <b>Origin</b>: the position of the owner
+The predicate gets validated as if it gets the {{cd|enchanted_damage}} context.
+|}
+
+=== location_changed ===
+Enables or disables a [[#Location-based effects|location-based effect]] when the owners block position changed, i.e. when the integer portion of the coordinate changes. Also triggers when the equipment is equipped, and when an entity with the enchantment is loaded.
+<div class="treeview">
+* {{nbt|list|minecraft:location_changed}}
+** {{nbt|compound}}
+*** {{nbt|compound|effect}}: [[#Location-based effects|location-based effect]] &mdash; The effect to apply
+*** {{nbt|compound|requirements}}: Optional [[predicate]] &mdash; Determines when the effect is active. Cannot be of type <code>minecraft:reference</code>; all predicates must be in-lined<ref name=":0" />.
+</div>
+The [[loot context]] for the predicate is {{cd|enchanted_location}}:
+* <b>{{cd|this}} entity</b>: The entity that moved
+* <b>Enchantment level</b>
+* <b>Origin</b>: The position of the entity that moved
+* <b>Enchantment active status</b>: Flag whether the enchantment was active before, i.e. the predicate succeeded at the old position.
+
+=== damage_immunity ===
+Applies damage immunity if the requirements are fulfilled.
+<div class="treeview">
+* {{nbt|list|minecraft:damage_immunity}}
+** {{nbt|compound}}
+*** {{nbt|compound|effect}}: {{cd|<nowiki>{}</nowiki>}}
+*** {{nbt|compound|requirements}}: Optional [[predicate]] &mdash; Determines when the damage immunity is applied. Cannot be of type <code>minecraft:reference</code>; all predicates must be in-lined<ref name=":0" />.
+</div>
+The [[loot context]] for the predicate is {{cd|enchanted_damage}}:
+* <b>{{cd|this}} entity</b>: The attacked entity (i.e the owner of the enchanted item)
+* <b>{{cd|attacker}} entity</b>: the attacking entity
+* <b>{{cd|direct_attacker}} entity</b>: the projectile entity
+* <b>Enchantment level</b>
+* <b>Origin</b> {{more info}}
+* <b>Damage source</b>
+
+=== prevent_equipment_drop ===
+Prevents the item from being dropped on death of the owner when the component is present.
+<div class="treeview">
+* {{nbt|compound|minecraft:prevent_equipment_drop}}: {{cd|<nowiki>{}</nowiki>}}
+</div>
+
+=== prevent_armor_change ===
+Prevents the item from being unequipped from an armor slot.
+<div class="treeview">
+* {{nbt|compound|minecraft:prevent_armor_change}}: {{cd|<nowiki>{}</nowiki>}}
+</div>
+
+=== attributes ===
+Always applies all listed [[#Attribute effects|attribute effects]].
+<div class="treeview">
+* {{nbt|list|minecraft:attributes}}:
+** {{nbt|compound}} an [[#Attribute effects|attribute effect]]
+</div>
+=== crossbow_charging_sounds ===
+Changes the sounds used when charging a [[crossbow]].
+<div class="treeview">
+* {{nbt|list|minecraft:crossbow_charging_sounds}}:
+** {{nbt|compound}}: the sounds used at enchantment level I
+*** {{nbt|string|start}}: {{json_ref|sound event}} &mdash; Optional, sound to use at start of charging
+*** {{nbt|string|mid}}: {{json_ref|sound event}} &mdash; Optional, sound to use in the middle of charging
+*** {{nbt|string|end}}: {{json_ref|sound event}} &mdash; Optional, sound to use for the end of charging
+** {{nbt|compound}}: the sounds used at enchantment level II
+** ...
+</div>
+
+=== trident_sound ===
+Changes the sounds of a [[trident]].
+<div class="treeview">
+* {{nbt|list|minecraft:trident_sound}}:
+** {{nbt|string}}: {{json_ref|sound event}} &mdash; the sounds used at enchantment level I
+** {{nbt|string}}: {{json_ref|sound event}} &mdash; the sounds used at enchantment level II
+** ...
+</div>
+
+== Value effects ==
+Value effects are used to modify a value, see {{slink||Components with value effects}}.
+
+=== set ===
+Sets the value to the specified value.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:set}}
+** {{nbt|float}}{{nbt|compound|value}}: [[#Level-based value|level based value]] determining the new value.
+</div>
+
+=== add ===
+Adds the specified value to the old value.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:add}}
+** {{nbt|float}}{{nbt|compound|value}}: [[#Level-based value|level based value]] determining the value to add.
+</div>
+
+=== multiply ===
+Multiplies the old value with the specified factor.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:multiply}}
+** {{nbt|float}}{{nbt|compound|factor}}: [[#Level-based value|level based value]] determining the value to multiply.
+</div>
+
+=== remove_binomial ===
+Runs a single<ref group="note">Although not clarified by Mojang, the {{Code|chance}} used in {{Code|minecraft:unbreaking}} indicates this. The {{Cd|chance}} is <math>\frac{level}{level+1}</math> for tools and <math>\frac{2\times level}{(5\times level)+5}</math> for armors, which is exactly the chance of not losing the durability upon each use (see <u>[[unbreaking]]</u>).</ref>{{more info|how many}} test with the {{Cd|chance}} of removing {{cd|1}} from the value.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:remove_binomial}}
+** {{nbt|float}}{{nbt|compound|chance}}: [[#Level-based value|level based value]] determining the chance to remove {{cd|1}} .
+</div>
+
+=== all_of ===
+Runs multiple value effects in series.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:all_of}}
+** {{nbt|list|effects}}: List of value effects
+*** {{nbt|compound}}: A value effect
+</div>
+
+== Attribute effects ==
+Attribute effects are used to apply an [[attribute modifier]] to the entity that has an enchanted item equipped.
+<div class="treeview">
+* {{nbt|compound}} The attribute effect
+** {{nbt|string|attribute}}: The id of the [[attribute]] to modify
+** {{nbt|float}}{{nbt|compound|amount}}: [[#Level-based value|level-based value]] &mdash; amount to add depending on level of the enchantment
+** {{nbt|string|operation}}: One of {{cd|add_value}}, {{cd|add_multiplied_base}} and {{cd|add_multiplied_total}} &mdash; The operation to apply, see {{slink|Attribute|Operations}}
+** {{nbt|string|id}}: A [[resource location]] to use for this attribute modifier. Must be unique. The equipment slot is postfixed to this id.
+</div>
+
+== Entity effects ==
+These effects are used to affect an entity by an enchantment component, see {{slink||Components with entity effects}}. The affected entity is determined by the component
+
+=== all_of ===
+Runs multiple entity effects in sequence.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:all_of}}
+** {{nbt|list|effects}}: The list of entity effects to run
+*** {{nbt|compound}}: A entity effect
+</div>
+
+=== apply_impulse ===
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:apply_impulse}}
+** {{nbt|list|direction}}: The first step of determining the impulse is applying this vector as local coordinates (the same used by {{cd|tp @s ^ ^ ^}}) onto the entity look vector
+** {{nbt|list|coordinate_scale}}: The second step is scaling the resulting vector by this vector on each axis in world space, X, Y and Z
+** {{nbt|float|magnitude}}: The third step is scaling the resulting vector by this [[#Level-based value|level-based value]]
+</div>
+
+=== apply_exhaustion ===
+Applies an [[Food mechanics#Exhaustion|exhaustion effect]] to the affected player.
+
+{{nbt|compound}}
+* {{nbt|string|type}}: {{cd|minecraft:apply_exhaustion}}
+* {{nbt|float|amount}}: The exhaustion to apply by this [[#Level-based value|level-based value]]
+
+=== apply_mob_effect ===
+Applies a [[status effect]] to the affected mob.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:apply_mob_effect}}
+** {{nbt|string}}{{nbt|list|to_apply}}: {{json ref|effect|tag=1}} &mdash; The effect(s) to apply.
+** {{nbt|float}}{{nbt|compound|min_duration}}: [[#Level-based value|level-based value]] &mdash; minimum possible duration of the effect in seconds
+** {{nbt|float}}{{nbt|compound|max_duration}}: [[#Level-based value|level-based value]] &mdash; maximum possible duration of the effect in seconds
+** {{nbt|float}}{{nbt|compound|min_amplifier}}: [[#Level-based value|level-based value]] &mdash; minimum possible amplifier of the effect
+** {{nbt|float}}{{nbt|compound|max_amplifier}}: [[#Level-based value|level-based value]] &mdash; maximum possible amplifier of the effect
+</div>
+
+=== damage_entity ===
+Deals (extra) damage to the affected entity.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:damage_entity}}
+** {{nbt|string|damage_type}}: {{json ref|damage type}}
+** {{nbt|float}}{{nbt|compound|min_damage}}: [[#Level-based value|level-based value]] &mdash; minimum possible damage
+** {{nbt|float}}{{nbt|compound|max_damage}}: [[#Level-based value|level-based value]] &mdash; maximum possible damage
+</div>
+
+=== change_item_damage ===
+Reduces the durability of the enchanted item
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:change_item_damage}}
+** {{nbt|float}}{{nbt|compound|amount}}: [[#Level-based value|level-based value]] &mdash; The amount of durability to remove from the item
+</div>
+
+=== explode ===
+Causes an explosion
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:explode}}
+** {{nbt|boolean|attribute_to_user}}: Should the explosion be attributed to the entity using the enchanted item?
+** {{nbt|string|damage_type}}: Optional. {{json ref|damage type}} &mdash; the explosion deals no damage if this field is omitted.
+** {{nbt|string}}{{nbt|list|immune_blocks}}: Optional. {{json_ref/block|tag=1}} &mdash; blocks that fully block the explosion and can't be destroyed.
+** {{nbt|float}}{{nbt|compound|knockback_multiplier}}: Optional [[#Level-based value|level-based value]], defaults to {{cd|1}} &mdash;  Multiplier of the explosion knockback.
+** {{nbt|list|offset}}: Optional list of 3 {{nbt|float}}, defaults to {{cd|[0,0,0]}} &mdash; X, Y, Z position offset to spawn the explosion.
+** {{nbt|float}}{{nbt|compound|radius}}: [[#Level-based value|level-based value]] &mdash; The radius of the explosion
+** {{nbt|boolean|create_fire}}: Should [[fire]] be placed by the explosion?
+** {{nbt|string|block_interaction}}: One of {{cd|none}} (no effect), {{cd|block}} (like a bed explosion), {{cd|mob}} (like a creeper explosion), {{cd|tnt}} (like tnt explosion), {{cd|trigger}} (like a wind-charge explosion). &mdash; How the explosion should interact with blocks.
+** {{nbt|compound|small_particle}}: The small particle the explosion emits.
+*** {{nbt inherit/particle}}
+** {{nbt|compound|large_particle}}: The large particle the explosion emits.
+*** {{nbt inherit/particle}}
+** {{nbt|list|block_particles}}: Optional, particles for each air block in the radius of the explosion.
+*** {{nbt|compound}}: A block particle option.
+**** {{nbt|int|weight}}: The weight for this option to be chosen.
+**** {{nbt|compound|particle}}: The particle to spawn.
+***** {{nbt inherit/particle}}
+**** {{nbt|float|scaling}}: Scaling of the distance from the center of the explosion to the block position.
+**** {{nbt|float|speed}}: Multiplier of the speed of the particle.
+** {{nbt|string|sound}}: {{json ref|sound event}} &mdash; The sound to play.
+</div>
+
+=== ignite ===
+Ignites the affected entity
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:ignite}}
+** {{nbt|float}}{{nbt|compound|duration}}: [[#Level-based value|level-based value]] &mdash; The duration the fire should last in seconds.
+</div>
+
+=== play_sound ===
+Plays a sound
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:play_sound}}
+** {{nbt|string}}{{nbt|compound}}{{nbt|list|sound}} List of {{json ref|sound event|list=1|inline=1}} to play, one for each level of enchantment. If a level is higher than the number of sounds, the last sound in the list is used.
+*** {{nbt_inherit/sound_event}}
+** {{nbt|float}}{{nbt|compound|volume}}: Float between {{cd|0.00001}} and {{cd|10.0}} &mdash; Volume of the sound
+*** {{nbt inherit/float provider}}
+** {{nbt|float}}{{nbt|compound|pitch}}: Float between {{cd|0.00001}} and {{cd|2.0}} &mdash; Pitch of the sound. Values less than 0.5 are treated as 0.5.
+*** {{nbt inherit/float provider}}
+</div>
+
+=== replace_block ===
+Places a block
+
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:replace_block}}
+** {{nbt|compound|block_state}} The block to place.
+*** {{nbt inherit/block_state_provider}}
+** {{nbt|list|offset}}: Optional list of 3 {{nbt|int}}, defaults to {{cd|[0,0,0]}} &mdash; X, Y, Z position offset to place the block.
+** {{nbt|string|trigger_game_event}}: {{json ref|game event}} &mdash; The game event to trigger on placing the block.
+** {{nbt|compound|predicate}}: Optional &mdash; A [[block predicate]] used to test if the block should be placed.
+*** {{list indent|*|{{#lst:block predicate|json format}}}}
+</div>
+
+=== replace_disk ===
+Places a half-sphere{{verify}}.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:replace_disk}}
+** {{nbt|compound|block_state}} The block to place.
+*** {{nbt inherit/block_state_provider}}
+** {{nbt|list|offset}}: Optional list of 3 {{nbt|int}}, defaults to {{cd|[0,0,0]}} &mdash; X, Y, Z position offset to place the center of the disk.
+** {{nbt|float}}{{nbt|compound|radius}}: [[#Level-based value|level-based value]] &mdash; The radius of the disk.
+** {{nbt|float}}{{nbt|compound|height}}: [[#Level-based value|level-based value]] &mdash; The height of the disk.
+** {{nbt|string|trigger_game_event}}: {{json ref|game event}} &mdash; The game event to trigger on placing each block.
+** {{nbt|compound|predicate}}: Optional &mdash; A [[block predicate]] used to test each position in the disk to determine if a block should be placed.
+*** {{list indent|*|{{#lst:block predicate|json format}}}}
+</div>
+
+=== run_function ===
+Run a [[Function (Java Edition)|function]].
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:run_function}}
+** {{nbt|string|function}}: {{json ref|function|Function (Java Edition)}} &mdash; The function to run.
+</div>
+
+=== set_block_properties ===
+Sets the block properties of a block.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:set_block_properties}}
+** {{nbt|list|offset}}: Optional list of 3 {{nbt|int}}, defaults to {{cd|[0,0,0]}} &mdash; X, Y, Z position offset to place the block.
+** {{nbt|compound|properties}}: The block state properties to apply.
+*** {{nbt|string|''<block state>''}}: A key-value pair, where the key is a block state key and the value is a block state value to force place for this block, for example {{cd|"facing": "east"}}.
+** {{nbt|string|trigger_game_event}}: {{json ref|game event}} &mdash; The game event to trigger on modifying the block.
+</div>
+
+=== spawn_particles ===
+Spawns particles.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:spawn_particles}}
+** {{nbt|compound|particle}}: The particle to spawn.
+*** {{nbt inherit/particle}}
+** {{nbt|compound|horizontal_position}}: How to spawn the particle horizontally
+*** {{nbt|string|type}}: One of {{cd|entity_position}} (spawn at position of entity) or {{cd|in_bounding_box}} (spawn at random position inside the bounding box of the entity)
+*** {{nbt|float|offset}}: Optional, defaults to {{cd|0}} &mdash; Offset to the position.
+***; Additional field if {{nbt|string|type}} is {{cd|in_bounding_box}}<nowiki>:</nowiki>
+*** {{nbt|float|scale}}: Optional, defaults to {{cd|1}} &mdash; Scaling factor of the bounding box.
+** {{nbt|compound|vertical_position}}: How to spawn the particle vertically
+*** same fields as {{nbt|compound|horizontal_position}}.
+** {{nbt|compound|horizontal_velocity}}: The initial horizontal velocity of the particle.
+*** {{nbt|float}}{{nbt|compound|base}}: Optional, defaults to {{cd|0}} &mdash; Base speed of the particle
+**** {{nbt inherit/float provider}}
+*** {{nbt|float|movement_scale}}: Optional, defaults to {{cd|1}} &mdash; Factor of the entity speed to add to the particle speed. A value of {{cd|1}} adds the entity speed to the particle speed.
+** {{nbt|compound|vertical_velocity}}: The initial vertical velocity of the particle.
+*** same fields as {{nbt|compound|horizontal_velocity}}.
+** {{nbt|float}}{{nbt|compound|speed}}: Optional, defaults to {{cd|0}} &mdash; Speed factor of the particle.
+*** {{nbt inherit/float provider}}
+</div>
+
+=== summon_entity ===
+Spawns an entity.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:summon_entity}}
+** {{nbt|string}}{{nbt|list|entity}}: {{json ref/entity type|tag=1|}} &mdash; The entity or entities {{more info|random selection?}} to spawn
+** {{nbt|boolean|join_team}}: Should the summoned entity join the team of the owner of the enchanted item?
+</div>
+
+== Location-based effects ==
+All [[#Entity effects|entity effects]] are also location-based effects. In this case the {{cd|minecraft:all_of}} effect also accepts location-based effects as sub-effects. Additionally the following location-based effect exists:
+
+=== attribute ===
+Applies [[attribute modifier]]s to the affected entity.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:attribute}}
+** {{nbt|string|attribute}}: The id of the [[attribute]] to modify
+** {{nbt|float}}{{nbt|compound|amount}}: [[#Level-based value|level-based value]] &mdash; amount to add depending on level of the enchantment
+** {{nbt|string|operation}}: One of {{cd|add_value}}, {{cd|add_multiplied_base}} and {{cd|add_multiplied_total}} &mdash; The operation to apply, see {{slink|Attribute|Operations}}
+** {{nbt|string|id}}: A [[resource location]] to use for this attribute modifier. Must be unique. <!--The equipment slot is postfixed to this id. [This is apparently not the fact yet MC-272327]--> 
+</div>
+
+== Level-based value ==
+A level-based value is used in enchantment effects to use different numbers depending on the level of the enchantment.
+
+=== Constant ===
+A constant float can be used instead of a compound to set a value that doesn't depend on the level of the enchantment
+<div class="treeview">
+* {{nbt|float}} A constant value
+</div>
+
+=== exponent ===
+Raises the base to the specified power level.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:exponent}}
+** {{nbt|float}}{{nbt|compound|base}}: Level-based value indicating the base of the exponent
+** {{nbt|float}}{{nbt|compound|power}}: Level-based value indicating the power of the exponent
+</div>
+
+=== linear ===
+The value is linearly increased (or decreased) per level. The final value is {{cd|base + per_level_above_first * (level - 1)}}.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:linear}}
+** {{nbt|float|base}}: Value to use for a level I enchantment
+** {{nbt|float|per_level_above_first}}: Amount added to the value for each level above the first.
+</div>
+
+=== levels_squared ===
+The value is based on the square of the level. The final value is {{cd|level ^ 2 + added}}
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:levels_squared}}
+** {{nbt|float|added}}: Value to add to the squared level
+</div>
+
+=== clamped ===
+Uses another level-based value and clamps the resulting value to the range {{cd|[min, max]}}.
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:clamped}}
+** {{nbt|float}}{{nbt|compound|value}}: level-based value &mdash; input
+** {{nbt|float|min}}: The minimum value of the output
+** {{nbt|float|max}}: The maximum value of the output
+</div>
+
+=== fraction ===
+Calculates a fraction of 2 level-based values: {{cd|numerator/denominator}}
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:fraction}}
+** {{nbt|float}}{{nbt|compound|numerator}}: level-based value &mdash; numerator of the fraction
+** {{nbt|float}}{{nbt|compound|denominator}}: level-based value &mdash; denominator of the fraction
+</div>
+
+=== lookup ===
+Directly defines the value for each level, with a fallback for levels that aren't directly defined
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:lookup}}
+** {{nbt|list|values}}: List of values to use for each level, indexed by {{cd|level - 1}}
+*** {{nbt|float}}: Value to use for level {{cd|1}}
+*** {{nbt|float}}: Value to use for level {{cd|2}}
+*** ...
+** {{nbt|float}}{{nbt|compound|fallback}}: level-based value &mdash; Value to use when {{nbt|list|values}} doesn't define a value for the given level.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21|dev=24w18a|Enchantments can now be changed using [[data pack]]s.}}
+|{{HistoryLine|||dev=24w19a
+|Added {{cd|trigger_game_event}} field to {{cd|replace_block}}, {{cd|replace_disc}}, and {{cd|set_block_properties}} entity effects.
+|Removed predicates from {{cd|crossbow_charge_time}} and {{cd|trident_spin_attack_strength}} effect components.}}
+|{{HistoryLine|||dev=24w20a
+|Maximum value of {{cd|weight}} is now 1024 (was unbound)
+|Maximum value of {{cd|max_level}} is now 255 (was unbound)}}
+|{{HistoryLine|||dev=24w21a
+|Changed attribute effects and the {{cd|minecraft:attribute}} location based effect: removed {{cd|name}} and {{cd|uuid}} field, added {{cd|id}} field
+|The {{cd|minecraft:damage_item}} entity effect doesn't affect items of players in creative mode anymore
+|Changed loot context used by {{cd|minecraft:hit_block}} effect component to {{cd|hit_block}} (was {{cd|enchanted_entity}})}}
+|{{HistoryLine|||dev=pre1|Added {{cd|minecraft:lookup}} level-based value}}
+|{{HistoryLine|||dev=pre3|Renamed {{cd|replace_disc}} entity effect to {{cd|replace_disk}}}}
+|{{HistoryLine||1.21.2|dev=24w33a|Added support for enchantment trigger <code>projectile_spawned</code> in several items.}}
+|{{HistoryLine|||dev=24w40a|Entity effect <code>damage_item</code> has been renamed to <code>change_item_damage</code> and now allows a negative value.}}
+|{{HistoryLine||1.21.9|dev=25w33a|Added {{cd|block_particles}} field to {{cd|explode}} entity effect.}}
+|{{HistoryLine||1.21.11|dev=25w41a|Added {{cd|exponent}}.|Enchantment Effect Components: added {{cd|minecraft:post_piercing_attack}}.|Enchantment Entity Effects: added {{cd|minecraft:apply_impulse}}.}}
+|{{HistoryLine|||dev=25w43a|Enchantment Entity Effects: added {{cd|minecraft:apply_exhaustion}}.}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap1|The {{cd|post_piercing_attack}} component no longer only works for a player if that player has a certain food level.}}
+}}
+
+== See also ==
+* [[Enchantment tag (Java Edition)]]
+
+== Notes ==
+{{Notelist}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Verzauberungsdefinition]]
+[[fr:Définition d'enchantement]]
+[[ja:エンチャントのカスタマイズ]]
+[[pt:Definição de encantamento]]
+[[zh:魔咒定义格式]]

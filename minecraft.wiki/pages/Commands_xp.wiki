@@ -1,0 +1,119 @@
+{{Infobox command
+|name=xp
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+|alias=
+* {{cmd|experience|link=none}}{{only|java|short=1}}
+}}
+Adds, removes or queries player [[experience]].
+
+==Syntax==
+
+* '''Java Edition'''
+: <code>experience add <targets> <amount> [levels|points]</code>
+: <code>xp add <targets> <amount> [levels|points]</code>
+:* Increases or decreases experience amount or experience level.
+:** If experience amount, it is counted into the player's [[experience#Score|Score]].
+:** If experience level, it is not counted into the player's score. The amount of experience points in the current experience bar is scaled proportionally, keeping the progress of experience bar unchanged.
+: <code>experience set <targets> <amount> [levels|points]</code>
+: <code>xp set <targets> <amount> [levels|points]</code>
+:* Setting experience amount or experience level. Does not change the player's score.
+:** If setting experience amount, the experience level is not changed. If the specified amount is greater than or equal to the remaining capacity of a player's current experience bar, the setting does not work for the player.
+:** If setting experience level, the amount of experience points in the current experience bar is scaled proportionally, keeping the progress of experience bar unchanged.
+: <code>experience query <targets> (levels|points)</code>
+: <code>xp query <targets> (levels|points)</code>
+:* Queries experience level or the experience amount in the current experience bar.
+* '''Bedrock Edition'''
+: <code>xp <amount: int> [player: target]</code>
+:* Increases experience amount.
+: <code>xp <amount: int>L [player: target]</code>
+:* Increases or decreases experience level. The amount of experience points in the current experience bar is scaled proportionally, keeping the progress of experience bar unchanged.
+
+==Arguments==
+
+{{el|je|short=1}}: {{argument|amount|integer}} (in <code>add</code> mode)
+: Specifies the amount of experience points or levels to give to the player. Negative values remove experience instead of adding them.
+: {{arg desc|je=integer}}
+
+{{el|je|short=1}}: {{argument|amount|integer}} (in <code>set</code> mode)
+: Specifies the amount of experience points or levels to be set to the player.
+: {{arg desc|je=integer|min=0}}
+
+{{el|be|short=1}}: {{argument|be=1|amount: int|int}}
+: Specifies the amount of experience points or levels to be added to the player. This amount may represent either an amount of points or an amount of levels.
+: If an <code>L</code> is added to the end, adds levels. Negative values remove experience instead of adding them.
+: {{arg desc|be=int}} If the amount is expressed in points, it must be not lower than 0.
+
+{{el|je|short=1}}: {{argument|targets|entity}} (in <code>add</code> and <code>set</code> mode)<br>
+{{el|be|short=1}}: {{argument|be=1|player: target|CommandSelector<Player>}}
+: Specifies the target of the command. {{IN|bedrock}}, if not specified, defaults to the command's executor.
+: {{arg desc|je=entity|amount=multiple|type=players|be=player}}
+
+{{el|je|short=1}}: {{argument|targets|entity}} (in <code>query</code> mode)
+: Specifies the target of the command.
+: {{arg desc|je=entity|amount=single|type=players}}
+
+==Result==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|cmd=/... add ...<br>/... set ...|<code><targets></code> fails to resolve to one or more online players.|fail|N/A}}
+{{Result table|cmd=/... query ...|<code><targets></code> fails to resolve to one or more online players.}}
+{{Result table|cmd=/... set ...|<code><amount></code> is greater than the current capacity of xp bars of all the targeted players.}}
+{{Result table|cmd=|<code>player: target</code> is a target selector that is not in [[Target selectors#Player type and single type|player type]].|N/A|fail}}
+{{Result table|<code>player: target</code> fails to resolve to one or more online players.}}
+{{Result table|<code>player: target</code> is not specified when the command's executor is not a player.}}
+{{Result table|The amount is expressed in points, and <code>amount: int</code> is lower than 0.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/... query ...|On success|1|1|The number of experience points or levels the player has}}
+{{Output table|cmd=/... add ...<br>/... set ...|On success|1|1|The number of targeted players}}
+{{Output table|cmd=|edition=be|On fail|0}}
+{{Output table|On success|The number of players who are given or taken experience}}
+{{Output table}}
+
+== Examples ==
+
+* To display Steve's current level: <code>experience query Steve levels</code>{{only|java}}
+* To give 7 experience to yourself: <code>xp 7</code>{{only|bedrock}} or <code>experience add @s 7</code>{{only|java}}
+* To give 3 levels to Alice: <code>xp 3L Alice</code>{{only|bedrock}} or <code>xp add Alice 3 levels</code>{{only|java}}
+* To remove all levels from all players: <code>xp -2147483648L @a</code>{{only|bedrock}} or <code>xp set @a 0</code>{{only|java}} or <code>xp set @a 0 levels</code>{{only|java}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.0.0|dev=Beta 1.9 Prerelease 5|Added {{cmd|xp|link=none}}.   The command took a player name and then a number of xp orbs to award.}}
+|{{HistoryLine||1.3.1|dev=12w16a|{{cmd|xp|link=none}} is now usable in singleplayer.|Syntax changed to have the number of orbs first, and then the player, and the player is now optional.}}
+|{{HistoryLine||1.4.2|dev=12w39a|Added <code>L</code> notation for levels.  Levels can be subtracted, but points cannot, failing with the message "Cannot give player negative experience points".|The limit for {{cmd|xp|link=none}} is now 2,147,483,647 (2<sup>31</sup>&minus;1) instead of 5,000.}}
+|{{HistoryLine||1.13|dev=17w45a|Added {{cmd|experience|link=none}} and made {{cmd|xp|link=none}} alias it.|Restructured syntax into {{cmd|experience add|link=none}}, {{cmd|experience set|link=none}}, and {{cmd|experience query|link=none}} sub-commands.|Negative points are now supported.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|xp|link=none}}.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/xp?view=minecraft-bedrock-stable|title=<code>/xp</code> Command|website=Microsoft Learn|date=August 1, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/experience]]
+[[es:Comandos/xp]]
+[[ja:コマンド/experience]]
+[[pt:Comandos/xp]]
+[[ru:Команды консоли/experience]]
+[[th:คำสั่ง/experience]]
+[[uk:Команди консолі/xp]]
+[[zh:命令/experience]]

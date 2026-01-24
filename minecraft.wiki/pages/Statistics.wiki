@@ -1,0 +1,555 @@
+{{For|other uses|Stats}}
+{{exclusive|java}}
+[[File:Statistics.png|thumb|427px|The general statistics screen.]]
+'''Statistics''' is a game feature that allows players to track certain tasks in the form of numerical data.
+
+Statistics are present only in {{el|je}}. {{el|be}} has no equivalent of statistics in-game, but a part of statistics can be viewed on the player's [[profile screen]].
+
+== Statistics screen ==
+
+In statistics screen, statistics are divided into three sections: 
+*'''General''' – The General screen displays a multitude of generic statistics that are listed in the table below.
+*'''Items''' – The Items screen displays the number of times different items and blocks have been depleted, crafted, used to destroy blocks, picked up and dropped.
+*'''Mobs''' – The Mob screen shows for each different type of mobs or other living entities ([[player]]s, [[armor stand]]s) how many the player has killed, or the number of deaths caused by those mobs.
+
+The buttons at the top of the Items screen can be used to sort the list. The General and Mobs screens are sorted alphabetically.
+
+== Resource location ==
+The [[resource location]]s of statistics are unique. They are the only combination resource locations in the game.
+
+The resource locations of statistics are in form of <code>NAMESPACE:PATH</code> as well, however, in which <code>NAMESPACE</code> is the resource location of a statistic type in form of <code>namespace.path</code>, <code>NAME</code> is the resource location of a statistic name in form of <code>namespace.path</code>.
+
+That means, the resource locations of statistics are in form of <code>A.B:C.D</code>, in which:
+* <code>A</code> is the namespace of statistic type.
+* <code>B</code> is the path of statistic type.
+* <code>C</code> is the namespace of statistic name.
+* <code>D</code> is the path of statistic name.
+
+For both two namespaces, it can be omitted if it is <code>minecraft</code>. For example, the following four locations work the same:
+* <code>minecraft.mined:minecraft.stone</code>
+* <code>mined:minecraft.stone</code>
+* <code>minecraft.mined:stone</code>
+* <code>mined:stone</code>
+
+=== Statistic types and names ===
+
+Statistics are divided into a few types. For general statistics, their type is called <code>minecraft:custom</code>. For item statistics, their types are <code>minecraft:mined</code>, <code>minecraft:broken</code>, <code>minecraft:crafted</code>, <code>minecraft:used</code>, <code>minecraft:picked_up</code>, and <code>minecraft:dropped</code>. For mob statistics, their types are <code>minecraft:killed</code> and <code>minecraft:killed_by</code>. 
+
+{| class="wikitable sortable" style="text-align:left" data-description="Statistic types"
+! Statistic type
+! class="unsortable" | Description
+! [[Resource location]]
+|-
+| CUSTOM
+|
+A multitude of generic statistics related to a player's actions. Players' statistics increase automatically when they perform the action relevant to the statistic names.
+
+The statistic name for CUSTOM is used to specify the action for statistics. See [[#List of custom statistic names]] below.
+| minecraft:custom
+
+|-
+
+| BLOCK_MINED
+|
+Statistic related to the number of blocks a player mined. Players' statistic increases when the player mines a block of the specified type, only if they use a tool that would normally make the item drop (even if custom loot tables or the <code>doTileDrops</code> game rule being <code>false</code> result in no drops). It never increases for a player in Creative Mode.
+
+The statistic name for BLOCK_MINED is used to specify the type of blocks. It can be the resource location of any block.
+| minecraft:mined
+
+|-
+
+| ITEM_BROKEN
+| 
+Statistics related to the number of items a player ran their durability negative. Players' statistic increases when a player runs the durability of one item of the specified type negative. Durability runs negative when the item's durability loss–condition is met and the item already has a durability of 0.
+
+The statistic name for ITEM_BROKEN is used to specify the type of items. It can be the resource location of any item or block for which items exist.
+| minecraft:broken
+
+|-
+
+| ITEM_CRAFTED
+| 
+Statistics related to the number of items crafted, smelted, etc. Players' statistic increases by an amount equal to the number of items crafted or smelted, upon removing a block or item from the output of an interface, like a crafting table, a furnace, or a [[villager]]'s output slot.
+
+The statistic name for ITEM_CRAFTED is used to specify the type of items. It can be the resource location of any item or block for which items exist.
+| minecraft:crafted
+
+|-
+
+| ITEM_USED
+|
+Statistics related to the number of block or item used. Players' statistic increases when a player uses a block or item. "Use" is defined as when:
+* A [[shovel]], a [[pickaxe]], an [[axe]], [[flint and steel]], [[shears]], a [[hoe]], a [[bow]], or a [[sword]] would normally consume durability
+*: Players' statistics do not increase when [[armor]] consumes durability. Instead, they increase when [[armor]] is equipped directly with {{ctrl|use}}. 
+*: Players' statistics increase even if no durability is consumed, like when a [[torch]] is destroyed with an item that takes the {{ctrl|destroy}} key to use (e.g. pickaxes).
+* For the [[fishing rod]], [[carrot on a stick]] and [[Warped Fungus on a Stick|warped fungus on a stick]], the {{ctrl|use}} key is used.
+* A block is placed
+* A [[painting]], [[item frame]], [[snowball]], [[egg]], [[spawn egg]], any type of [[minecart]] or [[boat]], [[eye of ender]], [[ender pearl]], [[bow]], any type of throwable [[potion]], [[Bottle o' Enchanting]], or [[fishing rod]] spawns an entity
+* A [[cocoa]] pod is planted on a jungle [[log]], or [[bone meal]] is used to grow plants like [[crops]], [[grass]], and saplings
+* A [[potion]], bucket of [[milk]], or any [[food]] (save [[cake]]) is consumed
+* An empty [[map]], empty [[bucket]], [[lava bucket]], [[water bucket]], [[milk bucket]], [[book and quill]], or [[potion]] turns into a new item
+*: Players' statistics do not increase when a [[bowl]] becomes [[mushroom stew]] or a [[bucket]] becomes [[milk]].
+* A [[music disc]] is placed in a [[jukebox]]
+* A player's health reaches 0 while holding a [[Totem of Undying]]
+
+Players' statistics do not increase when items are used on mobs&mdash;whether to name, tame, feed, breed, saddle, leash, shear, dye, milk, or gather stew from&mdash;when [[leather armor]] is washed in a [[cauldron]], and instances mentioned above.
+
+The statistic name for ITEM_USED is used to specify the type of items. It can be the resource location of any item or block for which items exist.
+| minecraft:used
+
+|-
+
+| ITEM_PICKED_UP
+| 
+Statistics related to the number of dropped items a player picked up. Players' statistic increases when the player picks up a dropped item of the specified type.
+
+The statistic name for ITEM_PICKED_UP is used to specify the type of items. It can be the resource location of any item or block for which items exist.
+| minecraft:picked_up
+
+|-
+
+| ITEM_DROPPED
+| 
+Statistics related to the number of items that droped. Players' statistic increases when a player drops an item of the specified type from inventory.
+
+The statistic name for ITEM_DROPPED is used to specify the type of items. It can be the resource location of any item or block for which items exist.
+| minecraft:dropped
+
+|-
+
+| ENTITY_KILLED
+| 
+Statistics related to the number of entities a player killed. Players' statistic increases when a player kills an entity of the specified type.
+
+The statistic name for ENTITY_KILLED is used to specify the type of entities. It can be the resource location of any entity.
+| minecraft:killed
+
+|-
+
+| ENTITY_KILLED_BY
+| 
+Statistics related to the times of a player being killed by entities. Players' statistic increases when the player is killed by an entity of the specified type.
+
+The statistic name for ENTITY_KILLED is used to specify the type of entities. It can be the resource location of any entity.
+| minecraft:killed_by
+|}
+
+=== List of custom statistic names ===
+{| class="wikitable sortable" style="text-align:left" data-description="All statistics"
+! width=150 |Statistic name
+! class="unsortable" | Description
+! [[Resource location]]
+|-
+| Animals Bred
+| The number of times the player bred two mobs.
+| minecraft:animals_bred
+|-
+| [[Armor]] Pieces Cleaned
+| The number of dyed [[leather armor]]s washed with a cauldron.
+| minecraft:clean_armor
+|-
+| [[Banner]]s Cleaned
+| The number of [[banner]] patterns washed with a cauldron.
+| minecraft:clean_banner
+|-
+| [[Barrel]]s Opened
+| The number of times the player has opened a [[barrel]].
+| minecraft:open_barrel
+|-
+| [[Bell]]s Rung
+| The number of times the player has rung a [[bell]].
+| minecraft:bell_ring
+|-
+| [[Cake]] Slices Eaten
+| The number of [[cake]] slices eaten.
+| minecraft:eat_cake_slice
+|-
+| [[Cauldron]]s Filled
+| The number of times the player filled [[cauldron]]s with water buckets.
+| minecraft:fill_cauldron
+|-
+| [[Chest]]s Opened
+| The number of times the player opened [[chest]]s.
+| minecraft:open_chest
+|-
+| [[Damage]] Absorbed
+| The amount of damage the player has [[Absorption|absorbed]] in tenths of {{hp|1}}.
+| minecraft:damage_absorbed
+|-
+| [[Damage]] Blocked By Shield
+| The amount of damage the player has blocked with a [[shield]] in tenths of {{hp|1}}.
+| minecraft:damage_blocked_by_shield
+|-
+| [[Damage]] Dealt
+| The amount of [[damage]] the player has dealt in tenths of {{hp|1}}. Includes only melee attacks.
+| minecraft:damage_dealt
+|-
+| [[Damage]] Dealt (Absorbed)
+| The amount of damage the player has dealt that was [[Absorption|absorbed]], in tenths of {{hp|1}}.
+| minecraft:damage_dealt_absorbed
+|-
+| [[Damage]] Dealt (Resisted)
+| The amount of damage the player has dealt that was [[Resistance|resisted]], in tenths of {{hp|1}}.
+| minecraft:damage_dealt_resisted
+|-
+| [[Damage]] Resisted
+| The amount of damage the player has [[Resistance|resisted]] in tenths of {{hp|1}}.
+| minecraft:damage_resisted
+|-
+| [[Damage]] Taken
+| The amount of damage the player has taken in tenths of {{hp|1}}.
+| minecraft:damage_taken
+|-
+| [[Dispenser]]s Searched
+| The number of times interacted with [[dispenser]]s.
+| minecraft:inspect_dispenser
+|-
+| Distance Climbed
+| The total distance traveled up [[ladder]]s or [[vines]].
+| minecraft:climb_one_cm
+|-
+| Distance Crouched
+| The total distance traveled while [[sneaking]] and not in water.
+| minecraft:crouch_one_cm
+|-
+| Distance Fallen
+| The total distance fallen, excluding [[jumping]]. If the player falls more than one block, the entire jump is counted.
+| minecraft:fall_one_cm
+|-
+| Distance Flown
+| Distance traveled upward and forward at the same time, while more than one block above the ground.
+| minecraft:fly_one_cm
+|-
+| Distance [[Sprint]]ed
+| The total distance [[sprint]]ed.
+| minecraft:sprint_one_cm
+|-
+| Distance Swum
+| The total distance covered with [[Swimming|sprint-swimming]].
+| minecraft:swim_one_cm
+|-
+| Distance Walked
+| The total distance walked.
+| minecraft:walk_one_cm
+|-
+| Distance Walked on Water
+| The total distance covered in any direction while the player's head is not underwater.
+| minecraft:walk_on_water_one_cm
+|-
+| Distance Walked under Water
+| The total distance covered in any direction while the player's head is underwater.
+| minecraft:walk_under_water_one_cm
+|-
+| Distance by [[Boat]]
+| The total distance traveled by [[boat]]s.
+| minecraft:boat_one_cm
+|-
+| Distance by [[Elytra]]
+| The total distance traveled by [[elytra]].
+| minecraft:aviate_one_cm
+|-
+| Distance by [[Happy Ghast]]
+| The total distance traveled by [[happy ghast]]s.
+| minecraft:happy_ghast_one_cm
+|-
+| Distance by [[Horse]]
+| The total distance traveled by [[Horse|horses]].
+| minecraft:horse_one_cm
+|-
+| Distance by [[Minecart]]
+| The total distance traveled by [[minecart]]s.
+| minecraft:minecart_one_cm
+|-
+| Distance by [[Pig]]
+| The total distance traveled by pigs via [[saddle]]s.
+| minecraft:pig_one_cm
+|-
+| Distance by [[Strider]]
+| The total distance traveled by striders via [[saddle]]s.
+| minecraft:strider_one_cm
+|-
+| [[Dropper]]s Searched
+| The number of times interacted with [[dropper]]s.
+| minecraft:inspect_dropper
+|-
+| [[Ender Chest]]s Opened
+| The number of times the player opened [[ender chest]]s.
+| minecraft:open_enderchest
+|-
+| [[Fish (food)|Fish]] Caught
+| The number of [[fish]] caught.
+| minecraft:fish_caught
+|-
+| Games Quit
+| The number of times "Save and quit to title" has been clicked. Does not count [[Crash|crashes]].
+| minecraft:leave_game
+|-
+| [[Hopper]]s Searched
+| The number of times interacted with [[hopper]]s.
+| minecraft:inspect_hopper
+|-
+| Interactions with [[Anvil]]
+| The number of times interacted with [[anvil]]s.
+| minecraft:interact_with_anvil
+|-
+| Interactions with [[Beacon]]
+| The number of times interacted with [[beacon]]s.
+| minecraft:interact_with_beacon
+|-
+| Interactions with [[Blast Furnace]]
+| The number of times interacted with [[Blast Furnace|blast furnace]]s.
+| minecraft:interact_with_blast_furnace
+|-
+| Interactions with [[Brewing Stand]]
+| The number of times interacted with [[brewing stand]]s.
+| minecraft:interact_with_brewingstand
+|-
+| Interactions with [[Campfire]]
+| The number of times interacted with [[campfire]]s.
+| minecraft:interact_with_campfire
+|-
+| Interactions with [[Cartography Table]]
+| The number of times interacted with [[Cartography Table|cartography table]]s.
+| minecraft:interact_with_cartography_table
+|-
+| Interactions with [[Crafting Table]]
+| The number of times interacted with [[Crafting Table|crafting tables]].
+| minecraft:interact_with_crafting_table
+|-
+| Interactions with [[Furnace]]
+| The number of times interacted with [[Furnace|furnaces]].
+| minecraft:interact_with_furnace
+|-
+| Interactions with [[Grindstone]]
+| The number of times interacted with [[grindstone]]s.
+| minecraft:interact_with_grindstone
+|-
+| Interactions with [[Lectern]]
+| The number of times interacted with [[lectern]]s.
+| minecraft:interact_with_lectern
+|-
+| Interactions with [[Loom]]
+| The number of times interacted with [[loom]]s.
+| minecraft:interact_with_loom
+|-
+| Interactions with [[Smithing Table]]
+| The number of times interacted with [[Smithing Table|smithing table]]s.
+| minecraft:interact_with_smithing_table
+|-
+| Interactions with [[Smoker]]
+| The number of times interacted with [[smoker]]s.
+| minecraft:interact_with_smoker
+|-
+| Interactions with [[Stonecutter]]
+| The number of times interacted with [[stonecutter]]s.
+| minecraft:interact_with_stonecutter
+|-
+| Items Dropped
+| The number of items dropped. This does not include items dropped upon death. Stacked blocks count as 1.
+| minecraft:drop
+|-
+| Items [[Enchanting|Enchanted]]
+| The number of items [[Enchanting|enchanted]].
+| minecraft:enchant_item
+|-
+| [[Jumping|Jumps]]
+| The total number of [[jumping|jump]]s performed.
+| minecraft:jump
+|-
+| [[Mob]] Kills
+| The number of [[mob]]s the player killed.
+| minecraft:mob_kills
+|-
+| [[Music Disc]]s Played
+| The number of music discs played on a [[jukebox]].
+| minecraft:play_record
+|-
+| [[Note Block]]s Played
+| The number of [[note block]]s hit.
+| minecraft:play_noteblock
+|-
+| [[Note Block]]s Tuned
+| The number of times interacted with [[Note Block|note blocks]].
+| minecraft:tune_noteblock
+|-
+| Number of Deaths
+| The number of times the player died.
+| minecraft:deaths
+|-
+| Plants Potted
+| The number of [[plant]]s potted onto [[flower pot]]s.
+| minecraft:pot_flower
+|-
+| Player Kills
+| The number of players the player killed. Indirect kills do not count.
+| minecraft:player_kills
+|-
+| [[Raid]]s Triggered
+| The number of times the player has triggered a [[raid]].
+| minecraft:raid_trigger
+|-
+| [[Raid]]s Won
+| The number of times the player has won a [[raid]].
+| minecraft:raid_win
+|-
+| [[Shulker Box]]es Cleaned
+| The number of times the player has washed a [[Shulker Box|shulker box]] with a cauldron.
+| minecraft:clean_shulker_box
+|-
+| [[Shulker Box]]es Opened
+| The number of times the player has opened a [[Shulker Box|shulker box]].
+| minecraft:open_shulker_box
+|-
+| [[Sneaking|Sneak]] Time
+| The time the [[player]] has held down the [[Sneaking|sneak button]] (tracked in ticks).
+| minecraft:sneak_time
+|-
+| Talked to [[Villager]]s
+| The number of times interacted with [[Villager|villagers]] (opened the trading GUI).
+| minecraft:talked_to_villager
+|-
+| [[Target]]s Hit
+| The number of times the player has shot a [[target]] block.
+| minecraft:target_hit
+|-
+| Time Played
+| The total amount of time played (tracked in ticks). If the game is paused, counting does not continue.{{Note|If for example "5.50 h" is displayed this means that you have played for 5 hours and 30 minutes, not 50 minutes.}}
+| minecraft:play_time
+|-
+| Time Since Last Death
+| The time since the player's last [[death]] (tracked in ticks). 
+| minecraft:time_since_death
+|-
+| Time Since Last Rest
+| The time since the player's last [[Bed#Sleeping|rest]] (tracked in ticks). If this value is greater than 1.00h (3 days ingame), [[phantom]]s can spawn.
+| minecraft:time_since_rest
+|-
+|Time with World Open
+|The total amount of time the world was opened (tracked in ticks). Unlike Play Time, if the game is paused this number continues to increase, but it does not change visually while the statistics menu is open.
+|minecraft:total_world_time
+|-
+| Times Slept in a Bed
+| The number of times the player has slept in a [[bed]].
+| minecraft:sleep_in_bed
+|-
+| Traded with [[Villager]]s
+| The number of times traded with [[Villager|villagers]].
+| minecraft:traded_with_villager
+|-
+| [[Trapped Chest]]s Triggered
+| The number of times the player opened [[trapped chest]]s.
+| minecraft:trigger_trapped_chest
+|-
+| [[Water]] Taken from [[Cauldron]]
+| The number of times the player took water from cauldrons with [[glass bottle]]s.
+| minecraft:use_cauldron
+|}
+
+== Storage ==
+Statistics are stored in <samp>[[.minecraft]]/saves/<''world name''>/stats/<''[[uuid]]''>.json</samp> (<samp><''world name''>/stats/<''uuid''>.json</samp> on servers). They keep track of these stats. The file structure is JSON based and takes the following format:
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|int|DataVersion}}: The [[data version]] of the game version the file was last saved in.
+** {{nbt|compound|stats}}: The tag that stores the actual statistics.
+*** {{nbt|compound|<''statisticType''>}}: A compound that saves all statistics of this type.
+**** {{nbt|int|<''statisticName''>}}: The value of the statistic specified in this tag's name.
+</div>
+
+For example, if a player walked only one block (statistic <code>minecraft.custom:minecraft.walked_one_cm</code>) and broke an oak log (statistic <code>minecraft.mined:minecraft.oak_log</code>), the player's stats would be:
+
+{{#tag:syntaxhighlight|
+{
+   "stats": {
+      "minecraft:mined": {
+         "minecraft:oak_log": 1
+      },
+      "minecraft:custom": {
+         "minecraft:walked_one_cm": 100
+      }
+   },
+   "DataVersion": {{data version|Java Edition {{v|java|link=none}}}}
+}
+|lang=json}}
+Statistics are stored in the stats-change section. All of these fields are empty unless they need updating. For example, until the player jumps, the number of times jumped is not recorded. Distance is stored in centimeters (where one block equals 100 centimeters), and time is stored in [[tick]]s (where one tick equals 0.05 seconds).
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java beta}}
+|{{HistoryLine||March 18, 2011|link=https://web.archive.org/web/20110321090121/https://notch.tumblr.com/post/3940195633/the-state-of-minecraft|[[Notch]] talked about statistics (along with [[achievements]]) on his blog post:
+{{q|Achievements will NOT be chores like "cut down 10000 trees", but rather challenges like "ride a pig off a cliff". Stats, however, will be used to keep track of how many trees you have cut down. The long term plan is to show achievements and stats from the profile page on minecraft.net as well, in case you want to brag.|[[Notch]]|his blog<ref>[[wordofnotch:3940195633/the-state-of-minecraft]]</ref>|Notchface.png}} }}
+|{{HistoryLine||1.5|Added statistics.}}
+|{{HistoryLine||May 24, 2011|link={{tweet|notch|73033283226697728}}|Saving of stats online was considered for Beta 1.6, but was considered too error prone at that point.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.7.2|dev=13w36a|Statistics are now stored per world instead of globally.|Added Distance by Horse, Animals Bred, Junk Fished and Treasure Fished.|Removed Times Played, Worlds created, Saves loaded, and Multiplayer joins.}}
+|{{HistoryLine||1.7.6|dev=pre1|Statistics file names are now UUIDs instead of player names. The names of existing files are converted.}}
+|{{HistoryLine||1.8|dev=14w06a|Statistics for items/blocks are now be referenced per name, instead of ID.}}
+|{{HistoryLine|||dev=February 24, 2014|slink={{tweet|SeargeDP|438005253922123776}}|[[Searge]] posts an image of Distance Crouched and Distance Sprinted.}}
+|{{HistoryLine|||dev=14w10a|Added Distance Crouched, Distance Sprinted and Since Last Death.}}
+|{{HistoryLine|||dev=14w30a|Added Talked to Villagers and Traded with Villagers.}}
+|{{HistoryLine||1.8.2|dev=pre1|Added the following statistics:<br>
+Cake Slices Eaten, Cauldrons Filled, Water Taken from Cauldron, Armor Pieces Cleaned, Banners Cleaned, Interactions with Brewing Stand, Interactions with Beacon, Droppers Searched, Hoppers Searched, Dispensers Searched, Noteblocks played, Noteblocks tuned, Plants potted, Trapped Chests Triggered, Ender Chests Opened, Items Enchanted, Records Played, Interactions with Furnace, Interactions with Crafting Table, and Chests Opened}}
+|{{HistoryLine||1.9|dev=15w32a|Added Sneak Time.}}
+|{{HistoryLine|||dev=15w33a|Added statistics for items picked up and dropped.}}
+|{{HistoryLine|||dev=15w38a|Added Times Slept in a Bed.}}
+|{{HistoryLine|||dev=15w49a|Added Distance by Elytra.}}
+|{{HistoryLine||1.11.1|dev=16w50a|Removed Junk Fished and Treasure Fished.}}
+|{{HistoryLine||1.13|dev=17w47a|Changed statistic type and statistic name to be namespaced (snake case instead of camel case and {{code|stat.<type>}} replaced with {{code|minecraft:<type>}} to ultimately make the format A.B:C.D).
+|Removed Blocks section, merging it into the Items section.
+|The entity section has no statistics.}}
+|{{HistoryLine|||dev=17w48a|Re-added entity statistics, now tracking all entities.}}
+|{{HistoryLine|||dev=18w07a|Added Time Since Rest statistic.}}
+|{{HistoryLine||1.13.1|dev=18w32a|Added the following statistics:<br>Damage Dealt (Absorbed), Damage Dealt (Resisted), Damage Blocked By Shield, Damage Absorbed, Damage Resisted, and Shulker Box Cleaned.}}
+|{{HistoryLine||1.14|dev=18w50a|Added Barrels Opened statistic.}}
+|{{HistoryLine|||dev=19w02a|Added following statistics:<br>Interactions with Blast Furnace, Interactions with Campfire, Interactions with Lectern, and Interactions with Smoker.}}
+|{{HistoryLine|||dev=Pre-Release 2|Added following statistics:<br>Bells Rung, Interactions with Cartography Table, Interactions with Loom, Interactions with Stonecutter, Raids Triggered, and Raids Won.}}
+|{{HistoryLine||1.16|dev=20w09a|Added Targets Hit statistic.}}
+|{{HistoryLine|||dev=20w14a|Statistics are in alphabetical order now.}}
+|{{HistoryLine|||dev=20w19a|Added Distance by Strider statistic.}}
+|{{HistoryLine||1.17|dev=21w11a|Spyglass use statistic now works properly.}}
+|{{HistoryLine|||dev=21w16a|Renamed the statistic for play time from <code>play_one_minute</code> to <code>play_time</code>.
+|Included time when game paused for "Time with World Open" (<code>total_world_time</code>).}}
+|{{HistoryLine||1.21.6|dev=25w15a|Added Distance by Happy Ghast statistic.}}
+|{{HistoryLine||1.21.9|dev=25w34a|The Statistics screen now uses the same type of tabs as the [[Create New World]] screen instead of buttons.}}
+|{{HistoryLine||1.21.11|dev=25w44a|Added Distance by Nautilus statistic.}}
+}}
+
+=== Legacy Console Edition ===
+{{HistoryTable
+|{{HistoryLine|console}}
+|{{HistoryLine||?|Added a statistics section.
+|Statistics can be compared to friends and global users on actions such as farming, traveling, and mining on each difficulty mode.
+|Unlike {{edition|java}} statistics, they are counted across worlds.}}
+}}
+
+== Issues ==
+{{issue list|projects=MC}}
+
+== Gallery ==
+<gallery>
+Statistics Items (pre-release).png|Statistics screen in the reveal video.
+Statistics Items.png|The items statistics screen.
+Statistics Mobs.png|The mobs statistics screen.
+Statistics 1.jpg|The statistics screen after 20w14a.
+Distance Crouched & Sprinted.png|The general statistics screen.
+Picked Up & Dropped.png|First image of the items picked up and items dropped statistics.
+</gallery>
+
+== References ==
+{{reflist}}
+<references group="note"/>
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[de:Statistiken]]
+[[es:Estadísticas]]
+[[fr:Statistiques]]
+[[it:Statistiche]]
+[[ja:統計]]
+[[nl:Statistieken]]
+[[pl:Statystyki]]
+[[pt:Estatísticas]]
+[[ru:Статистика]]
+[[uk:Статистика]]
+[[zh:统计信息]]

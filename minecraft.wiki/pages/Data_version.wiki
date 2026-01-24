@@ -1,0 +1,92 @@
+{{exclusive|java}}
+
+A '''data version''', also known as a '''world version''',<ref><samp>[https://minecraft.net/download/server server.jar] or [https://libraries.minecraft.net/com/mojang/javabridge/1.0.22/javabridge-1.0.22-sources.jar javabridge library source]</samp>, located in class <samp>com.mojang.bridge.game.GameVersion</samp></ref><ref>As appeared in the [[#version.json|<samp>version.json</samp> format]].</ref> is a positive integer used in a world saved data to denote a specific version, and determines whether the player should be warned about opening that world due to client version incompatibilities.
+
+== Usage ==
+[[File:Outdated singleplayer world.png|thumb|The game prompting the player whether they want to back up their outdated world.]]
+Upon selecting and loading a [[singleplayer]] world, the game checks if the client has a data version newer or older than the selected world. If it does, the game then prompts the user whether they want to back up their world before playing it if the world is older, or warn them that their world may become corrupted if the world is newer.
+
+== Versioning ==
+Every version of ''Java Edition'' since [[15w32a]], including minor releases and snapshots, has its own data version. The version takes the form of an ever-increasing positive integer unlike client versions. Data versions are necessary because client versions usually cannot be directly compared since they use different [[Version formats|formats]] (i.e., "1.14" and "19w02a" cannot be compared). Data versions may skip numbers between any release, and are not necessarily always incremented with every release.
+
+== Storage locations ==
+Data versions can be found in many different places.
+
+=== Player data ===
+In-game, the data version can be obtained using the command {{cmd|/data get entity @s DataVersion}}.
+
+=== Version command ===
+In [[Java Edition 25w15a]] and later, running {{cmd|version}} prints the data version to chat.
+
+=== <samp>options.txt</samp> ===
+The first line of <samp>[[options.txt]]</samp> since [[1.10-pre1]] displays the data version, named <code>version</code>.
+
+=== <samp>.dat</samp> and <samp>.nbt</samp> files ===
+All <samp>.dat</samp> and <samp>.nbt</samp> files contain the data version in their root compound of when the file was last saved.
+
+<div class="treeview">
+* {{nbt|compound|''file name''}}
+** {{nbt|int|DataVersion}}: An integer displaying the data version.
+</div>
+
+==== <samp>level.dat</samp> ====
+
+The data version is stored in two places inside the <samp>[[Java Edition level format#level.dat format|level.dat]]</samp> file of a world save: in the root {{cd|Data}} compound named {{cd|DataVersion}} and also in the {{cd|Version}} compound named {{cd|Id}}.
+<div class="treeview">
+* {{nbt|compound}} level.dat
+** {{nbt|compound|Data}}: Information about the <samp>level.dat</samp> file.
+*** {{nbt|int|DataVersion}}: An integer displaying the data version.
+*** {{nbt|compound|Version}}: Versioning information about when the world was last saved.
+**** {{nbt|int|Id}}: An integer displaying the data version.
+</div>
+
+=== Region files ===
+
+Each chunk in the region files (located in <samp>[[.minecraft]]\saves\<''world name''>\region</samp> named <samp>r.<''region X''>.<''region Z''>.mca</samp>) contains information about the data version when it was last saved.
+
+<div class="treeview">
+* {{nbt|compound|r.''x''.''z''.mca}}: Information about the region at exact region coordinates [''x'',''y''] (1 region = 32×32 chunks)
+** {{nbt|compound|Chunk [''x<sub>1</sub>'',''y<sub>1</sub>''] &emsp; in world at (''x<sub>2</sub>'',''y<sub>2</sub>'')}}: Information about the chunk at relative chunk coordinates [''x<sub>1</sub>'',''y<sub>1</sub>''], located at exact chunk coordinates [''x<sub>2</sub>'',''y<sub>2</sub>''] (1 chunk = 16×16 blocks)
+*** {{nbt|int|DataVersion}}: An integer displaying the data version.
+</div>
+
+=== <samp>version.json</samp> ===
+
+Each ''Minecraft'' build since [[18w47b]] also specifies its current data version in the <samp>[[version.json]]</samp> file, found in the root directory of the [[Client.jar|client]] and [https://minecraft.net/download/server server] jars.
+<div class="treeview">
+* {{nbt|compound}} version.json
+** {{nbt|int|world_version}}: The data version of this build.
+</div>
+
+== List of data versions ==
+{{Data version/Latest}}
+
+{{collapse|expanded=1|content=<nowiki/>
+{{Protocol version/Table|Java Edition|April Fools versions|hideprotocol=1|hiderespack=1|hidedatpack=1|lastvers=Java Edition 15w32a,Java Edition 1.RV-Pre1}}
+}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.9|dev=15w32a|Added data versions, starting from version "100".}}
+}}
+
+== See also ==
+* [[Protocol version]]
+* [[al_version]]
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[de:Versionsdaten]]
+[[es:Versión de datos]]
+[[fr:Version de données]]
+[[ja:データバージョン]]
+[[ko:데이터 버전]]
+[[pt:Versão de dados]]
+[[ru:Версия данных]]
+[[uk:Версія даних]]
+[[zh:数据版本]]

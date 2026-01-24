@@ -1,0 +1,189 @@
+{{Infobox version
+| image = Bedrock 1.20.10.23 PatchNotes.jpg
+| image2 = Bedrock 1.20.10.23.png
+| edition = bedrock
+| type = Preview
+| build = 16006385
+| editorver = 0.3.7
+| internal = '''Windows''': 1.20.1023.0<br>'''Android, iOS, iPadOS''': 1.20.10.23<br>'''Xbox One''': 1.20.1023.70<br>
+| server = 1.20.10.23
+| versioncode = '''Android''':<br>
+952001023（armeabi-v7a，33）<br>
+962001023（x86，33）<br>
+972001023（arm64-v8a，33）<br>
+982001023（x86_64，33）<br>
+| date = June 14, 2023
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.10.23.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.10.23.zip Linux]
+| parent = 1.20.10
+| prevparent = 1.20.1
+| prev = Preview 1.20.10.21
+| next = Preview 1.20.10.24
+| nextparent = 1.20.12 
+}}<onlyinclude>
+
+'''Beta 1.20.10.23''' (Android) or '''Preview 1.20.10.23''' (Windows, iOS, iPadOS, Xbox) is the third beta/''Preview'' version for [[Bedrock Edition 1.20.10]], released on June 14, 2023,<ref>https://feedback.minecraft.net/hc/en-us/articles/16744110942349</ref> which fixes bugs.
+
+== Changes ==
+=== World Generation ===
+'''Fallen [[Tree]]s'''
+* Now generate with [[mushroom]]s again
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" "Short Sneaking and Crawling" and "Experimental Cameras" experimental toggles.
+=== Additions ===
+==== Command format ====
+'''{{cmd|camera}}'''
+* Added the "example:example_player_effects" preset to demonstrate this
+
+=== Changes ===
+==== Gameplay ====
+'''[[Sneaking]] and [[Crawling]]'''
+* Players can now be forced into sneak/crawl state while flying
+
+==== Command format ====
+'''{{cmd|camera}}'''
+* Camera command can now take a 'facing' option instead of a 'rot' option with a target entity or position specified
+
+==== Technical ====
+'''API'''
+* Dynamic Property identifiers are now limited to <code>1024</code> characters.
+* Removed MinecraftEffectTypes defined in @minecraft/server. See @minecraft/vanilla-data NPM package for an equivalent.
+* Moved several APIs to stable <code>1.30</code>
+** Moving <code>tryTeleport(location: Vector3, duration: number, options: ScriptTeleportOptions)</code> to <code>3.0</code>
+** Moving <code>teleport(location: Vector3, options: ScriptTeleportOptions)</code> to <code>3.0</code>
+** Moved <code>function getComponent</code> to <code>3.0</code>
+** Moved <code>world event PlayerJoinAfterEvent</code> to <code>3.0</code>
+** Moved <code>world event PlayerLeaveAfterEvent</code> to <code>3.0</code>
+** Moved <code>world event PlayerSpawnAfterEvent</code> to <code>3.0</code>
+** Moved <code>EntityComponent EntityHealableComponent</code> to <code>3.0</code>
+** Moved <code>EntityComponent EntityHealthComponent</code> to <code>3.0</code>
+** Moved <code>class FeedItem</code> to <code>3.0</code>
+** Moved <code>class FeedItemEffect</code> to <code>3.0</code>
+** Moved <code>addEffect(effectType: string | EffectType, duration: number, options: EntityEffectOptions)</code> to <code>3.0</code>
+** Moved <code>getEffect(effectType: string | EffectType)</code> to <code>3.0</code>
+** Moved <code>getEffects</code> to <code>3.0</code>
+** Moved <code>removeEffect(effectType: string | EffectType)</code> to <code>3.0</code>
+** AfterEvents
+*** Moved <code>ButtonPushEvent</code> to <code>3.0</code>
+*** Moved <code>LeverActivateEvent</code> to <code>3.0</code>
+** Moved function <code>spawnEntity</code> to <code>3.0</code>
+** Moved function <code>spawnItem</code> to <code>3.0</code>
+* Spawnpoint updates
+** Removed function <code>clearSpawn</code>
+** Removed property <code>spawnDimension</code>
+** Added function getSpawnPoint: DimensionLocation | undefined- Returns the player's spawn point
+** Added function setSpawnPoint(spawnPoint?: DimensionLocation): void- Sets the player's spawn point, or clears it if spawnPoint is undefined
+** Renamed function <code>getDefaultSpawnPosition</code> to <code>getDefaultSpawnLocation</code>
+** Renamed function <code>setDefaultSpawn</code> to <code>setDefaultSpawnLocation</code>
+** DimensionLocation
+*** Added new interface DimensionLocation- Represents a location in a dimension
+** Added <code>hasParticipantfunction</code> to <code>ScoreboardObjective</code>.
+** The following functions in <code>ScoreboardObjective</code> can now accept Entity or string types as participants:
+*** <code>getScore</code>
+*** <code>setScore</code>
+** removeParticipant
+** Removed <code>getScore</code>, <code>setScore</code> from ScoreboardIdentity and Scoreboard.
+* Removed the <code>removeFromObjective</code> function from ScoreboardIdentity
+* Raycasting
+** Changed function <code>getBlockFromRay</code>
+*** Changed return type from <code>Block</code> to <code>BlockRaycastHit</code> | undefined
+** Changed function <code>getEntitiesFromRay</code>
+*** Changed return type from <code>Entity[]</code> to <code>EntityRaycastHit[]</code>
+** Changed function <code>getBlockFromViewDirection</code>
+*** Changed return type from <code>Block</code> to <code>BlockRaycastHit</code> | undefined
+** Changed function <code>getEntitiesFromViewDirection</code>
+*** Changed return type from <code>Entity[]</code> to <code>EntityRaycastHit[]</code>
+** Added interface <code>BlockRaycastHit</code>
+** Added interface <code>EntityRaycastHit</code>
+* Renamed <code>leverActivate</code> after event to <code>leverAction</code>
+** Removed class <code>EntityHitAfterEvent</code>
+** Added class <code>EntityHitBlockAfterEvent</code>
+** Added class <code>EntityHitEntityAfterEvent</code>
+** Class <code>WorldAfterEvents</code>
+*** Removed property <code>entityHit</code>
+*** Added property <code>entityHitBlock</code>
+*** Added property <code>entityHitEntity</code>
+** Added helper function isValidto several classes in order to check if the object is valid. This can safely be used on any handle to a native object before accessing or using the object, to ensure the underlying object still exists and is valid to use.
+*** <code>Block</code> (checks the block is a valid position in bounds and the containing chunk is loaded & ticking)
+*** <code>Container</code> (checks the relevant container inventory exists and is valid)
+*** <code>Effect</code> (checks the owning entity is valid and the effect exists on that entity)
+*** <code>ScreenDisplay</code> (checks the owning player is valid)
+*** <code>ScoreboardObjective</code> (checks the objective entry exists and is attached to a valid scoreboard)
+*** <code>Entity</code> (checks that the entity exists in the world. Will return true if the entity is dead)
+**** <code>Player</code>
+**** <code>SimulatedPlayer</code> (Note simulated players do not automatically get removed from the world, so isValidwill return true long after they are dead)
+*** <code>ContainerSlot</code> (checks the item context is valid: Container exists in the world, such as the owning entity, and the slot is within the container bounds)
+**** Already existed as a readonly property, changed to a method for consistency
+*** <code>Component</code>
+**** <code>EntityAttributeComponent</code> (checks the owning entity is valid and the attribute exists on the entity)
+**** <code>BlockLiquidContainerComponent</code> (checks block exists and is a valid cauldron type)
+***** Added read only method isValidLiquidwhich checks if the liquid in the cauldron matches the component in question (EG. BlockLavaContainerComponent checks for lava liquid)
+**** <code>EntityComponent</code> (checks the owning entity exists)
+**** <code>ItemComponent</code> (checks the owning item exists)
+* World
+** Renamed <code>getTime</code> to <code>getTimeOfDay</code>
+** Renamed <code>setTime</code> to <code>setTimeOfDay</code>
+** <code>setTimeOfDay</code> now accepts a <code>TimeOfDay</code> enum as an argument.
+** The <code>timeOfDay</code> argument for <code>setTime</code> must now be within <code>0</code>-<code>23999</code> (inclusive).
+** Added <code>getDay</code>
+* Updated the following enums' values to be <code>PascalCase</code> instead of <code>camelCase</code>
+** <code>ClipboardMirrorAxis</code>
+** <code>ClipboardRotation</code>
+** <code>HttpRequestMethod</code>
+** <code>FormCancelationReason</code>
+** <code>Direction</code>
+** <code>DisplaySlotId</code>
+** <code>EntityLifetimeState</code>
+** <code>FluidType</code>
+** <code>ObjectiveSortOrder</code>
+** <code>ScoreboardIdentityType</code>
+** <code>ScriptEventSource</code>
+** <code>SignSide</code>
+** <code>WatchdogTerminateReason</code>
+** <code>WeatherType</code>
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.10.23 Preview|otherissuescount=3
+|;old
+|138333|Fallen trees do not spawn with mushroom anymore
+|153446|Cape when riding a boat changes its position (folds up) when you turn the camera
+|156444|Horse / donkey jump meter isn't the same length as the experience bar
+|164801|Chiseled bookshelf slot interactions aren't symmetrical
+|166569|Player will sometimes automatically crouch when climbing ladders, vines, twisting vines, weeping vines under full block
+|167447|Mouse and Keyboard buttons for Attack/Destroy and Interact/Place behave strangely when a controller is detected
+|168119|Remove an enchanted book from a chiseled bookshelf plays wrong sound
+|169453|Entities continue to freeze even without powder snow if there is a powder snow block near the west & north side
+|169772|Boats broken and all mobs exit boats when updated to 1.20 versions
+|170814|P2P/SIG: no_session(Expired Auth from Discovery)
+|170885|Crawl speed does not increase with swift sneak enchantment
+|;From the 1.20.0
+|169732|Conduit is black
+|;From the 1.20.10 development versions
+|170834|Mounts stop working after switching mounts directly
+|170838|Player's head uses default rotations when crawling
+|170848|It's still possible to craft barrels with sticks
+|170889|Crawling animation is played on top of the gliding one
+|170983|Mob spawning is not using json-defined collision box when checking for obstructions
+|171022|Stuck in vines and ladders with the new short sneaking and crawling
+|;previous
+|171073|Recipe Unlocking works in spectator
+|171203|Inventory cursor snaps to a random spot when flicking the left thumbstick in the Creative inventory or recipe book
+}}
+'''Other'''
+* Fixed an issue where legacy Crawling was not working correctly with the Sneak and Crawl toggle turned off
+* Fixed bug where scoreboard values would not be updated on the client when updated from script
+* Fixed a crash.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.10 betas]]
+[[de:Bedrock Edition beta 1.20.10.23]]
+[[es:Bedrock Edition beta 1.20.10.23]]
+[[ko:Bedrock Edition 프리뷰 1.20.10.23]]
+[[pt:Edição Bedrock Preview 1.20.10.23]]
+[[uk:Preview 1.20.10.23 (Bedrock Edition)]]
+[[zh:基岩版1.20.10.23]]

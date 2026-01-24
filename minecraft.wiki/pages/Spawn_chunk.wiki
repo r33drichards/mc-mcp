@@ -1,0 +1,183 @@
+{{about|the mechanic in ''Java Edition'' that kept certain chunks loaded|the similar game mechanic in ''Bedrock Edition''|Ticking area}}
+{{cleanup}}
+{{Removed feature|This feature was removed in [[Java Edition 1.21.9]].}}
+'''Spawn chunks''' were [[chunk]]s found around the [[world spawn]] {{in|JE}}, prior to [[Java Edition 1.21.9|1.21.9]]. Spawn chunks were always loaded, unlike normal chunks, which unload when no players are nearby.
+
+== Usage ==
+Normally, old [[chunk]]s beyond the player's chunk loading distance unload. This means the game stops processing those chunks and they are frozen in time. This prevents [[redstone]] mechanisms and farms in unloaded chunks from running in the background. Since spawn chunks remained loaded, events occurring in them continued to process, even if no players were nearby. This mechanic could have been a detriment to the game's performance if sources of lag (e.g. lots of entities or large redstone contraptions) were present in the spawn chunks, as they would always be processing and lagging the game.
+
+== Behavior ==
+{{main|Chunk#Java Edition chunk loading}}
+The spawn chunks behavior arose from a dedicated [[chunk#Ticket types|chunk ticket]] that was created for the chunk that contained the [[world spawn]]. This ticket had a level of 30 with the {{code|spawnChunkRadius}} [[game rule]] set to the default value of 2, which propagated to neighboring chunks. Each time the level propagated, it increased its level by 1 until the maximum of 44 was reached.
+
+Different levels of propagation had different behaviors. These levels were divided into 4 load types.
+{| class="wikitable"
+! colspan="2"| Load Type
+! Level
+! Properties
+|-
+| style="background:#0f0" |
+|Entity Ticking
+|31 and below
+|All game aspects were available.
+|-
+| style="background:#ff0" |
+|Block Ticking
+|32
+|All game aspects were available except that entities were not naturally spawned and were not processed (but were still accessible) and [[Tick#Chunk_tick|chunk ticks]] weren't processed either. These were sometimes referred to as "lazy chunks".
+|-
+| style="background:#f60" |
+|Border
+|33
+|No game aspect was available, but entities and blocks were still accessible (could be detected or modified).
+|-
+| style="background:#c00" |
+|Inaccessible
+|34 and above
+|No game aspect was available or accessible, but [[world generation]] occurred here.
+|}
+
+{| class="wikitable" style="text-align: center"
+|+Default spawn chunk load level map
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|-
+|style="background:#c00; color: white" |IN
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#c00; color: white" |IN
+|-
+|style="background:#c00; color: white" |IN
+|style="background:#f60; color: white" |BO
+|style="background:#ff0; color: black" |BT
+|style="background:#ff0; color: black" |BT
+|style="background:#ff0; color: black" |BT
+|style="background:#ff0; color: black" |BT
+|style="background:#ff0; color: black" |BT
+|style="background:#f60; color: white" |BO
+|style="background:#c00; color: white" |IN
+|-
+|style="background:#c00; color: white" |IN
+|style="background:#f60; color: white" |BO
+|style="background:#ff0; color: black" |BT
+|style="background:#0f0; color: black" |ET
+|style="background:#0f0; color: black" |ET
+|style="background:#0f0; color: black" |ET
+|style="background:#ff0; color: black" |BT
+|style="background:#f60; color: white" |BO
+|style="background:#c00; color: white" |IN
+|-
+|style="background:#c00; color: white" |IN
+|style="background:#f60; color: white" |BO
+|style="background:#ff0; color: black" |BT
+|style="background:#0f0; color: black" |ET
+|style="background:#0f0; color: black" |ET
+|style="background:#0f0; color: black" |ET
+|style="background:#ff0; color: black" |BT
+|style="background:#f60; color: white" |BO
+|style="background:#c00; color: white" |IN
+|-
+|style="background:#c00; color: white" |IN
+|style="background:#f60; color: white" |BO
+|style="background:#ff0; color: black" |BT
+|style="background:#0f0; color: black" |ET
+|style="background:#0f0; color: black" |ET
+|style="background:#0f0; color: black" |ET
+|style="background:#ff0; color: black" |BT
+|style="background:#f60; color: white" |BO
+|style="background:#c00; color: white" |IN
+|-
+|style="background:#c00; color: white" |IN
+|style="background:#f60; color: white" |BO
+|style="background:#ff0; color: black" |BT
+|style="background:#ff0; color: black" |BT
+|style="background:#ff0; color: black" |BT
+|style="background:#ff0; color: black" |BT
+|style="background:#ff0; color: black" |BT
+|style="background:#f60; color: white" |BO
+|style="background:#c00; color: white" |IN
+|-
+|style="background:#c00; color: white" |IN
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#f60; color: white" |BO
+|style="background:#c00; color: white" |IN
+|-
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|style="background:#c00; color: white" |IN
+|}
+
+=== Limitations ===
+{{main|Chunk#Limitations}}
+There were some limitations which could affect the behavior of spawn chunks.
+
+;Idle timeout
+Each [[dimension]] had a 300 [[Tick#Game_tick|game tick]] idle timeout on entity processing. When a [[player]] was present in the dimension, a [[Commands/forceload|forceloaded]] chunk was present in the dimension, or an entity travelled to the dimension through a portal, the idle timeout was reset. When the timeout expired, entities and [[block entity|block entities]] would stop processing for spawn chunks and the rest of the dimension. This mechanic was removed in the same version that removed spawn chunks.
+
+;Entities
+{{see also|Mob spawning}}
+* Hostile mobs more than 128 blocks from a player would still despawn in spawn chunks.
+* Mob spawning only occurred around players.
+* Passive mobs present in the spawn chunks counted towards the mob cap. This often prevented passive mobs from naturally spawning elsewhere in the world as the passive mob cap is very low.
+
+== Changing location ==
+A new world spawn point could be set using {{cmd|setworldspawn}}. If no coordinates were provided, the block position that the player was currently standing on became the spawn point. The chunk where the world spawn was located would then be given a start ticket, and the ticket for the old world spawn would be cleared.
+
+== History ==
+{{info needed section|information on spawn chunks on legacy console edition}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||v1.0.15|Added spawn chunks to dedicated multiplayer servers.}}
+|{{HistoryLine|java beta}}
+|{{HistoryLine||1.8|dev=Pre-release|Added spawn chunks to singleplayer.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20.5|dev=24w03a|Added [[gamerule]] {{cd|spawnChunkRadius}} to control the size of the spawn chunks.|The default spawn chunk propagation is now 3×3 instead of 19×19.}}
+|{{HistoryLine||1.21.5|dev=25w06a|All block ticking chunks now receive random ticks, regardless of if a player is within an 8-chunk distance or not. This includes the spawn chunks.}}
+|{{HistoryLine|||dev=25w09a|Random ticks now only occur in entity processing chunks.}}
+|{{HistoryLine||1.21.9|dev=25w31a|Removed spawn chunks and the {{cd|spawnChunkRadius}} gamerule.}}
+}}
+
+=== Legacy Console Edition ===
+{{HistoryTable
+|{{HistoryLine|console}}
+|{{HistoryLine||xbox=?|xbone=?|ps3=?|psvita=?|ps4=?|wiiu=?|switch=?|Added spawn chunks.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+{{mojang featured|https://www.minecraft.net/en-us/article/minecraft-snapshot-24w03a}}
+
+[[fr:Chunk d'apparition]]
+[[ja:スポーンチャンク]]
+[[ko:스폰 청크]]
+[[pl:Chunk spawnu]]
+[[pt:Chunk de renascimento]]
+[[ru:Чанк возрождения мира]]
+[[uk:Чанк появи]]
+[[zh:出生点区块]]

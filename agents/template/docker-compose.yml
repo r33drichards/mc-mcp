@@ -1,0 +1,19 @@
+services:
+  {{AGENT_NAME}}:
+    build: ../..
+    image: mc-mcp
+    container_name: mc-{{AGENT_NAME}}
+    network_mode: host
+    environment:
+      - MC_HOST=localhost
+      - MC_PORT=25565
+      - MC_USERNAME={{AGENT_NAME}}
+      - MC_AUTH=offline
+      - VIEWER_PORT={{VIEWER_PORT}}
+      - MCP_TRANSPORT=http
+      - MCP_PORT={{MCP_PORT}}
+    volumes:
+      - ../../state:/usr/src/app/state
+      - .:/usr/src/app/agent
+      - ../../mineflayer:/usr/src/app/mineflayer
+      - ../../minecraft.wiki:/usr/src/app/minecraft.wiki

@@ -1,0 +1,236 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.4020.0<br>'''Android, iOS, iPadOS''': 1.21.40.20
+| image = Bedrock 1.21.40.20 PatchNotes.jpeg
+| image2 = Bedrock 1.21.40.20.png
+| build = 27412328
+| editorver = 0.7.1
+| versioncode = '''Android''':<br />
+952104020 (armeabi-v7a, 34)<br />
+962104020 (x86, 34)<br />
+972104020 (arm64-v8a, 34)<br />
+982104020 (x86_64, 34)<br />
+| date = September 4, 2024
+| server = 1.21.40.20
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.40.20.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.40.20.zip Linux]
+| parent = 1.21.40
+| prevparent = 1.21.31
+| next = Preview 1.21.40.21
+| nextparent = 1.21.41
+}}<onlyinclude>
+'''Beta 1.21.40.20''' (ChromeOS, Android) or '''Preview 1.21.40.20''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the first beta/''Preview'' version for [[Bedrock Edition 1.21.40]], released on September 4, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/29937458432397|title=Minecraft Beta & Preview - 1.21.40.20|website=Minecraft Feedback|date=September 4, 2024}}</ref> which brings more parity with {{JE}}, and fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Mushroom Block]]'''
+*The all-sided pore mushroom block has been removed from the creative inventory.
+
+'''[[Mushroom Stem]]'''
+*{{cd|mushroom_stem}} is now its own block and is no longer a variant of {{cd|red_mushroom_block}} and {{cd|brown_mushroom_block}}.
+*Mushroom stems used on the composter have had their fill chance adjusted from 85% to 65%.
+
+'''[[Head]]s'''
+* The different [[Bedrock Edition data values|data values]] for the <code>skull</code> ID have been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="7" | {{BlockSprite|heads}} <code>skull</code>
+| {{BlockSprite|skeleton-skull}} <code>skeleton_skull</code>
+|-
+| {{BlockSprite|wither-skeleton-skull}} <code>wither_skeleton_skull</code>
+|-
+| {{BlockSprite|zombie-head}} <code>zombie_head</code>
+|-
+| {{BlockSprite|player-head}} <code>player_head</code>
+|-
+| {{BlockSprite|creeper-head}} <code>creeper_head</code>
+|-
+| {{BlockSprite|dragon-head}} <code>dragon_head</code>
+|-
+| {{BlockSprite|piglin-head}} <code>piglin_head</code>
+|}
+
+=== Command format ===
+'''{{cmd|/effect}}'''
+*Added infinite duration option to the command:
+** {{cmd|/effect <player: target> <effect: Effect> infinite [amplifier: int] [hideParticles: Boolean]}}
+*Added specific effect removal option to the command:
+** {{cmd|/effect <player: target> clear <effect: Effect>}}
+
+=== General ===
+'''[[Realms]]'''
+*Added a new Realm Event.
+
+'''UI'''
+*Added a new message to explain when a Marketplace Template is not available on a specific platform.
+
+=== Technical ===
+'''[[API]]'''
+*{{cd|BlockLiquidContainerComponents}} API (water, lava, potion, snow) has been replaced with {{cd|BlockFluidContainerComponent}}.
+*Moved {{cd|isHardcore}} from {{cd|beta}} to {{cd|1.15.0}}.
+
+'''[[Commands]]'''
+*Added new overloads for the {{cmd|/schedule}} command which allows you to clear a queued function:
+**{{cmd|/schedule clear <function name>}} - Clears all queued functions matching the given name.
+**{{cmd|/schedule on_area_loaded clear function <function name>}} - Clears all queued functions that are scheduled as {{cd|on_area_load}} by name.
+**{{cmd|/schedule on_area_loaded clear tickingarea <tickingarea name> [function name]}} - Clears all queued functions that are scheduled as {{cd|on_area_load}} by ticking area name (and optionally also checks function name too).
+
+'''Components'''
+*The {{cd|restriction_type}} field has been added to the {{cd|minecraft:home}} component, allowing to define how an entity is restricted to its home position:
+**Its values are:
+***{{cd|none}}, which poses no restriction.
+***{{cd|random_movement}}, which restricts randomized movement around the home position.
+***{{cd|all_movement}}, which restricts any kind of movement around the home position.
+**The {{cd|all_movement}} value is currently in {{cd|[Beta]}} and is planned to be fully released at a later date.
+**Entities that have moved too far from their home will always be able to move closer to it if prompted.
+**The radius of the restriction is still specified with {{cd|restriction_radius}}.
+**Entities with a format version prior to {{cd|1.21.40}} will be upgraded to use the new field in a way that preserves their existing behavior.
+*Added the {{cd|minecraft:dimension_bound}} component, which prevents entities from changing dimension through portals.
+**In Vanilla content, this is used by the Ender Dragon, the fishing hook, and some projectiles.
+*Added the {{cd|minecraft:transient}} component, entities with this component will never be saved. In Vanilla content, this is currently used for the fishing hook.
+
+'''Entity Components'''
+*{{cd|behavior.fire_at_target}} is no longer usable if it is missing a projectile definition and will now throw a content error if so.
+
+'''Entity Event Responses'''
+*Added the {{cd|execute_event_on_home_block}} entity event response, which allows the entity to execute an event on the block at its home position:
+**The {{cd|event}} field allows to specify the event to execute.
+**For this to work properly, the entity must have a {{cd|minecraft:home}} component with a set home position.
+
+'''General'''
+*Made the following changes to {{cd|minecraft:single_block_feature}}:
+**{{cd|places_block}} now supports a list of weighted block specifiers.
+**New {{cd|randomize_rotation}} property.
+**New {{cd|may_not_attach_to}} placement conditions.
+**Added {{cd|diagonal}} as a new option for {{cd|may_attach_to}} conditions.
+**File format version increased to {{cd|1.21.40}}.
+
+'''[[Molang]]'''
+*Molang queries {{cd|wing_flap_position}} and {{cd|wing_flap_speed}} now work for the [[chicken]].
+
+'''Resource and Behavior Packs'''
+*Built-in packs now include archive files for improved load performance on some platforms.
+
+'''Stability and Performance'''
+*Increased the size of biome ids in saved chunk data from 8 bit to 16 bit values.
+
+'''[[Direct item forms of blocks|Technical blocks]]'''
+* Merged the separate and direct item form of the [[head]]s (<code>item.skull</code>).
+**This change is reverted in later versions (the direct item form of [[head]]s (<code>item.skull</code>) still exists).
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Bundles", and "Creator Cameras: New Third Person Presets" experimental toggles.
+=== Changes ===
+==== Items ====
+'''[[Bundle]]'''
+*When a Bundle is used in the hotbar, one group of items is emptied at a time instead of everything being emptied at once.
+
+==== Technical ====
+'''API'''
+*Moved {{cd|EntityBreathableComponent}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|breathesAir}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|breathesLava}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|breathesSolids}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|breathesWater}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|generatesBubbles}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|inhaleTime}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|suffocateTime}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|totalSupply}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|componentId}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|getBreatheBlocks()}} from {{cd|beta}} to {{cd|1.15.0}}.
+**Moved {{cd|getNonBreatheBlocks()}} from {{cd|beta}} to {{cd|1.15.0}}.
+*Moved class {{cd|BlockLocationIterator}} from {{cd|beta}} to {{cd|1.15.0}}.
+*Moved class {{cd|InvalidIteratorError}} from {{cd|beta}} to {{cd|1.15.0}}.
+*Moved property {{cd|BlockVolumeBase.getBlockLocationIterator}} from {{cd|beta}} to {{cd|1.15.0}}.
+*Moved enum {{cd|BlockVolumeIntersection}} from {{cd|beta}} to {{cd|1.15.0}}. 
+*Moved class {{cd|BlockVolume}} from {{cd|beta}} to {{cd|1.15.0}}.
+*Added the {{cd|DyeableItemComponent}} to {{cd|beta}}. 
+
+'''Cameras '''
+*Added {{cd|minecraft:camera_attach_to_player}} to {{cd|minecraft:follow_orbit}}.
+*Added {{cd|align_target_and_camera_forward}} option to the camera preset behavior pack JSON which can be used when the third person camera preset experiment is enabled.
+*3rd person camera experiment - The radius property of the creator cameras is now constrained to a value between 0.1 and 100. 
+*Third person boom camera will now reset to the starting rotation values specified in json when the {{cd|default}} parameter is passed in the camera command.
+*Added the {{cd|entity_offset}} parameter to the command.
+
+'''Graphical'''
+*Removed the dark aura around the moon in the Deferred Technical Preview.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.40.20 Preview
+|;old
+|28531|Potion tooltips missing % sign on mobile.
+|49126|No sound when placing cocoa beans.
+|57498|Player body located wrong in pocket UI.
+|91187|Piglins are attracted to powered rails.
+|103061|Enchanted Golden Apple gives wrong effects.
+|103592|Armor GUI still shows when almost broken armor breaks.
+|114752|The message of death by thorns is wrong.
+|119761|Chat messages overlap.
+|120971|Delayed chunk, block, and sound loading.
+|121058|Sound event for pillager is unused due to typo.
+|122488|Polar bears killed by fire/lava does not drop cooked fish.
+|128393|Beehives/nests work as furnace fuel.
+|131854|Vines placed with {{cmd|/setblock}} are invisible.
+|150684|Dyeing mobs has no sound.
+|151765|Tamed wolves ignoring player while chasing skeletons and won't teleport back soon enough.
+|152134|Spawn point cannot be set at night when monsters are nearby.
+|161140|Item text moves up when pointing to entities, even when the old interact button is not there.
+|166008|Icon ? do not connected with the UI button X in loom and smithing table menu.
+|167134|Controller hints show in villager menu when turned off.
+|174398|Pink Screen Glitch when opening Microsoft Live Account Login Menu.
+|177192|The health bar and the hunger bar are not centered in Classic UI Profile on mobile.
+|177299|Gamerule {{cd|showrecipemessages}} is considered a Cheat.
+|178148|[ScriptAPI] Invalid ModalFormData and ActionFormData never resolve the Promise.
+|179008|Creeper doesn't drop a music disc when killed by bogged.
+|182876|Action bars reappear when re-entering a world.
+|185268|Air bubbles are not aligned with hunger bar in HUD.
+|185460|Emptying a bundle into the ground doesn't play sound and animations.
+|185504|When the Clear Hotbar option is enabled, "Take from Bundle" button clears hotbar.
+|185868|Item Display Transforms break when using bone visibility.
+|otherissuescount=18}}
+'''Other'''
+*Bundles now display the bar showing their fullness level when placed in the hotbar.
+*Bundle tooltip placement now takes screen safe area into account.
+*The "Swap" button hint is now shown when hovering an item over another item with a game controller.
+*The "Place" button hint is now shown on all screens when holding an item on the cursor with a game controller.
+*Wind Charges can't be hit and redirected shortly after throwing them.
+*Players hitting the edge of the generated world will keep their velocity. Example: While flying with the elytra, the player will stay floating instead of looing all speed instantly.
+*Wolves, cats, and parrots trying to catch up to their owner now seamlessly resume navigation after teleporting to them.
+*Wolves, cats, and parrots now teleport to their owner when panicking and far enough away.
+*Fixed a bug that would prevent activation of addon for a Realm via Marketplace.
+*Fixed a bug where the close button subpanel in the stonecutter panel was empty instead of hidden while using controller.
+*Bogged now drops poison arrows when killed by mobs tamed by a player.
+*Fixed an issue which prevented the new 1.21.30 trade table format from loading in-game.
+*Fixed method {{cd|ItemStack.getComponents}} from returning components that are unsupported in the current {{cd|@minecraft/server}} version.
+*Fixed a bug where the tessellation of redstone dust does not match the powered state of the dust for the following blocks: 
+**{{cd|minecraft:*_slab}}
+**{{cd|minecraft:chain}}
+**{{cd|minecraft:chorus_flower}}
+**{{cd|minecraft:chorus_plant}}
+**{{cd|minecraft:farmland}}
+**{{cd|minecraft:grass_path}}
+**{{cd|minecraft:heavy_core}}
+**{{cd|minecraft:jigsaw}}
+**{{cd|minecraft:sea_lantern}}
+**{{cd|minecraft:sniffer_egg}}
+**{{cd|minecraft:structure_block}}
+*Fixed a bug where extremely fast moving entities would cause the game to crash. Entities can now no longer move more than 16 blocks in a single tick. (For reference, an entity with Speed 255 will move ~11 blocks in a single tick.)
+*Game will no longer crash when loading a world near an End city.
+*Fixed an issue where {{cd|rider_rotation_lock}} of {{cd|minecraft:rideable}} had no effect when using the {{cd|minecraft:follow_orbit}} camera.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.40 betas]]
+
+[[de:Bedrock Edition beta 1.21.40.20]]
+[[pt:Edição Bedrock Preview 1.21.40.20]]
+[[ru:Preview 1.21.40.20 (Bedrock Edition)]]
+[[uk:Preview 1.21.40.20 (Bedrock Edition)]]
+[[zh:基岩版1.21.40.20]]

@@ -1,0 +1,219 @@
+{{Dangerous snapshot|type=crash|The game can crash when changing the client's render distance.<ref>{{bug|MC-236656||resolution=fixed}}</ref>|version=development|edition=java}}
+{{Infobox version
+|title=Minecraft 21w37a
+|image=21w37a.jpg
+|image2=Java Edition 21w37a.png
+|edition=Java
+|type=Snapshot
+|date=September 15, 2021
+|jsonhash=7dfcb7bb54ac9e9b927627ef2a70d922543bb8bf
+|clienthash=be41b4e18f4a600365fd7a2b8eeac49232304ced
+|clientmap=7761b416aed2c0c449f7f879c184fe56372fd226
+|serverhash=de695215d83f1f6ec5a19847f6178b84cfde7a26
+|servermap=b8bfb658eb0229d74f7d36c004d6bc71b6d2d63c
+|parent=1.18
+|prevparent=1.17.1
+|prev=1.18 experimental snapshot 7
+|next=21w38a
+|nextparent=1.18.1
+}}<onlyinclude>
+
+'''21w37a''' is the first non-experimental [[snapshot]] for [[Java Edition 1.18]], released on September 15, 2021,<ref>{{snap|21w37a|September 15, 2021}}</ref> which adds the contents of the previous seven experimental snapshots and brings more parity with {{BE}}.
+
+== Additions ==
+=== General ===
+'''[[Commands]]'''
+* {{cmd|jfr}}
+** When enabled, begins profiling with Java FlightRecorder, as well as the following custom events:
+*** '''minecraft.ServerTickTime''': Sampling event exposing average server tick times in intervals of a second
+*** '''minecraft.ChunkGeneration''': Time taken to generate individual chunk stages
+*** '''minecraft.PacketRead''' / '''minecraft.PacketSent''': Network traffic
+*** '''minecraft.WorldLoadFinishedEvent''': Initial world loading duration
+** The profiling can be stopped in-game by using {{cmd|jfr stop}}.
+
+'''Font'''
+* Added <code>illageralt</code>, the rune-like font from ''[[Minecraft Dungeons]]''.
+** Currently only usable via commands
+
+'''[[Loot table]]s'''
+* Added the <code>type</code> field, which is mandatory.
+** Written into <code>BlockEntityTag.id</code> to ensure that the tag can be migrated correctly between versions.
+
+'''[[Options]]'''
+* Can now disable [[lightning]] flashes, which prevents lightning from making the sky flash. Lightning bolts themselves still appear.
+* The device the game outputs audio to can now be chosen in-game.
+* Added "Priority updates" to video settings.
+** Determines as to which chunk sections are updated synchronously in a single frame.
+** Three options:
+*** '''nearby''', which corresponds to how chunk sections were updated before 21w37a, '''by player''' and '''none''', which reduce stuttering when placing or removing blocks.
+*** However, the latter two options may cause rare visual delays in world updates. These options also appear to be improperly capitalized.<ref>{{Bug|MC-236615}}</ref> 
+
+'''[[Subtitles]]'''
+* Added subtitles for various [[bundle]] sounds.
+
+== Changes ==
+=== Blocks ===
+'''[[Enchanting table]]'''
+* Now emits a light level of 7.
+
+'''[[Cave vines]], [[kelp]], [[twisting vines]] and [[weeping vines]]'''
+* Now stop growing if [[shears]] are used on the tip.
+** This action changes the <code>age</code> block state of the tip to 25.
+
+'''[[Snow block]]'''
+* Reverted change allowing plants to be placed on snow blocks.
+** This reversion results in the lack of vegetation in the grove biome.
+
+=== Items ===
+'''[[Bundle]]'''
+* Has been removed from the creative inventory once again.
+* Can once again no longer be crafted.
+* Only accessible through commands once again.
+
+'''[[Crossbow]]'''
+* Durability has been increased to 465.
+
+'''[[Elytra]]'''
+* Reverted changes from [[Java Edition 1.18 experimental snapshot 7|experimental snapshot 7]].
+
+=== Mobs ===
+'''[[Axolotl]]s'''
+* Now have their own mob cap.
+* Now avoid lava.
+
+'''[[Vindicator]]s, [[pillager]]s, and [[evoker]]s'''
+* Don't attack baby [[villager]]s anymore.
+
+'''[[Goat]]s'''
+* Now only spawn in [[snowy slopes]], [[stony peaks]], [[lofty peaks]], and [[snow capped peaks]] biomes.
+
+'''[[Rabbits]]'''
+* Can now spawn on [[snow block]]s.
+
+'''Feedable mobs'''
+* All feedable mobs (except sheep) named "Dinnerbone" now look at the player correctly.
+
+'''General'''
+* Reverted changes of [[Monster Spawner|spawner]]s from [[Java Edition 1.18 experimental snapshot 2|experimental snapshot 2]].
+
+=== World generation ===
+'''[[Stone shore]]s'''
+* Changes of [[diorite]], [[andesite]], or [[granite]] generated as strips in [[Java Edition 1.18 experimental snapshot 4|experimental snapshot 4]] is reverted.
+
+'''[[Stony peaks]]'''
+* Changes of andesite, granite and [[gravel]] generated as strips in experimental 4 is reverted.
+
+=== General ===
+'''[[Data pack]]s'''
+* Version number has been increased to 8.
+
+'''[[Options]]'''
+* Sneak, sprint, and auto-jump options have been moved to the "Controls" menu.
+* Render distance now causes chunks to load in a cylinder shape around the player instead of a square.
+
+'''[[Scoreboard]]s'''
+* Removed length limits for scoreboards, score holders and team names.
+
+'''[[Splash]]es'''
+* The splash "[this splash text has been delayed until part 2]" has been changed to "[this splash text is now available]".
+
+'''[[Tag]]s'''
+* Renamed the <code>lava_pool_stone_replaceables</code> block tag to <code>lava_pool_stone_cannot_replace</code>.
+
+'''Other'''
+* Worlds last opened before [[Java Edition 1.2]] can no longer be opened.
+** These worlds must be opened in a version prior to 21w37a (preferably between [[Java Edition 1.2]] and [[Java Edition 1.6.4]]).
+** An error is shown when attempting to open these worlds.
+
+== Fixes ==
+{{fixes|fixedin=21w37a
+|;old
+|7200|Cave/tunnel generation may cut tunnels a bit too soon.
+|29274|Withers will not pursue players in survival mode unless attacked.
+|30560|River through eroded badlands biome generates floating rock formations at water surface.
+|54545|Client render distance doesn't adjust to server render distance if they are different, causing faulty chunk loading.
+|65628|Desert pyramids generate underground when using amplified or custom terrain.
+|72831|Water lakes can generate in deserts.
+|85975|Slimes don't spawn in the swamp hills biome.
+|101917|Andesite, diorite and granite won't generate above a height of about 80.
+|123277|Too long scoreboard objectives and team names are not detected when commands are parsed.
+|125033|Old cave and ravine generation gets cut off unnaturally on chunk borders near water.
+|126133|Undercover ravines sometimes generate cut off at chunk borders.
+|129266|Jagged ocean transitions and slower biome generation.
+|132175|Beaches generate along swamp hills when bordering an ocean.
+|132429|Sand beaches generate when bordering gravelly mountains biomes.
+|134407|Ocean ravines spawning underground with a stone roof on top.
+|138801|The interactions between a biome and another biome and its variants are inconsistent.
+|140151|Modified jungle edge biomes only generate when a jungle borders a swamp hills biome.
+|140690|Giant spruce taiga hills have no difference with giant spruce taiga.
+|159025|Drowned do not spawn in warm ocean biomes.
+|160710|Chat messages written while sleeping are deleted after waking up.
+|166238|Trees can generate on mycelium.
+|166423|Splash water bottles don't damage endermen.
+|167277|Swamp hills don't naturally generate seagrass.
+|167800|Rabbits do not spawn on snow block, podzol and coarse dirt.
+|175929|Ice spikes get cut off below height limit on AMPLIFIED worlds.
+|182362|Score callbacks with a too long name break callback chain.
+|186042|Plains biome is always generated when a swamp borders a desert, snowy tundra or snowy taiga.
+|188096|Gravelly mountains+ is no different than gravelly mountains.
+|190363|Some biomes generate as "Single biome" worlds in "Floating islands" world type.
+|199298|Strongholds don't generate in bamboo jungles.
+|200230|Anomalous stripes/grid ice generation in frozen ocean biome.
+|202376|Rabbits, instead of spawning on snow blocks, spawn on snow layers.
+|208352|Dark forest hills don't generate small patches of plains or sunflower plains, but dark forest does.
+|208353|Several hills biomes do not generate sporadically replacing patches of their regular biome counterparts.
+|208601|Axolotls do not avoid danger when pathfinding.
+|212113|Glow lichen can spawn underwater whilst not in a cave.
+|213779|FPS drops when looking up in a tall world (4064 blocks).
+|214335|Flower forest is much steeper than regular forest.
+|214783|Oceans generate with stone floors.
+|214797|Pointed dripstone can generate floating at transitions between local water levels.
+|214799|Aquifers sometimes create air pockets.
+|214864|Hard edges when new caves generate near surface.
+|215062|Weird aquifer barrier generator and water in incorrect states.
+|215296|Mineshafts often don't generate in floating island worlds.
+|215876|Dirt can generate below Y{{=}}0 from mineshafts.
+|216362|Jukeboxes that have been placed don't stack with jukeboxes that have not been placed.
+|216448|River generates over a ravine.
+|216784|Ruined portals don't generate below Y{{=}}0.
+|216952|Some chunks interrupting with cave systems filled with blocks.
+|216967|Kelp and seagrass can generate in aquifers.
+|217136|Random noise pillars generating mid air.
+|217465|Unnatural shape looking like a chunk border but appears to be completely unrelated to chunk borders.
+|217509|Inefficient generation of aquifers, noise caves and ore veins.
+|219774|Magma blocks spawn everywhere underwater in 21w10a.
+|219946|Weird flat sections of terrain.
+|221679|End fog loses its gradient when under Y{{=}}0.
+|221777|Horses, donkeys, mules, llamas, and trader llamas do not follow players holding food.
+|221815|Flat roofs in underwater caves.
+|221917|Dripstone, pointed dripstone, and cave magma generate in oceans.
+|222051|Iron ore generation was not increased in 21w13a.
+|222379|Magma can spawn under air in underwater caves.
+|223044|Floating water can generate in ravines.
+|223051|Dripstone can generate in surface lakes.
+|223148|Extended height message goes behind the scrolling bar.
+|225781|The noise cave lava level and the cave carver lava level generate 1 block apart.
+|227244|Ore blocks from ore veins float in underwater magma ravines.
+|230343|Parity issue: Enchanting tables do not emit a light level of 7.
+|231863|Game crashes when trying to access the Realms settings.
+|233050|{{cd|#lava_pool_stone_replaceables}} tag name is misleading.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|WisPvaJnbTE|dqRebCw1uW8}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:21w37a]]
+[[es:Java Edition 21w37a]]
+[[fr:Édition Java 21w37a]]
+[[it:Java Edition 21w37a]]
+[[ja:Java Edition 21w37a]]
+[[pt:Edição Java 21w37a]]
+[[ru:21w37a (Java Edition)]]
+[[th:รุ่น Java 21w37a]]
+[[zh:Java版21w37a]]

@@ -1,0 +1,131 @@
+{{Infobox version
+| title = Minecraft 24w35a
+| image = 24w35a.jpg
+| image2 = Java Edition 24w35a.png
+| edition = Java
+| type = Snapshot
+| date = August 28, 2024
+| jsonhash = ef1297730167607cf1dcf755d86efed837185dea
+| clienthash = 23e08d90ceee1b4c8864946479a766e7074f449f
+| clientmap = 8c59c979b5606a811f45aacfe955d5e99f903187
+| serverhash = 93d259fdba93aa7d3c1763cfb0136295087e0de3
+| servermap = df0bf2c451408f0add7440923142212574d5e0d3
+| parent = 1.21.2
+| prevparent = 1.21.1
+| prev = 24w34a
+| next = 24w36a
+| nextparent = 1.21.3
+}}<onlyinclude>
+
+'''24w35a''' is the third [[snapshot]] for [[Java Edition 1.21.2]], released on August 28, 2024.<ref>{{snap|24w35a|August 28, 2024}}</ref> It contains improvements to bundle interactions, as well as some technical changes and bug fixes.
+
+== Changes ==
+=== Blocks ===
+'''[[Bee nest]]s and [[beehive]]s'''
+* Now show information about their level of honey and number of [[bee]]s.
+* Now use their "full" texture when held or in the inventory, and they are at max level of honey.
+
+=== Gameplay ===
+'''[[Raid]]s'''
+* Raiders must find a place to spawn no more than 96 blocks vertically above or below the village center, or a raid cannot start.
+* It is now much less likely for raiders to not find a valid place to spawn when raiding.
+
+=== General ===
+'''[[Data pack]]s'''
+* The [[pack format]] version is now <code>51</code>.
+** [[Trial spawner]] configurations in fields <code>normal_config</code> and <code>ominous_config</code> are now defined in registry <code>trial_spawner</code>.
+*** This allows for easier customization of trial spawner configurations in data packs.
+*** Inlined configuration data is still supported.
+** Entities' rotation on the x axis is now clamped between -90 and 90.
+** {{cmd|loot}} command now returns an error when trying to drop from a block without a loot table (like [[air]]).
+** The <code>cooldownGroup</code> field in <code>food</code> item stack component has been renamed to <code>cooldown_group</code>.
+
+'''[[Loot table]]s'''
+* Special loot table empty has been removed and is no longer defined in vanilla data pack.
+* Sheep now always uses a single loot table <code>entities/sheep</code>.
+* Wool drops are still defined in sub-tables in <code>entities/sheep/{{ph|color}}</code>, but they are now just dispatched from the main table.
+** Note: mutton drop is now controlled by the main table, while sub-tables are responsible only for wool drop.
+* Sheep shearing is now controlled by loot table found as <code>shearing/sheep</code>.
+* Mooshroom shearing is now controlled by loot table found as <code>shearing/mooshroom</code>.
+
+'''[[Predicate]]'''
+* New entity sub-predicate for testing sheep wool.
+** Fields:
+*** <code>sheared</code> - optional boolean.
+*** <code>color</code> - optional wool dye color.
+
+== Experimental ==
+'''[[Bundle]]s '''
+* The number keys can no longer be used to select items in a bundle.
+* The bundle fullness bar and its fill color now have new separate textures that can be overridden in a resource pack.
+
+== Fixes ==
+{{Fixes|fixedin=24w35a
+|;From released versions before 1.21
+|124331|Redstone lamps do not show on maps.
+|129298|Drowned don't chase the player if they are in 1 block deep water.
+|146805|Trader Llamas don't attack zombies, drowned, husks, zombie villager and illagers.
+|148982|Map color for wheat is incorrect.
+|167906|Beehive items at full honey level do not appear with honey in inventory/as item/in hand.
+|168329|Bees do not leave their hives in the Nether/End in some cases.
+|168546|Bee nest/hive items have no lore.
+|270113|Trial spawner {{cd|ominous_config}} doesn't save setting values to default.
+|270742|Displays don't rotate properly between {{cd|179}} and {{cd|180}}.
+|;From 1.21
+|272345|Some trial spawners don't have an extra breeze out at once when ominous.
+|273601|The Channeling enchantment no longer functions on tridents without an owner.
+|273745|Soul Speed momentum resets when jumping on soul sand.
+|;dev
+|275204|Coast armor trim has generic "Smithing Template" name.
+|275208|The player cannot move bundles into or around the inventory using hotkeys.
+|275220|Picking up a salmon in a bucket doesn't keep its size.
+|275222|Salmons always have the same hitbox regardless of their size.
+|275256|Snow golem shoots to the sky/floor instead of at mobs.
+|275275|Footsteps on monster spawners create missing subtitle.
+|275279|Raiders do not spawn on small islands even though there are close enough places around the village.
+|275322|"Subspace Bubble" is granted when exiting and entering some nether portals.
+|275353|Item frame/glow item frame "Fixed" tag behaving strangely since 24w33a.
+|275358|Renamed bundle's contents are not centered.
+|275409|Stuffing too many items into a bundle through commands will cause the capacity bar to overflow.
+|275410|Flying in Creative mode no longer resists the thrust of the bubble column.
+|275417|Creepers can destroy vehicles even if {{cd|mobGriefing}} is set to false.
+|275521|Tall seagrass can now generate when bone mealing one-high water.
+|275523|Reduced shield glint applies to the shield's item appearance.
+|275586|Renamed items highlighted in the bundle are not in italics.
+|275612|Items with rarity values highlighted in bundles do not display their rarity colors.
+|275838|Drowned holds trident upside down.
+|;previous
+|275752|Villagers indefinitely stand around items when their "{{cd|CanPickUpLoot}}" tag is set to "{{cd|0b}}".
+|275754|Random stack trace sometimes appears.
+|275755|Attempting to swap armor by right-clicking deletes it.
+|275757|Using a bucket deletes the bucket in most cases.
+|275774|Observers no longer detect redstone dust powering/unpowering.
+|275778|Bundle fullness bar texture and color are hardcoded.
+|275800|Translucency sorting is broken.
+|275801|Use cooldown triggers without item consumption.
+|275828|Game crashes when there is an invalid shader path.
+|275837|The {{cd|use_cooldown}} component uses field {{cd|cooldownGroup}} instead of {{cd|cooldown_group}}.
+|275843|Using an empty map (single item in stack) doesn't create a filled map in Survival mode.
+|275851|{{cd|diameter}} in {{cd|teleport_randomly}} consume effect is ignored.
+|275958|Selected item in inventory drops at target dimension's nether portal's coordinates when travelling through them without delay.
+|275959|Drowned no longer raise their arms to attack.
+|276053|Glass bottles are deleted when used on a water source block.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|24t0h3zPQ8M|b6aHBFBESpA}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w35a]]
+[[es:Java Edition 24w35a]]
+[[fr:Édition Java 24w35a]]
+[[ja:Java Edition 24w35a]]
+[[pt:Edição Java 24w35a]]
+[[ru:24w35a (Java Edition)]]
+[[uk:24w35a (Java Edition)]]
+[[zh:Java版24w35a]]

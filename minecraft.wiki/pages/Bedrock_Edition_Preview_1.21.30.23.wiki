@@ -1,0 +1,180 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.3023.0<br>'''Android, iOS, iPadOS''': 1.21.30.23
+| image = Bedrock 1.21.30.23 PatchNotes.jpeg
+| image2 = Bedrock 1.21.30.23.png
+| build = 26929008
+| editorver = 0.7.0
+| versioncode = '''Android''':<br />
+952103023 (armeabi-v7a, 34)<br />
+962103023 (x86, 34)<br />
+972103023 (arm64-v8a, 34)<br />
+982103023 (x86_64, 34)<br />
+| date = August 15, 2024
+| server = 1.21.30.23
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.30.23.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.30.23.zip Linux]
+| parent = 1.21.30
+| prevparent = 1.21.23
+| prev = Preview 1.21.30.22
+| next = Preview 1.21.30.24
+| nextparent = 1.21.31
+}}<onlyinclude>
+'''Beta 1.21.30.23''' (ChromeOS, Android) or '''Preview 1.21.30.23''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the third beta/''Preview'' version for [[Bedrock Edition 1.21.30]], released on August 15, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/29288258913293|title=Minecraft Beta & Preview - 1.21.30.23|website=Minecraft Feedback|date=August 15, 2024}}</ref><ref>{{mcnet|minecraft-preview-1-21-30-23|Minecraft Preview 1.21.30.23|August 15, 2024|Jay Wells}}</ref> which adds [[bundle]]s as an experimental feature and fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Chemistry Table]]'''
+* The different chemistry table type [[block states]] for the <code>chemistry_table</code> ID have now been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="4" | {{BlockSprite|compound-creator}} <code>chemistry_table</code>
+| {{BlockSprite|compound-creator}} <code>compound_creator</code>
+|-
+| {{BlockSprite|material-reducer}} <code>material_reducer</code>
+|-
+| {{BlockSprite|element-constructor}} <code>element_constructor</code>
+|-
+| {{BlockSprite|lab-table}} <code>lab_table</code>
+|}
+
+'''[[Redstone power]]'''
+*The following blocks have been brought to parity with {{JE}} for redstone power: 
+**{{cd|minecraft:mangrove_roots}} is now powered
+**{{cd|minecraft:beacon}} is no longer powered
+**{{cd|minecraft:tnt}} is no longer powered
+**{{cd|minecraft:sea_lantern}} is no longer powered
+
+'''[[TNT]] and [[Underwater TNT]]'''
+* The different allow underwater bit [[block states]] for the <code>tnt</code> ID have now been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="2" | {{BlockSprite|tnt}} <code>tnt</code>
+| {{BlockSprite|tnt}} <code>tnt</code>
+|-
+| {{BlockSprite|underwater-tnt}} <code>underwater_tnt</code>
+|}
+
+=== Items ===
+'''[[Name Tag]]'''
+*Adding input glyph support in the name tags displayed over the entities.
+
+=== General ===
+'''UI'''
+*Renamed the "All worlds" tab to "Worlds" in OreUI Play screen (''Preview'' only).
+*The hardcore heart displayed on worlds in the new Play screen now animates when world is hovered (''Preview'' only).
+*Added hotkeys to take screenshots in game on controller and keyboard. On mouse/keyboard: {{Keys|F2}}. On controller: {{Xbtn|lb}} + {{Xbtn|rb}}, {{Psbtn|l1}} + {{Psbtn|r1}}, {{Nsbtn|l}} + {{Nsbtn|r}}.
+
+=== Technical ===
+'''AI Goals '''
+*Removed the {{cd|minecraft:behavior.peek}} AI goal component that was never used.
+
+'''API'''
+*Changes to iterators to make them properly store their own state, be simplified and better handle common usages.
+*The following APIs have been shipped out of experimental: {{cd|PlayerCursorInventoryComponent}} API, Target Selector for Actor Properties APIs, and the Block Record Player Component APIs.
+
+'''[[Block]]s'''
+*Parsing {{cd|blocks.json}} now produces a Content Error if its {{cd|format_version}} is greater or equal than the block names it overrides.
+*The {{cd|item_display_transforms}} field in block geometries no longer requires the "Upcoming Creator Features" toggle.
+
+'''[[Item]]s'''
+*Item data versioned 1.16.100+ can now be overridden by item data versioned 1.16.100+ higher in the pack stack.
+*Enables Creators to override 1.16.100+ data driven Vanilla items with 1.16.100+ data.
+*Added {{cd|minecraft:storage_item}} item component to allow an item to store data of the dynamic container associated with it:
+**This component requires that the bundles toggle is enabled.
+**A dynamic container is a container for storing items that is linked to an item instead of a block or an entity.
+**To use this component the item must have {{cd|minecraft:max_stack_size}} set to 1.
+**The {{cd|max_slots}} field (1 to 64) defines the number of slots of the dynamic container.
+**The {{cd|max_weight_limit}} field defines the maximum allowed sum of the weight of the items in all slots of the dynamic container.
+***Items that stack to 64 weigh 1 each, those that stack to 16 weigh 4 each and unstackable items weigh 64.
+**The {{cd|allow_nested_storage_items}} field allows for other items with a {{cd|minecraft:storage_item}} component to be put inside it.
+**The {{cd|weight_in_storage_item}} (0 to 64) defines the additional weight the item adds when inside another storage item.
+***A value of 0 means that this item is not allowed inside another storage item.
+**The {{cd|banned_items}} field defines the items that are not allowed in the item's dynamic container.
+**The {{cd|allowed_items}} field defines the items that are exclusively allowed in the item's dynamic container.
+***If empty all items are allowed in the item's dynamic container.
+*Added {{cd|minecraft:bundle_interaction}} item component to enable bundle-specific interaction scheme and tooltip.
+**This component requires that the bundles toggle is enabled.
+**To use this component the item must have a {{cd|minecraft:storage_item}} component defined.
+**The {{cd|minecraft:bundle_interaction}} component interacts with the container created by the {{cd|minecraft:storage_item}} component.
+**The {{cd|num_viewable_slots}} field (1 to 64) defines the maximum number of item stacks accessible from the top of the bundle, while other slots are hidden.
+**Textures named {{cd|[item_name]_open_front}} and {{cd|[item_name]_open_back}} must be added to {{cd|textures/textures_list.json}}.
+
+'''[[Trading|Trade Tables]]'''
+*The Trade Table files are now versioned:
+**TradeTier's {{cd|total_exp_required}} is a required member from version {{cd|1.21.30}}.
+**TradeTier's {{cd|groups}} is a required member from version {{cd|1.21.30}}.
+**TradeItem's quantity {{cd|min}} cannot be lower than {{cd|max}} from version {{cd|1.21.30}}.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Bundles" experimental toggles.
+=== Additions ===
+==== Items ====
+'''[[File:Bundle Filled BE1.png|32px]] [[Bundle]]s'''
+* Added bundles.
+* A bundle is an item that can pack different items together into the same stack.
+* A bundle only fits one stack (usually 64 items) but it can be a mixture of many different item types.
+* Player can insert items into a bundle directly in the [[inventory]].
+* Bundles have a tooltip that shows the items inside:
+** If a bundle has less than 8 item types inside, the tooltip will show all of them.
+** Otherwise, the tooltip will show the top two rows of items and the others will be hidden below.
+* Player can select any of the visible items to pull out of the bundle:
+** Use the scroll wheel on mouse, the right stick on a game controller, or tap on a touch device.
+* When selecting an item to remove, the bundle icon shows that item poking out of the bundle.
+* When holding a bundle in hand, player can empty it onto the ground.
+* The bundle is crafted with one string above one leather:
+{{Crafting
+|B1=String
+|B2=Leather
+|Output=Bundle
+|ignoreusage=1
+}}
+
+=== Changes ===
+==== Technical ====
+'''[[API]]'''
+*Moved class {{cd|PlayerCursorInventoryComponent}} from {{cd|beta}} to {{cd|1.14.0}}.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.30.23 Preview
+|;old
+|46302|Parrots don't imitate sounds of newly added hostile mobs.
+|59729|Snow layers don't drop themselves when mined with a silk touch enchanted shovel.
+|66061|End Gateway Teleports to Main End Island.
+|79271|Sea lanterns conducting redstone and not acting like transparent block.
+|100267|ID changes left behind legacy IDs.
+|153838|Mangrove roots don't conduct redstone signals.
+|160236|The arrow in the Stonecutter UI only appears after placing an ingredient (in the Classic UI Profile).
+|176186|Beacon text uses white color in Pocket UI.
+|181944|When updating to versions past 1.20.80, blocks in item form in old worlds using numerical IDs are not upgraded correctly.
+|183011|Breeze becomes Peaceful towards target within short range.
+|183825|Category tabs are missing when switching from Classic to Pocket UI with recipe book closed.
+|183986|{{cmd|/camera set}} still behaves incorrectly when run during an existing camera interpolation.
+|otherissuescount=8}}
+'''Other'''
+*EDU: Fixed Material Reducer recipes not working with some flattened blocks such as Andesite or Terracotta.
+*Parrots can now imitate Endermites.
+*Basalt Deltas now have a moody ambient sound again.
+*Fixed an issue where items durability and storage bar was incorrect size and placement on certain screens.
+*Fixed Mushroom Farms in Woodland Mansions that incorrectly spawned Dirt instead of Coarse Dirt.
+*Fixed the {{cd|next}} method for iterable objects.
+*Fixed an issue with {{cd|minecraft:redstone_conductivity}} support for custom blocks.
+*Fixed night vision potions having no effect in Deferred Technical Preview. 
+*Fishing lines are now rendered correctly in first person when the FOV setting has been changed in Deferred Technical Preview.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.30 betas]]
+[[de:Bedrock Edition beta 1.21.30.23]]
+[[pt:Edição Bedrock Preview 1.21.30.23]]
+[[ru:Preview 1.21.30.23 (Bedrock Edition)]]
+[[uk:Preview 1.21.30.23 (Bedrock Edition)]]
+[[zh:基岩版1.21.30.23]]

@@ -1,0 +1,551 @@
+{{Update|A lot has changed with slots since this page was actually majorly updated, example: the offhand slot for players is no longer the -106th slot of the inventory, it's now located in the "equipment.offhand" NBT tag, and the page also contains a lot of incorrect info in general.}}
+
+A '''slot''' is a location in the data of a block entity or entity that an item stack can be placed in.
+
+== ''Java Edition'' ==
+A slot is defined by its '''slot index'''.
+
+{| class="wikitable sortable" data-description="Slot Index"
+!Slot index
+!Used by
+!Description
+|-
+|0-53
+|General inventories
+|Different containers have different ranges for the slot number:
+* [[Item]]s, [[item frame]]s, [[Display|item displays]], [[arrow]]s, [[trident]]s, [[spectral arrow]]s, [[fireball]]s, and [[small fireball]]s: 0.
+* [[Barrel]]s, [[chest]]s, [[dispenser]]s, [[dropper]]s, [[hopper]]s, [[shulker box]]es and [[trapped chest]]s are numbered 0 for the top-left slot and then increase first horizontally, then vertically (so, for example, a chest's top row slots are numbered 0 to 8 from left to right). Double chests and double trapped chests are treated as two single container blocks.
+* A [[brewing stand]]'s bottom slots are numbered 0 to 2 from left to right, its top slot is 3 and the fuel slot is 4.
+* A [[furnace]]'s slots are numbered 0 for the input slot, 1 for the fuel slot, and 2 for the output slot.
+* [[Player]]s: 0-35
+* [[Minecart with chest|Minecarts with chests]]: 0-26
+* [[Minecart with Hopper|Minecarts with hoppers]]: 0-4
+|-
+|98-103
+|[[Mobs]], [[player]]s, and [[armor stand]]s (all living entities support these slots although not all mobs show or make use of the items),
+|
+*Head armor slot: 103
+*Chest armor slot: 102
+*Leg armor slot: 101
+*Feet armor slot: 100
+*Mainhand: 98
+*Offhand: 99
+|-
+|105
+|[[Mobs]], [[player]]s, and [[armor stand]]s (all living entities support these slots although not all mobs show or make use of the items)
+|Slot for [[wolf armor]] on [[wolf]], [[horse armor]] on [[horse]]
+|-
+|106
+|[[Mobs]], [[player]]s, and [[armor stand]]s (all living entities support these slots although not all mobs show or make use of the items)
+|Slot for [[saddle]] on [[horse]] and [[pig]], [[carpet]] on [[llama]], [[harness]] on [[happy ghast]]
+|-
+|200-226
+|[[Player]]s
+|Slots in ender chest
+|-
+|300-307
+|[[Villager]]s, [[wandering trader]]s, [[pillager]]s
+|Their inventory
+|-
+|400
+|[[Horse]]s, [[donkey]]s, [[mule]]s, [[llama]]s
+|Slot for saddle item
+|-
+|499
+|Chested [[donkey]]s, [[llama]]s, [[mule]]s
+|Slot for the chest item of [[Donkey]]s, [[llama]]s, [[mule]]s.
+|-
+|499
+|[[Player]]s
+|Slot for the item held by a player in GUI screens. Not available in creative mode.<ref>[https://www.minecraft.net/en-us/article/minecraft-snapshot-24w10a#:~:text=Note%3A%20this%20information%20is%20not%20available%20in%20creative%20mode 24w10a] — Note: this information is not available in creative mode</ref>
+|-
+|500-503
+|[[Player]]s
+|Crafting slots in inventory screen
+|-
+|500-514
+|Chested [[donkey]]s, [[llama]]s, [[mule]]s
+|Slots in their chests.
+|}
+
+=== Command argument ===
+In commands, a slot should be referred by a string name instead of its index. The string name is mapped to its index when executing command.
+
+A string name of slot consists of '''slot type''' and optional '''slot number''', in the format of <code><slot_type></code> or <code><slot_type>.<slot_number></code>.
+
+{| class="wikitable sortable" data-description="Slot mapping"
+!Slot string name
+!Valid ''slot number''
+!Mapped index
+|-
+|<code>contents</code>
+|
+|align="center"|0
+|-
+|<code>container.<slot_number></code>
+|align="center"|0-53
+|align="center"|0-53
+|-
+|<code>hotbar.<slot_number></code>
+|align="center"|0-8
+|align="center"|0-8
+|-
+|<code>inventory.<slot_number></code>
+|align="center"|0-26
+|align="center"|9-35
+|-
+|<code>enderchest.<slot_number></code>
+|align="center"|0-26
+|align="center"|200-226
+|-
+|<code>villager.<slot_number></code>
+|align="center"|0-7
+|align="center"|300-307
+|-
+|<code>horse.<slot_number></code>
+|align="center"|0-14
+|align="center"|500-514
+|-
+|<code>weapon</code>
+|
+|align="center"|98
+|-
+|<code>weapon.mainhand</code>
+|
+|align="center"|98
+|-
+|<code>weapon.offhand</code>
+|
+|align="center"|99
+|-
+|<code>armor.head</code>
+|
+|align="center"|103
+|-
+|<code>armor.chest</code>
+|
+|align="center"|102
+|-
+|<code>armor.legs</code>
+|
+|align="center"|101
+|-
+|<code>armor.feet</code>
+|
+|align="center"|100
+|-
+|<code>armor.body</code>
+|
+|align="center"|105
+|-
+|<code>horse.saddle</code><br/>
+|
+|align="center"|400
+|-
+|<code>horse.chest</code>
+|
+|align="center"|499
+|-
+|<code>player.cursor</code>
+|
+|align="center"|499
+|-
+|<code>player.crafting.<slot_number></code>
+|align="center"|0-3
+|align="center"|500-503
+|}
+
+{{cmd|execute if items}} command also supports wildcarded slot names:
+* <code>container.*</code>: contains <code>container.0</code> to <code>container.53</code>.
+* <code>hotbar.*</code>: contains <code>hotbar.0</code> to <code>hotbar.8</code>.
+* <code>inventory.*</code>: contains <code>inventory.0</code> to <code>inventory.26</code>.
+* <code>enderchest.*</code>: contains <code>enderchest.0</code> to <code>enderchest.26</code>.
+* <code>villager.*</code>: contains <code>villager.0</code> to <code>villager.7</code>.
+* <code>horse.*</code>: contains <code>horse.0</code> to <code>horse.14</code>.
+* <code>weapon.*</code>: contains {{cd|d=and|weapon.mainhand|weapon.offhand}}.
+* <code>armor.*</code>: contains {{cd|d=and|armor.head|armor.chest|armor.legs|armor.feet|armor.body}}.
+* <code>player.crafting.*</code>: contains <code>player.crafting.0</code> to <code>player.crafting.3</code>.
+
+== ''Bedrock Edition'' ==
+
+=== Command argument ===
+In commands, a slot is referred by two arguments: '''slot type''' and '''slot number'''.
+
+'''For a block''', its slot type is <code>slot.container</code>.
+:* [[Barrel]]s, [[chest]]s, [[dispenser]]s, [[dropper]]s, [[hopper]]s, [[shulker box]]es and [[trapped chest]]s are numbered 0 for the top-left slot and then increase first horizontally, then vertically (so, for example, a chest's top row slots are numbered 0 to 8 from left to right). Double chests and double trapped chests are treated as two single container blocks.
+:* A [[brewing stand]]'s bottom slots are numbered 0 to 2 from left to right, its top slot is 3 and the fuel slot is 4.
+:* A [[furnace]]'s slots are numbered 0 for the input slot, 1 for the fuel slot, and 2 for the output slot.
+
+'''For entities''':
+:{| class="wikitable" data-description="Slot information"
+!Slot Type
+!Slot Numbers
+!Restrictions
+|-
+|<code>slot.weapon.mainhand</code>
+|any number (0 in <code>hasitem</code> [[target selector|selector]])
+|rowspan=6|[[Mob]]s only (including [[armor stand]]s and [[player]]s) (although not all mobs show or make use of the items)
+
+[[Wolf]] uses <code>slot.armor.chest</code> slot for [[wolf armor]].
+|-
+|<code>slot.weapon.offhand</code>
+|any number (0 in <code>hasitem</code> selector)
+|-
+|<code>slot.armor.head</code>
+|any number (0 in <code>hasitem</code> selector)
+|-
+|<code>slot.armor.chest</code>
+|any number (0 in <code>hasitem</code> selector)
+|-
+|<code>slot.armor.legs</code>
+|any number (0 in <code>hasitem</code> selector)
+|-
+|<code>slot.armor.feet</code>
+|any number (0 in <code>hasitem</code> selector)
+|-
+|<code>slot.hotbar</code>
+|align="center"|0–8
+|[[Player]]s only
+|-
+|<code>slot.inventory</code>
+|align="center"|0–''the size of the inventory minus 1''
+|Entities with <code>minecraft:inventory</code> component only
+|-
+|<code>slot.enderchest</code>
+|align="center"|0–26
+|[[Player]]s only
+|-
+|<code>slot.saddle</code>
+|any number (0 in <code>hasitem</code> selector)
+|[[Horse]]s, [[donkey]]s, [[mule]]s, only; item in it must be a [[saddle]]
+|-
+|<code>slot.armor</code>
+|any number (0 in <code>hasitem</code> selector)
+|[[Horse]]s only; item in it must be a [[horse armor]]
+|-
+|<code>slot.chest</code>
+|align="center"| 0–''the size of the chest minus 1''
+|Chested donkeys, mules and llamas only
+
+There's a bug in {{cmd|replaceitem}} and {{cmd|loot}}. The slot numbers for the two commands are -1–''the size of the chest minus 2''
+|-
+|<code>slot.equippable</code>
+|align="center"|0–''the number of equippable slots minus 1''
+|Entities with <code>minecraft:equippable</code> component only. Note that these slots refer to slots in <code>minecraft:inventory</code> component.
+
+'''Unsupported''' in {{cmd|replaceitem}} and {{cmd|loot}}
+|}
+
+=== Slots of vanilla entities ===
+
+{|class='sortable wikitable collapsible'
+!Name
+!Entity ID
+!slot<br>.inventory
+!slot<br>.weapon<br>.mainhand
+!slot<br>.weapon<br>.offhand
+!slot<br>.equippable
+!slot<br>.armor
+!slot<br>.saddle
+!slot<br>.chest
+!slot<br>.enderchest
+!slot<br>.hotbar
+|-
+|{{EntityLink|Allay}}
+|{{cd|allay}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|partial|1, unused}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|id=oak boat with chest|Boat with Chest}}
+|{{cd|boat_chest}}
+|{{tc|yes|27}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Camel}}
+|{{cd|camel}}
+|{{tc|yes|1}}
+|{{tc|partial|1, unused}}
+|{{tc|partial|1, unused}}
+|{{tc|yes|1 (refers to the slot of slot.saddle)}}
+|{{tc|no}}
+|{{tc|yes|refers to slot 0 in slot.inventory}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Donkey}}
+|{{cd|donkey}}
+|{{tc|yes|16 <small>(When tamed)</small>}}
+|{{tc|partial|1, unused}}
+|{{tc|partial|1, unused}}
+|{{tc|yes|1 (refers to the slot of slot.saddle)}}
+|{{tc|no}}
+|{{tc|yes|refers to slot 0 in slot.inventory <small>(When tamed)</small>}}
+|{{tc|yes|15 (refers to slot 1–15 in slot.inventory<ref name="slot-chest">There's a bug in {{cmd|replaceitem}} and {{cmd|loot}}. The slot numbers of <code>slot.chest</code> for the two commands are -1–13, refering to slot 0–14 in slot.inventory</ref>) <small>(When tamed and chested)</small>}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Drowned}}
+|{{cd|drowned}}
+|{{tc|no}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Fox}}
+|{{cd|fox}}
+|{{tc|no}}
+|{{tc|yes|1}}
+|{{tc|partial|1, unused}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Horse}}
+|{{cd|horse}}
+|{{tc|yes|2 <small>(When tamed)</small>}}
+|{{tc|partial|1, unused}}
+|{{tc|partial|1, unused}}
+|{{tc|yes|2 (slot 0 refers to slot.saddle, 1 refers to slot.armor)}}
+|{{tc|yes|refers to slot 1 in slot.inventory <small>(When tamed)</small>}}
+|{{tc|yes|refers to slot 0 in slot.inventory <small>(When tamed)</small>}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Husk}}
+|{{cd|husk}}
+|{{tc|no}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Llama}}
+|{{cd|llama}}
+|{{tc|yes|16 <small>(When tamed)</small>}}
+|{{tc|partial|1, unused}}
+|{{tc|partial|1, unused}}
+|{{tc|yes|1 (refers to slot 0 in slot.inventory)}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|yes|N (refers to slot 1–N in slot.inventory; N is the size of the chest<ref>There's a bug in {{cmd|replaceitem}} and {{cmd|loot}}. The slot numbers of <code>slot.chest</code> for the two commands are -1–(N-2), refering to slot 0–(N-1) in slot.inventory</ref>)<small>(When tamed and chested)</small>}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Minecart with Chest}}
+|{{cd|chest_minecart}}
+|{{tc|yes|27}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Minecart with Hopper}}
+|{{cd|hopper_minecart}}
+|{{tc|yes|5}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Mule}}
+|{{cd|mule}}
+|{{tc|yes|16 <small>(When tamed)</small>}}
+|{{tc|partial|1, unused}}
+|{{tc|partial|1, unused}}
+|{{tc|yes|1 (refers to the slot of slot.saddle)}}
+|{{tc|no}}
+|{{tc|yes|refers to slot 0 in slot.inventory <small>(When tamed)</small>}}
+|{{tc|yes|15 (refers to slot 1–15 in slot.inventory<ref name="slot-chest"/>) <small>(When tamed and chested)</small>}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Panda}}
+|{{cd|panda}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|partial|1, unused}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Piglin}}
+|{{cd|piglin}}
+|{{tc|yes|8}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Piglin Brute}}
+|{{cd|piglin_brute}}
+|{{tc|no}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Player}}
+|{{cd|player}}
+|{{tc|yes|27}}
+|{{tc|yes|1 from slot.hotbar}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|yes|27}}
+|{{tc|yes|9}}
+|-
+|{{EntityLink|Skeleton}}
+|{{cd|skeleton}}
+|{{tc|no}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Stray}}
+|{{cd|stray}}
+|{{tc|no}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Villager}}
+|{{cd|villager}}
+|{{tc|yes|8}}
+|{{tc|yes|1}}
+|{{tc|partial|1, unused}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Zombie}}
+|{{cd|zombie}}
+|{{tc|no}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Zombie Villager}}
+|{{cd|zombie_villager}}
+|{{tc|no}}
+|{{tc|yes|1}}
+|{{tc|yes|1}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{EntityLink|Happy Ghast}}
+|{{Cd|happy_ghast}}
+|{{tc|no}}
+|{{tc|partial|1, unused}}
+|{{tc|partial|1, unused}}
+|{{tc|no}}
+|{{tc|yes|1, used for harness}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|{{tc|no}}
+|}
+
+== History ==
+{{info needed section|Did pigs and striders ever gain a saddle slot, or happy ghasts a harness slot?}}
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20.5|dev=24w05a|Replaced <code>horse.armor</code> (401) slot argument with <code>armor.body</code> (105), applicable now to all mobs.}}
+|{{HistoryLine|||dev=24w10a|Added <code>item_slots</code> [[argument type]] for wildcarded slot name.
+|Added <code>player.cursor</code> and <code>player.crafting.<slot_number></code> slot name.}}
+|{{HistoryLine|||dev=24w11a|Added <code>contents</code> slot name for single-slot containers like items and item frames.}}
+|{{HistoryLine|||dev=pre1|Fixed <code>contents</code> slot not working for shot arrows, tridents, spectral arrows, fireballs, and small fireballs.<ref>{{bug|MC-270119|||fixed}}</ref>}}
+
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.21.20|dev=Preview 1.21.10.20|Added <code>slot.armor.body</code> slot name.}}
+}}
+
+== See also ==
+*{{cmd|item}}
+*{{cmd|replaceitem}}
+*{{cmd|loot}}
+*[[Target selector]]
+*[[Argument types]]
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox commands}}
+
+[[Category:Commands]]
+
+[[de:Inventarplatz]]
+[[ja:スロット]]
+[[pt:Espaço]]
+[[zh:槽位]]

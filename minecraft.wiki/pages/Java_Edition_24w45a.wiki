@@ -1,0 +1,603 @@
+{{Infobox version
+| title = Minecraft 24w45a
+| image = 24w45a.jpg
+| image2 = Java Edition 24w45a.png
+| edition = Java
+| type = Snapshot
+| date = November 6, 2024
+| jsonhash = e37faab35679f498f84eb35d09d9f6e32ffdfad0
+| clienthash = 4db71417912fdd7be8aed0792bc09dc70e505ff5
+| clientmap = 92ca3b43f2246c9d6de3f4b1777c559429496d46
+| serverhash = 8bbe822806cfdbeb9f6fc55d18fa1e8080e60047
+| servermap = be8e5a028f506b448eb1ec71301919fec06b45d3
+| parent = 1.21.4
+| prevparent = 1.21.3
+| prev = 24w44a
+| next = 24w46a
+| nextparent = 1.21.5
+}}<onlyinclude>
+
+'''24w45a''' is the second [[snapshot]] for [[Java Edition 1.21.4]], released on November 6, 2024,<ref>{{snap|24w45a|November 6, 2024}}</ref> which revamps the item model system, changes various items and mobs, and fixes bugs and crashes from [[24w44a]].
+
+== Additions ==
+=== General ===
+'''[[Items model definition]]s'''
+* {{cd|minecraft:model}} item model type.
+** Renders a plain model from models directory.
+** Fields:
+*** {{cd|model}}: namespaced ID of model in models (like {{cd|minecraft:block/yellow_glazed_terracotta}})
+*** {{cd|tints}}: a list of tint sources to apply to elements of rendered model (first entry applies to {{cd|tintindex}} 0, second one - 1, etc.)
+** Format:
+*** {{cd|type}}: type of tint source (see below)
+*** {{cd|<type-specific>}} - additional fields depending on tint source type.
+
+* {{cd|minecraft:constant}} tint source type.
+** Returns a constant RGB color.
+** Fields:
+*** {{cd|value}} - A packed integer RGB value (e.g. {{cd|-1}}) or an array of RGB values (e.g. {{cd|[ 1, 1, 1 ]}}).
+
+* {{cd|minecraft:dye}} tint source type.
+** Returns value from {{cd|minecraft:dyed_color}} component or default if not present.
+** Fields:
+*** {{cd|default}} - RGB value.
+
+* {{cd|minecraft:grass}} tint source type.
+** Returns grass color at specific climate parameters, based on {{samp|textures/colormap/grass.png}}.
+** Same colors as ones selected by {{cd|downfall}} and {{cd|temperature}} in biome configuration.
+** Fields:
+*** {{cd|temperature}} - float in {{cd|0..1}} (inclusive) range.
+*** {{cd|downfall}} - float in {{cd|0..1}} (inclusive) range.
+
+* {{cd|minecraft:firework}} tint source type.
+** Returns average of colors from {{cd|minecraft:firework_explosion}} component or default color if there are none.
+** Fields:
+*** {{cd|default}}: RGB value.
+
+* {{cd|minecraft:potion}} tint source type.
+** Returns color from {{cd|minecraft:potion_contents}} component:
+*** If component is present:
+**** custom color, if there is one present in component.
+**** default color, if effect list is empty.
+**** average of effect colors, otherwise.
+*** Default color, otherwise.
+** Fields:
+*** {{cd|default}}: RGB value.
+
+* {{cd|minecraft:map_color}} tint source type.
+** Return value from {{cd|minecraft:map_color}} component or default color if component is not present.
+** Fields:
+*** {{cd|default}}: RGB value.
+
+* {{cd|minecraft:custom_model_data}} tint source type.
+** Returns value from colors list in {{cd|minecraft:custom_model_data}} component.
+** Fields:
+*** {{cd|index}} - index for field in {{cd|colors}}.
+**** Default: {{cd|0}}
+
+* {{cd|minecraft:special}} item model type.
+** Renders a special (not data-driven) model.
+** Fields:
+*** {{cd|model}}: special model instance.
+**** Format:
+***** {{cd|type}} - type of special model.
+***** {{cd|<type-specific>}} - additional fields depending on tint source type.
+*** {{cd|base}}: namespaced ID of model in {{cd|models}}, providing transformations, particle texture and GUI light.
+
+* {{cd|minecraft:bed}} special model type.
+** Renders a whole bed.
+** Fields:
+*** {{cd|texture}} - namespaced ID for texture, without {{cd|textures/entity/bed/}} prefix and {{cd|.png}} suffix.
+
+* {{cd|minecraft:banner}} special model type.
+** Renders a banner with patterns from {{cd|minecraft:banner_patterns}} component.
+** Fields:
+*** {{cd|color}} - color of banner base, one of 16 predefined colors.
+
+* {{cd|minecraft:conduit}} special model type.
+** Renders a conduit.
+** No fields.
+
+* {{cd|minecraft:chest}} special model type.
+** Renders a single chest.
+** Fields:
+*** {{cd|texture}} - namespaced ID for texture, without {{cd|textures/entity/chest/}} prefix and {{cd|.png}} suffix.
+*** {{cd|openness}} - float, {{cd|0.0}} (default) - fully closed, {{cd|1.0}} - fully open.
+
+* {{cd|minecraft:head}} special model type.
+** Renders a head.
+** Uses profile from {{cd|minecraft:profile}} component when applicable.
+** Fields:
+*** {{cd|kind}} - one of {{cd|skeleton}}, {{cd|wither_skeleton}}, {{cd|player}}, {{cd|zombie}}, {{cd|creeper}}, {{cd|piglin}}, {{cd|dragon}}
+
+* {{cd|minecraft:shulker_box}} special model type.
+** Renders a shulker box.
+** Fields:
+*** {{cd|texture}} - namespaced ID for texture, without {{cd|textures/entity/shulker/}} prefix and {{cd|.png}} suffix
+*** {{cd|openness}} - float, {{cd|0.0}} (default) - fully closed, {{cd|1.0}} - fully open
+*** {{cd|orientation}} - orientation for rendering.
+**** Default: {{cd|up}}
+
+* {{cd|minecraft:shield}} special model type.
+** Renders a shield.
+** Uses patterns from {{cd|minecraft:banner_patterns}} component and color from {{cd|minecraft:base_color}} component.
+** No fields.
+
+* {{cd|minecraft:trident}} special model type.
+** Renders a trident.
+** No fields.
+
+* {{cd|minecraft:decorated_pot}} special model type.
+** Renders a decorated pot.
+** Uses values from {{cd|minecraft:pot_decorations}} component.
+** No fields.
+
+* {{cd|minecraft:composite}} item model type.
+** Renders multiple sub-models.
+** All models are rendered in the same space.
+** Fields:
+*** {{cd|models}}: a list of item models to render.
+
+* {{cd|minecraft:condition}} item model type.
+** Renders an item model depending on boolean property.
+** Fields:
+*** {{cd|property}}: type of property.
+*** {{cd|<property-specific>}} - additional fields depending on property type, added inline.
+*** {{cd|on_true}} - item model to render when property is true.
+*** {{cd|on_false}} - item model to render when property is false.
+
+* {{cd|minecraft:using_item}} boolean property.
+** Returns true if player is currently using this item.
+** No fields.
+
+* {{cd|minecraft:broken}} boolean property.
+** Returns true if the item is damageable and has only one use remaining before breaking.
+** No fields.
+
+* {{cd|minecraft:damaged}} boolean property.
+** Returns true if the item is damageable and has been used at least once.
+** No fields.
+
+* {{cd|minecraft:has_component}} boolean property.
+** Returns true if the given component is present on the item.
+** Fields:
+*** {{cd|component}} - component type.
+
+* {{cd|minecraft:fishing_rod/cast}} boolean property.
+** Returns true if there is a fishing bobber attached to currently used fishing rod.
+** No fields.
+
+* {{cd|minecraft:bundle/has_selected_item}} boolean property.
+** Returns true if bundle is "open", i.e. it has selected item visible in GUI.
+** No fields.
+
+* {{cd|minecraft:xmas}} boolean property.
+** Returns true if current date is between December 24th and December 26th (inclusive).
+** No fields.
+
+* {{cd|minecraft:selected}} boolean property
+** Returns true if item is selected on a hotbar.
+** No fields.
+
+* {{cd|minecraft:carried}} boolean property.
+** Returns true if item is carried between slots in GUI.
+** No fields.
+
+* {{cd|minecraft:shift_down}} boolean property.
+** Returns true if player currently holding shift key down.
+** No fields.
+
+* {{cd|minecraft:custom_model_data}} boolean property.
+** Returns value from flags list in {{cd|minecraft:custom_model_data}} component.
+** Fields:
+*** {{cd|index}} - index for field in flags.
+**** Default: {{cd|0}}
+
+* {{cd|minecraft:select}} item model type.
+** Renders an item model based on discrete property.
+** Fields:
+*** {{cd|property}}: type of property.
+*** {{cd|<property-specific>}} - additional fields depending on property type, added inline.
+*** {{cd|cases}} - list of cases to match in format:
+**** {{cd|when}} - value to match against property, type depends on property.
+***** Could be a single value or a list of values.
+**** {{cd|model}} - item model to render when case is selected.
+*** {{cd|fallback}} - item model to render if none of the cases matched the value.
+**** If not present, placeholder "missing" model is rendered instead.
+
+* {{cd|minecraft:main_hand}} property.
+** Returns main hand of holding player.
+** No fields.
+** Values: {{cd|left}}, {{cd|right}}
+
+* {{cd|minecraft:charge_type}} property.
+** Returns charge type stored in {{cd|minecraft:charged_projectiles}} component.
+** No fields.
+** Values:
+*** {{cd|none}} - if there are no projectiles or component is not present.
+*** {{cd|rocket}} - if there is at least one firework rocket.
+*** {{cd|arrow}} - any other case.
+
+* {{cd|minecraft:trim_material}} property.
+** Returns value of material field from {{cd|minecraft:trim}} component, if present.
+** No fields.
+** Values: namespaced ID.
+
+* {{cd|minecraft:block_state}} property.
+** Returns value for some property from {{cd|minecraft:block_state}} component.
+** Fields:
+*** {{cd|block_state_property}} - string key to select from component.
+** Values: any string.
+
+* {{cd|minecraft:display_context}} property.
+** Returns context this item is rendered in.
+** No fields.
+** Values:
+*** {{cd|none}}
+*** {{cd|thirdperson_lefthand}}
+*** {{cd|thirdperson_righthand}}
+*** {{cd|firstperson_lefthand}}
+*** {{cd|firstperson_righthand}}
+*** {{cd|head}}
+*** {{cd|gui}}
+*** {{cd|ground}}
+*** {{cd|fixed}}
+
+* {{cd|minecraft:custom_model_data}} property.
+** Returns value from strings list in {{cd|minecraft:custom_model_data}} component.
+** Fields:
+*** {{cd|index}} - index for field in strings.
+**** Default: {{cd|0}}
+** Values: any string.
+
+* {{cd|minecraft:range_dispatch}} item model type.
+** Renders an item model based on numeric property.
+** Replacement for old overrides section from block models.
+** Selects last entry with threshold less or equal to property value.
+** Fields:
+*** {{cd|property}}: type of property.
+*** {{cd|<property-specific>}} - additional fields depending on property type.
+*** {{cd|scale}} - factor to multiply property value with.
+**** Default: {{cd|1.0}}
+*** {{cd|entries}} - list of entries in format:
+**** {{cd|threshold}} - float value.
+**** {{cd|model}} - item model to render when entry is selected.
+**** Note: order of fields does not matter, list is sorted by threshold in ascending order before use.
+*** {{cd|fallback}} - item model to render if no entries were less or equal to property value.
+**** If not present, placeholder "missing" model is rendered instead.
+
+* {{cd|minecraft:custom_model_data}} numeric property
+** Returns value from {{cd|floats}} list in {{cd|minecraft:custom_model_data}} component.
+** Fields:
+*** {{cd|index}} - index for field in {{cd|floats}}
+**** Default: {{cd|0}}
+
+* {{cd|minecraft:bundle/fullness}} numeric property.
+** Returns weight of {{cd|bundle_contents}} component or 0 if not present.
+** No fields.
+
+* {{cd|minecraft:damage}} numeric property.
+** Returns value for damage component.
+** Fields:
+*** {{cd|normalize}}: boolean 
+**** Default: true
+**** If true, returns value of damage divided by {{cd|max_damage}} component, clamped to {{cd|0..1}}.
+**** If false, returns value of damage, clamped to {{cd|0..max_damage}}.
+
+* {{cd|minecraft:count}} numeric property.
+** Returns stack size.
+** Fields:
+*** {{cd|normalize}}: boolean.
+**** Default: {{cd|true}}
+**** If true, returns count divided by {{cd|max_stack_size}} component, clamped to {{cd|0..1}}.
+**** If false, returns count clamped to {{cd|0..max_stack_size}}.
+
+* {{cd|minecraft:cooldown}} numeric property
+** Returns remaining cooldown for item, scaled to {{cd|0..1}}.
+** No fields.
+
+* {{cd|minecraft:time}} numeric property
+** Returns value of day time (used for clock), scaled to {{cd|0..1}}.
+** Fields:
+*** {{cd|wobble}} - if true, value oscillates for some time around target before settling.
+**** Default: {{cd|true}}
+*** {{cd|natural_only}} - if true, value is random in dimensions with {{cd|natural{{=}}false}}.
+**** Default: {{cd|true}}
+
+* {{cd|minecraft:compass}} numeric property
+** Returns angle, scaled to {{cd|0..1}} in x-z plane between holder position and target.
+** If target is not valid (not present, in other dimension or to close to holder position) random value is returned.
+** Fields:
+*** {{cd|target}} - one of:
+**** {{cd|spawn}} - points at world spawn.
+**** {{cd|lodestone}} - points at location stored in {{cd|lodestone_tracker}} component.
+**** {{cd|recovery}} - points at last player death location.
+*** {{cd|wobble}} - if true, value oscillates for some time around target before settling.
+**** Default: {{cd|true}}
+
+* {{cd|crossbow/pull}} numeric property.
+** Returns crossbow-specific use time.
+** No fields.
+
+* {{cd|use_duration}} numeric property
+** Returns item use ticks.
+** Fields:
+*** {{cd|remaining}} - if {{cd|true}}, returned value is remaining use ticks, if {{cd|false}} - ticks so far.
+**** Default: {{cd|false}}
+
+* {{cd|use_cycle}} numeric property.
+** Returns remaining use ticks modulo period.
+** Fields:
+*** {{cd|period}} - positive float.
+**** Default: {{cd|1.0}}
+
+* {{cd|minecraft:bundle/selected_item}} item model type.
+** Renders selected stack in {{cd|minecraft:bundle_contents}} component, if present, otherwise does nothing.
+
+'''[[Tags]]'''
+* Added the {{cd|#bee_attractive}} block tag.
+** Denotes all blocks that [[bee]]s may pollinate.
+* Added {{cd|#skeleton_preferred_weapon}}, {{cd|#piglin_preferred_weapon}}, {{cd|#pillager_preferred_weapon}} and {{cd|#drowned_preferred_weapon}} item tags.
+** For specifying preferred weapons types for these mobs when picking up items.
+
+== Changes ==
+=== Blocks ===
+'''[[Creaking heart]]'''
+* A naturally spawned creaking heart no longer drops experience when broken in Creative mode.
+* Its <code>hurt</code> subtitle has been changed.
+
+'''[[Sculk sensor]]s'''
+* Are now activated from resin clumps being placed by a creaking heart, with a frequency of 13.
+
+=== Items ===
+'''[[Eyeblossom]]s'''
+* Are now found at the end of the flowers in the Creative inventory.
+
+'''[[Resin brick]]'''
+* Now used to trim armor, instead of [[resin clump]]s.<ref>{{bug|MC-278130|MC-278130|'''{{Font color|Red|Known Issue}}:''' Resin bricks cannot be placed or used inside smithing tables}}</ref><ref>{{bug|MC-278131|MC-278131|'''{{Font color|Red|Known Issue}}:''' Resin clumps can be placed inside smithing tables}}</ref>
+
+'''[[Suspicious stew]]'''
+* Changed durations of the Suspicious Stew effects to match {{BE}}:
+** [[Fire Resistance]]: 3 seconds
+** [[Blindness]]: 11 seconds
+** [[Weakness]]: 7 seconds
+** [[Regeneration]]: 7 seconds
+** [[Jump Boost]]: 5 seconds
+** [[Wither (effect)|Wither]]: 7 seconds
+** [[Poison]]: 11 seconds
+
+=== Mobs ===
+'''General'''
+* The way mobs decide to replace their equipped items with items on the ground was changed.
+** If the item belongs in an armor slot, replace the item if any of the following conditions apply.
+*** The new item has a higher base armor value.
+*** The new item has a higher base armor toughness value.
+*** The new item has more enchantments.
+*** The new item is less damaged.
+*** The new item has a custom name while the old one doesn't.
+** If the item belongs in the main hand slot, replace the item if any of the following conditions apply.
+*** The new item is a preferred weapon while the old one isn't.
+**** If the old item is a preferred weapon while the new item isn't, do not replace the item.
+*** The new item has a higher base damage value.
+*** The new item has more enchantments.
+*** The new item is less damaged.
+*** The new item has a custom name while the old one doesn't.
+
+'''[[Bee]]s'''
+* Are no longer attracted to closed eyeblossoms.
+* Can no longer interact with closed eyeblossoms.
+
+'''Baby [[cat]]s and [[wolves]]'''
+* Now get a collar with the color that is a mix between the parents collar color if possible.
+
+'''[[Creaking]]'''
+* An activated creaking doesn't move if a player in Survival or Adventure mode is looking at it.
+** Creakings also have full knockback resistance in that state.
+* Their eyes are now visible when they have the [[Invisibility]] effect.
+* Its <code>activate</code>, <code>deactivate</code>, <code>death</code>, <code>spawn</code> & <code>sway</code> subtitles have been changed.
+
+'''[[Drowned]]'''
+* Prefer to pick [[trident]]s from the ground as opposed to other items.
+
+'''[[Pillager]]s and [[piglin]]s'''
+* Prefer to pick [[crossbow]]s from the ground as opposed to other items.
+
+'''[[Skeleton]]s, [[wither skeleton]]s, [[stray]]s and [[bogged]]'''
+* Prefer to pick [[bow]]s from the ground as opposed to other items.
+
+=== Non-mob entities ===
+'''[[Experience orb]]'''
+* Physics were changed. They are now bouncy when falling from a height.<ref>This was added alongside a fix for a bug which unintentionally made them bouncy several versions earlier. {{bug|MC-277961}}</ref>
+
+=== World generation ===
+'''[[Woodland mansion]]s'''
+* Loot chests can now contain resin clumps, not resin bricks.
+
+=== Gameplay ===
+'''Damage'''
+* [[Player]]s no longer receive 3 seconds of damage immunity when spawning, respawning, or joining a world or server.
+
+=== General ===
+'''[[Client.jar]]'''
+* New entry point {{samp|net.minecraft.client.data.Main}} is present in client jar, with similar command line structure as data generator in server jar.
+** Available options: {{cd|--client}} - generates {{cd|assets}} directory.
+
+'''[[Data component format]]'''
+* {{cd|minecraft:custom_model_data}}
+** Now has more fields to accommodate new uses by various model property getters.
+** Fields:
+*** {{cd|floats}} - list of floats.
+*** {{cd|flags}} - list of booleans.
+*** {{cd|strings}} - list of strings.
+*** {{cd|colors}} - list of RGB color values.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|59}}.
+* The tooltip warning on item blocks with the {{cd|minecraft:block_entity_data}} component can no longer be hidden by any other component.
+* Field model in {{cd|minecraft:equippable}} component has been renamed to asset_id.
+* Field {{cd|item_model_index}} in {{cd|trim_material}} registry has been removed (no longer needed for model rendering).
+
+'''[[Item model]]s'''
+* New format has been introduced for describing item models. See [[Items model definition]].
+* Item models are selected based on {{cd|minecraft:item_model}} component.
+** Model for item with {{cd|item_model{{=}}foo:bar}} is stored in {{samp|/assets/foo/items/bar.json}}.
+* Format of file is <syntaxhighlight lang="text">{ 
+  "model": {
+    "type": <item model type>,
+    <item model type specific fields>
+  } 
+}</syntaxhighlight>
+* {{cd|overrides}} section has been removed from existing block models.
+* There are no longer any hardcoded paths in {{cd|models}} directory - models are now only used if referenced by definitions in {{cd|items}} or {{cd|blockstates}} directories.
+* Models in {{cd|models/item}} that only redirect to a block model have been removed.
+** In such cases, the item model refers to the {{cd|models/block}} model directly.
+
+'''[[Item modifier]]s'''
+* {{cd|minecraft:set_custom_model_data}}
+** Now has more fields to accommodate more complex component structure.
+** Fields:
+*** {{cd|floats}} - optional list operation of number providers.
+*** {{cd|flags}} - optional list operation of boolean values.
+*** {{cd|strings}} - optional list operation of string values.
+*** {{cd|colors}} - optional list operation of RGB values or number providers.
+** List operation uses same format as explosions field in {{cd|set_fireworks}} modifier.
+** For example <syntaxhighlight lang="json">{
+  "function": "set_custom_model_data",
+  "floats": {
+    "values": [2],
+    "mode": "replace_all"
+  }
+}</syntaxhighlight> sets replaces {{cd|floats}} with value {{cd|2}}.
+
+'''[[Missing textures and models]]'''
+* If a model which the game uses directly (as opposed to template models) fails to specify a texture to use for particles, an error is now printed to the game log<ref>{{bug|MC-236295}}</ref>.
+* If a model does not attempt to route a texture reference to an actual texture file, an error is logged once again<ref>{{bug|MC-276828}}</ref>.
+
+'''Protocol'''
+* Client now sends the {{cd|minecraft:player_loaded}} packet once the loading terrain screen has closed after initially loading into the world, and after closing the loading screen when respawning.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now {{cd|44}}.
+* Invalid {{cd|minecraft:filled_map}} items in an Item Frame (map item without the {{cd|map_id}} component) no longer change the size of the frame.
+* The {{cd|equipment}} directory has been moved one level up, i.e. {{cd|models/equipment/}} becomes {{cd|equipment/}}.
+* {{cd|broken_elytra}} model and texture has been renamed to {{cd|elytra_broken}}.
+
+'''[[Server.jar]]'''
+* Data generator in server jar ({{samp|net.minecraft.data.Main}}) no longer generates {{cd|assets}} directory.
+** {{cd|--client}} option has been removed from command line for this entry point.
+
+'''[[Tags]]'''
+* Removed the {{cd|#tall_flowers}} block and item tags.
+* Removed the {{cd|#flowers}} item tag.
+* Put the contents of the removed {{cd|#tall_flowers}} block tag into the {{cd|#flowers}} block tag.
+* Put the contents of the removed {{cd|#flowers}} item tag, except {{cd|closed_eyeblossom}} into the {{cd|#bee_food}} item tag.
+* Added {{cd|resin_clump}} to the {{cd|#replaceable}} block tag.
+* Added {{cd|resin_brick_slab}}, and {{cd|resin_brick_stairs}} into the {{cd|#slabs}}, and {{cd|#stairs}} block and item tags respectively.
+* Removed the {{cd|#small_flowers}} block tag from the {{cd|#sword_efficient}} block tag.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=24w45a
+|;From released versions before 1.21
+|212|Fall damage is ignored for a couple of seconds when reloading into LAN or singleplayer worlds.
+|21650|Player is immune to damage for a few seconds after saving the world and returning.
+|99848|Sprinting isn't canceled upon receiving the blindness effect.
+|158872|Models use model of last matched predicate, not closest match.
+|159508|{{key|Ctrl + Pick block}} on beehives and nests does not copy their honey levels.
+|160051|Players can prevent fire damage by reloading world/re-joining server.
+|166072|Custom Trident model ignores "{{cd|layer0}}" and "{{cd|elements}}" section.
+|186341|Command autocomplete doesn't consider parts after a slash.
+|193176|Most mobs with {{cd|CanPickUpLoot}} prefer swords over axes and will downgrade their weapon.
+|193313|Mob item pick up behavior is not distinct resulting in mobs constantly dropping and picking up items.
+|193336|Heads/skulls don't render when held by an enderman or as block display entities.
+|201940|After dying, Ender Dragon body part hitboxes do not move upwards with the main hitbox.
+|202250|Sprinting particles appear when sprinting inside of boats in shallow water.
+|206684|Spyglass particles have no associated texture.
+|229142|Spyglass texture doesn't allow override through resource pack.
+|236295|The game does not report absent particle texture references in models to the output log.
+|249079|Sculk veins are not mirrored correctly from behind.
+|260216|Decorated pots aren't rendered when held by endermen or as block display entities.
+|267343|Sprinting isn't canceled upon riding entities.
+|269616|Telemetry Data scroll bar does not have a background.
+|269749|Report Player scroll bar does not have a background.
+|270136|Thrown projectiles with {{cd|custom_model_data}} do not maintain proper particles when breaking.
+|270529|Air's model does not define a particle texture, causing issues.
+|271786|Empty block states in {{cd|noise_provider}} does not cause validation to fail, causing crash.
+|;From 1.21
+|272994|Allays assigned to a player can be set on fire with sweeping and fire aspect.
+|273407|Block entity items with custom block states keep them as components when placed.
+|273450|Mobs with {{cd|CanPickUpLoot:1b}} behave inconsistently with the mace / trident.
+|273522|Mobs with {{cd|CanPickUpLoot}} no longer pick up enchanted items after picking up an unenchanted item.
+|273635|Trial spawners forget their designated mob when placed by player out of creative mode, assigned by spawn eggs.
+|274268|Trial Spawner keeps flashing after cooldown ends.
+|275011|Instant mine does not work when standing inside of cobwebs.
+|;From 1.21.1
+|275338|Sprint particles can be seen if you mount a minecart (with no rail below it) while running.
+|;From 1.21.2
+|275215|Experiments warning goes off the screen if viewed at low window size.
+|276110|{{cd|honey_level}} model predicate range is 1 for level 5 and 0 for levels 1-4.
+|276115|New Bee Nest and Beehive item models don't use the block parent.
+|276412|Custom item models set to a shield and various other items all create invisible items.
+|276654|{{cd|item_model}} item component breaks on trident.
+|276728|Tridents and spyglasses appear dark in the inventory if given a custom item model for a block.
+|276730|Bundles appear dark in the inventory if given a custom item model for a block and then scrolled through.
+|276731|Items which use entity models will not render another entity model if specified via item model component.
+|276732|Colors will carry over from item ID to target model.
+|276764|Eggs with custom models use the particles from that model, but snowballs do not.
+|276769|Missing texture when throwing eggs with certain template models.
+|276771|Missing texture when a damageable item with one of several template models is destroyed.
+|276828|Minecraft no longer prints an error to the game log when a model fails to define a texture.
+|276847|Bundles given the model of a different bundle will not preserve their color when scrolled through.
+|277082|Creakings take knockback from wind charges.
+|277092|The eyes of creakings aren't visible when creakings have the invisibility effect.
+|277149|Creakings are affected by knockback from mace smash attacks.
+|277243|Creakings take knockback from Punch bows.
+|277264|The Creaking can be knocked back by zoglins.
+|277916|Containers are locked when upgrading a world from certain versions.
+|;From 1.21.3
+|277961|Experience orbs incorrectly bounce up.
+|278071|"{{cd|minecraft.used:minecraft.trident}}" doesn't increase when throwing a trident.
+|;From the previous development version
+|277925|Resin Brick Stairs are not part of the {{cd|#stairs}} block and item tags.
+|277926|Resin Brick Slab is not part of the {{cd|#slab}} block and item tags.
+|277929|The game crashes when attempting to use the void preset.
+|277930|Eyeblossom subtitles are inverted.
+|277931|Incorrect display on the map of the flower Closed and Open Eyeblossom.
+|277932|Resin Clump is not part of the {{cd|#replaceable}} block tag.
+|277933|Smithing Table doesn't show a Clump icon for ingredient slot.
+|277939|Programmer Art's empty slot icons may not have been correctly updated for 24w44a.
+|277941|resin_clump is not mirrored correctly from behind.
+|277945|Incorrect verb form in "Elytra swooshes" subtitle.
+|277950|Open potted eyeblossom is shaded ({{cd|flower_pot_cross_emissive}}).
+|277951|Eyeblossom is placed in an unexpected position in the Creative inventory.
+|277952|Sprinting isn't canceled upon flying with elytra.
+|277954|Creaking Heart underwater plays spawning sounds in a loop.
+|277955|Using a loom crashes the game.
+|277964|Resin is not generated when a creaking is attacked by a wolf owned by a player.
+|277966|Creaking does not generate resin from player-caused explosions.
+|277967|The game crashes when certain explosions occur near a creaking in its death animation.
+|277970|Hanging signs don't display chains when attached to the side of a block.
+|277972|You can no longer swim when crouched under a slab.
+|277983|Naturally-spawned creaking hearts drop experience when broken in Creative mode.
+|277994|Picking a decorated pot or a shulker box always keeps its container data.
+|278002|Sculk sensors are not activated upon resin clumps spawning from creaking hearts.
+|278004|Hitting a creaking heart with a wind charge kills the creaking.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|7_dDlCUgsBc|TKCvKR4DGoI}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[Category:Java Edition 1.21.4 development versions]]
+
+[[de:24w45a]]
+[[es:Java Edition 24w45a]]
+[[fr:Édition Java 24w45a]]
+[[ja:Java Edition 24w45a]]
+[[pt:Edição Java 24w45a]]
+[[ru:24w45a (Java Edition)]]
+[[uk:24w45a (Java Edition)]]
+[[zh:Java版24w45a]]

@@ -1,0 +1,448 @@
+{{about|the legacy §-based formatting system|the modern system|Text component format|emoji shortcodes in ''Bedrock Edition''|Chat#Formatting}}
+{{Redirect|Format|pack formats|Pack format}}
+{{Deprecated feature|edition=je|See {{bug|MC-190605}}.}}
+[[File:Minecraft Formatting.gif|thumb|200px|A book showing the possible formatting options with the character that performs them.]]
+
+'''Formatting codes''' (also known as '''color codes''') add color and modifications to text in-game. Since [[Java Edition 1.21.6]], pasting paragraph symbols into books is no longer possible, making formatting in survival impossible.
+
+Text in ''Minecraft'' can be formatted with the {{w|section sign}} (<code>§</code>). {{IN|bedrock}}, the section sign can be used in [[sign]]s, world names, [[book and quill]]s, [[anvil]]s and [[cartography table]]s (to rename items and maps), and in the [[chat]] input field (including in commands such as <code>/say</code> and <code>/title</code>). {{IN|java}}, section signs may be used in <samp>[[server.properties]]</samp>, <samp>[[pack.mcmeta]]</samp>, <samp>[[Splash|splashes.txt]]</samp>, [[language]] files, world titles, commands (such as <code>/tellraw</code> and <code>/title</code>) in [[data pack]]s, and server names. [[Programs and editors|External programs]] can be used to insert it in other locations.
+
+== Usage ==
+Text can be formatted using the section sign (§) followed by a character. A § symbol followed by a hex digit in the message tells the client to switch colors while displaying text. {{IN|bedrock}}, the § symbol can be used in any text input, while {{in|java}}, it may be used in <samp>[[server.properties]]</samp>, <samp>[[pack.mcmeta]], [[Splash|splashes.txt]]</samp>, [[language]] files, world titles, commands (such as <code>/tellraw</code> and <code>/title</code>) in [[datapacks]], and server names.
+
+=== ''Java Edition'' ===
+{{warning|section=1|Formatting codes are no longer actively supported, being replaced with [[text component]]s in most places.
+{{Q|Formatting codes are deprecated and will be removed in the future. We will continue to introduce further support for text components instead where it is still missing, so prefer moving to those wherever possible and be aware that any strings using format codes may stop working in future versions.|[[Mikael Hedberg|slicedlime]]|{{bug|MC-190605}}|Slicedlime_Twitter_avatar.jpg}}
+}}
+
+If a color code is used after a formatting code, the formatting code is disabled beyond the color code point. For example, <code>§cX§nY</code> displays as <span class="format-c" style="font-family: Minecraft;">X<u>Y</u></span>, whereas <code>§nX§cY</code> displays as <span class="format-f" style="font-family: Minecraft"><u>X</u><span class="format-c">Y</span></span>. Therefore, when using a color code in tandem with a formatting code, ensure the color code is used first and reuse the formatting code when changing colors. Also, you could put <code>§r§f</code> in an anvil to rename an item as non-italic.
+
+=== ''Bedrock Edition'' ===
+{{Warning|section=1|[[Ore UI#Warning|Ore UI]] does not support color codes.<ref>{{tweet|Volgar|1867216296821370992|It probably won't be supported in the new screens, but it certainly shouldn't look like this, just plain text. Thanks, I'll pass it to the team.}}</ref><ref>{{bug|MCPE-174371|MCPE-174371|The new "Play screen" UI doesn't support colored characters|WAI}}</ref><ref>{{bug|MCPE-152246|MCPE-152246|New Create New World UI doesn't support text formatting codes|WAI}}</ref>}}
+
+Formatting codes persist after a color code. Furthermore, if an obfuscated code is used and a reset code is not used before the end of the line, the client GUI continues to obfuscate text past the MOTD and into the version number display.
+[[File:Motd scramble bug.png|thumb|400px]]
+
+=== Color codes ===
+[[File:Colors.png|thumb|x516px|Hex digit to color mapping. Use "§" followed by the corresponding color letter/number; e.g. "§e" gives yellow.]]
+Messages sent from the server to the client can contain color codes, which allow the coloring of text for various purposes.
+
+{| class="wikitable" style="text-align: center;" data-description="Color codes"
+|-
+! rowspan=2 | Code
+! rowspan=2 | Name
+! colspan=4 | Foreground color
+! colspan=4 | Background color
+! rowspan=2 | Equivalent [[wikipedia:ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters|ANSI escape code]]
+! rowspan=2 | Version
+|-
+! R !! G !! B !! <abbr title="Hexadecimal color code">Hex</abbr>
+! R !! G !! B !! <abbr title="Hexadecimal color code">Hex</abbr>
+|-
+| §0
+| black
+| 0 || 0 || 0 || style="text-align: left;" | {{color|#000000}}
+| 0 || 0 || 0 || style="text-align: left;" | {{color|#000000}}
+| <code>\e[0;30m</code>
+|
+|-
+| §1
+| dark_blue
+| 0 || 0 || 170 || style="text-align: left;" | {{color|#0000AA}}
+| 0 || 0 || 42 || style="text-align: left;" | {{color|#00002A}}
+| <code>\e[0;34m</code>
+|
+|-
+| §2
+| dark_green
+| 0 || 170 || 0 || style="text-align: left;" | {{color|#00AA00}}
+| 0 || 42 || 0 || style="text-align: left;" | {{color|#002A00}}
+| <code>\e[0;32m</code>
+|
+|-
+| §3
+| dark_aqua
+| 0  || 170 || 170 || style="text-align: left;" | {{color|#00AAAA}}
+| 0 || 42 || 42 || style="text-align: left;" | {{color|#002A2A}}
+| <code>\e[0;36m</code>
+|
+|-
+| §4
+| dark_red
+| 170 || 0 || 0 || style="text-align: left;" | {{color|#AA0000}}
+| 42 || 0 || 0 || style="text-align: left;" | {{color|#2A0000}}
+| <code>\e[0;31m</code>
+|
+|-
+| §5
+| dark_purple
+| 170 || 0 || 170 || style="text-align: left;" | {{color|#AA00AA}}
+| 42 || 0 || 42 || style="text-align: left;" | {{color|#2A002A}}
+| <code>\e[0;35m</code>
+|
+|-
+| §6
+| gold
+| 255 || 170 || 0 || style="text-align: left;" | {{color|#FFAA00}}
+| 64 || 42 || 0 || style="text-align: left;" | {{color|#3E2A00}}
+| <code>\e[0;33m</code>
+| 
+|-
+| rowspan=2 | §7
+| rowspan=2 | gray
+| 170 || 170 || 170 || style="text-align: left;" | {{color|#AAAAAA}}
+| 42 || 42 || 42 || style="text-align: left;" | {{color|#2A2A2A}}
+| rowspan=2 | <code>\e[0;37m</code>
+| {{only|je|short=1}}
+|-
+| 198 || 198 || 198 || style="text-align: left;" | {{color|#C6C6C6}}
+| 49 || 49 || 49 || style="text-align: left;" | {{color|#313131}}
+| {{only|be|short=1}}
+|-
+| §8
+| dark_gray
+| 85 || 85 || 85 || style="text-align: left;" | {{color|#555555}}
+| 21 || 21 || 21 || style="text-align: left;" | {{color|#151515}}
+| <code>\e[0;90m</code>
+|
+|-
+| §9
+| blue
+| 85 || 85 || 255 || style="text-align: left;" | {{color|#5555FF}}
+| 21 || 21 || 63 || style="text-align: left;" | {{color|#15153F}}
+| <code>\e[0;94m</code>
+|
+|-
+| §a
+| green
+| 85 || 255 || 85 || style="text-align: left;" | {{color|#55FF55}}
+| 21 || 63 || 21 || style="text-align: left;" | {{color|#153F15}}
+| <code>\e[0;92m</code>
+|
+|-
+| §b
+| aqua
+| 85 || 255 || 255 || style="text-align: left;" | {{color|#55FFFF}}
+| 21 || 63 || 63 || style="text-align: left;" | {{color|#153F3F}}
+| <code>\e[0;96m</code>
+|
+|-
+| §c
+| red
+| 255 || 85 || 85 || style="text-align: left;" | {{color|#FF5555}}
+| 63 || 21 || 21 || style="text-align: left;" | {{color|#3F1515}}
+| <code>\e[0;91m</code>
+|
+|- <!--Do not change "Light Purple" to "Pink", it is the in game name -->
+| §d
+| light_purple
+| 255 || 85 || 255 || style="text-align: left;" | {{color|#FF55FF}}
+| 63 || 21 || 63 || style="text-align: left;" | {{color|#3F153F}}
+| <code>\e[0;95m</code>
+|
+|-
+| §e
+| yellow
+| 255 || 255 || 85 || style="text-align: left;" | {{color|#FFFF55}}
+| 63 || 63 || 21 || style="text-align: left;" | {{color|#3F3F15}}
+| <code>\e[0;93m</code>
+|
+|-
+| §f
+| white
+| 255 || 255 || 255 || style="text-align: left;" | {{color|#FFFFFF}}
+| 63 || 63 ||  63 || style="text-align: left;" | {{color|#3F3F3F}}
+| <code>\e[0;97m</code>
+|
+|-
+| §g
+| minecoin_gold
+| 221 || 214 || 5 ||style="text-align: left;" | {{color|#DDD605}}
+| 55 ||  53 || 1 || style="text-align: left;" | {{color|#373501}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §h
+| material_quartz
+| 227 || 212 || 209 ||style="text-align: left;" | {{color|#E3D4D1}}
+| 56 ||  53 || 52 || style="text-align: left;" | {{color|#383534}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §i
+| material_iron
+| 206 || 202 || 202 ||style="text-align: left;" | {{color|#CECACA}}
+| 51 ||  50 || 50 || style="text-align: left;" | {{color|#333232}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §j
+| material_netherite
+| 68 || 58 || 59 ||style="text-align: left;" | {{color|#443A3B}}
+| 17 ||  14 || 14 || style="text-align: left;" | {{color|#110E0E}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §m
+| material_redstone
+| 151 || 22 || 7 ||style="text-align: left;" | {{color|#971607}}
+| 37 ||  5 || 1 || style="text-align: left;" | {{color|#250501}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §n
+| material_copper
+| 180 || 104 || 77 ||style="text-align: left;" | {{color|#B4684D}}
+| 45 ||  26 || 19 || style="text-align: left;" | {{color|#2D1A13}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §p
+| material_gold
+| 222 || 177 || 45 ||style="text-align: left;" | {{color|#DEB12D}}
+| 55 ||  44 || 11 || style="text-align: left;" | {{color|#372C0B}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §q
+| material_emerald
+| 17 || 159 || 54 ||style="text-align: left;" | {{color|#119F36}}
+| 4 ||  40 || 13 || style="text-align: left;" | {{color|#04280D}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §s
+| material_diamond
+| 44 || 186 || 168 ||style="text-align: left;" | {{color|#2CBAA8}}
+| 11 ||  46 || 42 || style="text-align: left;" | {{color|#0B2E2A}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §t
+| material_lapis
+| 33 || 73|| 123 ||style="text-align: left;" | {{color|#21497B}}
+| 8 ||  18 || 30 || style="text-align: left;" | {{color|#08121E}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §u
+| material_amethyst
+| 154 || 92 || 198 ||style="text-align: left;" | {{color|#9A5CC6}}
+| 38 ||  23 || 49 || style="text-align: left;" | {{color|#261731}}
+| &mdash;
+| {{only|be|short=1}}
+|-
+| §v
+| material_resin
+| 235 || 114 || 20 ||style="text-align: left;" | {{color|#EB7114}}
+| 59 ||  29 || 5 || style="text-align: left;" | {{color|#3B1D05}}
+| &mdash;
+| {{only|be|short=1}}
+|}
+
+
+=== Formatting codes ===
+{| class="wikitable" style="text-align: center;" border="1" cellpadding="5" data-description="Formatting codes"
+|-
+! width="8" colspan="1" | Code
+! colspan="1" | Name
+! Equivalent [[wikipedia:ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters|ANSI escape code]]
+! Version
+|-
+| §k || obfuscated/MTS*
+| —
+| 
+|-
+| §l || '''bold'''
+| <code>\e[1m</code>
+| 
+|-
+| §m || <s>strikethrough</s>
+| <code>\e[9m</code>
+| {{only|je|short=1}}
+|-
+| §n || <u>underlined</u>
+| <code>\e[4m</code>
+| {{only|je|short=1}}
+|-
+| §o || ''italic''
+| <code>\e[3m</code>
+| 
+|-
+| §r || reset
+| <code>\e[0m</code>
+| 
+|-
+|}
+
+The random characters placed after <code>§k</code> are always the same width as the original characters. For example, any random character cycled through in place of the letter "m" would be a wide character while any random character in place of the letter "i" would be a narrow character.
+
+<nowiki>*</nowiki>MTS: Magical Text Source; used in the game's source code (<code>this.magictextsrc</code>)
+
+<code>§r</code> resets the styles of following characters; e.g., <code>§nXXX§rYYY</code> displays as <span class="format-f" style="font-family: Minecraft"><u>XXX</u>YYY</span>, which can be used to remove the default italics formatting when renaming an item in an [[Anvil]].
+
+=== Typing ===
+{{see also|Wikipedia:Unicode input}}
+* To enter "§" on Windows with most US/UK English keyboards type {{keys|Alt+NUMPAD2|NUMPAD1}} ([[Wikipedia:alt code|alt code]] on cp437) or {{Keys|Alt+NUMPAD7|NUMPAD8|NUMPAD9|}}. For any other keyboard, the Windows ANSI version {{keys|Alt+NUMPAD0|NUMPAD1|NUMPAD6|NUMPAD7}} often works.
+* If <code>EnableHexNumpad</code> is enabled in the Windows registry, {{keys|Alt+NUMPAD<nowiki>+</nowiki>|A|NUMPAD7}} (using the main keyboard for "A") works for any language due to it being Unicode.
+* On a Mac with a US keyboard, type {{keys|Option+6}} (or {{keys|Option+5}} for US Extended). For any other keyboard, type {{keys|Option+0|0|a|7}}.
+* On Linux with the [[wikipedia:Compose key|compose key]] activated, type {{keys|Compose|s|o}}. The symbol can also be typed by using Unicode shortcuts: {{keys|Control+Shift+u|a|7|Enter}}.
+* To enter "§" on a Nintendo Switch, select languages (globe icon), scroll to the bottom to find the "Symbols" language, and then select Page 2 to find the symbol to the right in the bottom line.
+* For various Android keyboards:
+** Google Keyboard (GBoard): The "§" is in the More Symbols section the symbols. To access it, press the Numbers and Symbols button (?123), then press the More Symbols button (=\<). Note that on previous versions of GBoard, it was behind the Paragraph Symbol "¶" in the same position, but they were recently swapped so that now "¶" is behind "§".
+** Samsung Keyboard: The "§" is under the "s" key. To access, hold down on the "s" and then slide over to the "§" mark.
+* For iOS:
+** On the iPad the "§" is under the percent sign. To access, tap the number/symbol button and then swipe down on the percent sign.
+** On the iPhone the "§" is under the ampersand "&". To access, tap the number/symbol button then hold down the ampersand key and slide over to the "§" mark.
+* For Xbox:
+** On the Xbox One the "§" is under the paragraph mark "¶". To access, use {{xbtn|lt}}, hold down {{xbtn|A}} while on ¶ until other options pop up. Move the cursor over to the "§" mark and use {{xbtn|A}} to select.
+** One can also highlight the S key on the standard alphanumeric keyboard, then press and hold {{xbtn|A}} to reveal several "alternate" characters, including "§". This method also works on the Windows 10 version.
+* For Nintendo Switch:
+**In the bottom left corner of the keyboard is a language button. Tapping it or pressing {{nsbtn|A}} on it will open a list of keyboard languages. Scroll down to the bottom and select the "Symbol" keyboard. The "§" character is located on page 2.
+
+When part of [[JSON text|JSON]] text, the symbol can be written as {{code|\u00A7}} or {{code|\u00a7}}.
+
+Alternatively {{in|be}}, the character can be copied from this page (<code>§</code>) and pasted into virtually any text field by pressing {{keys|Ctrl+V}} (Windows) or {{keys|CMD+V}} (macOS). If pasting does not work it may be necessary to use the JSON format or another method.
+
+While in chat in [[Java Edition]], usage of this character disconnects the user, even in 'offline' single player mode, and thus cannot be used directly in commands such as <code>/say</code>.
+
+In early [[Java Edition Classic]] versions, the character used was {{cd|&}} instead of {{cd|§}}.<ref name="Notch announcement">[https://archive.org/download/Minecraft_IRC_Logs_2009/DBN-IRC-Logs/ IRC logs] on Archive.org; #minecraft.20090619.log. "''P7:43:58 <Notch> Quatroking: want to know a secret?''" [...] "''P7:44:44 <Notch> /say He&1llo&f, world! &bHOW ARE YOU!?''" [...] "''P7:45:52 <Notch> it's the ega palette, almost''" (June 20, 2009, 00:43:58 UTC)</ref>
+
+=== Sample text ===
+The following text can be pasted into a [[Book and Quill]] (prior to 1.14) to produce what is shown in the picture:
+
+{|
+|-
+| style="vertical-align: middle;" | [[File:Minecraft Formatting.gif|292px]]
+|
+<pre>§nMinecraft Formatting§r
+
+§00 §11 §22 §33
+§44 §55 §66 §77
+§88 §99 §aa §bb
+§cc §dd §ee §ff
+
+§rk §kMinecraft
+§rl §lMinecraft
+§rm §mMinecraft
+§rn §nMinecraft
+§ro §oMinecraft
+§rr §rMinecraft</pre>
+|-
+|}
+
+=== Formatting code editor ===
+This tool converts input text into plain text with formatting codes.
+
+''Note: The dice icon highlights text, which, in the real game, will appear as obfuscated text.''
+{{Calculator|formattingCodeEditor}}
+
+== Use in <samp>server.properties</samp> and <samp>pack.mcmeta</samp> ==
+In order to get an MOTD colored or formatted, <code>\u00A7</code> must be used instead of <code>§</code>; for example, <code>§5</code> would be <code>\u00A75</code>. The full list of them is listed below.
+Colors can be used in conjunction with formatting. The formatting must be done '''after''' the color.
+
+Given that <code>pack.mcmeta</code> files accept [[Commands#Raw JSON text|raw JSON text]] as descriptions, the usage of <code>§</code> can be replaced by text components with different color and style, though using <code>§</code> still works.
+
+{| class="wikitable" style="text-align: center;" data-description="Codes without 'section' symbol"
+|-
+! Code !!  Official Name !! <abbr title="Message of the Day">MOTD</abbr> code !! Note
+|-
+| §0 || Black || \u00A70 ||
+|-
+| §1 || Dark Blue || \u00A71 ||
+|-
+| §2 || Dark Green || \u00A72 ||
+|-
+| §3 || Dark Aqua || \u00A73 ||
+|-
+| §4 || Dark Red || \u00A74 ||
+|-
+| §5 || Dark Purple || \u00A75 ||
+|-
+| §6 || Gold || \u00A76 ||
+|-
+| §7 || Gray || \u00A77 ||
+|-
+| §8 || Dark Gray || \u00A78 ||
+|-
+| §9 || Blue || \u00A79 ||
+|-
+| §a || Green || \u00A7a ||
+|-
+| §b || Aqua || \u00A7b ||
+|-
+| §c || Red || \u00A7c ||
+|-
+| §d || Light Purple || \u00A7d ||
+|-
+| §e || Yellow || \u00A7e ||
+|-
+| §f || White || \u00A7f ||
+|-
+| §k || Obfuscated || \u00A7k ||
+|-
+| §l || '''Bold''' || \u00A7l ||
+|-
+| §m ||<s>Strikethrough</s> || \u00A7m || {{Only|java}}
+|-
+| §n ||<u>Underline</u> || \u00A7n || {{Only|java}}
+|-
+| §o || ''Italic'' || \u00A7o ||
+|-
+| §r || Reset || \u00A7r ||
+|}
+
+=== Compatibility with older versions ===
+Formatting codes can be used in the <code>motd</code> line in a {{cd|server.properties}} file, but the section signs must be escaped as <code>\u00A7</code>. If a section sign is entered directly, the server replaces it with <code>\u00C2\u00A7</code> ({{cd|Â§}}); clients display the <code>\u00C2</code> character as a question mark. Delete the <code>\u00C2</code> character in the MOTD if it comes with a bunch of question marks: this happens if something is not compatible.
+
+== Use in custom language packs ==
+Formatting codes can be used to color names and description in language files by using <samp>§</samp> then any of the numbers/letters displayed above. This is also used in <samp>end.txt</samp> and <samp>credits.txt</samp>. An example of this is <code>§dDiamond</code> to make the name of a diamond appear as <span class="format-d" style="font-family: Minecraft">Diamond</span>.
+
+Since [[Java Edition 1.16]], <code>§r</code> can no longer be used to remove italics from custom translation tags within language files. For example, if the translation tag <code>"item.example.test": "§rTest Item"</code> is applied to the <code>Name</code> display data of a custom item (<code>{display:{Name:'{translate:"item.example.test"}'}</code>), it still appears as <code>''Test Item''</code> rather than simply <code>Test Item</code>. This is not true of any other formatting options.
+
+== Use in world names ==
+[[File:Colorful world name (legacy).png|thumb|Colorful name of a world (as it is visible on the [[Select World#Java Edition|world list]]) after applying [[#Color codes|color codes]] (legacy, §-based).]]
+{{IN|java}}, with the help of external tools, such as [[Programs and editors/NBTExplorer|NBTExplorer]], world names can have custom colors and formatting codes. To modify the name, choose the <samp>LevelName</samp> tag in the world's <samp>[[Java Edition level format#level.dat format|level.dat]]</samp>. For example, the <samp>LevelName</samp> tag can be set to <code>§1R§2e§3d§4s§5t§6o§7n§8e §9C§ar§be§ca§dt§ei§fo§1n§2s</code> to make the world name a colorful one.
+
+Additionally, the player can rename the world's folder to contain the codes. Then, in the [[Select World#Java Edition|world selection menu]], the specified colors or effects will appear.
+
+The player can also use a resource pack with <samp>§</samp> character(s) already present in the world name, and in this case, when creating a new world, all the player has to do is to change the color codes after the <samp>§</samp> characters.
+
+{{IN|bedrock}}, the player is allowed to use a <samp>§</samp> inside of the world name when creating the world. This allows for using custom colors and formatting codes inside of the world name without having to modify the game.
+
+== Use in server names ==
+[[File:ColouredServer.png|thumb|400px]]
+With the use of a third party tool such as NBTExplorer, server names can have custom colors. To utilize this functionality, select the {{cd|Name}} attribute in the {{cd|[[servers.dat]]}} file inside the {{cd|[[.minecraft]]}} directory using a third party tool. In the following example, the {{cd|Name}} tag is set to
+<code>§4§lMinecraft §6§lServer</code>:
+
+== History ==
+[[File:Obfuscated Text Comparison.gif|thumb|400px]]
+{{Expand section|A conversion to history table with information about when it was added, when & was changed to §, when it was superseded, etc.}}
+{{info needed section|When was g added to Bedrock Edition?}}
+In [[Java Edition Alpha 1.0.12]], text coloring from color codes were changed for the first time {{info needed|Which were the old colors?}}.
+Obfuscated format <code>§k</code> has changed 3 times {{in|java}} after being introduced in [[Java Edition Beta 1.9 Prerelease 6|Beta 1.9 Prerelease 6]]. On the right is an image of how the obfuscated text of <code>1234567890abcdefghijklmnopqrstuvwxyz~!@#$%^&*()-=_+{}[]</code> looks in 4 different versions. At first glance, they might look similar, but in reality,  there are some differences. One major difference is that as font textures get updated with new characters and symbols, the obfuscated character cycles through more characters. That change can be clearly seen when any character gets obfuscated in versions 1.6.4-1.12.2. However, when 1.13 came out, if the obfuscated format was used on any character, it looped only through the [[wikipedia:ASCII#Character_set|ASCII]] character set. Nevertheless, an obfuscated character can still add a character to its loop. If a character that matches its dimensions was written into the chat by a player, it is inserted to the loop automatically. As for 1.13+, the whole system got reworked. All characters cycle through all characters that can be written in the game no matter what kind of character is getting obfuscated. The difference is that the condition that identifies similar characters, became more diverse in its identification, which made it include several unicode font characters. This can be spotted in one pixel width characters <code>i!:;.</code>, which are the most used characters by players, as they display a unique effect when used with obfuscation rather than it being what it's for, "Obfuscation". Followed by <code>@~</code> in older versions.
+
+In [[Java Edition 25w36a|25w36a]], formatting codes have now been stripped from the code of conduct files.
+
+== Trivia ==
+* The first 16 color codes almost exactly match, in order, the 16 colors available using a [[wikipedia:Color Graphics Adapter#Color palette|Color Graphics Adapter (CGA)]], as released in 1981. Only color 6 differs; the value for color 6 in Minecraft – {{color|#FFAA00}} – differs from that made for CGA – {{color|#AA5500}}.
+* Obfuscated format (§k) displays as dots in ''[[Bedrock Edition]]'' if any font except Mojangles is used.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{Navbox Minecraft|general}}
+
+[[de:Formatierungscodes]]
+[[es:Códigos de formato]]
+[[fr:Codes de mise en forme]]
+[[it:Codici di formattazione]]
+[[ja:装飾コード]]
+[[ko:형식화 부호]]
+[[pl:Kody formatowania]]
+[[pt:Códigos de formatação]]
+[[ru:Форматирование текста]]
+[[uk:Коди форматування]]
+[[zh:格式化代码]]

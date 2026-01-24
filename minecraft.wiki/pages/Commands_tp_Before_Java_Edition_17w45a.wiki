@@ -1,0 +1,77 @@
+{{about|the {{cmd|tp|link=none}} command before [[Java Edition 1.13]]|the main command in Java Edition 1.13 and Bedrock Edition|Commands/teleport}}
+{{outdated feature}}
+{{Infobox command
+|name=tp
+|oplevel=op
+}}
+
+Teleports entities (players, mobs, items, etc.).
+
+The primary difference between this command and the {{cmd|teleport}} command is that {{cmd|tp|link=none}} uses coordinates relative to the teleported targets, while {{cmd|teleport}} uses coordinates relative to the command's execution.
+
+Although most commands can only affect chunks that have already been generated, {{cmd|tp|link=none}} can send entities into chunks that have yet to be generated. If this happens to a player, then the chunks around and including that player's destination will be newly generated.
+
+==Syntax==
+
+: <code>tp <destination player></code>
+: <code>tp <x> <y> <z> [<yaw> <pitch>]</code>
+: <code>tp <target player> <destination player></code>
+: <code>tp <target player> <x> <y> <z> [<yaw> <pitch>]</code>
+
+==Arguments==
+
+<code><target player></code>
+: Specifies the entity(s) to be teleported. Must be a player name, a [[target selector]], or a [[UUID]].
+: Permits entities other than players.
+
+<code><x> <y> <z></code> (BE: <code>destination: x y z</code>)
+: Specifies the coordinates to teleport the target(s) to. <code><x></code> and <code><z></code> must fall within the range -30,000,000 to 30,000,000 (exclusive, without the commas), and <code><y></code> must be within the range -4096 to 4096, inclusive. May use [[tilde notation|tilde]] and [[caret notation]] to specify a position relative to the target's current position – an exception to tilde notation's usual rule of being relative to the executor of the command. {{cmd|teleport}} can be used to teleport relative to executor of the command.
+
+<code><destination player></code>
+: Specifies the entity to teleport the target(s) to. Must be a player name, a [[target selector]], or a [[UUID]].
+: Permits entity other than players.
+
+<code><yaw></code> and <code><pitch></code>
+: Specifies the rotation.
+:: For the horizontal rotation (<code>yaw</code>), -180.0 for due north, -90.0 for due east, 0.0 for due south, 90.0 for due west, to 179.9 for just west of due north, before wrapping back around to -180.0.
+:: For the vertical rotation (<code>pitch</code>), -90.0 for straight up to 90.0 for straight down.
+: Tilde notation can be used to specify a rotation relative to the target's previous rotation.
+
+==Result==
+
+Fails if the arguments are not specified correctly, if <code><target player></code> fails to resolve to one or more entities (named players must be online), or if <code><destination player></code> fails to resolve to a single entity (a named player must be online). Fails individually for each entity referenced by <code><target player></code> that is not in the same dimension as the <code><destination player></code>, if specified.
+
+On success, teleports the targets to the specified destination.
+
+==Examples==
+
+* To teleport yourself to Alice: <code>tp Alice</code>
+* To teleport all players to yourself: <code>tp @a @s</code>
+* To teleport yourself to x=100 and z=100, but three blocks above your current position: <code>tp 100 ~3 100</code>
+* To rotate the nearest player 10 degrees to the right without changing their position: <code>tp @p ~ ~ ~ ~10 ~</code>
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|java classic}}
+|{{HistoryLine||0.0.18a|Added {{cmd|teleport|link=none}}.}}
+|{{HistoryLine||server 1.7|Added {{cmd|tp|link=none}}, an alias for {{cmd|teleport|link=none}}.}}
+|{{HistoryLine|java indev}}
+|{{HistoryLine||0.31|dev=20091223-0040|Removed all commands.}}
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||v1.0.16_01|Re-added {{cmd|tp|link=none}}.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.3.1|dev=12w25a|Can now be used to teleport to any coordinates rather than just another player.}}
+|{{HistoryLine||1.8|dev=14w03a|Added rotation arguments to {{cmd|tp|link=none}}.}}
+|{{HistoryLine||1.9.3|dev=pre1|{{cmd|tp|link=none}} no longer teleports the player to a y-coordinate outside the range -512 to 512.}}
+|{{HistoryLine||1.10|dev=16w21b|The y-coordinate range of {{cmd|tp|link=none}} is increased to &minus;4096 to 4096.
+|Now the specified destination is relative to executor of the command, instead of the target's current position.}}
+|{{HistoryLine|||dev=pre1|Behavior is reverted back to 16w20a and previous versions.}}
+|{{HistoryLine||1.13|dev=17w45a|{{cmd|tp|link=none}} is no longer different from {{cmd|teleport}} now, and become an alias of {{cmd|teleport}}.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[ja:コマンド/tp/Java Edition 17w45a以前]]
+[[zh:命令/tp/Java版17w45a前]]

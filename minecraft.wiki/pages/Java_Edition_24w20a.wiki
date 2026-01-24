@@ -1,0 +1,134 @@
+{{Dangerous version|type=crash|The game crashes when entities die while having the Oozing effect.|version=development|edition=java}}
+{{Infobox version
+|title=Minecraft 24w20a
+|image=24w20a.jpg
+|image2=Java Edition 24w20a.png
+|edition=Java
+|type=Snapshot
+|date=May 15, 2024
+|jsonhash=837e9b5707c5c76ed705b7835f40323b4b04bfc0
+|clienthash=114be228b9168caeb28769a716c6f78d5aba7588
+|clientmap=d154a11e41461705c338a0544fd541c607559198
+|serverhash=e3b1bcc2d7a09b6f1acfef7090ee64409feb3b94
+|servermap=35dc942cb3328dd856ee3961642f5500e069e98f
+|parent=1.21
+|prevparent=1.20.6
+|prev=24w19b
+|next=24w21a
+|nextparent=1.21.1
+}}<onlyinclude>
+
+'''24w20a''' is the fourth [[snapshot]] for [[Java Edition 1.21]], released on May 15, 2024,<ref name=":0">{{snap|24w20a|May 15, 2024}}</ref> which fixes bugs. 
+
+== Changes ==
+=== Mobs ===
+''' [[Witch]] '''
+* Now always drops 4–8 [[redstone dust]] on death.
+** This is to improve the viability of farms that utilize [[witch hut]]s to obtain redstone dust.<ref name=":0"/>
+
+=== Gameplay ===
+''' [[Effect]]s '''
+* Improved player attribute and effect handling.
+** Custom set base attributes are now kept when respawning.
+** Active effects and modifiers are kept when changing dimension or winning the game.
+
+''' [[Enchantment]]s '''
+* [[Wind Burst]]
+** Invalidates the fall damage protection of mace smash attacks once again, reverting the fix of {{bug|MC-270687}}.<ref>[https://bugs.mojang.com/browse/MC-270687?focusedId=1324659&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-1324659 MC-270687] — Maces enchanted with wind burst don't reliably protect players from fall damage — resolved as "Works As Intended".</ref>
+
+=== Sounds ===
+''' [[Piston]]s '''
+* Changed sounds to lower their volume and attenuation.
+** This was done to address the old sounds being too harsh and loud when used in redstone contraptions.<ref name=":0"/>
+
+=== General ===
+''' [[Credits]] '''
+* Have been updated.
+
+''' [[Data pack]] '''
+* The [[pack format]] version is now <code>44</code>.
+
+''' [[Custom structure]] '''
+* <code>dimension_padding</code> jigsaw structure tag was changed.
+** Now it is an object with fields:
+*** <code>bottom</code>: the vertical padding at the bottom of the dimension, non-negative integer.
+*** <code>top</code>: the vertical padding at the top of the dimension, non-negative integer.
+** Can be written as a single non-negative integer instead to be applied to both top and bottom fields.
+*** e.g. both <code>dimension_padding: 10</code> or <code>dimension_padding: { bottom: 10, top: 5 }</code> are valid.
+* Data-driven enchantment field <code>weight</code> now has an upper bound of 1024.
+* Data-driven enchantment field <code>max_level</code> now has an upper bound of 255.
+* New entity sub predicate <code>movement_affected_by</code> - optional location predicate.
+** When present, adds requirements on a block at most 0.5 blocks below the entity which can affect its movement.
+
+== Fixes ==
+{{fixes|fixedin=24w20a
+|;old
+|6431|Status effects are lost when returning to the Overworld from the exit End portal.
+|83590|Armor attributes list can be too long.
+|101170|Portal sound doesn't get played when returning from the End.
+|124177|Teleporting to another dimension loses some client states.
+|137719|The player's horizontal motion doesn't affect fired projectiles in certain situations.
+|179940|Player's attributes reset back to default values upon respawning.
+|181604|Exiting the End portal resets player attributes to their default values.
+|252361|Obsidian platform in the End is off by a block from entering from the Nether compared to the Overworld.
+|255218|Fly mode is disabled after teleporting from the End to the Overworld through the End portal.
+|267230|Hangul fonts are rendered with missing pixels.
+|268113|The {{cd|minecraft:generic.scale}} attribute is desynchronized when the player leaves the End dimension via an End portal.
+|268370|Japanese CJK variants use the same diacritic.
+|268598|The "weight" of skeletons in swamp biomes is too high causing less bogged spawns.
+|269036|Bogged do not drop mushrooms when sheared with {{cd|doMobLoot}} false.
+|269147|Shearing a bogged spawns mushrooms at the bogged's feet.
+|269574|Client attribute values may desync from the server after leaving the End.
+|269951|When the gamerule "{{cd|doImmediateRespawn}}" is set to true, the Wind Charged, Oozing or Weaving effects don't function for players.
+|270052|Blur levels below 10 % do not appear to actually work.
+|270301|The Fire Protection enchantment applied to horse armor no longer decreases the duration of time the horse remains ablaze.
+|270539|The Blast Protection enchantment, when applied to horse armor, no longer diminishes the knockback effect from explosions on horse.
+|270637|{{cd|maxEntityCramming}} set to 0 prevents slime spawning from Oozing effect.
+|270789|Only mace smash attacks increment "Times Used" stat.
+|271034|List entries in the Social interactions menu are rendered over the background.
+|271168|Demo timer does not respect "Text Background" setting.
+|271244|Auto-save text does not respect "Text Background" setting in accessibility settings.
+|271360|Horse armor and wolf armor are deleted when used on an armor stand.
+|271414|{{cmd|Damage}} command at position applies knockback in random direction.
+|271980|Arrows/bee stingers stuck in players disappear when leaving the End.
+|;dev
+|271462|Buttons make the deactivation sound when pressed.
+|271468|Game crashes with custom enchantment's "{{cd|rotated_block_provider}}".
+|271532|Mace only loses durability during smash attacks.
+|271547|The player can't immediately sprint jump into a 2 block ceiling when standing next to it since 24w18a.
+|271533|Throwing Channeling trident at mobs during thunderstorm in Survival no longer summons lightning.
+|271566|Game crash on insufficient "{{cd|ammo_use}}" amount.
+|271574|Inlining a painting variant causes players to disconnect when receiving entity data.
+|271583|Soul speed no longer works through partial blocks.
+|271629|Channeling doesn't work/"{{cd|post_attack}}" effect requires enchanted item to be in the mainhand.
+|271636|Attempting to modify NBT of killer rabbit throws unexpected error.
+|271678|{{cd|damage_item}} enchantment entity effect doesn't break items.
+|271715|Crash when the sum of enchantments' weights overflow.
+|271716|Fraction value provider allows division by zero.
+|271803|Custom enchantment with very large max level causes game to hang after opening Creative inventory.
+|271863|Crafter recipe gets stuck on an item with a similar recipe.
+|271881|Soul speed doesn't make soul particles.
+|271896|Using {{key|Shift}}+{{key|F3}}+{{key|I}} on a villager crashes the game.
+|271937|Striking a villager with Channeling trident during thunderstorms doesn't grant the advancement "Very Very Frightening".
+|;previous
+|271853|Random "Failed to store chunk" error.
+|271854|Trying to generate new chunks crashes the server.
+|271948|Entering the Nether breaks the game.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|TxUG0GMRf1s|x1KFrMsn968}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w20a]]
+[[es:Java Edition 24w20a]]
+[[fr:Édition Java 24w20a]]
+[[ja:Java Edition 24w20a]]
+[[ru:24w20a (Java Edition)]]
+[[uk:24w20a (Java Edition)]]
+[[zh:24w20a]]

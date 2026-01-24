@@ -1,0 +1,145 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.6024.0<br>'''Android, iOS, iPadOS''': 1.21.60.24<br>
+| image = Bedrock 1.21.60.24 PatchNotes.jpg
+| image2 = Bedrock 1.21.60.24.png
+| build = 29835496
+| editorver = 0.8.3
+| versioncode = '''Android''':<br />
+952106024 (armeabi-v7a, 34)<br />
+962106024 (x86, 34)<br />
+972106024 (arm64-v8a, 34)<br />
+982106024 (x86_64, 34)
+| date = December 12, 2024
+| server = 1.21.60.24
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.60.24.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.60.24.zip Linux]<br>
+| parent = 1.21.60
+| prevparent = 1.21.51
+| prev = Preview 1.21.60.23
+| next = Preview 1.21.60.25
+| nextparent = 1.21.61
+}}
+<onlyinclude>
+
+'''Beta 1.21.60.24''' (ChromeOS, Android) or '''Preview 1.21.60.24''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the third beta/''Preview'' version for [[Bedrock Edition 1.21.60]], released on December 12, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/32662041516045-Minecraft-Beta-Preview-1-21-60-24|title=Minecraft Beta & Preview - 1.21.60.24|website=Minecraft Feedback|date=December 12, 2024}}</ref> which fixes bugs. This is the final beta/''Preview'' released in 2024.
+
+== Changes ==
+=== Gameplay ===
+'''[[Achievement]]s'''
+*The [[Monster Hunter]] achievement can now be unlocked by destroying a [[creaking heart]] while it has a spawned [[creaking]].
+
+=== Items ===
+'''[[Resin Clump]]s'''
+*The [[XP]] rewarded for smelting resin clumps into [[resin brick]]s has been reduced from 0.3 to 0.1.
+
+=== World generation ===
+'''[[Canyon]]s'''
+*Now generate more often.
+*Can once again generate on the ocean floor.
+*Now properly interact with aquifers, filling with water instead of generating as disconnected segments.
+
+=== General ===
+'''UI'''
+*PlayStation 5: 'Enable Screen Reader' accessibility setting is now used to initialize Text-to-Speech during first launch.
+*Changed wording for enabling/disabling player's sleep skipping the night to "Skip night by sleeping" from "Beds work".
+*Added additional debug info regarding [[Realms]] features in the general settings screen.
+*Updated the text on the new bed screen when sleeping to skip the night is disabled.
+
+=== Technical ===
+'''[[Block]]s'''
+*Door blocks use state {{cd|minecraft:cardinal_direction}} instead of {{cd|minecraft:direction}}. Uses string values ({{cd|north}}, {{cd|south}}, {{cd|east}}, {{cd|west}}).
+
+'''Collisions'''
+*Entities with no collision box but with the {{cd|minecraft:custom_hit_test}} component are no longer sometimes unable to be interacted with.
+
+'''Components'''
+*Moved the {{cd|minecraft:liquid_detection}} component out of the Upcoming Creator Features experiment for {{cd|format_versions}} 1.21.60 and above.
+*Expand the {{cd|minecraft:breedable}} component to allow inheriting properties to child entities.
+**Adds the new {{cd|property_inheritance}} field which takes property name keyed objects.
+**The objects in {{cd|property_inheritance}} can contain a {{cd|mutation_chance}} which give the chance it should not inherit from either parent.
+**They can also contain the {{cd|mutation_values}} array of values to select from if mutating and the component has random mutation set.
+
+'''Graphical'''
+*Single-channel textures in resource packs are now interpreted as grayscale, rather than red. This change does not apply to single-channel UI textures, which were already interpreted as such.
+
+'''Graphics'''
+*{{cd|client_biome}} JSON files now support a {{cd|surface_opacity}} field in the {{cd|minecraft:water_appearance}} component.
+**This change also restores {{cd|swampland}} and {{cd|warm_ocean}} surface opacity to what they were until recently when the {{cd|client_biome}} JSON files were introduced.
+
+'''[[Item]]s'''
+*The following legacy item (pre 1.16.100) components are now synced to the client:
+**{{cd|minecraft:camera}}
+**{{cd|minecraft:seed}}
+**{{cd|minecraft:max_damage}}
+**{{cd|minecraft:hand_equipped}}
+**{{cd|minecraft:stacked_by_data}}
+**{{cd|minecraft:foil}}
+**{{cd|minecraft:block}}
+**{{cd|minecraft:use_duration}}
+**{{cd|minecraft:max_stack_size}}
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" experimental toggle.
+=== Additions ===
+==== Technical ====
+'''Scripting'''
+*Structure
+**Added {{cd|waterlogged: boolean}} parameter to {{cd|setBlockPermutation}}. This can be used to set whether the specified block within a structure is waterlogged.
+
+=== Changes ===
+==== Technical ====
+'''Scripting'''
+*{{cd|system.scriptEvent}} updated to return a new error for exceeding the message size.
+*Removed {{cd|ScriptBlockType.canBeWaterlogged}} from {{cd|Beta}} - instead, {{cd|ScriptBlock.canContainLiquid}} or {{cd|ScriptBlockPermutation.canContainLiquid}} can be used to check if a block can be waterlogged.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.60.24 Preview
+|;old
+|121708|Old caves, ravines, noodle caves, and underground structures don't generate properly above layer 0
+|169520|Block placement on Sniffer Egg is inconsistent/doesn't match java
+|181410|Copper Ore Vein generates with no copper ore when intersecting a ravine
+|187337|Generated Pale Oak trees with Creaking Hearts are rarer than in Java Edition
+|187805|Global resources ignores data inside the first {{cd|biomes_client.json}} file it finds in applied packs
+|188005|Aim assist is enabled for third person back camera
+|188234|Resin brick items can be found in the woodland mansion chest loot
+|188352|Parity issue: Creakings from creaking hearts despawn on world reload
+|188355|Open bundle texture has a missing pixel
+|188481|Empty space at top of player list
+|188521|Cannot switch slots in Dressing Room due to Marketplace loading screen being stuck while offline
+|188789|Tall grass only rendering bottom half on bonemeal
+|;previous
+|188473|Using shears on vines or kelp doesn't play the arm swing animation
+|188474|Player is unable to use shears on vines while crouching
+|188476|Collecting glow berries while holding shears performs two actions at the same time
+|188607|Overlapping text in the Preview header when in a Realm
+|otherissuescount=15}}
+'''Other'''
+*The second passenger of a boat will no longer have large camera twitches when rotating toward the west direction.
+*Creaking's eyes now properly flicker when the creaking heart which spawned it is destroyed.
+*The friends tab on the play screen now shows the correct list of joinable worlds and realms.
+*Player permissions no longer revert to the previous state after leaving the manage realm tab.
+*Fixed an issue where game mode appears as unknown on the realms tab even if the realm has a world with a valid game mode.
+*Players on Switch should remain signed into their Microsoft account after putting Minecraft app to sleep and resuming it.
+*Some savanna villages no longer have a hole where a dirt path block should be.
+*Fixed a bug where the game could soft lock in certain scenarios when it was suspended right before the player dying.
+*Water and lava no longer remain in the world when placing a water or lava bucket against a cave vine with glow berries.
+*Sniffer egg block no longer provides side support to any block.
+*Fixed an issue where legacy data driven block didn't apply the render layer from the material instances component.
+*Fix spurious content log error: "trying to override the Geometry component with {{cd|blocks.json}} settings for a custom block".
+*Fixed a bug where opening a chest while the {{cmd|clone}} command is spamming could crash the server.
+*Fixed an issue where non-host clients joining multiplayer sessions would be missing an icon for packs that had duplicate items.
+*Fixed {{cd|Entity.getComponent}} and {{cd|Entity.getComponents}} from crashing when called within {{cd|EntityDieAfterEvent}} callback.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.60 betas]]
+[[de:Bedrock Edition beta 1.21.60.24]]
+[[pt:Edição Bedrock Preview 1.21.60.24]]
+[[ru:Preview 1.21.60.24 (Bedrock Edition)]]
+[[uk:Preview 1.21.60.24 (Bedrock Edition)]]
+[[zh:基岩版1.21.60.24]]

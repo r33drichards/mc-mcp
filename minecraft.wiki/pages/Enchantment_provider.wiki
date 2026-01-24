@@ -1,0 +1,113 @@
+{{Exclusive|java}}
+
+'''Enchantment providers''' are used to source one or more enchantments for use in specific scenarios, such as mobs spawning with enchanted equipment.
+
+Enchantment providers are stored as JSON files within a [[data pack]] in the {{cd|data/<namespace>/enchantment_provider}} folder.
+
+== JSON format ==
+
+=== single ===
+Always returns the same enchantment
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:single}}
+** {{nbt|string|enchantment}}: {{json ref/enchantment}} &mdash; the enchantment to return
+** {{nbt|int}}{{nbt|compound|level}}: The level of the enchantment
+*** {{nbt inherit/int_provider}}
+</div>
+
+=== enchantments_by_cost ===
+Returns random enchantments from a list of possible enchantments, using a configured cost. Similar{{more info}} to the cost of an [[enchanting table]].
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:enchantments_by_cost}}
+** {{nbt|string|enchantments}}: {{json ref/enchantment|tag=1}} &mdash; set of all possible enchantments
+** {{nbt|int}}{{nbt|compound|cost}}: The cost to use to determine the enchantments
+*** {{nbt inherit/int_provider}}
+</div>
+
+=== enchantments_by_cost_with_difficulty ===
+Works the same way as {{cd|enchantments_by_cost}} but the cost is determined using the [[local difficulty]] of the area.
+
+The effective cost is calculated by {{cd|min_cost + rand(0, local_difficulty_factor * max_cost_span)}}. Where:
+* {{cd|rand(a,b)}} refers to a random number between {{cd|a}} and {{cd|b}}.
+* {{cd|local_difficulty_factor}} is: {{cd|local_difficulty/2 - 1}} clamped to a value between {{cd|0}} and {{cd|1}}.
+
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|type}}: {{cd|minecraft:enchantments_by_cost_with_difficulty}}
+** {{nbt|string|enchantments}}: {{json ref/enchantment|tag=1}} &mdash; set of all possible enchantments
+** {{nbt|int|min_cost}}: Minimum {{cd|1}} &mdash; The base cost at local difficulty below {{cd|2}}.
+** {{nbt|int|max_cost_span}}: Minimum {{cd|0}} &mdash;Factor of the uniform randomization range for local difficulty.
+</div>
+
+== Usage ==
+Enchantment providers are used by the game in specific cases listed below:
+{| class="wikitable"
+! Enchantment provider !! Used for the enchantments of
+|-
+| {{cd|minecraft:mob_spawn_equipment}} || armor and weapons of a mob that spawns with enchanted equipment
+|-
+| {{cd|minecraft:pillager_spawn_crossbow}} || the enchanted [[crossbow]] of a spawned [[pillager]]
+|-
+| {{cd|minecraft:raid/pillager_post_wave_3}} || the enchanted [[crossbow]] of a spawned [[pillager]] in waves 4 and 5 of a [[raid]]
+|-
+| {{cd|minecraft:raid/pillager_post_wave_5}} || the enchanted [[crossbow]] of a spawned [[pillager]] in waves above 5 of a [[raid]]
+|-
+| {{cd|minecraft:raid/vindicator}} || the enchanted [[axe]] of a spawned [[vindicator]] in waves 1 to 5 of a [[raid]]
+|-
+| {{cd|minecraft:raid/vindicator_post_wave_5}} || the enchanted [[axe]] of a spawned [[vindicator]] in waves above 5 of a [[raid]]
+|-
+| {{cd|minecraft:enderman_loot_drop}} || the "fake tool" used in the loot tables of the block held by an [[enderman]] when killed.
+|-
+|}
+
+=== With villager trade rebalance ===
+{{experimental|JE||je=Villager Trade Rebalance|section=1}}
+Enchantment providers are used to determine the traded equipment depending on [[biome]], [[profession]], equipment (i.e. the item traded) and trading level. They follow the format {{cd|minecraft:trades/<biome>_<profession>_<equipment>_<level>}}. 
+
+{{Collapse|title=The following enchantment providers are in use:|content=
+* {{cd|minecraft:trades/desert_armorer_boots_4}}
+* {{cd|minecraft:trades/desert_armorer_chestplate_4}}
+* {{cd|minecraft:trades/desert_armorer_chestplate_5}}
+* {{cd|minecraft:trades/desert_armorer_helmet_4}}
+* {{cd|minecraft:trades/desert_armorer_leggings_4}}
+* {{cd|minecraft:trades/desert_armorer_leggings_5}}
+* {{cd|minecraft:trades/jungle_armorer_boots_4}}
+* {{cd|minecraft:trades/jungle_armorer_boots_5}}
+* {{cd|minecraft:trades/jungle_armorer_chestplate_4}}
+* {{cd|minecraft:trades/jungle_armorer_helmet_4}}
+* {{cd|minecraft:trades/jungle_armorer_helmet_5}}
+* {{cd|minecraft:trades/jungle_armorer_leggings_4}}
+* {{cd|minecraft:trades/plains_armorer_boots_4}}
+* {{cd|minecraft:trades/plains_armorer_boots_5}}
+* {{cd|minecraft:trades/plains_armorer_chestplate_4}}
+* {{cd|minecraft:trades/plains_armorer_helmet_4}}
+* {{cd|minecraft:trades/plains_armorer_leggings_4}}
+* {{cd|minecraft:trades/plains_armorer_leggings_5}}
+* {{cd|minecraft:trades/savanna_armorer_boots_4}}
+* {{cd|minecraft:trades/savanna_armorer_chestplate_4}}
+* {{cd|minecraft:trades/savanna_armorer_chestplate_5}}
+* {{cd|minecraft:trades/savanna_armorer_helmet_4}}
+* {{cd|minecraft:trades/savanna_armorer_helmet_5}}
+* {{cd|minecraft:trades/savanna_armorer_leggings_4}}
+* {{cd|minecraft:trades/snow_armorer_boots_4}}
+* {{cd|minecraft:trades/snow_armorer_boots_5}}
+* {{cd|minecraft:trades/snow_armorer_helmet_4}}
+* {{cd|minecraft:trades/snow_armorer_helmet_5}}
+* {{cd|minecraft:trades/swamp_armorer_boots_4}}
+* {{cd|minecraft:trades/swamp_armorer_boots_5}}
+* {{cd|minecraft:trades/swamp_armorer_chestplate_4}}
+* {{cd|minecraft:trades/swamp_armorer_helmet_4}}
+* {{cd|minecraft:trades/swamp_armorer_helmet_5}}
+* {{cd|minecraft:trades/swamp_armorer_leggings_4}}
+* {{cd|minecraft:trades/taiga_armorer_chestplate_5}}
+* {{cd|minecraft:trades/taiga_armorer_leggings_5}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Verzauberungsanbieter]]
+[[fr:Fournisseur d'enchantement]]
+[[zh:魔咒提供器定义格式]]

@@ -1,0 +1,83 @@
+{{Distinguish|/dialogue}}
+{{Exclusive|java}}
+{{Infobox command
+| name = dialog
+| oplevel = 2
+| others = [[Commands#Cheats|Cheats]] enabled
+}}
+
+Manages [[dialog]] screens displayed to [[player]]s. Allows server [[operator]]s to show custom or predefined dialogs in [[data pack]] to specified players, and clear any displayed dialogs on their screen.
+
+==Syntax==
+: {{cd|/dialog show <targets> <dialog>}}
+:: Shows a dialog screen from inline [[SNBT]] or {{cd|minecraft:dialog}} registry (usually defined in a [[data pack]]) to specified players.
+: {{cd|/dialog clear <targets>}}
+:: Clears currently displayed dialogs for specified players.
+
+==Arguments==
+{{argument|targets|entity}}
+: Specifies the players whose dialog is shown or cleared.
+: {{arg desc|je=entity|amount=multiple|type=players}}
+
+{{argument|dialog|dialog}}
+: Specifies the dialog to show to the players. This argument is only used with {{cmd|link=none|dialog show}}.
+: Must be either:
+:* A namespaced ID of a dialog defined in a data pack (e.g., {{code|custom:my_dialog}} or {{code|minecraft:server_links}}). These are stored in the {{cd|minecraft:dialog}} registry.
+:* An inline [[SNBT]] defining the dialog structure directly in the command. See {{slink|Dialog|Dialog format}} for the structures.
+
+==Result==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/dialog (show{{!}}clear) <targets>|{{cd|targets}} is a target selector that includes any entities other than the player.|fail}}
+{{Result table|cmd=/dialog show <targets> <dialog>|{{cd|dialog}} is not a valid dialog [[SNBT]], or dialog does not exist in {{cd|minecraft:dialog}} registry (usually in a [[data pack]]).|fail}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of targeted players}}
+{{Output table}}
+
+==Examples==
+[[File:Dialog_simple_confirmation.png|thumb|right|A simple confirmation dialog from an example.]]
+[[File:Dialog_command_execution_confirmation.png|thumb|right|Pressing "Yes" results in a [[command]] execution, which requires a confirmation from the player.]]
+* To show the nearest player a dialog located at <code>data/custom/dialog/example/test.json</code> in a loaded data pack:
+*:<code>/dialog show @p custom:example/test</code>
+
+* To show all players the built-in <code>minecraft:server_links</code> dialog:
+*:<code>/dialog show @a minecraft:server_links</code>
+
+* To show nearest players a [[Dialog#notice|notice dialog]] with title "Hello" and an "Ok" button in the footer:
+*:<code>/dialog show @p {type:"minecraft:notice",title:"Hello"}</code>
+
+* To show all players a simple [[Dialog#confirmation|confirmation dialog]] with two action buttons with the label "Yes please" and "Nope". If the player presses "Yes please", the game runs a command to give the player a [[diamond]], otherwise, if they press "Nope", the game closes the dialog: 
+*:<code>/dialog show @a {type:"minecraft:confirmation",title:"Give yourself diamond?",yes:{label:"Yes please","action":{"type":"run_command","command":"give @s diamond"}},no:{label:"Nope"}}</code>
+
+* To clear any currently visible dialogs for all players:
+*:<code>/dialog clear @a</code>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.6|dev=25w20a|Added {{command|dialog|link=none}}|Added {{code|minecraft:custom_options}} and {{code|minecraft:server_links}} as blank built-in dialogs.}}
+|{{HistoryLine|||dev=Pre-Release 1|Added {{code|minecraft:quick_actions}} as a blank built-in dialog.}}
+}}
+
+== Gallery ==
+<gallery>
+File:Dialog example ioblackshaw.png|An example dialog created by [https://github.com/Enchanted-Games ioblackshaw], showcased by [https://youtube.com/@xisumavoid xisumavoid] on YouTube.<ref>{{YouTube link|1=JGm8iejJLEo|2=Tears For Facing Your Fears {{!}} Snapshot 25W20A|3=xisumavoid|4=May 13, 2025|t=399}}</ref>
+File:Entity Summoner.png|An entity summoner made and shown off by [https://www.reddit.com/r/MinecraftCommands/comments/1kn2omk/i_made_a_very_basic_entity_summoner_with_the_new/ u/SmoothTurtle872] on Reddit
+</gallery>
+
+== References ==
+<references />
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/dialog]]
+[[es:Comandos/dialog]]
+[[ja:コマンド/dialog]]
+[[pt:Comandos/dialog]]
+[[zh:命令/dialog]]

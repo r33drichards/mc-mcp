@@ -1,0 +1,274 @@
+{{Dangerous version|The game crashes when a [[Breeze]] or [[Warden]] is rendered in any way.|type=crash|edition=java|version=development}}{{Infobox version
+|title=Minecraft 25w09a
+|image=25w09a.jpg
+|image2=Java Edition 25w09a.png
+|edition=Java
+|type=Snapshot
+|date=February 26, 2025
+|jsonhash=c5f008cb23e91680ad24c67f66ddb612d7bcd513
+|clienthash=393baee4824f5329086d75c808d32a3e17dc7a8e
+|clientmap=349aaa08ec8620847cb98d98d0b90f92173dfaf1
+|serverhash=baab122c7652b302621f7befd5be40abef9b9b7c
+|servermap=75e486a6ab66c511244448ccbd80534d169c9bea
+|parent=1.21.5
+|prevparent=1.21.4
+|prev=25w08a
+|next=25w09b
+|nextparent=1.21.6
+}}<onlyinclude>
+
+'''25w09a''' is the eighth [[snapshot]] for [[Java Edition 1.21.5]], released on February 26, 2025, which adds fallen trees for parity with {{BE}}, updates firefly bushes to generate in more biomes and fixes bugs.<ref>{{snap|25w09a|id=a|February 26, 2025}}</ref>
+
+== Additions ==
+
+=== World generation ===
+'''[[Fallen tree]]'''
+* Fallen trees are a new decorative variant of trees.
+* Fallen trees come in four different wood type variants:
+** [[Oak]]
+** [[Spruce]]
+** [[Birch]]
+** [[Jungle tree|Jungle]]
+* Birch fallen trees can come in a shorter version or a longer version.
+* Some fallen trees can be decorated with [[mushroom]] or [[vines]].
+* Fallen trees can be found in all biomes where their standing tree variant grow, except the following:
+** {{BiomeLink|Meadow}}
+** {{BiomeLink|Bamboo Jungle}}
+** {{BiomeLink|River}}
+** {{BiomeLink|Grove}}
+** {{BiomeLink|Flower Forest}}
+*** Has fallen birch trees but not fallen oak trees.
+
+== Changes ==
+
+=== Blocks ===
+'''[[Dead bush]]'''
+* Can now be placed on [[farmland]].
+
+'''[[Firefly bush]]'''
+* The Firefly Bush can now generate near water in [[mangrove swamp]]s and all types of [[badlands]] (very rarely), like other biomes with water.
+
+'''[[Leaf litter]]'''
+* Leaf Litter is now replaceable by other blocks.
+
+'''[[Short dry grass]]''' and '''[[tall dry grass]]'''
+* Are now randomly offset within the block they are on.
+
+=== Command format ===
+'''{{cmd|data}}'''
+* Can now create and modify heterogeneous lists transparently.
+* Can no longer traverse paths with an empty key (e.g. {{cmd|data get ... foo.''.bar''}})
+
+=== General ===
+'''[[Block entity format]]'''
+* <code>campfire</code>
+** The <code>CookingTimes</code> and <code>CookingTotalTimes</code> fields will no longer be preserved when removed.
+* <code>chiseled_bookshelf</code>
+** The <code>last_interacted_slot</code> field now defaults to <code>-1</code> if not specified.
+* <code>hopper</code>
+** The <code>TransferCooldown</code> field now default to <code>-1</code> if not specified.
+* <code>jigsaw</code>
+** The <code>name</code>, <code>target</code>, and <code>pool</code> fields now default to <code>minecraft:empty</code> if not specified.
+** The <code>final_state</code> field now defaults to <code>minecraft:air</code> if not specified.
+* <code>sculk_shrieker</code> 
+** The <code>warning_level</code> field now defaults to <code>0</code> if not specified.
+* <code>structure_block</code>
+** The <code>ignoreEntities</code> and showboundingbox fields now default to <code>true</code> if not specified.
+** The <code>posY</code> field now defaults to 1 if not specified.
+
+'''[[Data pack]]'''
+*The [[pack format]] version is now <code>69</code>.
+* New command line argument <code>--renderDebugLabels</code> is available for the client.
+** Adds debug labels to relevant OpenGL objects, making debugging rendering easier for developers.
+
+'''[[Entity format]]'''
+* The <code>FallFlying</code> field will no longer be preserved if removed.
+** The <code>Health</code> and <code>Air</code> fields now default to their respective maximum value if not specified.
+* <code>area_effect_cloud</code>
+** The <code>Duration</code> field now defaults to <code>-1</code> if not specified.
+** If the <code>Duration</code> field is <code>-1</code>, the Area Effect Cloud will never run out.
+** This means that an Area Effect Cloud summoned with no duration specified will no longer immediately disappear.
+* <code>creeper</code>
+** The <code>Fuse</code> field now defaults to <code>30</code> if not specified.
+** The <code>ExplosionRadius</code> field now defaults to <code>3</code> if not specified.
+* <code>dolphin</code>
+** The <code>Moistness</code> field now defaults to <code>2400</code> if not specified.
+* <code>ender_dragon</code>
+** The <code>DragonDeathTime</code> field now defaults to <code>0</code> if not specified.
+* <code>falling_block</code>
+** The <code>BlockState</code> field can now be <code>air</code> (will despawn immediately) - if otherwise not specified or invalid, defaults to <code>sand</code>.
+** The <code>HurtEntities</code> field now defaults to <code>false</code> if not specified (or <code>true</code> if <code>BlockState</code> is <code>anvil</code>).
+** The <code>FallHurtAmount</code> field now defaults to <code>0</code> if not specified.
+** The <code>FallHurtMax</code> field now defaults to <code>40</code> if not specified.
+** The <code>DropItem</code> field now defaults to <code>true</code> if not specified.
+** The <code>TileEntityData</code> field will no longer be preserved if removed.
+* <code>firework_rocket</code>
+** The <code>ShotAtAngle</code> field now defaults to false if not specified.
+* <code>fox</code>
+** The <code>Trusted</code> field now defaults to empty if not specified (and will no longer be merged with the previous state if modified by {{cmd|data}}).
+* <code>ghast</code>
+** The <code>ExplosionPower</code> field now defaults to <code>1</code> if not specified.
+* <code>goat</code>
+** The <code>HasLeftHorn</code> and <code>HasRightHorn</code> fields now default to true if not specified.
+* <code>interaction</code>
+** The <code>width</code> and <code>height</code> fields now default to <code>1</code> if not specified.
+* <code>item</code>
+** The <code>Health</code> field now defaults to <code>5</code> if not specified.
+** The <code>PickupDelay</code> field now defaults to <code>0</code> if not specified.
+** The <code>Age</code> field now defaults to <code>0</code> if not specified.
+** The <code>Owner</code> and <code>Thrower</code> fields will no longer be preserved when removed.
+* <code>item_frame</code> and <code>glow_item_frame</code>
+** The <code>ItemDropChance</code> field now defaults to <code>1.0</code> if not specified
+* <code>primed_tnt</code>
+** The <code>fuse</code> field now defaults to <code>80</code> if not specified.
+** The <code>explosion_power</code> field now defaults to <code>4</code> if not specified.
+* <code>shulker</code>
+** The <code>Color</code> field now defaults to <code>16</code> (no color) if not specified.
+* <code>skeleton</code>
+** The <code>StrayConversionTime</code> field will no longer be preserved when removed.
+* <code>spectral_arrow</code>
+** The Duration field now defaults to <code>200</code> if not specified.
+* <code>snow_golem</code>
+** The Pumpkin field now defaults to <code>true</code> if not specified.
+* <code>tnt_minecart</code>
+** The <code>fuse</code> field now defaults to <code>80</code> if not specified.
+** The <code>explosion_power</code> field now defaults to <code>4</code> if not specified.
+** The <code>explosion_speed_factor</code> field now defaults to <code>1</code> if not specified.
+* <code>trader_llama</code>
+** The <code>DespawnDelay</code> field now defaults to <code>47999</code>.
+* <code>villager</code>
+** The <code>FoodLevel</code> and <code>Xp</code> fields now default to <code>0</code> if not specified.
+** The <code>ConversionTime</code> field will no longer be preserved when removed.
+* <code>wandering_trader</code>
+** The <code>DespawnDelay</code> field now defaults to <code>0</code> if not specified.
+* <code>zombie</code>
+** The <code>DrownedConversionTime</code> field will no longer be preserved when removed.
+* <code>zombie_villager</code>
+** The <code>Xp</code> field now defaults to <code>0</code> if not specified.
+** The <code>ConversionTime</code> field will no longer be preserved when removed.
+* <code>arrow</code>, <code>spectral_arrow</code>, <code>trident</code>
+** The <code>damage</code> field now defaults to <code>2</code> if not specified.
+* <code>dragon_fireball</code>, <code>wind_charge</code>, <code>breeze_wind_charge</code>, <code>wither_skull</code>, <code>small_fireball</code>, and <code>large_fireball</code>
+** The <code>acceleration_power</code> field now defaults to <code>0.1</code> if not specified.
+* <code>small_fireball</code> and <code>large_fireball</code>
+** The <code>ExplosionPower</code> field now defaults to <code>1</code> if not specified.
+* <code>block_display</code>, <code>item_display</code>, and <code>text_display</code>
+** The <code>interpolation_duration</code>, <code>teleport_duration</code>, and <code>start_interpolation</code> fields now default to <code>0</code> if not specified.
+** The <code>view_range</code> field now defaults to <code>1</code> if not specified.
+** The <code>shadow_radius</code> field now defaults to <code>0</code> if not specified.
+** The <code>shadow_strength</code> field now defaults to <code>1</code> if not specified.
+** The <code>width</code> and <code>height</code> fields now default to <code>0</code> if not specified.
+
+'''[[NBT format]]'''
+* Any interface with NBT data within the game (SNBT representation, {{cmd|data}}) now supports heterogeneous lists, i.e. ones where elements are not of the same type
+** Inserting or replacing into a list of a different type with {{cmd|data}} will no longer give an error.
+** Inserting into an array type (e.g. <code>[I;1,2,3]</code>) is still type-restricted.
+** This means that the 'wrapper' objects previously used to represent heterogeneous lists will no longer be observable by in-game means.
+* The NBT file format is unchanged.
+** Heterogeneous lists are transformed before storage to bypass NBT constraints.
+*** Example transform: <code>['a', {'b':3}]</code> is stored as <code>[{'<nowiki/>':'a'},{'b':3}]</code>.
+** Existing external tools will still be able to read NBT files as before, but heterogeneous lists will be displayed in the transformed form.
+* No data produced by the game has changed: objects such as Text Components were already producing heterogeneous lists in this form.
+* Note: these wrapper objects may never be observed in-game, they are only relevant to developers working with the NBT file or network format directly.
+
+'''[[SNBT]] format'''
+* The text format for describing object-like data in commands (like NBT, text components, predicates, etc.) has been extended.
+* Number Format
+** Either whole or fraction parts of a float number can be omitted
+*** Examples: <code>.1</code> and <code>1.</code> are valid now
+** Float numbers now use E notation
+*** Example: both <code>1.2e3</code> and <code>1.2E3</code>, <code>1.2E+3</code>, <code>12000e-1</code> are now a valid way to represent <code>1200.0</code>
+** Integer numbers can now be prefixed with <code>0x</code> to represent hexadecimal numbers and <code>0b</code> to represent binary numbers
+*** Example: <code>0xbad</code> (equal to <code>2989</code>), <code>0xCAFE</code> (equal to <code>51966</code>), <code>0b101</code> (equal to <code>5</code>)
+** Integer numbers now can't start with <code>0</code>
+*** Normally (e.g. in Java) it would mean number is in base-8, but this usage is not implemented, to avoid accidental misuse
+** Numbers can now contain <code>_</code> character between sequences of digits (but not at the start or the end of sequence)
+*** Example: <code>0b10_01</code>, <code>0xAB_CD</code>, <code>1_2.3_4__5f</code>, <code>1_2e3_4</code>
+** <code>NaN</code>, <code>Inf</code> or hexadecimal float representation are NOT supported
+** Type suffixes have been extended:
+*** Integer type suffixes (<code>b</code> or <code>B</code> - byte, <code>s</code> or <code>S</code> - short, <code>i</code> or <code>I</code> - integer, <code>l</code> or <code>L</code>) can now be prefixed with <code>s</code> (signed) or <code>u</code> unsigned
+*** New suffixes only affect valid range when parsing - values are still stored as signed
+**** Example: <code>240ub</code> is equal to <code>-16sb</code>, while <code>240sb</code> does not parse
+*** When a suffix is used without <code>u</code> or <code>s</code>, it defaults to signed for decimal numbers and unsigned for binary and hexadecimal numbers
+*** Note: since <code>b</code> is also a valid hexadecimal digit, byte sized hexadecimal values can only be written with a signed suffix, like <code>0x11ub</code> or <code>0x11sb</code>
+
+* Strings
+** Quoted strings can now use escape sequences beyond ', " and \:
+*** Unicode escapes:
+**** <code>\x</code> - two digit escape, like <code>\x42</code>
+**** <code>\u</code> - four digit escape, like <code>\u2603</code>
+**** <code>\U</code> - eight digit escape, like <code>\U00002603</code>
+**** <code>\N{<name>}</code> - named Unicode character, like <code>\N{Snowman}</code>
+*** Built-in escape sequences:
+**** <code>\b</code> - backspace, Unicode <code>\x08</code>
+**** <code>\s</code> - space, Unicode <code>\x20</code>
+**** <code>\t</code> - horizontal tab, Unicode <code>\x09</code>
+**** <code>\n</code> - linefeed, Unicode <code>\u0a</code>
+**** <code>\f</code> - form feed, Unicode <code>\u0c</code>
+**** <code>\r</code> - carriage return, Unicode <code>\u0d</code>
+** Unquoted strings now can't start with <code>0-9</code>, <code>.</code>, <code>+</code>, <code>-</code> to avoid accidental collision with numbers
+
+* Number Arrays
+** Values in arrays (<code>[B;]</code>, <code>[I;]</code>, <code>[L;]</code>) without a suffix are now assumed to have suffix matching the type of the array
+*** Example: <code>[B;1,2]</code> is equivalent to {{cd|[B; 1b, 2b]}}
+** Arrays can now also accept types smaller than the array type
+*** Example: <code>[I;1b,2s,3]</code> is valid and equivalent to <code>[I;1i,2i,3i]</code>
+
+* Lists
+** Lists now accept trailing commas
+*** Example: <code>[1,2,]</code> is valid and equivalent to <code>[1,2]</code>
+*** Only one trailing comma is allowed, and it must come after a valid element - both <code>[,]</code> and <code>[1,,]</code> are invalid
+
+* Compounds
+** Compounds (maps) now accept trailing commas
+*** Example: <code>{a:b,}</code>
+*** Only one trailing comma is allowed, and it must come after a valid key-value pair - both <code>{,}</code> and <code>{a:b,,}</code> are invalid
+
+'''[[Tag]]s'''
+* Added <code>farmland</code> to <code>#dry_vegetation_may_place_on</code> block tag.
+* Added <code>leaf_litter</code> to <code>#replaceable</code> block tag.
+* Added <code>cactus_flower</code> to <code>#wall_post_override</code> block tag.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w09a
+|;From released versions before 1.21
+|168262|Dead bushes cannot be placed on farmland.
+|236100|End crystal beam appears to be black.
+|;From 1.21.2
+|276861|The player can sometimes teleport through blocked end portals when moving very fast.
+|;dev
+|279229|SNBT text components prevent <code>\n</code> and <code>\t</code> from working.
+|279236|Flying into water with an elytra puts the player into an erroneous state.
+|279250|SNBT text components prevent unicode escapes from working.
+|279252|Changing a single line of a sign with {{cmd|data}} is no longer possible in some situations.
+|279278|Strafing twice in rapid succession while walking forward causes player to sprint.
+|279928|Beacon beam clips into beacon block when far enough away.
+|279932|Beacon beam disappears and reappears when approaching it.
+|279942|Beacon beam can render over fog when outside render distance.
+|279947|Snout of the new cow model is offset vertically by 0.1 pixels.
+|280022|Players can be lit by lava while stepping onto solid blocks next to it.
+|280033|Beacon beams render beyond client render distance.
+|280121|Leaf litter can be placed on walls and fences.
+|280123|Short dry grass and tall dry grass aren't randomly offset, unlike similar blocks.
+|280155|Random ticks can cause entity build-up in lazy chunks.
+|280170|Goats can no longer ram armor stands unless the game rule <code>mobGriefing</code> is set to <code>false</code>.
+|280211|End crystal beams cause OpenGL errors with glDebugVerbosity set to 3.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|6PK34Qpl5Lk|E_NCyRsdX5g}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w09a]]
+[[es:Java Edition 25w09a]]
+[[fr:Édition Java 25w09a]]
+[[ja:Java Edition 25w09a]]
+[[pt:Edição Java 25w09a]]
+[[ru:25w09a (Java Edition)]]
+[[uk:25w09a (Java Edition)]]
+[[zh:Java版25w09a]]

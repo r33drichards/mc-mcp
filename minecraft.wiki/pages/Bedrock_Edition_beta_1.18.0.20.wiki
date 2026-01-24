@@ -1,0 +1,139 @@
+{{Infobox version
+|edition=Bedrock
+|image=Bedrock 1.18.0.20 PatchNotes.jpg
+|image2=Bedrock 1.18.0.20.png
+|type=Beta
+|internal=
+'''Windows''': 1.18.20.0<br>
+'''Xbox One''': 1.18.20.70<br>
+'''Android''': 1.18.0.20<br>
+|parent=1.18.0
+|date='''Xbox, Windows 10, Android''': October 6, 2021
+|prevparent=1.17.41
+|prev=
+|next=beta 1.18.0.21
+|nextparent=1.18.1
+}}<onlyinclude>
+
+'''Beta 1.18.0.20''' is the first beta version for [[Bedrock Edition 1.18.0]], released on October 6, 2021,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/4410756779405|title=Minecraft Beta - 1.18.0.20 (Xbox One/Windows 10/Android)|website=feedback.minecraft.net|date=October 6, 2021}}</ref> which moved all [[Caves & Cliffs]] features out from [[experimental gameplay]], and fixes bugs.
+
+== Changes ==
+=== World generation ===
+'''[[Cave]]s'''
+* Old caves can now reach all the way to the surface.
+* Old cave carver placement is now on parity with ''Java Edition''.
+
+'''[[Mountains]]'''
+* Tweaked peaks to look more jagged on small mountains instead of looking like flat hilly mounds.
+
+=== General ===
+'''[[Chunk]]s'''
+* Improved blending between old and new chunks.
+
+'''[[Experimental Gameplay|Experiments]]'''
+* Removed the “Caves and Cliffs” experimental toggle.
+** All features previously locked behind this toggle are now available through normal gameplay.
+
+=== Technical ===
+'''Item Scripting'''
+* Implemented first past of Item Script Components:
+** {{cd|ItemStack}}
+*** Exposed interfaces for accessing script-enabled {{cd|ItemComponents}} on {{cd|ItemStack}}
+*** {{cd|hasComponent(componentId: string)}} - returns true if the {{cd|ItemStack}} has the component {{cd|[componentId]}} attached to it
+*** {{cd|getComponent(componentId: string)}} - returns a handle to the component attached to this {{cd|ItemStack}}. Returns an undefined handle if the component does not exist or if the component is yet to be exposed to script.
+*** {{cd|getComponents()}} - returns an array of all attached script-enabled components on this {{cd|ItemStack}}.
+** {{cd|NumberRange}}
+*** A class to describe a random value between a min and max number
+*** Property {{cd|min}} - the minimum value in the range
+*** Property {{cd|max}} - the maximum value in the range
+*** {{cd|next()}} - returns a random number between min and max.
+** {{cd|Items}} registry
+*** Added {{cd|Items}} registry class to get all {{cd|Items}} by name.
+*** {{cd|get(itemId: string)}} - returns a handle to an {{cd|ItemType}} if a type by the given name exists.
+** Script-enabled item components
+*** {{cd|minecraft:food}}
+**** Read-only property {{cd|nutrition}} - number that describes how much nutrition the food item gives the player when eaten
+**** Read-only property {{cd|saturationModifier}} - number that is the saturation modifier used to apply the saturation buff when eaten
+**** Read-only property {{cd|canAlwaysEat}} - if true the player can always eat the specified item (even when not hungry).
+**** Read-only property {{cd|usingConvertsTo}} - string name of the item that the food item will be converted into when eaten. If empty, the item will not convert into anything else.
+*** {{cd|minecraft:durability}}
+**** Read-only property {{cd|maxDurability}} - the number that is the amount of damage this item can take before breaking
+**** Read-only property {{cd|damageRange}} - a {{cd|NumberRange}} describing the chance of the item losing durability
+**** Property {{cd|damage}} - gets or sets the current damage on the {{cd|ItemStack}}.
+**** {{cd|<nowiki>getDamageChance(unbreaking: number = <level>)</nowiki>}} - gets the maximum chance that the item would be damaged using the {{cd|damageRange}} property if given an {{cd|unbreaking}} level. The incoming {{cd|unbreaking}} parameter must be greater than 0
+
+== Fixes ==
+'''Caves & Cliffs'''
+* Water no longer generates floating in caves. ({{bug|MCPE-141424}})
+* [[Meadow]] flowers no longer replace blocks in [[villages]] or other structures. ({{bug|MCPE-141378}})
+* Tuff [[Blob|blob features]] now generate below y=0. ({{bug|MCPE-141452}})
+* [[Deepslate]] patches no longer generate above y=0. ({{bug|MCPE-141330}})
+* [[Amethyst geode]]s now get placed in the correct y-range during [[world generation]]. ({{bug|MCPE-141326}})
+* [[Mineshaft]] tunnels cannot replace bedrock anymore. ({{bug|MCPE-141123}})
+* Fixed an issue that prevented large trees from growing below y=0. ({{bug|MCPE-126254}})
+* Small [[dripleaf]] now properly generates as part of the Lush Caves biome. ({{bug|MCPE-125799}})
+
+'''Stability and Performance'''
+* Players are no longer disconnected if the server and client have different runtime [[block IDs]].
+* Optimized the time it takes to place vines in [[the Overworld]].
+
+'''Accessibility'''
+* Added the missing [[Narrator|screen reader]] on the “Controller lost connection” prompt.
+
+'''Commands'''
+* Order of function calls triggered by {{cd|[[Commands/execute|/execute]]}} inside a function is now consistent. ({{bug|MCPE-111849}})
+
+'''Gameplay'''
+* Corrected [[nether portal]] locations when the portal was moved but the location was not updated. ({{bug|MCPE-28765}})
+* Breaking a block below fire no longer creates an invisible fire block when the {{cd|doFireTick}} [[gamerule]] is disabled. ({{bug|MCPE-101371}})
+
+'''General'''
+* Players with higher than recommended [[render distance]] settings are now prompted to change it to the recommended value.
+* Render distance default and max settings have been updated for better performance
+* A prompt now warns players that they will be taken back to the main menu if they sign in while in-game.
+* Added caching support for [[subchunk]] requests and fixed issues with holes in the terrain.
+* Fixed a rendering error that could occur when attempting to render a [[vanilla]] [[mob]] in a base game version prior to the version that mob was introduced through JSON files.
+* Most content errors and warnings now only display once per [[world]]. ({{bug|MCPE-135153}})
+
+'''Graphical'''
+* The [[carved pumpkin]] enchantment glint now only covers the item instead of the entire slot. ({{bug|MCPE-68219}})
+* Fixed a bug that could occur on older worlds where looking up in a [[minecart]] would display the inside of the minecart, blocking the player's view.
+* Updated item rendering so [[enchanted]] items are no longer invisible in [[the Nether]]. ({{bug|MCPE-116880}})
+
+'''Marketplace'''
+* The store update prompt no longer appears without internet connection or on session start failure.
+
+'''Mobs'''
+* [[Mobs]] can now path over [[trapdoors]].
+* Mobs no longer walk through [[campfires]]. ({{bug|MCPE-142054}})
+* [[Axolotl]]s now animate correctly when airborne. ({{bug|MCPE-131322}})
+* [[Sweet berry bush]]es now damage mobs. ({{bug|MCPE-56142}}, {{bug|MCPE-140012}})
+* Mobs no longer try to path through sweet berry bushes.
+
+'''User Interface'''
+* [[Structure block]]s can now be saved and loaded within the current [[dimension]]'s height limits. ({{bug|MCPE-122643}})
+* Fixed an issue where searching for non-existent content brought up the incorrect "1 result" message.
+* Fixed overlapping text on offerings occurring on 4:3 resolution screens.
+* Fixed [[Java Edition]] parity while lying in bed in multiplayer game. A message will show how many players are lying in [[bed]] while waiting for all players to fall asleep.
+* Provided better visual feedback and hints for different render distance settings.
+
+'''Vanilla Parity'''
+* Changed the raid [[bossbar]] color from pink to red. ({{bug|MCPE-46047}})
+* [[Raid]] mobs now despawn after a raid ends if every player moves far away enough from them.
+* [[Vindicators]] no longer naturally spawn in [[patrols]].
+
+'''Villages'''
+*The [[Hero of the Village]] effect now applies to all players who helped kill a [[raider]] once a raid is defeated; the effect also remains on the players, even if they travel outside the [[village]]. ({{bug|MCPE-53384}})</onlyinclude>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[de:Bedrock Edition beta 1.18.0.20]]
+[[es:Bedrock Edition beta 1.18.0.20]]
+[[ja:Bedrock Edition beta 1.18.0.20]]
+[[pt:Edição Bedrock beta 1.18.0.20]]
+[[ru:Beta 1.18.0.20 (Bedrock Edition)]]
+[[zh:基岩版1.18.0.20]]

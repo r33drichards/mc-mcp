@@ -1,0 +1,162 @@
+{{Lowercase}}
+{{Redirect|Client|the [[entity]] sometimes called "client"|Player|the [[block]] {{in|be}}|Client request placeholder block}}
+{{Exclusive|java}}
+{{Infobox program
+| image = Java Edition {{v|java|nolink=1}}.png
+| title = client.jar
+| author =
+* [[File:Mojang Studios logo.svg|x20px|link=Mojang Studios]] [[Mojang Studios]]
+| platform = {{OS|win|mac|lin}} and other platforms that support running a JVM
+| programming language = {{OS|java}} {{w|Java (programming language)|Java}}
+| license = [https://www.minecraft.net/en-us/eula EULA]
+| website = https://www.minecraft.net/en-us/download
+| source available = Partial
+| size = ≈ 29 MiB ([[Java Edition 1.21.10|1.21.10]])
+| version =
+* '''Release''': {{v|java}}
+{{#if: {{v|java-snap}} | * '''Snapshot''': {{v|java-snap}} }}
+| date = May 16, 2009
+}}
+
+<code>'''client.jar'''</code> is a {{w|JAR (file format)|JAR}} file containing the ''[[Minecraft]]'' program and some default resources. It is launched by the user using the ''[[Minecraft Launcher]]''.
+
+The <code>client.jar</code> file is named using the [[Version formats#Release|version]] number after download, e.g., ''1.21.5.jar''. The name ''client.jar'' is used on the distribution server, and commonly as a general term for all versions of the file. It is located at <code>[[.minecraft]]/versions/''version''/''version''.jar</code>, next to the <code>[[client.json]]</code> file.
+
+It can be opened with a [[wikipedia:File archiver|file archiving program]] that supports ZIP files.
+
+== Contents ==
+The file contains some, but not all, default resources. For instance, textures from the vanilla resource pack are stored here, but [[Tutorial:Sound directory|sound files]] are stored separately.
+
+It also stores the ''Minecraft'' program in form of Java class files. These files have names such as "acq" or "qn", because they have been obfuscated with the {{w|ProGuard}} tool to hide the original names.{{Until|Java 26.1}} However, they can still be disassembled or decompiled to understand their functionality and aid modding, and can be deobfuscated using the official [[obfuscation map]]s or community-created obfuscation maps such as Yarn.
+
+=== Directory structure ===
+The <code>client.jar</code> file has the following directory structure. Note that Java class files have been omitted for brevity.
+
+<!-- last checked in 1.21.1 -->
+{{blist|class=treeview
+|{{File|archive|''version''.jar}}
+|{{blist
+|{{File|directory|META-INF}}: Information for the JVM, including signature information, which may be used to check if the game is [[Mod#Crash reports|modified]].
+{{blist
+    |{{File|file|MANIFEST.MF}}
+    |{{File|file|MOJANGCS.RSA}}
+    |{{File|file|MOJANGCS.SF}}
+}}
+|{{File|directory|assets}}: The vanilla [[resource pack]].
+{{blist
+    |{{Collapse|title={{File|directory|minecraft}}
+    |content={{blist
+        |{{File|directory|atlases}}
+        |{{File|directory|blockstates}}
+        |{{File|directory|font}}
+        |{{File|directory|items}}
+        |{{File|directory|lang}}
+        {{blist
+        |{{File|file|en_us.json}}
+        }}
+        |{{File|directory|models}}
+        |{{File|directory|particles}}
+        |{{File|directory|shaders}}
+        |{{File|directory|texts}}
+        |{{File|directory|textures}}
+        |{{File|file|gpu_warnlist.json}}
+        |{{File|file|regional_compliancies.json}}
+    }}
+    }}
+    |{{File|file|.mcassetsroot}}: Empty file identifying the vanilla resource pack.
+}}
+|{{File|directory|com}}
+{{blist
+    |{{File|directory|mojang}}
+    {{blist
+    |{{File|directory|blaze3d}}
+    }}
+}}
+|{{File|directory|data}}: The vanilla [[data pack]].
+{{blist
+    |{{Collapse|title={{File|directory|minecraft}}
+    |content={{blist
+        |{{File|directory|advancement}}
+        |{{File|directory|banner_pattern}}
+        |{{File|directory|chat_type}}
+        |{{File|directory|damage_type}}
+        |{{File|directory|datapacks}}
+        {{blist
+        |{{File|directory|bundle}}
+        |{{File|directory|trade_rebalance}}
+        }}
+        |{{File|directory|dimension_type}}
+        |{{File|directory|enchantment}}
+        |{{File|directory|enchantment_provider}}
+        {{blist
+        |{{File|directory|raid}}
+        }}
+        |{{File|directory|jukebox_song}}
+        |{{File|directory|loot_table}}
+        |{{File|directory|recipe}}
+        |{{File|directory|structure}}
+        |{{File|directory|tags}}
+        |{{File|directory|trim_material}}
+        |{{File|directory|trim_pattern}}
+        |{{File|directory|wolf_variant}}
+        |{{File|directory|worldgen}}
+    }}
+    }}
+    |{{File|file|.mcassetsroot}}: Empty file identifying the vanilla data pack.
+}}
+|{{File|directory|net}}
+{{blist
+    |{{File|directory|minecraft}}
+    {{blist
+    |{{File|directory|client}}
+    |{{File|directory|data}}
+    |{{File|directory|obfuscate}}
+    |{{File|directory|server}}
+    |{{File|directory|util}}
+    }}
+}}
+|{{File|file|flightrecorder-config.jfc}}
+|{{File|file|pack.png}}: Vanilla resource pack and data pack icon.
+|{{File|file|[[version.json]]}}
+}}
+}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java classic}}
+|{{HistoryLine||mc-161607|[[Notch]] started distributing the game to other people, constituting the creation of client.jar.}}
+|{{HistoryLine||0.0.14a_08|Signature files, MOJANG_C.SF and MOJANG_C.DSA have been added to the META-INF folder.}}
+|{{HistoryLine|java indev}}
+|{{HistoryLine||0.31|dev=20091223-0040|Java class files have been moved from client.jar/com/mojang/minecraft to client.jar/net/minecraft.}}
+|{{HistoryLine|java infdev}}
+|{{HistoryLine||20100627|Java class files are now all located in the root directory of client.jar.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.2.5|The signature files, MOJANG_C.SF and MOJANG_C.DSA have been moved to CODESIGN.SF and CODESIGN.RSA, respectively.}}
+|{{HistoryLine||1.21.4|dev=24w45a|New entry point {{samp|net.minecraft.client.data.Main}} is present in client.jar, with similar command line structure as data generator in [[server.jar]].}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap1|The Java class files in client.jar are no longer obfuscated, and are no longer located in the root directory of client.jar.}}
+}}
+
+== See also ==
+* [[Bedrock Edition installation files|''Bedrock Edition'' installation files]], which contain the game client executable for {{BE}}.
+* [[.minecraft]]
+* [[server.jar]]
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:Minecraft.jar]]
+[[es:Minecraft.jar]]
+[[fr:Client.jar]]
+[[it:Client.jar]]
+[[ja:Client.jar]]
+[[ko:Client.jar]]
+[[nl:Minecraft.jar]]
+[[pl:Minecraft.jar]]
+[[pt:Client.jar]]
+[[ru:Client.jar]]
+[[tr:Client.jar]]
+[[uk:Client.jar]]
+[[zh:Client.jar]]

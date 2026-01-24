@@ -1,0 +1,369 @@
+{{Infobox version
+| title = Minecraft 24w13a
+| image = 24w13a.jpg
+| image2 = Java Edition 24w13a.png
+| edition = Java
+| type = Snapshot
+| date = March 27, 2024
+| jsonhash = 6cf31c11399048afad69861cf91756ec18ab4ead
+| clienthash = a54dff40ae8a065acd180e518a16c576ecf2972a
+| clientmap = 0b69ad88d133024f9fd46448ffe23b5375866561
+| serverhash = 2fd2113b7b81cc78cb4a76939a6c11840d57036d
+| servermap = 7c03129b48e53704e76c140b16f14883a0e83752
+| parent = 1.20.5
+| prevparent = 1.20.4
+| prev = 24w12a
+| next = 24w14a
+| nextparent = 1.20.6
+}}<onlyinclude>
+
+'''24w13a''' is the fourteenth [[snapshot]] for [[Java Edition 1.20.5]], released on March 27, 2024,<ref>{{snap|24w13a|March 27, 2024}}</ref> that adds [[ominous event]]s, [[ominous trial spawner]]s, and [[ominous vault]]s, and fixes bugs.
+
+This is the last Java Edition version able to run on 32-bit operating systems and Java from 17 to 20.<ref>{{snap|24w14a|April 3, 2024}}</ref>
+
+== Additions ==
+=== Items ===
+<ref name="noexp">{{bug|MC-270954|||Won't Fix}}</ref>
+
+'''{{Animate|Potion of Infestation.png; Splash Potion of Infestation.png; Lingering Potion of Infestation.png|x32px}} [[Potion of Infestation]]'''
+* [[Brewed]] with an [[awkward potion]] and a [[stone]] block.
+* Gives the [[Infested]] effect.
+
+'''{{Animate|Potion of Oozing.png; Splash Potion of Oozing.png; Lingering Potion of Oozing.png|32px}} [[Potion of Oozing]]'''
+* Brewed with an awkward potion and a [[slime block]].
+* Gives the [[Oozing]] effect.
+
+'''{{Animate|Potion of Weaving.png; Splash Potion of Weaving.png; Lingering Potion of Weaving.png|32px}} [[Potion of Weaving]]'''
+* Brewed with an awkward potion and a [[cobweb]].
+* Gives the [[Weaving]] effect.
+
+'''{{Animate|Potion of Wind Charging.png; Splash Potion of Wind Charging.png; Lingering Potion of Wind Charging.png|32px}} [[Potion of Wind Charging]]'''
+* Brewed with an awkward potion and a [[breeze rod]].
+* Gives the [[Wind Charged]] effect.
+
+=== Gameplay ===
+'''[[Effect]]s'''<ref name=noexp>{{bug|MC-270954|||Won't Fix}}</ref>
+* [[File:Infested JE1 BE1.png|32px]] [[Infested]]
+** Affected entities have a 5% chance to spawn 1&ndash;2 [[silverfish]] when hurt.
+** Silverfish cannot get this affect.
+* [[File:Oozing JE1 BE1.png|32px]] [[Oozing]]
+** Affected entities spawn two [[slime]]s upon death.
+** Slimes cannot get this effect.
+* [[File:Raid Omen JE1.png|32px]] [[Raid Omen]]
+** A variant that Bad Omen can transform into if the player enters a village.
+** It has a duration of 30 seconds.
+** Once the Raid Omen expires, a raid starts at the location the player gained the Raid Omen.
+* [[File:Trial Omen JE1 BE1.png|32px]] [[Trial Omen]]
+** A variant that Bad Omen can transform into if the player is within detection range of a [[trial spawner]] that is not ominous.
+** The Trial Omen has a duration of 15 minutes multiplied by the transformed Bad Omen's level.
+** Players that have Trial Omen are surrounded by ominous particles.
+* [[File:Weaving JE1 BE1.png|32px]] [[Weaving]]
+** Affected entities spread [[cobweb]] blocks upon death.
+* [[File:Wind Charged JE1 BE1.png|32px]] [[Wind Charged]]
+** Affected entities emit a wind burst upon death.
+
+'''[[Enchantments]]'''<ref name=noexp>{{bug|MC-270954|||Won't Fix}}</ref>
+* Three new enchantments have been introduced that are unique to the [[mace]].
+* [[Breach]]
+** Rare enchantment, accessible in the [[enchanting table]] and on [[enchanted book]]s in loot.
+** Has 4 levels.
+** Maces enchanted with Breach reduce the effectiveness of armor on the target.
+*** The effectiveness of the armor is reduced by 15% per Breach level.
+* [[Density]]
+** Common enchantment, accessible in the [[enchanting table]] and on [[enchanted book]]s in loot.
+** Has 5 levels.
+** Maces enchanted with Density do more damage per fallen block per Density level.
+*** Damage dealt per fallen block is increased by 1 per level of Density.
+* [[Wind Burst]]
+** Unique enchantment which can only be found in [[ominous vault]]s.
+** Has 3 levels.
+** Maces enchanted with Wind Burst emit a burst of wind upon hitting an enemy, launching the attacker upward and enabling the linking of smash attacks one after the other.
+** Each level bounces the attacker higher up in the air; however any level above the default maximum of 3 obtained through commands makes the player simply lose all downward momentum and begin falling again, without gaining any upward momentum.
+
+=== Command format ===
+'''Entity sub-predicates'''
+* Added <code>raider</code> sub entity predicate.
+** New sub-predicate has been added to match raidersFields:
+*** <code>has_raid</code> - Match whether the raider is in an active raid.
+*** <code>is_captain</code> - Match whether the raider is a captain.
+
+'''Item stack components'''
+* Added <code>item_name</code> item stack component.
+** When present, replaces default item name with contained chat component.
+** Differences from <code>custom_name</code>:
+*** <code>item_name</code> can't be changed or removed in anvil.
+*** <code>item_name</code> is not styled with italics when displayed to player.
+*** <code>item_name</code> does not show labels where applicable (for example: banner markers, names in item frames).
+
+'''Loot tables'''
+* Added new loot table type <code>minecraft:equipment</code>.
+** Has required parameters of <code>this_entity</code> and <code>origin</code>. 
+*** <code>this_entity</code>: the mob that is about to be given equipment.
+*** <code>origin</code>: the position of the mob.
+* Added optional <code>equipment_loot_table</code> to the spawn data present in the <code>SpawnPotentials</code> of monster spawners and <code>spawn_potentials</code> of trial spawner configs.
+** If present, rolled items from the specified loot table are equipped to the mob that spawns.
+
+=== General ===
+'''[[Tag]]s'''
+* Added <code>minecraft:is_player_attack</code> damage type tag: for attacks performed by the player.
+* Added the <code>#enchantable/fire_aspect</code>, and <code>#enchantable/sharp_weapon</code> item tags.
+
+== Changes ==
+=== Blocks ===
+'''[[Cobweb]]'''
+* Added unique sounds.
+
+=== Command format ===
+'''Item stack components'''
+* Non-default components on item stacks containing block items are now stored on block entities when placed.
+* Component removals from defaults are currently not preserved.
+* Placing and breaking non-block entity blocks remains unchanged - nothing is preserved.
+* Does not automatically cause preserved components to be restored on drops - this requires addition of <code>copy_components</code> function to loot table.
+* Components are stored in field called <code>components</code>.
+** Some components (like <code>custom_name</code>) are still handled by legacy serialization, which means they might not be present in there.
+** Contains map of component id to component value.
+
+'''Loot functions'''
+* Changed <code>copy_components</code> loot function.
+** Removed field <code>components</code> and replaced it with: 
+*** <code>include</code> - optional list of data components to be copied from source.
+**** If omitted, all components present are included.
+*** <code>exclude</code> - optional list of data components to be excluded from copying.
+**** If omitted, defaults to empty.
+*** Only components that are included (explicitly or implicitly) but not excluded are copied.
+* Changed <code>set_name</code> loot function.
+** Added optional field <code>target</code> to specify which name should be set.
+** Values:
+*** <code>custom_name</code> - sets <code>custom_name</code> component (default).
+*** <code>item_name</code> - sets <code>item_name</code> component.
+
+=== General ===
+'''Chat'''
+* Client chat state (on-screen messages and chat input history) is now preserved by client when entering and exiting configuration phase.
+* Message signature chain handling remains unchanged - going into configuration phase starts new session.
+* If client has message delay configured, pending messages are delivered immediately before leaving world.
+* Server can clear chat state by sending <code>reset_chat</code> packet in configuration phase.
+
+'''[[Data pack]]'''
+* The data pack version is now <code>37</code>.
+* Int and float providers used in worldgen definitions are no longer wrapped in an extra <code>value</code> field next to <code>type</code>
+** For example, <code><nowiki>{"type":"minecraft:uniform","value":{"min_inclusive":0.0,"max_inclusive":1.0}}</nowiki></code> becomes <code>{"type":"minecraft:uniform","min_inclusive":0.0,"max_inclusive":1.0}</code>. 
+
+'''Protocol'''
+* The <code>minecraft:chat_command_signed</code> packet has been split from <code>minecraft:chat_command</code>.
+** Commands that do not accept any signed arguments use the unsigned packet, and don't pass any 'last seen' chat updates. 
+
+'''[[Resource pack]]'''
+* The resource pack version is now <code>31</code>.
+* Added the following particle types: {{cd|d=and|infested|item_cobweb|small_gust|raid_omen|trial_omen|trial_spawner_detection_ominous|ominous_spawning}}.
+* Added the following sound events: {{cd|d=and|block.cobweb.break|block.cobweb.step|block.cobweb.place|block.cobweb.hit|block.cobweb.fall|block.trial_spawner.about_to_spawn_item|block.trial_spawner.spawn_item|block.trial_spawner.spawn_item_begin|block.trial_spawner.charge_activate|block.trial_spawner.ambient_charged|item.ominous_bottle.dispose|event.mob_effect.bad_omen|event.mob_effect.trial_omen|event.mob_effect.raid_omen}}.
+* Added textures for the following blocks and items: ominous vault, ominous trial spawner, ominous bottle.
+* Updated textures for normal vault block.
+* Added the following mob effect icon textures: {{cd|d=and|infested|oozing|weaving|wind_charged|raid_omen|trial_omen|bad_omen_121}}.
+* Added new models for ominous state of vault block. 
+
+'''[[Tag]]s'''
+* Fixed the <code>#parrot_poisonous_food</code> item tag to contain <code>cookie</code> instead of <code>carrot</code>.
+
+== Experimental ==
+=== Additions ===
+==== Blocks ====
+'''[[File:Ominous Trial Spawner (active) JE1 BE1.png|32px]] [[Ominous trial spawner]]'''
+* A more powerful active phase of the [[trial spawner]] with unique challenges and rewards. 
+** Provides a more challenging experience that advanced players can opt into for better rewards.
+* A trial spawner becomes ominous when it detects a [[player]] with the [[Trial Omen]] effect if:
+** Either it is not in [[Trial Spawner#Cooldown|cooldown]].
+** Or, it is in cooldown but was not ominous during its last activation. This bypasses the cooldown.
+* While active, it:
+** Glows blue instead of orange.
+** Emits soul flames instead of normal flames.
+** Spawns mobs, usually with equipment if they can wear it.
+*** The [[armor]] these mobs wear have [[armor trim]]s applied from the [[trial chambers]].
+*** Known issue: these mobs can currently drop their equipment on death, but they will not in the future.
+** Periodically spawns potions and projectiles on top of unsuspecting players and mobs. 
+*** Based on their location, spawners in an area select a random set of projectiles to spawn.
+*** These projectiles always include a single type of [[lingering potion]] from a set of possible status effects.
+* Becoming ominous despawns any existing mobs it spawned and resets its challenge.
+** It stays ominous until it has been defeated and its cooldown has finished.
+* When defeated, it ejects a different set of loot to normal trial spawners.
+* An [[ominous trial key]] has a 30% chance of ejecting from a defeated ominous trial spawner, replacing the usual 50% chance to eject a [[trial key]].
+
+'''[[File:Ominous Vault (active) JE1 BE1.png|32px]] [[Ominous vault]] '''
+* A variant of the [[vault]], with a different texture, that emits soul flames instead of normal flames.
+* Can be found throughout the [[trial chambers]] in harder to find places.
+* Is unlocked with an [[ominous trial key]].
+* Holds a more valuable set of rewards than the normal vault.
+* Can provide some particularly valuable items, to mention a few:
+** [[Ominous bottle]] III - V
+** [[Enchanted golden apple]]
+** [[Flow banner pattern]]
+** [[Flow armor trim]] smithing template
+** Enchantments for the [[mace]]:
+*** [[Wind Burst]]
+*** [[Breach]]
+*** [[Density]]
+** [[Heavy core]]
+
+==== Items ====
+'''[[File:Ominous Bottle JE1 BE1.png|32px]] [[Ominous bottle]]'''
+* Can be consumed by players to give the [[Bad Omen]] effect for {{convert|100|minutes|ticks}}.
+** Has 5 variations, one for each Bad Omen level.
+** The bottle breaks when consumed.
+** Can be stacked to 64.
+* Is occasionally found in loots from [[vault]]s.
+* Is dropped by [[raid captain]]s when they are defeated outside a [[raid]].
+
+'''[[File:Ominous Trial Key JE1 BE1.png|32px]] [[Ominous trial key]] '''
+* A new variant of the [[trial key]].
+* Can only be obtained by defeating an [[ominous trial spawner]].
+* Can be used to unlock an [[ominous vault]], but cannot unlock a [[vault]].
+
+==== Command format ====
+'''Item stack components'''
+* Added <code>ominous_bottle_amplifier</code> item stack component.
+** Controls the amplifier amount for an ominous bottle's bad omen effect.
+** Format: integer between 0 and 4.
+*** e.g. <code>ominous_bottle_amplifier=3</code> 
+
+'''Loot functions'''
+* Added <code>set_ominous_bottle_amplifier</code> loot function.
+** Sets the <code>ominous_bottle_amplifier</code> component on the target item according to a number provider.
+*** <code>conditions</code>: list of conditions to filter this function.
+*** <code>amplifier</code>: a number provider used to generate the <code>ominous_bottle_amplifier</code> component.
+
+==== Gameplay ====
+'''{{Animate|Bad Omen JE3 BE3.png; Raid Omen JE1.png; Bad Omen JE3 BE3.png; Trial Omen JE1 BE1.png|32px}} [[Ominous event]]s'''
+* Bad Omen has been expanded to give access to an optional experience in trial chambers.
+* These optional experiences accessed through Bad Omen are now known as ominous events.
+** They are more challenging than usual, and are designed to shake up the experience in unique ways.
+** Illager raids are an example of an existing ominous event.
+* Bad Omen is getting some changes with this redesign:
+** It has a new, shadowy icon and a sound for being applied to the player.
+** It no longer triggers a raid directly when entering a village.
+*** Instead, it transforms into a Raid Omen variant with a duration of 30 seconds.
+*** Once the Raid Omen expires, a raid starts at the location the player gained the Raid Omen.
+*** Like any other effect, players can drink a bucket of milk to clear the Raid Omen to prevent the raid from starting.
+** It is no longer given to players that defeat a raid captain outside a raid.
+*** Instead, players can gain access to Bad Omen by consuming a new ominous bottle.
+
+==== General ==== 
+'''[[Tag]]s '''
+* Added new entity type tags:
+** <code>#immune_to_infested</code>: contains <code>silverfish</code>.
+*** For entities that cannot receive the Infested effect.
+** <code>#immune_to_oozing</code>: contains <code>slime</code>.
+*** For entities that cannot receive the Oozing effect.
+* Added new item tag:
+** <code>#enchantable/mace</code>: contains <code>mace</code>.
+
+=== Changes ===
+==== Blocks ====
+'''[[Trial spawner]]'''
+* All trials spawners now increase the amount of mobs present at once by 0.5 for each additional player, down from 2.
+* Baby zombie spawners now only have 2 mobs present at once for its baseline, down from 3 mobs.
+* Can now only activate when a player is in line of sight.
+* The loot ejected from trial spawners has been adjusted.
+** It now has a focus on providing higher quality food more often to make replenishing between fights more safe.
+
+'''[[Vault]]'''
+* The loot found within vaults has been adjusted.
+* Standard vaults give slightly less items of high quality, but also include the following changes:
+** Ominous bottle I - II can be found.
+** Flow banner pattern, flow armor trim smithing template, and heavy core can no longer be obtained.
+** Guster banner pattern and bolt armor trim smithing template remain exclusive to standard vaults.
+** In heavy core's place, standard vaults instead have a very rare chance of providing a [[trident]].
+
+==== Items ==== 
+'''[[Mace]]'''
+* Added a new explosive particle effect when executing a smash attack with the mace to really show the player's power.
+* Increased the power and range of the knockback effect from a smash attack.
+* Introduced an even stronger knockback when falling for more than 5 blocks before attacking.
+* When successfully striking a target, all vertical momentum is reset in addition to negating any accumulated fall distance.
+* The baseline additional damage dealt by the mace smash attack has been slightly reduced to 3 (1.5 hearts) per fallen block.
+* Can now be enchanted with:
+** [[Smite]]
+** [[Bane of Arthropods]]
+** [[Fire Aspect]]
+** [[Unbreaking]]
+** [[Mending]]
+** [[Curse of Vanishing]]
+** [[Density]]
+** [[Breach]]
+** [[Wind Burst]]
+
+==== Mobs ==== 
+'''[[Breeze]]'''
+* Now avoids jumping into dangerous blocks or air.
+
+==== Non-mob entities ====
+'''[[Wind charge]]s'''
+* No longer collide with end crystals.
+
+==== World generation ====
+'''[[Trial chambers]]'''
+* Remade <code>chamber_5</code> with variations, and renamed it to <code>eruption</code>.
+* Reduced amount of trial spawners in corridors.
+* Updated layout and placements of vaults.
+* Placed ominous vaults in chambers, intersections, at the ends of corridors.
+* Corridors no longer generate endlessly.
+* Added an atrium to the corridors.
+* Made various layout changes in intersections and corridors.
+* Known issues: corner quadrants in slanted may still fail to generate correctly.
+
+==== General ==== 
+'''[[Tag]]s'''
+* Added <code>mace</code> to the <code>#enchantable/durability</code>, <code>#enchantable/fire_aspect</code>, <code>#enchantable/vanishing</code>, and <code>#enchantable/weapon</code> item tags.
+
+== Fixes ==
+{{fixes|fixedin=24w13a
+|;From released versions before 1.20
+|94413|Breaking, placing and walking in cobweb plays stone sounds.
+|123804|Explorer map and ominous banner names appear in item frames, draw in italics, and can be removed with an anvil.
+|148057|Ominous banners generated in outposts show the pattern list.
+|166361|GUI scale does not visually update when the option is changed using the keyboard and without the mouse.
+|178410|Banners don't support the {{cd|HideFlags}} tag when placed down as blocks.
+|230256|NBT "HideFlags" does not hide "Slot" on {{cd|minecraft:bundle}}.
+|;dev
+|268195|Slimes spawning inside walls and suffocating in trial chambers.
+|268578|Bogged mob sits wrong in boats.
+|268627|Slime spawns are incorrect.
+|268716|Magma cubes spawn even if there's only 2 blocks in height.
+|268882|Same enchantments in an item component crash the game.
+|268893|Comparators requiring a block update to function properly, and droppers/observers receiving false state changes.
+|269015|Wind charges can destroy end crystals.
+|269143|Attribute modifiers cannot exclusively target the "{{cd|body}}" slot.
+|269342|The experimental features details menu is rendered incorrectly after resizing the game window.
+|269371|If the "GUI Scale" option is on "Auto", and if you try to scale it down using {{key|CTRL}} + mouse wheel, it shows as "-1".
+|269387|Mace sounds use the Neutral sound category.
+|269388|Mace falling damage increase is applied while using an elytra.
+|269427|Lingering potion particles are tinted black instead of the potion's color.
+|;previous
+|269628|Heavy cores delete water when placed into it.
+|269635|The game crashes when attempting to eat lily pads or frogspawn.
+|269643|Waterlogged heavy core does not update water flow correctly.
+|269649|"Who Needs Rockets" advancement is granted after launching yourself up 8 blocks instead of 7 blocks.
+|269659|Parrots can now be fed carrots to kill them instead of cookies.
+|269670|Game crash when giving bundle with hide tooltip.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|lLocZLcmno8|l7DGtwvDTqM|ome1h0UM0-M}}
+
+== Trivia ==
+* The potion of Infestation, potion of Oozing, and potion of Weaving can all be brewed in worlds without the Update 1.21 experiment enabled. However, they are not present in the Creative inventory in those worlds.
+* This snapshot adds more effects than any other ''Minecraft'' version since their introduction in [[Java Edition Beta 1.8 Pre-release|Beta 1.8 Pre-release]], with a total of six.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w13a]]
+[[es:Java Edition 24w13a]]
+[[fr:Édition Java 24w13a]]
+[[ja:Java Edition 24w13a]]
+[[pt:Edição Java 24w13a]]
+[[ru:24w13a (Java Edition)]]
+[[uk:24w13a (Java Edition)]]
+[[zh:Java版24w13a]]

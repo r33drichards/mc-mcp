@@ -1,0 +1,185 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.8020.0<br>'''Android''': 1.21.80.20
+| image = SummerDrop LocatorBar B.jpeg
+| image2 = Bedrock 1.21.80.20.png
+| build = 31641019
+| editorver = 0.9.1
+| versioncode = '''Android''':<br />
+952108020 (armeabi-v7a, 34)<br />
+962108020 (x86, 34)<br />
+972108020 (arm64-v8a, 34)<br />
+982108020 (x86_64, 34)
+| date = March 11, 2025
+| server = 1.21.80.20
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.80.20.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.80.20.zip Linux]
+| parent = 1.21.80
+| prevparent = 1.21.73
+| prev =
+| next = Preview 1.21.80.21
+| nextparent = 1.21.81
+}}<onlyinclude>
+'''Beta 1.21.80.20''' (ChromeOS, Android) or '''Preview 1.21.80.20''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the first beta/''Preview'' version for [[Bedrock Edition 1.21.80]], released on March 11, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/34870603664909-Minecraft-Beta-Preview-1-21-80-20|title=Minecraft Beta & Preview - 1.21.80.20|website=Minecraft Feedback|date=March 11, 2025}}</ref> which adds the new [[Player Locator Bar]] and fixes bugs.
+
+== Changes ==
+=== General ===
+'''[[UI]]'''
+*Added model to handle Not Enough Disc Space error in Edit World screen, Resource Packs tab.
+*Stopped main menu background rotation when entering new player flow
+*Stopped main menu background rotation and logo text movement when the "screen animations" option is disabled.
+
+=== Technical ===
+'''[[Biome]]s'''
+*Moved Vanilla biome JSON files from an internal folder to the appropriate Vanilla behavior packs.
+
+'''Components'''
+*The {{cd|minecraft:rideable}} component now has three new additional fields:
+**{{cd|dismount_mode}} defines where riders are placed when dismounting the entity:
+***{{cd|default}}, riders are placed on a valid ground position around the entity, or at the center of the entity's collision box if none is found.
+***{{cd|on_top_center}}, riders are placed at the center of the top of the entity's collision box.
+**{{cd|on_rider_enter_event}}, defines the event to execute on the owner entity when an entity starts riding it.
+**{{cd|on_rider_exit_event}}, defines the event to execute on the owner entity when an entity stops riding it.
+
+'''General'''
+*Updated the client side biome component {{cd|minecraft:water_appearance}} field {{cd|surface_color}} to be optional. Added a content error that fires if the component is empty.
+
+'''Goals'''
+*{{cd|minecraft:behavior.float_wander}} has been updated with new fields:
+**{{cd|navigate_around_surface}}: enables the usage of a new algorithm to find random positions to navigate to. The new algorithm aims to find random positions in the vicinity of solid (i.e. non-air and non-liquid) blocks, and if that fails will fall back to finding a random position in the vicinity of the current dimension's surface level.
+**{{cd|additional_collision_buffer}}: makes sure there are no blocks present in an inflated area around the target position.
+**{{cd|allow_navigating_through_liquids}}: allow the mob to have target positions inside liquids.
+**{{cd|surface_xz_dist}}: the distance in the horizontal directions to look for nearby surfaces. Only valid when {{cd|navigate_around_surface}} is {{cd|true}}.
+**{{cd|surface_y_dist}}: the distance in the vertical directions to look for nearby surfaces. Only valid when {{cd|navigate_around_surface}} is {{cd|true}}.
+*{{cd|minecraft:behavior.follow_mob}} has been updated with the following new fields:
+**{{cd|use_home_position_restriction}}: If {{cd|true}}, the mob will respect the {{cd|minecraft:home}} component's {{cd|restriction_radius}} field when choosing a target to follow. If {{cd|false}}, it will choose target position without considering home restrictions.
+**{{cd|preferred_actor_type}}: The type of actor to prefer following. If left unspecified, a random actor among those in range will be chosen.
+**{{cd|filters}}: If non-empty, provides criteria for filtering which nearby Mobs can be followed. If empty default criteria will be used, which will exclude players, squid variants, Fish variants, tadpoles, dolphins, and mobs of the same type as the owner of the goal.
+
+'''[[Molang]]'''
+*{{cd|query.graphics_mode_is_any}} no longer requires the Upcoming Creator Features experiment.
+
+'''Network Protocol'''
+*Added {{cd|ActorFlags::DOES_SERVER_AUTH_ONLY_DISMOUNT}}.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Locator Bar" experimental toggles.
+
+=== Additions ===
+==== Gameplay ====
+'''[[Player Locator Bar]]'''
+*The Player Locator Bar is a new UI element on the player HUD that displays the direction of other players in the world.
+**When the player locator bar experiment is enabled and there are multiple players in a world, the player locator bar will appear on-screen for each player, replacing the experience bar. The player level number will still be visible as before above the player locator bar.
+**The Player Locator Bar will display colored indicators when the camera is facing within 120 degrees towards another player. If another player is 30 degrees above or below the camera's viewport (the screen) an up or down arrow will be displayed.
+**Crouching will hide the player, preventing their indicator from appearing on the player locator bar of other players.
+**Players in spectator mode are not visible on the player locator bar.
+**A mob head or a carved pumpkin will similarly hide players from the player locator bar when worn in the head slot.
+*Using a potion of invisibility will also hide players from the player locator bar.
+
+=== Changes ===
+==== Technical ====
+'''API'''
+:{{cd|@minecraft/server 2.0.0-beta}}
+*{{cd|EntityPushThroughComponent}} has been changed to read-only.
+*{{cd|resetHudElements}} method on {{cd|ScreenDisplay}} has been renamed to {{cd|resetHudElementsVisibility}}.
+*{{cd|ItemStack}} methods {{cd|getComponent}} and {{cd|getComponents}} will return {{cd|ItemCustomComponentInstance}} for custom components registered with {{cd|ItemComponentRegistry}}.
+*{{cd|ItemStack}} method {{cd|hasComponent}} will return {{cd|true}} for custom components registered with {{cd|ItemComponentRegistry}}.
+:{{cd|@minecraft/server-ui 2.0.0-beta}}
+*Class {{cd|ModalFormData}}.
+**Changed function {{cd|dropdown}}.
+***Removed parameter {{cd|defaultValueIndex?: number}}.
+***Added parameter {{cd|dropdownOptions?: ModalFormDataDropdownOptions}}.
+**Changed function {{cd|slider}}.
+***Removed parameter {{cd|valueStep: number,}}.
+***Removed parameter {{cd|defaultValue?: number}}.
+***Added parameter {{cd|sliderOptions?: ModalFormDataSliderOptions}}.
+**Changed function {{cd|textField}}.
+***Removed parameter {{cd|defaultValue?: minecraftserver.RawMessage | string}}.
+***Added parameter {{cd|textFieldOptions?: ModalFormDataTextFieldOptions}}.
+**Changed function {{cd|toggle}}.
+***Removed parameter {{cd|defaultValue?: boolean}}.
+***Added parameter {{cd|toggleOptions?: ModalFormDataToggleOptions}}.
+*Added interface {{cd|ModalFormDataDropdownOptions}}:
+<syntaxhighlight lang="c++">export interface ModalFormDataDropdownOptions {
+    defaultValueIndex?: number;
+    tooltip?: minecraftserver.RawMessage | string;
+}</syntaxhighlight>
+*Added interface {{cd|ModalFormDataSliderOptions}}:
+<syntaxhighlight lang="c++">export interface ModalFormDataSliderOptions {
+    defaultValue?: number;
+    tooltip?: minecraftserver.RawMessage | string;
+    valueStep?: number;
+}</syntaxhighlight>
+*Added interface {{cd|ModalFormDataTextFieldOptions}}:
+<syntaxhighlight lang="c++">export interface ModalFormDataTextFieldOptions {
+    defaultValue?: string;
+    tooltip?: minecraftserver.RawMessage | string;
+}</syntaxhighlight>
+*Added interface {{cd|ModalFormDataToggleOptions}}:
+<syntaxhighlight lang="c++">export interface ModalFormDataToggleOptions {
+    defaultValue?: boolean;
+    tooltip?: minecraftserver.RawMessage | string;
+}</syntaxhighlight>
+
+'''Graphical'''
+*Added caustics to bodies of water in the Deferred Technical Preview. This new feature is enabled by default, and can be further controlled by resource packs.
+*Modified exposure to preserve details in scenes with high contrast in lighting (i.e., local exposure).
+*Improved the lighting handoff between the sun and moon at sunrise and sunset in the Deferred Technical Preview.
+*Made some slight adjustments to volumetric fog density, the sky probe strength and the emissive brightness of the sun and moon sprites in the Deferred Technical Preview.
+*Introduced new 'Off' option to the Point Light Quality slider to fully disable analytical point light evaluation in the Deferred Technical Preview.
+
+'''Technical Experimental'''
+*Removed unused experimental json field {{cd|minecraft:nether_surface}} in the behavior pack biome file.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.80.20 Preview
+|;old
+|14975|Custom names on Slimes/Magma Cubes doesn't stay named when splitted
+|18704|Enchanted Weapons Don't have Attack Particles
+|42734|Cut Sandstone Slabs and Cut Red Sandstone Slabs can't be crafted with Stonecutter
+|46806|Wither Skeletons And Zombified Piglin Don't Like Fire Or Lava (Pathfinding)
+|47125|Rabbit meat is not affected by Looting
+|58999|Most items can't be used when aiming at a mob spawner
+|63995|Using shears on full beehive/nest doesn't consume durability
+|90716|Parity: The Durations of Regeneration II by Totem of Undying are different
+|101923|Potions/Splash potions/Lingering Potions/Arrows of Slowness IV don’t come after Potions/Splash potions/Lingering Potions/Arrows of Slowness I in creative inventory
+|109048|Efficiency 1 item (Cap/Pants/Tunic/Boots/Gapple) in Woodland Mansions
+|155605|Mangrove roots don't burn in the furnace
+|164404|Parrots cannot imitate guardians
+|166390|Item stack in a container gets deleted when a player and a hopper/dropper/crafter add to it at the same time
+|173843|You're able to clip into/through blocks placed at X and Z coordinates one less than powers of two
+|175138|All sound in Windows stops working after 40-41% loading
+|184403|Incorrect sneak/jump buttons when riding certain mobs with the "D-Pad & tap to interact" control mode
+|184704|Impossible to customize controls while in Spectator mode
+|186584|Controls can still be customized while you are dead in hardcore mode
+|188975|Seed is not inputted into the "World seed" box when selecting a seed in the seed picker after suspending/minimizing the game with Screen Animations disabled
+|189096|Clicking the cancel button while transferring between event server softlock the game
+|190178|When sleeping in a bed during a thunderstorm, the text displays "Sleeping through the night"
+|190286|The sapling growth stage retreats incorrectly
+|190555|Panorama rapidly flashes on certain graphics cards when the world loading bar disappears
+|190845|Named creakings despawn on world reload
+|otherissuescount=7}}
+'''Other'''
+*Fixed a bug that occasionally caused an error when creating a Realm on an empty slot.
+*Fixed a crash that could sometimes occur when certain foliage textures fail to load.
+*Fixed "Download all missing packs" button not working under specific conditions.
+*Fixed an issue with {{cd|BlockPermutation::withState}} in outdated scripts that prevented some states from being set correctly on a number of blocks. Affected blocks include any which have had their directional or placement states recently changed. Scripts created after these blocks were changed may need to be updated to avoid unintended behavior.
+*Fixed rotation of Jigsaw sections when Data-Driven Jigsaw Structures is enabled.
+*Fixed a bug where the last byte was sometimes lost when reading encrypted files on Xbox, which caused some files to become invalid and fail to load.
+*Fixed mirroring of door blocks when part of a structure that is being placed.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.80 betas]]
+
+[[de:Bedrock Edition beta 1.21.80.20]]
+[[es:Bedrock Edition Preview 1.21.80.20]]
+[[ja:Bedrock Edition Preview 1.21.80.20]]
+[[pt:Edição Bedrock Preview 1.21.80.20]]
+[[ru:Preview 1.21.80.20 (Bedrock Edition)]]
+[[uk:Preview 1.21.80.20 (Bedrock Edition)]]
+[[zh:基岩版1.21.80.20]]

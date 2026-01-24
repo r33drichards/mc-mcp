@@ -1,0 +1,104 @@
+{{exclusive|java}}
+{{Infobox command
+|name=random
+|oplevel=
+*0 (<code>/random (roll<nowiki>|</nowiki>value)</code> without the <code><sequence></code> argument)
+*2 (<code>/random reset</code> and the <code><sequence></code> argument in <code>/random (roll<nowiki>|</nowiki>value)</code>)
+}}
+
+Generates a random integer, or controls [[random sequence]]s in the world.
+
+== Syntax ==
+<code>random <nowiki>(value|roll) <range></nowiki></code>
+: Outputs a random integer.
+: Range is given by two integers separated by two periods where the first given number must always be smaller than the second given number.
+
+<code>random <nowiki>(value|roll) <range> <sequence></nowiki></code>
+: Samples a random integer from the specified random sequence. If the sequence does not exist, it is created with the random sequence settings of the world.
+
+<code>random reset *</code>
+: Removes all the random sequences in the world. A random sequence is created with the settings of the world when called by a loot table.
+
+<code>random reset <nowiki>* <seed> [<includeWorldSeed>] [<includeSequenceId>]</nowiki></code>
+: Removes all the random sequences in the world, and sets the random sequence settings of the world. The setting of the world is <code>0</code>, <code>true</code>, <code>true</code>, if having not executed <code>/random reset * ...</code> command in the world.
+
+<code>random <nowiki>reset <sequence></nowiki></code>
+: Removes and re-creates a random sequence with the settings of the world. If the sequence does not exist, it is just created.
+
+<code>random <nowiki>reset <sequence> [<seed>] [<includeWorldSeed>] [<includeSequenceId>]</nowiki></code>
+: Removes and re-creates a random sequence with the specified settings instead of the settings of the world. If the sequence does not exist, it is just created.
+
+{{see also|Random sequence format#Usage}}
+
+== Arguments ==
+
+{{code|value{{!}}roll}}
+: Whether or not to notify other players of the results when extracting random numbers.
+: If it is <code>value</code>, the result is displayed in chat only to the player executing the command. If <code>roll</code>, the result is broadcasted to all players.
+
+{{argument|range|int_range}}
+: Specifies the range to pick the random number from. The size of the range (calculated by <code>max - min + 1</code>) should be between 2 and 2147483646.
+: {{arg desc|je=int_range}}
+
+{{argument|sequence|resource_location}}
+: Specifies the [[resource location]] of a [[random sequence]] to sample or reset.
+: If there's no sequence with the specified [[resource location]], it is created.
+: {{arg desc|je=resource_location}}
+
+{{argument|seed|int}}
+: The salt value.
+: {{arg desc|je=integer}}
+
+{{argument|includeWorldSeed|bool}}
+: Whether to incorporate the world seed value with the specified <code><seed></code> when seeding a random sequence. If not specified, defaults to <code>true</code>.
+: {{arg desc|je=bool}}
+
+{{argument|includeSequenceId|bool}}
+:Whether to incorporate the hash of the ID with the specified <code><seed></code> when seeding a random sequence. If not specified, defaults to <code>true</code>.
+: {{arg desc|je=bool}}
+
+== Examples ==
+{{code|/random roll 1..5}}
+
+Rolls a random number between 1 and 5 and writes it in chat
+
+{{code|execute store result score @p random_number run random value 1..10}}
+
+Generates a random number between 1 and 10 and stores it in a scoreboard called {{code|random_number}}  for the nearest player
+
+{{code|/execute store result score player random_number run random value 1..3}}
+
+{{code|/tellraw @a [{text:"Rolled number "},{"score": {"name": "player", "objective": "random_number"} }]}}
+
+Generates a number between 1 and 3 and displays it with message "Rolled number <rolled number>"
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|the arguments are not specified correctly|unparseable}}
+{{Result table|cmd=/random (value{{!}}roll) ...|{{Cd|<range>}}range is less than 2 or greater than 2147483646|fail}}
+{{Result table|cmd=|success}}
+{{Result table}}
+
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/random (value{{!}}roll) ... |On success|1|1|the obtained random value}}
+{{Output table|cmd=/random reset <sequence> ... |On success|1|1|1}}
+{{Output table|cmd=/random reset * ... |On success|1|1|the number of random sequences currently in the world}}
+{{Output table}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|Java}}
+|{{HistoryLine||1.20.2|dev=23w31a|Added {{cd|/random}}.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/random]]
+[[ja:コマンド/random]]
+[[pt:Comandos/random]]
+[[ru:Команды консоли/random]]
+[[zh:命令/random]]

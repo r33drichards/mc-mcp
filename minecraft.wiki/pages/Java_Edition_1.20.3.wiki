@@ -1,0 +1,697 @@
+{{Dangerous version|Items stored in decorated pots will be deleted after reloading the world.<ref>{{bug|MC-267185||Decorated pots can delete items when reloading the world|Fixed}}</ref>|type=data-loss|version=release|edition=Java}}{{Infobox version
+| title = Minecraft 1.20.3
+| image = 1.20.3 banner.jpg
+| image2 = Java Edition 1.20.3.png
+| edition = Java
+| type = 
+| name = [[Bats and Pots]]
+| date = December 5, 2023
+| jsonhash = 8e62c81cea68ffd1705f0dc81a52b816b511a651
+| clienthash = b178a327a96f2cf1c9f98a45e5588d654a3e4369
+| clientmap = be76ecc174ea25580bdc9bf335481a5192d9f3b7
+| serverhash = 4fb536bfd4a83d61cdbaf684b8d311e66e7d4c49
+| servermap = c1cafe916dd8b58ed1fe0564fc8f786885224e62
+| prevparent = 1.20
+| prev = 1.20.2
+| next = 1.20.4
+| nextparent = 1.20.5
+}}
+{{relevant guide|Java Edition guides/Bats and Pots}}
+
+'''1.20.3''', retroactively named '''[[Bats and Pots]]''',<ref>{{tweet|CornerHardMC|1833203939426373917|"Bats and Pots" and "Armored Paws" are both considered "game drops"|September 9, 2024}}</ref><ref>{{tweet|CornerHardMC|1833211870804857139|"Bats and Pots" and "Armored Paws" are game drops we've had thus far, but they'll vary in size and some may be larger in scope|September 9, 2024}}</ref> is a [[game drop]] for ''[[Java Edition]]'' released on December 5, 2023.<ref>{{Mcnet|minecraft-java-edition-1-20-3|Minecraft Java Edition 1.20.3|December 5, 2023}}</ref> It improves [[shield]]s, adds new functionality for [[decorated pot]]s, changes the appearance of bats, adds the {{cmd|tick}} command, changes chat component serialization, and fixes bugs, alongside an experimental toggle for features that would later be included in [[Java Edition 1.21|Tricky Trials]].<ref>{{snap|23w40a|October 4, 2023}}</ref><ref>{{snap|23w41a|October 11, 2023}}</ref>
+
+== Additions ==
+=== Command format ===
+'''{{cmd|tick}}'''
+* A new administrative and debugging command which allows the player to control the ticking flow and measure the performance of the game.
+** Requires elevated permissions (admins and above), and so it is not by default available in [[command block]]s and [[data pack]]s.
+** Syntaxes:
+*** {{cmd|link=none|tick query}}
+**** Outputs the current target ticking rate, with information about the tick times performance.
+*** {{cmd|link=none|tick rate <rate>}}
+**** Sets a custom target ticking rate to the specified value. The value <code>rate</code> must be greater than <code>1.0</code> and lower than <code>10000.0</code>.
+*** {{cmd|link=none|tick freeze}}
+**** Freezes all gameplay elements, except for [[player]]s and any [[entity]] a player is [[riding]].
+*** {{cmd|link=none|tick step <time>}}
+**** Only works when the game is frozen. It runs the game for the specified number of ticks and then freezes the game again.This allows to step through the game a set amount of ticks at a time.
+**** The parameter is optional. The default value is <code>1</code>.
+*** {{cmd|link=none|tick step stop}}
+**** Stops the current stepping process, and re-freezes the game.
+*** {{cmd|link=none|tick unfreeze}}
+**** Unfreezes the game and resumes all gameplay elements.
+*** {{cmd|link=none|tick sprint <time>}}
+**** Runs the game while ignoring the set ticking target rate for the specified number of ticks. At the end of the sprint, the game resumes the previous ticking target and displays performance information about the tick times while sprinting.
+*** {{cmd|link=none|tick sprint stop}}
+**** Stops the current {{cmd|link=none|tick sprint}}, and resumes the previous ticking target.
+
+=== General ===
+'''[[Experiments]]'''
+* Added the "[[Java Edition 1.21|Update 1.21]]" experimental toggle (<code>update_1_21</code> data pack).
+
+'''[[Game rule]]'''
+* Added <code>maxCommandForkCount</code>, to control the maximum number of forks (contexts) that can be created during one tick. Applies to command blocks and functions. Defaults to <code>65536</code>.
+* Added <code>playersNetherPortalDefaultDelay</code>, to control time (in [[game tick]]s) that a player needs to stand in a [[nether portal]] before changing dimensions, while in Survival and Adventure mode. Defaults to <code>80</code>.
+* Added <code>playersNetherPortalCreativeDelay</code>, to control time (in game ticks) that a player needs to stand in a nether portal before changing dimensions, while in Creative mode. Defaults to <code>1</code>.
+* Added <code>projectilesCanBreakBlocks</code>, to control whether impact projectiles destroy blocks that are destructible by them (i.e. [[chorus flower]]s, [[pointed dripstone]] and [[decorated pot]]s). Defaults to <code>true</code>.
+
+'''[[Loading screen]]'''
+* Added a new screen for handling corrupted level files.
+** It gives the player the option to restore a backup, and a quick link to the bug tracker for reporting a bug about it.
+
+'''[[Options]]'''
+* Added "Hide Splash Texts" in accessibility options, which allows the [[splash]] in the main menu to be hidden.
+
+'''[[options.txt|{{mono|options.txt}}]]'''
+* Added <code>hideSplashTexts</code>, defaults to <code>false</code>.
+
+'''[[Particles]]'''
+* Added new <code>dust_plume</code>, <code>gust</code>, <code>gust_dust</code>, <code>trial_spawner_detection</code> and <code>white_smoke</code> particle types.
+
+'''[[Tag]]s'''
+* Added following damage type tag:
+** {{cd|#can_break_armor_stand}}: contains {{cd|d=and|player_attack|player_explosion}}.
+*** Used for damage types that can incrementally knock down armor stands.
+* Added following entity tags:
+** {{cd|#can_breathe_under_water}}: contains {{cd|d=and|#undead|axolotl|frog|guardian|elder_guardian|turtle|glow_squid|cod|pufferfish|salmon|squid|tropical_fish|tadpole|armor_stand}}.
+*** Used to disable drowning.
+** {{cd|#undead}}: contains {{cd|d=and|#skeletons|#zombies|wither|phantom}}.
+** {{cd|#zombies}}: contains {{cd|d=and|zombie_horse|zombie|zombie_villager|zombified_piglin|zoglin|drowned|husk}}.
+
+== Changes ==
+=== Blocks ===
+'''[[Decorated pot]]'''
+* Now can store up to a single stack of items.
+** [[Hopper]]s, [[minecart with hopper]]s and [[dropper]]s can now insert and/or extract items from them.
+** [[Comparator]]s can now read the number of items in them.
+** [[Player]]s can interact with them and insert items into them.
+*** Player interactions with them cause them to wobble and trigger a vibration frequency of 11.
+** They have no GUI, and need to be broken to retrieve their content by players.
+* Now can be smashed by projectiles, which cause them to shatter and drop their contents.
+* Now has new sounds for breaking, shattering and being stepped on.
+* Now can stack up to 64.
+* Now appears in the "Redstone" tab of the [[Creative inventory]].
+* Now, when blockstate <code>cracked</code> set to <code>true</code>, decorated pots always shatter when broken.
+* Now can utilize loot tables and read from the <code>LootTable</code> tag key.
+
+'''[[Grass]]'''
+* Renamed "Grass" to "Short Grass".
+* The ID has been changed from {{cd|grass}} to {{cd|short_grass}}.
+
+'''[[Jigsaw block]]'''
+* Added two new input fields in the edit screen.
+** Selection priority
+*** When the parent piece is being processed for connections, this controls the order in which this jigsaw block attempts to connect to its target piece.
+*** Jigsaws are processed in descending priority order and randomly within the same priority.
+** Placement priority
+*** When this jigsaw block connects to a piece, this is the order in which that piece is processed for connections in the wider structure.
+*** Pieces are processed in descending priority order with the default insertion order breaking ties within the same priority.
+** This functionality has been added to support the ability for jigsaw structures to generate branches in a depth-first order, as well as give finer control over ordering of connections.
+** All existing jigsaw blocks default their selection and placement priority to 0, resulting in the same behavior as before these two configurable values were introduced.
+* Increased maximum value of structure variable <code>size</code> from 7 to 20.
+
+'''[[Monster spawner]]'''
+* Now renders their inner faces when looking inside.
+
+=== Items ===
+'''[[Arrow]]s'''
+* Now keep their <code>CustomName</code> after being shot and picked up.
+* Special arrows, such as [[spectral arrow]]s, no longer revert to regular arrows when shot and picked up.
+
+'''[[Ender pearl]]'''
+* Thrown ender pearls produce a teleportation sound on impact.
+
+'''[[Shield]]'''
+* When a player is blocking with a shield, the arm with the shield now follows the direction the player is looking at, when viewed from third person perspective.
+* Now blocks damage while the player faces straight up.
+
+=== Mobs ===
+'''[[Bat]]'''
+* Their model, animations, and texture have been updated.
+
+=== Non-mob entities ===
+'''General'''
+* The name of them is now shown if looked at and a <code>CustomName</code> is set, or always displayed if <code>CustomNameVisible</code> is set, similar to living entities.
+
+=== Command format ===
+'''[[Function (Java Edition)|Function]]'''
+* {{cmd|function}} command has been changed to better accommodate new {{cmd|return}} command.
+* Functions no longer have any result unless they use {{cmd|link=none|return}} or there was an error during lookup or instantiation.
+** That means {{cmd|link=none|function}} command no longer returns (or even displays) the number of commands run during execution.
+** Error conditions:
+*** Calling non-existent function.
+*** Calling empty function tag.
+*** Macro instantiation failure.
+* "Result" in this context means values that would be stored with {{cmd|execute store}}.
+* The previous behavior where every command in a function would perform store if a function was called with {{cmd|link=none|execute store ... run ''function''}} is removed.
+** That means that a single call to <code>''function''</code> stores at most once (zero times if {{cmd|link=none|return}} was not called).
+** For function tags with multiple entries, function results are accumulated, but partial results are stored at the end of every function.
+* Existing limits for functions have been refined to accommodate new execution rules and prevent a wider range of exploits:
+** Limits apply even if run from command line (so it now always behaves as if they were placed in a function).
+*** For example, all functions called by {{cmd|link=none|execute as @e run ''function''}} count towards the same limit.
+*** Executions from command blocks still count as separate ones.
+** Limit <code>maxCommandChainLength</code> for functions now counts "operations" like:
+*** Execution of command for a single context.
+*** Execution of a stage in {{cmd|link=none|execute}} (no matter how many contexts were modified).
+*** Invocation of function.
+** A new limit with game rule <code>maxCommandForkCount</code> now restricts the total amount of context that can be created by single state of functions like {{cmd|link=none|execute}}.
+*** Example: if there are 5 entities in world, {{cmd|link=none|execute as @e}} creates 5 contexts, while {{cmd|link=none|execute as @e at @e}} creates 5*5 = 25 contexts.
+
+'''{{cmd|execute}}'''
+* Re-added <code>(if|unless) function</code> subcommand.
+** A new execute sub-command that runs a function or function tag and matches the return value(s). If a tag is given, all functions run regardless of the results of prior functions.
+** Syntax: {{cmd|link=none|execute (if{{!}}unless) function <function> -> [''execute'']}}
+** Arguments:
+*** <code>function</code>: The function or tag to run.
+** The matching of the result value of the function(s) that run:
+*** At least one of the functions must succeed for the match to succeed.
+*** A successful call is defined as a function that:
+**** Uses the {{cmd|link=none|return}} command to return a value.
+**** The return value is not 0.
+*** If no functions exited with {{cmd|link=none|return}}, neither <code>if</code> nor <code>unless</code> runs.
+** It doesn't always fail if all functions had no return.
+*** If there were no {{cmd|link=none|return}}s in called functions, <code>if</code> fails and <code>unless</code> passes.
+*** First {{cmd|link=none|return}} in any of called functions returns (for a single context).
+
+'''{{cmd|function}}'''
+* If {{cmd|link=none|function ''<function tag>''}} runs multiple functions in combination with {{cmd|link=none|return run}}, execution stops after first {{cmd|link=none|return}} in any of the functions.
+* A single call to the {{cmd|link=none|function}} command will always have return when run with {{cmd|link=none|return run}}.
+** For example, {{cmd|link=none|return run execute ''[split context]'' run function ''<some function with conditional return>''}} always returns after processing the first context.
+
+'''{{cmd|return}}'''
+* Re-added <code>run</code> subcommand: {{cmd|link=none|return run <command>}}.
+** This takes the result value from running the specified <code>command</code> and returns that as the return value of the function.
+*** If command did not return any value (like, for example, call to a function without {{cmd|link=none|return}}), {{cmd|link=none|return}} does not execute and function continues execution.
+*** If the given command fails, the return value is <code>0</code>.
+*** In all other aspects, it works like {{cmd|link=none|return}} with a specified <code>return</code> value.
+*** In case of fork (for example {{cmd|link=none|return run execute as @e run ''some_command''}}), the first execution of the command returns.
+**** If there are no executions (for example in {{cmd|link=none|return run execute if @e[''something_impossible''] run ''some_command''}}), function does not return and continues execution.
+** It always returns.
+*** If there are no valid results from returned command, function containing {{cmd|link=none|return run}} fails (i.e. <code>success=0</code> and <code>result=0</code>).
+** It propagates success value together with results value.
+** It also allows storing values, which means {{cmd|link=none|execute store ... run return run ''some_command''}} both stores value and returns it outside function.
+* Added new subcommand {{cmd|link=none|return fail}}, to make whole function fail (i.e. return <code>success=0</code> and <code>result=0</code>).
+
+'''{{cmd|scoreboard}}'''
+* New subcommands for changing the display of specific scoreboard entries in the sidebar: 
+** {{cmd|link=none|scoreboard objectives modify <objective> displayautoupdate (true{{!}}false)}}
+*** Determines whether the objective should automatically update on every score update (disabled by default)
+** {{cmd|link=none|scoreboard players display name <targets> <objective> <text component>}}
+*** Changes the display name of the given scoreboard entries.
+** {{cmd|link=none|scoreboard players display name <targets> <objective>}}
+*** Resets the display name of the given scoreboard entries to their default.
+** {{cmd|link=none|scoreboard players display numberformat <targets> <objective> <format>}}
+*** Changes the number format of the given scoreboard entries (see below for more information).
+** {{cmd|link=none|scoreboard players display numberformat <targets> <objective>}}
+*** Resets the number format of the given scoreboard entries.
+** {{cmd|link=none|scoreboard objectives modify <objective> numberformat <format>}}
+*** Changes the default number format of the given objective (see below for more information).
+** {{cmd|link=none|scoreboard objectives modify <objective> numberformat}}
+*** Resets the default number format of the given objective.
+* Number formats: 
+** {{cd|styled <style>}}
+*** The score is displayed with the selected style (e.g. {{cd|{"bold":true}<nowiki/>}}.
+** {{cd|fixed <text component>}}
+*** The score is replaced by the given text component.
+** {{cd|blank}}
+*** The score is not shown.
+
+=== General ===
+'''[[Custom structure]]'''
+* Changes to structure type definitions (<code>data/minecraft/worldgen/structure</code>):
+** Added optional <code>pool_aliases</code> list to jigsaw structures.
+** Aliases represent the possibility to rewire jigsaw pool connections by redirecting pool references on individual structure instances.
+** Alias variants are represented in <code>type</code> and is one of:
+*** <code>direct</code>: 1:1 mapping from an alias to a new pool.
+**** <code>alias</code>: Pool to replace.
+**** <code>target</code>: Pool to replace with.
+*** <code>random</code>: 1:n mapping where a pool from <code>n</code> is randomly selected for the structure instance.
+**** <code>alias</code>: Pool to replace.
+**** <code>targets</code>: Randomized list of candidate pools to replace <code>alias</code> with.
+*** <code>random_group</code>
+**** <code>groups</code>: Each group is a randomized list of above alias types.
+**** Only one group is selected per structure instance.
+**** This enables modelling selections such as "if pool X is replaced with X1, also replace pool Y with Y1".
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>26</code>.
+
+'''[[Entity format]]'''
+* In NBT format for entity type <code>tnt</code>:
+** Added <code>block_state</code>.
+*** This field allows replacement of rendered block model.
+** Renamed <code>Fuse</code> to <code>fuse</code>.
+* In NBT format for entity type {{cd|d=and|arrow|spectral_arrow}}:
+** Added <code>item</code>.
+*** This field is the item that will be picked up.
+* In NBT format for entity type <code>trident</code>:
+** Renamed <code>Trident</code> to <code>item</code>.
+
+'''[[Processor list]]'''
+* Added <code>trial_chambers_copper_bulb_degradation</code>.
+
+'''[[Raw JSON text format]]'''
+* Plain-text chat components (text, no sibilings, no stylings) are now always serialized as string instead of <code>{"text": "your text"}</code>.
+* Chat components now serialize to NBT when sent over network.
+** Components of type <code>nbt</code> now have <code>source</code> field with allowed values: {{cd|d=and|entity|block|storage}}.
+* Chat components now have an optional type value (allowed values: {{cd|d=and|text|translatable|score|selector|nbt|keybind}}) to speed up parsing and improve error checking.
+* <code>id</code> field in <code>show_entity</code> <code>hoverEvent</code> style now also accepts UUID as an array of 4 integers.
+* Numeric and boolean arguments for <code>translate</code> component are no longer converted to string.
+* The following JSON component representations are no longer accepted:
+** <code>null</code>
+** <code>[]</code>
+* Errors in following style fields are no longer silently ignored:
+** <code>color</code>
+** <code>clickEvent</code>
+** <code>hoverEvent</code>
+** <code>hoverEvent[action=show_entity].contents.name</code>
+** <code>hoverEvent[action=show_item].contents.tag</code>
+
+'''[[Realms]]'''
+* Realms are now available in snapshots, pre-releases, and release candidates.
+** Any player who has an active Realms subscription is eligible to create a free Snapshot Realm.
+** Snapshot Realms are separate from the regular Realms to prevent any issues from impacting regular Realms.
+* The version of the last played world on a Realm is displayed in the Realms list.
+* Experiments are available for newly created worlds.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>22</code>.
+* Added block model, item model and block state definitions for <code>crafter</code>.
+* Added GUI container texture and sprites for <code>crafter</code>.
+* Added <code>white_smoke</code> particle definition.
+* <code>bat.png</code> has been updated for the new bat model.
+* Added block models, items models and block state definitions for the following blocks:
+** {{cd|d=and|chiseled_copper|exposed_chiseled_copper|weathered_chiseled_copper|oxidized_chiseled_copper|copper_grate|exposed_copper_grate|weathered_copper_grate|oxidized_copper_grate|copper_bulb|exposed_copper_bulb|weathered_copper_bulb|oxidized_copper_bulb|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|tuff_stairs|tuff_slab|tuff_wall|chiseled_tuff|polished_tuff|polished_tuff_stairs|polished_tuff_slab|polished_tuff_wall|tuff_bricks|tuff_brick_stairs|tuff_brick_slab|tuff_brick_wall|chiseled_tuff_bricks}}.
+* Added unique sprites for the following blocks:
+** {{cd|d=and|chiseled_copper|exposed_chiseled_copper|weathered_chiseled_copper|oxidized_chiseled_copper|copper_grate|exposed_copper_grate|weathered_copper_grate|oxidized_copper_grate|copper_bulb|exposed_copper_bulb|weathered_copper_bulb|oxidized_copper_bulb|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|chiseled_tuff|polished_tuff|tuff_bricks|chiseled_tuff_bricks}}.
+* <code>uniform</code> font has been updated to use Unifont 15.1.04 (from 15.0.06).
+* The only supported texture format is now <code>.png</code>.
+* Changes to downloaded/world resource pack handling.
+** Changes apply to world resource packs ({{mono|resources.zip}}), Realms resource packs and resource packs controlled by dedicated servers.
+* UI Download screen has been replaced with a toast.
+* World resource pack application start together with chunk loading.
+* Downloaded packs are now stored in downloads directory (with different file organization than old {{cd|server-resource-packs}})
+** Files in this directory are no longer automatically cleaned (previously only up to 10 packs were kept).
+** Additionally, inside this directory there is also log file {{mono|log.json}} that stores information about downloaded files for debug purposes.
+* Downloaded packs now have unique id (GUID/UUID) that can be used to differentiate them.
+** This value for dedicated server pack can be configured with the {{cd|resource-pack-id}} option in {{mono|server.properties}}.
+** If the value is missing, it is generated based on URL.
+** If hash of a pack is not set, this pack is redownloaded before every application.
+** Previously, if hash was missing, the latest downloaded version of a pack was applied.
+* In local storage, only up to 20 server resource packs are cached.
+* Client now sends additional updates about packs (like download success).
+
+'''[[Tag]]s'''
+* Added {{cd|firework_rocket}} into the {{cd|impact_projectiles}} entity tag.
+* Added {{cd|skeleton_horse}} into {{cd|#skeletons}} entity tag.
+
+'''[[Telemetry]]'''
+* Small tweaks to the telemetry data collection screen, such as a box for allowing or denying collection of optional data.
+
+'''General'''
+* Some additional options are added for 3rd-party servers software:
+** Client can now accept multiple server resource packs.
+** New packet was added to un-apply server resource packs.
+** Resource packs are no longer cleaned when entering configuration phase.
+
+== Experimental ==
+These additions and changes only take effect when the [[Update 1.21]] experimental data pack is enabled.
+
+=== Additions ===
+{{Additions table
+|Crafter
+|Chiseled Copper
+|Exposed Chiseled Copper
+|Weathered Chiseled Copper
+|Oxidized Chiseled Copper
+|Waxed Chiseled Copper
+|Waxed Exposed Chiseled Copper
+|Waxed Weathered Chiseled Copper
+|Waxed Oxidized Chiseled Copper
+|Copper Bulb
+|Exposed Copper Bulb
+|Weathered Copper Bulb
+|Oxidized Copper Bulb
+|Waxed Copper Bulb
+|Waxed Exposed Copper Bulb
+|Waxed Weathered Copper Bulb
+|Waxed Oxidized Copper Bulb
+|Copper Door
+|Exposed Copper Door
+|Weathered Copper Door
+|Oxidized Copper Door
+|Waxed Copper Door
+|Waxed Exposed Copper Door
+|Waxed Weathered Copper Door
+|Waxed Oxidized Copper Door
+|Copper Trapdoor
+|Exposed Copper Trapdoor
+|Weathered Copper Trapdoor
+|Oxidized Copper Trapdoor
+|Waxed Copper Trapdoor
+|Waxed Exposed Copper Trapdoor
+|Waxed Weathered Copper Trapdoor
+|Waxed Oxidized Copper Trapdoor
+|Copper Grate
+|Exposed Copper Grate
+|Weathered Copper Grate
+|Oxidized Copper Grate
+|Waxed Copper Grate
+|Waxed Exposed Copper Grate
+|Waxed Weathered Copper Grate
+|Waxed Oxidized Copper Grate
+|Tuff Slab
+|Tuff Stairs
+|Tuff Wall
+|Polished Tuff
+|Polished Tuff Slab
+|Polished Tuff Stairs
+|Polished Tuff Wall
+|Tuff Bricks
+|Tuff Brick Slab
+|Tuff Brick Stairs
+|Tuff Brick Wall
+|Chiseled Tuff
+|Chiseled Tuff Bricks
+|Trial Spawner
+|Trial Key
+|Breeze Spawn Egg Revision 1
+|title=1.20.3 experimental
+}}
+
+==== Blocks ====
+'''{{Animate|Chiseled Copper JE1 BE1.png; Exposed Chiseled Copper JE1 BE1.png; Weathered Chiseled Copper JE1 BE1.png; Oxidized Chiseled Copper JE1 BE1.png|32px}} [[Chiseled copper]]'''
+* Have 8 variants in 4 oxidation levels, waxed or not waxed.
+* Can be crafted both in [[crafting table]] and [[stonecutter]]:
+** When in crafting table, consume 2 [[cut copper slab]]s from the same type, resulting in 1 chiseled copper with the same type.
+** When in stonecutter, consume 1 [[block of copper]], resulting in 4 chiseled copper, or 1 [[cut copper]], resulting in 1 chiseled copper; all from the same type.
+
+'''{{Animate|Copper Bulb JE1 BE1.png; Exposed Copper Bulb JE1 BE1.png; Weathered Copper Bulb JE1 BE1.png; Oxidized Copper Bulb JE1 BE1.png|32px}} {{Animate|Lit Copper Bulb JE1 BE1.png; Lit Exposed Copper Bulb JE1 BE1.png; Lit Weathered Copper Bulb JE1 BE1.png; Lit Oxidized Copper Bulb JE1 BE1.png|32px}}  [[Copper bulb]]'''
+* A light-emitting block that can toggle its light emission through redstone pulses.
+* Have 8 variants in 4 oxidation levels, waxed or not waxed.
+* Can be crafted in crafting table with a cross pattern, by 3 blocks of copper from the same type, 1 [[blaze rod]] in the center slot, and 1 [[redstone dust]] in the bottom slot, resulting in 1 copper bulb with the same type.
+* They emit less light the more oxidized they are. From less oxidized to most oxidized, they emit block light levels of 15, 12, 8, and 4, respectively.
+* While powered by a redstone signal, a redstone crystal in the center of them glows.
+* They have following properties:
+** Only toggle their light on or off when receiving a redstone pulse. Their state doesn't change if the source of the redstone pulse is removed.
+** When the light is on, redstone comparators read a redstone signal strength of 15.
+** Don't conduct redstone power.
+
+'''{{Animate|Copper Door JE3 BE3.png; Exposed Copper Door JE3 BE3.png; Weathered Copper Door JE3 BE3.png; Oxidized Copper Door JE3 BE3.png|32px}} {{Animate|Copper Trapdoor JE2 BE2.png; Exposed Copper Trapdoor JE2 BE2.png; Weathered Copper Trapdoor JE2 BE2.png; Oxidized Copper Trapdoor JE2 BE2.png|32px}} [[Copper door]] and [[copper trapdoor]]'''
+* Have 8 variants in 4 oxidation levels, waxed or not waxed.
+* Works like wooden doors in that they can be opened and closed by the player as well as redstone.
+* Can be crafted as other doors, with blocks of copper from the same type (instead of [[copper ingot|ingots]], as in [[iron door]]s).
+
+'''{{Animate|Copper Grate JE1 BE1.png; Exposed Copper Grate JE1 BE1.png; Weathered Copper Grate JE1 BE1.png; Oxidized Copper Grate JE1 BE1.png|32px}} [[Copper grate]]'''
+* A new type of decorative block unique to the copper family.
+* Have 8 variants in 4 oxidation levels, waxed or not waxed.
+* Can be crafted both in crafting table and stonecutter:
+** When in crafting table, consume 4 blocks of copper from the same type in rhombic pattern, resulting in 1 copper grate with the same type.
+** When in stonecutter, consume 1 block of copper, resulting in 4 copper grate from the same type.
+* They are transparent, so they allow light to pass through and cannot conduct redstone, prevent mob spawning on top of them, and do not suffocate mobs who end up with their head inside them.
+* Can be [[waterlogged]].
+** Acts similarly to waterlogged [[mangrove roots]]; water doesn't flow out of any of the block's faces.
+
+'''{{Animate|Crafter JE4 BE3.png; Crafter Triggered JE4 BE3.png; Crafter Crafting JE4 BE3.png|32px}} [[Crafter]]'''
+* A variant of [[crafting table]], can be crafted with five [[iron ingot]]s, a crafting table, two [[redstone dust]]s, and a [[dropper]] in the crafting table.
+* Crafters can be oriented in any direction when placed.
+* A [[pickaxe]] can increase the speed of mining them.
+* Have a user interface similar to crafting table.
+** Have 3×3 interactable crafting grid.
+** Their crafting grid slots are toggleable, meaning that the player can change the behavior of a slot by clicking or pressing on a slot with an empty hand.
+*** A toggled slot cannot hold any items and therefore cannot have items placed into it by other blocks such as [[hopper]]s and droppers.
+*** A toggled slot can be toggled off by player, whether clicked directly or holding item(s), pressing slot keys associated with an empty or a not empty hotbar slot.
+** Unlike the crafting table, the slots display a preview of the crafted item which will be crafted and ejected on the next redstone pulse, but cannot be manually taken out by the player.
+** The user interface is shared between all players interacting with them, meaning that multiple players can interact with them at the same time, similar to [[chest]]s and hoppers.
+** The user interface does not have a [[recipe book]] to provide help, so the player must know the recipes.
+* The crafter ejects one crafted item at a time when powered by a new redstone pulse, a redstone signal that is not a continuous signal.
+** Upon receiving this new signal, crafters eject the recipe result from the front face.
+** All the result items are ejected together when the output result has multiple type of items.
+* They can interact with hoppers and droppers, to input/output automatically.
+** Hoppers can be used to both insert and pull items out of them.
+** Droppers can be used to insert items into them.
+** Moving items in from another block with a hopper or a dropper prioritizes filling items into slots, by following these rules:
+*** If there is a toggled slot, skipped.
+*** If there is not a toggled slot, crafters prioritize the first empty slot from left-to-right and top-to-bottom.
+*** If there is not a toggled slot, and there are no empty slots, crafters prioritize the smallest stack of the same item. If there are multiple possible stacks, pick the first from left-to-right and top-to-bottom.
+** If failed to select a slot, hoppers and droppers don't take any action.
+* When read by a [[redstone comparator]], the redstone signal strength is 0 to 9, where each non-empty or toggled slot adds 1 strength.
+
+'''{{Animate|Trial Spawner JE1 BE1.png; Active Trial Spawner JE1 BE1.png; Ejecting Trial Spawner JE1 BE1.png|32px}} [[Trial spawner]]'''
+* Trial spawner is a new variant of [[monster spawner]]s that ejects rewards upon completion and can have variable levels of challenge in multiplayer.
+* The challenge level increases for each new player a trial spawner notices nearby.
+** Challenge level doesn't decrease until it is reset during a trial spawner's cooldown.
+* Unlike normal spawners, a trial spawner spawns a limited number of mobs proportional to its current challenge level.
+** It can only spawn a mob at positions that are within line of sight.
+** It can spawn a mob regardless of any light level requirement the mob has.
+** Spawned mobs are persistent and don't despawn.
+* Once all mobs are defeated, the trial spawner ejects a set of rewards proportional to the current challenge level.
+** After the rewards have been ejected, the trial spawner goes into cooldown for 30 minutes during which it no longer spawns mobs.
+* Trial spawners cannot be crafted nor obtained by players in Survival - instead, they can be found naturally placed throughout trial chambers.
+* Trial spawners are extremely slow to mine and resistant to explosions, and don't drop even with [[Silk Touch]].
+* When placed in Creative, trial spawners have no mob type set by default.
+** The mob type can be set by interacting with it while holding a spawn egg.
+* Creative and Spectator players cannot be detected or noticed by trial spawners.
+
+'''[[File:Tuff.png|32px]] [[Tuff]] family'''
+* Added following blocks:
+** [[File:Tuff Stairs JE1 BE1.png|32px]] [[Tuff stairs]]
+** [[File:Tuff Slab JE1 BE1.png|32px]] [[Tuff slab]]
+** [[File:Tuff Wall JE1 BE1.png|32px]] [[Tuff wall]]
+** [[File:Chiseled Tuff JE1 BE1.png|32px]] [[Chiseled tuff]]
+** [[File:Polished Tuff JE1 BE1.png|32px]] [[Polished tuff]]
+** [[File:Polished Tuff Stairs JE1 BE1.png|32px]] [[Polished tuff stairs]]
+** [[File:Polished Tuff Slab JE1 BE1.png|32px]] [[Polished tuff slab]]
+** [[File:Polished Tuff Wall JE1 BE1.png|32px]] [[Polished tuff wall]]
+** [[File:Tuff Bricks JE3 BE3.png|32px]] [[Tuff bricks]]
+** [[File:Tuff Brick Stairs JE3 BE3.png|32px]] [[Tuff brick stairs]]
+** [[File:Tuff Brick Slab JE3 BE3.png|32px]] [[Tuff brick slab]]
+** [[File:Tuff Brick Wall JE3 BE3.png|32px]] [[Tuff brick wall]]
+** [[File:Chiseled Tuff Bricks JE1 BE1.png|32px]] [[Chiseled tuff bricks]]
+* Can be crafted in crafting table or stonecutter like others.
+
+==== Items ====
+'''[[Spawn egg]]'''
+* [[File:Breeze Spawn Egg_JE1_BE1.png|32px]] [[Breeze spawn egg]]
+
+'''[[File:Trial Key JE2 BE2.png|32px]] [[Trial key]]'''
+* An item that can only be obtained from trial spawners.
+* Currently doesn't have any functionality.
+
+==== Mobs ====
+'''[[File:Breeze JE1.webp|32px]] [[Breeze]]'''
+* The breeze is a cunning, hostile mob that can spawn via trial spawner in some rooms within the trial chambers.
+* Has {{hp|30}} health points.
+* Cannot be hit by [[arrow]]s or [[trident]]s.
+* The breeze moves primarily by leaping around the target, sometimes jumping quite long distances.
+* An aggressive adversary, the breeze shoots volatile wind energy in the form of wind charge projectiles at its target.
+* Wind charges deal a small amount of damage when colliding directly with an entity.
+* After colliding with an entity or a block, wind charge projectiles produce a wind burst, which knocks back entities in the area by several blocks.
+* Wind bursts also have the effect of 'activating' certain blocks:
+** Non-iron doors and trapdoors are flipped.
+** Fence gates are flipped.
+** Buttons are pressed.
+** Levers are flipped.
+** Bells are rung and swung.
+** Lit candles (both standalone and on cake) are extinguished.
+* Wind bursts do not have any effect on iron doors, iron trapdoors, or any block being held in its position by a redstone signal.
+* Currently does not drop any loot.
+
+==== Non-mob entities ====
+'''[[File:Wind Charge (item) JE1 BE1.png|32px]] [[Wind charge]]'''
+* Fired by the [[breeze]].
+* Explodes upon impact, emitting a large burst of plume [[particles]] and [[knockback|knocking]] entities back similar to a TNT explosion.
+* Its explosion interacts with certain blocks, including [[button]]s and [[trapdoor]]s.
+* Deals damage when colliding directly with a player or mob.
+* Wind charges break [[decorated pot]] and [[chorus flower]]s upon collision.
+* Can be deflected, just like shulker bullets.
+
+==== World generation ====
+'''[[File:Trial Chambers chamber 4.png|32px]] [[Trial chambers]]'''
+* Trial chambers are a new structure in the Overworld where players can explore and take on combat challenges during the mid-game.
+** Trial chambers are made out of a variety of copper and tuff blocks and can be found in different sizes from large to small.
+** Trial chambers are a relatively common find throughout the deepslate layer of the underground, with the starting piece generating at a height between <code>-40</code> and <code>-20</code>.
+* The layout of each trial chamber is procedurally generated, and can include traps, supply and reward chests, decorated pots, and a variety of combat spaces.
+** Traps include dispensers containing different potential items, such as [[arrow]]s or [[fire charge]]s.
+** Supply chests can be found between the different rooms, and give the player blocks and items which help them navigate their trials.
+** Reward chests are guarded by challenges in each room, and can be a source of many high level enchanted books and equipment.
+** Decorated pots found in hallways can contain supplies such as iron or arrows. Some pots are decorated and others are blank.
+** The loot found in reward chests and decorated pots are still being iterated, and are absolutely not final as well as the loot from defeating mobs from a trial spawner.
+* Each trial chamber includes trial spawners with a melee, small melee, or ranged category:
+** Melee
+*** [[Zombie]]
+*** [[Husk]]
+*** [[Slime]]
+** Small melee
+*** [[Spider]]
+*** [[Cave spider]]
+*** Baby zombie
+*** [[Silverfish]]
+** Ranged
+*** [[Skeleton]]
+*** [[Stray]]
+*** Skeleton with Poison [[tipped arrow]]s
+* Each trial spawner category only uses one mob for the entire structure when generated, and these mobs are randomized for each trial chamber.
+** For example, one trial chamber might only spawn zombies, cave spiders and strays, while another might only spawn slimes, silverfish and skeletons.
+** The exceptions to this are some trial spawners in unique rooms which always spawn breezes.
+* Regular mob spawning does not happen inside the bounding boxes of the trial chamber pieces.
+
+==== General ====
+'''[[Tag]]s'''
+* Added following damage type tag:
+** {{cd|#breeze_immune_to}}: contains {{cd|d=and|arrow|trident}}.
+* Added following entity type tags:
+** {{cd|#can_turn_in_boats}}: contains {{cd|breeze}}.
+** {{cd|#deflects_arrows}}: contains {{cd|breeze}}.
+** {{cd|#deflects_tridents}}: contains {{cd|breeze}}.
+* Added following biome tag:
+** {{cd|#has_structure/trial_chambers}}: contains {{cd|#is_overworld}}.
+
+=== Changes ===
+==== Gameplay ====
+'''[[Advancement]]s'''
+* The [[breeze]] now counts for "Monster Hunter", and is now required for "Monsters Hunted".
+
+==== General ====
+'''[[Resource pack]]'''
+* Added entity models and textures for experimental breeze mob:
+** {{cd|d=,|breeze|wind_charge}}.
+* Added shader:
+** <code>breeze_wind</code>.
+
+'''[[Tag]]s'''
+* Added {{cd|breeze}} into {{cd|#fall_damage_immune}} entity type tag.
+* Added {{cd|trial_spawner}} into the {{cd|#features_cannot_replace}}, and {{cd|#lava_pool_stone_cannot_replace}} block tags.
+* Added {{cd|wind_charge}} into the {{cd|#impact_projectiles}} entity type tag.
+* Added {{cd|d=and|crafter|tuff_slab|tuff_stairs|tuff_wall|chiseled_tuff|polished_tuff|polished_tuff_slab|polished_tuff_stairs|polished_tuff_wall|tuff_bricks|tuff_brick_slab|tuff_brick_stairs|tuff_brick_wall|chiseled_tuff_bricks|chiseled_copper|exposed_chiseled_copper|weathered_chiseled_copper|oxidized_chiseled_copper|waxed_chiseled_copper|waxed_exposed_chiseled_copper|waxed_weathered_chiseled_copper|waxed_oxidized_chiseled_copper|copper_grate|exposed_copper_grate|weathered_copper_grate|oxidized_copper_grate|waxed_copper_grate|waxed_exposed_copper_grate|waxed_weathered_copper_grate|waxed_oxidized_copper_grate|copper_bulb|exposed_copper_bulb|weathered_copper_bulb|oxidized_copper_bulb|waxed_copper_bulb|waxed_exposed_copper_bulb|waxed_weathered_copper_bulb|waxed_oxidized_copper_bulb|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|waxed_copper_door|waxed_exposed_copper_door|waxed_weathered_copper_door|waxed_oxidized_copper_door|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|waxed_copper_trapdoor|waxed_exposed_copper_trapdoor|waxed_weathered_copper_trapdoor|waxed_oxidized_copper_trapdoor}} into {{cd|mineable/pickaxe}} block tag.
+* Added {{cd|d=and|crafter|chiseled_copper|exposed_chiseled_copper|weathered_chiseled_copper|oxidized_chiseled_copper|waxed_chiseled_copper|waxed_exposed_chiseled_copper|waxed_weathered_chiseled_copper|waxed_oxidized_chiseled_copper|copper_grate|exposed_copper_grate|weathered_copper_grate|oxidized_copper_grate|waxed_copper_grate|waxed_exposed_copper_grate|waxed_weathered_copper_grate|waxed_oxidized_copper_grate|copper_bulb|exposed_copper_bulb|weathered_copper_bulb|oxidized_copper_bulb|waxed_copper_bulb|waxed_exposed_copper_bulb|waxed_weathered_copper_bulb|waxed_oxidized_copper_bulb|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|waxed_copper_trapdoor|waxed_exposed_copper_trapdoor|waxed_weathered_copper_trapdoor|waxed_oxidized_copper_trapdoor}} into {{cd|needs_stone_tool}} block tag.
+* Added {{cd|d=and|tuff_slab|polished_tuff_slab|tuff_brick_slab}} into {{cd|slabs}} block and item tags.
+* Added {{cd|d=and|tuff_stairs|polished_tuff_stairs|tuff_brick_stairs}} into {{cd|stairs}} block and item tags.
+* Added {{cd|d=and|copper_trapdoor|exposed_copper_trapdoor|weathered_copper_trapdoor|oxidized_copper_trapdoor|waxed_copper_trapdoor|waxed_exposed_copper_trapdoor|waxed_weathered_copper_trapdoor|waxed_oxidized_copper_trapdoor}} into {{cd|#trapdoors}} block tag.
+* Added {{cd|d=and|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|waxed_copper_door|waxed_exposed_copper_door|waxed_weathered_copper_door|waxed_oxidized_copper_door}} into {{cd|#doors}} block tag.
+* Added {{cd|d=and|tuff_wall|polished_tuff_wall|tuff_brick_wall}} into {{cd|walls}} block and item tags.
+* Added {{cd|d=and|copper_door|exposed_copper_door|weathered_copper_door|oxidized_copper_door|waxed_copper_door|waxed_exposed_copper_door|waxed_weathered_copper_door|waxed_oxidized_copper_door}} into {{cd|wooden_doors}} block tag.
+
+== Fixes ==
+{{fixes|fixedin=23w40a,23w41a,23w42a,23w43a,23w43b,23w44a,23w45a,23w46a,1.20.3 Pre-release 1,1.20.3 Pre-release 2,1.20.3 Pre-release 3,1.20.3 Pre-release 4,1.20.3 Release Candidate 1,1.20.3
+|;From released versions before 1.20
+|1981|All arrow types lose their name/NBT data when shot and picked up.
+|5820|The game doesn't recognise the ISO 8601 date format.
+|16937|Shooting an arrow into the nether portal can hurt anybody when PvP is disabled.
+|47607|Barrier particles aren't shown if particles are set to minimal.
+|50319|Player owned projectiles lose their player ownership when exiting portals.
+|50647|Slime mob spawners spawn slimes only in slime chunks.
+|78314|(Marker) Armor stands create bubbles in water.
+|81656|Field determining whether or not a wither skull is blue is not saved to and read from NBT.
+|109101|Shields do not block damage while the player faces straight up.
+|114761|Area effect cloud applies effect to dying mob.
+|118403|Vexes summoned by evoker do not have evoker team applied.
+|129608|Scoreboard doesn't handle entity UUIDs correctly.
+|131646|Drowned spawners only work in biomes where drowned spawn.
+|136904|{{cmd|execute store score}} does not store 0 when subcommand is {{cd|advancement}} and fails.
+|142160|{{cd|pausedTickDelta}} updated when the game is unpaused rather than paused.
+|143266|Nested function calls reevaluate {{cd|maxCommandChainLength}} before queueing commands.
+|143269|Nested intermediate functions are skipped when {{cd|maxCommandChainLength}} commands are already queued.
+|147649|Can't copy or select command block output.
+|163943|Read-only scores can be mutated by swapping.
+|164316|Resource pack update by a hash doesn't work.
+|169969|The back faces of spawners do not render.
+|172398|Fire texture renders according to the player's rotation in the player inventory.
+|173434|Server resource pack download is inconsistent.
+|177446|{{cd|RootVehicle}} tag in playerdata entry is not upgraded.
+|185117|Narrator Disabled text in toast is no longer vertically centered.
+|186797|Functioning clock and compasses in crafting output slot.
+|189227|First time tutorial uses old textures.
+|189261|Various Realms buttons and texts are incorrectly capitalized.
+|189739|Two-tall/wide blocks not taking breaking method into account.
+|198113|Incomplete commands do not prevent functions from loading.
+|219293|When teleporting via Chorus Fruit, the burping and teleporting sounds play at the wrong location.
+|221558|Light particles aren't shown if particles are set to minimal.
+|223774|Firework Rockets can't be used to break Chorus Flowers.
+|225364|Chorus flowers can be destroyed by projectiles in adventure mode.
+|225365|Pointed dripstone can be destroyed by tridents in adventure mode.
+|227255|Beehives and bee nests do not rotate/mirror correctly in structure blocks.
+|232719|The scroll bar within the singleplayer menu doesn't reset its position to the top of the list when searching for worlds.
+|233276|You can feed adult donkeys, horses, llamas or mules with maximum Temper value, and hand animation is not played.
+|234323|Performance issue with text parsing.
+|234472|The right side of the selection box is cut off by the scroll bar in the realms "Players" menu.
+|234483|Some strange pixels can be seen on the left side of world slot frames within several Realms menus.
+|234567|The "minecraft:ui.button.click" sound isn't played when interacting with the spawn protection slider in the Realms world options menu.
+|236341|You can feed hay bales to adult donkeys, horses or mules, and animal eating animation/sounds are not played.
+|236501|Renamed minecarts and boats don't show their name tag in the world.
+|236946|Shield attack vector is normalized incorrectly.
+|237009|Incompatible worlds don't have a tooltip in the world list.
+|247421|Console spam: "{{cd|Error starting SoundSystem. Turning off sounds & music}}".
+|249408|Boats with Chests lose their name when placed.
+|251126|Server resource pack is not redownloaded when a hash mismatch is detected with the previously downloaded version.
+|253819|Bells don't rotate correctly when loaded by structure/jigsaw blocks.
+|254850|An operator can kick a host of a LAN world.
+|255173|Nether portal teleportation is inaccurate at large coordinate values.
+|255244|NBT link/reference when using {{cmd|fill}}.
+|257516|"Fox teleports" sound plays for both Players and Friendly Creatures sound categories.
+|257786|The game takes a long time to process players leaving realms groups or accepting or declining realms invitations.
+|259321|Spawner counts related entities against {{cd|MaxNearbyEntities}}.
+|260341|Death screen can remain after respawning using the Unsafe Link Warning.
+|260576|Incomplete {{cmd|execute summon}} command still runs.
+|261395|When in {{cd|mcfunction}} files, the {{cmd|damage}} command does not trigger {{cd|player_hurt_entity}} and {{cd|player_killed_entity}} advancements the correct number of times.
+|262027|Result consumer created by {{cmd|execute store}} is invoked for every command within a function.
+|262105|Entities can block brushing actions when players look very close to their hitboxes.
+|263123|Mending incorrectly calculates overflow after full repair.
+|265899|The translation for {{cd|gamerule.commandModificationBlockLimit}} is in title case instead of sentence case.
+|;From 1.20
+|261303|Decorated pots have an unused "cracked" block state.
+|261682|Brushing can continue when block goes out of range.
+|262888|Clicking "I know what I'm doing!" on the world loading screen when loading a world in a new snapshot is way too loud.
+|263263|The operator buttons intersect the scroll bar within the realms player menu.
+|263272|You cannot click on an area to set a value within the spawn protection slider in the realms world options menu.
+|263309|You can configure your realm before it has been created by using the {{key|Tab}} key.
+<!-- MC-265927 and MC-265929 are marked to first appear in 1.20.2 in the bug tracker, but it has been tested that it affected the game since 1.20 -->
+|265927|Edit box length restrictions can result in unpaired surrogate characters.
+|265929|{{key|Ctrl+Backspacing}} a word with non-BMP characters in an edit box deletes additional characters.
+|;From 1.20.1
+|263575|When an item is extracted from suspicious sand/gravel, gravity does not work on this block.
+|263660|"Sign wobbles" subtitle is the same for signs and hanging signs, causing translation issues.
+|264748|{{cd|GLX._initGlfw}} Treats Pointer as a String.
+|265353|Clocks and Compasses in Item Display Entities don't show correct time/direction.
+|;From 1.20.2
+|264595|{{cmd|return}} command cannot run function when inside another function.
+|264699|Functions return the output of commands only if the command doesn't start with {{cmd|return run}}.
+|264710|{{cmd|execute if function}} always fails and {{cmd|execute unless function}} always succeeds if run from a function.
+|264880|GUI slider uses new texture with programmer art.
+|264966|{{cd|Signature is missing from Property textures}} appears in the logs of some Minecraft worlds due to player heads.
+|265291|Command suggestions within the command block interface don't disappear when the console command field is unselected.
+|265426|Certain inputs pressed whilst in {{key|F3+Esc}} pause will be carried out after game is unpaused.
+|265462|Sending resource pack during play phase shows loading terrain screen for a long time.
+|265515|The "You don't seem to have a Realm" element in the realms menu cannot be selected via the mouse cursor.
+|265516|The "Cancel" button within some realms menus can be deselected using keyboard navigation despite it being the only element within the said menu.
+|265517|The "Buy a realm!" button is automatically selected when opening the "Add Realm" interface.
+|265519|Game minimizes when certain areas of the screen are clicked on Mac in fullscreen mode.
+|265551|"No pending invites!" tooltip in Realms is now untranslatable.
+|265589|Brigadier exception can be repeatedly logged if command has invalid syntax.
+|265814|Minecart with TNT explodes or just dies depending on the type of explosion that hits it.
+|266196|Signs and hanging signs become non-editable by right-click after modifying one line message to an empty text string with a specific color.
+|266256|Accessibility button in the Welcome screen still needs its own string.
+|266380|Rain texture doesn't loop correctly.
+}}
+
+== Video ==
+{{slicedlime|1Gy5Zp7wfo0|fl4zWZ_uBXU}}
+
+== See also ==
+* [[Bedrock Edition 1.20.50]]
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:1.20.3]]
+[[es:Java Edition 1.20.3]]
+[[fr:Édition Java 1.20.3]]
+[[ja:Java Edition 1.20.3]]
+[[lzh:爪哇版一點二〇點三]]
+[[pl:Java Edition 1.20.3]]
+[[pt:Edição Java 1.20.3]]
+[[ru:1.20.3 (Java Edition)]]
+[[th:รุ่น Java 1.20.3]]
+[[zh:Java版1.20.3]]

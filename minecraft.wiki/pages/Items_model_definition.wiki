@@ -1,0 +1,618 @@
+{{about|files that link to raw item models and configure their rendering|raw models that directly define the appearance and shape of items|Model#Item models}}
+{{Exclusive|java}}
+{{TOC|right}}
+
+'''Items models'''<ref>Name from the official name ("Item model", [https://www.minecraft.net/en-us/article/minecraft-snapshot-24w45a 24w45a news]) and file directory (<samp>assets/''<namespace>''/items</samp>).</ref> are processor files used by the game to define and select which [[model]] to use for rendering items, depending of various criteria such as [[data component format|components]], item interactions, their position in the inventory, or numerous other in-game values.
+<!-- Some text was removed for being redundant in this part of the page, but was edited in case it gets used later. 
+"Criteria is often used to render items that have several variants, each with its own model. Items model files list all the existing variants of an item's model and states when each model should render. Items can also be composed of several different models at the same time, with the "composite" object." -->
+
+Items models are stored as [[JSON]] files in a [[resource pack]] in the {{cd|assets/{{ph|namespace}}/items}} folder.
+
+Which items model is used by an item is based on the component {{cd|minecraft:item_model}}, which references the [[resource location]] of the items model at {{cd|/assets/{{ph|namespace}}/items/{{ph|id}}}}, and can be changed through [[commands]].
+
+== JSON format ==
+<div class="treeview">
+* {{nbt|compound}} Root object
+** {{nbt|bool|hand_animation_on_swap}}: Optional. Describes if a down-and-up animation should be played in first-person view when the item slot is changed (either type, count, components or by swapping the item into the other hand). Default: {{cd|true}}.
+** {{nbt|bool|oversized_in_gui}}: Optional. Describes if the items model is allowed to render bigger than the item slot. If {{cd|false}} the render will be clipped to the item slot size. Default: {{cd|false}}.
+*** ''The ability of items being rendered outside of their slots is not considered officially supported by Mojang. It's a backward compatibility until an official functionality is developed at some point in the future.''<ref>{{Mcnet|minecraft-1-21-6-pre-release-1|Minecraft 1.21.6 Pre-Release 1|May 28, 2025}}</ref>
+** {{nbt|float|swap_animation_scale}}: Optional. Indicates how fast the item moves up and down when swapping items in hotbar. Large speeds can allow items that take more of the screen space to fully duck before swapped into the next item. Default: {{cd|1.0}}.
+** {{nbt|compound|model}}: Set the basic '''Items model''' object.
+</div>
+
+=== Items model ===
+<div class="treeview">
+* {{nbt|compound}} An '''Items model''' object
+** {{nbt|string|type}}: One of {{cd|d=or|minecraft:model|minecraft:composite|minecraft:condition|minecraft:select|minecraft:range_dispatch|minecraft:empty|minecraft:bundle/selected_item|minecraft:special}}.
+** Additional fields depending on value of type, see {{slink||Items model types}}.
+</div>
+
+== Items model types ==
+
+=== model ===
+Render a [[Model|plain model]] from the {{cd|models}} directory.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''model''' items model object
+** {{nbt|string|type}}: {{cd|minecraft:model}}
+** {{nbt|string|model}}: Specifies the path to the model file of the item, in form of a Namespaced ID.
+** {{nbt|list|tints}}: Optional. List of '''tint sources''' to apply to the elements of rendered model (first entry applies to {{cd|tintindex}} 0, second one to {{cd|tintindex}} 1, etc.). Elements with no {{cd|tintindex}} specified remain untinted.
+*** {{nbt|compound}} A '''tint source''' object
+**** {{nbt|string|type}}: One of {{cd|d=or|minecraft:constant|minecraft:dye|minecraft:firework|minecraft:grass|minecraft:map_color|minecraft:potion|minecraft:team|minecraft:custom_model_data}}.
+**** Additional fields depending on value of '''tint source type'''.
+</div>
+
+==== Tint sources types ====
+===== constant =====
+Return a constant RGB color.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''constant''' tint source object
+** {{nbt|string|type}}: {{cd|minecraft:constant}}
+** {{nbt|int}}{{nbt|list|value}}: A packed integer RGB value (e.g. {{cd|-1}}) or an array of decimal RGB values, each between 0.0 and 1.0 (e.g. {{cd|[1, 1, 1]}})
+</div>
+
+===== dye =====
+Return value from {{cd|minecraft:dyed_color}} component or '''default''' if not present
+
+<div class="treeview">
+* {{nbt|compound}} Root '''dye''' tint source object
+** {{nbt|string|type}}: {{cd|minecraft:dye}}
+** {{nbt|int}}{{nbt|list|default}}: An RGB value.
+</div>
+
+===== firework =====
+Return average of colors from {{cd|minecraft:firework_explosion}} component or '''default''' color if there are none.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''firework''' tint source object
+** {{nbt|string|type}}: {{cd|minecraft:firework}}
+** {{nbt|int}}{{nbt|list|default}}: An RGB value.
+</div>
+
+===== grass =====
+Return grass color at specific climate parameters, based on {{cd|textures/colormap/grass.png}}
+
+<div class="treeview">
+* {{nbt|compound}} Root '''grass''' tint source object
+** {{nbt|string|type}}: {{cd|minecraft:grass}}
+** {{nbt|float|temperature}}: Positive float between {{cd|0.0}} and {{cd|1.0}}.
+** {{nbt|float|downfall}}: Positive float between {{cd|0.0}} and {{cd|1.0}}.
+</div>
+
+===== map_color =====
+Return value from {{cd|minecraft:map_color}} component or '''default''' color if component is not present.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''map_color''' tint source object
+** {{nbt|string|type}}: {{cd|minecraft:map_color}}
+** {{nbt|int}}{{nbt|list|default}}: An RGB value.
+</div>
+
+===== potion =====
+Return color from {{cd|minecraft:potion_contents}} component:
+* if component is present:
+** ''custom_color'' value, if there is one present in component
+** '''default''' color, if effect list is empty
+** average of effect colors
+* else, '''default''' color 
+
+<div class="treeview">
+* {{nbt|compound}} Root '''potion''' tint source object
+** {{nbt|string|type}}: {{cd|minecraft:potion}}
+** {{nbt|int}}{{nbt|list|default}}: An RGB value.
+</div>
+
+===== team =====
+Returns the team color of context entity, if any. Else, when there is no context entity, entity is not in a team or team has no color, return '''default'''.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''team''' tint source object
+** {{nbt|string|type}}: {{cd|minecraft:team}}
+** {{nbt|int}}{{nbt|list|default}}: An RGB value.
+</div>
+
+===== custom_model_data =====
+Return value from {{cd|colors}} list in {{cd|minecraft:custom_model_data}} component.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''custom_model_data''' tint source object
+** {{nbt|string|type}}: {{cd|minecraft:custom_model_data}}
+** {{nbt|int|index}}: Optional. Index for field in {{cd|colors}}. Default: {{cd|0}}.
+** {{nbt|int}}{{nbt|list|default}}: An RGB value.
+</div>
+
+=== composite ===
+Render multiple sub-models in the same space.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''composite''' items model object
+** {{nbt|string|type}}: {{cd|minecraft:composite}}
+** {{nbt|list|models}}: List of '''Items model''' objects to render.
+</div>
+
+
+=== condition ===
+
+<div class="treeview">
+* {{nbt|compound}} Root '''condition''' items model object
+** {{nbt|string|type}}: {{cd|minecraft:condition}}
+** {{nbt|string|property}}: type of boolean property. One of {{cd|d=or|minecraft:broken|minecraft:bundle/has_selected_item|minecraft:carried|minecraft:component|minecraft:damaged|minecraft:extended_view|minecraft:fishing_rod/cast|minecraft:has_component|minecraft:keybind_down |minecraft:selected|minecraft:using_item|minecraft:view_entity|minecraft:custom_model_data}}.
+** Additional fields depending on value of '''boolean property type'''.
+** {{nbt|compound|on_true}}: The '''Items model''' object when the property is {{cd|true}}.
+** {{nbt|compound|on_false}}: The '''Items model''' object when the property is {{cd|false}}.
+</div>
+
+==== Boolean property types ====
+===== broken =====
+Return {{cd|true}} if the item is damageable and has only one use remaining before breaking.
+
+No additional fields for this type.
+
+===== bundle/has_selected_item =====
+Return {{cd|true}} if bundle is "open", i.e. it has selected item visible in GUI.
+
+No additional fields for this type.
+
+===== carried =====
+Return {{cd|true}} if item is carried between slots in GUI.
+
+No additional fields for this type.
+
+===== component =====
+Uses component [[data component predicate]]s to match item components.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|predicate}}: Type of component predicate (member of {{cd|minecraft:data_component_predicate_type}} registry).
+** {{nbt|string|value}}: Value to match.
+</div>
+
+===== damaged =====
+Return {{cd|true}} if the item is damageable and has been used at least once.
+
+No additional fields for this type.
+
+===== extended_view =====
+Return {{cd|true}} if player has requested extended details by holding shift key down. Only works when item is displayed in UI. Note: not a keybind, can't be rebound.
+
+No additional fields for this type.
+
+===== fishing_rod/cast =====
+Return {{cd|true}} if there is a fishing bobber attached to currently used fishing rod.
+
+No additional fields for this type.
+
+===== has_component =====
+Return {{cd|true}} if the given component is present on the item.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|component}}: Component name.
+** {{nbt|boolean|ignore_default}}: Optional. If default component value should be handled as "no component". Default: false.
+</div>
+
+===== keybind_down =====
+Return {{cd|true}} if keybind is currently active.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|keybind}}: [[Controls#Configurable_controls|Keybind ID]], same as value in {{cd|keybind}} text component.
+</div>
+
+===== selected =====
+Return {{cd|true}} if item is selected on a hotbar.
+
+No additional fields for this type.
+
+===== using_item =====
+Return {{cd|true}} if player is currently using this item.
+
+No additional fields for this type.
+
+===== view_entity =====
+* When not spectating, return {{cd|true}} if context entity is the local player entity, i.e. the one controlled by client.
+* When spectating, return {{cd|true}} if context entity is the ''spectated'' entity.
+* If context entity is not present, will return {{cd|false}}.
+
+No additional fields for this type.
+
+===== custom_model_data =====
+Return value from {{cd|flags}} list in {{cd|minecraft:custom_model_data}} component.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|int|index}}: Optional. Index for field in {{cd|flags}}. Default: {{cd|0}}.
+</div>
+
+
+=== select ===
+Render an items model based on discrete property.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''select''' items model object
+** {{nbt|string|type}}: {{cd|minecraft:select}}
+** {{nbt|string|property}}: type of property. One of {{cd|d=or|minecraft:block_state|minecraft:charge_type|minecraft:component|minecraft:context_dimension|minecraft:context_entity_type|minecraft:display_context|minecraft:local_time|minecraft:main_hand|minecraft:trim_material|minecraft:custom_model_data}}.
+** Additional fields depending on value of '''property type'''.
+** {{nbt|list|cases}}: List of cases to match.
+*** {{nbt|compound}} ''A case to match''
+**** {{nbt|string}}{{nbt|list|when}}: Value to match against property, type depends on property. If a list, will match any value of them.
+**** {{nbt|compound|model}}: The '''Items model''' object for this case.
+** {{nbt|compound|fallback}}: The '''Items model''' object if no valid entry was found. Optional, but will render a "missing" error model if not present.
+</div>
+
+==== Property types ====
+===== block_state =====
+Return value for some property from {{cd|minecraft:block_state}} component.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|block_state_property}}: String key to select from component.
+</div>
+
+Values: Any string.
+
+===== charge_type =====
+Return charge type stored in {{cd|minecraft:charged_projectiles}} component.
+
+No additional fields for this type.
+
+Values:
+* {{cd|none}}: If there are no projectiles or component is not present.
+* {{cd|rocket}}: If there is at least one firework rocket.
+* {{cd|arrow}}: Any other case.
+
+===== component =====
+Return value from a [[data component format|component]]. If the selected value comes from a registry and the current datapacks does not provide it, the entry will be silently ignored.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|component}}: Namespaced ID of the component type.
+</div>
+
+Values: Depends on the target component type.
+
+===== context_dimension =====
+Return the ID of the dimension in context, if any.
+
+No additional fields for this type.
+
+Values: Namespaced dimension ID.
+
+===== context_entity_type =====
+Return the holding entity type, if present.
+
+No additional fields for this type.
+
+Values: Namespaced entity type ID.
+
+===== display_context =====
+Return context this item is rendered in.
+
+No additional fields for this type.
+
+Values:
+* {{cd|none}}
+* {{cd|thirdperson_lefthand}}
+* {{cd|thirdperson_righthand}}
+* {{cd|firstperson_lefthand}}
+* {{cd|firstperson_righthand}}
+* {{cd|head}}
+* {{cd|gui}}
+* {{cd|ground}}
+* {{cd|fixed}}
+* {{cd|on_shelf}}
+
+===== local_time =====
+Returns the current time formatted according to a given pattern. The value is updated every second. For full format documentation for locale, time zone and pattern, see ICU (International Components for Unicode) documentation.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|locale}}: Optional. Value describing locale. Default {{cd|""}} which means "root" locale (a set of defaults, including English names).
+*** {{cd|en_US}}: English language (used for things like week names), formating as in USA. 
+*** <code>cs_AU@numbers=thai;calendar=japanese</code>: Czech language, Australian formatting, Thai numerals and Japanese calendar.
+** {{nbt|string|time_zone}}: Optional. Value describing time zone. If not present, defaults to timezone set on client.
+*** Examples: {{cd|d=,|Europe/Stockholm|GMT+0:45}}
+** {{nbt|string|pattern}}: Describes format to be used for time formatting
+*** {{cd|yyyy-MM-dd}}: 4-digit year number, then 2-digit month number, then 2-digit day of month number, all zero-padded if needed, separated by {{cd|-}}.
+*** {{cd|HH:mm:ss}}: current time (hours, minutes, seconds), 24-hour cycle, all zero-padded to 2 digits of needed, separated by {{cd|:}}.
+</div>
+
+Values: Any string.
+
+===== main_hand =====
+Return main hand of holding player.
+
+No additional fields for this type.
+
+Values: {{cd|d=or|left|right}}.
+
+===== trim_material =====
+Return value of {{cd|material}} field from {{cd|minecraft:trim}} component, if present.
+
+No additional fields for this type.
+
+Values: Namespaced ID trim material.
+
+===== custom_model_data =====
+Return value from {{cd|strings}} list in {{cd|minecraft:custom_model_data}} component.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|int|index}}: Optional. Index for field in {{cd|strings}}. Default: {{cd|0}}.
+</div>
+
+Values: Any string.
+
+=== range_dispatch ===
+Render an items model based on numeric property. Will select last entry with threshold less or equal to property value.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''range_dispatch''' items model object
+** {{nbt|string|type}}: {{cd|minecraft:range_dispatch}}
+** {{nbt|string|property}}: type of numeric property. One of {{cd|d=or|minecraft:bundle/fullness|minecraft:compass|minecraft:cooldown|minecraft:count|minecraft:crossbow/pull|minecraft:damage|minecraft:time|minecraft:use_cycle|minecraft:use_duration|minecraft:custom_model_data}}.
+** Additional fields depending on value of '''numeric property type'''.
+** {{nbt|float|scale}}: Optional. Factor to multiply property value with. Default: {{cd|1.0}}.
+** {{nbt|list|entries}}:
+*** {{nbt|compound}} ''An entry object''
+**** {{nbt|float|threshold}}: Threshold float value to select this entry.
+**** {{nbt|compound|model}}: The '''Items model''' object for this threshold.
+** {{nbt|compound|fallback}}: The '''Items model''' object if no valid entry was found. Optional, but will render a "missing" error model instead.
+</div>
+
+==== Numeric property types ====
+===== bundle/fullness =====
+Return weight of {{cd|minecraft:bundle_contents}} component or {{cd|0}} if not present.
+
+No additional fields for this type.
+
+===== compass =====
+Return an angle, scaled from {{cd|0.0}} to {{cd|1.0}} in x-z plane between holder position and target. If target is not valid (not present, in other dimension or too close to holder position) random value will be returned.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|target}}: One of:
+*** {{cd|spawn}}: points at world spawn.
+*** {{cd|lodestone}}: points at location stored in {{cd|minecraft:lodestone_tracker}} component.
+*** {{cd|recovery}}: points at last player death location.
+*** {{cd|none}}: always return an invalid target.
+** {{nbt|bool|wobble}}: Optional. If {{cd|true}}, value will oscillate for some time around target before settling. Default: {{cd|true}}.
+</div>
+
+===== cooldown =====
+Return remaining cooldown for item, scaled between {{cd|0.0}} to {{cd|1.0}}.
+
+No additional fields for this type.
+
+===== count =====
+Return stack size.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|bool|normalize}}: Optional. Default: {{cd|true}}.
+*** If {{cd|true}}, return count divided by {{cd|minecraft:max_stack_size}} component, clamped to {{cd|0.0}} to {{cd|1.0}}.
+*** If {{cd|false}}, return count clamped to {{cd|0}} to {{cd|minecraft:max_stack_size}}.
+</div>
+
+===== crossbow/pull =====
+Return crossbow-specific use time.
+
+No additional fields for this type.
+
+===== damage =====
+Return value for {{cd|minecraft:damage}} component or {{cd|0}} if not present.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|bool|normalize}}: Optional. Default: {{cd|true}}.
+*** If {{cd|true}}, return value of damage divided by {{cd|minecraft:max_damage}} component, clamped to {{cd|0.0}} to {{cd|1.0}}.
+*** If {{cd|false}}, return raw value of damage, clamped to {{cd|0}} to {{cd|minecraft:max_damage}}.
+</div>
+
+===== time =====
+Return value of a in-game time, scaled between {{cd|0.0}} to {{cd|1.0}}.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|source}}: Time source to return. One of {{cd|d=or|daytime|moon_phase|random}}.
+** {{nbt|bool|wobble}}: Optional. If {{cd|true}}, value will oscillate for some time around target before settling. Default: {{cd|true}}.
+</div>
+
+===== use_cycle =====
+Return remaining use ticks modulo {{cd|period}}.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|float|period}}: Optional. Must be positive. Default {{cd|1.0}}.
+</div>
+
+===== use_duration =====
+Return item use ticks.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|bool|remaining}}: Optional. If {{cd|true}}, returned value will be remaining use ticks, if {{cd|false}} - ticks so far. Default: {{cd|false}}.
+</div>
+
+===== custom_model_data =====
+Return value from {{cd|floats}} list in {{cd|minecraft:custom_model_data}} component or {{cd|0}} if not present.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|int|index}}: Optional. Index for field in {{cd|floats}}. Default: {{cd|0}}.
+</div>
+
+=== empty ===
+Does not render anything.
+
+No additional fields for this type.
+
+
+=== bundle/selected_item ===
+Render the selected stack in {{cd|minecraft:bundle_contents}} component, if present, otherwise does nothing.
+
+No additional fields for this type.
+
+
+=== special ===
+Render a special model.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''special''' items model object
+** {{nbt|string|type}}: {{cd|minecraft:special}}
+** {{nbt|compound|model}}
+*** {{nbt|string|type}}: type of special model. One of {{cd|d=or|minecraft:banner|minecraft:bed|minecraft:chest|minecraft:conduit|minecraft:copper_golem_statue|minecraft:decorated_pot|minecraft:head|minecraft:player_head|minecraft:shield|minecraft:shulker_box|minecraft:standing_sign|minecraft:hanging_sign|minecraft:trident}}.
+*** Additional fields depending on value of '''special model type'''.
+** {{nbt|string|base}}: Namespaced ID of model in {{cd|models}} directory, to providing transformations, particle texture and GUI light.
+</div>
+
+==== special model types ====
+===== banner =====
+Render a banner with patterns from {{cd|minecraft:banner_patterns}} component.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''banner''' special type object
+** {{nbt|string|type}}: {{cd|minecraft:banner}}
+** {{nbt|string|color}}: Color of the banner base, one of 16 predefined colors.
+</div>
+
+===== bed =====
+Render a whole bed.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''bed''' special type object
+** {{nbt|string|type}}: {{cd|minecraft:bed}}
+** {{nbt|string|texture}}: Namespaced ID for the texture in the beds texture atlas without the {{cd|.png}} suffix. By default this includes textures in {{cd|textures/entity/bed/}}, without the prefix.
+</div>
+
+===== chest =====
+Render a single chest.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''chest''' special type object
+** {{nbt|string|type}}: {{cd|minecraft:chest}}
+** {{nbt|string|texture}}: Namespaced ID for the texture in the chests texture atlas without the {{cd|.png}} suffix. By default this includes textures in {{cd|textures/entity/chest/}}, without the prefix.
+** {{nbt|float|openness}}: Optional. Render the chest in the specified open state, between {{cd|0.0}} (fully closed) to {{cd|1.0}} (fully open). Default: {{cd|0.0}}.
+</div>
+
+===== conduit =====
+Render conduit.
+
+No additional fields for this type.
+
+===== copper_golem_statue =====
+Render a [[copper golem statue]].
+
+<div class="treeview">
+* {{nbt|compound}} Root '''copper_golem_statue''' special type object
+** {{nbt|string|type}}: {{cd|minecraft:copper_golem_statue}}
+** {{nbt|string|pose}}: One of {{cd|d=or|sitting|running|star|standing}}.
+** {{nbt|string|texture}}: Namespaced ID for the texture with the {{cd|.png}} suffix.
+</div>
+
+===== decorated_pot =====
+Render a decorated pot. Uses values from {{cd|minecraft:pot_decorations}} component.
+
+No additional fields for this type.
+
+===== head =====
+Render a head.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''head''' special type object
+** {{nbt|string|type}}: {{cd|minecraft:head}}
+** {{nbt|string|kind}}: One of {{cd|d=or|skeleton|wither_skeleton|player|zombie|creeper|piglin|dragon}}.
+** {{nbt|string|texture}}: Optional. Namespaced ID for the texture, without {{cd|textures/entity/}} prefix and {{cd|.png}} suffix.
+*** If absent, default texture will be used, depending on {{cd|kind}} field.
+** {{nbt|float|animation}}: Optional. Controlling head animation if available for this {{cd|kind}} of head (like Piglin ears or Ender Dragon jaw). Default: {{cd|0.0}}.
+*** The {{cd|dragon}} animation is {{cd|10}} units long. Mouth fully closed at {{cd|-2.5}} and fully open at {{cd|2.5}} <ref name="head_animation">[https://www.youtube.com/watch?v=z6rrHbFp5nw&t=67 News in Resource Pack Version 46 (1.21.4 Pre-Release 1)]</ref>.
+*** The {{cd|piglin}} ears wiggle out of sync. The left ear period is {{cd|8.3333}} and right ear period is {{cd|10.0}}.<ref name="head_animation"/>
+</div>
+
+===== player_head =====
+
+Render a player head. Use the data into the [[Data component format#profile|{{cd|minecraft:profile}}]] component to select the texture to render.
+
+No additional fields for this type.
+
+===== shield =====
+Render a shield. Uses patterns from {{cd|minecraft:banner_patterns}} component and color from {{cd|minecraft:base_color}} component.
+
+No additional fields for this type.
+
+===== shulker_box =====
+Render a shulker box.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''shulker_box''' special type object
+** {{nbt|string|type}}: {{cd|minecraft:shulker_box}}
+** {{nbt|string|texture}}: Namespaced ID for the texture in the shulker boxes texture atlas without the {{cd|.png}} suffix. By default this includes textures in {{cd|textures/entity/shulker/}}, without the prefix.
+** {{nbt|float|openness}}: Optional. Render the shulker box in the specified open state, between {{cd|0.0}} (fully closed) to {{cd|1.0}} (fully open). Default: {{cd|0.0}}.
+** {{nbt|string|orientation}}: Optional. Orientation for rendering. Default: {{cd|up}}.
+</div>
+
+===== standing_sign =====
+Renders a standing sign.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''standing_sign''' special type object
+** {{nbt|string|type}}: {{cd|minecraft:standing_sign}}
+** {{nbt|string|wood_type}}: One of {{cd|d=or|oak|spruce|birch|acacia|cherry|jungle|dark_oak|pale_oak|mangrove|bamboo|crimson|warped}}.
+** {{nbt|string|texture}}: Optional. Namespaced ID for the texture in the signs texture atlas without the {{cd|.png}} suffix. By default this includes textures in {{cd|textures/entity/signs/}}, without the prefix. If present, {{cd|wood_type}} field is ignored.
+</div>
+
+===== hanging_sign =====
+Renders a hanging sign.
+
+<div class="treeview">
+* {{nbt|compound}} Root '''hanging_sign''' special type object
+** {{nbt|string|type}}: {{cd|minecraft:hanging_sign}}
+** {{nbt|string|wood_type}}: One of {{cd|d=or|oak|spruce|birch|acacia|cherry|jungle|dark_oak|pale_oak|mangrove|bamboo|crimson|warped}}.
+** {{nbt|string|texture}}: Optional. Namespaced ID for the texture in the signs texture atlas without the {{cd|.png}} suffix. By default this includes textures in {{cd|textures/entity/signs/}}, without the prefix. If present, {{cd|wood_type}} field is ignored.
+</div>
+
+===== trident =====
+Render a trident.
+
+No additional fields for this type.
+
+== References ==
+{{reflist}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.4|dev=24w45a|Added Item model definitions.}}
+|{{HistoryLine|||dev=24w46a|Added {{cd|holder_type}} property types.
+|Added {{cd|keybind_down}} boolean property types.
+|Added {{cd|standing_sign}} and {{cd|hanging_sign}} special model types.
+|Added {{cd|texture}} field to {{cd|head}} special model types.
+|Removed {{cd|xmas}} boolean property, replaced by {{cd|local_time}} property model types.
+|Removed {{cd|shift_down}} boolean property, replaced by {{cd|extended_view}} boolean property.
+}}
+|{{HistoryLine|||dev=Pre-Release 1|Add {{cd|hand_animation_on_swap}} field to items model definition.
+|Added {{cd|empty}} item model type.
+|Added {{cd|team}} tint sources type.
+|Added {{cd|context_dimension}} property type.
+|Added {{cd|view_entity}} boolean property type.
+|Renamed {{cd|holder_type}} to {{cd|context_entity_type}} property type.
+|Removed {{cd|natural_only}} field and added {{cd|source}} field in {{cd|time}} numeric property type.
+|Added {{cd|none}} to possible values for {{cd|target}} field  in {{cd|compass}} numeric property type.
+|Added {{cd|animation}} field to {{cd|head}} special model type.
+}}
+|{{HistoryLine||1.21.5|dev=25w03a|Added {{cd|component}} property type.}}
+|{{HistoryLine|||dev=25w04a|Added {{cd|component}} boolean property type.}}
+|{{HistoryLine||1.21.6|dev=Pre-Release 1|Removed the support of loading profile data for {{cd|head}} special type to render player head.
+|Added {{cd|player_head}} special type.
+|Added {{cd|oversized_in_gui}} field to items model definition.
+}}
+|{{HistoryLine||1.21.9|dev=25w31a|Added {{cd|copper_golem_statue}} special type.}}
+|{{HistoryLine|||dev=25w33a|Added {{cd|on_shelf}} display context.}}
+|{{HistoryLine||1.21.11|dev=25w41a|Added {{cd|swap_animation_scale}} field to items model definition.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|resourcepack}}
+
+[[de:Gegenstandsmodelldefinition]]
+[[zh:物品模型映射]]

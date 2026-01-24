@@ -1,0 +1,980 @@
+{{About|item components|block components|Block components|the format of item components in {{JE}}|Data component format}}
+{{exclusive|bedrock}}
+'''Item components''' are [[JSON]] formatted for [[items]] in [[add-on]]s used to change how your item looks and functions in the world, and also have NBT components that also work on vanilla items.
+
+== Applying components ==
+They are applied within the {{cd|components}} field within the {{cd|minecraft:item}} field, components can also be applied to vanilla items, but unlike custom items they are limited to a few components.
+
+== Component types ==
+=== <code>minecraft:allow_off_hand</code> ===
+Allows the item to be placed in the [[offhand]] but does not allow use of the item.
+
+It has no field, it must be a boolean value being either {{cd|true}} or {{cd|false}}.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:allow_off_hand": true
+</syntaxhighlight>
+
+=== <code>minecraft:block_placer</code> ===
+Allows the item to place blocks when used, if used in [[survival]] the item is consumed.
+
+The available fields are:
+* '''{{cd|block}}''':
+** Defines the block that will be positioned.
+* '''{{cd|replace_block_item}}''':
+** Defines whether the item will replace the block, it can be {{cd|true}} or {{cd|false}} if it is {{cd|true}} the block and the item must have the same {{cd|identifier}} and the {{cd|minecraft:icon}} field can be omitted merging the two into one thing.
+* '''{{cd|use_on}}''':
+** List of block descriptors that contain blocks this item can be used on. If left blank, all blocks will be allowed. This also applies to [[Creative]] mode.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:block_placer": {
+    "block": "wiki:custom_block",
+    "replace_block_item": true,
+    "use_on": [
+        "minecraft:dirt",
+        "wiki:custom_dirt"
+    ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:bundle_interaction</code> ===
+Enables the [[bundle]] interface and functionality on the item. The item must have the [[#minecraft:storage_item|{{cd|minecraft:storage_item}}]] component for this component to work.
+
+The available fields are:
+* '''{{cd|num_viewable_slots}}''':
+** Sets the maximum number of visible item stacks between 1 and 64 from the pack tooltip going from right to left.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:bundle_interaction": {
+    "num_viewable_slots": 12
+}
+</syntaxhighlight>
+
+=== <code>minecraft:compostable</code> ===
+Allows an item to be used in a [[composter]].
+
+The available fields are:
+* '''{{cd|composting_chance}}''':
+** Sets the chance to increase the level of the [[Composter#Composting|compost]] can be a value between 0 and 100.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:compostable": {
+    "composting_chance": 50 // 50% chance to increase compost bin level
+}
+</syntaxhighlight>
+
+=== <code>minecraft:cooldown</code> ===
+Cooldown component. After use, all items in a specified "cooldown category" become unusable for a period of time specified in the component. The item must have the [[#minecraft:use_modifiers|{{cd|minecraft:use_modifiers}}]] component for this component to work.
+
+The available fields are:
+* '''{{cd|category}}''':
+** The item's cooldown category.
+* '''{{cd|duration}}''':
+** The cooldown duration (in seconds) that items with a matching category will take to charge before becoming usable again, if this value is a negative number the item will become unusable.
+* '''{{cd|type}}''':
+** Defines the action to which the cooldown applies, in a mutually exclusive manner. The cooldown of one type of action does not affect the other. This can be:
+*** {{cd|use}} — activates the cooldown only when using the item, allowing other actions.
+*** {{cd|attack}} — activates cooldown when attacking, preventing further attacks until time runs out.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:cooldown": {
+    "category": "spear",
+    "duration": 1.0,
+    "type": "attack"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:damage</code> ===
+Defines how much extra [[damage]] the item deals in an [[attack]], the value must be positive.
+
+The available fields are:
+* Any positive number, the actual damage is always the '''set value + 1''', values above 32.767 are read as negative values so values between 0 and 255 are recommended Values above 255 resulted in unexpected values{{until|be 1.21.130}}.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:damage": 10
+</syntaxhighlight>
+
+=== <code>minecraft:damage_absorption</code> ===
+Causes the item to absorb damage that would otherwise be dealt to the entity wearing it. For this to happen, the item must have the [[#minecraft:durability|{{cd|minecraft:durability}}]] component and be equipped in an armor slot.
+
+The available fields are:
+* '''{{cd|absorbable_causes}}''':
+** List of damage deals (such as {{cd|entity_attack}} and {{cd|magma}}) that can be absorbed by the item.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:damage_absorption": {
+    "absorbable_causes": ["all"]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:digger</code> ===
+Determine how quickly an item can [[break]] specific blocks.
+
+The available fields are:
+* '''{{cd|destroy_speeds}}''':
+** List of blocks to break, with correlated extraction speeds.
+*** {{cd|block}} — which block the item will break, and you can put the {{cd|tags}} entry for a [[molang]] query.
+*** {{cd|speed}} — how fast the block will be broken, accepting negative values if it is negative the item will never break the block.
+* '''{{cd|use_efficiency}}''':
+** Defines whether the item should be affected if the [[efficiency]] enchantment is applied to it. Can be {{cd|true}} or {{cd|false}}.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:digger": {
+    "use_efficiency": true,
+    "destroy_speeds": [
+        {
+            "block": {
+                "tags": "q.any_tag('stone', 'metal')" // Note that not all blocks have tags; you may need to list many blocks.
+            },
+            "speed": 6
+        },
+        {
+            "block": "minecraft:grass_block",
+            "speed": 7
+        }
+    ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:display_name</code> ===
+Sets the text displayed when an item's name is displayed.
+
+The available fields are:
+* '''{{cd|value}}''':
+** It can be any word for fixed text, or a translation key that must be specified in the [[language]] file.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:display_name": {
+    "value": "secret weapon"
+}
+</syntaxhighlight>
+Example with translation key:
+<syntaxhighlight lang="json" copy>
+"minecraft:display_name": {
+    "value": "item.snowball.name"
+}
+</syntaxhighlight>
+=== <code>minecraft:durability</code> ===
+It sets the item's [[durability]] and also allows the item to be [[Item Repair|repaired]] with the combination of the same item on the [[crafting table]] and on the [[grindstone]] and on the [[anvil]]. When breaking a block, durability is not spent, requiring the use of the [[Script API]], however, it loses durability when attack any [[mob]], losing 2 durability points. If you use the [[#minercraft:wearable|{{cd|minercraft:wearable}}]] component, it loses 1 durability when attack mobs.
+
+The available fields are:
+* '''{{cd|damage_chance}}''':
+** An object that has {{cd|min}} and {{cd|max}} fields that define the probability of the item losing durability working in conjunction with the [[Unbreaking]] enchantment must be a value from 0 to 100.
+* '''{{cd|max_durability}}'''
+** Sets the total durability of the item with a minimum value of 0 and a maximum of 32767. Values greater than this are considered negative and do not work.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:durability": {
+    "damage_chance": {
+        "min": 0,
+        "max": 100
+    },
+    "max_durability": 100
+}
+</syntaxhighlight>
+
+=== <code>minecraft:durability_sensor</code> ===
+Allows an item to emit sound effects and particles when reaching a specific level of durability.
+
+The available fields are:
+* '''{{cd|durability_thresholds}}''': Base object to place the sub fields.
+** '''{{cd|durability}}''': A value at which the effect will be emitted when it is less than or equal to the set value.
+** '''{{cd|particle_type}}''': The particle effect to be emitted.
+** '''{{cd|sound_event}}''': The sound effect to be emitted.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:durability_sensor": {
+  "durability_thresholds": [
+    {
+      "durability": 100,
+      "particle_type": "minecraft:explosion_manual",
+      "sound_event": "blast"
+    },
+    {
+      "durability": 5,
+      "sound_event": "raid.horn"
+     }
+    ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:dyeable</code> ===
+Allows an item to be [[dyed]] in a [[cauldron]] with water like [[leather armor]], when dyed it uses the {{cd|dyed}} field of the [[#minecraft:icon|{{cd|minecraft:icon}}]] component.
+
+The available fields are:
+* '''{{cd|default_color}}''':
+** Optional color to use by default before player dyes item, needs to be a color in hexadecimal format.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:dyeable": {
+    "default_color": "#ffffff"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:enchantable</code> ===
+Determines whether the item can be enchanted and which [[enchantments]] can be applied to the item.
+
+The available fields are:
+* '''{{cd|slot}}''':
+** Which enchantments can be applied, the only non-existent category is for [[mace]] enchantments, for this you must use the {{cd|all}} category (ex: Using {{cd|bow}} would allow this item to be enchanted as if it were a [[bow]]).
+{{Collapse|title=All possible slots:|content=* {{cd|none}}: Disables enchantments on the item.
+* {{cd|all}}: Allows all possible types of enchantments.
+* {{cd|sword}}: Allows [[sword]]s enchantments.
+* {{cd|spear}}: Allows enchantments of [[trident]]s.
+* {{cd|melee_spear}}: Allows enchantments of [[spear]]s.
+* {{cd|bow}}: Allows [[bow]]s enchantments.
+* {{cd|crossbow}}: Allows enchantments of [[crossbow]]s.
+* {{cd|g_armor}}: Allows generic enchantments of [[armor]] or any part.
+* {{cd|cosmetic_head}}: Allows cosmetic helmet enchantments like [[carved pumpkin]].
+* {{cd|armor_head}}: Allows enchantments of [[helmet]]s.
+* {{cd|armor_torso}}: Allows enchantments of [[chestplate]]s.
+* {{cd|armor_legs}}: Allows [[leggings]] enchantments.
+* {{cd|armor_feet}}: Allows enchantments of [[boots]].
+* {{cd|shield}}: Allows [[shield]] enchantments.
+* {{cd|elytra}}: Allows [[elytra]] enchantments.
+* {{cd|g_tool}}: Allows generic [[tool]] enchantments.
+* {{cd|g_digging}}: Allows tool enchantments that break blocks.
+* {{cd|pickaxe}}: Allows enchantments of [[pickaxe]]s.
+* {{cd|shovel}}: Allows [[shovel]]s enchantments.
+* {{cd|axe}}: Allows enchantments of [[axe]]s.
+* {{cd|hoe}}: Allows enchantments of [[hoe]]s.
+* {{cd|shears}}: Allows [[shears]] enchantments.
+* {{cd|flintsteel}}: Allows enchantments of [[flint and steel]].
+* {{cd|fishing_rod}}: Allows [[fishing rod]] enchantments.
+* {{cd|carrot_stick}}: Allows [[carrot on a stick]] enchantments.}}
+* '''{{cd|value}}''':
+** The minimum enchantment value is 0 and the maximum is 256, it determines the enchantability of the item, influencing the quality and quantity of potential enchantments. Higher values increase the chance of granting more powerful enchantments. See [[Enchantment mechanics#Enchantability|Enchantability]] for vanilla values.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:enchantable": {
+    "slot": "sword",
+    "value": 10
+}
+</syntaxhighlight>
+
+=== <code>minecraft:entity_placer</code> ===
+Allows the item to place specific [[entity]]s into the world.
+
+The available fields are:
+* '''{{cd|dispense_on}}''':
+** List of block descriptors that contain blocks on which the [[dispenser]] can use this item. If left blank, all blocks will be allowed.
+* '''{{cd|entity}}''':
+** The entity the item will place on.
+* '''{{cd|use_on}}''':
+** List of block descriptors that contain blocks this item can be used on. If left blank, all blocks are allowed.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:entity_placer": {
+  "entity": "minecraft:spider",
+  "dispense_on": [
+    "minecraft:dirt"
+  ],
+  "use_on": [
+    "minecraft:dirt"
+  ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:fire_resistant</code> ===
+Determines whether items should be able to resist [[fire]] and [[lava]] instead of being destroyed like any [[netherite]] item.
+
+The available fields are:
+* '''{{cd|value}}''':
+** It can be {{cd|true}} or {{cd|false}} to define whether or not the item resists fire and lava.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:fire_resistant": {
+    "value": true
+}
+</syntaxhighlight>
+
+=== <code>minecraft:food</code> ===
+Allows the item to be edible as a [[food]]. It requires the [[#minecraft:use_modifiers|{{cd|minecraft:use_modifiers}}]] component to work properly. To display an [[eating]]/[[drinking]] animation, also apply the [[#minecraft:use_animation|{{cd|minecraft:use_animation}}]] component to the item.
+
+The available fields are:
+* '''{{cd|can_always_eat}}''':
+** If {{cd|true}} you can always eat this item (even when you are not hungry).
+* '''{{cd|nutrition}}''':
+** The value that is added to the player's [[nutrition]] when the item is used, which can be a negative value, with a maximum of {{cd|107374180}} as it is the maximum 32-bit value.
+* '''{{cd|saturation_modifier}}''':
+** A 32-bit integer value that defines the [[saturation]] modification value that uses the calculation ({{math|nutrition * saturation_modifier * 2}}) applying the saturation value.
+* '''{{cd|using_converts_to}}''':
+** When used, converts to the item specified by the string in this field, as with [[stew]].
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:food": {
+    "can_always_eat": false,
+    "nutrition": 3,
+    "saturation_modifier": 0.6,
+    "using_converts_to": "bowl"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:fuel</code> ===
+Allows the item to be used as [[fuel]] in a [[smelting]] block such as a furnace used to smelt other items.
+
+The available fields are:
+* '''{{cd|duration}}''':
+** How long, in seconds, this fuel will smelt items in a furnace, minimum value being {{cd|0.05}} and maximum value being {{cd|107374180}} being the 32-bit limit value.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:fuel": {
+    "duration": 3.0
+}
+</syntaxhighlight>
+
+=== <code>minecraft:glint</code> ===
+Determines whether the item has the [[enchantment glint]] like an [[enchanted golden apple]].
+
+It has no field, it must be a boolean value being either {{cd|true}} or {{cd|false}}.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:glint": false
+</syntaxhighlight>
+
+=== <code>minecraft:hand_equipped</code> ===
+Determines whether an item is rendered as a [[tool]] while in hand.
+
+It has no field, it must be a boolean value being either {{cd|true}} or {{cd|false}}.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:hand_equipped": true
+</syntaxhighlight>
+
+=== <code>minecraft:hover_text_color</code> ===
+Determines the color of the item name overriding the [[rarity]].
+
+It has no field, it needs to be a string value with the color name, you can see all possible values [[Formatting codes#Color codes|here]].
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:hover_text_color": "minecoin_gold"
+</syntaxhighlight>
+
+=== <code>minecraft:icon</code> ===
+Determines the icon to represent the item in the UI and elsewhere, if {{cd|replace_block_item}} is {{cd|true}} of the [[#minecraft:block_placer|{{cd|minecraft:block_placer}}]] component this component can be omitted and it will use the block as the visual, this can be a string or an object.
+
+The available fields if object are:
+* '''{{cd|textures}}''': This object contains the different textures that can be used for the item's icon. Armor textures and finish palettes can also be specified here, all specified in the {{cd|item_texture.json}} file.
+** '''{{cd|default}}''':
+*** The default icon for the item.
+** '''{{cd|dyed}}''':
+*** The icon displayed after a [[#minecraft:dyeable|dyeable]] item is dyed in a [[cauldron]].
+** '''{{cd|icon_trim}}''':
+*** The icon overlay for when your item has a [[trim]], by default it uses the icon corresponding to the ''slot'' defined in the [[#minecraft:wearable|{{cd|minecraft:wearable}}]] component.
+** '''{{cd|<material>_palette}}''':
+*** The [[Smithing#List of color palettes for all materials|color palette]] that the armor ornament will use for a certain material type must be a direct path to the texture.
+** '''{{cd|bundle_open_back}}''':
+*** The texture displayed behind the item preview with the [[#minecraft:bundle_interaction|{{cd|minecraft:bundle_interaction}}]] component used in the [[bundle]].
+** '''{{cd|bundle_open_front}}''':
+*** The texture displayed in front of the item preview with the [[#minecraft:bundle_interaction|{{cd|minecraft:bundle_interaction}}]] component used in the [[bundle]].
+
+Example with string:
+<syntaxhighlight lang="json" copy>
+"minecraft:icon": "wiki:custom_item"
+</syntaxhighlight>
+Example with object:
+<syntaxhighlight lang="json" copy>
+"minecraft:icon": {
+    "textures": {
+        "default": "wiki:custom_item",
+        "icon_trim": "wiki:custom_item_trim",
+        "emerald_palette": "textures/trims/color_palettes/redstone_palette",
+        "bundle_open_back": "bundle_blue_open_back",
+        "bundle_open_front": "bundle_blue_open_front"
+    }
+}
+</syntaxhighlight>
+
+=== <code>minecraft:interact_button</code> ===
+This component determines whether the interaction button is displayed on touch controls and what text is displayed on the button. When set to {{cd|true}}, the default text "Use Item" will be used.
+
+It has no field, it must be a boolean value being either {{cd|true}} or {{cd|false}} or a string with a text or translation key.
+
+Example with string:
+<syntaxhighlight lang="json" copy>
+"minecraft:interact_button": "Use this custom item"
+</syntaxhighlight>
+Example as boolean:
+<syntaxhighlight lang="json" copy>
+"minecraft:interact_button": true
+</syntaxhighlight>
+
+=== <code>minecraft:kinetic_weapon</code> ===
+This item component is used to replicate the [[Lance#Charge|charged]] attack used on [[spear]]s. Allows an item to inflict damage and other effects with each tick while in use, to all unobstructed targets found in a straight line from the user's field of vision. Damage is calculated based on the speed of the user and the target projected onto the line of sight; the faster the user and the target move towards each other, the greater the final damage. After applying "{{cd|damage_multiplier}}" and "{{cd|damage_modifier}}", the resulting damage is reduced to the nearest integer. Requires the [[#minecraft:use_modifiers|{{cd|minecraft:use_modifiers}}]] item component on the item.
+
+The available fields are:
+* '''{{cd|delay}}''':
+** Mark to wait before applying damage and effects.
+* '''{{cd|reach}}''':
+** Defines the range along the view vector where entities can be reached.
+* '''{{cd|creative_reach}}''':
+** Defines the range used when the user is in Creative mode.
+* '''{{cd|hitbox_size}}''':
+** Defines the extra tolerance in raycast for detecting entities.
+* '''{{cd|damage_multiplier}}''':
+** Multiply the sum of the projected speeds.
+* '''{{cd|damage_modifier}}''':
+** Add to the multiplied sum of the projected speeds.
+* '''{{cd|damage_conditions}}''':
+** Conditions that must be met for the damage to be applied.
+* '''{{cd|knockback_conditions}}''':
+** Conditions that must be met for repulsion to be applied.
+* '''{{cd|dismount_conditions}}''':
+** Conditions that must be met for riders to be dismounted.
+The fields available in {{cd|damage_conditions}}, {{cd|knockback_conditions}}, and {{cd|dismount_conditions}} are:
+* '''{{cd|max_duration}}''':
+** Time, in ticks, during which the effect can be applied after the {{cd|delay}} has elapsed.
+* '''{{cd|min_speed}}''':
+** Minimum user speed (projected onto the display vector via a dot product) required for the effect to be applied.
+* '''{{cd|min_relative_speed}}''':
+** Minimum relative speed of the user relative to the target (projected onto the view vector via a dot product) required for the effect to be applied.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:kinetic_weapon": {
+   "delay": 12,
+   "reach": {
+      "min": 2.0,
+      "max": 4.5
+   },
+   "creative_reach": {
+      "min": 2.0,
+      "max": 7.5
+   },
+   "hitbox_margin": 0.25,
+   "damage_multiplier": 0.95,
+   "damage_conditions": {
+      "max_duration": 225,
+      "min_relative_speed": 4.6
+   },
+   "knockback_conditions": {
+      "max_duration": 90,
+      "min_speed": 5.1
+   },
+   "dismount_conditions": {
+      "max_duration": 50,
+      "min_speed": 11.0
+   }
+ }
+</syntaxhighlight>
+
+=== <code>minecraft:liquid_clipped</code> ===
+Determines whether an item interacts with [[liquid]] blocks when used. When interacting with liquid, outline selection cannot highlight any blocks below it. The interaction occurs within the liquid block, not on its sides.
+
+It has no field, it must be a boolean value being either {{cd|true}} or {{cd|false}}.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:liquid_clipped": true
+</syntaxhighlight>
+
+=== <code>minecraft:max_stack_size</code> ===
+Determines how many of the same item can be [[Inventory#Slots|stacked]].
+
+The available fields are:
+* There are no fields, it must be a number with a minimum of 1 and a maximum of 64.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:max_stack_size": 64
+</syntaxhighlight>
+
+=== <code>minecraft:piercing_weapon</code> ===
+This item component is used to replicate the [[jab]] attack used in [[spear]]s. Allows the item to damage all entities detected in a straight line along the user's field of vision. Items with this component cannot destroy blocks, as the attack action always takes priority.
+
+The available fields are:
+* '''{{cd|reach}}''':
+** Defines the range along the view vector where entities can be reached.
+* '''{{cd|hitbox_size}}''':
+** Defines the extra tolerance in raycast for detecting entities.
+* '''{{cd|creative_reach}}''':
+** Defines the range used when the user is in [[Creative]] mode.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:piercing_weapon": {
+  "reach": {
+    "min": 2.0,
+    "max": 4.5
+  },
+  "creative_reach": {
+    "min": 2.0,
+    "max": 7.5
+  },
+  "hitbox_margin": 0.25
+}
+</syntaxhighlight>
+
+=== <code>minecraft:projectile</code> ===
+[[Projectile]] item component. Projectile items are fired like an arrow.
+
+The available fields are:
+* '''{{cd|minimum_critical_power}}''':
+** Sets the time a projectile needs to charge to cause a critical hit.
+* '''{{cd|projectile_entity}}''':
+** The entity to fire as a projectile. If no namespace is specified, it is assumed to be {{cd|minecraft}}.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:projectile": {
+    "minimum_critical_power": 1.25,
+    "projectile_entity": "arrow"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:rarity</code> ===
+Represents the item's difficulty to obtain by changing the color of its name text. This component has no effect if [[#minecraft:hover_text_color|{{cd|minecraft:hover_text_color}}]] is also applied. The item's rarity will be increased if it is enchanted. See [[rarity]] for vanilla values.
+
+It has no field, it must be a string value being {{cd|common}} for the white name, {{cd|uncommon}} for the yellow name, {{cd|rare}} for the aqua blue name and {{cd|epic}} for the light purple name.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:rarity": "rare"
+</syntaxhighlight>
+
+=== <code>minecraft:record</code> ===
+Allows the item to play a sound like a [[music disc]] when used in a [[jukebox]], when used the item always turns its name color to aqua blue.
+
+The available fields are:
+* '''{{cd|comparator_signal}}''':
+** [[Redstone signal]] intensity for use in [[comparator]] blocks can be any value including negative values, but only values from {{cd|0-15}} work.
+* '''{{cd|duration}}''':
+** Duration of the sound event in seconds, can be any value.
+* '''{{cd|sound_event}}''':
+** Sound event type, if it is a sound from a vanilla music album, the name of the album's author will be added, '''only vanilla sound events are allowed for use'''.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:record": {
+  "comparator_signal": 1,
+  "duration": 5,
+  "sound_event": "ambient.tame"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:repairable</code> ===
+Determines which items can be used to [[repair]] a specified item, as well as the amount of durability the specified items will repair. By default, any item that has durability can be repaired by itself; setting it to repair in this component will override the vanilla calculation.
+
+The available fields are:
+* '''{{cd|repair_items}}''': List of item entries to repair.
+** '''{{cd|repair_amount}}''':
+*** How much durability is repaired, can be an integer value or a [[Molang]] expression, being able to use {{cd|math.random}} and {{cd|context.other}} to get the second slot.
+** '''{{cd|items}}''':
+*** The item used to repair the item that has the component.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:repairable":{
+    "repair_items": [
+        {
+            "items":[
+                "minecraft:diamond"
+            ],
+            "repair_amount": 10
+        },
+        {
+            "items":[
+                "minecraft:stick"
+            ],
+            "repair_amount": "math.random(1,10)"
+        },
+        {
+            "items":[
+                "minecraft:apple"
+            ],
+            "repair_amount": "math.min(q.remaining_durability + c.other->q.remaining_durability + math.floor(q.max_durability /20), c.other->q.max_durability)"
+        }
+    ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:shooter</code> ===
+Used to shoot projectiles like a [[bow]]. Must have the [[#minecraft:use_modifiers|{{cd|minecraft:use_modifiers}}]] component to work properly.
+
+The available fields are:
+* '''{{cd|ammunition}}''': Input list used to set ammunition and priority.
+** '''{{cd|item}}''':
+*** Indicates the item identifier. The item must have the component [[#minecraft:projectile|{{cd|minecraft:projectile}}]].
+** '''{{cd|use_offhand}}''':
+*** Can be {{cd|true}} or {{cd|false}}, allows the ammunition to be used in the [[offhand]].
+** '''{{cd|search_inventory}}''':
+*** Can be {{cd|true}} or {{cd|false}}, determines whether it is possible to search for ammunition in the inventory, mandatory to be {{cd|true}} in [[survival]] and in [[creative]] if {{cd|use_in_creative}} is {{cd|true}}.
+** '''{{cd|use_in_creative}}''':
+*** Can be {{cd|true}} or {{cd|false}}, allows the ammo to be used in [[creative]].
+* '''{{cd|charge_on_draw}}''':
+** Can be {{cd|true}} or {{cd|false}}, defines whether the item is carried when drawn, if the item uses [[#minecraft:use_modifiers|{{cd|minecraft:use_modifiers}}]] it must have {{cd|use_duration}} greater than or equal to {{cd|max_draw_duration}}.
+* '''{{cd|max_draw_duration}}''':
+** Determines how long the weapon can be drawn before it is automatically released.
+* '''{{cd|scale_power_by_draw_duration}}''':
+** It can be {{cd|true}} or {{cd|false}}, when {{cd|true}} the longer the weapon is drawn, the more power it will have when released.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:shooter": {
+    "ammunition": [
+        {
+            "item": "custom_projectile",
+            "use_offhand": true,
+            "search_inventory": true,
+            "use_in_creative": true
+        }
+    ],
+    "max_draw_duration": 1.0,
+    "scale_power_by_draw_duration": true,
+    "charge_on_draw": false
+}
+</syntaxhighlight>
+
+=== <code>minecraft:should_despawn</code> ===
+Determines whether an item should eventually [[despawn]] while floating in the world.
+
+It has no field, it must be a boolean value being either {{cd|true}} or {{cd|false}}.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:should_despawn": true
+</syntaxhighlight>
+
+=== <code>minecraft:stacked_by_data</code> ===
+Determines whether the same item with different auxiliary values can be stacked. Additionally, it determines whether the item's actors can be merged while floating in the world.
+
+It has no field, it must be a boolean value being either {{cd|true}} or {{cd|false}}.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:stacked_by_data": true
+</syntaxhighlight>
+
+=== <code>minecraft:storage_item</code> ===
+Allows the item to act as a container and store other items as a [[bundle]]. The item must not stack for this component to work.
+
+The available fields are:
+* '''{{cd|allow_nested_storage_items}}''':
+** Determines whether other storage items can be placed in the container can be {{cd|true}} or {{cd|false}}.
+* '''{{cd|allowed_items}}''':
+** Defines the items that are allowed exclusively in the container. If empty or omitted, all items are allowed in the container.
+* '''{{cd|banned_items}}''':
+** Defines items that are not allowed exclusively in the container.
+* '''{{cd|max_slots}}''':
+** Sets the number of slots in the container to a minimum of 1 and a maximum of 64.
+* '''{{cd|max_weight_limit}}''':
+** An integer.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:storage_item": {
+    "max_slots": 64,
+    "allow_nested_storage_items": true,
+    "banned_items": [
+        "minecraft:shulker_box",
+        "minecraft:undyed_shulker_box"
+    ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:storage_weight_limit</code> ===
+Sets the maximum allowed total weight of all items in the storage item container. The item must have the [[#minecraft:storage_item|{{cd|minecraft:storage_item}}]] component for this component to work.
+
+* To calculate the weight of an item, divide 64 by the maximum number of stacked items. If there are 64, each item weighs 1. If there are 16, each item weighs 4. If there are 1, each item weighs 64.
+
+The available fields are:
+* '''{{cd|max_weight_limit}}''':
+** An integer.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:storage_weight_limit": {
+    "max_weight_limit": 64
+}
+</syntaxhighlight>
+
+=== <code>minecraft:storage_weight_modifier</code> ===
+Sets the additional weight the item adds when it is inside another storage item.
+
+The available fields are:
+* '''{{cd|weight_in_storage_item}}''':
+** An integer between 0 and 64 a value of 0 does not allow the item to be used in a storage item.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:storage_weight_modifier": {
+    "weight_in_storage_item": 4
+}
+</syntaxhighlight>
+
+=== <code>minecraft:swing_duration</code> ===
+Determines the duration, in seconds, of the player's arm swing animation when drawing, attacking, or using an item. It only affects the visuals and does not impact the frequency of attacks or the game mechanics.
+
+The available fields are:
+* '''{{cd|value}}''':
+** The duration in seconds of the arm's swing.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:swing_duration": {
+  "value": 1.05
+}
+</syntaxhighlight>
+
+=== <code>minecraft:swing_sounds</code> ===
+Allows you to cancel user-generated swing sounds and emit sounds defined in the component; '''only vanilla sounds are allowed for use'''.
+
+The available fields are:
+* '''{{cd|attack_miss}}''':
+** Sound played when an attack misses or does not cause damage due to invulnerability.
+* '''{{cd|attack_hit}}''':
+** Sound played when an attack hits.
+* '''{{cd|attack_critical_hit}}''':
+** Sound played when an attack hits and deals critical damage.
+
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:swing_sounds": {
+  "attack_miss": "item.spear.attack_miss",
+  "attack_hit": "item.spear.attack_hit"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:tags</code> ===
+Sets the tag for an item, which can be vanilla or custom, for the list of vanilla tags see [[Item tag (Bedrock Edition)|item tag]].
+
+The available fields are:
+* '''{{cd|tags}}''':
+** List of tags that the item has.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:tags": {
+    "tags": [
+        "custom_tag"
+    ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:throwable</code> ===
+Defines throwable items, such as a [[snowball]]. The item must have the [[#minecraft:projectile|{{cd|minecraft:projectile}}]] component otherwise it will not work.
+
+The available fields are:
+* '''{{cd|do_swing_animation}}''':
+** Whether the item should use the arm swing animation when thrown can be either {{cd|true}} or {{cd|false}}.
+* '''{{cd|launch_power_scale}}''':
+** The scale at which the throwing power increases, which can be negative, ending up throwing the item in the opposite direction.
+* '''{{cd|max_draw_duration}}''':
+** The maximum time to throw the throwable item, it can be negative if it is negative it throws instantly.
+* '''{{cd|max_launch_power}}''':
+** The maximum power to throw the throwable item, which can be negative.
+* '''{{cd|min_draw_duration}}''':
+** The minimum time to throw the throwable item, can be negative if it is negative it throws instantly.
+* '''{{cd|scale_power_by_draw_duration}}''':
+** Whether or not the power of the throw increases with the duration of the charge. It can be {{cd|true}} or {{cd|false}}, if it is {{cd|true}} it will take the time into consideration, that is, the longer you hold it, the more power it will have when thrown.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:throwable": {
+    "do_swing_animation": false,
+    "launch_power_scale": 1.0,
+    "max_draw_duration": 0.0,
+    "max_launch_power": 1.0,
+    "min_draw_duration": 0.0,
+    "scale_power_by_draw_duration": false
+}
+</syntaxhighlight>
+
+=== <code>minecraft:use_animation</code> ===
+Defines which [[animation]] will happen when using the item.
+
+The available fields are:
+* There are no fields, it must be a string value and can be {{cd|eat}}, {{cd|drink}}, {{cd|bow}}, {{cd|block}}, {{cd|camera}}, {{cd|crossbow}}, {{cd|none}}, {{cd|brush}}, {{cd|spear}} and {{cd|spyglass}}.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:use_animation": "eat"
+</syntaxhighlight>
+
+=== <code>minecraft:use_modifiers</code> ===
+Modifies usage effects, including the time it takes for an item to be used and the player's speed when used in combination with components such as Shooter, Throwable, or Food. 
+
+The available fields are:
+* '''{{cd|movement_modifier}}''':
+** Modifier value to scale players' movement speed when the item is in use, sensing a value between 0 and 1.
+* '''{{cd|use_duration}}''':
+** How long in seconds it takes to use the item.
+* '''{{cd|emit_vibrations}}''':
+** Controls whether an item vibrates when it starts or stops being used; can be {{cd|true}} or {{cd|false}}.
+* '''{{cd|start_sound}}''':
+** Defines the sound to be played when starting to use the item '''only vanilla sounds are allowed for use'''.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:use_modifiers": {
+  "movement_modifier": 0.5,
+  "use_duration": 1.0,
+  "emit_vibrations": false,
+  "start_sound": "item.spear.use"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:wearable</code> ===
+Determines where the item can be used. If any slot other than the hand slot is selected, the maximum item stack value is set to 1.
+
+The available fields are:
+* '''{{cd|slot}}''':
+** Defines the slot in which the item can be used, which can be {{cd|slot.weapon.offhand}}, {{cd|slot.armor.head}}, {{cd|slot.armor.chest}}, {{cd|slot.armor.legs}} and {{cd|slot.armor.feet}} i.e. [[offhand]], head, chestplate, leggings and feet. It is also used for the [[armor trim]] icon and for the tooltip to show the armor value.{{upcoming|BE 26.0}}
+* '''{{cd|protection}}''':
+** How much [[protection]] the item will provide the player when used. Displayed in the item's tooltip.{{upcoming|BE 26.0|nocat=1}}
+* '''{{cd|hides_player_location}}''':
+** Determines whether or not to hide the player's location on [[locator map]]s and in the [[locator bar]] when used. Can be either {{cd|true}} or {{cd|false}}.
+Example:
+<syntaxhighlight lang="json" copy>
+"minecraft:wearable": {
+    "slot": "slot.armor.chest",
+    "protection": 10,
+    "hides_player_location": false
+}
+</syntaxhighlight>
+
+== Custom components ==
+
+Custom item components allow for custom items to take advantage of [[script API]] capabilities. Custom components are registered in scripts using the method {{cd|StartupEvent.itemComponentRegistry.registerCustomComponent()}}.
+
+Custom components can be added to items the same way as any other component, using the namespaced [[identifier]] the component was registered with. Custom components can have arguments of any type, which will be passed to scripts as the second argument.
+
+Examples:
+<syntaxhighlight lang=json copy>
+"example_namespace:example_component": "foo",
+"example_namespace:example_component2": 4,
+"example_namespace:example_component3": [ "hello", "world" ],
+"example_namespace:example_component4": true,
+"example_namespace:example_component5": {
+  "stuff": 4
+}
+</syntaxhighlight>
+
+In scripts, the custom component object can have methods added to listen to any amount of the following events<ref>{{cite|url=https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/itemcustomcomponent?view=minecraft-bedrock-stable|title=minecraft/server.ItemCustomComponent Interface|website=Microsoft Learn|date=December 3, 2025}}</ref>:
+
+* {{cd|onBeforeDurabilityDamage}}: Called when the item hits an entity and is about to take [[durability]] damage.
+* {{cd|onCompleteUse}}: Called when the item's use duration was completed.
+* {{cd|onConsume}}: Called when the item is eaten by an entity.
+* {{cd|onHitEntity}}: Called when the item is used to hit an entity.
+* {{cd|onMineBlock}}: Called when the item is used to mine a block.
+* {{cd|onUse}}: Called when the item is used by a player.
+* {{cd|onUseOn}}: Called when the item is used on a block.
+
+== NBT Components ==
+Item NBT components are a little different from regular components, they are stored internally by the game and can only be modified by commands like {{cmd|give}} or {{cmd|replaceitem}} much like {{JE}} [[data components]].
+
+The available NBT components are {{cd|minecraft:can_place_on}}, {{cd|minecraft:can_destroy}}, {{cd|minecraft:item_lock}} and {{cd|minecraft:keep_on_death}}.
+
+=== <code>minecraft:can_place_on</code> ===
+Controls what types of blocks this block can be placed on. This allows blocks to be placed in adventure mode without the use of [[allow]] blocks.
+
+Example:
+{{Cmd|give @s cobblestone 64 0 {"minecraft:can_place_on":{"blocks":["stained_glass:2"]<nowiki>}}</nowiki>}}
+
+=== <code>minecraft:can_destroy</code> ===
+Controls what types of blocks this item can destroy.
+
+Example:
+{{Cmd|give @a wooden_axe 16 0 {"minecraft:can_destroy":{"blocks":["wool:5"]<nowiki>}}</nowiki>}}
+
+=== <code>minecraft:item_lock</code> ===
+Locks the item in the player's inventory depending on the chosen mode. Having the {{cd|mode}} parameter that specifies the lock type. Which can be {{cd|lock_in_inventory}} or {{cd|lock_in_slot}}.<ref>{{cite|url=https://feedback.minecraft.net/hc/pt-br/articles/360052592091-Minecraft-1-16-100-Bedrock-|title=Minecraft - 1.16.100 (Bedrock)|website=Minecraft Feedback|date=November 16, 2020}}</ref>
+
+==== <code>lock_in_inventory</code> ====
+[[File:Item lock yellow.png|32px|class=pixel-image|The texture used on the item.]]
+
+Prevents the item from being dropped, removed from inventory, used as a crafting ingredient, placed in a [[bundle]], or renamed on an [[anvil]]. It displays a yellow triangle in the top corner of the item.
+
+Example:
+{{cmd|give @p diamond_axe 1 0 {"minecraft:item_lock":{"mode":"lock_in_inventory"<nowiki>}}</nowiki>}}
+
+==== <code>lock_in_slot</code> ====
+[[File:Item lock red.png|32px|class=pixel-image|The texture used on the item.]]
+
+Prevents the item from being moved or removed from its slot in the player's inventory, dropped, placed stacked, and used as a crafting ingredient. It displays a red triangle in the top corner of the item.
+
+Example:
+{{cmd|give @p wooden_pickaxe 1 0 {"minecraft:item_lock":{"mode":"lock_in_slot"<nowiki>}}</nowiki>}}
+
+=== <code>keep_on_death</code> ===
+Prevents the item from being dropped when the entity dies.
+
+Example:
+{{cmd|give @s cooked_beef 1 0 {"minecraft:keep_on_death":{<nowiki>}}</nowiki>}}
+
+== History ==
+{{Missing information|section|Information about components before version 1.19.60.}}
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||?|Item components were added.}}
+|{{HistoryLine||1.19.60|dev=Preview 1.19.60.23|exp=Holiday Creator Features|Expanded {{cd|minecraft:shooter}} component to define multiple projectiles that can specify different projectile definitions and condition filters.|Exposed more fields to shooter component to allow for more projectile customization such as throw power, sounds, and whether the attack is a magic attack.}}
+|{{HistoryLine||1.20.0|dev=Preview 1.20.0.20|exp=Holiday Creator Features|Items with the component [[#minecraft:entity_placer|{{cd|minecraft:entity_placer}}]] will now successfully spawn the creature on air blocks if the {{cd|dispense_on}} field is empty.|
+Now, items with the {{cd|minecraft:entity_placer}} component can be used in a [[monster spawner]] to change the spawner's creature generation type. The item must have a version format equal to or greater than {{cd|1.19.80}}.|
+The non-functional parameter {{cd|on_repaired}} has been removed from the item component [[#minecraft:repairable|{{cd|minecraft:repairable}}]].|The item component {{cd|minecraft:dye_powder}} has been removed.}}
+|{{HistoryLine|||dev=Preview 1.20.0.21|Custom items with {{cd|minecraft:durability}} and {{cd|minecraft:repairable}} can now be combined to be repaired without the need for a custom item entry.}}
+|{{HistoryLine|||dev=Preview 1.20.0.22|The item component {{cd|minecraft:knockback_resistance}} has been removed.|Custom items with {{cd|minecraft:record}} display the correct sound description in the text when hovering over them and when played in a [[jukebox]].}}
+|{{HistoryLine|||dev=Preview 1.20.0.23|Items with the {{cd|minecraft:throwable}} component now trigger the throwing sound effect when used.|Items that use the minimum duration for the {{cd|minecraft:fuel}} component now work in the [[blast furnace]] and [[smoker]].}}
+|{{HistoryLine||1.20.0|dev=Preview 1.20.0.23|The following experimental item components were released in JSON format 1.20.0 and higher: {{cd|minecraft:display_name}}, {{cd|minecraft:durability}}, {{cd|minecraft:fuel}}, {{cd|minecraft:entity_placer}} and {{cd|minecraft:icon}}.}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.20|The following experimental item components have been released in JSON formats 1.20.10 and higher: {{cd|minecraft:cooldown}} and {{cd|minecraft:repairable}}.}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.20|exp=Holiday Creator Features|Items containing the {{cd|minecraft:block_placer}} component will now place blocks with the correct orientation.|Items in version 1.20.10 and higher with the {{cd|minecraft:throwable}} component will trigger Item Usage events when thrown.|Custom items with {{cd|minecraft:block_placer}} will no longer place certain blocks in the wrong location.|Changed the {{cd|minecraft:shooter}} to consume ammunition only when charging the item if {{cd|charge_on_draw}} is set to {{cd|true}}.}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.21|Items containing the {{cd|minecraft:block_placer}} component will now place blocks with the correct orientation.|The item component {{cd|minecraft:max_stack_size}} was released from the experimental version to JSON formats starting with Minecraft version 1.20.10.|Custom items containing {{cd|minecraft:block_placer}} will no longer place certain blocks in the wrong location.|The item component {{cd|minecraft:block_placer}} was released from the experimental version to JSON formats starting with version 1.20.10.|The item component {{cd|minecraft:record}} was released from the experimental version to JSON formats starting with version 1.20.10.}}
+|{{HistoryLine|||dev=Preview 1.20.10.23|The following experimental item components were released in JSON formats 1.20.10 and higher: {{cd|minecraft:shooter}}, {{cd|minecraft:throwable}}, {{cd|minecraft:projectile}}, {{cd|minecraft:can_destroy_in_creative}} and {{cd|minecraft:hover_text_color}}.}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.23|exp=Holiday Creator Features|The {{cd|minecraft:render_offsets}} component has been deprecated in JSON formats starting with Minecraft version 1.20.10.|The loading action behavior in {{cd|minecraft:shooter}} has been changed to match the [[crossbow]] behavior in Vanilla Minecraft. The firing behavior of a loaded {{cd|minecraft:shooter}} with an empty inventory/off-hand has been changed so that it successfully fires loaded ammunition.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.20.20|The following experimental item components were released in JSON formats 1.20.20 and higher: {{cd|minecraft:hand_equipped}}, {{cd|minecraft:use_duration}} and {{cd|minecraft:stacked_by_data}}.|The {{cd|minecraft:creative_category}} component has been discontinued in JSON formats starting with Minecraft version 1.20.20. It is now possible to set the visibility of creative groups and commands in the {{cd|description}} field in JSON formats starting with version 1.20.20.|The item component {{cd|minecraft:foil}} has been renamed to {{cd|minecraft:glint}} and released from the experimental version to JSON formats starting with version 1.20.20.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.20.20|exp=Holiday Creator Features|The following item components have been removed: {{cd|minecraft:ignores_permission}},  
+{{cd|minecraft:mirrored_art}} and {{cd|minecraft:armor}} in JSON format 1.20.20 and higher.|The {{cd|protection}} field has been moved from the {{cd|minecraft:armor}} component to the {{cd|minecraft:wearable}} component in JSON formats 1.20.20 and higher.|Removed non-functional and redundant slot options from the {{cd|minecraft:wearable}} component, such as {{cd|mainhand}}, {{cd|hotbar}}, {{cd|inventory}}, {{cd|enderchest}}, and {{cd|equipable}}.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.20.21|The following experimental item components were released in JSON formats 1.20.20 and higher: {{cd|minecraft:use_animation}}, {{cd|minecraft:allow_off_hand}}, {{cd|minecraft:should_despawn}}, {{cd|minecraft:liquid_clipped}} and {{cd|minecraft:damage}}.|{{cd|minecraft:entity_placer}} will now display an error when invalid blocks are named in the {{cd|use_on}} and {{cd|dispense_on}} lists.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.20.21|exp=Holiday Creator Features|The components {{cd|minecraft:animates_in_toolbar}} and {{cd|minecraft:explodable}} have been removed.|The component {{cd|minecraft:shooter}} now supports the enchantment [[Quick Charge]] with {{cd|minecraft:enchantable}} when {{cd|charge_on_draw}} is {{cd|true}}.|
+Added support for [[Efficiency]] enchantment for data-driven items using the {{cd|minecraft:digger}} component.|
+Removed non-functional entity slot options from the {{cd|minecraft:wearable}} component, such as ''sadle'', ''entity armor'', and ''chest''.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.20.22|The following experimental item components were released in JSON formats 1.20.20 and higher: {{cd|minecraft:wearable}} and {{cd|minecraft:digger}}|The parameter {{cd|on_dig}} is obsolete of the item component {{cd|minecraft:digger}} in versions 1.20.20 and later.}}
+|{{HistoryLine|||dev=Preview 1.20.30.20|The following experimental item component has been released in JSON format 1.20.30 and higher:{{cd|minecraft:enchantable}}|The parameter {{cd|minecraft:mining_speed}} is deprecated in JSON format as of version 1.20.30. Use {{cd|minecraft:digger}} to achieve the same functionality.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.30.20|exp=Holiday Creator Features|Component {{cd|minecraft:requires_interact}} removed.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.30.22|The following experimental item components were released in JSON formats 1.20.30 and higher: {{cd|minecraft:food}} and {{cd|minecraft:interact_button}}.|{{cd|minecraft:interact_button}} activates and sets text that is displayed when using touch controls; if it is {{cd|true}}, it displays "Use Item".}}
+|{{HistoryLine||1.20.40|dev=Preview 1.20.40.20|Updated {{cd|minecraft:icon}}, it is now possible to use unique string values again, for example {{cd|"minecraft:icon": "stick"}}.}}
+|{{HistoryLine||1.20.40|dev=Preview 1.20.40.21|exp=Holiday Creator Features|The components {{cd|minecraft:weapon}}, {{cd|minecraft:on_use}}, and {{cd|minecraft:on_use_on}} have been discontinued in version 1.20.40 and later.}}
+|{{HistoryLine||1.20.50|dev=Preview 1.20.50.20|The legacy item component {{cd|tag:<some tag>}} was discontinued and the {{cd|minecraft:tags}} item component was released, ceasing to be experimental, in JSON formats starting with version 1.20.50.}}
+|{{HistoryLine|||dev=Preview 1.20.50.22|The component {{cd|minecraft:use_duration}} has been renamed to {{cd|minecraft:use_modifiers}} and the parameter {{cd|movement_modifier}} has been added in JSON format in versions 1.20.50 and higher.|The component {{cd|minecraft:chargeable}} has been deprecated in JSON versions 1.20.50 and later. Use {{cd|minecraft:use_modifiers}} instead for the behavior of {{cd|movement_modifier}}.}}
+|{{HistoryLine|||dev=Preview 1.20.50.23|The {{cd|on_dig}} event of the {{cd|minecraft:digger}} component has been discontinued in versions 1.20.50 and higher of the format.}}
+|{{HistoryLine||1.20.80|dev=Preview 1.20.80.23|exp=Beta APIs|Added the item component {{cd|minecraft:custom_components}}.}}
+|{{HistoryLine||1.21.20|dev=Preview 1.21.10.22|The {{cd|minecraft:custom_components}} component requires no experimentation and works in version 1.21.10+ format.|Added the {{cd|minecraft:damage_absorption}} item component, enabling items to absorb damage intended for their wearer.|Added the {{cd|minecraft:durability_sensor}} item component, enabling items to emit sounds and particles when damage causes them to lose durability.}}
+|{{HistoryLine|||dev=Preview 1.21.20.22|Using {{cd|minecraft:wearable}} with the slot set to {{cd|slot.weapon.offhand}} along with {{cd|minecraft:allow_off_hand}} set to false will now cause a content error.}}
+|{{HistoryLine|||dev=Preview 1.21.20.23|The experimental "Holiday Creator Features" option has been removed, and the {{cd|events}} field has also been removed and should be replaced with [[scripts]].}}
+|{{HistoryLine||1.21.30|dev=Preview 1.21.30.21|Adds a content error in case an icon with the name {{cd|icon_name}} is not found in {{cd|minecraft:icon}} in the version 1.10 data.|Added the item component [[#minecraft:rarity|{{cd|minecraft:rarity}}]] which allows you to specify the rarity of an item.}}
+|{{HistoryLine|||dev=Preview 1.21.30.23|Data for items with version 1.16.100 or higher can now be replaced with data for items with version 1.16.100 or higher in a higher version of the package.|Creators are allowed to replace Vanilla items based on version 1.16.100+ data with items based on version 1.16.100+ data.}}
+|{{HistoryLine||1.21.30|dev=Preview 1.21.30.23|exp=Bundles|Added the components [[#minecraft:storage_item|{{cd|minecraft:storage_item}}]] and [[#minecraft:bundle_interaction|{{cd|minecraft:bundle_interaction}}]] to recreate a [[bundle]].}}
+|{{HistoryLine||1.21.30|dev=Preview 1.21.30.24|Added the component [[#minecraft:dyeable|{{cd|minecraft:dyeable}}]] to allow an item to be [[dyed]] like [[leather armor]].}}
+|{{HistoryLine||1.21.40|dev=Preview 1.21.40.22|exp=Upcoming Creator Features|Added support for custom items with the {{cd|minecraft:block_placer}} item component to use the {{cd|block}} referenced as the item icon. This applies to versions 1.21.40+ that do not have the {{cd|minecraft:icon}} component.}}
+|{{HistoryLine|||dev=Preview 1.21.40.23|The added field {{cd|replace_block_item}} to the component [[#minecraft:block_placer|{{cd|minecraft:block_placer}}]] requires that the item and the block have the same identifier.}}
+|{{HistoryLine||1.21.40|dev=Preview 1.21.40.23|The components {{cd|minecraft:bundle_interaction}} and {{cd|minecraft:bundle_interaction}} no longer require experimente.}}
+|{{HistoryLine||1.21.50|dev=Preview 1.21.50.20|exp=Upcoming Creator Features|Added the boolean option {{cd|canUseBlockAsIcon}} to the network data of the component {{cd|minecraft:block_placer}} to fix a bug where clients were not rendering the block item correctly.}}
+|{{HistoryLine|||dev=Preview 1.21.50.26|Added the component [[#minecraft:compostable|{{cd|minecraft:compostable}}]] to allow items to be used as compost in a [[composter]].}}
+|{{HistoryLine||1.21.60|dev=Preview 1.21.60.21|Added a content warning to the {{cd|minecraft:durability_sensor}} component in the {{cd|particle_type}} field when an invalid value is provided.}}
+|{{HistoryLine|||dev=Preview 1.21.60.23|The description component {{cd|menu_category}} now requires that the group field have a namespace.}}
+|{{HistoryLine|||dev=Preview 1.21.60.24|The following legacy components (prior to version 1.16.100) are now synchronized with the client:{{cd|minecraft:camera}},{{cd|minecraft:seed}},{{cd|minecraft:max_damage}},
+{{cd|minecraft:hand_equipped}},{{cd|minecraft:stacked_by_data}},
+{{cd|minecraft:foil}},{{cd|minecraft:block}},{{cd|minecraft:use_duration}} e {{cd|minecraft:max_stack_size}}.}}
+|{{HistoryLine|||dev=Preview 1.21.60.25|Two fields from the {{cd|minecraft:storage_item}} component have been separated into distinct components:{{cd|max_weight_limit}} has been moved to the new component [[#minecraft:storage_weight_limit|{{cd|minecraft:storage_weight_limit}}]], and {{cd|weight_in_storage_item}} has been moved to the new component [[#minecraft:storage_weight_modifier|{{cd|minecraft:storage_weight_modifier}}]].|The {{cd|replace_block_item}} field from the {{cd|minecraft:block_placer}} component no longer requires experimentation to function.}}
+|{{HistoryLine|||dev=Preview 1.21.60.27|The {{cd|minecraft:compostable}} component no longer requires the experimental option to work.}}
+|{{HistoryLine||1.21.80|dev=Preview 1.21.80.25|exp=Custom Component V2|The {{cd|minecraft:custom_components}} component has been removed in versions 1.21.80 with the experiment enabled; custom components are now listed as vanilla components and now also support parameters that can be configured with scripts.}}
+|{{HistoryLine||1.21.90|dev=Preview 1.21.90.20|The component {{cd|minecraft:custom_components}} was removed without experimentation in version 1.21.90+, functioning as a vanilla component and supporting script-defined parameters.}}
+|{{HistoryLine|||dev=Preview 1.21.90.25|The component {{cd|minecraft:wearable}} has been updated and the field {{cd|hides_player_location}} has been added, which hides the player's position in the [[location bar]] and on a [[locator map]] when using the item.}}
+|{{HistoryLine||1.21.110|dev=Preview 1.21.110.20|Setting the {{cd|movement_modifier}} field of the {{cd|minecraft:use_modifiers}} component to 1.0 now allows you to use the item while running and start running while using the item.}}
+|{{HistoryLine|||dev=Preview 1.21.110.22|Repairing an item using the {{cd|minecraft:repairable}} component will no longer fail when a stack larger than strictly necessary is used as repair material.|We've added the new component [[#minecraft:fire_resistant|{{cd|minecraft:fire_resistant}}]], which determines whether an item is immune to being burned when dropped into fire or lava, such as [[netherite]] being used as <code>"minecraft:fire_resistant":{}</code> Currently, items with this component visually disappear when in contact with fire or lava, but can still be picked up.}}
+|{{HistoryLine||1.21.120|dev=Preview 1.21.120.20|Items containing the {{cd|minecraft:fire_resistant}} component no longer visually disappear upon contact with fire or lava.}}
+|{{HistoryLine|||dev=Preview 1.21.120.22|Added the new component [[#minecraft:swing_duration|{{cd|minecraft:swing_duration}}]], which sets the duration, in seconds, of the item's swing animation when drawing or attacking.|The field {{cd|value}} has been added to the component {{cd|minecraft:fire_resistant}} and is now required for it to work.}}
+|{{HistoryLine|||dev=Preview 1.21.120.23|The field {{cd|emit_vibrations}} has been added to the {{cd|minecraft:use_modifiers}} component, which controls whether an item emits vibrations when it starts or stops being used.}}
+|{{HistoryLine||1.21.130|dev=Preview 1.21.130.20|Added the component [[#minecraft:swing_sounds|{{cd|minecraft:swing_sounds}}]] which allows the user to override the vanilla sound and use another custom sound.|Added the component [[#minecraft:kinetic_weapon|{{cd|minecraft:kinetic_weapon}}]] which allows you to perform a [[Spear#Charge attack|charge]] attack as a spear.|Added the component [[#minecraft:piercing_weapon|{{cd|minecraft:piercing_weapon}}]] which allows you to perform a [[Spear#Jab attack|jab]] attack like a spear.|The field {{cd|type}} has been added to the component [[#minecraft:cooldown|{{cd|minecraft:cooldown}}]] which supports {{cd|attack}} and {{cd|use}}.}}
+|{{HistoryLine|||dev=Preview 1.21.130.27|The field {{cd|creative_reach}} has been added to the item components {{cd|minecraft:kinetic_weapon}} and {{cd|minecraft:piercing_weapon}} to define the reach in creative mode.|The field {{cd|start_sound}} has been added to the component {{cd|minecraft:use_modifiers}} to define the sound when the item starts being used.}}
+|{{HistoryLine|upcoming bedrock}}
+|{{HistoryLine||26.0|dev=Preview 26.0.23|Custom Components V2 now require the format version to be 1.26.0 or higher instead of 1.21.90 or higher.|The {{cd|minecraft:damage}} item component now supports values between 0 and 32767.|The {{cd|minecraft:wearable}} item component now displays the armor protection value in the tooltip, just like vanilla armor.}}
+|{{HistoryLine|||dev=Preview 26.0.27|Custom Components V2 now require the format version 1.21.90 or higher again instead of 1.26.0 or higher.}}
+}}
+
+== References ==
+{{Reflist}}
+
+== External links ==
+=== More information about components ===
+*[https://wiki.bedrock.dev/items/item-components Bedrock Wiki]
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Development]]
+
+[[ja:アイテムコンポーネント]]
+[[pt:Componentes de item]]
+[[zh:基岩版物品堆叠组件]]

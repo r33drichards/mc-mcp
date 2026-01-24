@@ -1,0 +1,170 @@
+{{Schematic
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Repeater-Line Pulse Extender (Instant)'''
+
+2×N×2<br />flat, silent
+
+''circuit delay:'' 0 ticks<br />''output pulse:'' input pulse length (=IPL) + up to IPL ticks (max 4) per repeater
+
+ | input+rd-ew | rd-sew | rr-e4 | SB | rr-e4 | ellipsis-ew | SB | |-
+ | | ts+rd-ne | SB+rd-ew | rd-ew | rd-ew | ellipsis-ew | rd-ew | output+rd-ew
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Repeater-Line Pulse Extender (Delayed)'''
+
+2×N×2<br />flat, silent
+
+''circuit delay:'' 4 ticks<br />''output pulse:'' IPL + up to 4 ticks per repeater (excluding first)
+
+ | input+rd-ew | rr-e4 | SB | rr-e4 | SB | rr-e4 | ellipsis-ew | SB | |-
+ | | | rd-ew | rd-ew | rd-ew | rd-ew | ellipsis-ew | rd-ew | output+rd-ew
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Rising Edge Dropper-Latch Pulse Generator'''
+
+2×6×2 (24 block volume)<br />flat, silent
+
+''circuit delay:'' 5 ticks <br/>''output pulse:'' 5 ticks to 256 seconds (regardless of IPL as long as it’s shorter)
+<br/>The dropper contains a single item. The middle hopper contains one or more items depending on the desired pulse duration.
+
+ | input+rd-ew | Dr-s | rc-e! | rr-e1! | SB | rt-w | | |-
+ | | ho-n | rr-w4! | rc-w! | ho-e | ho-w | rc-e | output+rd-ew
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Rising Edge Hopper-Clock Pulse Generator (Flat)'''
+
+2×6×2 (24 block volume)<br />flat
+
+''circuit delay:'' 1 tick<br />''output pulse:'' 4 ticks to 256 seconds (regardless of IPL as long as its shorter)
+
+ | input+rd-ew! | rd-ew! | sp-e | BR | | pi-w | rd-ew | output+rd-ew |-
+ | | SB | rc-w! | ho-e | ho-w | rc-e | SB |
+}}
+
+{{Schematic
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Rising Edge Hopper-Clock Pulse Generator (1-Wide)'''
+
+1×6×3 (18 block volume)<br />1-wide
+
+''circuit delay:'' 1 tick<br />''output pulse:'' 4 ticks to 256 seconds (regardless of IPL as long as its shorter)
+
+ | | rd-$ew! | sp-$e | BR | | pi-$w | rd-$ew | |-
+ | rd-$ew!+&rarr; | SB | rc-$w! | ho-$e | ho-$w | rc-$e | SB | rd-$ew+&rarr; |-
+ | input | GB-$ | SB | GB-$ | GB-$ | SB | GB-$ | output
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''RS NOR Latch Pulse Extender'''
+
+3×3x(4+N)<br />silent
+
+''circuit delay:'' 2 ticks<br />''output pulse:'' input pulse length + 8 ticks per repeater
+
+ | | rd-se | rd-sw | | |-
+ | | rr-s1 | rt-s | rd-sw | |-
+ | input+rd-ew | SB+rt-d! | SB+rd-ew | rd-ne+SB-u | output+rd-ew |-
+ | | rr-s4 | rr-n4 | | |-
+ | | ellipsis-ns | ellipsis-ns | | |-
+ | | SB | rd-ns | |
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Opposed-Piston SR Latch Pulse Extender'''
+
+3×N×2<br />flat
+
+''circuit delay:'' 1 tick (1.5 tick if the output powers a piston)<br />''output pulse:'' 8 ticks per repeater (regardless of IPL as long as its shorter)
+<br>'''Breaks itself and requires manual reset''' if the IPL is greater than the configured OPL (output pulse length)!
+
+ | | | | rd-ew | rr-e4 | rr-e4 | ellipsis-ew | rd-sw |-
+ | input+rd-ew | pi-e | BR | | pi-w | | | rr-s4 |-
+ | | | | rd-ns | SB | rr-w4 | ellipsis-ew | rd-nw |-
+ | | | | output+rd-ns | | | |
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Fader Pulse Extender'''
+
+2×N×2<br />flat, silent
+
+''circuit delay:'' 0 ticks<br />''output pulse:'' up to 14 ticks per comparator
+
+ | output+rd-ns |-
+ | rd-nse | rc-w | rc-w | ellipsis-ew | rc-w | rd-ew |-
+ | rd-nse | rc-e | rc-e | ellipsis-ew | rc-e | SB |-
+ | input+rd-ns |-
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''MHC Pulse Extender'''
+
+6×6×2 (72 block volume)<br />flat
+
+''circuit delay:'' 3 ticks<br />''output pulse:'' up to 22 hours
+
+ | | SB | rc-w | ho-e | ho-w | rc-e! | SB |-
+ | | rd-nsew | sp-e! | se-e | BR | sp-w | rd-nsew! |-
+ | | | rt-s! | rd-sew! | rd-nsw! | | |-
+ | input+rd-ew | rd-ew | SB | rr-s1! | rr-s1! | | |-
+ | | SB | rc-w | ho-e | ho-w | rc-e! | SB |-
+ | output+rd-ew | rd-ew | sp-e | BR | se-w | sp-w! | rd-nsew!
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''MHDC Pulse Extender'''
+
+5×7×2 (70 block volume)<br />flat
+
+''circuit delay:'' 5 ticks<br />''output pulse:'' up to 81 hours
+
+ | | | SB | rc-w | ho-e | ho-w | rc-e! | SB |-
+ | | rt-s! | rd-ew! | sp-e! | se-e | BR | sp-w | rd-nsew |-
+ | input+rd-ew | SB | | | rd-nsew | | | |-
+ | | rd-nsew | SB | rc-w | Dr-e | Dr-w | rc-e! | SB |-
+ | output+rd-ew | rr-w1 | rd-ew | sp-e | BR | se-w | sp-w! | rd-nsew |-
+}}
+
+[[Category:Ajax loaded pages]]
+[[Category:Redstone circuits/Pulse|P]]
+
+[[zh:脉冲电路/脉冲稳定器]]

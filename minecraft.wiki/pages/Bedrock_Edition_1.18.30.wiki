@@ -1,0 +1,515 @@
+{{Infobox version
+| title = v1.18.30
+| vernum = 1.18.30
+| server = 1.18.30.04
+| internal = '''Windows''': 1.18.3004.0<br>
+'''Android''': 1.18.30.04<br>
+'''Fire''': 1.18.30.04<ref>{{cite|url=https://amazon.com/dp/B00992CF6W|archive-url=https://web.archive.org/web/20220420134314/https://www.amazon.com/Mojang-Minecraft-Pocket-Edition/dp/B00992CF6W?language=en_US|title=Minecraft on the Amazon App Store|website=Amazon App Store|quote=Version 1.18.30.04}}</ref><br>
+'''Xbox One''': 1.18.3004.70<br>
+'''Nintendo Switch''': 1.18.30<br>
+'''PlayStation 4''': 2.40
+| image = Bedrock 1.18.30 PatchNotes.png
+| image2 = Bedrock 1.18.30.png
+| edition = Bedrock
+| date = April 19, 2022
+| prevparent = 1.18.0
+| prev = 1.18.12
+| next = 1.18.31
+| nextparent = 1.19.0
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.18.30.04.zip Windows] [https://minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.18.30.04.zip Linux]
+}}<onlyinclude>
+
+'''1.18.30''' is a minor update to {{BE}} released on April 19, 2022, which added support for 64-bit [[world seed]]s, a new UI, [[Spectator]] mode, balanced the [[hunger]] system, fixed [[damage]], [[armor]], and [[protection]] calculations, and fixed bugs.<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/5520890863245|title=Minecraft - 1.18.30 (Bedrock)|website=feedback.minecraft.net|date=April 19, 2022}}</ref>
+
+==Changes==
+===Blocks===
+'''[[Invisible Bedrock]]'''
+* Block ID changed from <code>invisiblebedrock</code> to <code>invisible_bedrock</code>.
+'''[[Piston Head]]s'''
+* Block ID of Piston Head changed from <code>pistonarmcollision</code> to <code>piston_arm_collision</code>.
+* Block ID of Sticky Piston Head changed from <code>stickypistonarmcollision</code> to <code>sticky_piston_arm_collision</code>.
+'''[[Moving Block]]'''
+* Block ID changed from <code>movingblock</code> to <code>moving_block</code>.
+
+===Items===
+'''[[Armor]]'''
+* Added armor toughness to minimize the effects of the new armor penetration mechanics.
+**Diamond armor and netherite armor now have a toughness value of 2 and 3 respectively.
+**Netherite armor will now reduce more damage than diamond armor.
+*Tweaked armor reduction calculation to account for toughness.
+*Armor protects less due to the new penetration system. 
+** Armor points count for less as the attack strength increases: each {{hp|2}} done by the attack reduces the effective defense points by {{armor|1}}, but not below 20% of the armor points. Each armor point now defends 0.8% to 4% instead of always 4%.
+*Lowered the amount of knockback resistance granted by [[netherite]] armor. Each armor piece gives 10% of knockback reduction instead of 22.5%, so a full set reduces 40% of knockback instead of 90%.<ref>{{bug|MCPE-77430}}</ref><ref>[https://feedback.minecraft.net/hc/en-us/articles/360051721352-Minecraft-Beta-1-16-200-53-Xbox-One-Windows-10-Android- Netherite Armor now gives a ninety percent reduction in Knockback since Minecraft Beta - 1.16.200.53 (Xbox One/Windows 10/Android)]</ref>
+
+'''[[Boat]]'''
+*The item textures of spruce and dark oak [[boats]] have been changed from [[File:Spruce Boat (item) BE4.png|32px]] [[File:Dark Oak Boat (item) JE2 BE3.png|32px]] to [[File:Spruce Boat (item) JE3 BE5.png|32px]] [[File:Dark Oak Boat (item) JE3 BE4.png|32px]].
+
+===Mobs===
+<!--Reverted in the major version 1.18.30
+'''[[Cow]]s, [[pig]]s, [[chicken]]s, and [[sheep]]'''
+*No longer spawn in [[snowy taiga]]s.
+-->
+'''[[Magma Cube]]s'''
+*Tiny magma cubes now do slightly more damage, from {{hp|2}} to {{hp|3}} on normal.
+
+'''[[Shulker]]s'''
+*Now have a chance to spawn another shulker when hit by a shulker projectile.
+
+'''[[Skeleton]]s'''
+*The melee "short-ranged" attack does slightly less damage, from {{hp|3}} to {{hp|2}} on normal.
+
+'''[[Spider]]s'''
+*Now deal slightly less damage, from {{hp|3}} to {{hp|2}} on normal.
+
+'''[[Villager]]s'''
+*No longer share [[wheat Seeds|seeds]] and [[beetroot seed]]s.
+
+'''[[Wolf|Wolves]]'''
+*Untamed wolves can now be leashed.
+*Untamed wolves now deal slightly more damage, from {{hp|3}} to {{hp|4}} on normal.
+
+'''[[Zoglin]]s'''
+*Baby zoglins now deal slightly less damage, from {{hp|1}} to {{hp|0.5}} ({{frac|1|4}} of a heart) on normal.
+
+=== Non-mob entities===
+
+'''Ranged attacks'''
+*[[Blaze]] fireballs, [[evoker]] fangs and [[shulker]] bullets now deal consistent damage across all difficulties.
+
+===Gameplay===
+'''[[Enchanting]]'''
+*Protection now reduces damage from negative status effects like [[poison]] or [[Wither (effect)|wither]].<ref>{{bug|MCPE-40651}}</ref>
+*Protection enchantments have been nerfed to match ''[[Java Edition]]''. A full set of armor with Protection IV is ''not'' sufficient for a maximum amount of protection.<ref>{{bug|MCPE-113191}}</ref>
+
+'''[[Hunger]]'''
+*It is now possible to tweak the rate of hunger depletion with behavior packs ([[add-on]]s).
+*[[Exhaustion]] levels (the rate that hunger decreases) have been changed to better match ''Java Edition'', so [[player]]s can now properly lose hunger when sprinting or swimming and lose significantly less hunger when jumping.
+{| class="wikitable sortable" data-description="Exhaustion"
+! class="unsortable" |Action
+!Old rate
+!New rate
+!Units
+|-
+|Swimming
+| style="text-align: right;" |0
+| style="text-align: right;" |0.01&#8199;
+|per block
+|-
+|Breaking a [[Blocks|block]]
+| style="text-align: right;" |0.025
+| style="text-align: right;" |0.05
+|per block broken
+|-
+|Jumping
+| style="text-align: right;" |0.4&#8199;&#8199;
+| style="text-align: right;" |0.05&#8199;
+|per jump
+|-
+| Attacking an [[enemy]]
+| style="text-align: right;" |0.3&#8199;&#8199;
+| style="text-align: right;" |0.1&#8199;&#8199;
+|per attack landed
+|-
+|Jumping while sprinting
+| style="text-align: right;" |1.6&#8199;&#8199;
+| style="text-align: right;" |0.2&#8199;&#8199;
+|per jump
+|}
+
+'''[[Trading]]'''
+*Updated [[villager]] trade tables for armorer, cleric, fisherman, and weaponsmith to match {{JE}}.
+**Fishermen [[boat]] trades now change wood type based on villager biome type.
+** Clerics now offer [[glowstone]] instead of [[glowstone dust]].
+**Weaponsmith enchanted [[iron sword]] trade has been moved to Novice.
+**Armorer [[diamond]] trade has been moved to Journeyman.
+
+'''Miscellaneous'''
+*Fixed actor definition identifiers not being recognized if the item or block name contains "."
+*Damage is now calculated more accurately; the game now properly calculates and stores partial damage for larger damage.
+*Armor and protection reduction calculations have been made more accurate.
+
+===General===
+'''[[Create New World]]'''
+*The "Create New World" menu screen has been given a new design that is now available for some [[player]]s.
+
+'''[[Experiments]]'''
+*Removed "Additional Modding Capabilities" toggle.
+
+'''[[RenderDragon]]'''
+* Now runs on Android, Fire, iOS, iPadOS, Nintendo Switch, and Windows 10 32-bit.
+* [[Shader]]s are not supported in RenderDragon.
+
+'''[[Seed (world generation)|Seed]]s'''
+* Non-numeric seed UI inputs now produce the same seeds as ''Java Edition''.
+*Worlds can now be created with 64-bit seeds.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Wild Update", "Vanilla Experiments", "Upcoming Creator Features", and "GameTest Framework" experimental toggle.
+
+=== Additions ===
+==== Blocks ====
+{{Additions table
+|Reinforced Deepslate
+|Oak Boat with Chest
+|Spruce Boat with Chest
+|Birch Boat with Chest
+|Jungle Boat with Chest
+|Acacia Boat with Chest
+|Dark Oak Boat with Chest
+|Mangrove Boat with Chest
+|Goat Horn[&7Ponder]
+|Goat Horn[&7Sing]
+|Goat Horn[&7Seek]
+|Goat Horn[&7Feel]
+|Goat Horn[&7Admire]
+|Goat Horn[&7Call]
+|Goat Horn[&7Yearn]
+|Goat Horn[&7Dream]
+|Allay Spawn Egg Revision 1
+|Warden Spawn Egg Revision 1
+
+|title=1.18.30 experimental
+}}
+'''[[Reinforced Deepslate]]'''
+* A new block only found in [[Ancient City|ancient cities]].
+* It is unobtainable in survival mode.
+* Has some unknown "interesting" purpose.
+* Currently can only be broken by mining, although after a very long time, and is immune to explosions.
+
+==== Items ====
+'''[[Boat with Chest]]'''
+* Function similarly to [[minecart with chest]]s, but in boats instead, so player can take a journey on the water and carry things.
+* Crafted by combining a [[chest]] with any [[boat]].
+
+'''[[Copper Horn]]'''
+* Crafted from a goat horn and copper ingots.
+* Can play three different sounds, with additional sounds if the horn is crafted from a goat horn that is dropped by a screaming goat.
+
+'''[[Spawn Egg]]s'''
+* Added Allay and Warden spawn egg.
+
+==== Mobs ====
+'''[[Allay]]'''
+* Can collect the same items from the world as it holds in its hand.
+* If holds an item it got from a player, it will follow that player.
+* Able to drop items at nearby [[note block]]s.
+* When playing a note block near them, that note block becomes their favorite one for 30 seconds, and they will attempt to drop off items at the note block rather than at the player.
+* If they have items in their inventory, they will attempt to give them to their owner.
+* Sometimes spawn in cages next to [[pillager outpost]]s (similar to [[iron golem]]), and inside [[woodland mansion]]s.
+
+'''[[Warden]]'''
+* The first fully blind mob (bats have basic eyesight, both in-game and in the real world).
+** Because of this, it stumbles as it walks.
+** Has a sense of smell. It can detect and pathfind toward the general location of a player or mob through a "smelling" action.
+*** Prioritizes smelling the player or mob that it is most suspicious of, rather than the one closest to it.
+** Has a sense of vibration. When sensing movement, it pathfinds toward the source of the movement.
+*** It follows and attacks players, mobs, and other entities that make vibrations.<ref group="note">The Warden does not attack non-mob entities but it does follow the vibrations that they make.</ref>
+**** It does not attack other wardens.
+*** When it detects a vibration, the growths on its head rattle and light up, similar to the [[sculk sensor]].
+**** Seems to follow the same rules as the [[sculk sensor]] when detecting vibrations.
+**** If any projectile (e.g. [[egg]], [[snowball]], [[arrow]]) lands near it, the warden inspects the location where the projectile landed, due to the projectile creating significant vibrations. This feature can be used in order to cause a distraction.
+*** Does not detect players that are sneaking.
+** Can detect players or mobs that have the [[Invisibility]] effect.
+* Becomes more suspicious of a player or mob as it detects its location more through vibrations and/or smelling. When it suspects the target enough, it identifies its exact location, which aggravates it, causing it to pathfind toward the target to attack regardless of outside distractions.
+* Spawns in the deep dark biome, specifically when a player activates sculk shriekers three times.
+** It is the only mob that spawns in the deep dark biome.
+* "Emerges" from the ground when spawned by [[sculk shrieker]]s.
+** Digs back into the ground when it doesn't sense any vibration after 60 seconds.
+*** Like how [[name tags]] prevent despawning, name tags can also prevent wardens from being able to burrow back to the ground.
+*** Wardens will not dig back when they're in water.
+* A mob designed to be extremely difficult, intended to be avoided and fled from.
+** Has {{hp|500}} health points and does {{hp|30}} damage on Normal difficulty, bringing players wearing full [[netherite]] [[armor]] from full health to {{hp|7}} health points. Wardens also disable shields when they hit the players with their fists, and are at least as fast as a walking player.
+* Warden's chest has a glowing core that appears to brighten and dim in tandem with the Darkness effect.
+** The core creates a low throbbing or "heartbeat" sound as it pulses. The sound and animation speed up rapidly as the warden gets more suspicious of or closer to attacking a player or mob.
+* Is about 3.5 blocks tall, making it one of the tallest mobs in the game, exceeding the [[iron golem]] and [[enderman]] in height and width (the same).
+** Wardens have long melee reach, being able to hit the player when on top of a four-block pillar, thus making it capable of countering certain cheese tactics, such as pillaring.
+* Is immune to [[lava]] and can float up lava columns very fast.
+
+==== World generation ====
+'''[[Ancient City]]'''
+* New structure that generates within the deep dark biome.
+* Includes all of the deep dark features within it.
+* Made of deepslate and its variants, basalt blocks and its variants, planks, and wool.
+* Contains soul sand, soul fire and soul lanterns.
+* Contains candles and skeleton skulls.
+* Contains chests with unique loot.
+** The loot is intended to be items that cannot be found anywhere else in the world, and that provide unique abilities and mechanics to players that weren't possible before and are not attainable by other methods.
+* Contains mysterious frames made of reinforced deepslate.
+* Has different levels and open spaces.
+* Extremely large in terms of size, tends to spawn between y=0 and y=-64.
+
+'''[[Deep Dark]]'''
+* New [[biome]] at the "deepest depths of the world".
+* Tends to generate under continental/mountainous areas, exclusively within the [[deepslate]] layer between Y=-1 and Y=-64.
+* The floor is covered in [[sculk]] and contains all [[sculk]]-related blocks.
+* With the exception of [[monster spawner]]s, no mobs other than wardens can spawn there, similar to [[mushroom field]]s.
+
+==== Command format ====
+'''{{cmd|volumearea}}'''
+* Used to create, remove, and list volumes in the world.
+
+=== Changes ===
+==== Blocks ==== 
+'''[[Frog Spawn]]'''
+* Renamed from "Frog Egg".
+* Texture was slightly changed.
+* The time to hatch into tadpoles has been increased.
+* Now breaks when pushed by a piston.
+* Can now be placed on waterlogged blocks.
+
+'''[[Froglight]]s'''
+* No longer randomly rotate.
+* Can now be placed sideways.
+* [[File:Pearlescent Froglight BE2.png|32px]][[File:Verdant Froglight BE2.png|32px]][[File:Ochre Froglight BE2.png|32px]] Changed their textures.
+
+'''[[Sculk Catalyst]]'''
+* Made changes to match recent redesign:
+** Blooms when mobs die within an 8-block radius.
+** Mobs will not drop experiences when perished in the presence of the block, a bubbling charge will be created where they perished instead.
+*** The charge from mobs will spread through sculk veins and sculk blocks in random directions until they find a valid substrate that they can convert into [[sculk]].
+*** The value of the charge is directly proportional to the amount of experiences the perished mob would have dropped, and each time a block is converted into sculk, it will remove 1 value from that charge.
+*** This charge in the sculk blocks and [[sculk veins]] will eventually decay, but it will decay much, much slower in the close vicinity of the sculk catalyst, and much faster away from its host.
+*** If the charge decays 4 blocks away from the catalyst, it has a chance of growing a sculk sensor or a [[sculk shrieker]].
+*** Charges and their values also merge when they move to the same position.
+
+'''[[Sculk Sensor]]'''
+* Made some changes in parity:
+** Now make no activation sound when waterlogged.
+** Vibrations are now also occluded by [[wool]] blocks.
+
+'''[[Sculk Shrieker]]'''
+* Now listens to the tendril clicking of the sculk sensor.
+* The threat level that causes the warden to spawn (to be added in a future beta/preview) will now be decreased over time.
+
+==== Items ====
+'''[[Goat Horn]]s'''
+* An animation is now shown when using the [[goat horn]] in both 1st and 3rd person views.
+* Now have a cooldown period every time they are used.
+* A sound now plays when a horn breaks off a goat.
+* An animation is now shown when using the goat horn in both 1st and 3rd person views.
+* Can now be crafted into copper horns
+* Is now always dropped when a goat with at least one horn rams into stone, packed ice, iron ore, copper ore, emerald ore, or any wood log in the Overworld
+
+==== Mobs ====
+'''[[Frog]]'''
+* Frogs now jump more frequently.
+* Frogs in Meadow biomes are now of the temperate variant.
+* Tweaked frog's jump and tongue animations.
+* Can now be tempted and bred using [[slimeball]]s.
+* Adjusted Frog spawning in [[Swamp|Swamps]], weight 10, herd size 2-5.
+
+'''[[Goat]]'''
+* A sound now plays when a [[goat horn]] breaks off.
+* Now have a small chance of spawning with only one horn.
+** Baby goats will always grow up to have two horns, however.
+
+'''[[Tadpole]]'''
+* Tadpole hitbox is now larger.
+* Health is now {{hp|6}}, instead of {{hp|4}}.
+
+==== World generation ====
+'''[[Pillager Outpost]]'''
+* Goat horns and copper horns now spawn as loot in pillager outpost chests.
+
+==== Gameplay ====
+'''[[Darkness]]'''
+* Lowers the gamma down at an equivalent of 0% while having this [[effect]].
+
+== Fixes ==
+'''Performance / Stability'''
+* Fixed a crash that could occur during gameplay
+* Fixed a crash that could occur when uploading corrupted worlds to Realms
+* Fixed a crash that could occur upon leaving the Zooming menu in the Dressing Room
+* Fixed a crash that could occur when hovering over the search bar in the crafting menu when playing with a controller
+* Fixed a crash that could occur on Android devices when suspending or resuming the app
+* Fixed a crash that could occur when stopping a Bedrock Dedicated Server ({{bug|BDS-16742}})
+
+'''Gameplay'''
+* Tweaked hunger depletion rate to better match ''Java Edition'' ({{bug|MCPE-56031}})
+** Players can now properly lose hunger when sprinting or swimming
+** Players lose significantly less hunger when jumping
+** Exhaustion rates can now be tweaked in Behavior Packs
+* Players flying in Creative mode are no longer pushed by liquid current ({{bug|MCPE-84592}})
+* Fixed an issue where the Mending enchantment would not always correctly consume XP Orbs to repair ({{bug|MCPE-120119}})
+* Players in Visitor Mode can no longer break Paintings and Minecarts ({{bug|MCPE-132869}})
+* Teleporting vertically beyond the visibility distance now loads terrain correctly ({{bug|MCPE-150021}})
+* Fixed a bug where the player could switch to gliding when riding in certain scenarios ({{bug|MCPE-147904}})
+* Crouch (sneak) state is now reset when player dies to avoid getting stuck in crouch state after respawning
+* The player's position when rejoining a world will remain the same if they quit while in lava ({{bug|MCPE-124219}})
+* Players can now fly down through Ladders and other climbable blocks such as Vines in Creative mode without stopping ({{bug|MCPE-82480}})
+* Fixed a Furnace exploit where items could be duplicated if the output slot was selected ({{bug|MCPE-152411}})
+* Fire that existed before the Fire Tick game rule is enabled will continue to spread again ({{bug|MCPE-140396}})
+* Vertical field of view is no longer halved in horizontal split screen, making items such as Book & Quill easier to view when playing in split screen
+* Fixed tick range check excluding chunks that were actually in range
+
+'''World Generation'''
+* Worlds can now be created with 64-bit seeds (-9223372036854775808 to 9223372036854775807). These seeds can be used between Bedrock Edition and Java Edition to produce the same world ({{bug|MCPE-144994}}, {{bug|MCPE-148168}})
+* Non-numeric seed UI inputs now produce the same seeds as Java Edition
+* Acacia Trees now grow Leaves on every branch below Y = 0 ({{bug|MCPE-151386}})
+* Fixed duplicate End Crystals spawning on top of End Spikes ({{bug|MCPE-147817}})
+* Improved surrounding terrain for structures such as Villages during world generation ({{bug|MCPE-145659}})
+* Fixed underwater lava lakes not turned into Obsidian during world generation ({{bug|MCPE-128022}})
+
+'''Mobs'''
+* Shulkers now have a chance to spawn another Shulker when hit by a Shulker projectile ({{bug|MCPE-104826}})
+* When a mob picks up an item, the item can now be seen slightly "pulled" towards the mob right as it picks it up.
+* Drowned can no longer spawn where the block light level is above 0 ({{bug|MCPE-150148}})
+* Bees no longer become angry when Beehives are destroyed by Silk Touch ({{bug|MCPE-83550}})
+* Untamed Wolves can now be leashed ({{bug|MCPE-82050}})
+* Mobs can no longer spawn on Campfires ({{bug|MCPE-152770}})
+* The Ravager now targets and attacks the Wandering Trader ({{bug|MCPE-44606}})
+* Mobs spawned from a Dispenser are now persistent ({{bug|MCPE-110521}})
+* Villagers no longer avoid Zombified Piglins ({{bug|MCPE-94102}})
+* Fixed an issue where Villagers did not hold the item they would trade when presented with Emeralds by the player ({{bug|MCPE-150303}})
+* Mobs are now able to path over Azalea blocks ({{bug|MCPE-129373}})
+* Mobs are now able to path over Dripleaf blocks and properly pathfind on top of them, when not fully tilted
+* Mobs are now able to path over Pointed Dripstone blocks and properly pathfind on top of them ({{bug|MCPE-133270}})
+* Mobs can now move properly on top of solid partial blocks, like Bells, Brewing Stands, and Enchanting Tables
+* Mobs can now jump from high enough solid partial blocks to full ones at a higher position
+* Mobs can now jump over fences if they are standing on an adjacent slab or on another block high enough
+* Mobs can now move through less than half-block tall Top Snow even when the ceiling, if any, is as tall as the mobs themselves ({{bug|MCPE-148355}})
+* Fixed a bug in the Glow Squid's texture where the glow map in the alpha channel was incorrect, causing patches of non-glowing texture to be seen ({{bug|MCPE-117507}})
+* Fixed an issue where players could not access a Villager's trades while holding a spawn egg ({{bug|MCPE-76153}})
+* Fixed an issue where Witches spawned during Village raids could despawn during the raid ({{bug|MCPE-149883}})
+* Cod, Salmon, Pufferfish, Tropical Fish, and Dolphins once again spawn in deep variants of ocean biomes ({{bug|MCPE-150191}})
+* Fixed Fangs from Evoker spells not being spawnable in blocks with no bounding boxes
+* Changed the spawning logic for Iron Golems and Cats to make it easier for them to spawn in roofed areas, like underground villages ({{bug|MCPE-142292}})
+* Fixed an issue where some large mobs in Marketplace maps could get stuck
+* Shulkers no longer like to occupy the same block as another Shulker ({{bug|MCPE-43972}})
+* Shulkers now prioritize attaching to neighboring block faces before trying to teleport away
+* Shulkers now stay attached to the current attached blockface if it is valid, instead of switching to upright position
+
+'''Blocks'''
+* Falling blocks once again have full-block hitbox
+* Changed block tick rates for Cactus, Chorus Flower, Crops, Grass, Pointed Dripstone, and Saplings to match ''Java Edition'' ({{bug|MCPE-145612}})
+* Cauldrons now only fill with water and lava by Dripstones that are below water and lava source blocks
+* TNT blocks now correctly move in a random X/Z direction once lit
+* Glow Lichen no longer generates hanging in the air inside Strongholds ({{bug|MCPE-123448}})
+* Glow Lichen now correctly checks for the face of the block they are attached to be a full block
+* Glow Lichen can now be attached to Leaves
+* Blocks such as Glow Lichen, Torches, and Redstone can no longer be placed on or attached to Brewing Stands
+* Blocks such as Glow Lichen, Torches, and Redstone can now be placed on or attached to Trapdoors, depending on their state
+* Azaleas and Lily Pads are now broken by flowing water ({{bug|MCPE-152040}})
+* Fixed a lighting bug where light level 1 incorrectly dropped to 0 when placing blocks in light level 1 with multiple light sources ({{bug|MCPE-151266}})
+* TNT no longer disappears when ignited with the 'TNT Explodes' game rule disabled and the 'Fire Spreads' game rule enabled ({{bug|MCPE-82485}})
+* Gravity affected blocks now fall on Top Snow when placed above it instead of hovering over it ({{bug|MCPE-151407}})
+* Fixed an issue with resource drops occasionally remaining black after breaking and placing a block quickly in its place
+* Top Snow no longer clips with the block beneath when falling
+* Fixed an issue where interacting with the Bell while holding a chargeable item would not continuously ring it ({{bug|MCPE-56968}})
+* Fixed an issue where projectiles would 'bounce' off of Bells in strange ways ({{bug|MCPE-47847}})
+* Removed water from the extra-block when placing an Amethyst cluster ({{bug|MCPE-148394}})
+* Scaffolding can no longer be placed without support on y=0 ({{bug|MCPE-150765}})
+* Observers placed facing Double Chests no longer send out a Redstone pulse when reloading/re-entering a chunk
+* Save Structure Blocks now correctly detect Corner Structure Blocks at negative Y levels ({{bug|MCPE-151511}})
+* Breaking a layer of snow placed in the same block as a flower no longer destroys the flower ({{bug|MCPE-151512}})
+* Water can no longer be placed in a block with Bamboo ({{bug|MCPE-56969}})
+
+'''Items'''
+* The player's arm no longer twitches while charging a bow ({{bug|MCPE-148486}})
+* Nether Brick, Iron/Gold Nuggets, Red/Brown Mushroom Blocks, and Chorus Plant/Flower Blocks can no longer be used as fuel in Furnaces ({{bug|MCPE-114216}})
+* Water and Lava Buckets can now be used on waterlogged blocks, such as Light Blocks or Big Dripleaves ({{bug|MCPE-148392}})
+* Custom armor can now be equipped with the "Use" button when different armor is already equipped ({{bug|MCPE-125323}})
+
+'''Combat and Damage'''
+* Improved accuracy of damage calculations
+* Fixed some issues where damage invulnerability wasn't being applied properly
+* The camera now shakes the same way it does in Java Edition when the player receives damage ({{bug|MCPE-118510}})
+* Fixed an issue where the Protection enchantments mitigated too much damage. This has been changed to match ''Java Edition'' ({{bug|MCPE-113191}})
+* Absorption Hearts no longer stay yellow while under the Wither effect ({{bug|MCPE-131852}})
+* Added armor toughness
+* Diamond Armor and Netherite Armor now have a toughness value of 2 and 3 respectively
+* Tweaked armor reduction calculation to account for toughness
+* Netherite Armor will now reduce more damage than Diamond Armor
+* Lowered the amount of knockback resistance granted by Netherite Armor ({{bug|MCPE-109408}})
+* Punching deals less damage now, to better match the Java Edition ({{bug|MCPE-152713}})
+* Damage is now calculated more accurately by properly calculating and storing partial damage for larger damage
+* Mobs across higher and lower difficulties had their damage adjusted slightly accordingly
+* Mobs with knockback resistance (e.g. Ravager or Zoglin) now receive less knockback when hit by an Iron Golem
+* Armor and protection reduction calculations have been made more accurate
+* Dragon's Breath attack now properly deals damage ({{bug|MCPE-94317}})
+* Protection Enchantment now properly works on most damage types ({{bug|MCPE-40651}})
+* Landing on a Stalagmite is now properly considered fall damage ({{bug|MCPE-151192}})
+* Blaze Fireball will deal knockback on impact ({{bug|MCPE-82421}})
+* Blaze fireballs, Fang attack damage, and Shulker bullets now deal consistent damage across all difficulties
+* Small Magma Cubes do slightly more damage, from 2 to 3 on normal
+* Spiders deal slightly less damage, from 3 to 2 on normal ({{bug|MCPE-94878}})
+* Baby Zoglins deal slightly less damage, from 1 to 0.5 on normal
+* Baby Hoglins now attack players for 0.5 damage on normal ({{bug|MCPE-152577}})
+* Skeleton melee attack does slightly less damage, from 3 to 2 on normal
+* Wolves deal slightly more damage, from 3 to 4 on normal
+* Fixed an issue that was causing entities to not be protected from fire damage by the Fire Resistance effect
+* Fixed a desync issue that could sometimes cause health to regenerate only visually
+
+'''Villagers'''
+* Updated Villager trade tables for Armorer, Cleric, Fisherman, Shepherd, Toolsmith, and Weaponsmith to match ''Java Edition''
+** Fishermen Boat trades now change wood type based on Villager biome type
+** Clerics now offer Glowstone instead of Glowstone Dust
+** Weaponsmith enchanted Iron Sword trade moved to Novice
+** Armorer Diamond trade moved to Journeyman
+* Villagers no longer share Seeds and Beetroot Seeds
+* Cartographers now always unlock Woodland Explorer Map trade ({{bug|MCPE-152725}})
+* Fixed an error where Journeymen Clerics would offer Glowstone Dust instead of Glowstone Blocks ({{bug|MCPE-57524}})
+* Farmer Villagers can now use Bone Meal on crops and can turn excess Seeds into Bone Meal at their Composter ({{bug|MCPE-74079}})
+
+'''Graphical'''
+* Fixed an issue that caused some emotes to have unintended rotations when near the end of their animation ({{bug|MCPE-134328}})
+* Fixed a case where ray tracing resources would be destroyed prematurely on level exit from an RTX-enabled world
+* Fixed the stage 3 carrot texture not showing up in-game, due to an incorrect filename ({{bug|MCPE-152175}})
+* Fixed a bug where the Shield blocking animation stopped playing smoothly after blocking once ({{bug|MCPE-149838}})
+* Fixed the crosshair disappearing when Outline Selection for blocks is disabled
+* Players that are on fire now render fire in front of the player on the inventory screen regardless of in-game camera perspective ({{bug|MCPE-147777}})
+* Fixed a highlight effect on Leather Armor appearing on paper dolls when using higher anti-aliasing ({{bug|MCPE-75321}})
+
+'''User Interface'''
+* Added an option in Video Settings to toggle anti-aliasing on the Nintendo Switch ({{bug|MCPE-123352}})
+* Fixed the loading screen when suspending and resuming the game while playing split-screen on Nintendo Switch
+* Increased line spacing on the "Realms Plus subscription has expired" screen
+* Chat changes:
+** Control + Backspace will now erase the whole word before the caret
+** Control + Delete will now erase the whole word after the caret
+** Control + Left Arrow will now move the caret to the beginning of the word before the caret
+** Control + Right Arrow will now move the caret to the beginning of the next word after the caret
+* When first opening the inventory screen in Pocket UI, we now default to the "Craftable" tab on the left-hand side, and the crafting grid on the right-hand side
+* Removed the question mark button on the Pocket UI inventory screen
+* Accessing the recipe book from the Inventory screen now only shows items that can be crafted from that screen's 2×2 crafting grid
+* Players can now use auto-move to equip or unequip armor in Crafting Table's menu while in Pocket UI ({{bug|MCPE-148970}})
+* Updated generic controller face button icons on mobile devices
+* Fixed a bug where the label above the inventory screen crafting grid in Pocket UI would get truncated in some languages
+* Fixed an issue in Pocket UI where items could be dropped unintentionally in blocks with custom UIs, and resized those screens to allow for dropping items on the sides instead
+* Improved contrast on multiple UI elements
+* Fixed an issue with the screen reader looping on the Play screen when you had a Realms invite
+* Download popup no longer flickers when closed
+* Added warning popup on Marketplace pages when attempting to equip skin pack skin while character creator item is equipped
+* Fixed issue where info and buttons did not appear for downloaded skin packs ({{bug|MCPE-152216}})
+
+'''Technical'''
+* Biome-specific fog settings can once again be defined
+* Fixed actor definition identifiers not being recognized if the item or block name contains "."
+* Mobs that are riding a boat, for example, can no longer use JumpToBlockGoal ({{bug|MCPE-150750}})
+* Custom mobs with a format version lower than 1.18.20 and using the {{cd|minecraft:behavior.knockback_roarcomponent}} will parse like before if it contains an extra field that the engine didn't expect
+* Fixed an issue in the Knockback goal where the incorrect owner was being passed into the filter evaluate function
+* Weapon events are now correctly applied when the weapons are used by mobs ({{bug|MCPE-118692}})
+* JumpToBlock behavior is now correctly affected by JumpBoost mob effect ({{bug|MCPE-137432}})
+* Fixed a case where experimental BlockCollisionComponents did not allow partial specification
+* Rotation when riding a mob that has a locked rotation will no longer unexpectedly snap to one side when that mob is rotating
+
+==Trivia==
+*''[[Minecraft Preview]]'' development releases started with this version.
+** This also marks the first version where iOS/iPadOS players are able to test the preview version before release.
+*1.18.20 is the fifth skipped version of Bedrock Edition, after 1.3.0, 1.15.0, 1.16.230 and 1.17.20 were skipped.
+
+== Notes ==
+{{notelist}}
+
+==References==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[de:Bedrock Edition 1.18.30]]
+[[es:Bedrock Edition 1.18.30]]
+[[ja:Bedrock Edition 1.18.30]]
+[[pt:Edição Bedrock 1.18.30]]
+[[ru:1.18.30 (Bedrock Edition)]]
+[[zh:基岩版1.18.30]]

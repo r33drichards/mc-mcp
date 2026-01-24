@@ -1,0 +1,121 @@
+{{Infobox version
+|title=Minecraft 17w45b
+|edition=Java
+|image=17w45a.png
+|image2=Java Edition 17w45b.png
+|type=Snapshot
+|date=November 10, 2017
+|parent=1.13
+|clienthash=83e5c3728b473a8d5afda12906a3e581888489fd
+|jsonhash=f9acb09376005f47f647ebb8bc687e5ba9e515ec
+|serverhash=eec0c6c49b1066b648f39e1dcef8c76510a794dc
+|prevparent=1.12.2
+|prev=17w45a
+|next=17w46a
+|nextparent=1.13.1
+}}<onlyinclude>
+
+'''17w45b''' is the fourth [[snapshot]] for [[Java Edition 1.13]], released on November 10, 2017,<ref>{{snap|17w45a|November 8, 2017}}</ref> which added the {{cmd|data}} command.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|data}}'''
+* A command that allows the player to get, merge, and remove entity and block NBT data.
+** {{cmd|data get block <pos> [<path>] [<scale>]}}
+*** Returns the NBT data from the block at <code><pos></code> as its <code>result</code> (if a <code>[<path>]</code> is specified). A <code>[<path>]</code> can be specified to only retrieve that NBT data, but this is limited to numeric tags. An optional <code>[<scale>]</code> can be provided to scale the number retrieved.
+** {{cmd|data get entity <target> [<path>] [<scale>]}}
+*** Returns the NBT data from one <code>[<target>]</code> entity as its <code>result</code> (if a <code>[<path>]</code> is specified). A <code>[<path>]</code> can be specified to only retrieve that NBT data, but this is limited to numeric tags. An optional <code>[<scale>]</code> can be provided to scale the number retrieved.
+** {{cmd|data merge block <pos> <nbt>}}
+*** Merges the block NBT data at <code><pos></code> with the specified <code><nbt></code> data.
+** {{cmd|data merge entity <target> <nbt>}}
+*** Merges the entity NBT data from <code><target></code> with the specified <code><nbt></code> data. Merging player NBT data is not allowed.
+** {{cmd|data remove block <pos> <path>}}
+*** Removes NBT data at <code><path></code> from the block at <code><pos></code>.
+** {{cmd|data remove entity <target> <path>}}
+*** Removes NBT data at <code><path></code> from one <code><target></code> entity. Removing player NBT data is not allowed.
+** Data paths look like this: <code>foo.bar[0]."A [crazy name]".baz</code>.
+*** <code>foo.bar</code> means foo's child called bar.
+*** <code>foo[0]</code> means element 0 of foo.
+*** "quoted strings" may be used if a name of a key needs to be escaped.
+** Examples of old commands:
+*** {{cmd|entitydata <target> {} }} is now {{cmd|data get entity <target>}}
+*** {{cmd|blockdata <pos> <nbt>}} is now {{cmd|data merge block <pos> <nbt>}}
+** Examples of new functionalities:
+*** {{cmd|data get entity <nowiki>@e[type=pig,limit=1]</nowiki> Saddle 2}}
+*** {{cmd|data remove block 17 45 34 Items}}
+
+== Changes ==
+=== Command format ===
+'''{{cmd|entitydata}}'''
+* Has been removed in favor of {{cmd|data}}.
+
+'''{{cmd|execute store}}'''
+* Has been reworked.
+** {{cmd|execute store (result{{!}}success) score <name> <objective> <chained command>}}
+*** The value is stored into the scoreboard under <code><name></code> and <code><objective></code>.
+*** The <code>objective</code> must exist, but unlike with {{cmd|stats}} you don't need to set an initial value for <code><name></code>.
+** {{cmd|execute store (result{{!}}success) block <pos> <path> (byte{{!}}double{{!}}float{{!}}int{{!}}long{{!}}short) <scale> <chained command>}}
+*** The value is stored in the NBT data at <code>path</code> of the block at <code>pos</code> as a byte, double, float, int, long, or short.
+** {{cmd|execute store (result{{!}}success) entity <target> <path> (byte{{!}}double{{!}}float{{!}}int{{!}}long{{!}}short) <scale> <chained command>}}
+*** The value is stored in the NBT data at <code>path</code> of one <code>target</code> entity as a byte, double, float, int, long, or short.
+** Data paths look like this: <code>foo.bar[0]."A [crazy name]".baz</code>.
+*** <code>foo.bar</code> means foo's child called bar.
+*** <code>foo[0]</code> means element 0 of foo.
+*** "quoted strings" may be used if a name of a key needs to be escaped.
+** Examples:
+*** {{cmd|execute store success score @a foo run say hi}}
+*** {{cmd|/execute as <nowiki>@e[type=pig]</nowiki> at @s store success entity @s Saddle byte 1 if entity <nowiki>@p[distance=..5]</nowiki>}}
+
+'''{{cmd|execute if <...>}}'''
+* Now returns success and result values if used on its own, without a sub-command.
+
+== Fixes ==
+{{fixes|fixedin=17w45b|prefix=Minecraft
+|;old
+|80400|Sizelimited entity selectors (@e with c{{=}}1,@r with type{{=}}!entity) in commands prefer players.
+|87799|{{cmd|execute}} detect functions inconsistently with semi- (snow layer, grass path, soul sand, farmland) blocks.
+|98244|Same UUID infinite times possible + changing UUID possible via entitydata.
+|106681|Scoreboard teams leave doesn't work if first player fails.
+|111704|Players can input any value in [old block handling] of setblock and fill.
+|114721|Title command treats invalid second argument as "title".
+|117933|{{cmd|clone}} command treats invalid optional arguments as if they were default.
+|;previous
+|121623|Cannot use namespace in type{{=}} for selectors.
+|121627|@s fails to build valid commands.
+|121635|Incorrect failed {{cmd|fill}} result message.
+|121637|Incorrect result message when teleporting a single entity.
+|121642|"Optional" commands following conditional execute chain succeed/fail strangely.
+|121647|JRE Fatal Error when joining multi-player server.
+|121655|Incorrect message when teleporting single entity.
+|121656|Some creative commands are available by a survival player with cheats disabled.
+|121660|distance argument can't find players with @a, @p or @e[type{{=}}player].
+|121663|Gamerules are copying from other worlds.
+|121674|Execute doesn't work in functions.
+|121683|-{{=}} isn't a valid operation in scoreboard players operation.
+|121686|Execute unless always fails on entities.
+|121695|Tellraw only supports 1 target.
+|121711|@a or @s doesn't include dead player.
+|121726|Only players can teleport with relative coordinates.
+|121727|Execute on multiple entities cancels, once one command fails.
+|121728|The order, in which execute runs the command for each entity, is in reverse.
+|121749|{{cmd|entitydata}} does not apply modified NBT data.
+|121765|Removing n scoreboard points adds them instead.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|HHsCchFNWnI}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:17w45b]]
+[[es:Java Edition 17w45b]]
+[[fr:Édition Java 17w45b]]
+[[ja:Java Edition 17w45b]]
+[[nl:17w45b]]
+[[pt:Edição Java 17w45b]]
+[[ru:17w45b (Java Edition)]]
+[[zh:Java版17w45b]]

@@ -1,0 +1,131 @@
+{{Exclusive|java}}
+The '''noise router''' is a collection of [[density function]]s. Density functions compute a value for each block position. They are used for terrain generation, biome layout, aquifers, ore veins, and more. A noise router is a part of a dimension's [[Custom noise settings|noise settings]].
+
+== JSON format ==
+The different density functions of the noise router and their uses.
+<div class="treeview">
+* {{nbt|compound|noise_router}}: Each entry is {{lcfirst: {{json ref|density function|inline=1|inline_type={{nbt|double}}{{nbt|compound}}}}}}
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|preliminary_surface_level}}: A 2D density function (sampled at Y=0) determining the Y-level of the preliminary surface; should generally be lower than the actual terrain height (determined by the final density). Used by the generation of aquifers and surface rules.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|final_density}}: Determines where there is an air or a default block. If positive, returns a default block that can be replaced by the [[surface rule]]. Otherwise, an air block where aquifers can generate.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|barrier}}: Affects whether to separate between aquifers and open areas in caves. Larger values leads to higher probability to separate.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|fluid_level_floodedness}}: Affects the probability of generating liquid in an cave for aquifer. The larger value leads to higher probability. The noise value greater than 1.0 is regarded as 1.0, and value less than -1.0 is regarded as -1.0.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|fluid_level_spread}}: Affects the height of the liquid surface at a horizonal position. Smaller value leads to higher probability for lower height.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|lava}}: Affects whether an aquifer here uses lava instead of water. The threshold is 0.3.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|vein_toggle}}: Affects [[ore vein]] type, vertical range and richness, given a vein of the appropriate type can generate at the location. If the Y coordinate is between 0 and 50 (inclusive), and the noise value is greater than 0.0, the vein is a copper vein. If the Y coordinate is between -60 and -8 (inclusive), and the noise value is less than or equal to 0.0, the vein is an iron vein. Veins generate where this value is at least 0.4 at 20 blocks from the limits and at least 0.6 at the limits, with a linear falloff.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|vein_ridged}}: Controls which blocks are part of a vein. If greater than or equal to 0.0, the block is not part of a vein. If less than 0.0, the block has a 30% probability to be replaced by either the vein type's filler block, or possibly an ore block.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|vein_gap}}: Affects which blocks in a vein are ore blocks. If this is less than or equal to -0.3, the vein type's stone block is placed. Otherwise, with a probability equal to the absolute value of '''vein_toggle''' mapped from 0.4 - 0.6 to 10% - 30%, with values outside of this range clamped, an ore block is placed, with a further 2% chance for the ore block to be a raw metal block.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|temperature}}: The temperature values only for biome placement. Note that this field and the following five fields do not affect terrain shape, as terrain generation is defined in '''final_density'''.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|vegetation}}: The humidity values only for biome placement.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|continents}}: The continentalness values only for biome placement.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|erosion}}: The erosion values only for biome placement and aquifer generation.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|depth}}: The depth values only for biome placement and aquifer generation.
+** {{nbt|string}}{{nbt|double}}{{nbt|compound|ridges}}: The weirdness values only for biome placement.
+</div>
+
+== Final density ==
+{{cd|final_density}} is the main density function that determines whether a block position should be solid or air. If the function returns a value greater than 0, the noise settings' '''default_block''' is placed. Otherwise, either [[air]] or the '''default_fluid''' is placed, decided by the aquifer logic. Only afterward, the '''default_block''' is replaced with other blocks using the [[surface rule]]s.
+
+Setting the final density is set to 0 results in a void dimension, similarly setting it to 1 would completely fill the world with stone.
+{{Collapse|head=1|title=An example noise settings file}}
+{{filename|data/minecraft/worldgen/noise_settings/overworld.json}}
+<syntaxhighlight lang="json" highlight="34">
+{
+  "sea_level": -64,
+  "disable_mob_generation": false,
+  "aquifers_enabled": false,
+  "ore_veins_enabled": false,
+  "legacy_random_source": false,
+  "default_block": {
+    "Name": "minecraft:stone"
+  },
+  "default_fluid": {
+    "Name": "minecraft:water",
+    "Properties": {
+      "level": "0"
+    }
+  },
+  "noise": {
+    "min_y": -64,
+    "height": 384,
+    "size_horizontal": 2,
+    "size_vertical": 2
+  },
+  "noise_router": {
+    "barrier": 0,
+    "fluid_level_floodedness": 0,
+    "fluid_level_spread": 0,
+    "lava": 0,
+    "temperature": 0,
+    "vegetation": 0,
+    "continents": 0,
+    "erosion": 0,
+    "depth": 0,
+    "ridges": 0,
+    "initial_density_without_jaggedness": 0,
+    "final_density": 0,
+    "vein_toggle": 0,
+    "vein_ridged": 0,
+    "vein_gap": 0
+  },
+  "spawn_target": [],
+  "surface_rule": {
+    "type": "minecraft:sequence",
+    "sequence": []
+  }
+}
+</syntaxhighlight>
+{{Collapse|tail=1}}
+
+=== Flat world ===
+[[File:Noise router diagram flat world.png|thumb|The side view of a flat world using the y_clamped_gradient density function]]
+Using the [[Density function#y_clamped_gradient|{{cd|y_clamped_gradient}} density function]], a flat world can be created. In the following example positions at Y=-64 get a density of 1 and positions at Y=320 get a density of -1.
+<syntaxhighlight lang="json">
+{
+  "type": "minecraft:y_clamped_gradient",
+  "from_y": -64,
+  "to_y": 320,
+  "from_value": 1,
+  "to_value": -1
+}
+</syntaxhighlight>
+
+=== Noises ===
+[[File:Noise router diagram simple noise.png|thumb|The side view of a world using a single noise]]
+[[File:Noise router diagram simple noise (overhangs).png|thumb|The side view of a world using noise, creating overhangs]]
+To bring some variety to the world, a [[Custom noise|noise]] is needed. By adding the previous {{cd|y_clamped_gradient}} to a noise, the height of the terrain is based on a noise that varies along the X and Z coordinates.
+<syntaxhighlight lang="json" highlight="2,10-15">
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:y_clamped_gradient",
+    "from_y": -64,
+    "to_y": 320,
+    "from_value": 1,
+    "to_value": -1
+  },
+  "argument2": {
+    "type": "minecraft:noise",
+    "noise": "minecraft:gravel",
+    "xz_scale": 2,
+    "y_scale": 0
+  }
+}
+</syntaxhighlight>
+
+The noise can be scaled to alter the results. Using <syntaxhighlight lang="json" inline>"xz_scale": 0.5</syntaxhighlight> makes the terrain smoother.
+
+To get overhangs, the noise also needs to vary along the Y coordinate. This can be done with <syntaxhighlight lang="json" inline>"xz_scale": 1</syntaxhighlight> and <syntaxhighlight lang="json" inline>"y_scale": 1</syntaxhighlight>.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.18.2|dev=pre1|Added noise router to noise settings}}
+|{{HistoryLine||1.21.9|dev=25w31a|Replaced <code>initial_density_without_jaggedness</code> with <code>preliminary_surface_level</code> determining the preliminary surface directly, instead of by scanning the initial density.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Rausch-Router]]
+[[fr:Routeur de bruit]]
+[[ko:Noise router]]

@@ -1,0 +1,141 @@
+{{Infobox version
+| image = Bedrock 1.19.60.22 PatchNotes.jpg
+| image2 = Bedrock 1.19.60.22.png
+| edition = Bedrock
+| type = Preview
+| date = '''Windows, Android, Xbox''' - December 1, 2022
+| internal = '''Windows''': 1.19.6022.0<br>'''Xbox''': 1.19.6022.70<br>'''Android''': 1.19.60.22
+| serverdl = '''Server'''<br>
+[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.19.60.22.zip Windows]
+[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.19.60.22.zip Linux]
+| parent = 1.19.60
+| prevparent = 1.19.51
+| prev = Preview 1.19.60.20
+| next = Preview 1.19.60.23
+| nextparent = 1.19.62
+}}<onlyinclude>
+'''Beta 1.19.60.22''' (Android) or Preview '''1.19.60.22''' (Windows, Xbox) is the second beta/''Preview'' version for [[Bedrock Edition 1.19.60]], released on December 1, 2022,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/11062311640333|title=Minecraft Beta & Preview - 1.19.60.22|website=Minecraft Feedback|date=December 1, 2022}}</ref> which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Dispenser]]'''
+* Dispensers can now equip saddles and horse armors to tamed horses.
+* Dispensers can now equip saddles and chests to tamed mules and donkeys.
+* Dispensers can now equip carpets and chests to tamed llamas.
+* Dispensers can now equip saddles to pigs and striders.
+* Shears in a dispenser will now only shear one sheep at a time.
+* Shears in a dispenser will now shear snow golems and mooshrooms.
+
+=== Mobs ===
+'''[[Enderman]]'''
+* Now only spawn at light level 7 and below in [[the Nether]], instead of 11 and below.
+'''[[Skeleton]] and [[Wither Skeleton]]'''
+* Now only spawn at light level 7 and below in [[the Nether]], instead of 11 and below.
+'''[[Vex]]'''
+* The texture of the vex has slightly changed.
+
+=== Technical ===
+'''Components'''
+* Added ''inventory'' as a possible ''domain'' value for the <code>has_equipment</code> filter, which allows to check for items stored in the actor's inventory.
+* Added an <code>equip_item_slot</code> field to the ''interact'' component.
+** If set, an item held by the player will be equipped to the specified slot upon successful interaction.
+** If an item is already present in the specified slot, it will be moved to the player's inventory.
+** Equipping an item removes it from the player's inventory, unless the player is in Creative mode.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Next Major Update" experimental toggle.
+
+=== Changes ===
+==== Blocks ====
+'''[[Block of Bamboo]] and [[Block of Stripped Bamboo]]'''
+* Renamed “Stripped Block of Bamboo” to “Block of Stripped Bamboo”, as it was incorrectly named.
+* Block of bamboo and block of stripped bamboo are now correctly classified as "Woods" in the Creative inventory, instead of as "Logs".
+* Updated block of bamboo and block of stripped bamboo textures, as their lighting was inconsistent with other blocks.
+'''[[Bamboo Mosaic]]'''
+* Bamboo mosaic cannot be used as a general wood plank in crafting recipes.
+'''[[Bamboo planks]]'''
+* Bamboo planks can now be used in all recipes that take planks of any wood type. ({{bug|MCPE-163365}})
+'''[[Bamboo slab]]'''
+* Bamboo slabs can now be used in all recipes that take planks of any wood type.
+'''[[Chiseled Bookshelf]]'''
+* Books can now be removed and added to specific slots on the chiseled bookshelf.
+* You can now remove a book from the chiseled bookshelf while holding a book in your hand.
+
+==== Mobs ====
+'''[[Camel]]'''
+* Using a saddle on an adult camel now results in it being properly equipped. ({{bug|MCPE-163333}})
+* Dispensers can now equip Saddles to tamed Camels.
+
+==== General ====
+'''[[Sound]]'''
+* Player sound slider now correctly adjusts step and fall sounds for bamboo blocks, hanging signs, nether wood types, and chiseled bookshelves.
+* Block sound slider now correctly adjusts sounds for chiseled bookshelf. ({{bug|MCPE-164700}})
+* Lowered sound volume for ender dragon when placed on a note block
+* Jukebox slider now correctly adjusts sound level for mob heads placed on note block.
+
+==== Technical ====
+'''API'''
+* Block
+** Added function <code>getRedstonePower(): number-</code> Gets the redstone signal strength of the block if it is part of a circuit, otherwise returns undefined.
+* Added {{cmd|scriptevent}} command as part of the Beta APIs experiment. This is what will trigger ''system.events.scriptEventReceive'' events (see below):<br>
+
+* Usage: <code>/scriptevent <messsageId: string> [message: ???]</code>
+** <code>messageId</code> must be namespaced, use of the minecraft namespace is invalid (e.g. <code>/scriptevent give:coal</code>, <code>/scriptevent my_scripts:spawn_sheep</code>)
+* message is optional, with a max length of 256 characters.
+
+* ''events.scriptEventReceive''
+** Added system event ''events.scriptEventReceive''.
+** Added ''read-only'' property id: <code>String-</code> The namespaced ID of the event.
+** Added ''read-only'' property message: String- The content of the message the event was sent with.
+** Added ''read-only'' property sourceBlock: <code>Block-</code> The command block that triggered/executed the command call if applicable, otherwise undefined.
+** Added ''read-only'' property sourceEntity: <code>Entity-</code> The player/entity that executed the command call if applicable, otherwise undefined.
+** Added ''read-only'' property initiator: <code>Entity-</code> The player that caused an NPC to execute the command call if applicable, otherwise undefined.
+** Added ''read-only'' property sourceType: <code>MessageSourceType-</code> The type of source the event was triggered by
+** <code>subscribe()</code> can filter by valid namespace string using the <code>ScriptEventMessageFilterOptions</code> class.
+
+* ScriptEventMessageFilterOptions
+** Added <code>ScriptEventMessageFilterOptions</code> class
+** Added property <code>namespaces: string[]-</code> An array of namespaces to filter on
+* Simulated Player
+** Added property <code>isSprinting</code>- Used to get or set if the sprinting state of the simulated player is set to true.
+'''JSON'''
+* Ensure Block Permutation Conditions cannot have side effects (i.e. 'math.random', 'math.random_integer', and variable assignment).
+
+== Fixes ==
+'''Gameplay'''
+* Fixed an issue where players could fall out of moving blocks when pushed upwards. ({{bug|MCPE-163725}})
+* Fixed an issue where night was being incorrectly skipped if the last player in a game is in the Nether or End.
+* A player entering the Nether or End will now trigger a night skip if all players left in Overworld are sleeping.
+* Fixed a bug where dropping an item and sleeping at the same time would cause the server to hang. ({{bug|MCPE-162989}})
+* Orbs spawned within the same block will merge and combine XP values until orb limit is reached. ({{bug|REALMS-10706}})
+'''General'''
+* Fixed an issue where text fields would not regain focus after being deselected with a gamepad. ({{bug|MCPE-153842}})
+* Fixed an issue where user interface elements on the Achievements screen and the new Create New World screen didn't properly trigger sound effects. ({{bug|MCPE-163722}})
+'''Items'''
+* Fixed an issue that prevented some tripwire hooks from being valid when trading with a fletcher villager. ({{bug|MCPE-108195}})
+'''Mobile Controls'''
+* Fixed a bug where players couldn’t interact with the toast notifications in joystick and crosshair touch controls.
+'''Player'''
+* Fixed a bug causing players’ hitboxes and nameplates to be unaligned when rejoining a world after dying and returning to menu without respawning. ({{bug|MCPE-162630}})
+'''Touch Controls'''
+* The inventory tab will now reset their hover state if the player uses the second input method and hover on another tab.
+'''Mobs'''
+* Using a saddle on a tamed horse, donkey, or mule now results in it being equipped. ({{bug|MCPE-83815}})
+* Using horse armor on an unarmored, tamed horse now results in it being equipped. ({{bug|MCPE-163336}})
+* Using a carpet on a tamed llama now results in it being equipped. ({{bug|MCPE-163336}})
+'''Wandering Trader'''
+* The wandering trader will no longer have a chance to offer duplicate seed trades. ({{bug|MCPE-161780}})
+'''User Interface'''
+* Fixed text to speech enumeration for the worlds in play screen, select language in settings screen, select controls in settings screen, and friends in invite friends screen when there are a large number of items in the list.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[Category:Bedrock Edition 1.19.60 betas]]
+[[de:Bedrock Edition beta 1.19.60.22]]
+[[es:Bedrock Edition beta 1.19.60.22]]
+[[pt:Edição Bedrock Preview 1.19.60.22]]
+[[zh:基岩版1.19.60.22]]

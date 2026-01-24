@@ -1,0 +1,1070 @@
+{{About|the Java and Bedrock Edition recipe system|crafting recipes|Crafting#Complete recipe list|smelting recipes|Smelting#Recipes|brewing recipes|Brewing#Recipes|the command|Commands/recipe}}
+
+Recipes provide a structured way for players to perform item and block transformations in-game. Every [[crafting]], [[smelting]], [[Blast Furnace#Smelting|blasting]], [[Campfire#Cooking|campfire cooking]], [[Smoker#Cooking|smoking]], [[Stonecutter#Usage|stonecutting]] and [[smithing]] recipe uses this system. {{IN|bedrock}}, [[brewing]] recipes also use this system. Recipes are data driven and can be configured by [[data pack]]s {{in|java}} or [[add-on]]s {{in|bedrock}}.
+
+== Obtaining ==
+
+Recipes can be obtained in various ways. Acquiring an item from the recipe causes the player to automatically discover it. Recipes can also be granted using the {{cmd|recipe}} command. In ''Java Edition'', as a reward for completing an [[advancement]], there are multiple advancements that grant recipes which trigger when, for example, the player obtains an item required in the recipe.
+
+Once a recipe has been discovered, it is added to the player's [[recipe book]]. In ''Java Edition'', discovered recipes are stored in the player's {{nbt|compound|recipeBook}} [[Player.dat format#NBT structure|NBT]].
+
+== Usage ==
+{{main|Recipe book}}
+
+Discovered recipes can be found in the player's [[recipe book]]. However, recipes do not need to be discovered for the player to be able to use them, unless the {{gmr|doLimitedCrafting}} game rule is enabled. {{IN|bedrock}} there is the game rule {{gmr|recipesUnlock}} which disables the unlocking of recipes making them all accessible and visible.
+
+Recipes appear in the inventory's recipe book if they are 2×2 in size, otherwise they will only appear if the player is using a [[crafting table]]. {{IN|Java}} the recipe book can also be used in the [[furnace]], showing exclusively [[smelting]] recipes.
+
+[[Anvil]], [[cartography table]], [[loom]], [[brewing stand]]{{only|java}}, and [[grindstone]] don't use a recipe system: they use another system.
+
+== Java Edition JSON format ==
+Vanilla recipes are stored as separate [[JSON]] files in the {{code|data/minecraft/recipe}} folder in the {{code|[[.minecraft]]/versions/<version>/<version>.jar}} file. This folder can be found by changing the extension of the {{Code|code=.jar}} file to {{code|.zip}} and navigating within it.
+
+Custom recipe files are stored in the<!-- The file recipe may need to be called recipes in some versions, please look more into this. --> {{code|data/<namespace>/recipe}} folder of a [[data pack]]. A recipe with ID {{code|foo:path/to/file}} would have its JSON file located at {{code|data/foo/recipe/path/to/file.json}} within a [[data pack]]. Data packs that load later with a recipe file in same resource location replace the existing recipe.
+
+Recipe JSON files have different structures dependent on their type, but they all have a {{nbt|string|type}} tag in its root tag. These types are listed below.
+
+=== blasting ===
+Represents a recipe in a [[blast furnace]].
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|string|type}}: {{code|minecraft:blasting}}
+** {{nbt|string|category}}: Optional. Controls to which [[recipe book]] category the recipe belongs to. Available values are: {{code|blocks}} and {{code|misc}}. Defaults to {{code|misc}}.
+** {{nbt|string|group}}: Optional. A string identifier. Used to group multiple recipes together in the recipe book. Recipes with same group identifier but different categories splits into two different groups.
+** {{nbt|string}}{{nbt|list|ingredient}}: The ingredient for the recipe. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|int|cookingtime}}: Optional. The cook time of the recipe in ticks. Defaults to {{code|100}}.
+** {{nbt|compound|result}}: The output item of the recipe.
+*** {{nbt|string|id}}: An [[Java Edition data values#Items|item ID]].
+*** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Data component format|item components]].
+** {{nbt|double|experience}}: Optional. The output [[experience]] of the recipe.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.1,
+  "group": "coal",
+  "ingredient": "minecraft:coal_ore",
+  "result": {
+    "id": "minecraft:coal"
+  }
+}
+</syntaxhighlight>
+{{Smelting
+|showname=1
+|Coal Ore
+|Coal
+|0,1
+|showdescription=1
+|description=Illustrative recipe
+}}
+
+=== campfire_cooking ===
+Represents a recipe in a [[campfire]].
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:campfire_cooking}}
+** {{nbt|string}}{{nbt|list|ingredient}}: The ingredient for the recipe. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|int|cookingtime}}: Optional. The cook time of the recipe in ticks. Defaults to {{code|100}}.
+** {{nbt|compound|result}}: The output item of the recipe.
+*** {{nbt|string|id}}: An [[Java Edition data values#Items|item ID]].
+*** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Data component format|item components]].
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "cookingtime": 600,
+  "experience": 0.35,
+  "ingredient": "minecraft:potato",
+  "result": {
+    "id": "minecraft:baked_potato"
+  }
+}
+</syntaxhighlight>
+
+Even though all vanilla campfire cooking recipes have a cook time of {{code|600}} ticks, the default is {{code|100}} ticks.
+
+Campfire recipes do not trigger the {{code|recipe_unlocked}} criteria.
+
+=== crafting_shaped ===
+Represents a shaped crafting recipe in a [[crafting table]], the survival [[inventory]] and the [[crafter]].
+
+The key used in the pattern may be any single character except <code> </code>, the space character, which is reserved for empty slots in a recipe.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:crafting_shaped}}
+** {{nbt|string|category}}: Optional. Controls to which [[recipe book]] category the recipe belongs to. Available values are: {{code|equipment}}, {{code|building}}, {{code|misc}}, and {{code|redstone}}. Defaults to {{code|misc}}.
+** {{nbt|string|group}}: Optional. A string identifier. Used to group multiple recipes together in the recipe book. Recipes with same group identifier but different categories splits into two different groups.
+** {{nbt|boolean|show_notification}}: Optional. Determines if a notification is shown when unlocking the recipe. Defaults to {{code|true}}.
+** {{nbt|list|pattern}}: A list of single-character keys used to describe a pattern for shaped crafting. Each row in the crafting grid is one string in this list containing 3 or less keys. All strings in this list need to have the same amount of keys. A space can be used to indicate an empty spot.
+** {{nbt|compound|key}}: All keys used for this shaped crafting recipe.
+*** {{nbt|string}}{{nbt|list|(A key)}}: An item that corresponds to this key. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|compound|result}}: The output item of the recipe.
+*** {{nbt|string|id}}: An [[Java Edition data values#Items|item ID]].
+*** {{nbt|int|count}}: Optional. The amount of the item. Falls back to 1 if the field is absent.
+*** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Data component format|item components]].
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:milk_bucket",
+    "B": "minecraft:sugar",
+    "C": "minecraft:wheat",
+    "E": "#minecraft:eggs"
+  },
+  "pattern": [
+    "AAA",
+    "BEB",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:cake"
+  }
+}
+</syntaxhighlight>
+
+{{Crafting
+|showname = 0
+|showdescription = 1
+|name =
+|A1= Milk Bucket
+|B1= Milk Bucket
+|C1= Milk Bucket
+|A2= Sugar 
+|B2= Any Egg   
+|C2= Sugar
+|A3= Wheat  
+|B3= Wheat  
+|C3= Wheat
+|Output= Cake
+|description = Illustrative recipe.
+|ignoreusage=1
+}}
+
+=== crafting_shapeless ===
+Represents a shapeless crafting recipe in a [[crafting table]], the survival [[inventory]] and the [[crafter]].
+
+The ingredients list must have at least one and at most nine entries.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:crafting_shapeless}}
+** {{nbt|string|category}}: Optional. Controls to which [[recipe book]] category the recipe belongs to. Available values are: {{code|equipment}}, {{code|building}}, {{code|misc}}, and {{code|redstone}}. Defaults to {{code|misc}}.
+** {{nbt|string|group}}: Optional. A string identifier. Used to group multiple recipes together in the recipe book. Recipes with same group identifier but different categories splits into two different groups.
+** {{nbt|list|ingredients}}: A list of entries for this shapeless crafting recipe. Must have 1 to 9 entries.
+*** {{nbt|string}}{{nbt|list}}: An entry made of a single ingredient or a list of acceptable ingredients. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|compound|result}}: The output item of the recipe.
+*** {{nbt|string|id}}: An [[Java Edition data values#Items|item ID]].
+*** {{nbt|int|count}}: Optional. The amount of the item. Defaults to {{code|1}}.
+*** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Data component format|item components]].
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "minecraft:flint"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:flint_and_steel"
+  }
+}
+</syntaxhighlight>
+
+{{Crafting
+|showname = 0
+|showdescription = 1
+|name =
+|Iron Ingot
+|Flint
+|Output= Flint and Steel
+|description = Illustrative recipe.
+|ignoreusage=1
+}}
+If the recipe contains the same 9 ingredients, it turns into {{code|minecraft:crafting_shaped}} recipe.
+
+=== crafting_transmute ===
+{{anchor|crafting_transmute}}
+Represents a crafting recipe in a [[crafting table]], a [[crafter]] and the survival [[inventory]].
+
+When matched, output copies the input item stack, changing the item type but preserving all stack components.
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:crafting_transmute}}
+** {{nbt|string|category}}: Optional. Controls to which [[recipe book]] category the recipe belongs to. Available values are: {{code|equipment}}, {{code|building}}, {{code|misc}}, and {{code|redstone}}. Defaults to {{code|misc}}.
+** {{nbt|string|group}}: Optional. A string identifier. Used to group multiple recipes together in the recipe book. Recipes with same group identifier but different categories splits into two different groups.
+** {{nbt|string}}{{nbt|list|input}}: Ingredient for item to copy. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|string}}{{nbt|list|material}}: Additional ingredient to use.  Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|string|result}}: The output item of the recipe. It keeps item components from the input.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:crafting_transmute",
+  "category": "misc",
+  "group": "shulker_box_dye",
+  "input": "#minecraft:shulker_boxes",
+  "material": "minecraft:blue_dye",
+  "result": {
+    "id": "minecraft:blue_shulker_box"
+  }
+}
+</syntaxhighlight>
+
+{{Crafting
+|showname = 0
+|showdescription = 1
+|name =
+|Any Shulker Box
+|Blue Dye
+|Output= Blue Shulker Box
+|description = Illustrative recipe.
+|ignoreusage=1
+}}
+
+=== crafting_special_* ===
+{{anchor|Crafting special *}}
+
+Represents a crafting recipe in a [[crafting table]], a [[crafter]] and the survival [[inventory]] that is handled with built-in logic instead of being data-driven.
+
+When the {{code|vanilla}} [[data pack]] is disabled, they can be used to re-enable desired built-in crafting recipes.
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: A resource location indicating the type of serializer of the recipe.
+** {{nbt|string|category}}: Optional. Controls to which [[recipe book]] category the recipe belongs to. Available values are: {{code|equipment}}, {{code|building}}, {{code|misc}}, and {{code|redstone}}. Defaults to {{code|misc}}.
+</div>
+Unlike most other recipe types, they do not have a {{code|group}} field and cannot be displayed in [[Recipe Book|recipe books]].
+
+* {{anchor|crafting_special_armordye}}<!--
+-->{{anchor|Crafting special armor dye}}<!--
+-->{{code|crafting_special_armordye}}
+:The [[Dye#Dyeing armor|armor dyeing]] recipe. 
+:Regular recipes cannot handle multiple dyes.
+
+* {{anchor|crafting_special_bannerduplicate}}<!--
+-->{{anchor|Crafting special banner duplicate}}<!--
+-->{{code|crafting_special_bannerduplicate}}
+:The [[Banner#Copying|banner copying]] recipe.
+:Regular recipes cannot copy [[NBT]] data associated to the [[banner]] item.
+
+* {{anchor|crafting_special_bookcloning}}<!--
+-->{{anchor|Crafting special book cloning}}<!--
+-->{{code|crafting_special_bookcloning}}
+:The [[Written Book#Copying|written book copying]] recipe.
+:Regular recipes cannot copy NBT data associated to the [[written book]] item and cannot control the generation of copies.
+
+* {{anchor|crafting_special_firework_rocket}}<!--
+-->{{anchor|Crafting special firework rocket}}<!--
+-->{{code|crafting_special_firework_rocket}}
+:The [[Firework Rocket#Crafting|firework rocket]] recipe using [[firework star]]s.
+:Regular recipes cannot handle inputs flexibly or add NBT data from a firework star to the firework rocket.
+
+* {{anchor|crafting_special_firework_star}}<!--
+-->{{anchor|crafting_special_firework_star_fade}}<!--
+-->{{anchor|Crafting special firework star}}<!--
+-->{{anchor|Crafting special firework star fade}}<!--
+-->{{code|crafting_special_firework_star}}
+* {{code|crafting_special_firework_star_fade}}
+:The [[Firework Star#Crafting|firework star]] crafting recipes and their fade additions.
+:Regular recipes cannot handle inputs flexibly or add NBT data to the firework star.
+
+* {{anchor|crafting_special_mapcloning}}<!--
+-->{{anchor|Crafting special mapcloning}}<!--
+-->{{anchor|Crafting special map cloning}}<!--
+-->{{code|crafting_special_mapcloning}}
+:The [[Map#Cloning|map copying]] recipe.
+:Regular recipes cannot copy NBT data associated to the map item.
+
+* {{anchor|crafting_special_mapextending}}<!--
+-->{{anchor|Crafting special map extending}}<!--
+-->{{code|crafting_special_mapextending}}
+:The [[Map#Zooming out|map zooming]] recipe.
+:Regular recipes cannot update NBT data associated to the map item.
+* {{anchor|crafting_special_repairitem}}<!--
+-->{{anchor|Crafting special repair item}}<!--
+-->{{code|crafting_special_repairitem}}
+:The [[item repair]] recipe.
+:Regular recipes cannot update damage data associated to the tool item.
+
+* {{anchor|crafting_special_shielddecoration}}<!--
+-->{{anchor|Crafting special shield decoration}}<!--
+-->{{code|crafting_special_shielddecoration}}
+:The [[Shield#Applying patterns|shield pattern]] application recipe.
+:Regular recipes cannot add [[NBT]] data from a [[banner]] item to a [[shield]] item.
+
+* {{anchor|crafting_special_tippedarrow}}<!--
+-->{{anchor|Crafting special tipped arrow}}<!--
+-->{{code|crafting_special_tippedarrow}}
+:The [[Tipped Arrow#Crafting|tipped arrow]] recipe.
+:Regular recipes cannot copy NBT data from a [[lingering potion]] item to a [[tipped arrow]] item.
+
+=== crafting_decorated_pot ===
+The [[Decorated Pot#Crafting|decorated pot]] recipe in a [[crafting table]] and a [[crafter]].
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:crafting_decorated_pot}}
+** {{nbt|string|category}}: Optional. Controls to which [[recipe book]] category the recipe belongs to. Available values are: {{code|equipment}}, {{code|building}}, {{code|misc}}, and {{code|redstone}}. Defaults to {{code|misc}}.
+</div>
+
+=== smelting ===
+Represents a recipe in a [[furnace]].
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:smelting}}
+** {{nbt|string|category}}: Optional. Controls to which [[recipe book]] category the recipe belongs to. Available values are: {{code|food}}, {{code|blocks}}, and {{code|misc}}. Defaults to {{code|misc}}.
+** {{nbt|string|group}}: Optional. A string identifier. Used to group multiple recipes together in the recipe book. Recipes with same group identifier but different categories splits into two different groups.
+** {{nbt|string}}{{nbt|list|ingredient}}: The ingredient for the recipe. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|int|cookingtime}}: Optional. The cook time of the recipe in ticks. Defaults to {{code|200}}.
+** {{nbt|compound|result}}: The output item of the recipe.
+*** {{nbt|string|id}}: An [[Java Edition data values#Items|item ID]].
+*** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Data component format|item components]].
+** {{nbt|double|experience}}: Optional. The output [[experience]] of the recipe.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": "minecraft:stone_bricks",
+  "result": {
+    "id": "minecraft:cracked_stone_bricks"
+  }
+}
+</syntaxhighlight>
+{{Smelting
+|showname=1
+|Stone Bricks
+|Cracked Stone Bricks
+|0,1
+|showdescription=1
+|description=Illustrative recipe
+}}
+
+=== smithing_transform ===
+Represents a [[smithing#Upgrading|upgrading]] recipe in a [[smithing table]].
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:smithing_transform}}
+** {{nbt|string}}{{nbt|list|template}}: Optional. Ingredient specifying an item to act as the template. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|string}}{{nbt|list|base}}: Ingredient specifying an item to be upgraded. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|string}}{{nbt|list|addition}}: Optional. Ingredient specifying an item to be added. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|compound|result}}: Item specifying the resulting upgraded item.
+*** {{nbt|string|id}}: An [[Java Edition data values#Items|item ID]].
+*** {{nbt|int|count}}: Optional. The amount of the item. Defaults to {{code|1}}.
+*** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Data component format|item components]].
+</div>
+The resulting item copies the components of the base item.
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "#minecraft:netherite_tool_materials",
+  "base": "minecraft:diamond_axe",
+  "result": {
+    "id": "minecraft:netherite_axe"
+  },
+  "template": "minecraft:netherite_upgrade_smithing_template"
+}
+</syntaxhighlight>
+
+{{Smithing
+|head=1
+|Netherite Upgrade
+|Diamond Axe
+|Netherite Ingot
+|Netherite Axe
+|showdescription=1
+|description = Illustrative recipe.
+|tail=1
+}}
+
+=== smithing_trim ===
+Represents a [[smithing#Trimming|trimming]] recipe in a [[smithing table]].
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:smithing_trim}}
+** {{nbt|string}}{{nbt|list|template}}: Optional. Ingredient specifying an item to act as the template. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|string}}{{nbt|list|base}}: Ingredient specifying an item to be trimmed. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|string}}{{nbt|list|addition}}: Optional. Ingredient specifying an item to be added. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+</div>
+Adds NBT Tags for the trim to the base item.
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:smithing_trim",
+  "addition": "#minecraft:trim_materials",
+  "base": "#minecraft:trimmable_armor",
+  "pattern": "minecraft:silence",
+  "template": "minecraft:silence_armor_trim_smithing_template"
+}
+</syntaxhighlight>
+{{Smithing
+|head=1
+|ingredients=[[Silence Armor Trim]] +<br>Any [[Armor]] Piece +<br>Any [[Smithing#Material|Material]]
+|Silence Armor Trim
+|Netherite Helmet; Iron Chestplate; Golden Leggings; Diamond Boots; Copper Boots; Chainmail Chestplate; Leather Pants; Turtle Shell; Netherite Helmet; Iron Chestplate; Golden Leggings; Copper Boots; Diamond Boots; Chainmail Chestplate; Leather Pants; Turtle Shell; Netherite Helmet
+|Amethyst Shard; Copper Ingot; Diamond; Emerald; Resin Brick; Gold Ingot; Iron Ingot; Lapis Lazuli; Nether Quartz; Netherite Ingot; Redstone Dust; Gold Ingot; Diamond; Emerald; Lapis Lazuli; Redstone Dust; Resin Brick
+|Amethyst Trim Netherite Helmet; Copper Trim Iron Chestplate; Diamond Trim Golden Leggings; Emerald Trim Diamond Boots; Resin Trim Copper Boots; Gold Trim Chainmail Chestplate; Iron Trim Leather Pants; Lapis Trim Turtle Shell; Quartz Trim Netherite Helmet; Netherite Trim Iron Chestplate; Redstone Trim Golden Leggings; Gold Trim Copper Boots; Diamond Trim Diamond Boots; Emerald Trim Chainmail Chestplate; Lapis Trim Leather Pants; Redstone Trim Turtle Shell; Resin Trim Netherite Helmet
+|showdescription=1
+|description = Illustrative recipe.
+|tail=1
+}}
+
+=== smoking ===
+Represents a recipe in a [[smoker]].
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:smoking}}
+** {{nbt|string|category}}: Optional. Controls to which [[recipe book]] category the recipe belongs to. Available values are: {{code|food}}. Defaults to {{code|food}}.
+** {{nbt|string|group}}: Optional. A string identifier. Used to group multiple recipes together in the recipe book. Recipes with same group identifier but different categories splits into two different groups.
+** {{nbt|string}}{{nbt|list|ingredient}}: The ingredient for the recipe. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|int|cookingtime}}: Optional. The cook time of the recipe in ticks. Defaults to {{code|100}}.
+** {{nbt|compound|result}}: The output item of the recipe.
+*** {{nbt|string|id}}: An [[Java Edition data values#Items|item ID]].
+*** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Data component format|item components]].
+** {{nbt|double|experience}}: Optional. The output [[experience]] of the recipe.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "cookingtime": 100,
+  "experience": 0.35,
+  "ingredient": "minecraft:beef",
+  "result": {
+    "id": "minecraft:cooked_beef"
+  }
+}
+</syntaxhighlight>
+{{Smelting
+|showname=1
+|Raw Beef
+|Steak
+|0,35
+|showdescription=1
+|description=Illustrative recipe.
+}}
+
+=== stonecutting ===
+Represents a recipe in a [[stonecutter]].
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: {{code|minecraft:stonecutting}}
+** {{nbt|string}}{{nbt|list|ingredient}}: The ingredient for the recipe. Can be one of an {{nbt|string}} [[Java Edition data values#Items|ID]], a {{nbt|string}} [[Tag#Item Tags|tag]] with {{code|#}}, or an {{nbt|list}} array containing IDs.
+** {{nbt|compound|result}}: The output item of the recipe.
+*** {{nbt|string|id}}: An [[Java Edition data values#Items|item ID]].
+*** {{nbt|int|count}}: Optional. The amount of the item. Defaults to {{code|1}}.
+*** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Data component format|item components]].
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "minecraft:cobbled_deepslate",
+  "result": {
+    "count": 1,
+    "id": "minecraft:cobbled_deepslate_stairs"
+  }
+}
+</syntaxhighlight>
+{{stonecutting
+|showname=0
+|showdescription=1
+| Cobbled Deepslate
+| Cobbled Deepslate Stairs
+|description = Illustrative recipe.
+|ignoreusage=1
+}}
+
+== Bedrock Edition JSON format ==
+Vanilla recipes are stored as separate [[JSON]] files in the {{code|behavior_packs/vanilla/recipes}} or {{code|behavior_packs/<version> /recipes}} within the game files.
+
+Vanilla recipes can be easily accessed in the {{code|behavior_pack/recipes}} folder on the [https://github.com/mojang/bedrock-samples official sample github] for addons.
+
+Custom recipe files are stored in the {{code|behavior_packs/<add-on name>/recipes}} in a [[add-on]], but it is allowed to add the recipe to a subfolder, allowing the creation of new recipes and the editing of vanilla recipes.
+
+Recipe JSON files have different structures depending on their type. These types are listed below.
+
+=== recipe_shaped ===
+Represents a crafting recipe with shape in a [[crafting table]], the [[inventory]], and the [[crafter]].
+
+The key used in the pattern can be any single character except the space character <code> </code>, which is reserved for empty slots in a recipe, can also be omitted to accept the recipe format in any location that has enough space. This format is the only format that accepts multiple results.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|format_version}}: Used to set the version your recipe should work on e.g. {{cd|1.20.10}}.
+** {{nbt|compound|minecraft:recipe_shaped}}: Used to define the recipe type.
+*** {{nbt|compound|description}}: Required in any type of recipe, it contains the identifier of a recipe.
+**** {{nbt|string|identifier}}: Required to detect the recipe in-game. The namespace can be omitted, but it is highly recommended to avoid conflicts.
+*** {{nbt|string}}{{nbt|list|tags}}: Defines where the recipe can be used. This can be a {{code|crafting_table}} or a custom crafting table tag.
+*** {{nbt|string|group}}: Optional used only for information as it has no known use.
+*** {{nbt|list|pattern}}: A list of single-character keys used to describe a pattern for creating shapes. Each row in the creation grid is a sequence in this list containing 3 or fewer keys. All strings in this list must have the same number of keys. A space can be used to indicate empty space.
+*** {{nbt|compound|key}}: All keys used for this crafting recipe with shape.
+**** {{nbt|compound|A key}}:
+***** {{nbt|string|item}}: Used to define an item or block with the id example {{code|minecraft:emerald_block}}.
+***** {{nbt|string|data}}: Optional. Integer or [[Molang]] expression for dynamic variants.
+***** {{nbt|string|tag}}: Used to define an [[Item tag (Bedrock Edition)|item tag]] example {{code|minecraft:planks}} also accepts custom tags.
+*** {{nbt|list|unlock}}: Defines the items that unlock the recipe when caught.
+**** {{nbt|compound}}:
+**** {{nbt|string|item}}: Used to define an item or block that unlocks the recipe.
+**** {{nbt|string|data}}: Optional. Integer or Molang expression for dynamic variants.
+**** {{nbt|string|tag}}: Used to set an item tag that unlocks the recipe, also accepts custom tags.
+**** {{nbt|string|context}}: Used to unlock recipes with context currently only known values are {{cd|AlwaysUnlocked}} and {{cd|PlayerInWater}}.
+*** {{nbt|compound|result}}: Defines the recipe result.
+**** {{nbt|string|item}}: Used to define an item or block that you will receive when crafting the recipe.
+**** {{nbt|string|data}}: Optional. Integer or Molang expression for dynamic variants.
+**** {{nbt|int|count}}: Optional. Number of items manufactured example {{code|3}}.
+*** {{nbt|int|priority}}: Optional, used to give priority if the same recipe exists in duplicate.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+    "identifier": "minecraft:cake"
+    },
+
+    
+    "tags": [ "crafting_table" ],
+    "pattern": [
+      "AAA",
+      "BEB",
+      "CCC"
+    ],
+    "key": {
+      "A": {
+        "item": "minecraft:bucket",
+        "data": 1
+      },
+      "B": {
+        "item": "minecraft:sugar"
+      },
+      "C": {
+        "item": "minecraft:wheat"
+      },
+      "E": {
+        "tag": "minecraft:egg"
+      }
+    },
+	"unlock": [
+      {
+        "tag": "minecraft:egg"
+      }
+    ],
+   "result": {
+      "item": "minecraft:cake",
+      "count": 1
+    } // for single result
+
+    "result": [
+      { "item": "minecraft:cake" },
+      { "item": "minecraft:bucket", "count": 3, "data": 0 } // to have multiple results
+    ]
+  }
+}
+</syntaxhighlight>
+
+{{Crafting
+|showname = 0
+|showdescription = 1
+|name =
+|A1= Milk Bucket
+|B1= Milk Bucket
+|C1= Milk Bucket
+|A2= Sugar 
+|B2= Any Egg   
+|C2= Sugar
+|A3= Wheat  
+|B3= Wheat  
+|C3= Wheat
+|Output= Cake
+|description = Illustrative recipe.
+|ignoreusage=1
+}}
+
+=== recipe_shapeless ===
+Represents a shapeless crafting recipe in a [[crafting table]], [[inventory]] and the [[crafter]], and is also used for the [[stonecutter]].
+
+The ingredient list must have at least one and a maximum of nine entries. Unlike a recipe shaped, multiple results are not possible.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|format_version}}: Used to set the version your recipe should work on e.g. {{cd|1.20.10}}.
+** {{nbt|compound|minecraft:recipe_shapeless}}: Used to set the type recipe shapeless.
+*** {{nbt|compound|description}}: Required in any type of recipe, it contains the identifier of a recipe.
+**** {{nbt|string|identifier}}: Required to detect the recipe in-game. The namespace can be omitted, but it is highly recommended to avoid conflicts.
+*** {{nbt|string}}{{nbt|list|tags}}: Defines where the recipe can be used. This can be {{code|crafting_table}} for the crafting table, {{code|stonecutter}} for the [[stonecutter]], or a custom crafting table tag.
+*** {{nbt|string|group}}: Optional used only for information as it has no known use.
+*** {{nbt|list|ingredients}}: All items used for this shapeless crafting recipe.
+**** {{nbt|compound}}:
+***** {{nbt|string|item}}: Used to define an item or block with the id example {{code|minecraft:emerald_block}}.
+***** {{nbt|string|data}}: Optional. Integer or [[Molang]] expression for dynamic variants.
+***** {{nbt|string|tag}}: Used to define an [[Item tag (Bedrock Edition)|item tag]] example {{code|minecraft:planks}} also accepts custom tags.
+*** {{nbt|list|unlock}}: Defines the items that unlock the recipe when purchased.
+**** {{nbt|compound}}:
+**** {{nbt|string|item}}: Used to define an item or block that unlocks the recipe.
+**** {{nbt|string|data}}: Optional. Integer or Molang expression for dynamic variants.
+**** {{nbt|string|tag}}: Used to set an item tag that unlocks the recipe, also accepts custom tags.
+**** {{nbt|string|context}}: Used to unlock recipes with context currently only known values are {{cd|AlwaysUnlocked}} and {{cd|PlayerInWater}}.
+*** {{nbt|compound|result}}: Defines the result of the recipe.
+**** {{nbt|string|item}}: Used to define an item or block that you will receive when crafting the recipe.
+**** {{nbt|string|data}}: Optional. Integer or Molang expression for dynamic variants.
+**** {{nbt|int|count}}: Optional. Number of items produced example {{code|3}}.
+*** {{nbt|int|priority}}: Optional, used to give priority if the same recipe exists in duplicate.
+</div>
+'''Crafting table example json:'''
+<syntaxhighlight lang="c++">
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shapeless": {
+    "description": {
+    "identifier": "minecraft:flint_and_steel"
+    },
+
+    
+    "tags": [ "crafting_table" ],
+    "ingredients": [
+      {
+        "item": "minecraft:iron_ingot"
+      },
+      {
+        "item": "minecraft:flint"
+      }
+    ],
+	"unlock": [
+      {
+        "item": "minecraft:flint"
+	  },
+	  {
+		"item": "minecraft:obsidian"
+      }
+    ],
+    "result": {
+      "item": "minecraft:flint_and_steel"
+    }
+  }
+}
+</syntaxhighlight>
+
+{{Crafting
+|showname = 0
+|showdescription = 1
+|name =
+|Iron Ingot
+|Flint
+|Output= Flint and Steel
+|description = Illustrative recipe.
+|ignoreusage=1
+}}
+
+'''Stonecutter Example Json:'''
+<syntaxhighlight lang="c++">
+{
+    "format_version": "1.20.10",
+    "minecraft:recipe_shapeless": {
+        "description": {
+            "identifier": "minecraft:polished_deepslate_stairs_from_cobbled_deepslate_stonecutting"
+        },
+      "tags": ["stonecutter"],
+        "ingredients": [
+            {
+                "data": 0,
+                "item": "minecraft:cobbled_deepslate"
+            }
+        ],
+        "unlock": [
+          {
+            "item": "minecraft:cobbled_deepslate"
+          }
+        ],
+        "result": {
+            "count": 1,
+            "data": 0,
+            "item": "minecraft:polished_deepslate_stairs"
+        },
+      "priority": 0
+    }
+}
+</syntaxhighlight>
+
+{{stonecutting
+|showname=0
+|showdescription=1
+| Cobbled Deepslate
+| Polished Deepslate Stairs
+|description = Illustrative recipe.
+|ignoreusage=1
+}}
+
+=== recipe_furnace ===
+Represents a [[smelting]] recipe in a [[furnace]], [[blast furnace]], [[smoker]], [[campfire]] and the [[soul campfire]].
+
+It is not possible to set the amount of [[experience]] you will receive when smelting the item.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|format_version}}: Used to set the version your recipe should work on e.g. {{cd|1.20.10}}.
+** {{nbt|compound|minecraft:recipe_furnace}}: Used to set the type of smelting recipe.
+*** {{nbt|compound|description}}: Required in any type of recipe, it contains the identifier of a recipe.
+**** {{nbt|string|identifier}}: Required to detect the recipe in-game. The namespace can be omitted, but it is highly recommended to avoid conflicts.
+*** {{nbt|string}}{{nbt|list|tags}}: Defines where the recipe can be used. It can be {{code|furnace}} for the standard furnace, {{code|blast_furnace}} for the blast furnace, {{code|smoker}} for the smoker, {{code|campfire}} for the campfire and {{code|soul_campfire}} for the soul campfire. Unlike it does not support custom tags.
+*** {{nbt|string|group}}: Optional used only for information as it has no known use.
+*** {{nbt|compound|input}}: All items used for this smelting recipe.
+**** {{nbt|string|item}}: Used to define an item or block with the id example {{code|minecraft:diamond_chestplate}}.
+**** {{nbt|string|data}}: Optional. Integer or [[Molang]] expression for dynamic variants.
+**** {{nbt|string|tag}}: Used to define an [[Item tag (Bedrock Edition)|item tag]] example {{code|minecraft:planks}} also accepts custom tags.
+*** {{nbt|list|unlock}}: Defines the items that unlock the recipe, but without use as there is no recipe book for smelting blocks.
+**** {{nbt|compound}}:
+**** {{nbt|string|item}}: Used to define an item or block that unlocks the recipe.
+**** {{nbt|string|data}}: Optional. Integer or Molang expression for dynamic variants.
+**** {{nbt|string|tag}}: Used to set an item tag that unlocks the recipe, also accepts custom tags.
+**** {{nbt|string|context}}: Used to unlock recipes with context currently only known values are {{cd|AlwaysUnlocked}} and {{cd|PlayerInWater}}.
+*** {{nbt|compound|output}}: Defines the result of the recipe.
+**** {{nbt|string|item}}: Used to define an item or block that you will receive when crafting the recipe.
+**** {{nbt|string|data}}: Optional. Integer or Molang expression for dynamic variants.
+**** {{nbt|int|count}}: Optional. Number of items manufactured example {{code|3}}.
+*** {{nbt|int|priority}}: Optional, used to give priority if the same recipe exists in duplicate.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_furnace": {
+    "description": {
+    "identifier": "minecraft:furnace_log"
+    },
+    "unlock": [
+      {
+        "tag": "minecraft:logs_that_burn"
+      }
+    ],
+    "tags": ["furnace"],
+    "input": {
+      "tag": "minecraft:logs_that_burn"
+    },
+    "output": {
+      "item": "minecraft:charcoal",
+      "count": 1
+     },
+    "priority": -1
+  }
+}
+</syntaxhighlight>
+
+{{Smelting
+|showname=0
+|showdescription=1
+|{Any Log}; {Any Stripped Log}
+|Charcoal
+|description = Illustrative recipe.
+|ignoreusage=1
+}}
+
+=== recipe_smithing_trim ===
+Represents a [[smithing]] recipe at a [[smithing table]] for adding [[Smithing#Trimming|trims]].
+
+It is not possible to create a custom one this is for documentation purposes only.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|format_version}}: Used to set the version your recipe should work on e.g. {{cd|1.20.10}}.
+** {{nbt|compound|minecraft:recipe_smithing_trim}}: Used to set the type of smithing recipe.
+*** {{nbt|compound|description}}: Required in any type of recipe, it contains the identifier of a recipe.
+**** {{nbt|string|identifier}}: Required to detect the recipe in-game. The namespace can be omitted, but it is highly recommended to avoid conflicts.
+*** {{nbt|string}}{{nbt|list|tags}}: Defines where the recipe can be used. It can be {{code|smithing_table}} it does not support custom tags.
+*** {{nbt|compound|template}}: Used to define a [[Smithing#Template|template]].
+**** {{nbt|string|tag}}: Used to set an [[Item tag (Bedrock Edition)|item tag]] using {{code|minecraft:trim_templates}} but has no effect on custom items with that tag.
+*** {{nbt|compound|base}}: Defines the base items that will be used.
+**** {{nbt|string|tag}}: Used to set an item tag for the recipe being used {{code|minecraft:trimmable_armors}} Using this tag on a custom item allows the custom armor to be trimmed.
+*** {{nbt|compound|addition}}: Used to define a [[Smithing#Material|material]].
+**** {{nbt|string|tag}}: Used to set an item tag for the recipe being used {{code|minecraft:trim_materials}} using this tag on a custom item has no effect.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_smithing_trim": {
+    "description": {
+      "identifier": "minecraft:smithing_armor_trim"
+    },
+    "tags": [ "smithing_table" ],
+    "template": {
+      "tag": "minecraft:trim_templates"
+    },
+    "base": {
+      "tag": "minecraft:trimmable_armors"
+    },
+    "addition": {
+      "tag": "minecraft:trim_materials"
+    }
+  }
+}
+</syntaxhighlight>
+
+{{Smithing
+|head=1
+|ingredients=Any [[Armor Trim]] +<br>Any [[Armor]] Piece +<br>Any [[Smithing#Material|Material]]
+|Any Armor Trim Smithing Template
+|Netherite Helmet; Iron Chestplate; Golden Leggings; Diamond Boots; Copper Boots; Chainmail Chestplate; Leather Pants; Turtle Shell; Netherite Helmet; Iron Chestplate; Golden Leggings; Copper Boots; Diamond Boots; Chainmail Chestplate; Leather Pants; Turtle Shell; Netherite Helmet
+|Amethyst Shard; Copper Ingot; Diamond; Emerald; Resin Brick; Gold Ingot; Iron Ingot; Lapis Lazuli; Nether Quartz; Netherite Ingot; Redstone Dust; Gold Ingot; Diamond; Emerald; Lapis Lazuli; Redstone Dust; Resin Brick
+|Amethyst Trim Netherite Helmet; Copper Trim Iron Chestplate; Diamond Trim Golden Leggings; Emerald Trim Diamond Boots; Resin Trim Copper Boots; Gold Trim Chainmail Chestplate; Iron Trim Leather Pants; Lapis Trim Turtle Shell; Quartz Trim Netherite Helmet; Netherite Trim Iron Chestplate; Redstone Trim Golden Leggings; Gold Trim Copper Boots; Diamond Trim Diamond Boots; Emerald Trim Chainmail Chestplate; Lapis Trim Leather Pants; Redstone Trim Turtle Shell; Resin Trim Netherite Helmet
+|showdescription=1
+|description = Illustrative recipe.
+|tail=1
+}}
+
+=== recipe_smithing_transform ===
+Represents a [[smithing]] recipe at a [[smithing table]] to perform a [[Smithing#Upgrading|upgrading]].
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|format_version}}: Used to set the version your recipe should work on e.g. {{cd|1.20.10}}.
+** {{nbt|compound|minecraft:recipe_smithing_transform}}: Used to set the type of smithing recipe.
+*** {{nbt|compound|description}}: Required in any type of recipe, it contains the identifier of a recipe.
+**** {{nbt|string|identifier}}: Required to detect the recipe in-game. The namespace can be omitted, but it is highly recommended to avoid conflicts.
+*** {{nbt|string}}{{nbt|list|tags}}: Defines where the recipe can be used. It can be {{code|smithing_table}} it does not support custom tags.
+*** {{nbt|string|template}}: Used to define a [[netherite upgrade]] accepting custom items if they have the [[Item tag (Bedrock Edition)|item tag]] {{code|minecraft:transform_templates}}.
+*** {{nbt|string|base}}: Defines the base items that will be used, the custom item needs to have the item tag {{code|minecraft:transformable_items}}.
+*** {{nbt|string|addition}}: Used to define a base material, custom items with the {{code|minecraft:transform_materials}} tag can be placed, however it does not work. The only truly valid item is the [[netherite ingot]] with the id {{code|minecraft:netherite_ingot}}.
+*** {{nbt|string|result}}: Used to set an item as a recipe result.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_smithing_transform": {
+    "description": {
+      "identifier": "minecraft:smithing_netherite_chestplate"
+    },
+    "tags": [ "smithing_table" ],
+    "template": "minecraft:netherite_upgrade_smithing_template",
+    "base": "minecraft:diamond_chestplate",
+    "addition": "minecraft:netherite_ingot",
+    "result": "minecraft:netherite_chestplate"
+  }
+}
+</syntaxhighlight>
+
+{{Smithing
+|head=1
+|Netherite Upgrade
+|Diamond Chestplate
+|Netherite Ingot
+|Netherite Chestplate
+|showdescription=1
+|description = Illustrative recipe.
+|tail=1
+}}
+
+=== recipe_brewing_mix ===
+Represents a [[brewing]] recipe on a [[brewing stand]].
+
+Vanilla potions use this system {{code|minecraft:potion_type:<potion_effect>}} can be added {{cd|long_}} or {{cd|strong_}} for other types like {{cd|minecraft:potion_type:strong_poison}} also accepted is {{cd|minecraft:potion}}, {{cd|minecraft:splash_potion}} and {{cd|minecraft:lingering_potion}}.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|format_version}}: Used to set the version your recipe should work on e.g. {{cd|1.20.10}}.
+** {{nbt|compound|minecraft:recipe_brewing_mix}}: Used to set the fermentation recipe type.
+*** {{nbt|compound|description}}: Required in any type of recipe, it contains the identifier of a recipe.
+**** {{nbt|string|identifier}}: Required to detect the recipe in-game. The namespace can be omitted, but it is highly recommended to avoid conflicts.
+*** {{nbt|string}}{{nbt|list|tags}}: Defines where the recipe can be used. {{code|brewing_stand}} does not support custom tags.
+*** {{nbt|string|input}}: Item used for this brew recipe, supports custom items and vanilla items in the format mentioned above.
+*** {{nbt|string|reagent}}: Used to define an item or block that is used as an ingredient also supports custom items.
+*** {{nbt|string|output}}: Recipe result item, supports custom items and vanilla items in the format mentioned above.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_brewing_mix": {
+    "description": {
+      "identifier": "minecraft:brew_awkward_poison"
+    },
+    "tags": [ "brewing_stand" ],
+
+    "input": "minecraft:potion_type:awkward",
+    "reagent": "minecraft:spider_eye",
+    "output": "minecraft:potion_type:poison"
+  }
+}
+</syntaxhighlight>
+{{Brewing
+|head = 1
+|Spider Eye
+|base = Awkward Potion
+|Potion of Poison
+|showvariants=1
+|showdescription=1
+|description = Illustrative recipe.
+|foot=1
+}}
+
+=== recipe_brewing_container ===
+Represents a [[brewing]] recipe focused on changing one type into another in a [[brewing stand]].
+
+Vanilla potions use this system {{code|minecraft:potion_type:<potion_effect>}} can be added {{cd|long_}} or {{cd|strong_}} for other types like {{cd|minecraft:potion_type:strong_poison}} also accepted is {{cd|minecraft:potion}}, {{cd|minecraft:splash_potion}} and {{cd|minecraft:lingering_potion}}.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|format_version}}: Used to set the version your recipe should work on e.g. {{cd|1.20.10}}.
+** {{nbt|compound|minecraft:recipe_brewing_container}}: Used to set the fermentation recipe type.
+*** {{nbt|compound|description}}: Required in any type of recipe, it contains the identifier of a recipe.
+**** {{nbt|string|identifier}}: Required to detect the recipe in-game. The namespace can be omitted, but it is highly recommended to avoid conflicts.
+*** {{nbt|string}}{{nbt|list|tags}}: Defines where the recipe can be used. {{code|brewing_stand}} does not support custom tags.
+*** {{nbt|string|input}}: Item used for this brewing recipe, unlike the mix only supports vanilla potions items in the format mentioned above.
+*** {{nbt|string|reagent}}: Used to define an item or block that is used as an ingredient also supports custom items.
+*** {{nbt|string|output}}: Recipe result item, supports custom items and vanilla items in the format mentioned above. 
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+  "format_version": "1.20.10",
+"minecraft:recipe_brewing_container": {
+    "description": {
+      "identifier": "minecraft:brew_potion_sulphur"
+    },
+    "tags": [ "brewing_stand" ],
+
+    "input": "minecraft:potion",
+    "reagent": "minecraft:gunpowder",
+    "output": "minecraft:splash_potion"
+  }
+}
+</syntaxhighlight>
+{{Brewing
+|head=1
+  |Gunpowder
+  |Matching Splash Potion
+  |base= Matching Potion
+  |ingredients=[[Gunpowder]] + <br>Any [[Potion]]
+|showdescription=1
+|description = Illustrative recipe.
+|foot=1
+}}
+
+=== recipe_material_reduction ===
+{{education feature}}
+Represents a [[Minecraft Education]] recipe in a [[material reducer]].
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|format_version}}: Used to set the version your recipe should work on e.g. {{cd|1.20.10}}.
+** {{nbt|compound|minecraft:recipe_material_reduction}}: Used to set the recipe type of the material reducer.
+*** {{nbt|compound|description}}: Required in any type of recipe, it contains the identifier of a recipe.
+**** {{nbt|string|identifier}}: Required to detect the recipe in-game. The namespace can be omitted, but it is highly recommended to avoid conflicts.
+*** {{nbt|string|tags}}: Defines where the recipe can be used. {{code|material_reducer}} does not support custom tags.
+*** {{nbt|string|input}}: Item used for this recipe.
+*** {{nbt|list|output}}: Defines the result of the recipe.
+**** {{nbt|compound}}:
+***** {{nbt|int|count}}: Optional. Number of items as result example {{code|3}}.
+***** {{nbt|string|item}}: Used to define an item or block that you will receive when crafting the recipe.
+</div>
+'''Usage example json:'''
+<syntaxhighlight lang="c++">
+{
+   "format_version" : "1.14",
+   "minecraft:recipe_material_reduction" : {
+      "description" : {
+         "identifier" : "minecraft:cobblestone_wall:4"
+      },
+      "input" : "minecraft:andesite_wall",
+      "output" : [
+         {
+            "count" : 33,
+            "item" : "minecraft:element_14"
+         },
+         {
+            "count" : 64,
+            "item" : "minecraft:element_8"
+         },
+         {
+            "count" : 3,
+            "item" : "minecraft:element_8"
+         }
+      ],
+      "tags" : "material_reducer"
+   }
+}
+</syntaxhighlight>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.12|dev=17w13a|Introduced the recipe system for most crafting recipes.}}
+|{{HistoryLine|||dev=17w16a|Added 'group' key to the recipe json format.}}
+|{{HistoryLine||1.13|dev=17w47a|Removed 'data' key from the recipe json format.}}
+|{{HistoryLine|||dev=17w48a|Custom recipes can now be added to data packs.
+|Added {{tooltip|these 13 recipe types|crafting_special_armordye, crafting_special_banneraddpattern, crafting_special_bannerduplicate, crafting_special_bookcloning, crafting_special_firework_rocket, crafting_special_firework_star, crafting_special_firework_star_fade, crafting_special_mapcloning, crafting_special_mapextending, crafting_special_repairitem, crafting_special_shielddecoration, crafting_special_shulkerboxcoloring, crafting_special_tippedarrow}}.
+|Converted various special crafting recipes to the recipe system using the special recipe types.}}
+|{{HistoryLine|||dev=17w49a|Added 'tag' key to the recipe json format.}}
+|{{HistoryLine|||dev=18w06a|Smelting recipes now use the recipe system.
+|Added <code>smelting</code> to <code>type</code>.
+|Added a string <code>result</code>.
+|Added <code>experience</code>.
+|Added <code>cookingtime</code>.}}
+|{{HistoryLine||1.14|dev=18w43a|Added a recipe type <code>crafting_special_suspiciousstew</code>.}}
+|{{HistoryLine|||dev=18w48a
+|Removed {{tooltip|these 2 recipe types|crafting_special_banneraddpattern, crafting_special_repairitem}}.}}
+|{{HistoryLine|||dev=18w50a
+|Added recipe types <code>blasting</code> and <code>smoking</code>.}}
+|{{HistoryLine|||dev=19w02a
+|Added a recipe type <code>campfire_cooking</code>.}}
+|{{HistoryLine|||dev=19w04a
+|Added a recipe type <code>stonecutting</code>.}}
+|{{HistoryLine||1.14.3|dev=pre3
+|Re-added the recipe type <code>crafting_special_repairitem</code>.}}
+|{{HistoryLine||1.16|dev=pre1
+|Added the recipe type <code>smithing</code>.}}
+|{{HistoryLine||1.18.1|dev=?
+|Result count is mandatory in this version.}}
+|{{HistoryLine||1.19.3|dev=22w42a|Recipe book categories are now defined for each recipe individually in the default datapack.}}
+|{{HistoryLine||1.19.4|exp=Update 1.20|dev=23w04a|Removed the recipe serializer <code>smithing</code> and replaced it with <code>smithing_transform</code>, and  <code>smithing_trim</code>.}}
+|{{HistoryLine|||dev=23w07a|Added a new recipe serializer <code>crafting_decorated_pot</code> for the new [[decorated pot]] recipe.|Added <code>show_notification</code> field to recipes.}}
+|{{HistoryLine||1.20|dev=Pre-release 2|{{cd|"item": "minecraft:air"}} can now be used to denote an ingredient that matches an empty slot.}}
+|{{HistoryLine|||dev=Pre-release 6|{{cd|"item": "minecraft:air"}} can no longer be used in data pack recipes.|Ingredients in array form are now also allowed in {{cd|d=and|smithing_trim|smithing_transform}} recipes on fields template, base and addition.}}
+|{{HistoryLine||1.20.5|dev=24w10a|Can now specify item component.}}
+|{{HistoryLine||1.21.2|dev=24w33a|The <code>crafting_special_suspiciousstew</code> recipe type has been removed.|The format used for recipe ingredients has been simplified and aligned with other fields that accept item lists (like item predicates).}}
+|{{HistoryLine|||dev=24w38a|The <code>crafting_special_shulkerboxcoloring</code> recipe type has been removed.|Instead it uses the newly added <code>crafting_transmute</code>, which can copy the input item stack, changing the item type but preserving all stack components.}}
+|{{HistoryLine||1.21.5|dev=25w02a|The {{cd|crafting_transmute}} result field now supports specifying a count and a components patch to apply to the result.}}
+|{{HistoryLine|||dev=25w04a|{{cd|smithing_transform}} recipe type: the {{cd|base}} ingredient field is no longer optional.|{{cd|smithing_trim}} recipe type: the {{cd|base}}, {{cd|template}}, and {{cd|addition ingredient}} fields are no longer optional, added new {{cd|pattern}} field.}}
+|{{HistoryLine|java upcoming}}
+|{{HistoryLine||26.1|dev=snap3|{{cd|result}} field should now be more consistent across all recipe types that contain it.|It will now accept short form.|For recipe types {{cd|smelting}}, {{cd|blasting}}, {{cd|smoking}} and {{cd|campfire_cooking}} this field now also accepts {{cd|count}} field.}}
+
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.12.0|dev=beta 1.12.0.2|Introduced the recipe system for most crafting recipes.}}
+|{{HistoryLine||1.19.40|dev=Preview 1.19.40.22|Added <code>tag</code> key to the recipe JSON format.}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.20|Added <code>unlock</code> field to the recipe JSON format.}}
+}}
+
+== Issues ==
+{{Issue list}}
+
+== External links ==
+* [https://misode.github.io/recipe/ Recipe Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Rezeptdefinition]]
+[[es:Receta]]
+[[fr:Recette]]
+[[ja:レシピ (システム)]]
+[[pt:Receita]]
+[[ru:Рецепт]]
+[[zh:配方]]

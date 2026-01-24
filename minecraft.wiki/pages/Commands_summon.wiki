@@ -1,0 +1,145 @@
+{{Infobox command
+| name = summon
+| oplevel =
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+| others = [[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Summons an [[entity]].
+
+==Syntax==
+
+* '''''Java Edition'''''
+: <code>summon <entity> [<pos>] [<nbt>]</code>
+
+* '''''Bedrock Edition'''''
+: <code>summon <entityType: EntityType> [spawnPos: x y z] [yRot: value] [xRot: value] [spawnEvent: string] [nameTag: string]</code>
+: <code>summon <entityType: EntityType> <nameTag: string> [spawnPos: x y z]</code>
+: <code>summon <entityType: EntityType> [spawnPos: x y z] facing <lookAtEntity: target> [spawnEvent: string] [nameTag: string]</code>
+: <code>summon <entityType: EntityType> [spawnPos: x y z] facing <lookAtPosition: x y z> [spawnEvent: string] [nameTag: string]</code>
+
+==Arguments==
+
+{{argument|entity|resource|entityType: EntityType|enum}}
+: Specifies the entity to be summoned.
+: {{arg desc|je=resource|registry=minecraft:entity_type|be=enum}}
+: {{IN|java}}, player and [[fishing bobber]] entity cannot be summoned. Commands trying to summon them always fail.
+: {{IN|bedrock}}, only certain entity types are allowed to be summoned. Entity types that are allowed to be summoned are listed in the auto-completion suggestion list. Commands trying to summon an entity that cannot be summoned are unparseable.
+
+{{argument|pos|vec3|spawnPos: x y z|CommandPositionFloat}}
+: Specifies the position to summon the entity. If not specified, defaults to the position of the command's execution.
+: {{arg desc|je=vec3|be=CommandPositionFloat}}
+
+{{el|je|short=1}}: {{argument|nbt|nbt_compound_tag}}
+: Specifies the [[Commands#Data tags|data tag]] for the entity, this can include any [[NBT format|NBT]] in [[Entity format#Entity format|Entity format]].
+: {{arg desc|je=nbt_compound_tag}}
+
+{{el|be|short=1}}: {{Argument|be=1|yRot: value|RelativeFloat}} and {{Argument|be=1|xRot: value|RelativeFloat}}
+: Specifies the rotation of the summoned entity.
+: {{arg desc|be=RelativeFloat}}
+
+{{el|be|short=1}}: {{Argument|be=1|lookAtEntity: target|CommandSelector<Actor>}}
+: Specifies the entity to make the summoned entity facing to.
+: {{arg desc|be=CommandSelector<Actor>}}
+
+{{el|be|short=1}}: {{Argument|be=1|lookAtPosition: x y z|CommandPositionFloat}}
+: Specifies the coordinates to make the summoned entity facing to.
+: {{arg desc|be=CommandPositionFloat}}
+
+{{el|be|short=1}}: {{argument|be=1|spawnEvent: string|basic_string}}
+: Specifies the in-game event for the entity. Should be a [[spawn event]] (event name for entities in behavior pack).
+: {{arg desc|be=basic_string}}
+
+{{el|be|short=1}}: {{argument|be=1|nameTag: string|basic_string}}
+: Specifies the name of the entity.
+: {{arg desc|be=basic_string}}
+
+==Result==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code>entityType: EntityType</code> is not an entity type that is allowed to be summoned.|N/A|unparseable}}
+{{Result table|<code><entity></code> is {{code|minecraft:player}} or {{code|minecraft:fishing_bobber}}.|fail|N/A}}
+{{Result table|Specified position is unloaded.||fail}}
+{{Result table|Trying to summon hostiles in peaceful difficulty.|success}}
+{{Result table|Attempting to summon an entity with an identical UUID with an existing entity.|fail|N/A}}
+{{Result table|The <''X''> or <''Z''> arguments exceed the range of [-30000000, 30000000), or the <''Y''> argument exceeds the range of [-20000000, 20000000).||success}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+==Examples==
+
+*To summon lightning 10 blocks west of the current position of the executing player:
+** <code> summon lightning_bolt ~-10 ~ ~</code>
+
+* ''Java Edition'':
+** To summon a [[charged creeper]] at the current position named "Powered Creeper":
+*** <code> summon creeper ~ ~ ~ {powered:true,CustomName:'"Powered Creeper"'}</code>
+*** NOTE: CustomName is a [[raw JSON text]].
+**To summon an unbreakable [[Diamond Pickaxe|diamond pickaxe]]:
+***<code><nowiki> summon item ~ ~ ~ {Item:{id:"minecraft:diamond_pickaxe",count:1,components:{"minecraft:unbreakable":{}}}}</nowiki></code>
+** To summon a [[spider jockey]]:
+***<code>summon spider ~ ~ ~ {Passengers:[{id:"minecraft:skeleton",HandItems:[{id:"minecraft:bow",count:1}]}]}</code>
+** To summon an [[evoker]] rotated -90° to face east without AI:
+*** <code>summon evoker ~ ~ ~ {Rotation:[-90f,0f],NoAI:1}</code>
+** To summon a [[villager]] that trades 1 dirt block in exchange for 5 diamonds:
+***<code><nowiki>summon villager ~ ~ ~ {Offers:{Recipes:[{buy:{id:"minecraft:dirt",count:1},sell:{id:"minecraft:diamond",count:5},rewardExp:false}]}}</nowiki></code>
+** To summon a baby [[zombie]] that has the Speed II [[mob effect]] with infinite duration:
+***<code>summon zombie ~ ~ ~ {IsBaby:true,active_effects:[{id:"minecraft:speed",amplifier:1b,duration:-1,show_particles:true}]}</code>
+** To summon a glowing [[Primed TNT]] 5 blocks forward, that will explode in 30 seconds but will not deal any damage to blocks or entities:
+***<code>summon tnt ^ ^ ^5 {Glowing:true,fuse:600s,explosion_power:0.0f}</code>
+* ''Bedrock Edition'':
+** To summon a [[patrol]] captain pillager at the current position:
+*** <code>summon pillager ~ ~ ~ ~ ~ minecraft:promote_to_patrol_captain</code>
+** To summon a [[dolphin]] with the name "Dolphin" in a golden color:
+*** <code>summon dolphin §6Dolphin ~ ~ ~</code>
+** To summon a [[boat]] rotated 180 degrees:
+*** <code>summon boat ~ ~ ~ 180 180</code>
+
+==History==
+{{Expand section}}
+===''Java Edition''===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.7.2|dev=13w36a|Added {{cmd|summon|link=none}}.}}
+|{{HistoryLine||1.8|dev=14w30a|{{cmd|summon|link=none}} can now spawn [[lightning]].}}
+|{{HistoryLine||1.16|dev=20w06a|{{cmd|summon|link=none}} now cannot summon an entity with a position where <x> or <z> exceeds the range of [-30000000, 30000000), or <y> exceeds the range of [-20000000, 20000000)}}
+|{{HistoryLine|||dev=20w11a|{{cmd|summon|link=none}} now gives permission to summon [[Fireball]].}}
+|{{HistoryLine||1.19.3|dev=22w42a|{{cd|<entity>}} now accepts a [[argument types|<code>resource</code> argument]], instead of <code>entity_summon</code>.}}
+|{{HistoryLine||1.21.9|dev=25w31a|The command now fails when trying to summon monsters while the difficulty is set to Peaceful.}}}}
+===''Bedrock Edition''===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|summon|link=none}}.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.19.40|dev=Preview 1.19.40.21|Added new overload to the {{cmd|summon|link=none}} command that adds rotation arguments.}}
+|{{HistoryLine|||dev=Preview 1.19.40.23|Temporarily disabled the rotation for the {{cmd|summon|link=none}} command while a bug is worked on.}}
+|{{HistoryLine||1.19.70|dev=Preview 1.19.70.23|Re-added the rotation arguments.}}
+|{{HistoryLine||1.19.80|dev=Preview 1.19.80.20|Added <code>facing</code> argument.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/summon?view=minecraft-bedrock-stable|title=<code>/summon</code> Command|website=Microsoft Learn|date=August 1, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/summon]]
+[[es:Comandos/summon]]
+[[fr:Commandes/summon]]
+[[ja:コマンド/summon]]
+[[uk:Команди_консолі/summon]]
+[[pt:Comandos/summon]]
+[[ru:Команды консоли/summon]]
+[[zh:命令/summon]]

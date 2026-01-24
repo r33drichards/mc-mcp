@@ -1,0 +1,292 @@
+{{Infobox version
+| image = Bedrock Edition 26.0.27.jpg
+| image2 = Bedrock 26.0.27.png
+| edition = bedrock
+| editorver = 1.2.3
+| type = Preview
+| build = '''Windows''': 40092415<br>'''Xbox Series X''': 40092419<br>'''Android''':<br>40092416 (armeabi-v7a)<br>40092421 (arm64-v8a)<br>'''iOS''': 40092420
+| internal = '''Windows, Xbox''': 1.26.27.0<br>'''Android''': 1.26.0.27
+| versioncode = '''Android''':<br />
+952600027 (armeabi-v7a, 35)<br />
+962600027 (x86, 35)<br />
+972600027 (arm64-v8a, 35)<br />
+982600027 (x86_64, 35)
+| date = January 7, 2026
+| server = 1.26.0.27
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.26.0.27.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.26.0.27.zip Linux]
+| parent = 26.0
+| prevparent = 1.21.132
+| prev = Preview 26.0.26
+| next = Preview 26.0.28
+| nextparent = 
+}}
+<onlyinclude>
+
+'''Beta 26.0.27''' (ChromeOS, Android) or '''Preview 26.0.27''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fourth ''Preview'' and third beta version for [[Bedrock Edition 26.0]], released on January 7, 2026.<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/42482730418445-Minecraft-Beta-Preview-26-0-27|title=Minecraft Beta & Preview - 26.0.27|website=Minecraft Feedback|date=January 7, 2026}}</ref> It adds features for the [[First Drop 2026|first drop of 2026]] behind an [[experiment]], including retextured and remodeled [[baby mobs]], retextured and remodeled [[rabbit]]s, craftable [[name tag]]s, and more. This is the first beta/''Preview'' released in 2026.
+
+== Changes ==
+=== Mobs ===
+{{animate|Camel Husk.png;Skeleton Horse.png;Zombie Horse BE3.png|32px}} '''[[Camel Husk]]''', '''[[Skeleton Horse]]''', and '''[[Zombie Horse]]'''
+* No longer damaged by a [[conduit]].
+* No longer prevent players from sleeping when nearby.
+
+{{animate|Drowned BE2.png;Plains Zombie Villager Base JE1 BE1.png;Zombified Piglin BE6.png|32px}} '''[[Drowned]]''', '''[[Zombie Villager]]''', and '''[[Zombified Piglin]]'''
+* 15% of naturally-spawned babies now have the ability to [[ride]] most nearby mobs.
+
+[[File:Nautilus.png|32px]] '''[[Nautilus]]'''
+* Now has an underwater saddle equip sound.
+* Changed swimming animation.
+
+[[File:Polar Bear.png|32px]] '''[[Polar Bear]]'''
+* Baby polar bears no longer attack [[fox]]es.
+
+[[File:Zombie Nautilus.png|32px]] '''[[Zombie Nautilus]]'''
+* No longer damaged by a [[conduit]].
+* No longer prevent players from sleeping when nearby.
+* Now has an underwater saddle equip sound.
+* Changed swimming animation.
+
+=== Items ===
+'''[[Spawn Egg]]'''
+* Now always spawn baby mobs when {{control|using}} on the same mob {{in|be}}, to match ''Java Edition''.
+
+=== Graphical ===
+* Dithering:
+** Added dithering to items held by players and mobs if dithering is enabled.
+** Added dithering to skulls, heads, chests, shulker boxes, banners, conduits, decorated pots, and copper golem statues held by players and mobs if dithering is enabled.
+** Added cobweb block to the list of ditherable blocks.
+* Data-driving:
+** Added the ability to specify ambient light colors and illuminances, and sky light light intensity according to the time of day in the Vibrant Visuals lighting configuration files.
+
+=== Technical ===
+'''AI Goals'''
+* Made the schema for for the following goals stricter when parsing, they will now fail to load an entity json that has invalid data in versions 1.26.0 and newer:
+** {{cd|minecraft:behavior.delayed_attack}}
+** {{cd|minecraft:behavior.dragonstrafeplayer}}
+** {{cd|minecraft:behavior.dragonchargeplayer}}
+** {{cd|minecraft:behavior.melee_attack}}
+** {{cd|minecraft:behavior.melee_box_attack}}
+** {{cd|minecraft:behavior.stomp_attack}}
+* Float Range field {{cd|target_zone}} in {{cd|minecraft:behavior.dragonchargeplayer}} and {{cd|minecraft:behavior.dragonstrafeplayer}} now only accepts an object with min and max values. Other formats will fail to parse.
+* Added new fields to {{cd|minecraft:jump.dynamic}}:
+** {{cd|regular_skip_data}}: Used during normal skip movement.
+*** {{cd|distance_scale}}: The multiplier applied to horizontal velocity when jumping.
+*** {{cd|height}}: The force applied vertically when jumping.
+*** {{cd|jump delay}}: Amount of ticks between sequential jumps.
+*** {{cd|animation_duration}}: Duration of the jump animation.
+** {{cd|fast_skip_data}}: Used when travelling quickly with skip movement.
+*** {{cd|distance_scale}}: The multiplier applied to horizontal velocity when jumping.
+*** {{cd|height}}: The force applied vertically when jumping.
+*** {{cd|jump delay}}: Amount of ticks between sequential jumps.
+*** {{cd|animation_duration}}: Duration of the jump animation.
+
+'''[[Block components|Block Components]]'''
+* Added block permutation component validation for geometry and material instance components. If one is added, the other one will need to added.
+** Raises a warning for blocks with a format_version from before 1.26.0.
+** Raises an error for blocks with a format_version of 1.26.0 and after.
+* The Block Trait {{cd|minecraft:connection}} can now be used without the Upcoming Creator Features toggle.
+* {{cd|minecraft:corner_and_cardinal_direction}} in {{cd|minecraft:placement_direction}} can now be used without the Beta APIs toggle.
+* Updated documentation for the {{cd|use_liquid_clipping}} field in {{cd|minecraft:liquid_detection}} to better explain its use.
+* Updated the {{cd|minecraft:geometry}} block component:
+** Changed {{cd|minecraft:geometry.full_block}} so DOWN face is rotated 180 degrees, this brings it in parity with non data driven full blocks and Java full blocks.
+** The old geometry can still used by explicitly using the identifier {{cd|minecraft:geometry.full_block_v1}}.
+** Any existing blocks using {{cd|minecraft:geometry.full_block}} that have a {{cd|format_version}} less than 1.26.0 will look the same and internally be considered as {{cd|minecraft:geometry.full_block_v1}}.
+* Released {{cd|minecraft:collision_box}} improvements from experimental and removed requirement of format version 1.21.130 or higher for those improvements.
+** Can now have an array of collision boxes.
+** Max height has been increased from 16 to 24.
+* Game no longer crashes on initializing {{cd|minecraft:collision_box}} component when the server sends invalid packets.
+
+'''[[Camera]]'''
+* Provided the script API for supporting entity type families in the aim assist.
+
+'''Components'''
+* Updated {{cd|minecraft.behaviour.look_at_X}} behavior components:
+** Made schemas stricter when parsing and will fail to load an entity json that has invalid data in versions 1.26.0 and newer:
+*** {{cd|min_look_time}} and {{cd|max_look_time}} - deprecated and has been replaced properly with {{cd|look_time}}.
+**** Uses of {{cd|min_look_time}} and {{cd|max_look_time}} will get upgraded automatically.
+**** {{cd|look_time}} - takes {{cd|min}} and {{cd|max}} as a range.
+** These changes affect the following behavior components:
+*** {{cd|minecraft.behaviour.look_at_entity}}
+*** {{cd|minecraft.behaviour.look_at_player}}
+*** {{cd|minecraft.behaviour.look_at_target}}
+*** {{cd|minecraft.behaviour.look_at_trading_player}}
+** Previous usage of the following definitions will not be automatically upgraded to preserve old behavior:
+*** {{cd|look_time}} - this was not correctly parsed prior to version 1.26.0, and always resulted in default values being assigned to {{cd|min_look_time}} and {{cd|max_look_time}}.
+*** {{cd|target_distance}} - was used in some definitions and it was never passed to the component.
+**** This would just silently fail and assign default values to the component.
+
+'''Entity'''
+* All projectiles now deflect {{cd|reflect_on_hurt:true}} projectiles on hit.
+** This is in addition to damage causing these projectiles to be deflected.
+
+'''Entity Components'''
+* Split the {{cd|minecraft:breedable}} component into two:
+** {{cd|minecraft:offspring_data}} which defines how an offspring of an entity is born, it contains the following fields moved from {{cd|minecraft:breedable}}:
+*** {{cd|blend_attributes}}
+*** {{cd|inherit_tamed}}
+*** {{cd|mutation_factor}}
+*** {{cd|mutation_strategy}}
+*** {{cd|random_variant_mutation_interval}}
+*** {{cd|random_extra_variant_mutation_interval}}
+*** {{cd|deny_parents_variant}}
+*** {{cd|breeds_with}}
+*** {{cd|combine_parent_colors}}
+*** {{cd|property_inheritance}}
+*** {{cd|parent_centric_attribute_blending}}
+** {{cd|minecraft:breedable}} now only contains data about how an entity uses breeding behavior.
+*** The way it spawns the child entity is via the {{cd|minecraft:offspring_data}} component.
+
+'''General'''
+* Now possible to reuse keybinding for normal actions, macros, and chords.
+
+'''Network Protocol'''
+* {{cd|ActorType}} modified: added {{cd|ActorType::Undead}}.
+* {{cd|ActorType}} modified: renamed {{cd|ActorType::UndeadMob}} to {{cd|ActorType::UndeadMonster}}.
+* {{cd|ActorCategory}} modified: renamed {{cd|ActorCategory::UndeadMob}} to {{cd|ActorCategory::UndeadMonster}}.
+* Added new Level Sound Event {{cd|saddle_in_water}}.
+** {{cd|Levelsoundevent}} modified: added unique sound events for every spear type.
+
+'''[[Tag (Bedrock Edition)|Tags]]'''
+* Added new [[Biome tag (Bedrock Edition)|biome tags]].
+** {{cd|slime}} tag allows slime to spawn higher than usual.
+** {{cd|swamp_water_huge_mushroom}} tag allows huge mushrooms to spawn in shallow swamp water.
+** {{cd|fast_fishing}} tag increases fishing speed.
+** {{cd|high_seas}} tag alters salmon behavior.
+** {{cd|surface_mineshaft}} tag changes surface mineshaft blocks to dark oak.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Upcoming Creator Features", "Render Dragon Features for Creators", and the new "Drop 1 of 2026" [[experimental]] toggles.
+=== Changes ===
+==== Items ====
+'''[[File:Name Tag JE2 BE2.png|32px]] [[Name Tag]]'''
+* Are now craftable.
+{{Crafting
+|A2=Paper
+|B1=Any Nugget
+|Output=Name Tag
+|type=Utility
+|ignoreusage=1
+}}
+
+==== Mobs ====
+'''[[Baby mobs|Baby Mobs]]'''
+* Added new sounds for baby variety of wolves, cats, and pigs.
+* Updated the models and textures of the following baby mobs:
+** {{Animate|Baby Tuxedo Cat JE2 BE2.png;Baby Red Cat JE2 BE2.png;Baby Siamese Cat JE2 BE2.png;Baby Tabby Cat JE2 BE2.png;Baby British Shorthair Cat JE2 BE2.png;Baby Calico Cat JE2 BE2.png;Baby Persian Cat JE2 BE2.png;Baby Ragdoll Cat JE2 BE2.png;Baby White Cat JE2 BE2.png;Baby Black Cat JE2 BE2.png;Baby Jellie Cat JE2 BE2.png|32px}} [[Cat]]
+** {{Animate|Baby Chicken JE3 BE3.png;Baby Cold Chicken JE2 BE2.png;Baby Warm Chicken JE2 BE2.png|32px}} [[Chicken]]
+** {{Animate|Baby Cow Temperate BE3 JE3.png;Baby Cow Cold BE3 JE3.png;Baby Cow Warm BE3 JE3.png|32px}} [[Cow]]
+** {{Animate|Baby Mooshroom BE3 JE3.png;Baby Mooshroom Brown BE3 JE3.png|32px}} [[Mooshroom]]
+** [[File:Baby Ocelot JE3 BE3.png|32px]] [[Ocelot]]
+** {{Animate|Baby Pig JE3 BE3.png;Baby Cold Pig JE2 BE2.png;Baby Warm Pig JE3 BE2.png|32px}} [[Pig]]
+** {{Animate|Baby Brown Rabbit JE3 BE3.png;Baby White Rabbit JE3 BE3.png;Baby Black Rabbit JE3 BE3.png;Baby Gold Rabbit JE3 BE3.png;Baby Salt Rabbit JE3 BE3.png;Baby White Splotched Rabbit JE4 BE3.png;Baby Toast Rabbit JE3 BE3.png|32px}} [[Rabbit]]
+** {{Animate|Baby White Sheep JE4 BE7.png;Baby Light Gray Sheep JE6 BE6.png;Baby Gray Sheep JE6 BE6.png;Baby Black Sheep JE6 BE6.png;Baby Brown Sheep JE6 BE6.png;Baby Red Sheep JE6 BE6.png
+;Baby Orange Sheep JE6 BE6.png;Baby Yellow Sheep JE6 BE6.png;Baby Lime Sheep JE6 BE6.png;Baby Green Sheep JE6 BE6.png;Baby Cyan Sheep JE6 BE6.png;Baby Light Blue Sheep JE6 BE6.png;Baby Blue Sheep JE6 BE6.png;Baby Purple Sheep JE6 BE6.png;Baby Magenta Sheep JE6 BE6.png;Baby Pink Sheep JE6 BE6.png|32px}} [[Sheep]]
+** {{Animate|Baby Wolf JE3 BE3.png;Ashen Baby Wolf JE2.png;Black Baby Wolf JE2.png;Chestnut Baby Wolf JE2.png;Rusty Baby Wolf JE3.png;Snowy Baby Wolf JE2.png;Spotted Baby Wolf JE2.png;Striped Baby Wolf JE2.png;Woods Baby Wolf JE2.png|32px}} [[Wolf]]
+* Armor on baby wolves and saddles on baby pigs will no longer render.
+
+{{Animate|Brown Rabbit JE3 BE3.png;White Rabbit JE3 BE3.png;Black Rabbit JE3 BE3.png;Gold Rabbit JE3 BE3.png;Salt Rabbit JE3 BE3.png;White Splotched Rabbit JE4 BE3.png;Toast Rabbit JE3 BE3.png|32px}} '''[[Rabbit]]'''
+* Their models, animations, and textures have been updated.
+* {{Animate|Brown rabbit head tilt.gif;White rabbit head tilt.gif;Black rabbit head tilt.gif;Gold rabbit head tilt.gif;Salt rabbit head tilt.gif;White splotched rabbit head tilt.gif;Toast rabbit head tilt.gif|60px}} Now has an idle animation.
+
+==== Technical ====
+'''[[API]]'''
+* Added {{cd|attachedTo}} property to {{cd|DebugShape}} which specifies an entity that this shape should be positionally attached to.
+* Added {{cd|visibleTo}} property to {{cd|DebugShape}} which specifies an array of players that this shape should be visible to.
+* Debug Shapes no longer have a maximum render distance.
+* Added {{cd|EntityItemDropAfterEvent}} to {{cd|beta}}.
+* Added {{cd|EntityItemDropAfterEventSignal}} to {{cd|beta}}.
+* Added {{cd|EntityItemDropEventOptions}} to {{cd|beta}}.
+* Added {{cd|previousPowerLevel}} to {{cd|BlockComponentRedstoneUpdateEvent}} behind {{cd|beta}}.
+
+'''[[Camera]]'''
+* Behavior packs for custom camera splines can be created in the <samp>camera/splines/</samp> directory. Splines will only play on the {{cd|minecraft:free}} camera preset.
+
+'''[[Commands]]'''
+* Added the {{cd|play_spline}} keyword to the {{cmd|camera}} command for playing a spline loaded from behavior pack. 
+** Enabled with the Experimental Creator Camera toggle.
+
+'''Graphical'''
+* RenderDragon for Creators Experiment:
+** Static colored lighting on flowing lava and other blocks no longer appears too dark.
+** Added static lighting shading support to data driven entities and items.
+** The number of analytic/point lights in the scene is now limited according to resource availability.
+** Analytic/point lights will now phase in or out according to their importance to the scene's lighting.
+
+'''[[Molang]]'''
+* Added {{cd|query.get_level_seed_based_fraction}} molang function behind the Upcoming Creator Features toggle.
+
+'''[[Tag (Bedrock Edition)|Tags]]'''
+* Added the new tag {{cd|minecraft:metal_nuggets}} item tag to copper, iron, and gold nuggets.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=26.0.27 Preview
+|;old
+|137379|Stripped spruce logs and wood are too dark in Bedrock Edition.
+|169754|Carried models of some items appear larger when using any HD texture pack.
+|172928|Cannot sleep with Skeleton Horse nearby
+|219844|Vibrant Visuals: First time adjusting options after selecting a preset doesn't change the preset to Custom.
+|220557|Player and mobs randomly disappear for a split second and reappear.
+|221667|Vibrant Visuals: Screen is completely black when the player is inside a block.
+|223845|Some zombie variants fail to form Chicken Jockeys.
+|225208|Panorama no longer rotates while loading a World.
+|228287|The entity model in the container screen does not rotate in the opposite direction from the cursor.
+|229178|Hovering over a text box with the mouse cursor no longer allows typing.
+|229312|The “Only add/see trusted skins” option name and description in the new General settings screen are misleading.
+|229351|The "Enter sleep mode when no inputs detected" option does not function as described.
+|229542|Zombie horses can burn even while standing on water.
+|230229|Non-Marketplace Resource Packs, Behavior Packs, and Skin Packs were not migrated to the new directory location.
+|230775|After changing language from Polish to English, some text remains in Polish.
+|230779|Chat does not let me type right after sending a message.
+|230820|Game window border is always dark.
+|231432|Worlds with a period in the folder name do not appear in-game.
+|231602|Nautilis, Zombie Nautilus & Coral Zombie Nautilus have an empty space in the back of the head.
+|231639|Static lights are equally bright at all light levels.
+|231979|Custom blocks face backwards in third person.
+|232366|Recommended Vibrant Visuals render distance does not scale with hardware and is always set to the lowest value in the Ore UI Video Settings menu.
+|232391|The “You can’t earn achievements” pop-up incorrectly lists Marketplace behavior packs as a reason achievements are disabled when Cheats are enabled.
+|232488|Wolf Armor model is off by on pixel to the left.
+|232638|Enchanted Banner Shield appears mostly white and covered with graphical artifacts in first-person view.
+|232656|Launching Minecraft turns on Text to Speech every time.
+|232690|“Show player names” option has an incorrect description in the Ore UI Video Settings menu.
+|232731|Experience Bottles Still Cannot Deflect Ghast Fireballs in Latest Beta 26.0.23 Despite Partial Fix for Bottle-type Projectiles.
+|233088|Xbox: Additional players in splitscreen log in with no items/the wrong user's items after 1.21.130 update.
+|;dev
+|232738|On-screen keyboard remains persistently open in the inventory/crafting menu, blocking the view and preventing normal gameplay.
+|232741|World entries briefly appear cut off when opening the Worlds menu with Screen Animations enabled.
+|otherissuescount=21}}
+'''Other'''
+* Fixed upgrade from UWP to GDK causing corrupt skin states.
+* Fixed an issue where textures would not be correctly reloaded when changing between graphics modes in the main menu.
+* Fixed shadow stripes appearing on the ground during sunset and sunrise with high FoV on low quality settings in [[Vibrant Visuals]] mode.
+* Fixed an issue that caused all player markers on locator maps to have the same color in Vibrant Visuals mode.
+* Fixed an issue which was causing textured items held-in-hand to be double-tinted in Vibrant Visuals mode.
+* Fixed an issue that caused banner poles to appear darker in Vibrant Visuals.
+* Fixed dithering for equipped [[shield]]s with [[banner]] designs when held by entities.
+* Fixed a bug where most mobs would stare at players, other mobs, or targets for an excessive amount of time.
+* Fixed a bug where several mobs would look at players from a further distance than intended.
+* Fixed a bug where the game could crash if the player cancelled in the middle of creating a template world on a Realm.
+* Fixed players potentially getting stuck between Realms timeline opt-in screen and play on Realms progress screen.
+* Fixed a bug in Realms where [[village]]s would not generate until approached.
+* Fixed an issue that caused the "Extra Large UI" option in Ore UI Video Settings to set the wrong GUI scale.
+* Fixed an issue that caused the shield to appear colored if placed in a slot that previously contained a colored shield.
+* Fixed an issue where the {{cd|getComponents}} entity component could return an undefined in the array when used in older scripting versions.
+* Fixed an issue where the {{cd|on_equip}} and {{cd|on_unequip}} events on the {{cd|minecraft:equippable}} entity component would be executed on world load.
+* Fixed an issue where marketplace content did not load correctly on PlayStation.
+* Fixed "Might occur crash when suspended" title when "Syncing user data" UI is running.
+* Fixed cases of static colored lighting leaking through corners.
+* Fixed a bug where custom components used by older versions of item definitions were not being properly loaded.
+* Nautiluses and zombie nautiluses no longer have permanently increased movement speed after becoming hostile.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 26.0 betas]]
+
+[[de:Bedrock Edition beta 26.0.27]]
+[[es:Bedrock Edition Preview 26.0.27]]
+[[ja:Bedrock Edition Preview 26.0.27]]
+[[pt:Edição Bedrock Preview 26.0.27]]
+[[zh:基岩版26.0.27]]

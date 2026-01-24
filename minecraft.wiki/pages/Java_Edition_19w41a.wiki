@@ -1,0 +1,182 @@
+{{Infobox version
+|title=Minecraft 19w41a
+|image=19w41a.png
+|image2=Java Edition 19w41a.png
+|edition=Java
+|type=Snapshot
+|date=October 9, 2019
+|jsonhash=c02e673b7c1376e6cbe238771f6810b5249f38c2
+|clienthash=e009395464a1e2f4c8c760fc08de73c91e5a03ee
+|serverhash=852eb4bfba2d886efeb88f82bcb706099193b121
+|clientmap=28a4a4df92feb1ba917babe11f716be9ad1fc4ce
+|servermap=8ed145385feb361c36e7fab5d44cb8edf93e67e0
+|parent=1.15
+|prevparent=1.14.4
+|prev=19w40a
+|next=19w42a
+|nextparent=1.15.1
+}}<onlyinclude>
+
+'''19w41a''' is the ninth [[snapshot]] for [[Java Edition 1.15]], released on October 9, 2019.<ref name="19w41a">{{snap|19w41a|October 9, 2019}}</ref> It adds a new menu panorama, two new [[block]]s, the ability to toggle [[sprinting]] and [[sneaking]], and a new [[command]] for spectating.
+
+== Additions ==
+=== Blocks ===
+'''[[File:Honey Block JE1 BE2.png|32px]] [[Honey block]]s'''
+* Crafted from 4 [[honey bottle]]s. 
+** The bottles are not consumed and remain in the crafting grid.
+* Walking on them is slower, and jump height is reduced.
+** Effect also works through non-full blocks like carpet, trapdoors and slabs.
+* If an [[entity]] is on a honey block that is pushed by a [[piston]], the entity is moved with the honey block.
+* Entities touching the side of a honey block slide down slowly.
+* Landing on a honey block reduces fall damage.
+** Fall damage is cut to about {{frac|1|5}} of normal: equal to <code>ceiling(fall distance - 3) / 5)</code>, or in other words, {{frac|1|5}} of {{hp|1}} for every block fallen after the first 3, rounded up.
+* When a honey block is pushed or pulled by a piston, it attempts to move all adjacent [[block]]s in the same direction.
+** Work the same way as [[slime block]]s.
+* [[Mob]]s usually avoid walking on them.
+* Does not conduct redstone signals.
+
+'''[[File:Honeycomb Block JE1 BE1.png|32px]] [[Honeycomb block]]s'''
+* Purely decorative.
+* Crafted using 4 [[honeycomb]]s.
+
+=== Command format ===
+'''{{cmd|spectate}}'''
+* Syntax is {{cmd|spectate [<''target''>] [<''player''>]}}.
+** <code>target</code> – the target entity to spectate.
+*** If omitted, makes the player stop spectating.
+** <code>player</code> – the [[player]] that should spectate the target.
+*** Must be in [[Spectator]] mode.
+*** If omitted, <samp>@s</samp> (the executing player) is used.
+
+'''<samp>[[Commands#Raw JSON text|clickEvent]]</samp>'''
+* Added <code>copy_to_clipboard</code> action.
+
+=== Gameplay ===
+'''[[Control]]s'''
+* {{ctrl|Sneak}} and {{ctrl|sprint}} inputs can now be switched between "Hold" and "Toggle" mode in the accessibility options.
+** Allows [[player]]s to stay sneaked while opening different GUIs.
+** Also affects flying down in [[Creative]] mode. When toggled, the player keeps going down until toggled again.
+
+'''Sprites'''
+'''[[Status effect]]s'''
+* [[Instant Damage]]
+** {{EffectSprite|instant-damage}} Added an effect sprite.
+* [[Instant Health]]
+** {{EffectSprite|instant-health}} Added an effect sprite.
+* [[Saturation (effect)|Saturation]]
+** {{EffectSprite|saturation}} Added an effect sprite.
+
+== Changes ==
+=== Blocks ===
+'''[[Beehive]]s'''
+* Name changed from "Bee hive" to "Beehive".
+** ID also changed from <code>bee_hive</code> to <code>beehive</code>.
+
+'''[[Stripped wood]]'''
+* Can now be crafted from stripped logs.
+
+=== Items ===
+'''[[Spawn egg]]'''
+* The bee spawn egg colors have been changed from {{InvSprite|Bee Spawn Egg Revision 1}} to {{InvSprite|Bee Spawn Egg Revision 2}}.
+
+=== Mobs ===
+'''General'''
+* Mobs are better at avoiding walking through lava now.
+
+'''[[Ender dragon]]s'''
+* Removed a black dot on the transparent parts of wing texture.
+* Removed texture for part of wing bottom in the exploding ender dragon.
+
+'''[[Iron golem]]s'''
+* Now starts cracking upon losing [[health]].
+** A [[sound]] plays on every cracking stage.
+*** There are 4 stages, from uncracked to fully cracked, before the golem dies.
+* Can be healed {{ctrl|using}} [[iron ingot]]s.
+** A [[sound]] plays each time the golem is repaired.
+* One iron ingot restores {{hp|25}} health.
+** It takes 4 iron ingots to repair an iron golem from 1 HP to full health.
+
+'''[[Zombie villager]]s'''
+* Zombie villagers that were converted from [[villager]]s can no longer despawn.
+
+=== Command format ===
+'''{{cmd|effect}}'''
+* The {{cmd|effect clear}} command now defaults to <samp>@s</samp> if no target argument is given.
+
+=== General ===
+'''[[Title screen]]'''
+* Changed panorama to an image which includes new 1.15 features such as bees and bee nests.
+** Because this was an asset update, the menu panorama in all previous 1.15 snapshots was also updated.
+* Descriptions under buttons on the "Create World" screen are now narrated.
+
+'''[[Tag]]s'''
+* Removed <code>dirt_like</code> block tag.
+
+== Fixes ==
+{{fixes|fixedin=19w41a
+|;old
+|20144|Saturation and Instant Health/Damage effects do not have an icon.
+|35920|Some translucent parts of entities make translucent blocks, block entities and some entities invisible (depending on loading order).
+|80110|Villager item count graphical bug.
+|86846|Changing a powered command block from impulse or chain mode to repeat mode does not trigger it until repowering.
+|109108|Mobs getting stuck on vines.
+|120480|Pets teleport onto blocks which have a solid "bottom", not "top" face.
+|121942|Item count renders behind crafting preview items.
+|124140|Anchoring does not reset after use and is implicitly applied in nonsensical cases by default.
+|125104|Cancelling delete world screen and options sub-menus using {{key|Esc}} opens main menu.
+|129806|Team prefixes and suffixes do not show for villagers without a custom name.
+|131552|Cannot craft stripped wood from stripped log.
+|145021|Tamed animals are not able to teleport to the player when they are on the snow layer blocks.
+|146213|Loading bar on splash screen is able to extend beyond its black outline.
+|156005|Tamed wolves no longer teleport to the player when they're in water.
+|161733|Vindicator's "idle5" sound is unused.
+|162952|Stacked numbers of an item in inventory are rendered behind the potion effect status effect in inventory.
+|;dev
+|159423|Bees cannot get to flowers on edges.
+|159469|There is a space in "Beehive" when there shouldn't be.
+|160102|{{cd|IllegalArgumentException}} when being attacked by a weak iron golem.
+|160957|Bees do not leave the nest or hive when it is destroyed by the player.
+|161297|Shulker box's inside textures are invisible.
+|161391|Strays are brighter.
+|161495|Horse texture is partially translucent when viewing it from certain angles.
+|161692|Hopper creating a furnace block entity by transferring an item crashes the game.
+|161840|Entities are shaded far darker than usual.
+|161847|Armor slots in the inventory are displayed black in some circumstances.
+|161855|Icons used for customizing superflat worlds are not displayed if no world has been opened before.
+|161856|Items held by armorstands are only visible in spectator mode.
+|161889|Mobs in spawners are in full lighting even when no light source is around.
+|161891|Blocks with special rendering are not rendered behind transparent block items.
+|162118|Iron Golems hanging in mid air.
+|162042|Items with partially transparent textures will render incorrectly in item frames.
+|162087|Parrots can imitate pandas.
+|162378|Screen turns black during the totem of undying activation animation.
+|162432|Some blocks like chests and beds are no longer shaded in the world.
+|;prev
+|162538|Creative menu corners have opacity issues; outlines have no transparency.
+|162550|Offhand slot is glitched/black in some circumstances.
+|162586|Log repeatedly prints the message "Ticking entity", and finally crashes the game.
+|162616|{{cd|java.lang.NullPointerException}} after attacking a parrot.
+|162671|Mooshroom cow's mushroom texture is too bright.
+|162936|{{cd|java.lang.IllegalArgumentException}} when using an enchanted totem of undying.
+|;private
+|160865|Waking up from a bed can cause the server to crash in specific circumstances.<ref name="19w41a"/>
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|7DAf_JE4Dsw}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[cs:19w41a]]
+[[de:19w41a]]
+[[es:Java Edition 19w41a]]
+[[fr:Édition Java 19w41a]]
+[[it:Java Edition 19w41a]]
+[[ja:Java Edition 19w41a]]
+[[pt:Edição Java 19w41a]]
+[[ru:19w41a (Java Edition)]]
+[[zh:Java版19w41a]]

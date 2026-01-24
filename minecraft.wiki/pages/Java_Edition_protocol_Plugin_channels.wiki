@@ -1,0 +1,1000 @@
+'''Plugin channels''' allow client mods and server plugins to communicate without cluttering up chat. [https://web.archive.org/web/20220711204310/https://dinnerbone.com/blog/2012/01/13/minecraft-plugin-channels-messaging/ This post by Dinnerbone] is a good introduction and basic documentation.
+{{anchor|Internal}}
+
+== Definitions ==
+
+=== Data Types ===
+
+==== Entity Path ====
+
+Represents calculated path of entity.
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Reaches Target
+ | {{Type|Boolean}}
+ | Seems to always be true.
+ |-
+ | Current node index
+ | {{Type|Int}}
+ | Index in nodes that the entity is currently targeting.
+ |-
+ | Target position
+ | {{Type|Position}}
+ | The position that the entity is trying to reach as its destination.
+ |-
+ | Nodes
+ | {{Type|Prefixed Array}} of Path Node
+ | The nodes of this path.
+ |-
+ | Target Nodes
+ | {{Type|Prefixed Array}} of Path Node
+ | The nodes that the entity is targeting.
+ |-
+ | Traversed Nodes
+ | {{Type|Prefixed Array}} of Path Node
+ | The nodes that the entity has completed.
+ |-
+ | Remaining Nodes
+ | {{Type|Prefixed Array}} of Path Node
+ | The nodes that the entity needs to traverse.
+ |}
+
+You can read more at [[wikipedia:A*_search_algorithm|A* search algorithm]].
+
+==== Path Node ====
+
+Represents single point in path
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | X
+ | {{Type|Int}}
+ | 
+ |-
+ | Y
+ | {{Type|Int}}
+ | 
+ |-
+ | Z
+ | {{Type|Int}}
+ | 
+ |-
+ | Distance from origin
+ | {{Type|Float}}
+ | Sum of the length of the previous nodes + the length of this node
+ |-
+ | Cost
+ | {{Type|Float}}
+ | 
+ |-
+ | Has been visited
+ | {{Type|Boolean}}
+ | 
+ |-
+ | Node type
+ | {{Type|Int}} {{Type|Enum}}
+ | See below
+ |-
+ | Heap Weight
+ | {{Type|Float}}
+ | 
+ |}
+
+Node type can be one of the following values:
+
+{| class="wikitable"
+ ! ID
+ ! Type
+ |-
+ | 0
+ | Blocked
+ |-
+ | 1
+ | Open
+ |-
+ | 2
+ | Walkable
+ |-
+ | 3
+ | Walkable door
+ |-
+ | 4
+ | Trapdoor
+ |-
+ | 5
+ | Powder snow
+ |-
+ | 6
+ | Danger powder snow
+ |-
+ | 7
+ | Fence
+ |-
+ | 8
+ | Lava
+ |-
+ | 9
+ | Water
+ |-
+ | 10
+ | Water border
+ |-
+ | 11
+ | Rail
+ |-
+ | 12
+ | Unpassable rail
+ |-
+ | 13
+ | Danger fire
+ |-
+ | 14
+ | Damage fire
+ |-
+ | 15
+ | Danger other
+ |-
+ | 16
+ | Damage other
+ |-
+ | 17
+ | Open door
+ |-
+ | 18
+ | Closed wooden door
+ |-
+ | 19
+ | Closed iron door
+ |-
+ | 20
+ | Breach (water)
+ |-
+ | 21
+ | Leaves
+ |-
+ | 22
+ | Sticky honey
+ |-
+ | 23
+ | Cocoa
+ |-
+ | 24
+ | Damage cautious
+ |-
+ | 25
+ | Danger trapdoor
+ |}
+
+==== Block Box ====
+
+Represents a box with integer precision
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Min X
+ | {{Type|Int}}
+ | must be less than max
+ |-
+ | Min Y
+ | {{Type|Int}}
+ | must be less than max
+ |-
+ | Min Z
+ | {{Type|Int}}
+ | must be less than max
+ |-
+ | Max X
+ | {{Type|Int}}
+ | must be more than min
+ |-
+ | Max Y
+ | {{Type|Int}}
+ | must be more than min
+ |-
+ | Max Z
+ | {{Type|Int}}
+ | must be more than min
+ |}
+
+==== Chunk Section Position ====
+
+Represents a box with integer precision
+
+<b>Note:</b> What you are seeing here is the latest version of the [[Minecraft Wiki:Projects/wiki.vg merge/Data types|Data types]] article, but the position type was [https://wiki.vg/index.php?title=Data_types&oldid=14345#Position different before 1.14].
+
+64-bit value split into three '''signed''' integer parts:
+
+* x: 22 MSBs
+* z: 22 middle bits
+* y: 20 LSBs
+
+For example, a 64-bit position can be broken down as follows:
+
+Example value (big endian): <code><span style="outline: solid 2px rgb(255, 0, 0)">0000000000000000000000</span> <span style="outline: solid 2px rgb(0, 0, 255)">0000000000000000000000</span> <span style="outline: solid 2px rgb(0, 255, 0)">00000000000000000000</span></code><br>
+* The red value is the X coordinate, which is <code>0</code> in this example.<br>
+* The blue value is the Z coordinate, which is <code>0</code> in this example.<br>
+* The green value is the Y coordinate, which is <code>0</code> in this example.<br>
+
+Encoded as follows:
+
+ ((x & 0x3FFFFF) << 42) | ((z & 0x3FFFFF) << 20) | (y & 0xFFFFF)
+
+And decoded as:
+
+ val = read_long();
+ x = val >> 42;
+ z = val << 20 >> 42;
+ y = val << 42 >> 42;
+
+Note: The above assumes that the right shift operator sign extends the value (this is called an {{wikipedia|arithmetic shift}}), so that the signedness of the coordinates is preserved. In many languages, this requires the integer type of <code>val</code> to be signed.
+
+== Channels internal to Minecraft ==
+
+These are channels used by Minecraft. Most of them are debugging-related except for brand.
+
+=== Brand ===
+
+Announces the server and client implementation name right after a player has logged in.
+
+These brands are used in crash reports and a few other locations. It's recommended that custom clients and servers use their own brand names for the purpose of identification. The brand is not processed in any other way, and Notchian clients will connect to servers with different brands with no issue (the brand is not used to validate).
+
+The Notchian server sends a <code>minecraft:brand</code> packet right after it sends a [[Minecraft Wiki:Projects/wiki.vg merge/Protocol#Login (play)|Login (play)]] packet, and the Notchian client sends it right after receiving a Login (play) packet. However, some modified clients and servers will not send this packet (or will take longer to send it than normal), so it is important to not crash if the brand has not been sent. Additionally, the brand may change at any time (for instance, if connected through a BungeeCord instance, you may switch from a server with one brand to a server with another brand without receiving a Login (play) packet).
+
+{| class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | <code>minecraft:brand</code>
+ | Two-way
+ | Channels
+ | {{Type|String}} (32767)
+ | The brand of the server/client. The Notchian value is "vanilla".
+ |}
+
+=== Debug/Path ===
+
+[[File:16w14a.png|thumb|The rendering as seen in the [https://web.archive.org/web/20161224194609/http://mojang.com/2016/04/minecraft-snapshot-16w14a/ snapshot 16w14a announcement].]]
+
+Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="3"| <code>minecraft:debug/path</code>
+ | rowspan="3"| Client
+ | Entity ID
+ | {{Type|Int}}
+ | ID of the entity that is traversing the path.
+ |-
+ | Path
+ | Entity Path
+ | 
+ |-
+ | Node reach proximity
+ | {{Type|Float}}
+ | 
+ |}
+
+The current node is rendered red; the others are rendered blue. The target position is rendered as a green cube.
+
+=== Debug/Neighbors Update ===
+
+Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="2"| <code>minecraft:debug/path</code>
+ | rowspan="2"| Client
+ | Time
+ | {{Type|VarLong}}
+ | World timestamp at which the update occurred. 200 ticks after this timestamp, the given update stops rendering.
+ |-
+ | Location
+ | {{Type|Position}}
+ | Location of the block that updated.
+ |}
+
+=== Debug/Redstone Update Order ===
+
+Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! colspan="2"| Field Name
+ ! colspan="2"| Field Type
+ ! Notes
+ |-
+ | rowspan="3"| <code>minecraft:debug/redstone_update_order</code>
+ | rowspan="3"| Client
+ | colspan="2"| Time
+ | colspan="2"| {{Type|VarLong}}
+ | World timestamp at which the update occurred. 200 ticks after this timestamp, the given update stops rendering.
+ |-
+ | rowspan="2"| Wires
+ | Location
+ | rowspan="2"| {{Type|Prefixed Array}}
+ | {{Type|Position}}
+ | Location of the redstone wire.
+ |-
+ | Orientation
+ | {{Type|VarInt}}
+ | Packed orientation. (unknown format)
+ |}
+
+=== Debug/Structures ===
+Used to debug structures. Never sent by the Notchian server. Requires modifications to the client to render.
+
+Adds a single new structure, which will always be rendered if the player is in the same dimension.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! colspan="2"| Field Name
+ ! colspan="2"| Field Type
+ ! Notes
+ |-
+ | rowspan="4"| <code>minecraft:debug/structures</code>
+ | rowspan="4"| Client
+ | colspan="2"| Dimension
+ | colspan="2"| {{Type|VarInt}}
+ | The ID of the type of dimension in the <code>minecraft:dimension_type</code> registry
+ |-
+ | colspan="2"| Box
+ | colspan="2"| Block Box
+ | Main box for the structure (rendered in white).
+ |-
+ | rowspan="2"| Sub-boxes
+ | Box
+ | rowspan="2"| {{Type|Prefixed Array}}
+ | Block box
+ | 
+ |-
+ | Starting piece
+ | {{Type|Boolean}}
+ | If true, the sub-box is rendered in green, otherwise in blue.
+ |}
+
+=== Debug/World Generation Attempt ===
+
+Used to debug something with world generation. Never sent by the Notchian server. Requires modifications to the client to render.
+
+Adds a colored cube of the list of things to render. This cube is never removed.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="6"| <code>minecraft:debug/worldgen_attempt</code>
+ | rowspan="6"| Client
+ | Location
+ | {{Type|Position}}
+ | The center of the location to render.
+ |-
+ | Size
+ | {{Type|Float}}
+ | Diameter/side length of a cube to render.
+ |-
+ | Red
+ | {{Type|Float}}
+ | Red value to render, from 0.0 to 1.0.
+ |-
+ | Green
+ | {{Type|Float}}
+ | Green value to render, from 0.0 to 1.0.
+ |-
+ | Blue
+ | {{Type|Float}}
+ | Blue value to render, from 0.0 to 1.0.
+ |-
+ | Alpha
+ | {{Type|Float}}
+ | Alpha value to render, from 0.0 to 1.0.
+ |}
+
+=== Debug/Add POI ===
+
+Used to add debugging [[Minecraft Wiki:Projects/wiki.vg merge/POI|POI]]. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="3"| <code>minecraft:debug/poi_added</code>
+ | rowspan="3"| Client
+ | Location of POI
+ | {{Type|Position}}
+ | 
+ |-
+ | POI Type
+ | {{Type|String}} (32767)
+ | Type of POI, see the [[Minecraft Wiki:Projects/wiki.vg merge/POI|POI]] article.
+ |-
+ | Free tickets
+ | {{Type|Int}}
+ | 
+ |}
+
+=== Debug/Remove POI ===
+
+Used to remove debugging [[Minecraft Wiki:Projects/wiki.vg merge/POI|POI]]. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | <code>minecraft:debug/poi_ticket_count</code>
+ | Client
+ | Location of POI
+ | {{Type|Position}}
+ | 
+ |}
+
+=== Debug/Update POI ===
+
+Used to set amount of free tickets for a given [[Minecraft Wiki:Projects/wiki.vg merge/POI|POI]]. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="2"| <code>minecraft:debug/poi_ticket_count</code>
+ | rowspan="2"| Client
+ | Location of POI
+ | {{Type|Position}}
+ | 
+ |-
+ | Free tickets
+ | {{Type|Int}}
+ | 
+ |}
+
+=== Debug/Village Sections ===
+
+Used to add/remove Village Sections. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="2"| <code>minecraft:debug/village_sections</code>
+ | rowspan="2"| Client
+ | Sections to add
+ | {{Type|Specified Array}} of Chunk Section Position
+ | 
+ |-
+ | Sections to remove
+ | {{Type|Specified Array}} of Chunk Section Position
+ | 
+ |}
+
+=== Debug/Goal Selector ===
+
+Used to debug goals of entities. Never sent by the Notchian server. Requires modifications to the client to render.
+
+Adds multiple lines of text on the given location, spaced by 0.25 units upward on the Y-axis.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! colspan="2"| Field Name
+ ! colspan="2"| Field Type
+ ! Notes
+ |-
+ | rowspan="5"| <code>minecraft:debug/goal_selector</code>
+ | rowspan="5"| Client
+ | colspan="2"| Entity ID
+ | colspan="2"| {{Type|Int}}
+ | 
+ |-
+ | colspan="2"| Location
+ | colspan="2"| {{Type|Position}}
+ | The location of the goal selector.
+ |-
+ | rowspan="3"| Goals
+ | Priority
+ | rowspan="3"| {{Type|Prefixed Array}}
+ | {{Type|Int}}
+ | Currently unused
+ |-
+ | Is running
+ | {{Type|Boolean}}
+ | Defines the color of the text. #00FF00 if true, #CCCCCC otherwise.
+ |-
+ | Name
+ | {{Type|String}} (255)
+ |
+ |}
+
+=== Debug/Brain ===
+
+Used to debug villagers but renders on any entity with a brain. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="20"| <code>minecraft:debug/brain</code>
+ | rowspan="20"| Client
+ | Unique ID
+ | {{Type|UUID}}
+ | 
+ |-
+ | Entity ID
+ | {{Type|Int}}
+ | 
+ |-
+ | Name
+ | {{Type|String}} (32767)
+ | A randomly generated name using the UUID.
+ |-
+ | Profession
+ | {{Type|String}} (32767)
+ | 
+ |-
+ | Experience
+ | {{Type|Int}}
+ | 
+ |-
+ | Health
+ | {{Type|Float}}
+ | 
+ |-
+ | Max Health
+ | {{Type|Float}}
+ | 
+ |-
+ | X
+ | {{Type|Double}}
+ | 
+ |-
+ | Y
+ | {{Type|Double}}
+ | 
+ |-
+ | Z
+ | {{Type|Double}}
+ | 
+ |-
+ | Inventory
+ | {{Type|String}} (32767)
+ | Doesn't render if empty
+ |-
+ | Path
+ | {{Type|Prefixed Optional}} Entity Path
+ | 
+ |-
+ | Wants golem
+ | {{Type|Boolean}}
+ | 
+ |-
+ | Anger level
+ | {{Type|Integer}}
+ | Possibly used for the warden.
+ |-
+ | Possible activities
+ | {{Type|Specified Array}} of {{Type|String}} (32767)
+ | 
+ |-
+ | Running tasks
+ | {{Type|Specified Array}} of {{Type|String}} (32767)
+ | 
+ |-
+ | Memories
+ | {{Type|Specified Array}} of {{Type|String}} (32767)
+ | 
+ |-
+ | Gossips
+ | {{Type|Specified Array}} of {{Type|String}} (32767)
+ | 
+ |-
+ | POIs
+ | {{Type|Specified Array}} of {{Type|Position}}
+ | 
+ |-
+ | Potential POIs
+ | {{Type|Specified Array}} of {{Type|Position}}
+ | 
+ |}
+
+=== Debug/Bee ===
+
+Used to debug bee pathfinding to hives and flowers. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="11"| <code>minecraft:debug/bee</code>
+ | rowspan="11"| Client
+ | Unique ID
+ | {{Type|UUID}}
+ | 
+ |-
+ | Entity ID
+ | {{Type|Int}}
+ | 
+ |-
+ | X
+ | {{Type|Double}}
+ | 
+ |-
+ | Y
+ | {{Type|Double}}
+ | 
+ |-
+ | Z
+ | {{Type|Double}}
+ | 
+ |-
+ | Path
+ | {{Type|Prefixed Optional}} Entity Path
+ | 
+ |-
+ | Hive position
+ | {{Type|Prefixed Optional}} {{Type|Position}}
+ | 
+ |-
+ | Flower position
+ | {{Type|Prefixed Optional}} {{Type|Position}}
+ | 
+ |-
+ | Travel ticks
+ | {{Type|Int}}
+ | 
+ |-
+ | Goals
+ | {{Type|Specified Array}} of {{Type|String}} (32767)
+ | 
+ |-
+ | Blacklisted hives
+ | {{Type|Specified Array}} of {{Type|Position}}
+ | 
+ |}
+
+=== Debug/Hive ===
+
+Used to debug hives. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="5"| <code>minecraft:debug/hive</code>
+ | rowspan="5"| Client
+ | Location
+ | {{Type|Position}}
+ | 
+ |-
+ | Hive type
+ | {{Type|String}} (32767)
+ | 
+ |-
+ | Occupant count
+ | {{Type|Int}}
+ | 
+ |-
+ | Honey level
+ | {{Type|Int}}
+ | 
+ |-
+ | Sedated
+ | {{Type|Boolean}}
+ | 
+ |}
+
+=== Debug/Add Game Test Marker ===
+
+Used to set different debug markers in the world. Never sent by the Notchian server. This interestingly renders without problems since 1.16.5.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="4"| <code>minecraft:debug/game_test_add_marker</code>
+ | rowspan="4"| Client
+ | Location
+ | {{Type|Position}}
+ | 
+ |-
+ | Color
+ | {{Type|Int}}
+ | ARGB with each channel having 8 bits.
+ |-
+ | Text
+ | {{Type|String}} (32767)
+ | The text to display above the given location.
+ |-
+ | Lifetime
+ | {{Type|Int}}
+ | Given in milliseconds.
+ |}
+
+=== Debug/Clear Game Test Markers ===
+
+Clears all debug markers.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | <code>minecraft:debug/game_test_clear</code>
+ | Client
+ | colspan="3"| ''no fields''
+ |}
+
+=== Debug/Raids ===
+
+Used to set debug raid centers. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | <code>minecraft:debug/raids</code>
+ | Client
+ | Locations
+ | {{Type|Prefixed Array}} of {{Type|Position}}
+ | Locations of raid centers.
+ |}
+
+=== Debug/Game Event ===
+
+Never sent, but used to debug game events. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="4"| <code>minecraft:debug/game_event</code>
+ | rowspan="4"| Client
+ | Game event type
+ | {{Type|VarInt}}
+ | The ID of the type of game_event in the <code>minecraft:game_event</code> registry
+ |-
+ | X
+ | {{Type|Double}}
+ | 
+ |-
+ | Y
+ | {{Type|Double}}
+ | 
+ |-
+ | Z
+ | {{Type|Double}}
+ | 
+ |}
+
+=== Debug/Add Game Event Listener ===
+
+Used to add game event listeners. Never sent by the Notchian server. Requires modifications to the client to render.
+
+{|class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="3"| <code>minecraft:debug/game_event_listeners</code>
+ | rowspan="3"| Client
+ | Listener type
+ | {{Type|VarInt}}
+ | The ID of the type of position_source_type in the <code>minecraft:position_source_type</code> registry
+ |-
+ | Listener data
+ | Listener data
+ | See below.
+ |-
+ | Listener range
+ | {{Type|VarInt}}
+ | 
+ |}
+ 
+Listener data for a block:
+ 
+ {|class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Location
+ | {{Type|Position}}
+ | 
+ |}
+ 
+Listener data for an entity:
+ 
+ {|class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Entity ID
+ | {{Type|VarInt}}
+ | 
+ |-
+ | Y offset
+ | {{Type|Float}}
+ | The y offset from the entity's position.
+ |}
+
+== Notable community plugin channels ==
+
+Channels listed in this section are not used by the vanilla Minecraft client or server. This is just a likely-incomplete list of channels used by mods/plugins popular within the Minecraft community.
+
+=== Register ===
+
+{| class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | <code>minecraft:register</code>
+ | Two-way
+ | Channels
+ | {{Type|Byte Array}}
+ | An ASCII (sometimes UTF-8) string without a length prefix containing the channels separated by \u0000
+ |}
+
+Allows the client or server to register for one or more custom channels, indicating that data should be sent on those channels if the receiving end supports it too. This format is used on Bukkit, BungeeCord, Velocity and Fabric API.
+
+=== Unregister ===
+
+{| class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | <code>minecraft:unregister</code>
+ | Two-way
+ | Channels
+ | {{Type|Byte Array}}
+ | An ASCII (sometimes UTF-8) string without a length prefix containing the channels separated by \u0000
+ |}
+
+Allows the client or server to unregister from one or more custom channels, indicating that the receiving end should stop sending data on those channels. This format is used on Bukkit, BungeeCord, Velocity and Fabric API.
+
+=== "Common" standard ===
+
+The common standard was created by the FabricMC, NeoForged, PaperMC and SpongePowered team because the current register channel lacked the game phase. It is currently used by Fabric API and NeoForge. The current version of the standard is 1, which contains the following payloads:
+
+==== Supported Versions ====
+
+{| class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | <code>c:version</code>
+ | Two-way
+ | Supported Versions
+ | {{Type|Prefixed Array}} of {{Type|Integer}}
+ | 
+ |}
+
+==== Register ==== 
+
+{| class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="3"| <code>c:register</code>
+ | rowspan="3"| Two-way
+ | Common Version
+ | {{Type|Integer}}
+ | The highest version that both the client and the server supports.
+ |-
+ | Phase
+ | {{Type|String}}
+ | "play" or "configuration"
+ |-
+ | Channels
+ | {{Type|Prefixed Array}} of {{Type|Identifier}}
+ |
+ |}
+
+Note: this standard only supports registering channels, not unregistering.
+
+=== BungeeCord ===
+
+<code>bungeecord:main</code>
+
+Formerly <code>BungeeCord</code>; additionally, note that the channel name is remapped by spigot so that the old name can still be used in plugins.
+
+[http://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/ See here]
+
+=== Forge ===
+
+{{Main|Minecraft Wiki:Projects/wiki.vg merge/Minecraft Forge Handshake}}
+
+<code>fml:handshake</code>, <code>fml:play</code>
+
+Previously <code>FML|HS</code>, <code>FML</code>
+
+Used by [http://www.minecraftforge.net/forum/index.php Minecraft Forge] to negotiate required mods, among other things.
+[https://github.com/MinecraftForge/MinecraftForge/blob/1.15.x/src/main/java/net/minecraftforge/fml/network/NetworkInitialization.java <code>fml:handshake</code> and <code>fml:play</code>]
+
+=== Fabric API ===
+
+<code>fabric:accepted_attachments_v1</code>, <code>fabric:attachment_sync_v1</code>, <code>fabric:custom_ingredient_sync</code> and much more
+
+=== WorldEdit CUI ===
+
+{{Main|/WorldEditCUI}}
+
+<code>worldedit:cui</code>
+
+Used by the server-side [http://www.enginehub.org/worldedit/ WorldEdit] and the client-side [http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1292886-worldeditcui/ WorldEditCUI] to coordinate selections.
+
+
+[[Category:Protocol Details]]
+[[Category:Java Edition protocol]]
+{{license wiki.vg}}

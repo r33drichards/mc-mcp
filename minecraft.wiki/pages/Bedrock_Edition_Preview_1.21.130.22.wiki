@@ -1,0 +1,158 @@
+{{Infobox version
+| edition = bedrock
+| editorver = 1.1.7
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.13022.0<br>
+'''Android''': 1.21.130.22
+| image = Bedrock 1.21.130.22.png
+| build = 38160028
+| versioncode = '''Android''':<br />
+952113022 (armeabi-v7a, 35)<br />
+962113022 (x86, 35)<br />
+972113022 (arm64-v8a, 35)<br />
+982113022 (x86_64, 35)
+| date = October 22, 2025
+| server = 1.21.130.22
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.130.22.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.130.22.zip Linux]
+| parent = 1.21.130
+| prevparent = 1.21.124
+| prev = Preview 1.21.130.20
+| next = Preview 1.21.130.24
+| nextparent = 1.21.131
+}}<onlyinclude>
+
+'''Beta 1.21.130.22''' (ChromeOS, Android) or '''Preview 1.21.130.22''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the second beta/''Preview'' version for [[Bedrock Edition 1.21.130]], released on October 22, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/40528922585613-Minecraft-Beta-Preview-1-21-130-22|title=Minecraft Beta & Preview - 1.21.130.22|website=Minecraft Feedback|date=October 22, 2025}}</ref> which fixes bugs.
+
+== Changes ==
+=== Items ===
+{{Animate|Wooden Spear.png;Stone Spear.png;Copper Spear.png;Iron Spear.png;Golden Spear.png;Diamond Spear.png;Netherite Spear.png|32px}} '''[[Spear]]'''
+* [[Zombie]]s and [[piglin]]s can now use the spear for attacking.
+
+=== Mobs ===
+[[File:Camel JE1 BE2.png|50px]] '''[[Camel]]'''
+* Now take fall damage starting 4 blocks higher when walking or dashing.
+
+[[File:Nautilus BE1.png|32px]] '''[[Nautilus]]'''
+* A tamed nautilus will now be tempted by all fish.
+** This includes buckets of fish.
+
+[[File:Zombie Horse BE3.png|50px]] '''[[Zombie Horse]]'''
+* The tooltip displayed when attempting to mount an untamed zombie horse has been changed from "Ride" to "Mount".
+* They once again have a baby variant, remaining unused.
+
+[[File:Zombie Nautilus BE1.png|32px]] '''[[Zombie Nautilus]]'''
+* An untamed zombie nautilus can now be tempted by [[pufferfish]] and [[bucket of pufferfish]].
+* A tamed zombie nautilus will now be tempted by all fish.
+** This includes buckets of fish.
+* No longer suffocates out of water.
+
+=== Technical ===
+'''AI Goals'''
+* Added the {{cd|"minecraft:behavior.use_kinetic_weapon"}} AI goal
+** Description:
+*** Allows a mob to make use of items with a {{cd|"minecraft:kinetic_weapon"}} item component.
+*** The mob will approach the target before using the weapon and charging with it.
+*** If the target gets too close, the mob will retreat and reposition before charging again.
+*** Once all {{cd|"max_duration"}} in the item's {{cd|"minecraft:kinetic_weapon"}} component have elapsed, the mob goes on cooldown and retreats before approaching again.
+** Fields:
+*** {{cd|"approach_distance"}}: The distance to the target within which the mob begins using its kinetic weapon.
+*** {{cd|"reposition_distance"}}: The distance the mob retreats to once the target is closer than the midpoint of the item's {{cd|"minecraft:kinetic_weapon"}} component's minimum and maximum {{cd|"reach"}}.
+*** {{cd|"reposition_speed_multiplier"}}: Multiplier applied to the mob's movement speed while repositioning.
+*** {{cd|"cooldown_distance"}}: The distance the mob retreats to after all of the item's {{cd|"minecraft:kinetic_weapon"}} component's {{cd|"max_duration"}} values have elapsed.
+*** {{cd|"cooldown_speed_multiplier"}}: Multiplier applied to the mob's movement speed while on cooldown.
+*** {{cd|"weapon_reach_multiplier"}}: Multiplier applied to the item's {{cd|"minecraft:kinetic_weapon"}} component's {{cd|"reach"}}.
+*** {{cd|"weapon_min_speed_multiplier"}}: Multiplier applied to each {{cd|"min_speed"}} and {{cd|"min_relative_speed"}} condition in the item's {{cd|"minecraft:kinetic_weapon"}} component.
+*** {{cd|"min_path_time"}}: Minimum base time, in seconds, before recalculating a new attack path to the target (before increases are applied).
+*** {{cd|"max_path_time"}}: Maximum base time, in seconds, before recalculating a new attack path to the target (before increases are applied).
+*** {{cd|"path_fail_time_increase"}}: Time, in seconds, added to the attack path recalculation interval when the mob cannot move along the current path.
+*** {{cd|"inner_boundary_time_increase"}}: Time, in seconds, added to the attack path recalculation interval when the target is beyond {{cd|"path_inner_boundary"}}.
+*** {{cd|"outer_boundary_time_increase"}}: Time, in seconds, added to the attack path recalculation interval when the target is beyond {{cd|"path_outer_boundary"}}.
+*** {{cd|"path_inner_boundary"}}: Distance at which to increase attack path recalculation by {{cd|"inner_boundary_time_increase"}}.
+*** {{cd|"path_outer_boundary"}}: Distance at which to increase attack path recalculation by {{cd|"outer_boundary_time_increase"}}.
+*** {{cd|"speed_multiplier"}}: Multiplier applied to the mob's movement speed when moving toward its target.
+*** {{cd|"require_complete_path"}}: Specifies whether a full navigation path from the mob to the target is required.
+*** {{cd|"track_target"}}: Allows the mob to track its target even if it lacks a hard-coded sensing component.
+*** {{cd|"cooldown_time"}}: Cooldown time, in seconds, between consecutive attacks.
+*** {{cd|"melee_fov"}}: Field of view, in degrees, used by the hard-coded sensing component to detect a valid attack target.
+*** {{cd|"x_max_rotation"}}: Maximum rotation, in degrees, on the X-axis while the mob is trying to look at its target.
+*** {{cd|"y_max_head_rotation"}}: Maximum rotation, in degrees, on the Y-axis while the mob is trying to look at its target.
+*** {{cd|"random_stop_interval"}}: Defines a 1-in-N chance for the mob to stop its current attack, where N equals {{cd|"random_stop_interval"}}.
+*** {{cd|"attack_once"}}: Allows the mob to perform this melee attack behavior only once during its lifetime.
+** Requirements:
+*** The mob must have an item with the {{cd|"minecraft:kinetic_weapon"}} item component
+*** Must otherwise fulfill the same conditions as other melee attack goals.
+*** {{cd|"minecraft:behavior.melee_box_attack"}}, {{cd|"minecraft:behavior.delayed_attack"}}, {{cd|"minecraft:behavior.melee_attack"}} and {{cd|"minecraft:behavior.stomp_attack"}} now correctly apply their {{cd|"path_inner_boundary"}} field.
+
+'''API'''
+* Added new module {{cd|@minecraft/server-graphics}} to change graphics and rendering settings.
+* The {{cmd|/clone}} command now fires {{cd|onBreak}} beta API event for custom blocks overridden at source destination.
+
+'''[[Biome]]s'''
+* The client side Molang queries {{cd|query.entity_biome_has_all_tags}}, {{cd|query.entity_biome_has_any_tags}}, and {{cd|query.entity_biome_has_any_identifier}} no longer need the Upcoming Creator Features toggle to be used.
+
+'''Block Components'''
+* The option {{cd|"alpha_masked_tint"}} in {{cd|"minecraft:material_instances"}} now requires the Upcoming Creator Features toggle again.
+* Modified {{cd|"minecraft:material_instances"}} block component.
+* Field emissive renamed to shaded to better describe what the field does.
+* Default value of shaded now true, when false the material ignores face_dimming and ambient occlusion.
+* Released field {{cd|"shaded"}}, formerly called {{cd|"emissive"}} from experimental.
+
+'''Entity Components'''
+* Added new field, {{cd|"protection_slot"}}, to {{cd|minecraft:burns_in_daylight}}, which allows specifying an equipment slot that should provide protection from burning in daylight.
+** Valid values are {{cd|"slot.weapon.offhand"}}, {{cd|"slot.armor.head"}}, {{cd|"slot.armor.chest"}}, {{cd|"slot.armor.legs"}}, {{cd|"slot.armor.feet"}}, and {{cd|"slot.armor.body"}}.
+** Leaving this field unspecified will default to having the head armor slot provide protection from burning in daylight.
+* In the {{cd|"minecraft:ageable"}} and {{cd|"minecraft:breedable"}} components, the {{cd|"transform_to_item"}} field has been renamed to {{cd|"result_item"}}.
+** This field is now defined for each item entry in each component's {{cd|"items"}} list, enabling item-specific transformations on use.
+* Added {{cd|"result_item"}} field to the items in the {{cd|"minecraft:healable"}} and {{cd|"minecraft:tameable"}} components.
+** This field is defined for each item entry in the {{cd|"items"}} list.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Upcoming Creator Features" [[experimental]] toggles.
+=== Additions ===
+==== Technical ====
+'''[[Block]]s'''
+* Added component {{cd|minecraft:connection_rule}} behind the Upcoming Creator Features toggle, which allows custom blocks to define whether other blocks with connection behavior - such as [[fence]]s, [[wall]]s, [[bars]], and [[glass pane]]s - can try to create a connection.
+* Added [[Block tag (Bedrock Edition)|VanillaBlockTag]] {{cd|minecraft:has_fence_connections}} that can be used to identify a custom block as a block that creates connections like a fence; this tag is required to create connections between custom and Vanilla fences.
+** The component and tag can be used along with the {{cd|minecraft:connection}} block trait to make a custom fence that creates connections like a Vanilla fence.
+
+=== Changes ===
+==== Technical ====
+'''API Infra'''
+* Modernized AvailableCommandsPacket serialization. Added these constraints:
+** Chained Subcommand Data / Name max size set to 512 characters.
+** Commands / Name max size set to 512 characters.
+** Commands / Description max size set to 1000 characters.
+** Commands / Chained Subcommand Indexes max size set to 250 elements.
+** Commands / Overloads max size set to 250 elements.
+** Constraints / Constraint Indices max size set to 250 elements.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.130.22 Preview
+|;old
+|101541|Phantom can drown.
+|147816|Command list does not move away from the edge correctly when the window is resized, enabling/disabling fullscreen mode (F11).
+|171996|Camel takes fall damage from lower height than in Java Edition.
+|180489|Custom blocks do not have a quick move animation.
+|228607|Worlds in the "shared" folder don't load resource/behavior packs.
+|;dev
+|229451|Zombie Horse Uses Incorrect Mob Category in Bedrock Edition.
+|229460|Zombie horse with horse armor can burn in sunlight.
+|otherissuescount=4}}
+'''Other'''
+* Fixed custom blocks rendered in [[structure block]] GUI.
+* Fixed controller focus being cut off for the top of the Realms Timeline opted-out members list.
+* Fixed a bug where {{cd|timeLeft}} would cause the {{cd|DebugShape}} to be removed immediately.
+* Fixed a bug where the arrow head of the {{cd|DebugArrow}} would look incorrect at certain rotations.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.130 betas]]
+
+[[de:Bedrock Edition beta 1.21.130.22]]
+[[es:Bedrock Edition Preview 1.21.130.22]]
+[[pt:Edição Bedrock Preview 1.21.130.22]]
+[[zh:基岩版1.21.130.22]]

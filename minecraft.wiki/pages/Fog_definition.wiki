@@ -1,0 +1,72 @@
+{{Exclusive|bedrock}}
+
+[[Fog]] settings are stored as JSON files in a resource pack in the {{File|directory|fogs|inline=1}} directory. Multiple fog settings can be created and each [[biome]] can be assigned a fog setting in the [[Resource pack#Biomes|client biome JSON files]]. Fog settings can also be applied with the {{cmd|fog}} command, which will override the biome fog settings.
+
+All fog settings are optional, if not specified they will equal to lower settings in the fog stack, first data default values and then hardcoded values. Default fog settings can be specified in the <code>biomes_client.json</code> file which will overwrite all fog settings that are not specified in the resource pack.
+
+== JSON format ==
+<div class="treeview">
+* {{nbt|compound}} The root tag
+** {{nbt|string|format_version}}: The 3-part schema version used in the file, usually  <code>1.16.110</code> or <code>1.21.90</code>.
+** {{nbt|compound|minecraft:fog_settings}}
+*** {{nbt|compound|description}}
+**** {{nbt|string|identifier}}: The identifier for these settings, which can be specified in the {{File|file|''biome''.client_biome.json|inline=1}} files. Must include a namespace. For a full list of vanilla identifiers that are applied to biomes, see {{Slink|Fog|Vanilla fog settings}}.
+*** {{nbt|compound|distance}}: The regular fog settings that are always visible.
+**** {{nbt|compound|air}}: Fog settings while the camera is inside [[air]].
+***** {{nbt|float|fog_start}}: The distance where fog will begin to appear.
+***** {{nbt|float|fog_end}}: The distance where fog becomes opaque.
+***** {{nbt|string|render_distance_type}}: The type of measuring used for fog distances. When set to <code>render</code>, the above values are measured in decimals as a percentage of the current render distance. When set to <code>fixed</code>, the above values are measured in blocks and the fog distance does not change with the render distance.
+***** {{nbt|int array}}{{nbt|string|fog_color}}: The color of the fog, supports RGB array or HEX string.
+**** {{nbt|compound|lava}}: Fog settings while the camera is inside [[lava]].
+**** {{nbt|compound|lava_resistance}}: Fog settings while the camera is inside lava under the [[Fire Resistance]] effect.
+**** {{nbt|compound|water}}: Fog settings while the camera is inside [[water]].
+***** {{nbt|compound|transition_fog}}: Settings for the transition between fogs when the camera has just entered water.
+****** {{nbt|compound|init_fog}}: Fog settings for the initial fog applied when the camera has just entered water.
+****** {{nbt|float|min_percent}}: The minimum progress of fog transition.
+****** {{nbt|float|mid_seconds}}: The time it takes to reach the <code>mid_percent</code> of fog transition in seconds.
+****** {{nbt|float|mid_percent}}: The progress of fog transition after the specified seconds.
+****** {{nbt|float|max_seconds}}: Total amount of time it takes to complete transition in seconds, when the transition fog completely disappears.
+**** {{nbt|compound|weather}}: Fog settings while the camera is inside air during [[precipitation]].
+*** {{nbt|compound|volumetric}}:{{Fn|Only in resource packs with <code>"pbr"</code> capability|name=pbr}} Volumetric fog settings exclusive to [[Vibrant Visuals]] and [[ray tracing]].
+**** {{nbt|compound|density}}
+***** {{nbt|compound|air}}: Volumetric fog settings while the camera is inside [[air]].
+****** {{nbt|float|max_density}}: The multiplier on how much fog disrupts the light, between 0.0 (no fog) and 1.0 (opaque).
+****** {{nbt|bool|uniform}}: Whether fog density is distributed evenly across all heights.
+****** {{nbt|float|zero_density_height}}: The height in blocks that fog will begin to appear, when <code>uniform</code> is false.
+****** {{nbt|float|max_density_height}}: The height in blocks that fog reaches its maximum density value, when <code>uniform</code> is false.
+***** {{nbt|compound|lava}}: Volumetric fog settings while the camera is inside [[lava]].
+***** {{nbt|compound|lava_resistance}}: Volumetric fog settings while the camera is inside lava under the [[Fire Resistance]] effect.
+***** {{nbt|compound|water}}: Volumetric fog settings while the camera is inside [[water]].
+***** {{nbt|compound|weather}}: Volumetric fog settings while the camera is inside air during [[precipitation]].
+**** {{nbt|compound|media_coefficients}}
+***** {{nbt|compound|air}}: Fog effects applied to light when it passes through [[air]].
+****** {{nbt|int array}}{{nbt|string|scattering}}: How much of each RGB color of the light is spread by the fog; supports RGB array or HEX string.
+****** {{nbt|int array}}{{nbt|string|absorption}}: How much of each RGB color of the light is absorbed by the fog; supports RGB array or HEX string.
+***** {{nbt|compound|cloud}}: Fog effects applied to light when it passes through [[clouds]].
+***** {{nbt|compound|water}}: Fog effects applied to light when it passes through [[water]].
+**** {{nbt|compound|henyey_greenstein_g}}: Exclusive to [[Vibrant Visuals]], requires format version <code>1.21.90</code>.
+***** {{nbt|compound|air}}
+****** {{nbt|float|henyey_greenstein_g}}: Controls the distribution of scattered light in air, between -1.0 and 1.0, defaults to 0.75. Positive values result in forward-scattering while negative values result in backward-scattering.
+***** {{nbt|compound|water}}
+****** {{nbt|float|henyey_greenstein_g}}: Controls the distribution of scattered light in water, between -1.0 and 1.0, defaults to 0.6. Positive values result in forward-scattering while negative values result in backward-scattering.
+</div>{{Fnlist}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.100|dev=beta 1.16.100.54|Separated fog settings from <code>[[Resource pack#Biomes|biomes_client.json]]</code> in favor of new fog definitions for each biome, with many more customization options.|Added volumetric fog options used for ray tracing.}}
+|{{HistoryLine||1.16.200|exp=Caves and Cliffs|dev=beta 1.16.200.52|Added powder snow fog.}}
+|{{HistoryLine||Preview 1.20.60.21|exp=Render Dragon Features for Creators|Added volumetric fog and light shafts to [[Deferred Technical Preview|deferred lighting]].}}
+|{{HistoryLine||Preview 1.21.10.20|exp=Render Dragon Features for Creators|Volumetric fog density settings are now supported for [[weather]] when a format version of <code>1.21.0</code> or higher is specified.}}
+|{{HistoryLine||1.21.90|dev=Preview 1.21.90.20|Added [[Vibrant Visuals]] in stable releases outside of experiments, which allows usage of volumetric fog.}}
+|{{HistoryLine|||dev=Preview 1.21.90.26|Added <code>henyey_greenstein_g</code> settings to the fog json files, exclusive to [[Vibrant Visuals]].}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/documents/foginresourcepacks?view=minecraft-bedrock-stable|title=Fog in Resource Packs|website=Microsoft Learn}}
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/documents/vibrantvisuals/volumetricfoglightshaftscustomization?view=minecraft-bedrock-stable|title=Volumetric Fog and Light Shafts|website=Microsoft Learn}}
+
+== Navigation ==
+{{Navbox resource packs}}
+{{Navbox Bedrock Edition}}

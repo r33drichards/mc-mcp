@@ -1,0 +1,149 @@
+{{Infobox version
+| image = Bedrock 1.19.70.23 PatchNotes.jpg
+| image2 = Bedrock 1.19.70.23.png
+| edition = Bedrock
+| type = Preview
+| versioncode = '''Android''':<br>
+951907023 (armeabi-v7a, 31)<br>
+961907023 (x86, 31)<br>
+971907023 (arm64-v8a, 31)<br>
+981907023 (x86_64, 31)<br>
+| date = '''Windows, iOS, iPadOS, Xbox''' - February 15, 2023<br>'''Android''' - February 18, 2023
+| internal = '''Windows''': 1.19.7023.0<br>'''Android, iOS, iPadOS''': 1.19.70.23<br>'''Xbox''': 1.19.7023.70
+| serverdl = '''Server'''<br>
+[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.19.70.23.zip Windows]
+[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.19.70.23.zip Linux]
+| parent = 1.19.70
+| prevparent = 1.19.63
+| prev = Preview 1.19.70.22
+| next = Preview 1.19.70.24
+| nextparent = 1.19.71
+}}<onlyinclude>
+
+'''Beta 1.19.70.23''' (Android) or '''Preview 1.19.70.23''' (Windows, iOS, iPadOS, Xbox) is the fourth beta/''Preview'' version for [[Bedrock Edition 1.19.70]], released on February 15 and 18, 2023,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/13133616291981|title=Minecraft Beta & Preview - 1.19.70.23|website=Minecraft Feedback|date=February 15, 2023}}</ref> which adds the [[Sniffer]], [[Archaeology]], and fixes bugs.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|summon}}'''
+* Re-added rotation arguments for the {{cmd|summon}} [[command]].
+** New syntax: {{cmd|summon <entityType: EntityType> [spawnPos: x y z] [yRot: value] [xRot: value] [spawnEvent: string] [nameTag: string]}}
+** Previous syntax: {{cmd|summon <entityType: EntityType> [spawnPos: x y z] [spawnEvent: string] [nameTag: string]}}
+
+=== General ===
+'''[[Experiments]]'''
+* Added the "Sniffer" experimental toggle.
+** Enables all sniffer-related features.
+*** The [[sniffer]], [[torchflower]]s, and [[Torchflower Seeds|torchflower seeds]].
+
+=== Technical ===
+'''JSON'''
+* Released block properties and permutations out of experimental in JSON formats 1.19.70 and higher.
+** Added a content warning when loading world with more than 65536 custom block permutations. Custom block permutation counts are logged in debug log.
+
+== Changes ==
+=== Gameplay ===
+'''[[Horse]] breeding'''
+* When breeding horses, the baby horse now has a chance of being better than its parents in speed, jump strength, and health.
+** This change is intended to make horse breeding a viable way of getting great horses, if a player starts with good parents and puts in enough time and [[golden carrot]]s.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Next Major Update", "Sniffer", and "Beta APIs" experimental toggle.
+=== Additions ===
+==== Blocks ====
+'''[[Decorated Pot]]'''
+* Can be crafted with any 4 pottery shards or [[brick]] items, shaped rhombic.
+** The type of crafting material decides which picture would occur on the certain side of the crafted decorated pot.
+*** The possible pictures are decided by the type of pottery shard which is used to craft.
+*** The brick item will not have a picture.
+* Very fragile, and very easy to break it:
+** Will break apart into its crafting materials when breaking it using any block-breaking tool.
+** Will drop itself when breaking it using empty hand.
+
+'''[[Suspicious Sand]]'''
+* Generates in [[Desert Pyramid|desert temples]] and [[desert well]]s.
+* Brushing the suspicious sand with a brush will extract objects.
+
+'''[[Torchflower]]'''
+* A new type of flower, grows from torchflower seeds.
+** Only drop itself when broken.
+** Can be crafted into a [[orange dye]].
+** Can be planted in the [[flower pot]].
+
+==== Items ====
+'''[[Brush]]'''
+* An item which can be used to brush things.
+* Can be crafted with 3 [[string]] and 2 [[stick]]s, like the shape of crafting [[pickaxe]]s.
+
+'''[[Pottery Shard]]'''
+* They have pictures on them.
+* They cannot be crafted and are only found by brushing suspicious sand.
+
+'''[[Spawn Egg]]'''
+* Added sniffer spawn egg.
+
+'''[[Torchflower Seeds]]'''
+* A new type of seed, which can be planted on [[farmland]] and grows into a torchflower.
+* Can only be obtained if a sniffer digs up a torchflower seed.
+
+==== Mobs ====
+'''[[Sniffer]]'''
+* A new passive friendly mob, which is the mob vote winner of [[Minecraft Live 2022]], and considered as the first "ancient" mob.
+* Cannot spawn naturally.
+* Cannot be tempted or tamed.
+* Often sniff in the air and occasionally dig for torchflower seeds.
+* Can be bred with torchflower seeds.
+* Drop [[moss block]] when killed.
+
+==== Technical ====
+'''API'''
+* <code>BlockPermutation</code>
+** Added method <code>matches(blockName: string, properties?: BlockProperties): boolean</code> which is used to match a block with optional states against a ''BlockPermutation''.
+** Added method <code>withProperty(name: string, value: boolean | number | string): BlockPermutation;</code> which returns a new block permutation with a given property set to a specific value. Throws if the provided data cannot be resolved as a valid block permutation.
+** Added function <code>static resolve(blockName: string, properties?: BlockProperties): BlockPermutation</code> which resolve a ''BlockPermutation'' from a block name and optional states. Throws if the provided data cannot be resolved as a valid block permutation.
+* <code>BlockProperties</code>
+** Added new class to expose ''BlockPropertyType''.
+* <code>BlockPropertyType</code>
+** Added new class to track "definitional" data about block properties. This is how you can find which values are valid for each block property.
+
+=== Changes ===
+==== World generation ====
+'''[[Desert Pyramid]]'''
+* Now includes a new room filled with [[sand]] and [[suspicious sand]].
+* Some sands will appear exposed, and can be found at the same height as the [[blue terracotta]].
+
+'''[[Desert Well]]'''
+* Now includes suspicious sands under its water.
+
+== Fixes ==
+'''Gameplay'''
+* Fixed a bug where an Allay holding a Lead wasn't able to be leashed unless the player held a full stack of 64 Leads in hand.
+'''Audio'''
+* Sounds from all Button types and Lever are now controlled by "Blocks" slider in Audio Settings. ({{bug|MCPE-166420}})
+* The sound volume of Ghasts will now fade the further they are from the player. ({{bug|MCPE-35222}})
+'''Blocks'''
+* Fixed a bug where Hoppers would not pull in items after being unpowered from Redstone. ({{bug|MCPE-166434}})
+'''General'''
+* The swap item animation now plays when switching hotbar items of the same type with the same durability.
+'''Graphical'''
+* The loading screen no longer flickers when entering the Nether in immersive VR mode.
+'''Items'''
+* Fixed loaded Crossbow staying loaded after shooting. ({{bug|MCPE-166827}})
+'''Mobs'''
+* Villagers will now emit anger particles when hit by a player outside of a village.
+* Horses cannot be pushed over Fences covered by Carpets anymore. ({{bug|MCPE-164717}})
+'''User Interface'''
+* Fixed a bug where moving the player or camera with a controller while text-to-speech for UI was turned on would cause the narrator to say "X of Y".
+* Fixed a bug where the Edit World screen couldn't be opened for a world if the corresponding world directory had a space in it. ({{bug|MCPE-166763}})
+</onlyinclude>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[Category:Bedrock Edition 1.19.70 betas]]
+[[de:Bedrock Edition beta 1.19.70.23]]
+[[es:Bedrock Edition beta 1.19.70.23]]
+[[pt:Edição Bedrock Preview 1.19.70.23]]
+[[zh:基岩版1.19.70.23]]

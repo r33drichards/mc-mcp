@@ -1,0 +1,890 @@
+Minecraft displays the '''player inventory''' differently, according to how the window was opened. Ranges of slot indices vary in meaning between different “windows”.
+
+{{TOC|right}}
+
+== Types ==
+{| class="wikitable"
+ |-
+ ! Packet
+ ! Type
+ ! Name
+ ! Description
+ |-
+ |
+ |colspan="2" style="text-align: center"|(none)
+ | [[#Player Inventory|The player inventory]].
+ |-
+ |-
+ | [[Java_Edition_protocol/Packets#Open_Horse_Screen|Open Horse Screen]]
+ |colspan="2" style="text-align: center"|(none)
+ | [[#Horse|A inventory for horses]]. Used by [[Horse]], [[Donkey]], [[Mule]], [[Llama]], [[Trader Llama]], and [[Camel]].
+ |-
+ |-
+ |rowspan="25"|[[Java_Edition_protocol/Packets#Open_Screen|Open Screen]]
+ | 0
+ | <code>generic_9x1</code>
+ | [[#Chest|A 1-row inventory]], not used by the notchian server.
+ |-
+ | 1
+ | <code>generic_9x2</code>
+ | [[#Chest|A 2-row inventory]], not used by the notchian server.
+ |-
+ | 2
+ | <code>generic_9x3</code>
+ | [[#Chest|General-purpose 3-row inventory]]. Used by [[Chest]], [[Minecart with Chest]], [[Ender Chest]], and [[Barrel]].
+ |-
+ | 3
+ | <code>generic_9x4</code>
+ | [[#Chest|A 4-row inventory]], not used by the notchian server.
+ |-
+ | 4
+ | <code>generic_9x5</code>
+ | [[#Chest|A 5-row inventory]], not used by the notchian server.
+ |-
+ | 5
+ | <code>generic_9x6</code>
+ | [[#Large Chest|General-purpose 6-row inventory]], used by [[Chest#Large_Chest|Large Chest]].
+ |-
+ | 6
+ | <code>generic_3x3</code>
+ | [[#Dispenser|General-purpose 3-by-3 square inventory]], used by [[Dispenser|Dispenser]] and [[Dropper|Dropper]].
+ |-
+ | 7
+ | <code>crafter_3x3</code>
+ | [[#Crafter|Crafter]]
+ |-
+ | 8
+ | <code>anvil</code>
+ | [[#Anvil|Anvil]]
+ |-
+ | 9
+ | <code>beacon</code>
+ | [[#Beacon|Beacon]]
+ |-
+ | 10
+ | <code>blast_furnace</code>
+ | [[#Blast Furnace|Blast Furnace]]
+ |-
+ | 11
+ | <code>brewing_stand</code>
+ | [[#Brewing Stand|Brewing Stand]]
+ |-
+ | 12
+ | <code>crafting</code>
+ | [[#Crafting Table|Crafting Table]]
+ |-
+ | 13
+ | <code>enchantment</code>
+ | [[#Enchanting Table|Enchanting Table]]
+ |-
+ | 14
+ | <code>furnace</code>
+ | [[#Furnace|Furnace]]
+ |-
+ | 15
+ | <code>grindstone</code>
+ | [[#Grindstone|Grindstone]]
+ |-
+ | 16
+ | <code>hopper</code>
+ | [[#Hopper|Hopper or Minecart with Hopper]]
+ |-
+ | 17
+ | <code>lectern</code>
+ | [[#Lectern|Lectern]]
+ |-
+ | 18
+ | <code>loom</code>
+ | [[#Loom|Loom]]
+ |-
+ | 19
+ | <code>merchant</code>
+ | [[#Villager Trading|Villager or Wandering Trader]]
+ |-
+ | 20
+ | <code>shulker_box</code>
+ | [[#Shulker Box|Shulker Box]]
+ |-
+ | 21
+ | <code>smithing</code>
+ | [[#Smithing Table|Smithing Table]]
+ |-
+ | 22
+ | <code>smoker</code>
+ | [[#Smoker|Smoker]]
+ |-
+ | 23
+ | <code>cartography_table</code>
+ | [[#Cartography Table|Cartography Table]]
+ |-
+ | 24
+ | <code>stonecutter</code>
+ | [[#Stonecutter|Stonecutter]]
+ |}
+
+The slot number is calculated starting at 0, counting up through the window's unique slots, and then counting through the players inventory.
+
+For all windows, the slot in the upper-left corner of the player's inventory is slot ''n'' where ''n'' is the number of unique slots, and slot number -999 is always used for clicking outside the window.
+
+The default inventory window, which is never explicitly opened by the server, has 10 unique slots.
+
+Rectangular regions are always indexed starting with the upper-left corner and scanning across rows. If a window has a crafting region, the output slot is always slot 0 followed immediately by the input region.
+
+Each window type is described in the following sections. All slot index ranges are inclusive and reflect the indices observed in the Minecraft protocol.
+
+For the window properties (additional data in each window, e.g. smelting progress or enchantments), refer to the table in the [[Java_Edition_protocol/Packets#Set_Container_Property|Set Container Property]] packet.
+
+== Player Inventory ==
+{{Anchor|Inventory}}
+[[File:Inventory-slots.png|thumb|Inventory slots]]
+
+This is the inventory window that the player can always open, typically by pressing {{Key|E}} since [[Beta 1.4]]. Before, you had to press {{Key|I}}.
+
+{{warning|The slots differ when storing using the [[Player.dat_format#Inventory_slot_numbers|player.dat format]].}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | crafting output
+ |-
+ | 1–4
+ | 2×2 crafting input (<code>1 + x + 2 * y</code>)
+ |-
+ | 5–8
+ | armor (head, chest, legs, feet)
+ |-
+ | 9–35
+ | main inventory
+ |-
+ | 36–44
+ | hotbar
+ |-
+ | 45
+ | Offhand slot
+ |}
+
+{{-}}
+
+== Horse ==
+
+[[File:Horse-slots.png|thumb|Horse slots]]
+
+The GUI that appears when interacting with a tamed [[Horse|horse]], or when opening the player's inventory while riding a tamed horse.
+
+{{info|The horse, donkey and llama technically share the same GUI, but are split into separate entries for clarity.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | saddle
+ |-
+ | 1
+ | armor
+ |-
+ | 2–28
+ | main inventory
+ |-
+ | 29–37
+ | hotbar
+ |}
+
+<gallery>
+File:Horse-slots.png|Horse slots
+File:Skeleton-horse-slots.png|Skeleton horse slots
+File:Zombie-horse-slots.png|Zombie horse slots
+File:Camel-slots.png|Camel slots
+</gallery>
+
+{{-}}
+
+=== Donkey ===
+
+[[File:Donkey-slots.png|thumb|Donkey slots]]
+
+The GUI that appears when interacting with a tamed [[Donkey|donkey]] or [[Mule|mule]], or when opening the player's inventory while riding a tamed donkey or mule.
+
+{{warning|There still is an armor slot, even though it cannot be used and is invisible.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | saddle
+ |-
+ | 1
+ | armor
+ |-
+ | 2–16
+ | donkey inventory
+ |-
+ | 17–43 (2-28 if unchested)
+ | player inventory
+ |-
+ | 44–52 (29-37 if unchested)
+ | hotbar
+ |}
+
+<gallery>
+File:Donkey-unchested-slots.png|Unchested donkey
+File:Donkey-chested-slots.png|Chested donkey
+File:Mule-unchested-slots.png|Unchested mule
+File:Mule-chested-slots.png|Chested mule
+</gallery>
+
+{{-}}
+
+=== Llama ===
+[[File:Llama-strength5-slots.png|thumb|Llama slots]]
+
+The GUI that appears when interacting with a tamed [[Llama|llama]] or [[Trader_Llama|trader llama]] that has a chest, or when opening the player's inventory while riding a tamed llama.
+
+Depending on the value of the strength field, the number of chest rows may vary (max is 5, so 15 slots).
+
+{{warning|There still is a saddle slot, even though it cannot be used and is invisible.}}
+
+{{warning|Slot positions within the llama inventory vary - slot 2 may be at (1,0) or at (0,1) depending on the number of columns.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | saddle
+ |-
+ | 1
+ | carpet
+ |-
+ | 2 - <code>(2 + 3 * strength)</code>
+ | llama inventory
+ |-
+ | <code>(2 + 3 * strength) + 1</code> - <code>(2 + 3 * strength) + 27</code>
+ | player inventory
+ |-
+ | <code>(2 + 3 * strength) + 28</code> - <code>(2 + 3 * strength) + 35</code>
+ | hotbar
+ |}
+
+<gallery>
+File:Llama-unchested-slots.png|Unchested llama
+File:Llama-strength1-slots.png|Llama with strength 1
+File:Llama-strength2-slots.png|Llama with strength 2
+File:Llama-strength3-slots.png|Llama with strength 3
+File:Llama-strength4-slots.png|Llama with strength 4
+File:Llama-strength5-slots.png|Llama with strength 5
+</gallery>
+
+== Chest ==
+{{anchor|Large Chest}}
+[[File:Chest-slots.png|thumb|Chest slots]]
+
+The <code>generic_9x3</code> GUI appears when interacting with a [[Chest#Chest|single chest]], [[Minecart_with_Chest|minecart with chest]], [[Ender_Chest|ender chest]], or [[Barrel|barrel]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0–26
+ | chest
+ |-
+ | 27–53
+ | main inventory
+ |-
+ | 54–62
+ | hotbar
+ |}
+
+<gallery>
+File:Generic-9x1-slots.png|Generic 9x1 slots
+File:Generic-9x2-slots.png|Generic 9x2 slots
+File:Chest-slots.png|Chest slots
+File:Generic-9x4-slots.png|Generic 9x4 slots
+File:Generic-9x5-slots.png|Generic 9x5 slots
+File:DoubleChest-slots.png|Large chest slots
+</gallery>
+
+{{-}}
+
+== Dispenser ==
+{{anchor|Dropper}}
+
+[[File:Dispenser-slots.png|thumb|Dispenser/dropper slots]]
+
+The <code>generic_3x3</code> GUI appears when interacting with a [[Dispenser|dispenser]] or [[Dropper|dropper]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0–8
+ | 3×3 dispenser contents (<code>x + 3 * y</code>)
+ |-
+ | 9–35
+ | main inventory
+ |-
+ | 36-44
+ | hotbar
+ |}
+
+{{-}}
+
+== Crafter ==
+
+[[File:Crafter-slots.png|thumb|Crafter slots]]
+
+The <code>crafter</code> GUI appears when interacting with a [[Crafter|crafter]].
+
+{{info|Disabling slots is implemented by sending a [[Java_Edition_protocol/Packets#Click_Container|Click Container]] packet with no carried item to an empty slot.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0-8
+ | 3×3 crafting input (<code>x + 3 * y</code>)
+ |-
+ | 9–35
+ | main inventory
+ |-
+ | 36–44
+ | hotbar
+ |-
+ | 45
+ | result
+ |}
+
+{{-}}
+
+== Anvil ==
+
+[[File:Anvil-slots.png|thumb|Anvil slots]]
+
+The <code>anvil</code> GUI appears when interacting with an [[Anvil|anvil]].
+
+{{info|The name input is implemented using the [[Java_Edition_protocol/Packets#Rename_Item|Rename Item]] packet.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | first item
+ |-
+ | 1
+ | second item
+ |-
+ | 2
+ | result
+ |-
+ | 3–29
+ | main inventory
+ |-
+ | 30–38
+ | hotbar
+ |}
+
+{{-}}
+
+== Beacon ==
+
+[[File:Beacon-slots.png|thumb|Beacon slots]]
+
+The <code>beacon</code> GUI appears when interacting with a [[Beacon|beacon]].
+
+{{info|The effect buttons are clientside and sent using the [[Java_Edition_protocol/Packets#Set_Beacon_Effect|Set Beacon Effect]] packet when clicking the confirm button.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | payment item
+ |-
+ | 1–27
+ | main inventory
+ |-
+ | 28–36
+ | hotbar
+ |}
+
+{{-}}
+
+== Furnace ==
+[[File:Furnace-slots.png|thumb|Furnace slots]]
+
+The <code>furnace</code> GUI appears when interacting with a [[Furnace|furnace]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | ingredient
+ |-
+ | 1
+ | fuel
+ |-
+ | 2
+ | output
+ |-
+ | 3–29
+ | main inventory
+ |-
+ | 30–38
+ | hotbar
+ |}
+
+{{-}}
+
+=== Blast Furnace ===
+[[File:Blast_Furnace-slots.png|thumb|Blast furnace slots]]
+
+The <code>blast_furnace</code> GUI appears when interacting with a [[Blast_Furnace|blast furnace]].
+
+Same layout as a furnace; however, the recipe book displays blast furnace recipes instead of regular furnace recipes.
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | ingredient
+ |-
+ | 1
+ | fuel
+ |-
+ | 2
+ | output
+ |-
+ | 3–29
+ | main inventory
+ |-
+ | 30–38
+ | hotbar
+ |}
+
+{{-}}
+
+=== Smoker ===
+[[File:Smoker-slots.png|thumb|Smoker slots]]
+
+The <code>smoker</code> GUI appears when interacting with a [[Smoker|smoker]].
+
+Same layout as a furnace; however, the recipe book displays smoker recipes instead of regular furnace recipes.
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | ingredient
+ |-
+ | 1
+ | fuel
+ |-
+ | 2
+ | output
+ |-
+ | 3–29
+ | main inventory
+ |-
+ | 30–38
+ | hotbar
+ |}
+
+{{-}}
+
+== Brewing Stand ==
+
+[[File:BrewingStand-slots.png|thumb|Brewing stand slots]]
+
+The <code>brewing_stand</code> GUI appears when interacting with a [[Brewing_Stand|brewing stand]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0-2
+ | bottles/potions
+ |-
+ | 3
+ | potion ingredient
+ |-
+ | 4
+ | blaze powder
+ |-
+ | 5-31
+ | main inventory
+ |-
+ | 32-40
+ | hotbar
+ |}
+
+{{-}}
+
+== Crafting ==
+{{anchor|Crafting Table}}
+
+[[File:CraftingTable-slots.png|thumb|Crafting table slots]]
+
+The <code>crafting</code> GUI appears when interacting with a [[Crafting_Table|crafting table]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | crafting output
+ |-
+ | 1–9
+ | 3×3 crafting input (<code>1 + x + 3 * y</code>)
+ |-
+ | 10–36
+ | main inventory
+ |-
+ | 37–45
+ | hotbar
+ |}
+
+{{-}}
+
+== Enchantment ==
+{{anchor|Enchanting Table}}
+
+[[File:EnchantmentTable-slots.png|thumb|Enchanting table slots]]
+
+The <code>enchantment</code> GUI appears when interacting with an [[Enchanting_Table|enchanting table]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | item to enchant
+ |-
+ | 1
+ | lapis lazuli slot
+ |-
+ | 2–28
+ | main inventory
+ |-
+ | 29–37
+ | hotbar
+ |}
+
+{| class="wikitable"
+ |-
+ ! Button
+ ! Description
+ |-
+ | 0-2
+ | Enchantment
+ |}
+
+{{-}}
+
+== Grindstone ==
+[[File:Grindstone-slots.png|thumb|Grindstone slots]]
+
+The <code>grindstone</code> GUI appears when interacting with a [[Grindstone|grindstone]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | first item
+ |-
+ | 1
+ | second item
+ |-
+ | 2
+ | result
+ |-
+ | 3–29
+ | main inventory
+ |-
+ | 30–38
+ | hotbar
+ |}
+
+{{-}}
+
+== Hopper ==
+
+[[File:Hopper-slots.png|thumb|Hopper slots]]
+
+The <code>hopper</code> GUI appears when interacting with a [[Hopper|hopper]] or [[Minecart_with_Hopper|minecart with hopper]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0-4
+ | hopper slots
+ |-
+ | 5–31
+ | main inventory
+ |-
+ | 32–40
+ | hotbar
+ |}
+
+{{-}}
+
+== Lectern ==
+[[File:Lectern-slots.png|thumb|Lectern UI]]
+
+The <code>lectern</code> GUI appears when interacting with a [[Lectern|lectern]] with a book.
+
+The player inventory is not included.
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | book
+ |}
+
+{| class="wikitable"
+ |-
+ ! Button
+ ! Description
+ |-
+ | 0
+ | unused
+ |-
+ | 1
+ | Page back
+ |-
+ | 2
+ | Page forward
+ |-
+ | 3
+ | Take Book
+ |-
+ | <code>100 + page - 1</code>
+ | Change page (via [[Text_component_format#Java_Edition|<code>"change_page"</code> click event]])
+ |}
+
+{{-}}
+
+== Loom ==
+[[File:Loom-slots.png|thumb|Loom slots]]
+
+The <code>loom</code> GUI appears when interacting with a [[Loom|loom]].
+
+{{info|The patterns retain their button ID when scrolling, i.e. the first visible button may have an ID higher than zero.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | banner
+ |-
+ | 1
+ | dye
+ |-
+ | 2
+ | pattern
+ |-
+ | 3
+ | result
+ |-
+ | 4–30
+ | main inventory
+ |-
+ | 31–39
+ | hotbar
+ |}
+
+{| class="wikitable"
+ |-
+ ! Button
+ ! Description
+ |-
+ | <code>n</code>
+ | Pattern <code>n</code>
+ |}
+
+{{-}}
+
+== Merchant ==
+{{anchor|Villager Trading}}
+
+[[File:Merchant-slots.png|thumb|Merchant slots]]
+
+The <code>merchant</code> GUI appears when interacting with a [[Villager|villager]] or [[Wandering_Trader|wandering trader]].
+
+{{info|If the villager only requires one item, you can put it in either (or both) slots.}}
+
+{{info|The trade buttons are implemented using the [[Java_Edition_protocol/Packets#Select_Trade|Select Trade]] packet.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0-1
+ | input items
+ |-
+ | 2
+ | result
+ |-
+ | 3–29
+ | main inventory
+ |-
+ | 30–38
+ | hotbar
+ |}
+
+{{-}}
+
+== Shulker Box ==
+[[File:Shulker-box-slots.png|thumb|Shulker box slots]]
+
+The <code>shulker_box</code> GUI appears when interacting with a [[Shulker Box|shulker box]].
+
+{{info|Although the GUI is effectively identical to <code>[[#Chest|generic_9x3]]</code>, it is technically a distinct GUI (with its own texture).}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0–26
+ | box slots
+ |-
+ | 27–53
+ | main inventory
+ |-
+ | 54–62
+ | hotbar
+ |}
+
+{{-}}
+
+== Smithing ==
+{{anchor|Smithing Table}}
+[[File:Smithing_Table-slots.png|thumb|Smithing table slots]]
+
+The <code>smithing</code> GUI appears when interacting with a [[Smithing_Table|smithing table]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | template
+ |-
+ | 1
+ | base item
+ |-
+ | 2
+ | additional item
+ |-
+ | 3
+ | result
+ |-
+ | 4–30
+ | main inventory
+ |-
+ | 31–39
+ | hotbar
+ |}
+
+{{-}}
+
+== Cartography Table ==
+[[File:Cartography-slots.png|thumb|Cartography table slots]]
+
+The <code>cartography_table</code> GUI appears when interacting with a [[Cartography_Table|cartography table]].
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | map
+ |-
+ | 1
+ | paper
+ |-
+ | 2
+ | output
+ |-
+ | 3–29
+ | main inventory
+ |-
+ | 30–38
+ | hotbar
+ |}
+
+{{-}}
+
+== Stonecutter ==
+[[File:Stonecutter-slots.png|thumb|Stonecutter slots]]
+
+The <code>stonecutter</code> GUI appears when interacting with a [[Stonecutter|stonecutter]].
+
+{{info|The recipes retain their button ID when scrolling, i.e. the first visible button may have an ID higher than zero.}}
+
+{| class="wikitable"
+ |-
+ ! Slot range
+ ! Description
+ |-
+ | 0
+ | input
+ |-
+ | 1
+ | result
+ |-
+ | 2–28
+ | main inventory
+ |-
+ | 29–37
+ | hotbar
+ |}
+
+{| class="wikitable"
+ |-
+ ! Button
+ ! Description
+ |-
+ | <code>n</code>
+ | Recipe <code>n</code>
+ |}
+
+{{-}}
+
+[[Category:Protocol Details]]
+[[Category:Java Edition protocol]]
+{{license wiki.vg}}

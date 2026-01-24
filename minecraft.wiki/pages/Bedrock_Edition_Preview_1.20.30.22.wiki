@@ -1,0 +1,156 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| image = Bedrock 1.20.30.22 PatchNotes.jpg
+| image2 = Bedrock 1.20.30.22.png
+| build = 17436038
+| editorver = 0.4.4
+| internal = '''Windows''': 1.20.3022.0<br>'''Android, iOS, iPadOS''': 1.20.30.22<br>'''Xbox One''': 1.20.3022.70
+| server = 1.20.30.22
+| versioncode = '''Android''':<br>
+952003022（armeabi-v7a，33）<br>
+962003022（x86，33）<br>
+972003022（arm64-v8a，33）<br>
+982003022（x86_64，33）<br>
+| date = August 17, 2023
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.30.22.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.30.22.zip Linux]
+| parent = 1.20.30
+| prevparent = 1.20.15
+| prev = Preview 1.20.30.21
+| next = beta 1.20.30.23
+| nextparent = 1.20.31
+}}<onlyinclude>
+
+'''Beta 1.20.30.22''' (Android) or '''Preview 1.20.30.22''' (Windows, iOS, iPadOS, Xbox) is the seventh beta/''Preview'' version for [[Bedrock Edition 1.20.30]], released on August 17, 2023<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/18619357250701-Minecraft-Beta-Preview-1-20-30-22|title=Minecraft - Beta & ''Preview'' 1.20.30.22|website=Minecraft Feedback|date=August 17, 2023}}</ref>, which brings more parity from {{JE}}, and fixes bugs.
+
+== Additions ==
+=== Technical ===
+'''[[JSON]]'''
+* Released the <code>minecraft:food</code> item component out of experimental in JSON formats 1.20.30 and higher.
+* Added <code>minecraft:interact_button</code> item component to enable and set text on the interact button in JSON formats 1.20.30 and above.
+
+== Changes ==
+=== Blocks ===
+'''[[Stained Terracotta]]'''
+* The IDs of <code>stained_hardened_clay</code> have now been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="16" | {{BlockSprite|stained-terracotta}} <code>stained_hardened_clay</code>
+| {{BlockSprite|white-terracotta}} <code>white_terracotta</code>
+|-
+| {{BlockSprite|orange-terracotta}} <code>orange_terracotta</code>
+|-
+| {{BlockSprite|magenta-terracotta}} <code>magenta_terracotta</code>
+|-
+| {{BlockSprite|light-blue-terracotta}} <code>light_blue_terracotta</code>
+|-
+| {{BlockSprite|yellow-terracotta}} <code>yellow_terracotta</code>
+|-
+| {{BlockSprite|lime-terracotta}} <code>lime_terracotta</code>
+|-
+| {{BlockSprite|pink-terracotta}} <code>pink_terracotta</code>
+|-
+| {{BlockSprite|gray-terracotta}} <code>gray_terracotta</code>
+|-
+| {{BlockSprite|light-gray-terracotta}} <code>light_gray_terracotta</code>
+|-
+| {{BlockSprite|cyan-terracotta}} <code>cyan_terracotta</code>
+|-
+| {{BlockSprite|purple-terracotta}} <code>purple_terracotta</code>
+|-
+| {{BlockSprite|blue-terracotta}} <code>blue_terracotta</code>
+|-
+| {{BlockSprite|brown-terracotta}} <code>brown_terracotta</code>
+|-
+| {{BlockSprite|green-terracotta}} <code>green_terracotta</code>
+|-
+| {{BlockSprite|red-terracotta}} <code>red_terracotta</code>
+|-
+| {{BlockSprite|black-terracotta}} <code>black_terracotta</code>
+|}
+
+=== Gameplay ===
+'''[[Game rule]]s'''
+* The <code>recipesUnlock</code> game rule is now set to <code>true</code> by default.
+
+=== General ===
+'''[[Settings]]'''
+* "Text to Speech" narrator will now read out the instruction text as well as the confirm button in the "Safe Area" menu.
+
+'''[[Pause menu]]'''
+* The "Pause menu" has been renamed to "Game menu".
+
+'''[[Play screen]]'''
+* Updated the "Play screen".
+** The "Friends" tab and "[[Realms]]" tab are now separated, for clearer feature separation.
+** The "[[Create New World]]" flow and "Create From Template" flow are now separated for a clearer path into the game.
+[[File:New UI - Play Screen Menu "Worlds" Tab (Bedrock Preview 1.20.30.22).png|right|thumb|350px|New Play Screen "World" Tab.]]
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" experimental toggle.
+=== Changes ===
+==== Technical ====
+'''[[API]]'''
+* <code>ItemStack</code>
+** Added <code>getCanPlaceOn()</code> and <code>getCanDestroy()</code>.
+** Added upper maximum limit of 255 to amount property - will throw if exceeds.
+* <code>Entity</code>
+** Added function <code>getProperty(identifier: string): boolean | number | string | undefined</code> - Gets an entity property.
+**Added function <code>setProperty(identifier: string, value: boolean | number | string): void</code> - Sets an entity property during the next tick.
+** Added function <code>resetProperty(identifier: string): boolean | number | string;</code> - Resets an entity property to its default value during the next tick and returns the default value.
+* <code>beforeEvents</code>
+** Added event/property <code>removeEvent</code>.
+* <code>afterEvents</code>
+** Renamed event/property <code>removedEvent</code> to <code>removeEvent</code>.
+* Class <code>EntityRemovedAfterEvent</code>
+** Renamed field <code>removedEntity</code> to <code>removedEntityId: removedEntityId: string</code>.
+** Added field <code>typeId: string</code>.
+* Added class <code>EntityRemovedBeforeEvent</code>.
+** Added field <code>removedEntity: Entity</code>.
+* Moved <code>EquipmentSlot</code> to <code>5.0</code> and changed enum values to uppercase.
+* Moved <code>EntityEquippableComponent</code> to <code>5.0</code>.
+* <code>Scoreboard</code>
+** <code>setObjectiveAtDisplaySlot</code> return type now correctly set to <code>ScoreboardObjective</code> or <code>undefined</code>.
+* <code>ScoreboardIdentity</code>
+** <code>getEntity</code> return type now correctly set to <code>Entity</code> or <code>undefined</code>.
+* <code>setWeather</code> API can now take an optional duration parameter to set the weather duration.
+* Added <code>read-only</code> property <code>heightRange: NumberRange</code> - Gets min/max dimension height limits.
+* Adding <code>Player.isSleeping</code> and <code>Player.isEmoting</code>.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.30.22 Preview
+|;From released versions before 1.20.0
+|46490|Crossbow durability decreases after charging.
+|131572|Cannot use the mouse or touch to navigate text menus.
+|159217|Vignette overlaps hotbar and other HUD elements with "Fancy Graphics" enabled.
+|171213|Wrong camera collision with the composter in 3rd person.
+|;From the 1.20.0 version
+|163456|Hanging signs placed by commands has a very large hitbox compared to the normal ones.
+|168813,169953|Calibrated sculk sensor doesn't fully light up when activated.
+|;From the 1.20.30 development versions
+|174073|[Script API] Unexpected change to properties of native classes.
+|otherissuescount=3}}
+'''Other'''
+* Fixed ZL/ZR icons for Joy-Con and Switch Pro controller on Android.
+* Fixed lighting of items in hand in the "Deferred Technical Preview".
+* Optimization and fixes for point light contributions.
+{{fixes|project=BDS|fixedin=1.20.30.22 Preview
+|;From released versions before 1.20.0
+|17527|Multiple server crashes due to memory leak when loading chunks.}}
+</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.30 betas]]
+[[de:Bedrock Edition beta 1.20.30.22]]
+[[es:Bedrock Edition beta 1.20.30.22]]
+[[ko:Bedrock Edition 프리뷰 1.20.30.22]]
+[[pt:Edição Bedrock Preview 1.20.30.22]]
+[[uk:Preview 1.20.30.22 (Bedrock Edition)]]
+[[zh:基岩版1.20.30.22]]

@@ -1,0 +1,243 @@
+{{lowercase title}}
+{{For|the {{JE}} directory|.minecraft}}
+{{distinguish|Mojang.com}}
+{{exclusive|bedrock|education}}
+
+{{File|directory|'''com.mojang'''|inline=1}} is a game directory which contains the [[player]]'s save data, such as [[world]]s, custom [[resource pack]]s and [[behavior pack]]s, [[screenshot]]s, [[options.txt|game settings]], and more.
+
+== Location ==
+{{/path}}
+
+=== Windows ===
+On Windows, every signed in user has its own {{File|directory|'''com.mojang'''|inline=1}} directory, located in the <code>Users</code> directory. A shared {{File|directory|'''com.mojang'''|inline=1}} directory for all players and signed out players is stored in <code>Users\Shared\games</code>.
+
+This means that worlds, options, and add-ons are stored separately for every player. User data in the directory of a signed in user is not visible for signed out players or different accounts.
+
+Each player's data is synchronized with the Xbox cloud storage. The game synchronizes with the cloud during startup.
+
+=== Android ===
+On Android, there are two distinct {{File|directory|'''com.mojang'''|inline=1}} directories - internal and external. If the ''File Storage Location'' option is set to ''Application'', all data is stored in the internal directory. If it's set to ''External'', some data (such as worlds) is stored in the external directory, but the internal directory is still used for other data.
+
+The external directory can be viewed and edited by users, though it might require workarounds in newer Android versions. The internal directory cannot be viewed or edited without root access. It's not possible to migrate worlds and other data between those directories without root access.
+
+The user ID is usually <code>0</code>, but differs if the user is a secondary user. <code>/storage/emulated/''user ID''</code> is often presented as ''Internal storage'' or similar by file managers, or when you access the device via MTP (connected to a Linux, macOS or Windows computer).
+
+== Directory structure ==
+<div class="treeview">
+* {{File|directory|com.mojang}}
+** {{File|directory|archive}}: Contains exported [[world]] files, presumably those with a failed export.{{info needed}}
+** {{File|directory|behavior_packs}}: Contains imported [[behavior pack]]s.
+** {{File|directory|custom_skins}}: Contains imported [[skin]] files.
+** {{File|directory|development_behavior_packs}}: Contains custom-made [[behavior packs]].
+** {{File|directory|development_resource_packs}}: Contains custom-made [[resource packs]].
+** {{File|directory|development_skin_packs}}: Contains custom-made [[skin packs]].
+*** {{File|file|ClientCorrelation<ID>.dat}}{{info needed}}
+** {{File|directory|editor}}: Data related to ''[[Bedrock Editor]]''
+*** {{File|directory|persistance/client}}
+**** {{File|directory|global}}
+***** {{File|directory|editor}}
+****** {{File|directory|blockpalettes/0}}
+******* {{File|file|custom_blockpalettes.json}}: Contains all saved hotbars.
+****** {{File|directory|tutorial/0}}
+******* {{File|file|Editor.Tutorial.Presented.json}}: JSON file containing one {{cd|value}} byte, whether the startup tutorial has been shown or not.
+****** {{File|directory|ui_settings/0}}
+******* {{File|file|ui_settings.json}}: Stores all states of the windows in Tool Mode (expanded or not, size), and all buttons in the action bar.
+***** {{File|file|group_manifest.json}}: Contains some information about the contents of this directory.
+**** {{File|directory|projects}}
+***** {{File|directory|''project ID''}}: Matches the ID of the world in {{file|directory|minecraftWorlds|inline=1}}.
+****** {{File|directory|editor}}
+******* {{File|directory|blockpalettes/0}}
+******** {{File|file|active_blockpalette_id.json}}: The ID of the currently selected hotbar in the global file.
+******** {{File|file|selected_palette_item_index.json}}: Which hotbar slot is currently selected.
+****** {{File|file|group_manifest.json}}: Contains some information about the contents of this directory.
+*** {{File|directory|structuredb}}: Contains saved structure files.{{verify}}
+** {{File|directory|minecraftpe}}
+*** {{File|directory|editor}}
+**** {{File|file|editoroptions.txt}}: Contains certain options related to ''[[Bedrock Editor]]''.
+*** {{File|file|catalog_info.json}}: Some information about [[Marketplace]] content.{{info needed}}
+*** {{File|file|clientId.txt}}: An ID of the client.{{info needed}}
+*** {{File|file|external_servers.txt}}: Contains all external servers added in the [[server list]], with their address and port.
+*** {{File|file|custom.png}}: Contains a custom skin.{{Verify|I did not find this directory on Windows, is it exclusive to certain versions?}}
+*** {{File|file|global_resource_packs.json}}: Determines which [[resource packs]] are globally activated.
+*** {{File|file|hs}}{{note|This file has no extension. It is a plaintext list of UUIDs, separated by newlines.{{info needed|What are the UUIDs for? I've heard people say this is for rolling out the new Bedrock UI, but I can not confirm nor deny that.}}}}
+*** {{File|file|invalid_known_packs.json}}: Shows all packs that can't be activated in-game.
+*** {{File|file|NonAssertErrorLog.txt}}
+*** {{File|file|NotificationCenterSettings.dat}}
+*** {{File|file|[[options.txt]]}}
+*** {{File|file|splitscreen_appearance.json}}
+*** {{File|file|storage_object}}
+*** {{File|file|telemetry_info.json}}
+*** {{File|file|valid_known_packs.json}}: Shows all internal packs.{{info needed}}
+** {{File|directory|minecraftWorlds}}: Contains [[world]]s.
+*** {{File|directory|''internal world ID''}}: See {{Slink|World|Directory structure}} for contents.
+** {{File|directory|resource_packs}}: Contains imported [[resource pack]]s.
+** {{File|directory|skin_packs}}: Contains imported [[skin packs]].
+** {{File|directory|Screenshots}}{{sic}}: Contains [[screenshot]]s.
+*** {{File|directory|''XUID''}}: Contains screenshots made on a specific Xbox account. The XUID is the ID of the player's Xbox account.
+**** {{File|file|''YYYY''-''MM''-''DD''_''HH''.''mm''.''ss''[''sequence''].jpeg}}: Screenshot in JPEG format.
+**** {{File|file|''YYYY''-''MM''-''DD''_''HH''.''mm''.''ss''[''sequence''].mc}}: Additional file of unknown format and not generated on every platform.
+**** {{File|file|<''UUID''>.jpeg}}: Screenshot in JPEG format.
+**** {{File|file|<''UUID''>.json}}: Contains screenshot capture time.
+**** {{File|file|<''UUID''>.mc}}: Additional file of unknown format and not generated on every platform.
+** {{File|file|ud''id''.dat}} (there may be more than one)
+** {{File|directory|world_templates}}: Contains [[World template|world templates]].
+** {{File|file|xal}}{{verify|Exists in PE 1.16.0+?}}{{info needed|Is it the account data for XBL?}}{{verify|Is this a regular file and not a directory?}}
+</div>
+
+=== Root directory ===
+On Windows devices, the root directory for ''Minecraft'' user data is {{File|directory|Minecraft Bedrock|inline=1}} or {{File|directory|Minecraft Bedrock Preview|inline=1}}. This directory contains some data outside of user-specific data in {{File|directory|com.mojang|inline=1}}, such as [[Marketplace]] content.<div class="treeview">
+* {{File|directory|Minecraft Bedrock}}
+** {{File|directory|cdn}}: Contains a [[Resource pack#Internal resource packs|resource pack]] for the [[SoulSteel]] button on the main menu.
+** {{File|directory|Flighting}}
+*** {{File|file|currentProgressions}}: Some technical information.{{Info needed}}
+*** {{File|file|currentTreatments}}: Contains some settings for which types of [[Menu screen|menu screens]] are shown.
+** {{File|directory|games\com.mojang}}
+*** {{File|file|uwpMigration.dat}}: Related to the migration of user data from the UWP app to the GDK app (empty by default).{{Info needed}}
+** {{File|directory|logs}}: Stores all content logs.
+*** {{File|file|ClientCorrelation''ID''.dat}}: {{Info needed}}
+*** {{File|file|ContentLogYYYY-MM-DD_HH-MM-SS_''1''.txt}}: A content log file, formatted like chat messages with the time, type, and level. Content logging is also visible and managable in-game in the [[Settings#Creator|Creator]] settings tab or as messages on the top of the screen.
+** {{File|directory|premium_cache}}: Contains [[Marketplace]] packs.
+*** {{File|directory|[[Behavior pack|behavior_packs]]}}
+*** {{File|directory|persona}}: Contains Marketplace [[Character Creator]] items and [[capes]].
+**** {{File|directory|''internal ID''}}: A character creator "pack", with the <code>persona_piece</code> type.
+**** {{File|file|personaCatalogItemCache.json}}: Stores data (including URLs, authors, and UUIDs) related to character creator items.
+*** {{File|directory|[[Resource pack|resource_packs]]}}
+*** {{File|directory|[[Skin pack|skin_packs]]}}
+*** {{File|directory|[[World template|world_templates]]}}
+** {{File|directory|treatments\treatments_packs2}}
+*** {{File|file|treatment_tags.json}}: Contains a list of tags, likely related to the {{File|file|currentTreatments|inline=1}} file.{{Info needed}}
+** {{File|directory|Users}}: Contains folders for each user with the {{File|directory|com.mojang|inline=1}} folder inside, storing user data.
+** {{File|file|''ID''.ent}}: Unknown file, may contain multiple files.{{Info needed}}
+** {{File|file|PackManifestFactoryCache}}: Contains some data related to the packs.{{Info needed}}
+** {{File|file|purchase_cache}}: {{Info needed}}
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.1.0|Added the {{File|directory|com.mojang|inline=1}} directory at the path <code>/storage/emulated/<user ID>/games/com.mojang</code>.
+|The file hierarchy of com.mojang is as follows:
+<div class{{=}}"treeview">
+* {{File|directory|com.mojang}}
+** {{File|directory|minecraftWorlds}}
+*** {{File|directory|''world name''}}
+**** {{File|file|chunks.dat}}: Stores [[chunk]] data.
+**** {{File|file|[[Bedrock Edition level format#level.dat|level.dat]]}}: Stores information about the world.
+**** {{File|file|[[Bedrock Edition level format/v0.1.0 alpha#player.dat|player.dat]]}}: Stores [[player]] data.
+</div>
+}}
+|{{HistoryLine||v0.2.0|Added {{File|file|entities.dat|inline=1}} under {{File|directory|''world name''|inline=1}}, which stores [[entity]] data.
+|{{File|file|player.dat|inline=1}} is no longer created nor used by the game and the data previously in there has been moved to {{File|file|level.dat|inline=1}}. Existing {{File|file|player.dat|inline=1}} files still remain.}}
+|{{HistoryLine||v0.3.3|This version creates unused duplicate directories under <code>com.mojang/../games/com.mojang/minecraftWorlds</code>. {{File|directory|minecraftWorlds|inline=1}} does not have any additional files.}}
+|{{HistoryLine||v0.5.0|Added {{File|file|level.dat_old|inline=1}} under {{File|directory|''world name''|inline=1}}, which is a backup of {{File|file|level.dat|inline=1}}.}}
+|{{HistoryLine||v0.7.0|Added the {{File|directory|minecraftpe|inline=1}} directory under {{File|directory|com.mojang|inline=1}}.
+|{{File|directory|minecraftpe|inline=1}} contains two files: {{File|file|clientId.txt|inline=1}} and {{File|file|[[options.txt]]|inline=1}}.
+|Added the {{File|directory|players|inline=1}} directory under {{File|directory|''world name''|inline=1}}.}}
+|{{HistoryLine||v0.7.3|Added the {{File|directory|_LevelCache|inline=1}} directory under {{File|directory|minecraftWorlds|inline=1}}, whose usage is not currently known.}}
+|{{HistoryLine||v0.9.0|dev=build 1|
+{{Collapse|title=Due to the switch to the [[Bedrock Edition level format/History#LevelDB based format|LevelDB level format]], the file hierarchy of com.mojang is now as follows, with temporary files from worlds using the previous level format being <span class="history-deleted">struck through</span>:|content=
+<div class="treeview">
+* {{File|directory|com.mojang}}
+** {{File|directory|minecraftpe}}
+*** {{File|file|clientId.txt}}
+*** {{File|file|options.txt}}
+** {{File|directory|minecraftWorlds}}
+*** {{File|directory|_LevelCache}}
+*** {{File|directory|''world name''}}
+**** {{File|directory|db}}
+***** {{File|file|######.ldb}}
+***** {{File|file|######.log}}
+***** {{File|file|CURRENT}}: The content of this file is <code>MANIFEST-######</code>.
+***** {{File|file|LOCK}}: An empty file.
+***** {{File|file|MANIFEST-######}}
+**** {{File|file|<span class{{=}}"history-deleted">chunks.dat</span>}}
+**** {{File|file|<span class{{=}}"history-deleted">entities.dat</span>}}
+**** {{File|file|<span class{{=}}"history-deleted">importedchunks.dat</span>}}: Lets the game know which chunks have been converted to the new level format.
+**** {{File|file|level.dat}}
+</div>}}
+|{{File|file|level.dat_old|inline=1}} files are no longer created nor updated by the game, but any existing ones are still functional.}}
+|{{HistoryLine|||dev=build 4|Added {{File|file|LOG|inline=1}} and {{File|file|LOG.old|inline=1}} files under {{File|directory|db|inline=1}}.}}
+|{{HistoryLine|||dev=build 8|Removed the {{File|directory|_LevelCache|inline=1}} directory.}}
+|{{HistoryLine||v0.11.0|dev=build 1|Added the {{File|directory|snooper|inline=1}} directory under {{File|directory|minecraftpe|inline=1}}.
+|{{File|file|snooper|inline=1}} contains at least one file named {{File|file|bundle#.txt|inline=1}}, and a file named {{File|file|meta.txt|inline=1}}.
+|For newly-created worlds, the directory name is now {{File|directory|''internal world ID''|inline=1}} instead of {{File|directory|''world name''|inline=1}}.
+|Added {{File|file|levelname.txt|inline=1}} under {{File|directory|''internal world ID''|inline=1}}.
+|<code>level.dat_old</code> is now created if the player goes to a given world's edit menu and changes any settings in it. Doing this also deletes the world's <code>level.dat</code> file, though it is created again upon world reentry.}}
+|{{HistoryLine||v0.13.0|dev=build 1|The <code>snooper</code> directory has been moved from <code>com.mojang/minecraftpe/snooper</code> to <code>com.mojang/snooper</code>. The old <code>snooper</code> directory still remains, but is no longer updated.}}
+|{{HistoryLine||v0.14.2|<code>snooper</code> is no longer created nor updated by the game.}}
+|{{HistoryLine||v0.15.0|dev=build 1|Added <code>r.txt</code> file under <code>minecraftpe</code>. The content of this file is <code>Vanilla</code>.
+|<code>LOG</code> and <code>LOG.old</code> files are no longer generated by the game.}}
+|{{HistoryLine|||dev=build 2|Added <code>r2.txt</code> file under <code>minecraftpe</code>. The content of this file is <code>Minecraft</code>.
+|<code>r.txt</code> is no longer created by the game.
+|<code>level.dat_old</code> is once again created by the game whenever the player exits a world.}}
+|{{HistoryLine|||dev=release|Added <code>resource_packs.txt</code> file under <code>minecraftpe</code>. The content of this file is <code>Minecraft</code>.
+|<code>r2.txt</code> is no longer created by the game.}}
+|{{HistoryLine||v0.16.0|dev=build 1|<code>resource_packs.txt</code> is now an empty file by default.
+|<code>resource_packs.txt</code> files are now created for each individual world under <code><internal world ID></code>.}}
+|{{HistoryLine|||dev=build 4|Added <code>global_resource_packs.txt</code> file under <code>minecraftpe</code>. This file is empty by default.}}
+|{{HistoryLine|||dev=build 5|Added two directories under <code>com.mojang</code>: <code>behavior_packs</code> and <code>resource_packs</code>. Both are empty by default.
+|Added <code>Perf_Log.csv</code> file under <code>com.mojang</code>.
+|Replaced <code>global_resource_packs.txt</code> with <code>global_resource_packs.json</code>.
+|Added two directories under <code><internal world ID></code>: <code>behavior_packs</code> and <code>resource_packs</code>. Both are empty by default.
+|Added two files under <code><internal world ID></code>: <code>world_behavior_packs.json</code> and <code>world_resource_packs.json</code>.
+|<code>resource_packs.txt</code> files are no longer generated by the game.
+|
+{{Collapse|title=The file hierarchy of <code>com.mojang</code> is now as follows:|content=
+<div class="treeview">
+* {{File|directory|com.mojang}}
+** {{File|directory|behavior_packs}}
+** {{File|directory|minecraftpe}}
+*** {{File|file|clientId.txt}}
+*** {{File|file|global_resource_packs.json}}
+*** {{File|file|options.txt}}
+** {{File|directory|minecraftWorlds}}
+*** {{File|directory|<internal world ID>}}
+**** {{File|directory|behavior_packs}}
+**** {{File|directory|db}}
+***** {{File|file|######.ldb}}
+***** {{File|file|######.log}}
+***** {{File|file|CURRENT}}
+***** {{File|file|LOCK}}
+***** {{File|file|MANIFEST-######}}
+**** {{File|directory|resource_packs}}
+**** {{File|file|<span class{{=}}"history-deleted">chunks.dat</span>}}
+**** {{File|file|<span class{{=}}"history-deleted">entities.dat</span>}}
+**** {{File|file|<span class{{=}}"history-deleted">importedchunks.dat</span>}}
+**** {{File|file|level.dat}}
+**** {{File|file|levelname.txt}}
+**** {{File|file|world_behavior_packs.json}}
+**** {{File|file|world_resource_packs.json}}
+** {{File|directory|resource_packs}}
+** {{File|file|Perf_Log.csv}}
+</div>}}
+}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.18.0|dev=beta 1.18.0.21|Changed the path of the {{File|directory|com.mojang|inline=1}} directory on Android due to API changes.
+|New path: <code>/data/user/<user ID>/com.mojang.minecraftpe/games/com.mojang</code> (internal) and <code>/storage/emulated/<user ID>/Android/data/com.mojang.minecraftpe/files/games/com.mojang</code> (external).}}
+|{{HistoryLine||1.20.0|dev=Preview 1.20.0.22|The files {{File|file|.nomedia|inline=1}} and {{File|file|ud''id''.dat|inline=1}}, and directories {{File|directory|logs|inline=1}}, {{File|directory|minecraftpe|inline=1}} and {{File|directory|xal|inline=1}} in the external {{File|directory|com.mojang|inline=1}} directory on Android are no longer used.<ref name="mcpe">{{bug|MCPE-176675||Settings lost because some files and folders are no longer generated within external storage}}</ref>}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.20|The directory {{File|directory|logs|inline=1}} in the external {{File|directory|com.mojang|inline=1}} directory on Android is once again used.}}
+|{{HistoryLine||1.20.70|dev=Preview 1.20.70.20|The directory {{File|directory|minecraftpe|inline=1}}, and the files {{File|file|.nomedia|inline=1}} and {{File|file|ud''id''.dat|inline=1}} in the external {{File|directory|com.mojang|inline=1}} directory on Android are once again used.<ref name="mcpe"/>}}
+|{{HistoryLine||1.21.120|On Windows, the game is now GDK-based, rather than UWP-based, changing the location of {{File|directory|com.mojang|inline=1}} from <code>%localappdata%\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang</code> to <code>%appdata%\Minecraft Bedrock\Users\''user ID''\games\com.mojang</code>.}}
+}}
+
+== Notes ==
+{{Notelist}}
+
+== References ==
+{{Reflist}}
+
+== See also ==
+
+* {{Cd|[[Microsoft.MinecraftUWP]]}}, the directory which stores all vanilla resources.
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Development]]
+
+[[es:Com.mojang]]
+[[fr:Com.mojang]]
+[[ja:Com.mojang]]
+[[lzh:Com.mojang]]
+[[pt:Com.mojang]]
+[[zh:Com.mojang]]

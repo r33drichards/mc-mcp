@@ -1,0 +1,1260 @@
+{{Hatnote|"Blocks movement" and "movement-blocking" redirect here. For information about collision, see [[Hitbox]].}}
+
+{{conjecture|The names <code>legacySolid</code> and <code>blocksMotion</code> appear in the [[obfuscation map]].}}
+{{exclusive|java}}
+
+The '''legacy solid''' [[block property]], usually simply called '''solid''', determines if a block is considered "solid" for a number of game mechanics. It is distinct from many other notions of solidity, such as whether the block is [[opaque]], [[conductive]], has a [[collision box]], is a [[full block]], or allows [[mob spawning]].
+
+The '''blocks motion''' block property, also sometimes called '''blocks movement''', '''motion-blocking''', or '''movement-blocking''', is nearly synonymous with ''legacy solid'', with two exceptions: [[cobweb]]s and [[bamboo sapling]]s are ''legacy solid'', but they are not ''motion-blocking''. Since the two properties are so similar, it can be useful to consider ''motion-blocking'' a variant of ''legacy solid'' rather than a truly distinct property. As such, this article describes the effects of both variants.
+
+Many gameplay mechanics are affected by the ''legacy solid'' property, including support for certain attached blocks like [[candles]], conversion of [[farmland]] to [[dirt]], destruction of [[cactus]], summoning of [[iron golem]]s, and [[pathfinding]]. Additionally, the ''blocks motion'' property influences random [[teleportation]] and certain [[fluid]] mechanics.
+
+== Effects ==
+
+{{Missing information|section|portal generation, and world generation}}
+
+Both ''legacy solid'' and ''blocks motion'' are arguably misnomers, as many so-called solid blocks do not have [[collision]], do not graphically appear solid, and do not obstruct movement. Rather, these properties exclusively affect the (largely unrelated) game mechanics described in this section.
+
+As the word ''legacy'' in ''legacy solid'' implies, these properties tend to be used by older game mechanics that predate introduction of other, more granular block properties. In some cases, their continued use may intentionally preserve historical behavior so as not to break players' designs.
+
+=== Support, placement, and survival conditions ===
+
+[[Item frame]]s, [[glow item frame]]s, and [[painting]]s can only be supported by ''legacy solid'' blocks and the side faces of [[redstone repeater]]s and [[redstone comparator]]s. [[Banner]]s, [[sign]]s, and [[cake]]s can only be supported by ''legacy solid'' blocks. Other attached blocks, including but not limited to [[torch]]es, [[button]]s, [[hanging sign]]s, and, [[ladder]]s, use other mechanisms to determine whether they have sufficient support and are '''not''' affected by the ''legacy solid'' property.<ref>https://joakimthorsen.github.io/MCPropertyEncyclopedia/?selection=placement_condition&filter=(placement_condition:No)</ref>
+
+[[Cactus]] cannot be placed horizontally adjacent to any ''legacy solid'' block, and it uproots and drops as an item if a ''legacy solid'' block is placed horizontally adjacent to it.
+
+[[Dirt path]] converts to dirt if any ''legacy solid'' block other than a [[fence gate]] is immediately above it. [[Farmland]] converts to dirt if any ''legacy solid'' block other than a fence gate or [[moving piston]] is immediately above it.
+
+=== Fluid flow ===
+{{Main|Fluid#Flow direction}}
+
+Flowing [[water]] that is adjacent to two water source blocks will only form a new [[Water#Source_blocks|source]] above ''legacy solid'' blocks or other water sources.
+
+[[File:Water flow with motion blocking.jpg|thumb|The upper water source block flows towards the bottom-left source block, but not the bottom-right, because [[glass]] ''blocks motion'' but [[ladder]]s do not.]]
+
+A fluid will only [[Fluid#Spread|spread]] towards other blocks it can flow into, but the shape and flow direction of each specific fluid block is affected by which blocks around it are ''motion-blocking''. This means that if a fluid is trying to flow down to a diagonally adjacent fluid of the same type, but is prevented from doing so by a ''non-motion-blocking'' block, then the shape and flow direction of the top fluid will behave as if it still could.
+
+=== Iron golem summoning ===
+{{Main|Iron golem#Spawning}}
+
+[[Iron golem]]s summoned by panicking [[villager]]s can only spawn on top of ''legacy solid'' blocks or [[powder snow]]. However, there are several exceptions: iron golems are explicitly prohibited from spawning on top of [[cactus]], [[glass]] (including [[stained glass]], [[tinted glass]], and their [[glass pane]] variants), [[leaves]], [[conduit]]s, [[ice]], [[TNT]], [[glowstone]], [[beacon]]s, [[sea lantern]]s, or [[frosted ice]], even though all of those blocks have the ''legacy solid'' property.
+
+For historical reasons, the set of blocks naturally summoned iron golems may spawn on top of are sometimes referred to as '''solid-blocking'''.<!-- Specifically, that term was one of the properties defined by the old [[materials]] system. However, as of Java Edition 1.20.4, this set of blocks is only used for iron golem spawning via the quite explicitly named LEGACY_IRON_GOLEM spawn strategy. -->
+
+=== Random wandering and teleportation ===
+
+When [[mobs]] select a random target destination to walk, swim, or fly to, the selected destination is adjusted upwards until it is not inside of any ''legacy solid'' block.
+
+When a [[dolphin]] checks to see if it can jump, it checks certain blocks along the path of the jump to ensure the path is clear. If the blocks are ''motion-blocking'' or do not contain [[water]], the jump fails.
+
+When an [[enderman]] teleports, a player teleports by eating a [[chorus fruit]], or a [[cat]] teleports just before giving the player a morning gift, the y [[coordinate]] of the selected destination is lowered until the block immediately below it ''blocks motion''. This is a necessary but not sufficient condition: the selected destination also must not collide with any blocks or fluids, otherwise the teleportation attempt fails.
+
+=== Breaking ice ===
+
+When [[ice]] is broken above a ''motion-blocking'' block or a [[fluid]], the ice is replaced with a [[water]] source block. Otherwise, the ice is simply destroyed and replaced with air like any other block.
+
+=== Heightmaps ===
+
+Only blocks that are ''motion-blocking'' will be considered as part of the <code>OCEAN_FLOOR</code> and <code>OCEAN_FLOOR_WG</code> [[heightmap]]s. It is also used to determine the <code>MOTION_BLOCKING</code> heightmap, with the exception of any block that does not have an empty fluid state (meaning that [[fluid]]s and [[waterlogging|waterlogged blocks]] are excluded). The <code>MOTION_BLOCKING_NO_LEAVES</code> has the additional exception of [[leaves]].
+
+These heightmaps are used for various mechanics related to sky exposure (like [[weather]] and [[ice]] formation), underwater [[feature]] placement (like [[kelp]] patches and [[ocean ruins]]), [[mob spawning]], and [[world generation]] (like making sure underground features like [[fossils]] and [[buried treasure]] are placed below the ocean floor).
+
+== Blocks ==
+
+{|class="sortable wikitable"
+!Block
+!Legacy solid?<ref>https://joakimthorsen.github.io/MCPropertyEncyclopedia/?selection=solid</ref>
+!Blocks motion?<ref>https://joakimthorsen.github.io/MCPropertyEncyclopedia/?selection=blocks_motion</ref>
+|-
+|{{BlockLink|Activator Rail}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Air}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Amethyst Cluster}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Ancient Debris}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Andesite}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Anvil}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Azalea}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Bamboo}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bamboo Mosaic}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bamboo Shoot}}
+|{{tc|yes}}
+|{{tc|no}}
+|-
+|{{BlockLink|Banners}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Barrel}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Barrier}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Basalt}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Beacon}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bedrock}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Beds}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bee Nest}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Beehive}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bell}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Big Dripleaf}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Blackstone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Blast Furnace}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Amethyst}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Bamboo}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Coal}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Copper}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Diamond}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Emerald}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Gold}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Iron}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Lapis Lazuli}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Netherite}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Quartz}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Raw Copper}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Raw Gold}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Raw Iron}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Redstone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Resin}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Block of Stripped Bamboo}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Blue Ice}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bone Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bookshelf}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Brewing Stand}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Bricks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Budding Amethyst}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Buttons}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Cactus}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cake}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Calcite}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Calibrated Sculk Sensor}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Campfire}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Candles}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Carpets}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Cartography Table}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cauldron}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cave Vines}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Chain}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chest}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chiseled Bookshelf}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chiseled Copper}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chiseled Tuff}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chiseled Tuff Bricks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Chorus Flower}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Chorus Plant}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Clay}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Coal Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Coarse Dirt}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cobbled Deepslate}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cobblestone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Cobweb}}
+|{{tc|yes}}
+|{{tc|no}}
+|-
+|{{BlockLink|Cocoa}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Command Blocks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Composter}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Concrete}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Concrete Powder}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Conduit}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Copper Bulb}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Copper Grate}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Copper Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Coral}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Coral Blocks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Coral Fans}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Crafter}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Crafting Table}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Creaking Heart}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Crimson Stem}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockSprite|Beetroots}}{{BlockSprite|Carrots}}{{BlockSprite|Potatoes}}{{BlockSprite|Wheat}} [[Crops]]
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Crying Obsidian}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Daylight Detector}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dead Bush}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Dead Coral}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dead Coral Blocks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dead Coral Fans}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Decorated Pot}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Deepslate}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Detector Rail}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Diamond Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Diorite}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dirt}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dirt Path}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dispenser}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Doors}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dragon Egg}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dried Kelp Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dripstone Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Dropper}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Emerald Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Enchanting Table}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|End Gateway}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|End Portal}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|End Portal Frame}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|End Rod}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|End Stone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|End Stone Bricks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Ender Chest}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Farmland}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Fence Gates}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Fences}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Fern}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Fire}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Fletching Table}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Flower Pot}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Flowers}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Froglights}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Frogspawn}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Frosted Ice}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Furnace}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Gilded Blackstone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Glass}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Glass Pane}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Glazed Terracotta}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Glow Lichen}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Glowstone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Gold Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Granite}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Grass Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Gravel}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Grindstone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Hanging Roots}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Hanging Signs}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Hay Bale}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Heads}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Heavy Core}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Honey Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Honeycomb Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Hopper}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Hyphae}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Ice}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Iron Bars}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Iron Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Jack o'Lantern}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Jigsaw Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Jukebox}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Kelp}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Ladder}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lantern}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Lapis Lazuli Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Lava}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Leaves}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Lectern}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Lever}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Light Block}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lightning Rod}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Lily Pad}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Lodestone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Logs}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Loom}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Magma Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Mangrove Propagule}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Mangrove Roots}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Melon}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Monster Spawner}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Moss Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Moss Carpet}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Moving Piston}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Mud}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Mud Bricks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Muddy Mangrove Roots}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Mushroom Blocks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Mushrooms}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Mycelium}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nether Bricks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nether Fungi}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Nether Gold Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nether Portal}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Nether Quartz Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nether Sprouts}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Nether Wart}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Nether Wart Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Netherrack}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Note Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Nylium}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Observer}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Obsidian}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Packed Ice}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Packed Mud}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pale Hanging Moss}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Pale Moss Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pale Moss Carpet}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Pink Petals}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Piston}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pitcher Crop}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Pitcher Plant}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Planks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Podzol}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pointed Dripstone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Polished Tuff}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Powder Snow}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Powered Rail}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Pressure Plates}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Prismarine}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Pumpkin}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Purpur Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Rail}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Red Sand}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Red Sandstone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Redstone Comparator}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Redstone Dust}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Redstone Lamp}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Redstone Ore}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Redstone Repeater}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Redstone Torch}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Reinforced Deepslate}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Resin Bricks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Resin Clump}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Respawn Anchor}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Roots}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sand}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sandstone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Saplings}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Scaffolding}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sculk}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sculk Catalyst}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sculk Sensor}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sculk Shrieker}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sculk Vein}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sea Lantern}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sea Pickle}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Seagrass}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Short Grass}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Shroomlight}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Shulker Box}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Signs}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Slabs}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Slime Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Small Dripleaf}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Smithing Table}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Smoker}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sniffer Egg}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Snow}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Snow Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Soul Sand}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Soul Soil}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sponge}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Spore Blossom}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Stained Glass}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Stained Glass Panes}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Stairs}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Stone}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Stone Bricks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Stonecutter}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Structure Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Structure Void}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Sugar Cane}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Suspicious Gravel}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Suspicious Sand}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Sweet Berry Bush}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|TNT}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Tall Grass}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Target}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Terracotta}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Tinted Glass}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Torch}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Torchflower}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Torchflower Crop}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Trapdoors}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Trapped Chest}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Trial Spawner}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Tripwire}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Tripwire Hook}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Tuff}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Tuff Bricks}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Turtle Egg}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Twisting Vines}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Vault}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Vines}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Walls}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Warped Stem}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Warped Wart Block}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Water}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Weeping Vines}}
+|{{tc|no}}
+|{{tc|no}}
+|-
+|{{BlockLink|Wood}}
+|{{tc|yes}}
+|{{tc|yes}}
+|-
+|{{BlockLink|Wool}}
+|{{tc|yes}}
+|{{tc|yes}}
+|}
+
+== History ==
+{{info needed section|earlier history}}
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20|dev=23w17a|The [[materials]] system has been removed. Legacy solid is now a [[block property]].}}
+}}
+
+== See also ==
+
+* [[Solid block]]
+
+== References ==
+{{reflist}}
+
+[[Category:Block properties]]

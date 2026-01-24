@@ -1,0 +1,136 @@
+{{Infobox version
+| title = Minecraft 23w18a
+| image = 23w18a.jpg
+| image2 = Java Edition 23w18a.png
+| edition = Java
+| type = Snapshot
+| date = May 3, 2023
+| jsonhash = e343b8c4b9dfa5880209cf90d4e1da20e589e27a
+| clienthash = a634e77f4292dba7af15f84fac946bf221dd1839
+| clientmap = d7d4457501369240ae12b6c7ec0836e449604396
+| serverhash = 240177c763b6009ea81aaf0ef14a73822320856d
+| servermap = 7015077a47c07e8d129280b73a40e8ddb11fc589
+| parent = 1.20
+| prevparent = 1.19.4
+| prev = 23w17a
+| next = 1.20 Pre-release 1
+| nextparent = 1.20.1
+}}<onlyinclude>
+
+'''23w18a''' is the sixth and final [[snapshot]] for [[Java Edition 1.20]], released on May 3, 2023.<ref>{{snap|23w18a|May 3, 2023}}</ref>
+
+== Additions ==
+=== Gameplay ===
+'''[[Advancement]]s'''
+* The Power of Books
+** Read the power signal of a [[Chiseled Bookshelf]] using a [[Comparator]].
+
+== Changes ==
+=== Blocks ===
+'''[[Smithing table]]'''
+* No longer requires a smithing template to be in the template slot before placing an item into the other slots.
+
+=== Mobs ===
+'''[[Slime]]s and [[magma cube]]s'''
+* Are now affected by the [[Jump Boost]] effect.
+
+=== General ===
+'''[[Advancement]]s'''
+* All fields in <code>placed_block</code>, <code>item_used_on_block</code>, and <code>allay_drop_item_on_block</code> advancement triggers have been collapsed to a single location field.
+** New location is similar to the player field - it's a list of loot conditions/predicates.
+** All conditions in this list must match for a trigger to run.
+* Conditions are evaluated in a new loot context called <code>advancement_location</code>. It has access to:
+** Player as <code>this</code> entity.
+** Position of the placed/interacted block.
+** Block state of the placed/interacted block.
+** Held/used item as "tool". 
+* Migration guide:
+** Contents of old location field should be migrated to a <code>location_check</code> condition.
+** Contents of item field should be migrated to a <code>match_tool</code> condition.
+** Contents of block and state fields should be migrated to a <code>block_state_property</code> condition.
+* Advancement fields now have a new boolean field called <code>sends_telemetry_event</code>.
+
+'''[[Data pack]]s'''
+* Version is now <code>15</code>, accounting for predicate/loot table and advancement changes.
+
+'''[[Creative inventory]]'''
+* [[Jukebox]] has been added to the "Redstone Blocks" tab.
+
+'''[[Predicate]]s'''
+* Condition <code>alternative</code> has been renamed to <code>any_of</code>.
+* Added new condition <code>all_of</code> that passes only when all sub-conditions pass.
+** It has the same syntax as <code>any_of</code>.
+
+'''[[Sound]]s'''
+* Walking on a block now always plays a step sound.
+** It was previously not the case if the player was walking along the edge of a block with air or fluid beside it.
+* Walking on the ocean floor produces a step sound for the block the player is walking on, but at a lower volume and pitch.
+
+'''[[Telemetry]]'''
+* Added new property: <code>launcher_name</code>.
+** A new global property sent with every event.
+** This is set based on the minecraft.launcher.brand system property.
+** This helps developers troubleshoot game launch related bugs more effectively, as they are able to see whether the issue originated in the Minecraft launcher or a third-party program.
+* Added new property <code>realms_map_content</code> to event <code>world_loaded</code>.
+** When loading into a Realms Map Content world (Minigame), the <code>world_loaded</code> event receives the name of that map.
+** This is to help developers understand how Java Realms users interact with Java Realms adventure or minimap content.
+* Added new optional event <code>advancement_made</code>.
+** This event is triggered when a player completes an advancement.
+** This allows developers to see the advancement ID and the time when the advancement was completed, and helps them as a studio understand player progress and limits, which informs their game design.
+* Added new optional event <code>game_load_times</code>.
+** An event that is triggered when the game client is loaded, and includes the time it took for the client to load.
+** This is so that developers can work on improving and reducing the time it takes to load the game client.
+
+== Fixes ==
+{{fixes|fixedin=23w18a
+|;old
+|1133|Whether or not a player experiences some effect is calculated based on the block under the center of the player.
+|2604|Walking on non-solid blocks with no collision plays their respective walking sounds.
+|48923|Slime/magma cubes not affected by jump boost potion effect.
+|75721|Arrow buttons within the book GUI are rendered above tooltips.
+|130089|Turtle eggs break weird at block edges.
+|158154|Players can bounce on beds even when not directly touching it.
+|199952|Skylight does not propagate across certain chunk borders upon world generation.
+|203317|There is a missing torch in one of the Stronghold rooms leaving a Light source.
+|207290|Sculk sensors don't detect vibrations while walking on the edge of a block.
+|212583|Sculk sensors are not activated upon walking inside of scaffolding that has air below it.
+|217447|"Walking" on nether wart produces stone footstep sounds instead of nether wart sounds.
+|240098|Minecraft can't be correctly profiled to Windows 11 version.
+|242105|When landing on some non-full blocks while touching a thin block, impact particles use the thin block's texture.
+|244307|Dark Chunks when exploring since 1.18.
+|252389|When landing (or jumping) on wool with your hitbox over the edge, it produces a vibration.
+|257269|Sculk sensor detects player walking between carpet and wool.
+|259978|Minecraft telemetry data detected Windows 11 as Windows 10.
+|260279|Jukebox is not in the Redstone Blocks tab in the creative inventory.
+|261417|The hitboxes of sniffers are not adjusted when they lay down.
+|262067|The type of sniffer digging particles that are produced is determined by the block that sniffers are located on instead of the block that sniffers are digging.
+|262069|Sniffers continue digging after their target block is destroyed.
+|;dev
+|261952|Clocks flicker rapidly when enchanted and in an unnatural dimension.
+|262003|Bundle tooltip does not show its interface.
+|262104|Rendering of FPS graph seems to be performing worse than before.
+|;previous
+|262123|Advancement titles of new advancements are improperly capitalized.
+|262185|Partially transparent pixels in font glyphs appear more opaque than they should in the tooltip.
+|262133|Strong lag spikes when moving above a cleared area with exposed void.
+|262218|Block light updates don't cross chunk borders properly in 23w17a.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|DkALpstYcKw}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:23w18a]]
+[[es:Java Edition 23w18a]]
+[[fr:Édition Java 23w18a]]
+[[ja:Java Edition 23w18a]]
+[[lzh:二三週一八甲]]
+[[pt:Edição Java 23w18a]]
+[[ru:23w18a (Java Edition)]]
+[[uk:23w18a (Java Edition)]]
+[[zh:Java版23w18a]]

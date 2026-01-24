@@ -1,0 +1,455 @@
+{{exclusive|java}}
+'''Item modifiers''' (also known as '''loot modifiers''') used to apply modifications to item stacks, such as adjusting the stack size or adding enchantments. They can be defined in [[data packs]] as [[JSON]] files, or used in [[loot table]]s. And {{cmd|item}} command accepts item modifiers in [[SNBT]] format.
+
+A single modification in item modifiers is called '''item function''' or '''loot function'''.
+
+== Definition ==
+An item modifier is a single loot function or an array of loot functions to apply to the item. The root element of an item modifier can be either an {{nbt|compound|JSON object or NBT compound tag}}, following the structure of a loot function below, or an {{nbt|list|JSON array or NBT list}}, containing multiple loot functions.
+
+Item modifiers are defined using the [[JSON]] format in [[data packs]], or the [[SNBT]] format in {{cmd|item}} command.
+
+Item modifiers defined in data packs in the following directory structure, highlighted below:
+{{Data pack directory|item_modifier|<nowiki><name>.json</nowiki>}}
+
+== Usage ==
+=== Commands ===
+Item modifiers can be invoked with the {{cmd|item}} command. When doing so, it is required to specify a target slot to invoke the modifier upon, either an item inside a container block's contents, or inside an entity's inventory.
+
+There are two variations of this command: {{cmd|item modify}} invokes a modifier alone upon the target slot, {{cmd|item replace}} replaces the item in the target slot with another and subsequently invokes a modifier upon it.
+
+* {{cmd|item modify (block <pos> {{!}} entity <targets>) <slot> '''<modifier>'''}}
+* {{cmd|item replace (block <pos> {{!}} entity <targets>) <slot> from (block <pos> {{!}} entity <targets>) '''[<modifier>]'''}}
+
+=== Loot tables ===
+In [[loot table]]s, item modifiers can be defined without the need for a separate file; however, separate files can also be explicitly referenced using the <code>reference</code> function.
+
+== Format ==
+The format of a single loot function is:
+<div class="treeview" style="margin-block-end: 1em;">
+* {{nbt|compound}} The root of the loot function.
+** {{nbt|string|function}}: [[Resource location]] of the loot function type to apply. Valid function types are described below.
+** {{nbt|list|conditions}}: A list of [[predicate]]s, of which all must pass, for this function to be applied.
+*** {{nbt|compound}} A predicate. The structure is described on the [[Predicate]]s page.
+** Other parameters of the function, described below.
+</div>
+
+Multiple loot functions may be entered into one item modifier by placing them into a JSON array or an NBT list: 
+<div class="treeview" style="margin-block-end: 1em;">
+* {{nbt|list}} The root of the loot function array.
+** {{nbt|compound}} A loot function.
+</div>
+
+=== Function types ===
+The possible resource locations (namespace <code>minecraft:</code> is omitted) for {{nbt|string|function}} field and associated extra contents:
+
+<div class="treeview">
+<div id="function_apply_bonus" style="margin-block-end: 1em;">
+* '''apply_bonus'''&mdash;Applies a predefined bonus formula to the count of the item stack.
+** {{nbt|string|enchantment}}: [[Java_Edition_data_value#Enchantments|ID of an enchantment]] on the tool provided by [[loot context]] used for level calculation.
+** {{nbt|string|formula}}: A [[resource location]]. Can be <code>binomial_with_bonus_count</code> for 1 bonus item plus bonus determined by binomial distribution with <code>n=level + extra</code>, <code>p=probability</code>. Can be <code>uniform_bonus_count</code> for uniform distribution (from <code>0</code> to <code>level * bonusMultiplier</code>), or <code>ore_drops</code> for a special function used for ore drops in the vanilla game (<code>Count *= (max(1; randomInt(0<small>''(inclusive)''</small> .. (Level + 2)<small>''(exclusive)''</small>)))</code>)<!--equals to 
+Count *= (max(0; randomInt(0(inclusive) .. (Level + 2)(exclusive))-1)+1)
+-->.
+** {{nbt|compound|parameters}}: Values required for the formula.
+*** {{nbt|int|extra}}: For formula 'binomial_with_bonus_count', the extra value.
+*** {{nbt|float|probability}}: For formula 'binomial_with_bonus_count', the probability.
+*** {{nbt|float|bonusMultiplier}}: For formula 'uniform_bonus_count', the bonus multiplier.
+</div>
+
+<div id="function_copy_components" style="margin-block-end: 1em;">
+* '''copy_components'''&mdash;Copies components from a specified source onto an item.
+** {{nbt|string|source}}: Source type to pull from. Specifies an entity or block entity from [[loot context]]. Can be {{cd|block_entity}}, {{cd|this}}, {{cd|attacker}}, {{cd|direct_attacker}}, {{cd|attacking_player}}, {{cd|target_entity}}, {{cd|interacting_entity}}, {{cd|tool}}
+** {{nbt|list|include}}: Optional. A list of components to include. If omitted, all components are copied.
+*** {{nbt|string}}: A component
+** {{nbt|list|exclude}}: Optional. A list of components to exclude. 
+*** {{nbt|string}}: A component
+</div>
+
+<div id="function_copy_custom_data" style="margin-block-end: 1em;">
+*'''copy_custom_data'''&mdash;Copies [[NBT]] values from a specified block entity or entity, or from [[Commands/data#Storage|command storage]] to the item's <code>minecraft:custom_data</code> component.
+**{{nbt|string|source}}: Shorthand form of {{nbt|compound|source}} below with {{nbt|string|type}} set to <code>context</code>. Specifies an entity or block entity from [[loot context]]. Can be {{cd|block_entity}}, {{Loot entity target}}.
+** {{nbt|compound|source}}: Information of the block entity, entity or storage to copy NBT from.
+***{{nbt|string|type}}: Set to <code>context</code> to use a block entity or an entity as the source, or <code>storage</code> to use a command storage as the source.
+***{{nbt|string|target}}: Included only if <code>type</code> is set to <code>context</code>. Specifies an entity or block entity from [[loot context]] to copy NBT from. Can be {{cd|block_entity}}, {{Loot entity target}}.
+***{{nbt|string|source}}: Included only if <code>type</code> is set to <code>storage</code>. A [[resource location]] specifying the storage ID to copy NBT from. 
+**{{nbt|list|ops}}: A list of copy operations.
+***{{nbt|compound}} An NBT operation.
+****{{nbt|string|source}}: The [[NBT path format|NBT path]] to copy from.
+****{{nbt|string|target}}: The [[NBT path format|NBT path]] to copy to, starting from the item's <code>minecraft:custom_data</code> component.
+****{{nbt|string|op}}: Set to <code>replace</code> to replace any existing contents of the target NBT path, <code>append</code> to append to a list or array, or <code>merge</code> to merge into a compound tag.
+</div>
+
+<div id="function_copy_name" style="margin-block-end: 1em;">
+*'''copy_name'''&mdash;Copies an entity's or a block entity's name tag into the item's <code>minecraft:custom_name</code> component.
+**{{nbt|string|source}} - The target whose name is to be copied. Specifies an entity or block entity from [[loot context]]. Can be {{cd|block_entity}}, {{cd|this}}, {{cd|attacking_entity}}, {{cd|last_damage_player}}, {{cd|direct_attacker}}, {{cd|target_entity}} or {{cd|interacting_entity}}.
+</div>
+
+<div id="function_copy_state" style="margin-block-end: 1em;">
+*'''copy_state'''&mdash;Copies block state properties provided by [[loot context]] to the item's <code>minecraft:block_state</code> component.
+**{{nbt|string|block}}: A [[Resource location|block ID]]. Function fails if the block doesn't match the {{nbt|list|properties}} list.
+**{{nbt|list|properties}}: A list of properties to copy.
+***{{nbt|string}} The name of a block state to copy.
+</div>
+
+<div id="function_enchant_randomly" style="margin-block-end: 1em;">
+*'''enchant_randomly'''&mdash;Enchants the item with one randomly-selected enchantment. The level of the enchantment, if applicable, is random. A book converts to an [[enchanted book]] when enchanted.
+**{{nbt|string}}{{nbt|list|options}}: Optional. {{json ref/enchantment|tag=1}}. List of enchantments to choose from. If omitted, all enchantments are possible.
+**{{nbt|boolean|only_compatible}}: Optional, defaults to {{cd|true}}. Whether only enchantments that are compatible with the item should be chosen (i.e. the item is listed in the enchantments {{cd|supported_items}}). Books are always considered compatible.
+**{{nbt|boolean|include_additional_cost_component}}{{upcoming|je 26.1}}. Optional, defaults to {{cd|false}}. Whether to add a {{cd|additional_trade_cost}} component to the item. The value is calculated as {{cd|2 + random(0, 5 + level * 10) + 3 * level}} where {{cd|level}} is the level of the enchantment applied.
+</div>
+
+<div id="function_enchant_with_levels" style="margin-block-end: 1em;">
+*'''enchant_with_levels'''&mdash;Enchants the item, with the specified [[Enchantment mechanics#How Enchantments Are Chosen|enchantment level]] (roughly equivalent to using an [[enchanting table]] at that level). A book converts to an [[enchanted book]].
+**{{nbt|int}}{{nbt|compound|levels}}: [[Loot_table#Number provider|Number provider]]. Specifies the enchantment level to use.
+**{{nbt|string}}{{nbt|list|options}}: Optional. {{json ref/enchantment|tag=1}}. List of enchantments to choose from. If omitted, all enchantments are possible.
+**{{nbt|boolean|include_additional_cost_component}}{{upcoming|je 26.1}}. Optional, defaults to {{cd|false}}. Whether to add a {{cd|additional_trade_cost}} component to the item. The value is equal to the value determined by {{nbt|int}}{{nbt|compound|levels}}.
+</div>
+
+<div id="function_looting_enchant" style="margin-block-end: 1em;">
+*'''enchanted_count_increase'''&mdash;Adjusts the stack size based on the level of the specified enchantment on the {{cd|killer}} entity provided by [[loot context]].
+**{{nbt|int}}{{nbt|compound|count}}: A [[Loot_table#Number provider|number provider]]. Specifies the number of additional items per level of the enchantment. Note the number may be fractional, rounded after multiplying by the enchantment level.
+** {{nbt|int|limit}}: Specifies the maximum amount of items in the stack after the enchantment calculation. If the value is 0, no limit is applied. Defaults to 0.
+** {{nbt|string|enchantment}}: {{json ref/enchantment}}. The enchantment whose levels should be used to calculate the count.
+</div>
+
+<div id="function_exploration_map" style="margin-block-end: 1em;">
+*'''exploration_map'''&mdash;If the origin is provided by  [[loot context]], converts an empty map into an [[explorer map]] leading to a nearby generated structure.
+** {{nbt|string|destination}}: A [[tag]] of [[structure]] to locate. Defaults to <code>on_treasure_maps</code>.
+** {{nbt|string|decoration}}: The icon used to mark the destination on the map. Accepts any of the [[Map#Map icons|map icon text IDs]] (case insensitive). If <code>mansion</code> or <code>monument</code> is used, the color of the lines on the item texture changes to match the corresponding explorer map. Defaults to <code>mansion</code>.
+** {{nbt|int|zoom}}: The zoom level of the resulting map. Defaults to 2.
+** {{nbt|int|search_radius}}: The size, in chunks, of the area to search for structures. The area checked is square, not circular. Radius 0 causes only the current chunk to be searched, radius 1 causes the current chunk and eight adjacent chunks to be searched, and so on. Defaults to 50.
+** {{nbt|bool|skip_existing_chunks}}: Don't search in chunks that have already been generated. Defaults to true.
+</div>
+
+<div id="function_explosion_decay" style="margin-block-end: 1em;">
+* '''explosion_decay'''&mdash;Removes some items from a stack, if the explosion radius is provided by [[loot context]]. Each item in the item stack has a chance of 1/explosion radius to be lost.
+</div>
+
+<div id="function_fill_player_head" style="margin-block-end: 1em;">
+* '''fill_player_head'''&mdash;Adds required item tags of a player head.
+** {{nbt|string|entity}}: Specifies a player to be used for the player head. Specifies an entity from [[loot context]]. Can be {{Loot entity target}}.
+</div>
+
+<div id="function_filtered" style="margin-block-end: 1em;">
+* '''filtered'''&mdash;Applies another function only to items that match item predicate.
+** {{nbt|compound|item_filter}}: A map of components ID to component value. 
+*** {{nbt inherit/conditions/item|indent=***}}
+** {{nbt|list|modifier}}: Functions to apply to matching items
+*** {{nbt|compound}}: A loot function.
+</div>
+
+<div id="function_furnace_smelt" style="margin-block-end: 1em;">
+* '''furnace_smelt'''&mdash;Smelts the item as it would be in a furnace without changing its count.
+</div>
+
+<div id="function_limit_count" style="margin-block-end: 1em;">
+* '''limit_count'''&mdash;Limits the count of every item stack.
+** {{nbt|int|limit}}: An integer to specify the exact limit to use.
+** {{nbt|compound|limit}}: Limits the count between a minimum and maximum value.
+*** {{nbt|int}}{{nbt|compound|min}}: Optional. A [[Loot_table#Number provider|number provider]]. Minimum limit to use.
+*** {{nbt|int}}{{nbt|compound|max}}: Optional. A [[Loot_table#Number provider|number provider]]. Maximum limit to use.
+</div>
+
+<div id="function_modify_contents" style="margin-block-end: 1em;">
+* '''modify_contents'''&mdash;Applies a function to every item inside an inventory component. If component does not exist, it is not added.
+** {{nbt|string|component}}: A target component. Allowed values are <code>bundle_contents</code>, <code>charged_projectiles</code>, <code>container</code>}}.
+** {{nbt|compound}}{{nbt|list|modifier}}: Function or list of functions to be applied to every item inside the container.
+</div>
+
+<div id="function_reference" style="margin-block-end: 1em;">
+*'''reference'''&mdash;Call sub-functions
+**{{nbt|string}}{{nbt|list|name}}: Location of function to call.
+</div>
+
+<div id="function_sequence" style="margin-block-end: 1em;">
+*'''sequence'''&mdash;Applies a list of functions
+**{{nbt|list|functions}}: Location of function to call.
+***{{nbt|compound}} An item modifier. The same JSON structure as described on this page.
+</div>
+
+<div id="function_set_attributes" style="margin-block-end: 1em;">
+* '''set_attributes'''&mdash;Add [[attribute|attribute modifiers]] to the item.
+** {{nbt|list|modifiers}}:
+*** {{nbt|compound}}: An attribute modifier to add.
+**** {{nbt|string|attribute}}: The [[resource location]] of the attribute this modifier is to act upon.
+**** {{nbt|string|operation}}: The operation of this attribute modifier. One of <code>add_value</code>, <code>add_multiplied_base</code>, or <code>add_multiplied_total</code>.
+**** {{nbt|float}}{{nbt|compound|amount}}: A [[Loot_table#Number provider|number provider]]. Specifies the amount of the modifier.
+**** {{nbt|string|id}}: [[Resource location]] to assign the modifier.
+**** {{nbt|string|slot}}: Sets the slots the item must be in for the modifier to take effect. One of: <code>mainhand</code>, <code>offhand</code>, <code>feet</code>, <code>legs</code>, <code>chest</code>, <code>head</code>.
+**** {{nbt|list|slot}}: To choose randomly from a set of possible slots. List contains strings of one of the above slot choices, to choose randomly from. The random selection can be weighted by listing the same slot multiple times.
+** {{nbt|bool|replace}}: Optional. Set to <code>true</code> to replace the existing item attributes with the attributes in  {{nbt|list|modifiers}}. If <code>false</code>, the lines are appended to the list of existing attributes. Defaults to <code>true</code>.
+</div>
+
+<div id="function_set_banner_pattern" style="margin-block-end: 1em;">
+*'''set_banner_pattern''' - Adds or replaces banner patterns of a banner. Function successfully adds patterns into NBT tag even if invoked on a non-banner.
+** {{nbt|list|patterns}}: List of patterns to add or replace with.
+*** {{nbt|compound}}: A pattern.
+**** {{nbt|string|pattern}}: The [[Banner/Patterns|pattern]] type. For example, <code>square_bottom_left</code>.
+**** {{nbt|string|color}}: The color for this pattern. One of <code>white</code>, <code>orange</code>, <code>magenta</code>, <code>light_blue</code>, <code>yellow</code>, <code>lime</code>, <code>pink</code>, <code>gray</code>, <code>light_gray</code>, <code>cyan</code>, <code>purple</code>, <code>blue</code>, <code>brown</code>, <code>green</code>, <code>red</code>, <code>black</code>.
+** {{nbt|boolean|append}}: Required. If true, the patterns are applied on top of the banner's existing patterns.
+</div>
+
+<div id="function_set_components" style="margin-block-end: 1em;">
+* '''set_book_cover'''&mdash;Sets the cover details of the <code>minecraft:written_book_content</code> component. If present, any pages in the book are left untouched.
+** {{nbt|string|author}}: Optional. Sets the author of the book. If omitted, the original author is kept (or an empty string is used if there was no component).
+** {{nbt|int|generation}}: Optional. Sets the generation value of the book (original, copy, etc.). Allowed values are <code>0</code> to <code>3</code>. If omitted, the original generation is kept (or <code>0</code> is used if there was no component).
+** {{nbt|compound}}{{nbt|list}}{{nbt|string|title}}: Optional. Sets the title of the book as a [[raw JSON text]] component. If omitted, the original title is kept (or an empty string is used if there was no component).
+</div>
+
+<div id="function_set_components" style="margin-block-end: 1em;">
+* '''set_components'''&mdash;Sets [[Data component format|components]] of an item.
+** {{nbt|compound|components}}: A map of components ID to component value. Components with a <code>!</code> prefix (e.g. <code>"!minecraft:damage": {}</code>) causes this component to be removed.
+</div>
+
+<div id="function_set_contents" style="margin-block-end: 1em;">
+* '''set_contents''' - Sets the contents of a container block item to a list of entries.
+** {{nbt|list|entries}}: A list of [[Loot table|loot table entry producer]] to provide item stacks.
+** {{nbt|string|component}}: The target component to be filled with items. Existing contents are replaced. Allowed values: <code>container</code>, <code>bundle_contents</code>, and <code>charged_projectiles</code>. Both <code>bundle_contents</code> and <code>charged_projectiles</code> ignore empty stacks.<ref>{{mcnet|minecraft-1-20-5-pre-release-1|Minecraft 1.20.5 Pre-Release 1}}</ref>
+</div>
+
+<div id="function_set_count" style="margin-block-end: 1em;">
+*'''set_count''' - Sets the stack size.
+** {{nbt|int}}{{nbt|compound|count}}: A [[Loot_table#Number provider|number provider]]. Specifies the stack size to set.
+** {{nbt|boolean|add}}: Optional. If <code>true</code>, change is relative to current count. Defaults to false.
+</div>
+
+<div id="function_set_custom_data" style="margin-block-end: 1em;">
+* '''set_custom_data'''&mdash;Sets the <code>minecraft:custom_data</code> component.
+** {{nbt|string}}{{nbt|compound|tag}}: The data to merge onto the item's <code>minecraft:custom_data</code> component, either within a JSON string or as unflattened tags.  That means that <code>{"tag": "{a:1}"}</code> and <code>{"tag": {"a":1}}</code> are equivalent. When using the string representation, additional care is required: the outer braces <code>{ }</code> of the component must still be present and if the NBT contains quotation marks <code>"</code>, they must be escaped with a backslash <code>\</code>.
+</div>
+
+<div id="function_set_custom_model_data" style="margin-block-end: 1em;">
+* '''set_custom_model_data'''&mdash;Sets <code>minecraft:custom_model_data</code> component.
+** {{nbt|compound|floats}}: Optional. Specifies floats for the [[custom model data]].
+*** {{nbt|list|values}}: A list of [[Loot_table#Number provider|number providers]].
+*** {{nbt|string|mode}}: Determines how existing values should be modified. Allowed values are <code>"append"</code>, <code>"insert"</code>, <code>"replace_all"</code>, <code>"replace_section"</code>.
+*** {{nbt|int|offset}}: Used only if {{nbt|string|mode}} is set to <code>"insert"</code> or <code>"replace_section"</code>. Specifies index to insert or replace values from. Defaults to <code>0</code>
+*** {{nbt|int|size}}: Used only if {{nbt|string|mode}} is set to  <code>"replace_section"</code>. Specifies the size of the range to be replaced. If omitted, the size of {{nbt|list|values}} field is used.
+** {{nbt|compound|flags}}: Optional. Specifies flags for the custom model data.
+*** {{nbt|list|values}}: A list of {{nbt|boolean|boolean}} values.
+*** {{nbt|string|mode}}: Determines how existing values should be modified. Allowed values are <code>"append"</code>, <code>"insert"</code>, <code>"replace_all"</code>, <code>"replace_section"</code>.
+*** {{nbt|int|offset}}: Used only if {{nbt|string|mode}} is set to <code>"insert"</code> or <code>"replace_section"</code>. Specifies index to insert or replace values from. Defaults to <code>0</code>
+*** {{nbt|int|size}}: Used only if {{nbt|string|mode}} is set to  <code>"replace_section"</code>. Specifies the size of the range to be replaced. If omitted, the size of {{nbt|list|values}} field is used.
+** {{nbt|compound|strings}}: Optional. Specifies strings for the custom model data.
+*** {{nbt|list|values}}: A list of {{nbt|string|strings}}.
+*** {{nbt|string|mode}}: Determines how existing values should be modified. Allowed values are <code>"append"</code>, <code>"insert"</code>, <code>"replace_all"</code>, <code>"replace_section"</code>.
+*** {{nbt|int|offset}}: Used only if {{nbt|string|mode}} is set to <code>"insert"</code> or <code>"replace_section"</code>. Specifies index to insert or replace values from. Defaults to <code>0</code>
+*** {{nbt|int|size}}: Used only if {{nbt|string|mode}} is set to  <code>"replace_section"</code>. Specifies the size of the range to be replaced. If omitted, the size of {{nbt|list|values}} field is used.
+** {{nbt|compound|colors}}: Optional. Specifies colors for the custom model data.
+*** {{nbt|list|values}}: A list of RGB values.
+**** {{nbt|int}}{{nbt|compound}}: A number provider specifying an RGB value as a decimal.
+**** {{nbt|list}}: A list containing 3 individual red, green, and blue values that is automatically converted to a decimal. {{more info needed|The formula?}}
+*** {{nbt|string|mode}}: Determines how existing values should be modified. Allowed values are <code>"append"</code>, <code>"insert"</code>, <code>"replace_all"</code>, <code>"replace_section"</code>.
+*** {{nbt|int|offset}}: Used only if {{nbt|string|mode}} is set to <code>"insert"</code> or <code>"replace_section"</code>. Specifies index to insert or replace values from. Defaults to <code>0</code>
+*** {{nbt|int|size}}: Used only if {{nbt|string|mode}} is set to  <code>"replace_section"</code>. Specifies the size of the range to be replaced. If omitted, the size of {{nbt|list|values}} field is used.
+</div>
+
+<div id="function_set_damage" style="margin-block-end: 1em;">
+*'''set_damage''' - Sets the item's damage value (durability).
+**{{nbt|float}}{{nbt|compound|damage}}: A [[Loot_table#Number provider|number provider]]. Specifies the damage fraction to set (1.0 is undamaged, 0.0 is zero durability left).
+**{{nbt|boolean|add}}: Optional. If <code>true</code>, change is relative to current damage. Defaults to false.
+</div>
+
+<div id="function_set_enchantments" style="margin-block-end: 1em;">
+* '''set_enchantments''' - Modifies the item's enchantments. A book converts to an [[enchanted book]].
+** {{nbt|compound|enchantments}}: Enchantments to modify.
+*** {{nbt|int}}{{nbt|compound|An enchantment}}: Key name is the [[Java_Edition_data_value#Enchantments|enchantment ID]]. Value is a [[Loot_table#Number provider|number provider]] specifying the enchantment power. Powers are clamped at a maximum of 255. Decreasing an enchantment power below 1 remove the enchantment, through a relative negative add or through a direct value assignemnt.
+** {{nbt|boolean|add}}: Optional. If <code>true</code>, change is relative to current level. A nonexistent enchantment is presumed to start at 0. Defaults to false.
+</div>
+
+<div id="function_set_fireworks" style="margin-block-end: 1em;">
+* '''set_fireworks'''&mdash;Sets <code>minecraft:fireworks</code> component.
+** {{nbt|compound|explosions}}: Optional. Specifies firework explosions.
+*** {{nbt|list|values}}: List of firework explosion data.
+**** {{nbt|string|shape}}: The shape of the explosion. Can be {{cd|d=or|small_ball|large_ball|star|creeper|burst}}.
+**** {{nbt|int-array|colors}}: The colors of the initial particles of the explosion, randomly selected from.
+**** {{nbt|int-array|fade_colors}}: The colors of the fading particles of the explosion, randomly selected from.
+**** {{nbt|boolean|has_trail}}: Whether or not the explosion has a trail effect (diamond).
+**** {{nbt|boolean|has_twinkle}}: Whether or not the explosion has a twinkle effect (glowstone dust).
+*** {{nbt|string|mode}}: Determines how existing fireworks component should be modified. Allowed values are <code>"append"</code>, <code>"insert"</code>, <code>"replace_all"</code>, <code>"replace_section"</code>.
+*** {{nbt|int|offset}}: Used only if {{nbt|string|mode}} is set to <code>"insert"</code> or <code>"replace_section"</code>. Specifies index to insert or replace explosions from. Defaults to <code>0</code>
+*** {{nbt|int|size}}: Used only if {{nbt|string|mode}} is set to  <code>"replace_section"</code>. Specifies the size of the range to be replaced. If omitted, the size of {{nbt|list|explosions}} field is used.
+** {{nbt|int|flight_duration}}: Optional, allowed values are <code>0</code> to <code>255</code>. Determines flight duration measured in number of gunpowder. If omitted, the flight duration of the item is left untouched (or set to <code>0</code> if the component did not exist before).
+</div>
+
+<div id="function_set_firework_explosion" style="margin-block-end: 1em;">
+* '''set_firework_explosion'''&mdash;Sets <code>minecraft:firework_explosion</code> component.
+** {{nbt|string|shape}}: The shape of the explosion. Can be {{cd|d=or|small_ball|large_ball|star|creeper|burst}}.
+** {{nbt|int-array|colors}}: The colors of the initial particles of the explosion, randomly selected from.
+** {{nbt|int-array|fade_colors}}: The colors of the fading particles of the explosion, randomly selected from.
+** {{nbt|boolean|has_trail}}: Whether or not the explosion has a trail effect (diamond).
+** {{nbt|boolean|has_twinkle}}: Whether or not the explosion has a twinkle effect (glowstone dust).
+</div>
+
+<div id="function_set_instrument" style="margin-block-end: 1em;">
+* '''set_instrument''' - Sets the item tags for instrument items to a random value from a tag.
+** {{nbt|string|options}}: The resource location started with <code>#</code> of an instrument [[tag]], one of the listings is selected randomly.
+</div>
+
+<div id="function_set_item" style="margin-block-end: 1em;">
+* '''set_item'''&mdash;Replaces item type without changing count or components.
+** {{nbt|string|item}}: An item ID.
+</div>
+
+<div id="function_set_loot_table" style="margin-block-end: 1em;">
+* '''set_loot_table''' - Sets the loot table for a container block when placed and opened.
+** {{nbt|string|name}}: Specifies the [[resource location]] of the loot table to be used.
+** {{nbt|int|seed}}: Optional. Specifies the loot table seed. If absent or set to 0, the seed won't be put into the NBT, and a random seed is used when opening the container.
+** {{nbt|string|type}}: the block entity type to be written in <code>BlockEntityTag.id</code>.
+</div>
+
+<div id="function_set_lore" style="margin-block-end: 1em;">
+* '''set_lore''' - Adds or changes the item's lore.
+** {{nbt|list|lore}}: List of lines to append or replace on the item's lore.
+*** {{nbt|list}}{{nbt|compound}}{{nbt|string}} A line of item lore, following the [[Raw JSON text format]]. Components requiring [[Raw_JSON_text_format#Component_resolution|resolution]] are resolved only if <code>entity</code> successfully targets an entity.
+** {{nbt|string|entity}}: Specifies the entity to act as <code>@s</code> when referenced in the JSON text component. Specifies an entity from [[loot context]]. Can be {{Loot entity target}}.
+** {{nbt|string|mode}}: Required. Determines how existing lore component should be modified. Allowed values are <code>"append"</code>, <code>"insert"</code>, <code>"replace_all"</code>, <code>"replace_section"</code>.
+** {{nbt|int|offset}}: Used only if {{nbt|string|mode}} is set to <code>"insert"</code> or <code>"replace_section"</code>. Specifies index to insert or replace lines of lore from. Defaults to <code>0</code>
+** {{nbt|int|size}}: Used only if {{nbt|string|mode}} is set to  <code>"replace_section"</code>. Specifies the size of the range to be replaced. If omitted, the size of {{nbt|list|lore}} field is used.
+</div>
+
+<div id="function_set_name" style="margin-block-end: 1em;">
+* '''set_name'''&mdash;Adds or changes the item's custom name.
+** {{nbt|list}}{{nbt|compound}}{{nbt|string|name}}: A [[Raw JSON text format|JSON text component]], overwriting the previous custom name on the item. Components requiring [[Raw_JSON_text_format#Component_resolution|resolution]] are resolved only if <code>entity</code> successfully targets an entity.
+** {{nbt|string|entity}}: Specifies the entity to act as <code>@s</code> when referenced in the JSON text component. Specifies an entity from [[loot context]]. Can be {{Loot entity target}}.
+** {{nbt|string|target}}: Optional. Allowed values are <code>custom_name</code> or <code>item_name</code>, corresponding with the component to be set. Defaults to <code>custom_name</code>.
+</div>
+
+<div id="function_set_ominous_bottle_amplifier" style="margin-block-end: 1em;">
+* '''set_ominous_bottle_amplifier'''&#x2014;Sets the <code>ominous_bottle_amplifier</code> component of an item.
+** {{nbt|compound|amplifier}}: a [[Loot table#Number provider|number provider]] used to generate the <code>ominous_bottle_amplifier</code> component.
+</div>
+
+<div id="function_set_potion" style="margin-block-end: 1em;">
+* '''set_potion'''&mdash;Sets the <code>potion_contents</code> component of an item.
+** {{nbt|string|id}}: The [[Potion#Java_Edition|potion ID]]. Set to <code>empty</code> to remove the <code>Potion</code> tag.
+</div>
+
+<div id="set_random_dyes" style="margin-block-end: 1em;">
+* '''set_random_dyes'''{{upcoming|je 26.1}}&mdash;Sets the <code>dyed_color</code> component of an item if it is in the {{tag link|item|dyeable}} tag.
+** {{nbt|int}}{{nbt|compound|id}}: A [[number provider]]. The amount of random dyes to select and add to the item. The same dye can be selected multiple times.
+</div>
+
+<div id="set_random_potion" style="margin-block-end: 1em;">
+* '''set_random_potion'''{{upcoming|je 26.1}}&mdash;Sets the <code>potion_contents</code> component of an item randomly.
+** {{nbt|string}}{{nbt|list|options}}: Optional. {{json ref|potion|tag=1|tag_link=Potion tag (Java Edition)}}. If omitted, all potions are possible.
+</div>
+
+<div id="function_set_stew_effect"style="margin-block-end: 1em;">
+* '''set_stew_effect'''&mdash;Sets the status effects for [[suspicious stew]]. Fails if invoked on an item that is not suspicious stew.
+** {{nbt|list|effects}}: The effects to apply.
+*** {{nbt|compound}} An effect.
+**** {{nbt|string|type}}: The effect ID.
+**** {{nbt|int}}{{nbt|compound|duration}}: A [[Loot_table#Number provider|number provider]]. The duration of the effect.
+</div>
+
+<div id="function_set_writable_book_pages" style="margin-block-end: 1em;">
+* '''set_writable_book_pages'''&mdash;Manipulates the pages of the <code>minecraft:writable_book_content</code> component.
+** {{nbt|list|pages}}: A list of pages as filterable strings.
+*** {{nbt|compound}}: A single page.
+**** {{nbt|string|raw}}: The plain text content of the page.
+**** {{nbt|string|filtered}}: The filtered text of the page. Optional. Shown only to players with chat filter enabled, instead of {{nbt|string|raw}}
+***; '''Alternatively, a single page can be represented as follows:'''
+*** {{nbt|string}}: The plain text content of a page.
+** {{nbt|string|mode}}: Determines how existing pages should be modified. Allowed values are <code>"append"</code>, <code>"insert"</code>, <code>"replace_all"</code>, <code>"replace_section"</code>.
+** {{nbt|int|offset}}: Used only if {{nbt|string|mode}} is set to <code>"insert"</code> or <code>"replace_section"</code>. Specifies index to insert or replace pages from. Defaults to <code>0</code>
+** {{nbt|int|size}}: Used only if {{nbt|string|mode}} is set to <code>"replace_section"</code>. Specifies the size of the range to be replaced. If omitted, the size of {{nbt|list|pages}} field is used.
+</div>
+
+<div id="function_set_written_book_pages" style="margin-block-end: 1em;">
+* '''set_written_book_pages'''&mdash;Manipulates the pages of the <code>minecraft:writable_book_content</code> component.
+** {{nbt|list|pages}}: A list of pages as filterable [[text components]].
+*** {{nbt|compound}}: A single page.
+**** {{nbt|compound}}{{nbt|list}}{{nbt|string|raw}}: A text component.
+**** {{nbt|compound}}{{nbt|list}}{{nbt|string|filtered}}: A text component. Optional. Shown only to players with chat filter enabled, instead of {{nbt|compound}}{{nbt|list}}{{nbt|string|raw}}
+***; '''Alternatively, a single page can be represented as follows:'''
+*** {{nbt|compound}}{{nbt|list}}{{nbt|string}}: A text component.
+** {{nbt|string|mode}}: Determines how existing pages should be modified. Allowed values are <code>"append"</code>, <code>"insert"</code>, <code>"replace_all"</code>, <code>"replace_section"</code>.
+** {{nbt|int|offset}}: Used only if {{nbt|string|mode}} is set to <code>"insert"</code> or <code>"replace_section"</code>. Specifies index to insert or replace pages from. Defaults to <code>0</code>
+** {{nbt|int|size}}: Used only if {{nbt|string|mode}} is set to <code>"replace_section"</code>. Specifies the size of the range to be replaced. If omitted, the size of {{nbt|list|pages}} field is used.
+</div>
+
+<div id="function_toggle_tooltips">
+* '''toggle_tooltips'''&mdash;Toggles which tooltips are visible.
+** {{nbt|compound|toggles}}: A map of supported item components to modify. All fields are optional.
+*** {{nbt|bool|attribute_modifiers}}: Changes the visibility of the tooltip displaying the item's attribute modifiers.
+*** {{nbt|bool|can_break}}: Changes the visibility of the tooltip displaying the blocks the item can break in [[Adventure]] mode.
+*** {{nbt|bool|can_place_on}}: Changes the visibility of the tooltip displaying the blocks the item can placed on in [[Adventure]] mode.
+*** {{nbt|bool|dyed_color}}: Changes the visibility of the tooltip displaying dyed [[armor]] color.
+*** {{nbt|bool|enchantments}}: Changes the visibility of the tooltip displaying the item's enchantments.
+*** {{nbt|bool|stored_enchantments}}: Changes the visibility of the tooltip displaying the item's stored enchantments (for [[enchanted book]]s).
+*** {{nbt|bool|trim}}: Changes the visibility of the tooltip displaying the item's armor trim.
+*** {{nbt|bool|unbreakable}}: Changes the visibility of the tooltip displaying the item's unbreakable status. Setting this to any value does not change whether the item is unbreakable.
+</div>
+</div>
+
+==History==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.9|dev=15w43a|Added loot functions as part of [[loot table]]s.}}
+|{{HistoryLine||1.17|dev=20w46a|Added the ability to create dedicated item modifier files in [[data pack]]s using the same syntax as existing loot functions.}}
+|{{HistoryLine||1.18|dev=21w39a|Added <code>set_potion</code> function.}}
+|{{HistoryLine||1.19|dev=22w18a|Added <code>set_instrument</code> function.}}
+|{{HistoryLine||1.20|dev=23w14a|Added <code>reference</code> function.}}
+|{{HistoryLine||1.20.2|dev=23w32a|Added <code>sequence</code> function.}}
+|{{HistoryLine||1.20.5|dev=24w09a|Added <code>set_components</code> function.|Added <code>copy_components</code> function.|<code>set_nbt</code> and <code>copy_nbt</code> functions have been renamed to <code>set_custom_data</code> and <code>copy_custom_data</code> respectively.
+|<code>set_attributes</code> function has been updated:
+*The <code>slot</code> field now supports <code>any</code>, <code>armor</code>, and <code>hand</code> values.
+*The <code>operation</code> values have been renamed:
+**<code>addition</code> -> <code>add_value</code>
+**<code>multiply_base</code> -> <code>add_multiplied_base</code>
+**<code>multiply_total</code> -> <code>add_multiplied_total</code>
+}}
+|{{HistoryLine|||dev=24w11a|Added <code>set_fireworks</code> function.
+|Added <code>set_firework_explosion</code> function.
+|Added <code>set_book_cover</code> function.
+|Added <code>set_writable_book_pages</code> function.
+|Added <code>set_written_book_pages</code> function.}}
+|{{HistoryLine|||dev=24w12a|Added <code>toggle_tooltips</code> function.|Replaced the <code>replace</code> field for <code>set_lore</code> with the <code>mode</code> and <code>offset</code> fields.}}
+|{{HistoryLine|||dev=24w13a|Removed field <code>components</code> from <code>copy_components</code> function and replaced it with <code>include</code> and <code>exclude</code>. Only components that are included (explicitly or implicitly) but not excluded are copied.
+|Added optional field <code>target</code> to the <code>set_name</code> function to specify whether the <code>custom_name</code> or <code>item_name</code> component should be set.}}
+|{{HistoryLine|||dev=24w14a|Added <code>replace</code> field to the <code>set_attributes</code> function.}}
+|{{HistoryLine|||dev=Pre-Release 1
+|Updated <code>set_contents</code> function:
+*Removed <code>type</code> field.
+*Added <code>component</code> field. Allowed values: <code>container</code>, <code>bundle_contents</code>, <code>charged_projectiles</code>
+|Updated <code>set_custom_data</code> function:
+*Updated <code>tag</code> field. It now accepts both SNBT data written as a string (existing format) and unflattened tags.
+|Added <code>filtered</code> function.
+|Added <code>modify_contents</code> function.
+|Added <code>set_custom_model_data</code> function.
+|Added <code>set_item</code> function.
+}}
+|{{HistoryLine|||dev=Pre-Release 2|<code>set_fireworks</code> function has been updated:
+*The list of firework explosions and the replacement mode have been moved inside the <code>explosions</code> field.
+**<code>{ "explosions": <list>, "mode": <mode>, <mode-dependent fields>}</code> becomes <code>{"explosions": {"values": <list>, "mode": <mode>, <mode-dependent fields>}<nowiki />}</code>
+* The <code>explosions</code> field is now optional.}}
+|{{HistoryLine||1.21|dev=24w18a
+|Target entities <code>killer</code>, <code>direct_killer</code>, <code>killer_player</code> were renamed to <code>attacker</code>, <code>direct_attacker</code>, <code>attacking_player</code>
+|<code>copy_name</code> source entities <code>killer</code> and <code>killer_player</code> were renamed to <code>attacking_entity</code> and <code>last_damage_player</code>}}
+|{{HistoryLine|||dev=24w21a|Moved item modifiers from {{File|directory|[[Item modifier|item_modifiers]]}} to {{File|directory|[[Item modifier|item_modifier]]}}}}
+|{{HistoryLine||1.21.4|dev=24w45a|{{cd|minecraft:set_custom_model_data}} now has more fields to accommodate more complex component structure.}}
+|{{HistoryLine||1.21.9|dev=Pre-Release 1|{{cd|minecraft:copy_name}}: The {{cd|source}} field now accepts new context values.|{{cd|minecraft:copy_components}}: The {{cd|source}} field now accepts new context values.}}
+|{{HistoryLine||1.21.11|dev=25w43a|Added {{cd|minecraft:discard}}.|{{cd|minecraft:filtered}}: The field {{cd|modifier}} has been replaced with two fields: {{cd|on_pass}} and {{cd|on_fail}}.}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap1|Added {{cd|minecraft:villager_trade}}, {{cd|minecraft:set_random_dyes}}, and {{cd|minecraft:set_random_potion}}.|Changed {{cd|minecraft:enchant_with_levels}}, now also takes the following field: {{cd|include_additional_cost_component}}.|Changed {{cd|minecraft:enchant_randomly}}, now also takes the following field: {{cd|include_additional_cost_component}}.}}
+}}
+
+==Issues==
+{{issue list|projects=MC}}
+
+== References == 
+{{reflist}}
+
+== External links ==
+* [https://misode.github.io/item-modifier/ Item Modifier Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[Category:Data packs]]
+
+[[de:Gegenstandsmodifizierer]]
+[[fr:Modificateur d'objet]]
+[[ja:アイテム修飾子]]
+[[pt:Modificador de itens]]
+[[zh:物品修饰器]]

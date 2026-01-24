@@ -1,0 +1,157 @@
+{{Infobox version
+|title=15w35a
+|edition=Java
+|image=Java Edition 15w35a.png
+|type=Snapshot
+|date=August 24, 2015
+|parent=1.9
+|clienthash=2880da12d8997ad4c669b7531a09e64c7e038f10
+|jsonhash=4ab25b24d191d46add8c53bb8714c5fd113bd2e6
+|serverhash=a3a1c19d861bce39a129ef18226449ea02afb58a
+|exehash=e0165bd93b2397274429b70b7ffee41eb507e72a
+|prevparent=1.8.9
+|prev=15w34d
+|next=15w35b
+|nextparent=1.9.1
+}}<onlyinclude>
+
+'''15w35a''' is the fourteenth [[snapshot]] for [[Java Edition 1.9]], released on August 24, 2015.<ref>https://web.archive.org/web/0/https://www.mojang.com/2015/08/minecraft-snapshot-15w35a/</ref>
+
+== Changes ==
+=== Blocks ===
+'''[[Command block]]s'''
+* Now have an option of "Needs Redstone" or "Always Active".
+** "Needs Redstone" is the previous behavior (default).
+** "Always Active" causes the command block to always behave as if it was powered.
+** Also changeable via the <code>auto</code> tag for all command blocks.
+* New textures.
+** Darkened outlines on the center panel.
+** The back of the [[arrow]] texture is now curved when the command block is set to conditional.
+
+=== Mobs ===
+'''[[Zombie villager]]s'''
+* New <code>VillagerProfession</code> tag is used to determine what profession the mob is represented as, as well as what profession it becomes when cured.
+** Zombie villagers now have different textures based on their profession and career.
+** The tag is always conserved upon transformation and curing.
+
+=== Gameplay ===
+'''Combat'''
+* [[Shovel]] base attack damage reduced from 4.5 to 2.5.
+* [[Pickaxe]] attack speed reduced from 1.5 to 1.2.
+* [[Axe]] base attack damage reduced from 8 to 7.
+* Axe attack speed increased from 0.85 to 0.9.
+** This slightly reduces the damage per second.
+* [[Hoe]] attack damage is now always 1.
+* Hoe attack speed now increases by 1 every tier, starting at 1.
+
+{| class="wikitable" style="text-align:center" data-description="New attack speed / damage"
+|+ Attack speed and damage
+! Item
+! Attack speed
+! colspan="4" | Attack damage
+! colspan="4" | Damage per second (DPS)
+|-
+| [[Sword]]s
+| 1.45
+| {{ItemSprite|Wooden Sword}}{{ItemSprite|Golden Sword}} {{hp|4}}
+| {{ItemSprite|Stone Sword}} {{hp|5}}
+| {{ItemSprite|Iron Sword}} {{hp|6}}
+| {{ItemSprite|Diamond Sword}} {{hp|7}}
+| {{ItemSprite|Wooden Sword}}{{ItemSprite|Golden Sword}} 5.8
+| {{ItemSprite|Stone Sword}} 7.25
+| {{ItemSprite|Iron Sword}} 8.7
+| {{ItemSprite|Diamond Sword}} 10.15
+|-
+| [[Axe]]s<ref group="note" name="durability">dealing damage with an axe, pick, or shovel decreases its durability by 2.</ref>
+| 0.9
+| {{ItemSprite|Wooden Axe}}{{ItemSprite|Golden Axe}} {{hp|7}}
+| {{ItemSprite|Stone Axe}} {{hp|8}}
+| {{ItemSprite|Iron Axe}} {{hp|9}}
+| {{ItemSprite|Diamond Axe}} {{hp|10}}
+| {{ItemSprite|Wooden Axe}}{{ItemSprite|Golden Axe}} 6.3
+| {{ItemSprite|Stone Axe}} 7.2
+| {{ItemSprite|Iron Axe}} 8.1
+| {{ItemSprite|Diamond Axe}} 9
+|-
+| [[Pickaxe]]s<ref group="note" name="durability" />
+| 1.2
+| {{ItemSprite|Wooden Pickaxe}}{{ItemSprite|Golden Pickaxe}} {{hp|2}}
+| {{ItemSprite|Stone Pickaxe}} {{hp|3}}
+| {{ItemSprite|Iron Pickaxe}} {{hp|4}}
+| {{ItemSprite|Diamond Pickaxe}} {{hp|5}}
+| {{ItemSprite|Wooden Pickaxe}}{{ItemSprite|Golden Pickaxe}} 2.4
+| {{ItemSprite|Stone Pickaxe}} 3.6
+| {{ItemSprite|Iron Pickaxe}} 4.8
+| {{ItemSprite|Diamond Pickaxe}} 6
+|-
+| [[Shovel]]s<ref group="note" name="durability" />
+| 1
+| {{ItemSprite|Wooden Shovel}}{{ItemSprite|Golden Shovel}} {{hp|2.5}}
+| {{ItemSprite|Stone Shovel}} {{hp|3.5}}
+| {{ItemSprite|Iron Shovel}} {{hp|4.5}}
+| {{ItemSprite|Diamond Shovel}} {{hp|5.5}}
+| {{ItemSprite|Wooden Shovel}}{{ItemSprite|Golden Shovel}} 2.5
+| {{ItemSprite|Stone Shovel}} 3.5
+| {{ItemSprite|Iron Shovel}} 4.5
+| {{ItemSprite|Diamond Shovel}} 5.5
+|-
+! Item
+! Attack damage
+! colspan="4" | Attack speed
+! colspan="4" | Damage per second (DPS)
+|-
+| [[Hoe]]s
+| {{hp|1}}
+| {{ItemSprite|Wooden Hoe}}{{ItemSprite|Golden Hoe}} 1
+| {{ItemSprite|Stone Hoe}} 2
+| {{ItemSprite|Iron Hoe}} 3
+| {{ItemSprite|Diamond Hoe}} 4
+| {{ItemSprite|Wooden Hoe}}{{ItemSprite|Golden Hoe}} 1
+| {{ItemSprite|Stone Hoe}} 2
+| {{ItemSprite|Iron Hoe}} 3
+| {{ItemSprite|Diamond Hoe}} 4
+|}
+{{notelist}}
+
+=== General ===
+'''[[Attribute]]s'''
+* The <code>Slot</code> string tag within <code>AttributeModifiers</code> determines which slot the modifier is applied to.
+* Available slots are: "mainhand", "offhand", "feet", "legs", "torso", "head".
+* e.g.: <code>give @p minecraft:diamond_chestplate 1 0 {AttributeModifiers:[{AttributeName:"generic.maxHealth",Name:"Test",Amount:10.0,Operation:0,UUIDLeast:1l,UUIDMost:1l,Slot:"torso"}]}</code>.
+
+'''Optimization'''
+* Experimental performance enhancements.
+* Fixed client memory leaks.
+
+== Fixes ==
+{{fixes|fixedin=15w35a|prefix=Minecraft
+|;old
+|2664|Floating mob heads above baby mobs that wear them/baby zombie hitbox too high.
+|45763|Some blocks are facing the wrong way if placed in an item frame.
+|;previous
+|86925|Running out of memory when exiting.
+|86937|Empty chunks duplicate one-another and cause weird behavior.
+|87050|(2 bugs in one) glitch with adding attributes to items in 1.9.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|0_P8i0dQ2-k}}
+
+== Trivia ==
+* Unlike most of the first-of-the-week snapshots, this was released on a Monday instead of Wednesday.
+* This version was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+* Zombies that spawn in this version don't have AI.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:15w35a]]
+[[es:Java Edition 15w35a]]
+[[fr:Édition Java 15w35a]]
+[[ja:Java Edition 15w35a]]
+[[pt:Edição Java 15w35a]]
+[[ru:15w35a (Java Edition)]]
+[[zh:Java版15w35a]]

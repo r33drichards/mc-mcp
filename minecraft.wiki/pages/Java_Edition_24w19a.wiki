@@ -1,0 +1,230 @@
+{{dangerous version|The game may crash if a villager dies in this snapshot.<ref>{{bug|MC-271843||resolution=fixed}}</ref>|type=crash|version=development|edition=Java}}
+{{Infobox version
+|title=Minecraft 24w19a
+|image=24w19a.jpg
+|image2=Java Edition 24w19a.png
+|edition=Java
+|type=Snapshot
+|date=May 10, 2024
+|jsonhash=efc6555115de2c4249a3e7285cf1034a99d418ba
+|clienthash=ec4ab4da55435693e7342cfe6d23ab0df9226eb7
+|clientmap=05e170c2a3722653cea193b427808f4c19dd3447
+|serverhash=8088cca48fece804d29b368ab5bbcc27a540456c
+|servermap=9d799a9d897cf54d9bd3ea4964e77113da1c8ca9
+|parent=1.21
+|prevparent=1.20.6
+|prev=24w18a
+|next=24w19b
+|nextparent=1.21.1
+}}<onlyinclude>
+
+'''24w19a''' is the second [[snapshot]] for [[Java Edition 1.21]], released on May 10, 2024,<ref>{{snap|24w19a|id=a|May 10, 2024}}</ref> which optimizes chunk loading performance, and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Sounds]]'''
+* Added 4 new cave [[ambient sounds]]:
+
+{| class="wikitable"
+!Name
+!Sound
+!Description
+!Volume
+!Pitch 
+|-
+|Cave 20<br>
+|[[File:Cave20 BE1.wav]]
+|
+|rowspan = 23|1.0
+|rowspan = 23|1.0
+|-
+|Cave 21<br>
+|[[File:Cave21 BE1.wav]]
+|Rumbling and creaking noises with quiet tones in the background.
+|-
+|Cave 22<br>
+|[[File:Cave22 BE1.wav]]
+|Resembles a [[warden]] using its sonic boom attack.
+|-
+|Cave 23<br>
+|[[File:Cave23 BE1.wav]]
+|Eerie sounds with heartbeats at the end, possibly resembling a [[warden]].
+|}
+
+== Changes ==
+=== Blocks ===
+''' [[Copper bulb]]'''
+* Replaced the sounds for "turn off" and "turn on" with one "toggle" sound.
+
+'''[[Sculk sensor]] and [[calibrated sculk sensor]]'''
+* Added [[frosted ice]] being placed by [[Frost Walker]] to the list of events that produce a "Block Placed" vibration (frequency 13).{{Info needed|if the enchantment is modified with a resource pack or if a resource pack adds a similar enchantment, will blocks placed by the enchantment in this manner trigger the "Block Placed" vibration?}}
+
+[[File:Trial Spawner JE4 BE3.png|width=32x32]]''' [[Trial spawner]]'''
+* Updated the top face texture and the active state texture.
+
+=== Items ===
+''' [[Mace]]'''
+* [[Fire Aspect]] can be applied to maces again.
+
+=== Gameplay ===
+'''[[Enchantments]]'''
+* [[Breach]] and [[Density]] are now incompatible.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>43</code>.
+* Registry decorated_pot_patterns has been renamed to <code>decorated_pot_pattern</code>.
+* Renamed directories; each directory that used the plural name of its element now matches registry name:
+
+{| class="wikitable"
+! Old name
+! New name
+|-
+| <samp>tags/items</samp>
+| <samp>tags/item</samp>
+|-
+| <samp>tags/blocks</samp>
+| <samp>tags/block</samp>
+|-
+| <samp>tags/entity_types</samp>
+| <samp>tags/entity_type</samp>
+|-
+| <samp>tags/fluids</samp>
+| <samp>tags/fluid</samp>
+|-
+| <samp>tags/game_events</samp>
+| <samp>tags/game_event</samp>
+|}
+
+'''[[Data component format]]'''
+* The <code>custom_data</code> component can now be specified as an SNBT string to preserve type information in JSON.
+** This is the same as is used in the <code>set_custom_data</code> loot function and <code>custom_data</code> predicate.
+* The <code>food</code> item component has new fields:
+** <code>using_converts_to</code>: item with components (optional).
+*** Once consumed, the food item is replaced with the specified item.
+*** e.g. <code>food={nutrition:1,saturation:0,using_converts_to:{id:"poisonous_potato",components:{"minecraft:custom_name":'"Wait what?"'}}}</code>.
+
+'''[[Entity format]]'''
+* Removed <code>power</code> tag and replaced with <code>acceleration_power</code> tag with a number value that control the projectile's acceleration (and maximum speed).
+** This change affects the following projectiles; <code>dragon_fireball</code>, <code>large_fireball</code>, <code>small_fireball</code>, <code>fireball</code>, <code>breeze_wind_charge</code>, <code>wind_charge</code>, <code>wither_skull</code>.
+
+'''[[Custom structure]]'''
+* New tag <code>dimension_padding</code> for structures.
+** Ensures that a structure is not generating through the edges of a dimension by adding vertical padding to its bounding box.
+** Default is <code>0</code>.
+** Trial chambers have a padding of 10 since they are generated deep underground and would sometimes intersect with bedrock layer.
+
+'''Entity effect types'''
+* Adds optional field <code>trigger_game_event</code> for effect types <code>replace_block</code>, <code>replace_disc</code> and <code>set_block_properties</code>.
+** Game event ID for a game event to trigger when a block has been replaced.
+
+'''[[Tag]]s'''
+* Added <code>fire_aspect_lightable</code> to each block that should be possible to light by {{control|hitting}} it with a tool that has [[Fire Aspect]].
+
+'''Damage type predicate'''
+* New option: <code>is_direct</code> - optional boolean.
+** When present, <code>true</code> requires the damage to be direct and <code>false</code> requires the damage to be indirect.
+** Damage is direct when its direct and source entities are the same.
+
+'''Performance'''
+* When reading an already generated chunk from disk, surrounding chunks are no longer unnecessarily loaded, reducing memory and CPU overhead.
+
+== Fixes ==
+{{fixes|fixedin=24w19a
+|;old
+|9568|Mobs suffocate/go through blocks when growing up near a solid block.
+|9644|Launched {{cd|falling_block}} entities do not travel through portals.
+|14923|Players can be kicked for spamming in a Singleplayer world with cheats disabled.
+|16345|Reducing the player's base max health using {{cmd|attribute}} does not always reduce their current health.
+|26304|Brewing stands reset brew cycle when unloaded.
+|93833|Only if Health is provided, {{cd|maxHealth}} attribute is used as maximum Health value.
+|96198|Boats/rafts move into blocks when landing in less than one block deep water.
+|110815|Slimes are summoned with the wrong amount of health.
+|175619|Dispenser drops honey bottle unless empty slot is available.
+|178383|Horses, donkeys, mules and llamas spawned from spawn eggs or {{cmd|summon}} command have 53 health.
+|195931|Incorrect amount of damage heart particles shown when hitting some entities for the first time.
+|252846|Mobs can pass through fences with carpets on top when growing up.
+|253791|Frogs suffocate when growing.
+|254004|Falling block entities do not process their end gateway cooldown timer.
+|267947|Ender pearls can teleport players in Spectator mode.
+|267951|The game freezes and eventually crashes when creating a world with the "{{cd|spawnChunkRadius}}" gamerule set to high values.
+|267968|Medium slimes from trial chamber spawners take damage incorrectly when first hit.
+|267981|The "Trial Spawner crackles" subtitle is only displayed for a split second upon the "{{cd|minecraft:block.trial_spawner.ambient}}" sound being played.
+|268106|Entities' current health is not capped at their max health in all applicable situations.
+|268772|Fall damage multiplier attribute has unintuitive coloring.
+|269318|Books placed on a lectern in Creative mode are consumed.
+|269601|Mace smash attack does not knock back other players when they are not the attacked entity.
+|269633|Placing an oversized filled bucket resets the stack size to 1.
+|269642|Eating an oversized soup/stew resets the stack size to 1.
+|269674|Oversized book and quill stacks reset count when signed.
+|269685|Buckets are lost when consuming oversized milk buckets.
+|269686|Oversized music disc stacks can be duplicated with jukeboxes.
+|269708|Dispensers using an oversized stack of water bottles resets the stack size to 1.
+|269717|Cauldron deletes overstacked tinted shulker boxes.
+|269809|Feeding an axolotl an oversized tropical fish bucket resets the stack size to 1.
+|270296|Ominous item spawner spawns unstackable arrows with potion effects.
+|270584|Vault/ominous vault loot isn't predetermined, allowing players to create backups of their worlds to get desired rewards.
+|270635|Trial spawner textures are inconsistent.
+|270684|{{cd|set_attributes}} loot function doesn't accept an empty list.
+|270779|Getting data with {{cmd|data}} command from a block/chest with a large amount of data can cause the game to crash.
+|270818|Data generator items report is not deterministic.
+|270926|"{{cd|foodSaturationLevel}}" can be negative.
+|270965|The data type of the "{{cd|minecraft:custom_data}}" component of the recipe result will be forcibly modified.
+|270988|Iron golem and snow golem spawn eggs from before 1.13 do not upgrade to 1.20.5 correctly
+|271001|Items in a container can be given a count above 99 (to max integer), and can crash the world.
+|271005|Knowledge books with a max stack size over 1 consume all items in the stack when used.
+|271026|Components that set a status effect sometimes lose parts of the data.
+|271094|Entity ID inside {{cd|EntityTag}} is ignored when updating a world to 1.20.5.
+|271159|Banner pattern entries without colors are invalidated when upgrading to 1.20.5.
+|271170|Unexpected error when modifying skull's custom name to an invalid value.
+|;previous
+|271398|Crafting ingredients remain in the grid after crafting certain items, causing item duplication.
+|271400|The Quick Charge enchantment on crossbows no longer increases the crossbow loading speed.
+|271402|Sharpness and mob-specific damage enchantments reduce attack damage instead of increasing it.
+|271404|Breach and Density enchantments aren't mutually exclusive.
+|271406|Blocks reappear when mined instantly.
+|271422|Soul Speed causes your FOV to change whenever you jump.
+|271423|Riptide enchantment does not work properly.
+|271427|Sweep attacks no longer trigger consistently.
+|271434|Campfires knockback the player.
+|271435|Moving while being attacked no longer deals knockback correctly.
+|271436|Mace can no longer be enchanted with Fire Aspect.
+|271441|Fire Protection tooltip is displayed in red text despite being a positive effect.
+|271442|The Fire Aspect enchantment can change the "lit" states of redstone lamps, redstone torches, copper bulbs, furnaces, smokers, and blast furnaces.
+|271444|The Fire Aspect enchantment can turn on campfires and candles while underwater.
+|271449|Player momentum no longer affects ender pearls, eggs, or snowballs.
+|271455|When holding a Fire Aspect weapon in the mainhand, thrown tridents in the offhand will set mobs on fire.
+|271459|Frost Walker deletes waterlogged blocks.
+|271461|Interacting with certain villagers with the villager trade rebalance enabled causes client crash.
+|271477|"{{cd|projectile_spawned}}" enchantment effect always activates at 0, 0, 0.
+|271484|Lighting candles and campfires with Fire Aspect doesn't sent vibration to sculk sensors.
+|271556|The drop rate of wither skeleton skulls is lowered by 0.01.
+|271562|"{{cd|projectile_spawned}}" enchantment component triggers the enchantment effects before setting the projectile's default NBT.
+|271565|The game can crash when upgrading worlds with zombie villagers from before 1.9.
+|271632|Weapon with Bane of Arthropods can only give the target Slowness I instead of Slowness IV.
+|271637|The enchantment entity effect type "{{cd|run_command}}" always runs the command in the overworld.
+|271652|Holding items enchanted with Thorns in your hand no longer works as if you were wearing them.
+|271654|Enchantments granting bonus damage to melee weapons aren't producing particles.
+|271710|Key Binds background is darker than the rest of UI.
+|271725|Enchantment entity effect "{{cd|apply_mob_effect}}" never applies an amplifier even if one is defined.
+|271726|The {{cd|item.trident.thunder}} sound can no longer be heard by the player who was struck by a lightning.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|seB2ZwgPOLQ|AJTSOwlsgwk}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w19a]]
+[[es:Java Edition 24w19a]]
+[[fr:Édition Java 24w19a]]
+[[ja:Java Edition 24w19a]]
+[[lzh:二四週一九甲]]
+[[pt:Edição Java 24w19a]]
+[[ru:24w19a (Java Edition)]]
+[[uk:24w19a (Java Edition)]]
+[[zh:Java版24w19a]]

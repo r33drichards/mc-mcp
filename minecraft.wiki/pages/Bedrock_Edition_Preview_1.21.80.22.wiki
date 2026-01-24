@@ -1,0 +1,151 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.8022.0<br>'''Android''': 1.21.80.22
+| image = Bedrock 1.21.80.22 PatchNotes.jpeg
+| image2 = Bedrock 1.21.80.22.png
+| build = 31998570
+| editorver = 0.9.3
+| versioncode = '''Android''':<br />
+952108022 (armeabi-v7a, 34)<br />
+962108022 (x86, 34)<br />
+972108022 (arm64-v8a, 34)<br />
+982108022 (x86_64, 34)
+| date = March 26, 2025
+| server = 1.21.80.22
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.80.22.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.80.22.zip Linux]
+| parent = 1.21.80
+| prevparent = 1.21.73
+| prev = Preview 1.21.80.21
+| next = Preview 1.21.80.25
+| nextparent = 1.21.81
+}}<onlyinclude>
+'''Beta 1.21.80.22''' (ChromeOS, Android) or '''Preview 1.21.80.22''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the third beta/''Preview'' version for [[Bedrock Edition 1.21.80]], released on March 26, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/35325653515149-Minecraft-Beta-Preview-1-21-80-22|title=Minecraft Beta & Preview - 1.21.80.22|website=Minecraft Feedback|date=March 26, 2025}}</ref> which adds [[flat]] world presets, and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Flat]] world presets'''
+*It is now possible to select a flat world preset in the Advanced tab of the [[Create New World|create new world]] screen when flat world mode has been enabled.
+*Player can now have more variety in your flat worlds with the following presets:
+**Classic Flat (The classic flat world)
+**Tunnelers' Dream
+**Water World (an endless ocean)
+**Overworld
+**Snowy Kingdom
+**Bottomless Pit
+**Desert
+**Redstone Ready (flat sandstone)
+[[File:New UI - Create New World Screen Menu "Advanced" Tab Settings - Flat World Toggle ON Button (Bedrock Preview 1.21.80.22).png|380px|thumb|New [[Create New World#Advanced|Create New World]] in "Advanced" tab - Flat World toggle on screen]]
+
+== Changes ==
+=== General ===
+'''UI'''
+*Updated the friends drawer status to tell if a friend is playing in the same world as a player.
+
+=== Technical ===
+'''Block Components'''
+*Removed Upcoming Creator Features experiment requirement for field {{cd|isotropic}} in {{cd|minecraft:material_instances}} component.
+
+'''[[Block]]s'''
+*From 1.21.80 onward, when using a {{cd|minecraft:geometry}} component or {{cd|minecraft:material_instances}} component, you must include both.
+
+'''[[Commands]]'''
+*Released {{cmd|place structure}} and {{cmd|place jigsaw}} out of the Data-Driven Jigsaw Structures experiment.
+
+'''Components'''
+*Added validation for block asset references in components.
+**Content errors will log missing block references for the following components:
+***item component {{cd|minecraft:digger}}
+***item component {{cd|minecraft:entity_placer}}
+***item component {{cd|minecraft:block_placer}}
+***spawn rules component {{cd|minecraft:spawns_on_block_filter}}
+***spawn rules component {{cd|minecraft:spawns_on_block_prevented_filter}}
+***spawn rules component {{cd|minecraft:spawns_above_block_filter}}
+**{{cd|can_be_stolen}} has been moved from {{cd|presets}} back to being a direct sub-field of the {{cd|minecraft:leashable}} component.
+
+'''Documentation'''
+*Include {{cd|biome}} and {{cd|client_biome}} JSON files in generated documentation.
+
+'''Goals'''
+*Added fields to {{cd|minecraft:behavior.tempt}} goal:
+**The {{cd|stop_distance}} field specifies a custom distance for when the tempted mob should stop moving towards the player.
+**The {{cd|on_start}} field specifies the event to trigger when the goal starts.
+**The {{cd|on_end}} field specifies the event to trigger when the goal ends.
+*Added {{cd|minecraft:behavior.float_tempt}} goal, which allows a tempted mob to move in a line towards the player:
+**This goal is a variant of the {{cd|minecraft:behavior.tempt}} goal and shares the same fields
+**Requires the mob to be in a floating state (e.g. use the {{cd|minecraft:navigation.float}} component)
+
+'''[[Structure]]s'''
+*Exposed new fields to data driven jigsaw structures: {{cd|start_height}}, {{cd|dimensional_padding}}, {{cd|pool_aliases}}, {{cd|max_distance_from_center}}
+*Made {{cd|height_map_projection}} optional and changed {{cd|anchor}} to {{cd|start_jigsaw_name}}
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Locator Bar" experimental toggles.
+
+=== Additions===
+==== Technical ====
+'''API'''
+:{{cd|@minecraft/server 2.0.0-beta}}
+*{{cd|EntitySkinIdComponent}} has been changed to read-only in version {{cd|2.0 beta}}
+*Added property {{cd|localizationKey}} to {{cd|Entity}}, {{cd|Block}}, and {{cd|ItemStack}} which returns the key used for finding the localized names of these objects.
+:Added new Container APIs:
+*{{cd|contains(ItemStack)}}: Attempts to find an instance of an item inside the container.
+*{{cd|firstEmptySlot()}}: Finds the index of the first empty slot inside the container.
+*{{cd|irstItem()}}: Finds the index of the first item inside the container.
+*{{cd|find(ItemStack)}}: Find the index of the first instance of an item inside the container.
+*{{cd|reverseFind(ItemStack)}}: Find the index of the last instance of an item inside the container.
+:Custom Commands
+*Added support for custom commands authored in script. The new {{cd|CustomCommandRegistry}} is provided when listening to {{cd|ModuleStartupEvent}}. 
+**Additional types added:
+***{{cd|CustomCommandRegistry}}
+***{{cd|CustomCommandPermissionLevel}}
+***{{cd|CustomCommandParamType}}
+***{{cd|CustomCommandResult}} and {{cd|CustomCommandStatus}}
+***{{cd|CustomCommandParameter}}
+
+=== Changes ===
+==== Gameplay ====
+'''[[Player locator bar]]'''
+*Dots are now shown representing players in spectator mode to other players also in spectator mode on the locator bar.
+
+==== Technical ====
+'''Graphical'''
+*Disabled split screen for the Deferred Technical Preview. Deferred/Ray Tracing modes are not available in the video menu during split screen sessions, and starting a split screen session while in one of these modes will force the game back to Fancy mode.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.80.22 Preview
+|;old
+|136864|Deepslate Redstone Ore doesn't turn off
+|189554|Dying while swimming and flying on elytras causes the hitbox to not update after respawning
+|190362|TNT physics changed since previous version
+|190576|Summoning wolves with a spawn egg doesn’t play any New wolf sounds when Spawned
+|190632|The music is still playing when you're in the world saving process.
+|190700|Camels spawn in player/creeper-sized spaces
+|;previous
+|191381|Can no longer light up deepslate redstone ore by right clicking on it
+|otherissuescount=9}}
+'''Other'''
+*Fixed an issue where Text To Speech wasn't working on Android Fire Tablet devices.
+*Fixed an issue where the player would momentarily lay under or beside a Bed when going to sleep.
+*Fixed a crash when clicking several times while trying to upload a world to an inactive Realm slot.
+*Fixed an issue that caused a crash while generating chunks.
+*Fixed an issue which prevented the {{keys|Esc}} keyboard shortcut from working in certain scenarios on the death screen.
+*Bundle slot selection using gamepad right stick no longer skips slots when playing in splitscreen.
+*Stacks are now correctly splitting across slots when moving cursor and holding the left mouse button to split a stack evenly across slots.
+*Fixed a bug where worlds set to Creative would be created with cheats turned on.
+*Fixed an issue with Android GPU identification causing Deferred Technical Preview to be disabled on certain supported devices.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.80 betas]]
+
+[[de:Bedrock Edition beta 1.21.80.22]]
+[[ja:Bedrock Edition Preview 1.21.80.22]]
+[[pt:Edição Bedrock Preview 1.21.80.22]]
+[[ru:Preview 1.21.80.22 (Bedrock Edition)]]
+[[uk:Preview 1.21.80.22 (Bedrock Edition)]]
+[[zh:基岩版1.21.80.22]]

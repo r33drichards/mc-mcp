@@ -1,0 +1,141 @@
+{{Infobox version
+|edition=Java
+|image=14w03a Banner.png
+|image2=Java Edition 14w03a.png
+|type=Snapshot
+|date=January 16, 2014
+|parent=1.8
+|clienthash=c1932528d91f084be73651509804d2266fd4c24d
+|jsonhash=6ee35b2eb136f1ec3246ff71e357149be156e64f
+|serverhash=5cbd5319a7b1198f049286d443148f1b88ff7bc7
+|exehash=eb1148c22e2b399ffcc7487fbe45de0371d227b4
+|prevparent=1.7.10
+|prev=14w02c
+|next=14w03b
+|nextparent=1.8.1
+}}
+<onlyinclude>
+
+'''14w03a''' is the fourth [[snapshot]] for [[Java Edition 1.8]], released on January 16, 2014,<ref>{{cite|url=https://web.archive.org/web/20140122052947/https://mojang.com/2014/01/minecraft-snapshot-14w03a/|title=Minecraft snapshot 14w03b|website=Mojang.com|author=[[Dinnerbone]]}}</ref> which adds the {{cmd|clone}} and {{cmd|fill}} [[command]]s as well as {{cmd|gamerule logAdminCommands}}.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|clone}}'''
+* Clones all the blocks (not entities) from a given area to a different given area.
+* Up to 4096 blocks can be copied.
+*** The clone can be masked or replace - replace copies every block, masked only copies non-air blocks.
+** Usage: {{cmd|clone <x1> <y1> <z1> <x2> <y2> <z2> <x> <y> <z> [mode]}}.
+** Example: {{cmd|clone 1001 3 1002 1011 3 992 1001 5 992 masked}}.
+
+'''{{cmd|fill}}'''
+* Fills a given volume with a specified block.
+* Up to 4096 blocks can be filled.
+** <code>oldBlockHandling</code> works like with {{cmd|setblock}}, but with additional options: hollow to only fill the outer layer of blocks and fill the inner part with air, outline to fill the outer layer of blocks and ignore the inner part.
+* Works similarly to /setblock
+** Usage: {{cmd|fill <x1> <y1> <z1> <x2> <y2> <z2> <TileName> [dataValue] [oldBlockHandling] <dataTag>}}.
+** Example: {{cmd|fill 1001 3 1002 1011 5 992 wool 6 replace}}.
+
+'''[[Gamerule]]s'''
+* <code>logAdminCommands</code>
+** If set to false, prevents all command blocks from outputting to the client console. 
+** If used on a server, it also does not log player executed commands in the server's log. 
+* Players still see other players' executed commands in chat.
+
+== Changes ==
+=== Items ===
+'''[[Player head]]s'''
+* No longer only have one layer.
+
+=== Mobs ===
+'''[[Iron golem]]s'''
+* Now only drop iron ingots when killed by the player, either through combat or potions, or player-activated mechanisms such as manually lit TNT.
+* If killed without player intervention, only drops poppies.
+
+'''[[Villager]]s'''
+* When struck by lightning, now transform into [[witch]]es, similar to [[pig]]s transforming to [[zombie pigmen]] and [[creeper]]s to [[charged creeper]]s.
+
+'''[[Zombie pigmen]]'''
+* Now only drop gold nuggets and rare drops when killed by the player, either through combat or potions, or player-activated mechanisms such as manually lit TNT.
+* If killed without player intervention, only drops rotten flesh.
+
+=== World generation ===
+'''[[Desert pyramid]]s'''
+* Now spawn with [[stained clay]] [[File:Desert pyramid JE2 BE2.png|40px]] rather than [[wool]] [[File:Desert pyramid JE1 BE1.png|40px]].
+
+'''[[Village]]s'''
+* Now spawn with cobblestone under the [[gravel]] pathways.
+
+=== Command format ===
+'''{{cmd|tp}}'''
+* Now supports rotation arguments.
+** Example: {{cmd|tp @p ~ ~ ~ ~20 ~40}} teleports the player so that they face 20 degrees to the right and 40 degrees downwards.
+
+'''[[Target selectors]]'''
+* Now supports cubic areas.
+** Example: <code>@e[x=0,y=0,z=0,dx=10,dy=10,dz=10]</code> gets all entities between 0,0,0 and 10,10,10.
+* The radius value in selectors is now based on the block center.
+** A radius of 0 works for exact block positions.
+
+=== Gameplay ===
+'''Item tooltips'''
+* Now shows the internal name for use in commands ({{key|F3+H}} mode).
+
+=== General ===
+'''Block IDs'''
+* NBT data in commands can now use block/item names in place of numerical IDs.
+* Old IDs still work, but are being phased out slowly.
+* Other occurrences of blocks/items now need to be named IDs.
+* Regular IDs in commands no longer work. {{cmd|give [player] 1}} is now {{cmd|give [player] stone}}.
+
+'''F3 hotkeys'''
+* {{key|F3}} + {{key|D}}: Clear chat history (including previously typed commands).
+
+'''[[Skin]] customization'''
+* Uses a char.png file with new layout and new dimensions.
+** Dimensions for the file are now 64&times;64.
+* Right and left arms and legs are now editable independently.
+* The hat layer is now full-body, can be transparent.
+** Overlays for arms, legs, head, and body are called sleeves, pants legs, hat, and jacket respectively.
+* Backward-compatible with older skins.
+** Old skins still work, but do not have the new features.
+** New skins when used in pre-14w02a versions act like old skins.
+* New "Skin Customization" button in the options menu.
+** Cape visibility is now toggled from here.
+** Players can toggle the visibility of overlays, independent for each limb/body part.
+
+== Fixes ==
+{{fixes|fixedin=14w03a|prefix=Minecraft
+|;old
+|14671|1-Tick pulse sustaining with repeaters.
+|26572|Mob/player head blocks don't render the hat layer.
+|34919|<code>Hopper: java.lang.NullPointerException: Rendering screen</code>.
+|36494|{{cmd|setworldspawn}} does not update compass.
+|42312|Range with command blocks subtly messed up.
+|44881|Command block custom radius.
+|;dev
+|44389|Leaves not changing color depending on biome.
+|44556|{{cmd|clear}} doesn't clear items in armor slot (NPE).
+|44684|14w02a teleporting changes cause side effects to endermen teleportation.
+|;prev
+|44618|Spawn point <code>@a</code>/<code>@p</code>/<code>@r</code> not working.
+|44758|CommandBlock @ selectors are offcentered.
+|44785|r{{=}}65536 in command block doesn't work anymore.
+|44824|{{code|Hopper: java.lang.NullPointerException: Rendering Block Entity}}.
+|44848|{{code|Hopper: java.lang.NullPointerException: Unexpected error}}.
+}}</onlyinclude>
+
+== Trivia ==
+* 14w03a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:14w03a]]
+[[es:Java Edition 14w03a]]
+[[fr:Édition Java 14w03a]]
+[[ja:Java Edition 14w03a]]
+[[ko:Java Edition 14w03a]]
+[[pt:Edição Java 14w03a]]
+[[ru:14w03a (Java Edition)]]
+[[uk:14w03a (Java Edition)]]
+[[zh:Java版14w03a]]

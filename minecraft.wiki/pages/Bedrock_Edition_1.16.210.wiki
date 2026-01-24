@@ -1,0 +1,242 @@
+{{Infobox version
+|title=v1.16.210
+|edition=Bedrock
+|image=Bedrock 1.16.210 PatchNotes.png
+|image2=Bedrock 1.16.210.png
+|date=March 9, 2021
+|prevparent=1.16.0
+|prev=1.16.201
+|next=1.16.220
+|nextparent=1.17.0
+|server=[[Bedrock Dedicated Server 1.16.210.05|1.16.210.05]]<br>[[Bedrock Dedicated Server 1.16.210.06|1.16.210.06]]
+|internal='''Android''': 1.16.210.05<br>'''PlayStation''': 2.21<br>
+'''Windows 10''': 1.16.21005.0<br>
+'''Xbox One''': 1.16.21005.70
+|serverdl='''Server (1.16.210.05):'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.16.210.05.zip Windows], [https://minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.16.210.05.zip Linux]<br>
+'''Server (1.16.210.06):'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win/bedrock-server-1.16.210.06.zip Windows], [https://minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.16.210.06.zip Linux]
+}}<onlyinclude>
+
+'''1.16.210''' is a minor update to {{el|be}} released on March 9, 2021, which adds new ambient sounds to [[the Nether]], and fixes bugs.<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/360057677072-Minecraft-1-16-210-Bedrock-|title=Minecraft - 1.16.210 (Bedrock)|website=Minecraft Feedback|date=March 9, 2021}}</ref> While it was not the last update to 1.16, it was the last one before the beta builds of [[Bedrock Edition 1.17.0|1.17.0]] started. This is the first version released in 2021.
+
+Development phases contained some of the [[Caves & Cliffs]] features through [[experimental gameplay]], which were not included in the full release for this update but are part of [[Bedrock Edition 1.17.0|1.17.0]].<ref>{{tweet|MattGartzke|1334183958586683396|My understanding is that Experimental Features only exist in Beta releases.}}</ref><ref>{{tweet|MattGartzke|1364622682201882626|You'll see more 1.16 versions before seeing 1.17. Increasing the second octet is still a little ways off, even though we're still testing Caves and Cliffs features. At the end of the day, it's just a version number.|25 Feb 2021}}</ref>
+
+== Additions ==
+=== Command format ===
+'''{{cmd|gametest}}'''
+* New command to test the GameTest features.
+
+=== General ===
+'''[[Ambience]]'''
+* Added new ambient sounds to [[the Nether]].<ref>{{bug|MCPE-74756}}</ref>
+** Different sounds play in each Nether biome.
+
+'''[[Experimental Gameplay|Experiments]]'''
+* Added new experiments toggle: "Enable GameTest Framework”.
+
+'''[[Settings]]'''
+* Added text-to-speech setting to the Audio settings.
+
+=== Technical ===
+'''GameTest Framework '''
+* A server-side test automation tool that is based on pairing test code with test structures. 
+* Not functional on console platforms.
+* Currently only accessible with Experimental Gameplay.
+
+== Changes ==
+=== Blocks ===
+'''[[Redstone]]'''
+* Now renamed as "Redstone Dust" to match ''Java Edition''.
+
+=== Command format ===
+'''{{cmd|camerashake}}'''
+* Added stop action command.
+
+'''{{cmd|clone}}, {{cmd|fill}}, {{cmd|setblock}}'''
+* Added new slash command options for passing in a list of block states to set on the block being spawned.
+
+'''{{cmd|mixer}}'''
+* Now removed entirely from the game.
+
+'''{{cmd|structure}}'''
+* Can now delete saved structure list with {{cmd|/structure delete}} command.
+
+=== General ===
+'''Accessibility '''
+* Changed the following options name:
+** "Enable Text To Speech For Chat" to "Text To Speech For Chat".
+** "Enable Text To Speech with Device Settings" to "Text To Speech with Device Settings".
+** "Enable UI Screen Reader" to "Text To Speech For UI".
+
+'''[[Controls]]'''
+* Fullscreen can now be toggled using the {{key|F11}} shortcut on keyboard.
+
+'''[[Loading tips]]'''
+* Added a new loading tip:
+** "Playing on iOS, Android, or FireOS? Get the free Minecraft Original Music Pack from the Marketplace for the full Minecraft experience."
+
+'''Map Making and [[Add-on]]'''
+* Added the "fogs" folder to the Resource Pack template.
+* Added Fog documentation.
+* A boolean parameter called {{cd|ignore_game_mode}} has been added for the block event response {{cd|decrement_stack}}, set to false by default. Thus {{cd|decrement_stack}} no longer decreases the item stack when playing in Creative by default.
+* Changing {{cd|RideableComponent}} property {{cd|rotate_rider_by}} to function for custom mobs.
+* {{cd|SetBlock}} and {{cd|SetBlockAtPos}} events now support custom block states.
+* Attachable items created in 1.16.2 and before will not render for their player in first person. Attachable items created after 1.16.2 will render for their player in first person unless they are armor.
+
+'''[[Settings]]'''
+* Broadcasting options are now completely removed from the game, since Mixer streaming services are no longer available.
+
+=== Technical ===
+'''Component Variables'''
+* <code>main_hand</code> - An optional object storing optional transform data for <code>first_person</code> and <code>third_person</code> for the player's right hand.
+* <code>off_hand</code> - An optional object storing optional transform data for <code>first_person</code> and <code>third_person</code> for the player's left hand.
+* <code>first_person</code> - An optional object storing 3 vectors 'position', 'rotation', 'scale' used to build the first person matrix.
+* <code>third_person</code> - An optional object storing 3 vectors 'position', 'rotation', 'scale' used to build the third person matrix.
+
+'''Render Offsets Component'''
+* Simple items, like swords or pickaxes, can have an optional offset applied to them to modify the way they are rendered.
+* Note this component should not be added to an attachable item.
+
+== Fixes ==
+'''Vanilla Parity'''
+* Players now experience ambient sounds in the Nether ({{bug|MCPE-74756}})
+** Mobile players need to update the Minecraft Original Music Pack via the Marketplace to hear these new sounds
+* Using bone meal in warm ocean biomes now only generates sea grass, coral, and coral fans ({{bug|MCPE-100085}}) 
+
+'''Performance / Stability'''
+* Fixed a number of crashes that could occur during gameplay
+* Fixed a crash that could occur when opening the achievements screen when the Anti-Aliasing setting was set to 1 ({{bug|MCPE-110164}})
+* Fixed a crash that could occur when loading '.mcstructure' files into the world that include entities ({{bug|MCPE-63387}})
+* Teleporting away from a structure animation no longer causes the game to crash
+* Fixed a crash that could occur when leaving a world
+* Fixed a crashing issue related to corrupted biomes during world load for various Marketplace worlds
+* Fixed a crash that could occur when using Code Connection ({{bug|MCPE-113355}})
+
+'''General'''
+* Players are once again able to join servers when the server has view-distance set to 4 or less ({{bug|BDS-8855}})
+* Split-screen characters are now stored in memory and re-joining the game will keep the character that the player had ({{bug|MCPE-58640}})
+* Brought back capability to rejoin a server after it has been suspended and resumed
+* Sign in failures now have a more helpful error message and provide error codes
+* Clicking "Download Template" when missing required templates of an existing world now correctly downloads the required templates
+* Resolved an issue where, in certain cases, a world could not be properly synced to the cloud (Xbox only). If you are having trouble syncing worlds, please try opening the world on the original Xbox, save/quit, then wait a few moments while the world is re-synced into the cloud
+* Fixed an issue where crafting a bed with the recipe book unlocked the "Change of Sheets" trophy
+
+'''Gameplay'''
+* Fixed players taking fall damage when opening Shulker Boxes ({{bug|MCPE-105490}})
+* Players will no longer dismount into liquids (lava or water) from rideables such as boats
+* In all worlds created with the same seed, the same chest will now always generate the same content in the same order ({{bug|MCPE-72432}})
+
+'''Mobs'''
+* All mobs that use a melee attack have had their ability to hit targets above and below them restored
+** The target still must be within melee attack distance to be hit
+** This only affects world versions greater than or equal to 1.16.210
+* Fixed a bug where parrots could fly upwards indefinitely
+* Fixed an issue that was causing the Ender Dragon animation to appear jittery ({{bug|MCPE-105892}})
+* Added new logic for mobs dismounting rideables
+** This also introduces a more fine-grained entity height check allowing different dismount places for entities of different heights
+* Fixed a bug where foxes wouldn't knock off and eat sweet berries ({{bug|MCPE-70790}})
+* Fixed a bug that allowed players to place custom spawn eggs by default in Adventure mode
+* Minecarts now properly update their effects (looping sound, player coordinates) when the minecart is not being rendered for the rider ({{bug|MCPE-104044}})
+
+'''Blocks'''
+* Mining crimson hyphae with Silk Touch now returns a placeable block
+* Fix for certain Marketplace worlds having incorrect block data when played on Realms and multiplayer between mobile and PC
+* Fixed dried kelp block bottom and carried textures so the rope pixels are aligned ({{bug|MCPE-35476}})
+* Fixed an issue where snow accumulated in lines with certain simulation distances ({{bug|MCPE-73468}})
+* TNT submerged in water will once again launch players in Survival mode ({{bug|MCPE-47047}})
+
+'''Items'''
+* Ink Sacs obtained from the Wandering Trader can now be used for crafting and can be stacked ({{bug|MCPE-101087}})
+* Redstone Dust is now displayed as "Redstone Dust" instead of "Redstone"
+* Nether Brick now gives XP from being smelted ({{bug|MCPE-100030}})
+
+'''Graphical'''
+* Fixed an issue with screen resolution which could flicker when resizing a window ({{bug|MCPE-69721}})
+* Fixed an issue with maps rendering over transparent objects when attached to item frames when using ray tracing
+* Reduced ghosting of fish when viewed through the water with DLSS enabled
+
+'''Accessibility'''
+* Fixed the screen reader not reading the title on the Permissions screen
+* Emote wheel now supports the screen reader on Android and iOS devices
+* Keyboard inputs can now adjust slider settings when the cursor is outside the UI frame
+* Fixed a bug where the screen reader did not read the permission toggles' titles on the Permissions Screen
+* The screen reader now reads Whisper and Announcement messages
+* The screen reader now informs the player when the "Chat Settings" menu has been opened
+* The screen reader now properly reads Edit/Create character button text for each character on the profile screen
+* The screen reader now announces the names of the A/B Button Swap and X/Y Button Swap options correctly
+* Fixed an issue where the screen reader would intermittently fail to announce some button names
+
+'''User Interface'''
+
+* Command blocks no longer censor numbers ({{bug|MCPE-106296}})
+* Improved the smoothness of menu transition animations ({{bug|MCPE-41772}})
+* A warning now appears when attempting to move a locked item in and from containers
+* Updated outdated loading screen tips ({{bug|MCPE-98977}}, {{bug|MCPE-102293}})
+* Added more helpful Video Settings messages for ray tracing on supported and non-supported platforms
+* Golden Apple and Enchanted Apple now have colored hotbar text when selecting them ({{bug|MCPE-64427}})
+* Tool and armor recipes now display the selected item background when selected in the recipe list
+* Wireframe of a structure block in the Overworld will no longer render in Nether and The End ({{bug|MCPE-75231}})
+* Audio sliders now always highlight when hovered over with a mouse
+* The durability bar is now visible when holding items with decreased durability in a window ({{bug|MCPE-105893}})
+* Fixed an issue where achievement names and descriptions would not be translated, independent of language selection ({{bug|MCPE-85813}})
+* The online status of cross-platform friends' shown on the invite screen will now update when a change has been detected ({{bug|MCPE-70004}})
+* Fixed an issue that prevented achievement rewards from showing correctly after changing the language setting
+* Owned and purchasable skins no longer get mixed into different categories while offline
+* Emote title no longer shows previously previewed emote upon re-entering the emotes tab.
+* Updated the in-game links to the proper support pages
+* Fixed Skin Preview navigation when using a controller
+* Fixed missing Incompatible button on the Marketplace Inventory screen
+* Fixed some interface issues with scrolling and clearing store filters
+* Raised the time limit for selecting whether to download a resource pack on connect from 5 seconds to 5 minutes
+* The in-game invite screen will now refresh when you return to it from the add members screen
+
+'''Achievement Screen'''
+* The new Achievement screens are now enabled by default (Except in VR, on PS4, or on touch devices with narration enabled)
+* Removed the input legend of the Achievement page Summary panel when narration is enabled
+* Fixed an issue where the scrollbar could be hidden behind the input legend
+* Fixed achievement details page getting its content hidden behind the Input legend
+* Updated size of achievement reward frame
+* Updated frame art for locked achievements
+
+'''Commands '''
+* Teleport command now correctly aligns your rotation with the destination entity ({{bug|MCPE-35979}})
+* Selector argument options can again be seen and auto-completed correctly after specifying one ({{bug|MCPE-59794}})
+* Spawn events now show as suggestions for the {{cmd|summon}} command ({{bug|MCPE-101112}})
+* {{cd|SendCommandFeedback}} no longer prevents display of outgoing messages ({{bug|MCPE-95217}})
+* Multiple {{cmd|tickingarea add}} or {{cmd|tickingarea remove}} commands performed during the same tick will no longer result in inaccurate messages about the number of ticking areas in use
+* Players can no longer overrun the maximum number of standalone ticking areas in use by adding them all in the same tick
+* Added stop action to the {{cmd|camerashake}} command
+* Score values on the scoreboard now align to the right of the table ({{bug|MCPE-64973}})
+* The {{cmd|setblock}} command now supports setting the connected state for Soul Lanterns ({{bug|MCPE-89609}})
+* The {{cmd|setblock}} command now supports setting the rotation state for the chain block ({{bug|MCPE-105912}})
+* Fixed an issue that preventing player interaction after using the {{cmd|clone}} command on a double chest block ({{bug|MCPE-109119}})
+* Using the {{cmd|clone}} command to clone a block of the same type is no longer treated as a failed operation ({{bug|MCPE-83352}})
+
+'''Technical'''
+* Horses, Donkeys, Mules, Skeleton Horses, and Zombie Horses can now properly be given custom names, and identified using their respective {{cd|runtime_identifier}}
+* Improved performance for actors using {{cd|TemptGoal}}
+* Zombie villagers spawned from zombie spawners on Marketplace worlds that were created after version 1.11 now correctly spawn as V2 zombie villagers. When cured, they will now correctly turn into V2 villagers
+* Fixed upgrade path for {{cd|format_version}} 1.13.0 boats to be properly upgraded to 1.16.100, which resolves a bug where boats templated worlds with a version lower than 1.16.100 had no gravity
+* Documentation for Bedrock Server Commands has been updated to show the correct commands for permission reloading and listing ({{bug|BDS-2341}})
+* Structure blocks no longer auto-save data when structure name text box is deselected ({{bug|MCPE-101055}})
+* Entities that use material state "Blending" now render correctly behind transparent parts
+* The scoreboard data of an entity is no longer removed if the entity is being teleported to an unloaded area of the world
+* Custom blocks now can only drop default state when broken, even with Silk Touch
+* Disabled loading of entities in custom biome features
+* Fixed UVs of data-driven blocks to not be slightly shrunk, which caused texel warping
+* Fixed data-driven blocks being pushed by pistons not working correctly
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[de:Bedrock Edition 1.16.210]]
+[[es:Bedrock Edition 1.16.210]]
+[[fr:Édition Bedrock 1.16.210]]
+[[ja:Bedrock Edition 1.16.210]]
+[[pt:Edição Bedrock 1.16.210]]
+[[ru:1.16.210 (Bedrock Edition)]]
+[[th:รุ่น Bedrock 1.16.210]]
+[[uk:1.16.210 (Bedrock Edition)]]
+[[zh:基岩版1.16.210]]

@@ -1,0 +1,116 @@
+{{Infobox version
+|title=Minecraft 25w19a
+|image=25w19a.jpg
+|image2=Java Edition 25w19a.png
+|edition=Java
+|type=Snapshot
+|date=May 6, 2025
+|jsonhash=c2f935b47b0057a37077a65938bb6b3632d599a0
+|clienthash=2b50bc6b71e02f68d5dfa7f1bfb07b84f28b8cc2
+|clientmap=35d3a7d48c3e91d9b3c66f4b0e2740a44fd6ab35
+|serverhash=cd279a0a79fd62f41c9dd8d17d455d06ff4d8013
+|servermap=e010893a60510007da43bcb8efb687319492e8b0
+|parent=1.21.6
+|prevparent=1.21.5
+|prev=25w18a
+|next=25w20a
+|nextparent=1.21.7
+}}<onlyinclude>
+'''25w19a''' is the fifth [[snapshot]] for [[Java Edition 1.21.6]] released on May 6, 2025.<ref>{{snap|25w19a|id=a|May 6, 2025}}</ref>
+
+== Changes ==
+=== Non-mob entities ===
+'''[[Projectile]]s'''
+* Projectiles now have a target tolerance margin that changes over time.
+** All projectiles start with no margin for the first two ticks of their flight.
+** After that, the target margin will expand by 0.05 blocks per tick until it reaches the previous fixed 0.3 blocks margin.
+** This allows for better precision close to the shooting player or entity, while still allowing for some collision leeway when the projectile is further away.
+
+=== General ===
+'''[[Attribute]]s'''
+* The scale attribute for the [[happy ghast]] now has a limit of {{cd|1.0}}.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|76}}.
+* {{cd|--quickPlaySingleplayer}} command line argument can now be used without an identifier to launch into the last played world.
+
+'''[[Entity format]]'''
+* {{cd|tnt}}
+** The entity that primed the TNT is now stored in an optional {{cd|owner}} field (UUID of Living entity).
+* {{cd|vex}}
+** The owner of a vex is now stored in an optional {{cd|owner}} field (UUID of Mob).
+
+'''[[Resource pack]]'''
+* The version is now {{cd|60}}.
+* [[Panorama]] textures must now all be the same size, and square.
+
+'''[[Shaders]]'''
+* Shader fog
+** The fog is now split into environmental and render-distance-based.
+** Previously both those concepts were mixed in the same uniforms.
+** Environmental fog is supposed to represent the "fogginess" of the environment the player is in: lava, water, and now also atmosphere.
+** Render distance fog is supposed to obscure the border of visible terrain.
+** Environmental fog uses spherical distance to determine its intensity, render distance fog uses cylindrical distance.
+** The resulting fog value for any given vertex is the maximum of both.
+* {{cd|Fog}} uniform block
+** {{cd|FogStart}} was renamed to {{cd|FogRenderDistanceStart}} and now represents the render distance fog start.
+** {{cd|FogEnd}} was renamed to {{cd|FogRenderDistanceEnd}} and now represents the render distance fog end.
+** {{cd|FogEnvironmentalStart}} is new and represents the start of environment-based fog.
+** {{cd|FogEnvironmentalEnd}} is new and represents the end of environment-based fog.
+** {{cd|FogShape}} was removed. Render distance fog is now cylindrical and environmental for is spherical.
+
+'''[[Sounds]]'''
+* The sound event {{cd|block.dried_ghast.hit}} has been removed.
+
+'''UI sprites'''
+* {{code|[[mob_effects.png-atlas]]}} has been merged into {{code|[[gui.png-atlas]]}} and no longer exists.
+** This means Mob Effect sprites now support GUI sprite scaling properties.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w19a
+|;From released versions before 1.21
+|69821|TNT "forgets" the player that ignited it when the world is reloaded.
+|118430|Vex summoner is not stored in NBT despite being used for AI task.
+|118432|Vex summoner is not reset once it is dead.
+|;From 1.21.1
+|277486|Mob effect icons ignore "scaling" parameter in mcmeta files.
+|;From 1.21.3
+|277903|Creative inventory tab icons can display item cooldown overlay.
+|;From 1.21.5
+|295690|Players stay on fire for a while after barely touching fire.
+|296701|Transformed entities do not retain their {{cd|custom_data}} component.
+|296709|All non-default {{cd|jukebox_playable}} components are deleted from existing items when updating past 1.21.4.
+|297347|Tamed animals no longer sit when their owner changes dimension.
+|297461|Equipment and sleeping pos data cannot be loaded in 1.21.4, but can be loaded in 1.21.5 to bees spawned from bee nest and bee hive.
+|;dev
+|296432|The ability to stand on top of happy ghasts which have a larger scale attribute becomes unreliable or even impossible.
+|296460|Debug crosshair renders incorrectly.
+|296494|The player sometimes falls from a happy ghast when reconnecting to a world.
+|296797|The movement of happy ghasts for non-controlling passengers is jittery.
+|296813|The panorama isn't slightly blurred anymore which causes some "flickering" effects.
+|296970|The dried ghast block has a hit sound event.
+|297142|The "Leave Bed" button is invisible.
+|297235|Clouds not fully rendered depending on angle when very high above the world.
+|297271|Waypoint packet is handled by network thread instead of render thread, causing crash.
+|;prev
+|297339|Sign text is non-functional.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|Ml6Yvjmaf44|aJodr1_eUzs}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w19a]]
+[[fr:Édition Java 25w19a]]
+[[ja:Java Edition 25w19a]]
+[[ko:Java Edition 25w19a]]
+[[lzh:二五週一九甲]]
+[[pt:Edição Java 25w19a]]
+[[ru:25w19a (Java Edition)]]
+[[uk:25w19a (Java Edition)]]
+[[zh:Java版25w19a]]

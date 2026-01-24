@@ -1,0 +1,491 @@
+{{Missing information|Missing entity data from new [[Creaking Heart]]}}
+{{exclusive|bedrock}}
+This page lists NBT structures of block entities {{in|bedrock}}.
+
+A [[block entity]] is used by ''Minecraft'' to store information about a block that can't be stored in the block's block states.
+__TOC__
+<div class="treeview">
+
+== Block Entity ==
+All block entities share this base:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|string|CustomName}}: (May not exist) The custom name of the block entity.
+** {{nbt|string|id}}: The savegame ID of the block entity.
+** {{nbt|byte|isMovable}}: 1 or 0 (true/false) - true if the block entity is movable with a piston.
+** {{nbt|int|x}}: X coordinate of the block entity.
+** {{nbt|int|y}}: Y coordinate of the block entity.
+** {{nbt|int|z}}: Z coordinate of the block entity.
+
+== Additional fields for block entity types ==
+=== Banner ===
+Additional fields for [[banner]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|Base}}: The base color of the banner. See [[Banner#Block_data]].
+** {{nbt|list|Patterns}}: (May not exist) List of all patterns applied to the banner.
+*** {{nbt|compound}}: An individual pattern.
+**** {{nbt|int|Color}}: The base color of the pattern. See [[Banner#Block_data]].
+**** {{nbt|string|Pattern}}: The pattern ID code. See [[Banner#Block_data]].
+** {{nbt|int|Type}}: The type of the block entity. 0 is normal banner. 1 is ominous banner.
+
+=== Beacon ===
+Additional fields for [[beacon]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|primary}}: The primary effect selected, see [[Status_effect|Potion effects]] for IDs. Set to 0 when no effect is selected.
+** {{nbt|int|secondary}}: The secondary effect selected, see [[Status_effect|Potion effects]] for IDs. Set to 0 when no effect is selected. When set without a primary effect, does nothing. When set to the same as the primary, the effect is given at level 2 (the normally available behavior for 5 effects). When set to a different value than the primary (normally only Regeneration), gives the effect at level 1.{{needs testing}}
+
+=== Bed ===
+Additional fields for [[bed]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|byte|color}}: The data value that determines the color of the half-bed block. When a bed is broken, the color of the block entity at the bed's head becomes the color of the bed item when it drops. See [[Bed#Metadata]].
+
+=== Beehive and Bee Nest ===
+Additional fields for [[beehive]] and bee nest:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|list|Occupants}}: (May not exist) Entities currently in the hive.
+*** {{nbt|compound}}: An entity in the hive.
+**** {{nbt|string|ActorIdentifier}}: The entity in the hive. Always <code>minecraft:bee<></code> in vanilla game. {{more info}}
+**** {{nbt|compound|SaveData}}: The NBT data of the entity in the hive.
+***** {{bedrock nbt|Entity|entity}}
+***** Tags unique to this entity type.
+**** {{nbt|int|TicksLeftToStay}}: The time in ticks until the entity leave the beehive.
+** {{nbt|byte|ShouldSpawnBees}}: 1 or 0 (true/false) - true if new bees will be spawned.
+
+=== Bell ===
+Additional fields for [[bell]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|Direction}}: The direction data of this bell.{{more info}}
+** {{nbt|byte|Ringing}}: 1 or 0 (true/false) - true if it is ringing.
+** {{nbt|int|Ticks}}: Unknown.{{more info}}
+
+=== Brewing Stand ===
+Additional fields for [[brewing stand]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|short|CookTime}}: The number of ticks until the potions are finished.
+** {{nbt|short|FuelAmount}}: Remaining fuel for the brewing stand.
+** {{nbt|short|FuelTotal}}: The max fuel numder for the fuel bar.
+** {{nbt|list|Items}}: List of items in brewing stand.
+*** {{nbt|compound}}: An item in the brewing stand, including the slot tag.
+**** {{nbt|byte|Slot}}: The slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+
+=== Campfire and Soul Campfire ===
+Additional fields for [[campfire]] and [[soul campfire]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|Item<''num''>}}: (May not exist) An items currently cooking. <code><''num''></code> is 1, 2, 3, and 4.
+*** {{bedrock nbt|Item Stack|item}}
+** {{nbt|int|ItemTime<''num''>}}: How long each item has been cooking. <code><''num''></code> is 1, 2, 3, and 4.
+
+=== Cauldron ===
+Additional fields for [[cauldron]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|CustomColor}}: (May not exist) This tag exists only if the cauldron stores dyed water; stores a 32-bit ARGB encoded color.
+** {{nbt|list|Items}}: List of items in this container.
+*** {{nbt|compound}}: An item, including the slot tag.
+**** {{nbt|byte|Slot}}: The inventory slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|short|PotionId}}: If the cauldron contains a potion, this tag stores the ID of that potion. If there is no potion stored, then this tag is set to -1.
+** {{nbt|short|PotionType}}: If the cauldron contains a potion, this tag stores the type of that potion. 0 is normal, 1 is splash, 2 is lingering. If there is no potion stored, then this tag is set to -1.
+
+=== Chalkboard ===
+Additional fields for [[chalkboard]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|BaseX}}: The X position of its base.
+** {{nbt|int|BaseY}}: The Y position of its base.
+** {{nbt|int|BaseZ}}: The Z position of its base.
+** {{nbt|byte|Locked}}: 1 or 0 (true/false) - true if it is on locked.
+** {{nbt|byte|OnGround}}: 1 or 0 (true/false) - true if it is on ground.
+** {{nbt|long|Owner}}: The Unique ID of its owner.
+** {{nbt|int|Size}}: The size of this chalkboard.
+** {{nbt|string|Text}}: The text on the chalkboard.
+
+=== Chemistry Tables ===
+Additional fields for chemistry tables ([[compound creator]], [[element constructor]], [[lab table]], [[material reducer]]):
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|short|itemAux}}: (Only for Lab Table) The Aux value of the item to be spawned.
+** {{nbt|int|itemId}}: (Only for Lab Table) The numeral ID value of the item to be spawned.
+** {{nbt|byte|itemStack}}: (Only for Lab Table) The item stack amount of the item to be spawned.
+
+=== Chests ===
+Additional fields for [[chest]], [[trapped chest]], [[barrel]], and [[ender chest]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|byte|Findable}}: Unknown.
+** {{nbt|byte|forceunpair}}: 1 or 0 (true/false) - (may not exist) true if this chest is unpair with chest next to it.
+** {{nbt|list|Items}}: List of items in this container.
+*** {{nbt|compound}}: An item, including the slot tag.
+**** {{nbt|byte|Slot}}: The inventory slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|string|LootTable}}: (May not exist) Loot table to be used to fill the chest when it is next opened, or the items are otherwise interacted with.
+** {{nbt|int|LootTableSeed}}: (May not exist) Seed for generating the loot table. 0 or omitted use a random seed.
+** {{nbt|byte|pairlead}}: (May not exist) Unknown.
+** {{nbt|int|pairx}}: (May not exist) The X position of the chest paired with.
+** {{nbt|int|pairz}}: (May not exist) The Z position of the chest paired with.
+
+=== Chiseled Bookshelf ===
+Additional fields for [[chiseled bookshelf]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|list|Items}}: List of books in the bookshelf.
+*** {{nbt|compound}}: An item in the chiseled bookshelf.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|int|LastInteractedSlot}}: Last interacted slot (1-6), or 0 if no slot has been interacted with yet.
+
+=== Command Block ===
+Additional fields for [[command block]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{bedrock nbt|Command Block}}
+** {{nbt|byte|auto}}: 1 or 0 (true/false) - Allows to activate the command without the requirement of a redstone signal.
+** {{nbt|byte|conditionalMode}}: (May not exist) Unknown.
+** {{nbt|byte|conditionMet}}: 1 or 0 (true/false) - if a conditional command block had its condition met when last activated. True if not a conditional command block.
+** {{nbt|byte|LPCondionalMode}}: Unknown.
+** {{nbt|byte|LPRedstoneMode}}: Unknown.
+** {{nbt|byte|LPCommandMode}}: Unknown.
+** {{nbt|byte|powered}}: 1 or 0 (true/false) - true if the command block is powered by redstone.
+
+=== Comparator ===
+Additional fields for [[comparator]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|OutputSignal}}: Represents the strength of the analog signal output of this redstone comparator.
+
+=== Conduit ===
+Additional fields for [[conduit]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|byte|Active}}: 1 or 0 (true/false) - true if it is active.
+** {{nbt|long|Target}}: The Unique ID of the hostile mob the conduit is currently attacking. If there's no target, defaults to -1.
+
+=== Copper Golem Statue ===
+Additional fields for [[copper golem statue]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|Actor}}: Data for the entity associated with the statue.
+*** {{nbt|string|ActorIdentifier}}: The entity's identifier. Always <code>minecraft:copper_golem<></code>.
+*** {{nbt|compound|SaveData}}: The NBT data of the entity (the copper golem) while it is in the statue state.
+**** {{bedrock nbt|Entity|entity}}
+** {{nbt|int|Pose}}: The current visual pose of the statue from 0 to 3, 0 for standing pose, 1 for sitting pose, 2 for running pose and 3 for star pose.
+
+=== Crafter ===
+Additional fields for [[crafter]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|short|disabled_slots}}: Indexes of slots that are disabled.
+** {{nbt|list|Items}}: List of items in the crafter.
+*** {{nbt|compound}}: An item in the crafter, including the slot tag. Crafter slots are numbered 0-8. 0 starts in the top left corner.
+**** {{nbt|byte|Slot}}: The inventory slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+
+=== Decorated Pot ===
+Additional fields for [[decorated pot]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|item}}: The item in the decorated pot.
+*** {{bedrock nbt|Item Stack|item}}
+** {{nbt|list|sherds}}: List of sherds on this decorated pot.
+*** {{nbt|string}}: [[Bedrock Edition data values|Item ID]] of this face. Defaults to <code>minecraft:brick</code>.
+
+=== Dispenser and Dropper ===
+Additional fields for [[dispenser]] and [[dropper]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|list|Items}}: List of items in this container.
+*** {{nbt|compound}}: An item, including the slot tag.
+**** {{nbt|byte|Slot}}: The inventory slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|string|LootTable}}: (May not exist) Loot table to be used to fill the chest when it is next opened, or the items are otherwise interacted with.
+** {{nbt|int|LootTableSeed}}: (May not exist) Seed for generating the loot table. 0 or omitted use a random seed.
+
+=== Enchantment Table ===
+Additional fields for [[Enchantment table]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|string|CustomName}}: (May not exist) The name of this enchantment table.
+** {{nbt|float|rott}}: The clockwise rotation of the book in radians. Top of the book points West when 0.
+
+=== End Gateway ===
+Additional fields for [[end gateway]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|Age}}: Age of the portal, in ticks. This is used to determine when the beam is rendered.
+** {{nbt|list|ExitPortal}}: Location entities are teleported to when entering the portal.
+*** {{nbt|int}}: X coordinate of target location.
+*** {{nbt|int}}: Y coordinate of target location.
+*** {{nbt|int}}: Z coordinate of target location.
+
+=== Flower Pot ===
+Additional fields for [[flower pot]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|PlantBlock}}: (May not exist) The block in the pot.
+*** {{bedrock nbt|Block}}
+
+=== Furnace ===
+Additional fields for [[furnace]], [[smoker]], and [[blast furnace]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|short|BurnDuration}}: The total time that in ticks that the currently used fuel can burn.
+** {{nbt|short|BurnTime}}: Number of ticks left before the current fuel runs out.
+** {{nbt|short|CookTime}}: Number of ticks the item has been smelting for. The item finishes smelting when this value reaches 200 (10 seconds). Is reset to 0 if BurnTime reaches 0.{{needs testing}}
+** {{nbt|list|Items}}: List of items in this container.
+*** {{nbt|compound}}: An item in the furnace, including the slot tag.
+**** {{nbt|byte|Slot}}: The inventory slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|int|StoredXPInt}}: The number of experiences it stores.
+
+=== Hopper ===
+Additional fields for [[hopper]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|list|Items}}: List of items in this container.
+*** {{nbt|compound}}: An item, including the slot tag.
+**** {{nbt|byte|Slot}}: The inventory slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|int|TransferCooldown}}: Time until the next transfer in game ticks, naturally between 1 and 8 or 0 if there is no transfer.
+
+=== Item Frame ===
+Additional fields for [[item frame]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|Item}}: The items in this item frame.
+*** {{bedrock nbt|Item Stack|item}}
+** {{nbt|float|ItemDropChance}}: (May not exist) The chance of item dropping when the item frame is broken.
+** {{nbt|float|ItemRotation}}: (May not exist) The rotation of the item in the item frame.
+
+=== Jigsaw ===
+Additional fields for [[jigsaw]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|string|final_state}}: The block that this jigsaw block becomes.
+** {{nbt|string|joint}}: The joint option value, either "rollable" or "aligned".
+** {{nbt|string|name}}: The jigsaw block's name. This jigsaw block will be aligned with another structure's jigsaw block which has this value in the target tag.
+** {{nbt|string|target}}: The jigsaw block's target name. This jigsaw block will be aligned with another structure's jigsaw block which has this value in the name tag.
+** {{nbt|string|target_pool}}: The jigsaw block's target pool to select a structure from.
+
+=== Jukebox ===
+Additional fields for [[jukebox]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|RecordItem}}: (May not exist) The record item in it.
+*** {{bedrock nbt|Item Stack|item}}
+
+=== Lectern ===
+Additional fields for [[lectern]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|book}}: (May not exist) The book item currently on the lectern.
+*** {{bedrock nbt|Item Stack|item}}
+** {{nbt|byte|hasBook}}: 1 or 0 (true/false) - (may not exist) true if it has a book.
+** {{nbt|int|page}}: (May not exist) The page the book is currently on, starting from 0.
+** {{nbt|int|totalPages}}: (May not exist) The total pages the book has.
+
+=== Lodestone ===
+Additional fields for [[lodestone]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|trackingHandle}}: (May not exist) The id of lodestone.
+
+=== Monster Spawner ===
+Additional fields for [[monster spawner]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{bedrock nbt|Monster Spawner}}
+
+=== Moving Block ===
+Additional fields for [[moving block]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|movingBlock}}: The main layer of moving block represented by this block entity.
+*** {{bedrock nbt|Block}}
+** {{nbt|compound|movingBlockExtra}}: The [[Waterlogging|extra moving block layer]] represented by this block entity.
+*** {{bedrock nbt|Block}}
+** {{nbt|compound|movingEntity}}: (May not exist) The block entity stored in this moving block.
+*** {{bedrock nbt|Block Entity|block}}
+** {{nbt|int|pistonPosX}}: X coordinate of the piston base.
+** {{nbt|int|pistonPosY}}: Y coordinate of the piston base.
+** {{nbt|int|pistonPosZ}}: Z coordinate of the piston base.
+
+=== Note Block ===
+Additional fields for [[note block]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|byte|note}}: The pitch of the note block.
+
+=== Nether Reactor ===
+Additional fields for [[nether reactor]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|byte|HasFinished}}: 1 or 0 (true/false) - true if the reactor has completed its activation phase, and has gone dark.
+** {{nbt|byte|IsInitialized}}: 1 or 0 (true/false) - true if the reactor has been activated, and has turned red.
+** {{nbt|short|Progress}}: Number of ticks the reactor has been active for. It finishes after 900 game ticks (45 seconds).
+
+=== Piston ===
+Additional fields for [[piston]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|list|AttachedBlocks}}: The list of positions of blocks it should move.
+*** {{nbt|int}}: A block's X coordinate.
+*** {{nbt|int}}: A block's Y coordinate.
+*** {{nbt|int}}: A block's Z coordinate.
+*** {{nbt|int}}: Another block's X coordinate.
+*** {{nbt|int}}: Another block's Y coordinate.
+*** {{nbt|int}}: Another block's Z coordinate.
+*** {{nbt|int}}: etc.
+** {{nbt|list|BreakBlocks}}: The list of positions of blocks it should break.
+*** {{nbt|int}}: A block's X coordinate.
+*** {{nbt|int}}: A block's Y coordinate.
+*** {{nbt|int}}: A block's Z coordinate.
+*** {{nbt|int}}: Another block's X coordinate.
+*** {{nbt|int}}: Another block's Y coordinate.
+*** {{nbt|int}}: Another block's Z coordinate.
+*** {{nbt|int}}: etc.
+** {{nbt|float|LastProgress}}: Progress in last tick.
+** {{nbt|byte|NewState}}: Next state. Can be 0 (unextended), 1 (pushing), 2 (extended), or 3 (pulling).
+** {{nbt|float|Progress}}: How far the block has been moved. Can be 0.0, 0.5, and 1.0.
+** {{nbt|byte|State}}: Current state.
+** {{nbt|byte|Sticky}}: 1 or 0 (true/false) - true if this piston is sticky.
+
+=== Sculk Catalyst ===
+Additional fields for [[sculk catalyst]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|list|cursors}}: List of charges associated with the sculk catalyst.
+*** {{nbt|compound}}: A charge.
+**** {{nbt|short|charge}}: How much power is in the charge.
+**** {{nbt|short|decay}}: Be 1 if the charge was spread from a sculk or sculk vein, 0 otherwise. The charge can spread to any block if this tag is 1. If it is 0, all the powers in the charge disappear when it spreads to a block not in sculk family.{{needs testing}}
+**** {{nbt|short|facing}}: {{info needed}}
+**** {{nbt|short|update}}: Delay in ticks until the charge begins to travel after being created.{{needs testing}}
+**** {{nbt|int|x}}: X coordinate of the charge.
+**** {{nbt|int|y}}: Y coordinate of the charge.
+**** {{nbt|int|z}}: Z coordinate of the charge.
+
+=== Sculk Shrieker, Sculk Sensor, and Calibrated Sculk Sensor ===
+Additional fields for [[sculk shrieker]], [[sculk sensor]], and [[calibrated sculk sensor]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|VibrationListener}}: The vibration event listener of the sculk shrieker, sculk sensor, and calibrated sculk sensor.
+*** {{nbt|int|event}}: Unknown.
+*** {{nbt|compound|pending}}: Unknown.
+**** {{nbt|float|distance}}: Unknown.
+**** {{nbt|long|source}}: Unknown.
+**** {{nbt|int|vibration}}: Unknown.
+**** {{nbt|int|x}}: Unknown.
+**** {{nbt|int|y}}: Unknown.
+**** {{nbt|int|z}}: Unknown.
+*** {{nbt|compound|selector}}: Unknown.
+*** {{nbt|int|ticks}}: Unknown.
+
+=== Shelf ===
+Additional fields for [[shelf]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|list|Items}}: List of items in the shelf. Unlike other containers, the order in the list determines the visual position.
+*** {{nbt|compound}}: An item in the shelf.
+**** {{bedrock nbt|Item Stack|item}}
+
+=== Shulker Box ===
+Additional fields for [[shulker box]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{bedrock nbt|Chests|block}}
+** {{nbt|float|facing}}: The facing of this shulker box.{{more info}}
+
+=== Sign and Hanging Sign ===
+Additional fields for [[sign]] and hanging sign:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|BackText}}: A compound which discribes back text. The same structure as {{nbt|compound|FrontText}}.
+** {{nbt|compound|FrontText}}: A compound which discribes front text.
+*** {{nbt|byte|HideGlowOutline}}: 1 or 0 (true/false) - true if the outer glow of a sign with glowing text does not show.
+*** {{nbt|byte|IgnoreLighting}}: 1 or 0 (true/false) - true if the sign has been dyed with a [[glow ink sac]].
+*** {{nbt|byte|PersistFormatting}}: Unknown. Defaults to 1.
+*** {{nbt|int|SignTextColor}}: The color that has been used to dye the sign. Is a 32-bit encoded color, defaults to <code>-16777216</code> (black). One of <code>-986896</code> for "White", <code>-425955</code> for "Orange", <code>-3715395</code> for "Magenta", <code>-12930086</code> for "Light Blue", <code>-75715</code> for "Yellow", <code>-8337633</code> for "Lime", <code>-816214</code> for "Pink", <code>-12103854</code> for "Gray", <code>-6447721</code> for "Light Gray", <code>-15295332</code> for "Cyan", <code>-7785800</code> for "Purple", <code>-12827478</code> for "Blue", <code>-8170446</code> for "Brown", <code>-10585066</code> for "Green", <code>-5231066</code> for "Red", and <code>-16777216</code> for "Black".
+*** {{nbt|string|Text}}: The text on it.
+*** {{nbt|string|TextOwner}}: Unknown.
+** {{nbt|byte|IsWaxed}}: 1 or 0 (true/false) - true if the text is locked with [[honeycomb]].
+
+=== Skull ===
+Additional fields for [[skull]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|byte|MouthMoving}}: 1 or 0 (true/false) - true if this dragon head's mouth is moving.
+** {{nbt|int|MouthTickCount}}: The animation frame of the dragon head's mouth movement.{{needs testing}}
+** {{nbt|float|Rotation}}: The rotation of this skull.{{more info}}
+** {{nbt|byte|SkullType}}: The type of this skull. (unused, only exists for backwards compatibility for flattened IDs) 0 = [[Skeleton]], 1 = [[Wither Skeleton]], 2 = [[Zombie]], 3 = [[Player]], 4 = [[Creeper]], 5 = [[Ender Dragon]], 6 = [[Piglin]].
+
+=== Structure Block ===
+Additional fields for [[structure block]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|byte|animationMode}}: The mode of animation.{{more info}}
+** {{nbt|float|animationSeconds}}: The duration of the animation.{{more info}}
+** {{nbt|int|data}}: The mode of the structure block, values for data are the same as the data values for the item. Ex. 0 = Data, 1 = Save, 2 = Load, 3 = Corner, 4 = Inventory, 5 = Export.
+** {{nbt|string|dataField}}: Unknown.
+** {{nbt|byte|ignoreEntities}}: 1 or 0 (true/false) - true if the entities should be ignored in the structure.
+** {{nbt|float|integrity}}: How complete the structure is that gets placed.
+** {{nbt|byte|isPowered}}: 1 or 0 (true/false) - true if this structure block is being powered by redstone.
+** {{nbt|byte|mirror}}: How the structure is mirrored.{{more info}}
+** {{nbt|int|redstoneSaveMode}}: The current redstone mode of this structure block.{{more info}}
+** {{nbt|byte|removeBlocks}}: 1 or 0 (true/false) - true if the blocks should be removed in the structure.
+** {{nbt|byte|rotation}}: Rotation of the structure.{{more info}}
+** {{nbt|long|seed}}: The seed to use for the structure integrity, 0 means random.{{needs testing}}
+** {{nbt|byte|showBoundingBox}}: 1 or 0 (true/false) - true if show the structure's bounding box to players in Creative mode.
+** {{nbt|string|structureName}}: Name of the structure.
+** {{nbt|int|xStructureOffset}}: X-offset of the structure.
+** {{nbt|int|yStructureOffset}}: Y-offset of the structure.
+** {{nbt|int|zStructureOffset}}: Z-offset of the structure.
+** {{nbt|int|xStructureSize}}: X-size of the structure.
+** {{nbt|int|yStructureSize}}: Y-size of the structure.
+** {{nbt|int|zStructureSize}}: Z-size of the structure.
+
+=== Suspicious Block ===
+Additional fields for [[suspicious sand]] and [[suspicious gravel]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|brush_count}}: The number of times the suspicious block is being brushed by the player, from 1 to 10 (the item will be extracted when it reaches 10). If the player stops brushing, it will progressively return to 0. And if it hasn't been brushed yet, defaults to 0.
+** {{nbt|byte|brush_direction}}: The direction of the suspicious block that was brushed. 0 = Down, 1 = Up, 2 = North, 3 = South, 4 = West, 5 = East, or 6 if it has not been brushed yet.
+** {{nbt|compound|item}}: (May not exist) The item in the suspicious block.
+*** {{bedrock nbt|Item Stack|item}}
+** {{nbt|string|LootTable}}: (May not exist) Loot table to be used to generate the hidden item when brushed.
+** {{nbt|int|LootTableSeed}}: (May not exist) Seed for generating the loot table. 0 or omitted use a random seed.
+** {{nbt|string|type}}: The type of suspicious block. Valid types are <code>minecraft:suspicious_sand</code> and <code>minecraft:suspicious_gravel</code>.
+
+=== Trial Spawner ===
+Additional fields for [[trial spawner]] and [[ominous trial spawner]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|int|required_player_range}}: Between 1 and 128. Defaults to 14. &mdash; Maximum distance in blocks for players to join the battle.
+** {{nbt|compound|normal_config}}: Optional, see configuration for defaults. &mdash; The configuration to use when not ominous.
+*** {{nbt|int|spawn_range}}: Between 1 and 128. Defaults to 4. &mdash; Maximum distance in blocks that mobs can spawn.
+*** {{nbt|float|total_mobs}}: Defaults to 6. &mdash; Total amount of mobs spawned before cooldown for a single player.
+*** {{nbt|float|simultaneous_mobs}}: Defaults to 2. &mdash; The amount of spawned mobs from this spawner that are allowed to exist simultaneously.
+*** {{nbt|float|total_mobs_added_per_player}}: Defaults to 2. &mdash; Amount of total mobs added for each additional player.
+*** {{nbt|float|simultaneous_mobs_added_per_player}}: Defaults to 1. &mdash; Amount of simultaneous mobs added for each additional player.
+*** {{nbt|int|ticks_between_spawn}}: Defaults to 20. &mdash; Time in ticks between spawn attempts.
+*** {{nbt|int|target_cooldown_length}}: Defaults to 36000. &mdash; Time in ticks of the cooldown period. Includes the time spend dispensing the reward.
+*** {{nbt|list|spawn_potentials}}: List of possible entities to spawn.
+**** {{nbt|compound}}: A potential future spawn. ''After'' the spawner makes an attempt at spawning, it chooses one of these entries at random and uses it to prepare for the next spawn.
+***** {{nbt|int|weight}}: The chance that this spawn gets picked in comparison to other spawn weights. Must be positive and at least 1.
+***** {{nbt|compound|data}}:
+****** {{nbt|compound|entity}}:
+******* {{nbt|string|id}}: An entity ID.
+****** {{nbt|compound|equipment}}: Optional. Determines the equipment the entity will wear.
+******* {{nbt|string|loot_table}}: A path to a [[loot table]].
+******* {{nbt|compound|slot_drop_chances}}: Optional. Chances for the equipment to drop upon death.
+******** {{nbt|float|head}}: Chance (0.0–1.0) for the head slot item to drop.
+******** {{nbt|float|chest}}: Chance (0.0–1.0) for the chest slot item to drop.
+******** {{nbt|float|legs}}: Chance (0.0–1.0) for the legs slot item to drop.
+******** {{nbt|float|feet}}: Chance (0.0–1.0) for the feet slot item to drop.
+******** {{nbt|float|mainhand}}: Chance (0.0–1.0) for the main hand item to drop.
+******** {{nbt|float|offhand}}: Chance (0.0–1.0) for the off hand item to drop.
+*** {{nbt|list|loot_tables_to_eject}}: List of possible loot tables to give as reward.
+**** {{nbt|compound}}: A potential loot table.
+***** {{nbt|int|weight}}: The chance that this loot table gets picked in comparison to other loot table weights. Must be positive and at least 1.
+***** {{nbt|string|data}}: A path to a [[loot table]].
+*** {{nbt|string|items_to_drop_when_ominous}}: Defaults to <code>loot_tables/spawners/trial_chamber/items_to_drop_when_ominous.json</code> &mdash; A path to a [[loot table]]. Determines the items used by [[ominous item spawner]]s spawned during the active phase when ominous. Ignored in normal mode.
+** {{nbt|compound|ominous_config}}: Optional, defaults to {{nbt|compound|normal_config}}. When individual entries are omitted, they also default to their setting in {{nbt|compound|normal_config}}. &mdash; The configuration to use when ominous.
+** {{nbt|list|registered_players}}: A set of player UUIDs. &mdash; All the players that have joined the battle.
+*** {{nbt|compound}}: A player UUID.
+**** {{nbt|long|uuid}}: The UUID.
+** {{nbt|list|current_mobs}}: A set of mob UUIDs. &mdash; The mobs that were spawned by this spawner and are still alive.
+*** {{nbt|compound}}: An entity UUID.
+**** {{nbt|long|uuid}}: The UUID.
+** {{nbt|long|cooldown_end_at}}: Gametime in ticks when the cooldown ends. 0 if not currently in cooldown.
+** {{nbt|long|next_mob_spawns_at}}: Gametime in ticks when the next spawn attempt happens. 0 if not currently active.
+** {{nbt|compound|spawn_data}}: The next mob to attempt to spawn. Selected from {{nbt|list|spawn_potentials}} after the last attempt. Determines the mob displayed in the spawner.
+*** {{nbt|string|TypeId}}: An entity ID.
+*** {{nbt|int|Weight}}: Selection weight for the current active spawn.
+*** {{nbt|compound|equipment}}: Optional. Same structure as the equipment found in {{nbt|list|spawn_potentials}}.
+** {{nbt|string|selected_loot_table}}: A path to the [[loot table]] that is given as reward. Unset if not currently giving rewards. Selected from {{nbt|list|loot_tables_to_eject}} after all mobs are defeated.
+
+=== Vault ===
+Additional fields for [[vault]] and [[ominous vault]]:
+* {{nbt|compound}}: The block entity's root tag.
+** {{nbt|compound|config}}: Configuration data that does not automatically change. All fields are optional.
+*** {{nbt|float|activation_range}}: The range in blocks when the vault should activate. Defaults to 4.
+*** {{nbt|float|deactivation_range}}: The range in blocks when the vault should deactivate. Defaults to 4.5.
+*** {{nbt|string|loot_table}}: A path to the [[loot table]] that is ejected when unlocking the vault. Defaults to <code>loot_tables/chests/trial_chambers/reward.json</code> for ''normal'' vaults and <code>loot_tables/chests/trial_chambers/reward_ominous.json</code> for ''ominous'' vaults.
+*** {{nbt|string|override_loot_table_to_display}}: A path to the loot table that is used to display items in the vault. If not present, the game will use the {{nbt|string|loot_table}} field.
+*** {{nbt|compound|key_item}}: The key item that is used to check for valid keys. Defaults to <code>minecraft:trial_key</code> for ''normal'' vaults and <code>minecraft:ominous_trial_key</code> for ''ominous'' vaults.
+**** {{bedrock nbt|Item Stack|item}}
+** {{nbt|compound|data}}: Data that is used to keep track of the current state of the vault.
+*** {{nbt|compound|display_item}}: The item that is currently being displayed.
+**** {{bedrock nbt|Item Stack|item}}
+*** {{nbt|list|items_to_eject}}: List of item stacks that have been rolled by the loot table and are waiting to be ejected.
+**** {{nbt|compound}}: An item stack.
+***** {{bedrock nbt|Item Stack|item}}
+*** {{nbt|list|rewarded_players}}: A set of player UUIDs that have already received their rewards from this vault.
+**** {{nbt|long}}: A UUID.
+*** {{nbt|long|state_updating_resumes_at}}: The game time when the vault will process block state changes, such as changing from <code>unlocking</code> to <code>ejecting</code> after a delay.
+*** {{nbt|long|total_ejections_needed}}: The total amount of item stacks that need to be ejected.
+</div>
+
+[[pt:Formato de nível da Edição Bedrock/Formatos de bloco-entidade]]
+[[zh:基岩版存档格式/方块实体格式]]

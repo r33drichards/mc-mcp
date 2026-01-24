@@ -1,0 +1,282 @@
+{{For|predicates inside models|Tutorials/Models#Item predicates}}
+{{Exclusive|java}}
+
+'''Predicates''' are [[JSON]] structures invoked to check conditions within the world. They return a ''pass'' or ''fail'' result to the invoker, which acts differently based on the result. They can be defined and invoked by [[data pack]]s or by [[commands]]. In practical terms, predicates are a flexible way for data packs to encode "if this, then that" logic without needing custom code.
+
+'''Predicate files''' are standalone data pack files containing one or more predicates.
+
+This article describes how predicates are defined and invoked, and also describes the JSON structure of a predicate.
+
+== Definition ==
+A predicate file is defined with the [[JSON]] format.
+
+Predicate files are part of the data pack directory structure, highlighted below:
+
+{{Data pack directory|predicate|<nowiki><name>.json</nowiki>}}
+
+The root element of a predicate file can be either an {{nbt|compound|object}} following the predicate structure below, or an {{nbt|list|array}} containing multiple predicates. In the latter case all predicates must evaluate to true.
+
+== Usage ==
+Predicates and predicate files can be invoked in several different manners from other data pack files:
+
+=== Commands ===
+[[Commands]] or [[Function (Java Edition)|functions]] can invoke predicate files in two ways:
+
+* [[Target selectors]]: The selector argument <code>predicate=</code> checks predicate files as a filter for entity selection. The predicate file is invoked once per entity that needs filtering, each time being at the entity's location.
+* {{Cmd|execute}}: A subcommand, <code>/execute if predicate</code>, can invoke a predicate file or an in-line predicate definition to either return a result or to decide whether to continue with a subcommand chain. The predicate is invoked once at the current contextual position of execution.
+
+=== Other predicates ===
+The condition type <code>minecraft:reference</code> invokes a predicate file and returns the result to the invoker.
+
+=== Presence in other files ===
+In addition to predicate files, predicates themselves are used in other locations within other data pack files such as [[Advancement/JSON format|advancements]] and [[Loot table|loot tables]].
+
+== Examples ==
+Below are a few simple predicate examples for context.
+
+=== Example 1: Check if player is holding a diamond sword ===
+<pre>{
+  "condition": "minecraft:entity_properties",
+  "entity": "this",
+  "predicate": {
+    "equipment": {
+      "mainhand": {
+        "items": ["minecraft:diamond_sword"]
+      }
+    }
+  }
+}</pre>
+
+=== Example 2: Only run if it’s daytime ===
+<pre>{
+  "condition": "minecraft:time_check",
+  "value": { "min": 0, "max": 12000 },
+  "period": 24000
+}</pre>
+
+=== Example 3: Nested example using any_of ===
+<pre>{
+  "condition": "minecraft:any_of",
+  "terms": [
+    { "condition": "minecraft:random_chance", "chance": 0.25 },
+    { "condition": "minecraft:weather_check", "raining": true }
+  ]
+}</pre>These snippets can be placed inside `/data/predicates/` within a data pack, then referenced using commands such as:<pre>/execute if predicate my_pack:daytime_check run say Good morning!</pre>
+
+== JSON format ==
+This section describes the JSON format of a predicate.
+
+<div class="treeview" style="margin-block-end: 1em;">
+* {{nbt|list}}{{nbt|compound}}: The root element of the predicate.
+** {{nbt|string|condition}}: The [[resource location]] of the condition type to check.
+** Other parts of the predicate, specified below. In lists each element must evaluate to true for the predicate to pass.
+</div>
+
+The possible values for {{nbt|string|condition}} and associated extra contents:
+
+<div class="treeview" id="condition_all_of" style="margin-block-end: 1em;">
+* '''all_of'''&mdash;Evaluates a list of predicates and passes if all of them pass. Invokable from <b><span style="color:#00af89">any context</span></b>.
+** {{nbt|list|terms}}: The list of predicates to evaluate.
+*** {{nbt|list}}{{nbt|compound}} A predicate, following this structure recursively.
+</div>
+
+<div class="treeview" id="condition_alternative" style="margin-block-end: 1em;">
+* '''any_of'''&mdash;Evaluates a list of predicates and passes if any one of them passes. Invokable from <b><span style="color:#00af89">any context</span></b>.
+** {{nbt|list|terms}}: The list of predicates to evaluate.
+*** {{nbt|list}}{{nbt|compound}} A predicate, following this structure recursively. Note that ''any_of'' only applies to {{nbt|list|terms}}, nested lists are ''all_of''.
+</div>
+
+<div class="treeview" id="condition_block_state_property" style="margin-block-end: 1em;">
+* '''block_state_property'''&mdash;Checks the mined block and its [[block states]]. Requires <b><span style="color:#00af89">block state</span></b> provided by [[loot context]], and always <b><span style="color:#d33">fails</span></b> if not provided.
+** {{nbt|string|block}}: A block ID. The test fails if the block doesn't match.
+** {{nbt|compound|properties}}: ''(Optional)'' A map of block state names to values. Errors if the block doesn't have these properties.
+*** {{nbt|string|''name''}}: A block state and a exact value. The value is a string.
+*** {{nbt|compound|''name''}}: A block state name and a ranged value to match.
+**** {{nbt|string|min}}: The min value.
+**** {{nbt|string|max}}: The max value.
+</div>
+
+<div class="treeview" id="condition_damage_source_properties" style="margin-block-end: 1em;">
+* '''damage_source_properties'''&mdash;Checks properties of the damage source. Requires <b><span style="color:#00af89">origin</span></b> and <b><span style="color:#00af89">damage source</span></b> provided by [[loot context]], and always <b><span style="color:#d33">fails</span></b> if not provided.
+** {{nbt|compound|predicate}}: Predicate applied to the damage source.
+*** {{Nbt_inherit/conditions/damage_type|indent=***}}
+</div>
+
+<div class="treeview" id="condition_entity_properties" style="margin-block-end: 1em;">
+* '''enchantment_active_check'''&mdash;Checks if the enchantment has been active. Requires <b><span style="color:#00af89">enchantment active status</span></b> provided by [[loot context]], and always <b><span style="color:#d33">fails</span></b> if not provided. It is therefore only usable from the {{cd|enchanted_location}} loot context. 
+** {{nbt|boolean|active}}: Whether to check for an active ({{cd|true}}) or inactive ({{cd|false}}) enchantment.
+</div>
+
+<div class="treeview" id="condition_entity_properties" style="margin-block-end: 1em;">
+* '''entity_properties'''&mdash;Checks properties of an entity. Invokable from <b><span style="color:#00af89">any context</span></b>.
+** {{nbt|string|entity}}: The entity to check. Specifies an entity from [[loot context]]. Can be {{Loot entity target}}.
+** {{nbt|compound|predicate}}: Predicate applied to entity, uses same structure as advancements.
+*** {{nbt inherit/conditions/entity|indent=***}}
+</div>
+
+<div class="treeview" id="condition_entity_scores" style="margin-block-end: 1em;">
+* '''entity_scores'''&mdash;Checks the [[scoreboard]] scores of an entity. Requires <b><span style="color:#00af89">the specified entity</span></b> provided by [[loot context]], and always <b><span style="color:#d33">fails</span></b> if not provided.
+** {{nbt|string|entity}}: The entity to check. Specifies an entity from [[loot context]]. Can be {{Loot entity target}}.
+** {{nbt|compound|scores}}: Scores to check. All specified scores must pass for the condition to pass.
+*** {{nbt|compound|A score}}: Key name is the objective while the value specifies a range of score values required for the condition to pass.
+**** {{nbt|int}}{{nbt|compound|min}}: A [[Loot table#Number provider|number provider]]. Minimum score. Optional.
+**** {{nbt|int}}{{nbt|compound|max}}: A [[Loot table#Number provider|number provider]]. Maximum score. Optional.
+*** {{nbt|int|A score}}: Shorthand version of the other syntax above, to check the score against a single number only. Key name is the objective while the value is the required score.
+</div>
+
+<div class="treeview" id="condition_inverted" style="margin-block-end: 1em;">
+* '''inverted'''&mdash;Inverts another predicate condition. Invokable from <b><span style="color:#00af89">any context</span></b>.
+** {{nbt|compound|term}}: The condition to be negated, following the same structure as outlined here, recursively.
+</div>
+
+<div class="treeview" id="condition_killed_by_player" style="margin-block-end: 1em;">
+* '''killed_by_player'''&mdash;Checks if there is a {{cd|attacking_player}} entity provided by [[loot context]]. Requires <b><span style="color:#00af89">{{cd|attacking_player}} entity</span></b> provided by [[loot context]], and always <b><span style="color:#d33">fails</span></b> if not provided.
+</div>
+
+<div class="treeview" id="condition_location_check" style="margin-block-end: 1em;">
+* '''location_check'''&mdash;Checks the current location against location criteria. Requires <b><span style="color:#00af89">origin</span></b> provided by [[loot context]], and always <b><span style="color:#d33">fails</span></b> if not provided.
+** {{nbt|int|offsetX}}: An optional x offset to the location.
+** {{nbt|int|offsetY}}: An optional y offset to the location.
+** {{nbt|int|offsetZ}}: An optional z offset to the location.
+** {{nbt|compound|predicate}}: Predicate applied to location, uses same structure as advancements.
+*** {{nbt inherit/conditions/location|indent=***}}
+</div>
+
+<div class="treeview" id="condition_match_tool" style="margin-block-end: 1em;">
+* '''match_tool'''&mdash;Checks tool used to mine the block. Requires <b><span style="color:#00af89">tool</span></b> provided by [[loot context]], and always <b><span style="color:#d33">fails</span></b> if not provided.
+** {{nbt|compound|predicate}}: Predicate applied to item, uses same structure as advancements.
+*** {{nbt inherit/conditions/item|indent=***}}
+</div>
+
+<div class="treeview" id="condition_random_chance" style="margin-block-end: 1em;">
+* '''random_chance'''&mdash;Generates a random number between 0.0 and 1.0, and checks if it is less than a specified value. Invokable from <b><span style="color:#00af89">any context</span></b>.
+** {{nbt|float}}{{nbt|compound|chance}}: A [[Loot table#Number provider|number provider]]. Success rate as a number 0.0&ndash;1.0.
+</div>
+
+<div class="treeview" id="condition_random_chance_with_looting" style="margin-block-end: 1em;">
+* '''random_chance_with_enchanted_bonus'''&mdash;Generates a random number between 0.0 and 1.0, and checks if it is less than the value determined using the level of a given enchantment. Requires <b><span style="color:#00af89"><code>attacker</code> entity</span></b> provided by [[loot context]], and if not provided, the enchantment level is regarded as 0.
+** {{nbt|float|unenchanted_chance}}: The success rate to use when the enchantment is not present; 0.0&ndash;1.0.
+** {{nbt|float}}{{nbt|compound|enchanted_chance}}: [[level-based value]]. The success rate based on the level when then enchantment is present; 0.0&ndash;1.0.
+** {{nbt|string|enchantment}}: {{json ref/enchantment}}. The enchantment whose level to use for the chance calculation. If the enchantment is not present, uses {{cd|0}} as level.
+</div>
+
+<div class="treeview" id="condition_reference" style="margin-block-end: 1em;">
+* '''reference'''&mdash;Invokes a predicate file and returns its result. Invokable from <b><span style="color:#00af89">any context</span></b>. Cannot be used in [[Enchantment_definition#Effect_components|enchantment definitions]].
+** {{nbt|string|name}}: The [[resource location]] of the predicate to invoke. A cyclic reference causes a parsing failure.
+</div>
+
+<div class="treeview" id="condition_survives_explosion" style="margin-block-end: 1em;">
+* '''survives_explosion'''&mdash;Returns success with {{cd|1 ÷ explosion radius}} probability. Requires <b><span style="color:#00af89">explosion radius</span></b> provided by [[loot context]], and always <b><span style="color:#00af89">success</span></b> if not provided.
+</div>
+
+<div class="treeview" id="condition_table_bonus" style="margin-block-end: 1em;">
+* '''table_bonus'''&mdash;Passes with probability picked from a list, indexed by enchantment power. Requires <b><span style="color:#00af89">tool</span></b> provided by [[loot context]]. If not provided, the enchantment level is regarded as 0.
+** {{nbt|string|enchantment}}: [[Resource location]] of enchantment. 
+** {{nbt|list|chances}}: List of probabilities for enchantment power, indexed from 0.
+</div>
+
+<div class="treeview" id="condition_time_check" style="margin-block-end: 1em;">
+* '''time_check'''&mdash;Compares the current day time (or rather, <code>24000 * day count + day time</code>) against given values. Invokable from <b><span style="color:#00af89">any context</span></b>.
+** {{nbt|compound|value}}: The time to compare the day time against.
+*** {{nbt|int}}{{nbt|compound|min}}: A [[Loot table#Number provider|number provider]]. The minimum value.
+*** {{nbt|int}}{{nbt|compound|max}}: A [[Loot table#Number provider|number provider]]. The maximum value.
+** {{nbt|int|value}}: Shorthand version of {{nbt|compound|value}} above, used to check for a single value only. Number providers cannot be used in this shorthand form.
+** {{nbt|int|period}}: If present, the day time is first reduced modulo the given number before being checked against {{nbt|compound}}{{nbt|int|value}}. For example, setting this to 24000 causes the checked time to be equal to the current daytime.
+</div>
+
+<div class="treeview" id="condition_value_check" style="margin-block-end: 1em;">
+* '''value_check'''&mdash;Compares a number against another number or range of numbers. Invokable from <b><span style="color:#00af89">any context</span></b>.
+** {{nbt|int}}{{nbt|compound|value}}: A [[Loot table#Number provider|number provider]]. The number to test.
+** {{nbt|compound|range}}: The range of numbers to compare {{nbt|int}}{{nbt|compound|value}} against.
+*** {{nbt|int}}{{nbt|compound|min}}: A [[Loot table#Number provider|number provider]]. The minimum value.
+*** {{nbt|int}}{{nbt|compound|max}}: A [[Loot table#Number provider|number provider]]. The maximum value.
+** {{nbt|int|range}}: Shorthand version of {{nbt|compound|range}} above, used to compare {{nbt|int}}{{nbt|compound|value}} against a single number only. Number providers cannot be used in this shorthand form.
+</div>
+
+<div class="treeview" id="condition_weather_check" style="margin-block-end: 1em;">
+* '''weather_check'''&mdash;Checks the current game weather. Invokable from <b><span style="color:#00af89">any context</span></b>.
+** {{nbt|boolean|raining}}: If true, the condition passes only if it is raining or thundering.
+** {{nbt|boolean|thundering}}: If true, the condition passes only if it is thundering.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.15|dev=19w38a|Added predicates to data packs.}}
+|{{HistoryLine||1.16|dev=20w12a|Added fishing_hook sub-predicate into entity predicate to check properties of the fishing hook.}}
+|{{HistoryLine||1.19|dev=22w14a|{{cd|player|fishing_hook|lightning_bolt|catType|d=and}} fields have been replaced with {{cd|type_specific}}. {{cd|type_specific}} has field {{cd|type}} (one of {{cd|player|fishing_hook|lightning_bolt|cat|d=or}}) and same sub-fields as removed fields.}}
+|{{HistoryLine||1.19.3|dev=23w06a|Removed {{cd|d=and|is_projectile|is_explosion|bypasses_armor|bypasses_invulnerability|bypasses_magic|is_fire|is_magic|is_lightning}} fields from {{cd|damage_source_properties}}.|A new {{cd|tags}} array has been added to {{cd|damage_source_properties}}. Each entry has two fields:
+* {{cd|id}}: The ID of a damage type tag.
+* {{cd|expected}}: Whether the damage is expected to have or not have the tag for the predicate to match.}}
+|{{HistoryLine||1.20|dev=23w18a|Condition {{cd|alternative}} has been renamed to {{cd|any_of}}.|Added new condition {{cd|all_of}} that passes only when all sub-conditions pass, with the same syntax as {{cd|any_of}}.}}
+|{{HistoryLine||1.20.5|dev=24w09a|Item predicate format has been updated:
+
+*{{cd|tag}} field has been removed.
+*{{cd|items}} field now supports a single entry, hash-prefixed item tag, or list of items.
+*{{cd|potion}} renamed to {{cd|potions}}, and supports a single entry, hash-prefixed potion tag, or list of potions.
+*{{cd|nbt}} predicate has been renamed to {{cd|custom_data}} and now matches {{cd|minecraft:custom_data}} component.
+*A new optional {{cd|components}} field matches exact components.
+|Block predicate format has been updated:
+*{{cd|tag}} field has been removed.
+*{{cd|blocks}} field now supports a single entry, hash-prefixed block tag, or list of blocks.
+|Fluid predicate format has been updated:
+*{{cd|tag}} field has been removed.
+*{{cd|fluid}} renamed to {{cd|fluids}}, and supports a single entry, hash-prefixed fluid tag, or list of fluids.
+|Entity predicate format has been updated:
+*{{cd|type}} field now supports a single entry, hash-prefixed entity type tag, or list of entity types.
+|Location predicate format has been updated:
+*{{cd|biome}} renamed to {{cd|biomes}}, and supports a single entry, hash-prefixed biome tag, or list of biomes.
+*{{cd|structure}} renamed to {{cd|structures}}, and supports a single entry, hash-prefixed structure tag, or list of structures.
+}}
+|{{HistoryLine|||dev=24w10a|Added entity sub-predicate {{cd|slots}}, used to check single or multiple slots on any entity.}}
+|{{HistoryLine|||dev=24w11a|Removed entity sub-predicate {{cd|any}}
+Component-specific item predicate properties have been moved to separate field {{cd|predicates}}|
+Item sub-predicate format has been updated:
+*Some fields from item predicate have been moved to a map in an optional field {{cd|predicates}}.
+*{{cd|enchantments}}, {{cd|stored_enchantments}}, {{cd|potions}}, {{cd|custom_data}} fields have been moved to {{cd|minecraft:enchantments}}, {{cd|minecraft:stored_enchantments}}, {{cd|minecraft:potion_contents}}, {{cd|minecraft:custom_data}} sub-predicates respectively.
+*{{cd|durability}} field has been expanded to {{cd|minecraft:damage}} predicate.
+*Predicates {{cd|minecraft:enchantments}}, {{cd|minecraft:stored_enchantments}}, {{cd|minecraft:potion_contents}}, {{cd|minecraft:damage}} now require matching component to exist on them.}}
+|{{HistoryLine||1.21|dev=24w18a|Renamed {{cd|random_chance_with_looting}} to {{cd|random_chance_with_enchanted_bonus}}, changing the {{cd|chance}} field from a float to a level-based value, removing the {{cd|looting_multiplier}} field, and adding a {{cd|enchantment}} field.|
+Changed the {{cd|chance}} field of {{cd|random_chance}} from a float into a number provider.|
+Added a {{cd|can_see_sky}} field to location predicates.|
+Renamed {{cd|enchantment}} to {{cd|enchantments}} in the {{cd|minecraft:enchantments}} item sub-predicate; now accepting multiple possible enchantments, or tags.|
+Changes to the entity predicate:
+* added {{cd|is_on_ground}} and {{cd|is_flying}} flags to flags sub-predicate.
+* added {{cd|movement}} sub-predicate.
+* added {{cd|periodic_ticks}} sub-predicate.|
+Renamed loot context entities: {{cd|killer}} renamed to {{cd|attacker}}; {{cd|direct_killer}} renamed to {{cd|direct_attacker}}; {{cd|killer_player}} renamed to {{cd|attacking player}}.}}
+|{{HistoryLine|||dev=24w19a|Added {{cd|is_direct}} field to damage type predicates.}}
+|{{HistoryLine|||dev=24w21a|Added {{cd|jukebox_playable}} item predicate.|
+The {{cd|gamemode}} field of the player predicate now accepts a list of gamemodes rather than a single string.}}
+|{{HistoryLine|||dev=pre1|Split {{cd|chance}} into {{cd|unenchanted_chance}} and {{cd|enchanted_chance}} in the {{cd|random_chance_with_enchanted_bonus}} condition.}}
+|{{HistoryLine||1.21.2|dev=24w35a|New entity sub-predicate for testing sheep wool. Fields: <code>sheared</code> and <code>color</code>.}}
+|{{HistoryLine|||dev=24w36a|New entity sub-predicate for testing player input. Available inputs to test are <code>forward</code>, <code>backward</code> <code>left</code>, <code>right</code>, <code>jump</code>, <code>sneak</code>, and <code>sprint</code>.}}
+|{{HistoryLine|||dev=24w37a|New entity sub-predicate for salmon. Fields: <code>variant</code>.}}
+|{{HistoryLine|||dev=24w39a|Removed the <code>minecraft:boat</code> entity sub-predicate, since boats no longer have variants.}}
+|{{HistoryLine||1.21.5|dev=25w03a|A new optional field was added to entity predicate: {{cd|components}}.|Several entity sub-predicates have been removed and replaced with combination of {{cd|components}} predicate and variant entity components.|The field {{cd|color}} has been removed from {{cd|minecraft:sheep}} sub-predicate.}}
+|{{HistoryLine|||dev=25w07a|The {{cd|stepping_on}} entity predicate can only evaluate to {{cd|true}} if the entity is on ground.}}
+|{{HistoryLine|||dev=25w10a|New optional fields have been added to block predicates: {{cd|components}} and {{cd|predicates}}.|A new optional field has been added to entity predicates: {{cd|predicates}}.}}
+|{{HistoryLine||1.21.11|dev=25w41a|Component predicates (predicates field in block, item and entity predicates) now include predicates for checking existence of every component type.|The {{cd|flags}} entity predicate now supports new values.|Item predicate in command form (<code><item>[predicate~{...},component={...}]</code>) has been extended to accept empty predicates for any component type.}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap1|Added {{cd|minecraft:sum}}.|{{cd|player}} Sub-Predicate has a new optional field: {{cd|food}}.}}
+|{{HistoryLine|||dev=snap3|{{cd|minecraft:time_check}} loot predicate: added {{cd|clock}} field.}}
+}}
+
+== See also ==
+
+* [[Data pack]] – where predicates are defined and stored
+* [[Loot table]] – one of the most common predicate users
+* [[Advancement]] – another system that embeds predicates
+* [[Execute]] – command subcomponent that can run predicates
+
+== External links ==
+* [https://misode.github.io/predicate/ Predicate Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Prädikate]]
+[[fr:Prédicat]]
+[[ja:プレディケート]]
+[[pt:Predicado]]
+[[zh:谓词]]

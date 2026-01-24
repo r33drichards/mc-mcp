@@ -1,0 +1,381 @@
+{{distinguish|Commands/datapack}}
+{{exclusive|java}}
+{{Infobox command
+|name=data
+|oplevel=2
+}}
+
+Allows the user to get, merge, modify, and remove [[NBT format|NBT data]] of a [[block entity]], [[entity]], or [[Command storage|Command NBT storage]].
+
+== Syntax ==
+[[File:Data graph.svg|thumb|A graph that describes the syntax of this command.]]
+There are four instructions for {{code|/data}} ({{code|[[#get|get]]}}, {{code|[[#merge|merge]]}}, {{code|[[#modify|modify]]}}, {{code|[[#remove|remove]]}}), and the targets/sources referenced by each instruction command may be either {{code|block <targetPos>}}, {{code|entity <target>}}, or {{cd|storage <target>}}.
+
+; {{code|/'''data''' ...}}
+: <code>... '''{{Text anchor|get}}'''</code>
+:: {{code|... (block <targetPos>{{!}}entity <target>{{!}}storage <target>) [<path>] [<scale>]}}
+::: Read off the entire NBT data or the subsection of the NBT data from the targeted block position or entity to the executor with syntax highlighting,  scaled by {{code|<scale>}} if specified.
+
+: <code>... '''{{Text anchor|merge}}'''</code>
+:: {{code|... (block <targetPos>{{!}}entity <target>{{!}}storage <target>) <nbt>}}
+::: Merge the NBT data from the target block position or entity with the specified {{code|<nbt>}} data.
+
+: <code>... '''{{Text anchor|modify}}''' (block <targetPos>|entity <target>|storage <target>) <targetPath> ...</code>
+:: {{code|... '''append''' from (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>]}}
+:: {{code|... '''append''' string (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>] [<start>] [<end>]}}
+:: {{code|... '''append''' value <value>}}
+::: Append the source data or direct value data onto the ''end'' of the pointed-to list or array.
+:: {{code|... '''insert <index>''' from (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>]}}
+:: {{code|... '''insert <index>''' string (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>] [<start>] [<end>]}}
+:: {{code|... '''insert <index>''' value <value>}}
+::: Insert the source data or direct value data into the pointed-to list or array as element {{code|<index>}}, then shift higher elements one position upward.
+:: {{code|... '''merge''' from (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>]}}
+:: {{code|... '''merge''' string (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>] [<start>] [<end>]}}
+:: {{code|... '''merge''' value <value>}}
+::: Merge the source data or direct value data into the pointed-to object.
+:: {{code|... '''prepend''' from (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>]}}
+:: {{code|... '''prepend''' string (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>] [<start>] [<end>]}}
+:: {{code|... '''prepend''' value <value>}}
+::: Prepend the source data or direct value data onto the ''beginning'' of the pointed-to list or array.
+:: {{code|... '''set''' from (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>]}}
+:: {{code|... '''set''' string (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>] [<start>] [<end>]}}
+:: {{code|... '''set''' value <value>}}
+::: Set the tag specified by {{code|<targetPath>}} to the source data or direct value data.
+
+: <code>... '''{{Text anchor|remove}}'''</code>
+:: {{code|... (block <targetPos>{{!}}entity <target>{{!}}storage <target>) <path>}}
+::: Removes NBT data at {{code|<path>}} from the targeted block position or entity. Player NBT data cannot be removed.
+
+
+'''Syntax displayed in various ways'''
+:{| class="collapsible collapsed collapse-button-none" data-description="simple_tree"
+|-
+! style="text-align:left" | Simplified tree:
+|-
+|
+: {{code|'''/data'''}}
+:* {{code|… '''[[#get|get]]''' <''TARGET''> [<path>] [<scale>]}}
+:* {{code|… '''[[#merge|merge]]''' <''TARGET''> <nbt>}}
+:* {{code|… '''[[#modify|modify]]''' <''TARGET''> <targetPath> <''MODIFICATION''>}}
+:** {{code|… from <''SOURCE''> [<sourcePath>]}}
+:** {{code|… string <''SOURCE''> [<sourcePath>] [<start>] [<end>]}}
+:** {{code|… value <value>}}
+:* {{code|… '''[[#remove|remove]]''' <TARGET> <path>}}
+: where substituted arguments are:
+:: {{code|<''TARGET''>}} = {{code|(block <targetPos> {{!}} entity <target> {{!}} storage <target>)}}
+:: {{code|<''MODIFICATION''>}} = {{code|('''[[#modify|append]]'''{{!}}'''[[#modify|insert <index>]]'''{{!}}'''[[#modify|merge]]'''{{!}}'''[[#modify|prepend]]'''{{!}}'''[[#modify|set]]''')}}
+:: {{code|<''SOURCE''>}} = {{code|(block <sourcePos> {{!}} entity <source> {{!}} storage <source>)}}
+|}
+:{| class="collapsible collapsed collapse-button-none" data-description="squished_tree"
+|-
+! style="text-align:left" | Squished tree:
+|-
+|
+: {{code|'''/data'''}}
+:* {{code|… '''[[#get|get]]''' (block <targetPos>{{!}}entity <target>{{!}}storage <target>) [<path>] [<scale>]}}
+:* {{code|… '''[[#merge|merge]]''' (block <targetPos>{{!}}entity <target>{{!}}storage <target>) <nbt>}}
+:* {{code|… '''[[#modify|modify]]''' (block <targetPos>{{!}}entity <target>{{!}}storage <target>) <targetPath> ('''[[#modify|append]]'''{{!}}'''[[#modify|insert <index>]]'''{{!}}'''[[#modify|merge]]'''{{!}}'''[[#modify|prepend]]'''{{!}}'''[[#modify|set]]''')}}
+:** {{code|… from (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>]}}
+:** {{code|… string (block <sourcePos>{{!}}entity <source>{{!}}storage <source>) [<sourcePath>] [<start>] [<end>]}}
+:** {{code|… value <value>}}
+:* {{code|… '''[[#remove|remove]]''' (block <targetPos>{{!}}entity <target>{{!}}storage <target>) <path>}}
+|}<!--
+:{| class="collapsible collapsed collapse-button-none" data-description="tree_diagram"
+|-
+! style="text-align:left" | Diagram:
+|-
+|
+[[File:Data graph.svg]]
+|}-->
+:{| class="collapsible collapsed collapse-button-none" data-description="maximised_tree"
+|-
+! style="text-align:left" | Maximised:
+|-
+|
+: {{code|data '''[[#get|get]]''' block <targetPos> [<path>] [<scale>]}}
+: {{code|data get entity <target> [<path>] [<scale>]}}
+: {{code|data get storage <target> [<path>] [<scale>]}}
+: {{code|data '''[[#merge|merge]]''' block <targetPos> <nbt>}}
+: {{code|data merge entity <target> <nbt>}}
+: {{code|data merge storage <target> <nbt>}}
+: {{code|data '''[[#modify|modify]]''' block <targetPos> <targetPath> '''[[#modify|append]]''' from block <sourcePos> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> append from entity <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> append from storage <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> append string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> append string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> append string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> append value <value>}}
+: {{code|data modify block <targetPos> <targetPath> '''[[#modify|insert <index>]]''' from block <sourcePos> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> insert <index> from entity <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> insert <index> from storage <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> insert <index> string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> insert <index> string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> insert <index> string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> insert <index> value <value>}}
+: {{code|data modify block <targetPos> <targetPath> '''[[#modify|merge]]''' from block <sourcePos> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> merge from entity <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> merge from storage <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> merge string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> merge string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> merge string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> merge value <value>}}
+: {{code|data modify block <targetPos> <targetPath> '''[[#modify|prepend]]''' from block <sourcePos> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> prepend from entity <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> prepend from storage <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> prepend string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> prepend string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> prepend string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> prepend value <value>}}
+: {{code|data modify block <targetPos> <targetPath> '''[[#modify|set]]''' from block <sourcePos> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> set from entity <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> set from storage <source> <sourcePath>}}
+: {{code|data modify block <targetPos> <targetPath> set string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> set string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> set string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify block <targetPos> <targetPath> set value <value>}}
+: {{code|data modify entity <target> <targetPath> append from block <sourcePos> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> append from entity <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> append from storage <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> append string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> append string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> append string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> append value <value>}}
+: {{code|data modify entity <target> <targetPath> insert <index> from block <sourcePos> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> insert <index> from entity <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> insert <index> from storage <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> insert <index> string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> insert <index> string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> insert <index> string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> insert <index> value <value>}}
+: {{code|data modify entity <target> <targetPath> merge from block <sourcePos> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> merge from entity <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> merge from storage <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> merge string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> merge string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> merge string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> merge value <value>}}
+: {{code|data modify entity <target> <targetPath> prepend from block <sourcePos> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> prepend from entity <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> prepend from storage <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> prepend string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> prepend string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> prepend string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> prepend value <value>}}
+: {{code|data modify entity <target> <targetPath> set from block <sourcePos> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> set from entity <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> set from storage <source> <sourcePath>}}
+: {{code|data modify entity <target> <targetPath> set string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> set string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> set string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify entity <target> <targetPath> set value <value>}}
+: {{code|data modify storage <target> <targetPath> append from block <sourcePos> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> append from entity <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> append from storage <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> append string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> append string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> append string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> append value <value>}}
+: {{code|data modify storage <target> <targetPath> insert <index> from block <sourcePos> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> insert <index> from entity <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> insert <index> from storage <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> insert <index> string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> insert <index> string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> insert <index> string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> insert <index> value <value>}}
+: {{code|data modify storage <target> <targetPath> merge from block <sourcePos> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> merge from entity <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> merge from storage <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> merge string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> merge string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> merge string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> merge value <value>}}
+: {{code|data modify storage <target> <targetPath> prepend from block <sourcePos> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> prepend from entity <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> prepend from storage <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> prepend string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> prepend string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> prepend string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> prepend value <value>}}
+: {{code|data modify storage <target> <targetPath> set from block <sourcePos> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> set from entity <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> set from storage <source> <sourcePath>}}
+: {{code|data modify storage <target> <targetPath> set string block <sourcePos> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> set string entity <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> set string storage <source> <sourcePath> <start> <end>}}
+: {{code|data modify storage <target> <targetPath> set value <value>}}
+: {{code|data '''[[#remove|remove]]''' block <targetPos> <path>}}
+: {{code|data remove entity <target> <path>}}
+: {{code|data remove storage <target> <path>}}
+|}
+
+== Arguments ==
+
+{{argument|targetPos|block_pos}}
+: The position of the target [[block entity]] whose NBT is to be operated on.
+: {{arg desc|je=block_pos}}
+
+{{argument|target|entity}} (in {{cd|entity <target>}} mode)
+: Specifies an entity whose NBT is to be operated on.
+: {{arg desc|je=entity|amount=single|type=entities}}
+
+{{argument|target|resource_location}} (in {{cd|storage <target>}} mode)
+: Specifies a storage to be operated on.
+: {{arg desc|je=resource_location}}
+
+{{argument|path|nbt_path}}
+: Specifies the NBT to retrieve or remove.
+: {{arg desc|je=nbt_path}}
+
+{{argument|scale|double}}
+: Scalar for the command's output value.
+: {{arg desc|je=double}}
+
+{{argument|nbt|nbt_compound_tag}}
+: Specifies a compound tag to be merged into somewhere.
+: {{arg desc|je=nbt_compound_tag}}
+
+{{argument|targetPath|nbt_path}}
+: Specifies target NBT to modify.
+: {{arg desc|je=nbt_path}}
+
+{{argument|index|integer}}
+: Specifies an item's index within a list.
+: {{arg desc|je=integer}}
+
+{{argument|sourcePos|block_pos}}
+: The position of the target [[block entity]] whose NBT is to be used.
+: {{arg desc|je=block_pos}}
+
+{{argument|source|entity}} (in {{cd|entity <source>}} mode)
+: Specifies an entity whose NBT is to be used by {{code|modify}}.
+: {{arg desc|je=entity|amount=single|type=entities}}
+
+{{argument|source|resource_location}} (in {{cd|storage <source>}} mode)
+: Specifies a storage to be used by {{code|modify}}.
+: {{arg desc|je=resource_location}}
+
+{{argument|sourcePath|nbt_path}}
+: Specifies the source NBT to be used by {{code|modify}}.
+: {{arg desc|je=nbt_path}}
+
+{{argument|start|integer}}
+: Specifies the index of first character to include at the start of the string. Negative values are interpreted as index counted from the end of the string.
+: {{arg desc|je=integer}}
+
+{{argument|end|integer}}
+: Specifies the index of the first character to exclude at the end of the string. Negative values are interpreted as index counted from the end of the string.
+: {{arg desc|je=integer}}
+
+{{argument|value|nbt_tag}}
+: Value used in modifying the target NBT.
+: {{arg desc|je=nbt_tag}}
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|{{code|<targetPos>}} is unloaded or out of the world.|fail}}
+{{Result table|The block at {{code|<targetPos>}} is not a block entity.}}
+{{Result table|{{code|<target>}} (in {{cd|entity <target>}} mode) fails to resolve to a single entity (named player must be online).}}
+{{Result table|cmd=/data get ...|More than one tag is got.}}
+{{Result table|cmd=/data get ... <path>|No tag exists at {{code|<path>}}.}}
+{{Result table|cmd=/data get ... <path> <scale>|The obtained tag is not a numeric tag.}}
+{{Result table|cmd=/data merge ...<br>/data remove ...<br>/data modify ...|Nothing is changed.}}
+{{Result table|Tries to edit a player's data.}}
+{{Result table|cmd=/data remove ...<br>/data modify ... set ...|{{code|<path>}} selects the root compound tag.}}
+{{Result table|cmd=/data modify ... (from{{!}}string) block ...|{{code|<sourcePos>}} is unloaded or out of the world.}}
+{{Result table|The block at {{code|<sourcePos>}} is not a block entity.}}
+{{Result table|cmd=/data modify ... (from{{!}}string) entity ...|{{code|<source>}} fails to resolve to a single entity (named player must be online).}}
+{{Result table|cmd=/data modify ... (from{{!}}string) ... <sourcePath>|No tag exists at {{code|<sourcePath>}}.}}
+{{Result table|cmd=/data modify ... string ... <sourcePath> <start> <end>|Any of the tags selected by {{code|<sourcePath>}} isn't string or numeric (will be converted to string) tag.}}
+{{Result table|{{cd|<start>}} or {{cd|<end>}} is out of valid index of any of the source strings.}}
+{{Result table|For any of the source strings, the character indexed by {{cd|<start>}} is behind of that indexed by {{cd|<end>}}.}}
+{{Result table|cmd=/data modify ... append ...<br>/data modify ... insert <index> ...<br>/data modify ... prepend ...|Any of the target tags isn't a list or array tag.}}
+{{Result table|All of the source tags aren't of the appropriate type for all of the target lists or arrays.}}
+{{Result table|cmd=/data modify ... insert <index> ...|The index is invalid for all of the target lists or arrays.}}
+{{Result table|cmd=/data modify ... merge ...|Any of the target tags is not a compound tag.}}
+{{Result table|Any of the source tags is not a compound tag.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/data get ...|On success|1|1|1}}
+{{Output table|cmd=/data get ... <path>|A numeric tag is got|1|1|The obtained value after rounding down<ref>double n = (double)value;<br>int output = n < (int)n ? (int)n - 1 :(int)n;<br>See also {{bug|MC-259032}}</ref>}}
+{{Output table|A list or array tag is got|1|1|The number of elements in this list or array}}
+{{Output table|A string tag is got|1|1|The length of the string}}
+{{Output table|A compound tag is got|1|1|The number of tags that are direct children of that compound}}
+{{Output table|cmd=/data get ... <path> <scale>|On success|1|1|The obtained value multiplied by {{code|<scale>}}, then rounded down<ref>double n = (double)value * scale;<br>int output = n < (int)n ? (int)n - 1 :(int)n;<br>See also {{bug|MC-259032}}</ref>}}
+{{Output table|cmd=/data merge ...|On success|1|1|1}}
+{{Output table|cmd=/data remove ...|On success|1|1|1}}
+{{Output table|cmd=/data modify ... append ...<br>/data modify ... insert <index> ...<br>/data modify ... prepend ...|On success|1|1|The number of lists or arrays into which new elements are added}}
+{{Output table|cmd=/data modify ... set ...|On success|1|1|The number of target tags that was successfully modified}}
+{{Output table|cmd=/data modify ... merge ...|On success|1|1|The number of target compound tags that was successfully modified}}
+{{Output table}}
+
+== Examples ==
+* To view the NBT data of the player's held item:
+*: {{code|/data get entity @s SelectedItem}}
+* To get the saturation level of the current player:
+*: {{code|/data get entity @s foodSaturationLevel}}
+* To make the nearest item within 10 blocks unable to be picked up by players:
+*: {{code|1=/data modify entity @n[type=item,distance=..10] PickupDelay set value -1s}}
+* To get the Y-position of a random item:
+*: {{code|1=/data get entity @e[type=item,limit=1,sort=random] Pos[1]}}
+* To get the item ID of the item in the first hotbar slot of the nearest player:
+*: <code>/data get entity @p Inventory[{Slot:0b}].id</code>
+* To change the first item in a chest located at coordinates (1, 64, 1) into a diamond block, keeping all NBT data:
+*: {{code|/data modify block 1 64 1 Items[0].id set value "minecraft:diamond_block"}}
+* To make the nearest zombie have a 80% chance to drop items in its off-hand when it dies, and never drop items in the main hand:
+*: <code>/data merge entity @n[type=zombie] {drop_chances:{mainhand:0f,offhand:0.8f}}</code>
+* To make the nearest zombie have an 80% chance to drop items in its off-hand when it dies, without affecting the chance for the main hand:
+*: {{code|1=/data modify entity @n[type=zombie] drop_chances.offhand set value 0.8f}}
+
+=== List, array and string length ===
+With {{cmd|data get|link=none}}, it is possible to get the length of lists or arrays and the number of characters in strings, since its return value is the length of the string, list, or arrays being referenced. This value can then be stored using {{cmd|execute store}}, if necessary.
+
+;List example
+Suppose a list is stored using the following command:
+
+:{{cmd|link=none|data merge storage wiki:example {List:[2,5,8,9,6,10]} }}
+
+Then, running the following returns <code>6</code>, the length of the list:
+
+:{{cmd|link=none|data get storage wiki:example List}}
+
+;String example
+Suppose a string is stored using the following command:
+
+:{{cmd|link=none|data merge storage wiki:example {String:"Example string with a character count of 43"} }}
+
+Then, running the following returns <code>43</code>, the length of the string:
+
+:{{cmd|link=none|data get storage wiki:example String}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=17w45b|Added {{cmd|data|link=none}}.}}
+|{{HistoryLine|||dev=17w47a|Commands {{cmd|blockdata}} and {{cmd|entitydata}} have been removed as their features are merged into {{cmd|data|link=none}}.}}
+|{{HistoryLine|||dev=18w03a|Using {{cmd|data get|link=none}} with a path now works on non-numeric values.}}
+|{{HistoryLine||1.14|dev=18w43a|Added {{cmd|data modify|link=none}}.}}
+|{{HistoryLine||1.15|dev=19w38a|Added {{cd|storage <''[[resource location]]''>}} as a source or target.}}
+|{{HistoryLine||1.19.4|dev=23w03a|Added {{cd|string}} source.}}
+|{{HistoryLine||1.20|dev=Pre-release 1|Now {{cd|<start>}} or {{cd|<end>}} in {{cd|string}} source accept negative boundaries, which are interpreted as index counted from the end of the string.}}
+|{{HistoryLine|||dev=Pre-release 2|Now invalid {{cd|<start>}} or {{cd|<end>}} in {{cd|string}} source result in command failure instead of unhandaled error.<ref>{{bug|MC-260602||/data modify from string index failure does not return 0 for /execute store success.|Fixed}}</ref>}}
+|{{HistoryLine||1.21.5|dev=25w09a|Can now create and modify heterogeneous lists transparently.|Can no longer traverse paths with an empty key.}}
+}}
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/data]]
+[[es:Comandos/data]]
+[[ja:コマンド/data]]
+[[pt:Comandos/data]]
+[[ru:Команды консоли/data]]
+[[uk:Команди консолі/data]]
+[[zh:命令/data]]

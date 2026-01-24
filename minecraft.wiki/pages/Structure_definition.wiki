@@ -1,0 +1,90 @@
+{{Distinguish|Structure file}}
+{{exclusive|java}}
+{{relevant tutorial|Custom structures}}
+
+A '''structure''' is a large decoration, covering an area up to 256×256×256 block centered on the structure start. Structures often consist of multiple pieces that are fit together to form the overall structure. They are configured using [[JSON]] files within a [[data pack]] in the path {{cd|data/<namespace>/worldgen/structure}}. To generate in a world, a structure needs to be part of at least one [[structure set]].
+
+== JSON format ==
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|string|type}}: The ID of structure feature type.<section begin="json format" />
+** {{nbt|string}}{{nbt|list|biomes}}: {{json ref/biome|tag=1}} &mdash; Biomes that this structure is allowed to generate in.
+** {{nbt|string|step}}: The step where the structure generates. See also the {{cd|features}} field in [[custom biome]]. Structure features are generated prior to features in the same step. One of {{cd|raw_generation}}, {{cd|lakes}}, {{cd|local_modifications}}, {{cd|underground_structures}}, {{cd|surface_structures}}, {{cd|strongholds}}, {{cd|underground_ores}}, {{cd|underground_decoration}}, {{cd|fluid_springs}}, {{cd|vegetal_decoration}}, and {{cd|top_layer_modification}}.
+** {{nbt|string|terrain_adaptation}}: (Optional, defaults to {{cd|none}}) The type of terrain adaptation used for the structure. {{cd|none}} for no adaptation, {{cd|beard_thin}} is used by [[Pillager Outpost|pillager outposts]] and [[Village|villages]], {{cd|beard_box}} is used by [[Ancient City|ancient cities]],  {{cd|bury}} is used by [[Stronghold|strongholds]], and {{cd|encapsulate}}  is used by [[Trial Chambers]].
+** {{nbt|compound|spawn_overrides}}: (Required, but can be empty. If this object doesn't contain a certain category, the category's spawn setting won't be overridden, and mobs are spawned based on biome.) Overrides the mobs that can spawn in this structure. Used for things like blaze and wither skeleton spawning in nether fortresses, and can also be used to block mobs from spawning like in ancient cities.
+*** {{nbt|compound|<mob category>}}: The key must be one of {{cd|monster}}, {{cd|creature}}, {{cd|ambient}}, {{cd|water_creature}}, {{cd|underground_water_creature}}, {{cd|water_ambient}}, {{cd|misc}}, or {{cd|axolotls}}.
+**** {{nbt|string|bounding_box}}：Can be {{cd|piece}} or {{cd|full}}. If {{cd|full}}, overrides spawn setting inside the full bounding box of the structure. If {{cd|piece}}, only the bounding boxes of all structure pieces.
+**** {{Nbt|list|spawns}}：(Required, but can be empty. If empty, mobs in this category do not spawn.) A list of spawner data objects, one for each mob which should spawn in this structure.
+***** {{nbt|compound}}: The spawner data for a single mob.
+****** {{nbt|string|type}}: The namespaced entity id of the mob.
+****** {{nbt|int|weight}}: How often this mob should spawn, higher values produce more spawns.
+****** {{nbt|int|minCount}}: The minimum count of mobs to spawn in a pack. Must be greater than 0.
+****** {{nbt|int|maxCount}}: The maximum count of mobs to spawn in a pack. Must be greater than 0. And must be not less than {{nbt|int|minCount}}.<section end="json format" />
+**Additional fields depending on value of {{nbt|string|type}}, see [[Structure/JSON format#Structure_types|Structure types]].
+</div>
+
+== Structure types ==
+Structures use different types. The structure types and their corresponding configuration are listed below:
+
+=== Using Jigsaw Blocks ===
+{{main|Jigsaw structure}}
+Jigsaw structures are using [[template pool]]s and [[jigsaw block]]s and allow full customization of structure generation using a datapack.
+{{collapse|title={{BlockSprite|jigsaw|link=Jigsaw structure|text='''jigsaw'''}}|content={{#lst:Jigsaw structure|config}}}}
+
+=== Using structure templates ===
+These structure types use specific [[structure template]]s, but they use hard-coded relative positioning between those structure templates instead of using jigsaw blocks.
+
+{{collapse|title={{EnvSprite|end-city|link=End City|text='''end_city'''}}|content={{#lst:End City|config}}}}
+{{collapse|title={{EnvSprite|igloo|link=Igloo|text='''igloo'''}}|content={{#lst:Igloo|config}}}}
+{{collapse|title={{EnvSprite|nether-fossil|link=Nether Fossil|text='''nether_fossil'''}}|content={{#lst:Nether Fossil|config}}}}
+{{collapse|title={{EnvSprite|ocean-ruin|link=Ocean Ruins|text='''ocean_ruin'''}}|content={{#lst:Ocean Ruins|config}}}}
+{{collapse|title={{EnvSprite|ruined-portal|link=Ruined Portal|text='''ruined_portal'''}}|content={{#lst:Ruined Portal|config}}}}
+{{collapse|title={{EnvSprite|shipwreck|link=Shipwreck|text='''shipwreck'''}}|content={{#lst:Shipwreck|config}}}}
+{{collapse|title={{EnvSprite|woodland-mansion|link=Woodland Mansion|text='''woodland_mansion'''}}|content={{#lst:Woodland Mansion|config}}}}
+
+=== Hardcoded structures ===
+These structure types use code to place the blocks of the structure directly.
+
+{{collapse|title={{EnvSprite|buried-treasure|link=Buried Treasure|text='''buried_treasure'''}}|content={{#lst:Buried Treasure|config}}}}
+{{collapse|title={{EnvSprite|desert-pyramid|link=Desert Pyramid|text='''desert_pyramid'''}}|content={{#lst:Desert Pyramid|config}}}}
+{{collapse|title={{EnvSprite|nether-fortress|link=Nether Fortress|text='''fortress'''}}|content={{#lst:Nether Fortress|config}}}}
+{{collapse|title={{EnvSprite|jungle-pyramid|link=Jungle Pyramid|text='''jungle_temple'''}}|content={{#lst:Jungle Pyramid|config}}}}
+{{collapse|title={{EnvSprite|mineshaft|link=Mineshaft|text='''mineshaft'''}}|content={{#lst:Mineshaft|config}}}}
+{{collapse|title={{EnvSprite|ocean-monument|link=Ocean Monument|text='''ocean_monument'''}}|content={{#lst:Ocean Monument|config}}}}
+{{collapse|title={{EnvSprite|stronghold|link=Stronghold|text='''stronghold'''}}|content={{#lst:Stronghold|config}}}}
+{{collapse|title={{EnvSprite|swamp-hut|link=Swamp Hut|text='''swamp_hut'''}}|content={{#lst:Swamp Hut|config}}}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.19|dev=22w11a|The structure system was rewritten.
+|Renamed "configured structure feature" registry to "structure".
+|Moved <samp>worldgen/configured_structure_feature</samp> to <samp>worldgen/structure</samp> folder.}}
+|{{HistoryLine|||dev=22w12a|Added {{cd|max_distance_from_center}} field to {{cd|jigsaw}} structure.}}
+|{{HistoryLine|||dev=22w13a|Added {{cd|rottable_blocks}} field into {{cd|minecraft:block_rot}} processor.
+|Now the {{cd|integrity}} field in {{cd|minecraft:block_rot}} processor becomes a required field, and now it must be between 0.0 and 1.0 (inclusive).
+|Replaced the {{nbt|boolean|adapt_noise}} field in configured structure feature with {{nbt|string|terrain_adaptation}} field. Before, it is an optional boolean value that defaults to false.
+|All fields except {{cd|type}} of jigsaw structure are now wrapped in a {{cd|value}} field.}}
+|{{HistoryLine|||dev=22w14a|Reverted the change on jigsaw structure from last snapshot.
+|Now the {{cd|rottable_blocks}} field in {{cd|minecraft:block_rot}} processor also accepts a block ID or a list of block IDs, and the block tag now needs to be prefixed with a {{cd|#}}.}}
+|{{HistoryLine|||dev=22w17a|Added {{nbt|string|start_jigsaw_name}} field in {{cd|minecraft:jigsaw}} config type of configured structure feature.}}
+|{{HistoryLine||1.19.3|dev=22w44a|Removed the {{nbt|string|name}} field in structure pool. Before, this field was a required field, but had no effect.}}
+|{{HistoryLine||1.19.4|dev=Pre-release 1|Now {{nbt|int|minCount}} and {{nbt|int|maxCount}} in {{nbt|compound|spawners}} in configured structure feature must be a positive integer. And {{nbt|int|maxCount}} must be not less than {{nbt|int|minCount}}.}}
+|{{HistoryLine||1.20|dev=23w12a|Added {{cd|capped}} processor.
+|The {{nbt|compound|output_nbt}} field in the {{cd|rule}} processor used to set fixed NBT data to the block entity has now been changed to {{nbt|compound|block_entity_modifier}}. Before, {{nbt|compound|output_nbt}} was an NBT compound in JSON object form, see [[NBT format#JSON and NBT]].}}
+|{{HistoryLine||1.20.3|dev=23w42a|Added optional {{cd|pool_aliases}} list to jigsaw structures.|Aliases represent the possibility to rewire jigsaw pool connections by redirecting pool references on individual structure instances.|Alias variants are represented in {{cd|type}}.}}
+|{{HistoryLine||1.21|dev=?|Added {{cd|liquid_settings}} field to structures of jigsaw type}}
+}}
+
+== External links ==
+* [https://misode.github.io/worldgen/structure/ Structure Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Konstruktionsdefinition]]
+[[fr:Définition de structure]]
+[[ja:構造物のカスタマイズ]]
+[[pt:Definição de estruturas]]
+[[uk:Визначення структури]]
+[[zh:结构定义格式]]

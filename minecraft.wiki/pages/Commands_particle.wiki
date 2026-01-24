@@ -1,0 +1,134 @@
+{{Infobox command
+|name=particle
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+Creates [[particles]].
+
+== Syntax ==
+*'''Java Edition'''
+: <code>particle <name> [<pos>]</code>
+: <code>particle <name> <pos> <delta> <speed> <count> [force|normal] [<viewers>]</code>
+*'''Bedrock Edition'''
+: <code>particle <effect: string> [position: x y z]</code>
+
+== Arguments ==
+{{argument|name|particle|effect: string|basic_string}}
+: Specifies the [[particle|particle type]] to create.
+: {{arg desc|je=particle|be=string}}
+
+{{argument|pos|vec3|position: x y z|CommandPositionFloat}}
+: Specifies the position at which to create particle. If not specified, defaults to the position of the commmand execution.
+: {{arg desc|je=vec3|be=CommandPositionFloat}}
+
+{{el|je|short=1}}: {{argument|count|integer}}
+: Specifies the number of particle effects to create. If 0, see below for what it results in.
+: {{arg desc|je=integer|min=0}}
+
+{{el|je|short=1}}: {{argument|delta|vec3}} — {{arg desc|je=vec3}}<br>
+{{el|je|short=1}}: {{argument|speed|float}} — {{arg desc|je=float|min=0.0}}
+: {{cd|<delta>}} and {{cd|<speed>}} parameters determine where the particles are created and the parameters to pass into the particles (see the table [[#Extra parameters of particle types|Extra parameters of particle types]] below). Based on whether {{cd|<count>}} is 0 or not, the two parameters have different meanings.
+:* if {{cd|<count>}} is 0, creates a single particle at the {{cd|<pos>}}. Multiplies each of the three values in{{cd|<delta>}} by {{cd|<speed>}} value, then passes them into the particles as three parameters.
+:** This means that for most particles that receive parameters, if {{cd|<count>}} is 0, the <code><delta></code> acts as motion values for the particle, with <code><speed></code> acting as a multiplier, so the particle move in the direction of <code><delta></code>.
+:* If {{cd|<count>}} is not 0, the specified count of particles are created at random positions. The positions obey normal distributions in each of the X, Y, and Z directions. Each normal distribution has a mean value of each value in {{cd|<pos>}}, meaning that particles are more likely to be created closer to the {{cd|<pos>}}. Each normal distribution has a standard deviation of each value in {{cd|<delta>}} (e.g. <code>1 1 1</code> means that the coordinates on X, Y, and Z axes obey three standard normal distributions, meaning that there is a 99.7% probability that the particle is created in a 6×6×6 cuboid region centered at the {{cd|<pos>}}; <code>2 2 2</code> means that the particle has a 99.7% probability of being created in a 12×12×12 cuboid region centered at the {{cd|<pos>}}). Negative values are accepted in {{cd|<delta>}}, but have the same effect as their positive counterparts (e.g. <code>-1 -1 -1</code> has the same effect as <code>1 1 1</code>). Each of the extra parameters to be passed into the particles also follows a normal distribution, with a mean of 0 and a standard deviation of each value in {{cd|<speed>}}.
+: {{cd|<delta>}} accepts [[Coordinates#Commands|relative coordinates and local coordinates]], which are converted to absolute coordinates, so relative coordinates and local coordinates are generally useless here.
+: If not specified, {{cd|<delta>}} defaults to <code>0 0 0</code>; {{cd|<speed>}} defaults to <code>0</code>.
+
+{{el|je|short=1}}: {{cd|force{{!}}normal}}
+: Specifies the display mode: <code>normal</code> or <code>force</code>.
+:: <code>normal</code>: The particle(s) are sent to players within 32.0 blocks (exclusive), may not be shown if the "Particles" option in Video Settings is "Minimal" (depending on the particle type, some particle types still displays when it is "Minimal")
+:: <code>force</code>: Allows the particle(s) to be sent to players within 512.0 blocks (exclusive). Always shown even if the "Particles" option in Video Settings is "Minimal".
+:: Defaults to the <code>normal</code> mode.
+
+{{el|je|short=1}}: {{argument|viewers|entity}}
+: Allows control of which player should view this particle instead of everyone in the viewing range of the particle.
+: {{arg desc|je=entity|amount=multiple|type=players}}
+
+=== Extra parameters of particle types ===
+{{main|Particle format}}
+{{expand section}}
+
+== Result ==
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code><targets></code> fails to resolve to one or more online players.|fail|N/A}}
+{{Result table|All the targeted players are not less than 32.0 (in <code>normal</code> mode) / 512.0 (in <code>force</code> mode) blocks away from the particle(s).||success}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of players who can see the particle(s)}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== Examples ==
+To create a stationary huge explosion particle 10 blocks to the east:
+* {{JE}}: <code>/particle minecraft:explosion_emitter ~10 ~ ~</code>
+* {{BE}}: <code>/particle minecraft:huge_explosion_emitter ~10 ~ ~</code>
+
+Using the [[particle format]] arguments in {{El|java}} to create purple dust with large particles:
+* <code>/particle minecraft:dust{color:[1, 0, 1], scale:4} ~ ~ ~ 1 1 1 1 10</code>
+
+Using the <code><delta></code> and <code><speed></code> arguments to pass parameters to the command and make a single particle move downward (note that <code>count</code> must be zero):
+* <code>/particle minecraft:white_smoke ^ ^1 ^2 0 -1 0 0.1 0</code>
+
+The same command with <code><count></code> nonzero instead uses <code><delta></code> to determine particle distribution, producing a vertical cloud of particles:
+* <code>/particle minecraft:white_smoke ^ ^1 ^2 0 -1 0 0.1 10</code>
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w04a|Added {{cmd|particle|link=none}}.}}
+|{{HistoryLine|||dev=14w25a|{{cmd|particle|link=none}} now accepts <samp>blockdust</samp>, <samp>blockcrack</samp> and <samp>iconcrack</samp>, which it could not before despite these particles indeed existing.
+|The block/item data is specified as part of the ID: for example, blockcrack_1_1 represents granite.}}
+|{{HistoryLine|||dev=14w28a|Due to a bug, {{cmd|particle|link=none}} commands using <samp>blockdust</samp>, <samp>blockcrack</samp> and <samp>iconcrack</samp> no longer work.<ref>{{bug|MC-61033}}</ref>}}
+|{{HistoryLine|||dev=14w28b|<samp>blockdust</samp>, <samp>blockcrack</samp> and <samp>iconcrack</samp> are no longer listed as supported by {{cmd|particle|link=none}} due to the aforementioned bug. Commands can still attempt to use them (they do not reject them in the same way non-existent particles are rejected); however, they just result in errors.}}
+|{{HistoryLine|||dev=14w29a|Added <code>force</code> argument to {{cmd|particle|link=none}}.
+|<samp>iconcrack</samp> now works again, supporting an item ID and a value for damage.
+|<samp>blockdust</samp> and <samp>blockcrack</samp> now work, but only if an ID alone is provided; specifying block metadata will produce an error.}}
+|{{HistoryLine||1.9|dev=15w32c|the range limit increased to 32 blocks (when the command /particle is used along with the force mode, the limit is 512 blocks).}}
+|{{HistoryLine|||dev=15w49a|Added <code>player</code> and <code>params</code> arguments to {{cmd|particle|link=none}}.
+|<samp>iconcrack</samp>, <samp>blockdust</samp> and <samp>blockcrack</samp> now use the new params field rather than specifying block/item ID and block metadata/item damage in the particle ID. The latter two particle types can now have block metadata specified again.}}
+|{{HistoryLine||1.13|dev=17w45a|The <code><params></code> argument has been removed, instead the parameters for particles like <code>block</code> can be specified right after the <code><name></code> argument using the new block argument.}}
+|{{HistoryLine|||dev=17w47a|Particle names have been changed for {{cmd|particle|link=none}}.
+|{{cmd|particle|link=none}} can no longer access{{verify|Can it no longer be accessed by command, but still exists internally as a particle, or was it actually removed proper, possibly replaced by some new method of rendering it?}} <samp>take</samp>, a particle used for handing the pickup animation of [[Item (entity)|dropped item]]s.{{verify|Was it used, or was it intended to be used and was scrapped, as I remember hearing somewhere? If it is in fact used, was it also used for experience orbs?}}}}
+|{{HistoryLine|||dev=18w03a|Added the {{cmd|link=none|particle <name> <pos>}} shortcut.}}
+|{{HistoryLine||1.19|dev=22w12a|Added the {{cd|shriek}} particle.
+|Removed the {{cd|origin}} parameter from the {{cd|vibration}} particle.}}
+|{{HistoryLine||1.20.5|dev=Pre-Release 1|Particle options in the {{cmd|particle|link=none}} command, and in fields like Particles in Area Effect clouds, now use the same representation ([[particle format|SNBT format]]) as in worldgen files (eg. the ash particle in the basalt_delta biome file of the vanilla data pack).}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket edition}}
+|{{HistoryLine||1.0.5|dev=alpha 1.0.5.0|Added {{cmd|particle|link=none}}.}}
+|{{HistoryLine|||dev=alpha 1.0.5.3|Removed {{cmd|particle|link=none}}.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.8.0|dev=beta 1.8.0.8|Re-added {{cmd|particle|link=none}}.}}
+|{{HistoryLine||1.17.30|dev=beta 1.17.20.23|The {{cmd|particle|link=none}} command no longer outputs 0 when run successfully.
+|The {{cmd|particle|link=none}} command's position argument is now optional.}}
+}}
+
+== References ==
+{{reflist}}
+
+== External links ==
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/particle?view=minecraft-bedrock-stable|title=<code>/particle</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+{{navbox particles}}
+
+[[de:Befehl/particle]]
+[[es:Comandos/particle]]
+[[ja:コマンド/particle]]
+[[pt:Comandos/particle]]
+[[ru:Команды консоли/particle]]
+[[uk:Команди консолі/particle]]
+[[zh:命令/particle]]

@@ -1,0 +1,293 @@
+{{Infobox version
+|title=Minecraft 1.20.5 Pre-Release 1
+|image=1.20.5-pre1.jpg
+|image2=Java Edition 1.20.5 Pre-Release 1.png
+|edition=Java
+|type=Pre-Release
+|date=April 10, 2024
+|jsonfile=1.20.5-pre1
+|jsonhash=2fb2c20dfa96166980872b24e02ea8c0b5ae7a5d
+|clienthash=5d4591f3433e4f1ed7f02ef04e6e26dc9fe52bf3
+|clientmap=7ccbdeacea57d971b20a48479914ef1d3b370c64
+|serverhash=018c4aa3b1dcd5ac4487456de062072de750f729
+|servermap=cb6f5312d9ee90a685e47c071b11de62f6d882ea
+| parent = 1.20.5
+| prevparent = 1.20.4
+| prev = 24w14a
+| next = 1.20.5 Pre-Release 2
+| nextparent = 1.20.6
+}}<onlyinclude>
+'''1.20.5 Pre-Release 1''' (known as '''1.20.5-pre1''' in the launcher) is the first pre-release for [[Java Edition 1.20.5]], released on April 10, 2024,<ref>{{mcnet|minecraft-1-20-5-pre-release-1|Minecraft 1.20.5 Pre-Release 1}}</ref> which adds new [[advancement]]s and fixes bugs. This is the first pre-release released in 2024.
+
+== Additions ==
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Added the following advancements:
+** Isn't it Scute?
+*** Get armadillo scutes from an armadillo using a brush.
+** Snip it!
+*** Remove wolf armor from a wolf using shears.
+** Good as New
+*** Repair a damaged wolf armor using armadillo scutes.
+** The Whole Pack
+*** Tame one of each wolf variant.
+
+=== Command format ===
+'''Loot functions'''
+* Added <code>modify_contents</code>.
+** Apply modifier function to every item inside a component.
+** If component does not exist, it is not added.
+** Fields:
+*** <code>conditions</code> - list of conditions to filter this function.
+*** <code>component</code> - target component.
+**** Allowed values: <code>container</code>, <code>bundle_contents</code>, <code>charged_projectiles</code>.
+*** <code>modifier</code> - function or list of functions to be applied to every item inside container
+
+* Added <code>set_item</code>.
+** Replaces item type of item stack without changing count and components.
+** Fields:
+** <code>conditions</code> - list of conditions to filter this function.
+*** <code>item</code> - new item type.
+
+* Added <code>filtered</code>.
+** Applies sub-function only to items that match item predicate.
+** Fields:
+*** <code>conditions</code> - list of conditions to filter this function.
+*** <code>item_filter</code> - item predicate used to match items.
+*** <code>modifier</code> - functions to apply to matching items.
+
+* Added <code>set_custom_model_data</code>.
+** Sets <code>custom_model_data</code> component.
+** Fields:
+*** <code>conditions</code> - list of conditions to filter this function.
+*** <code>value</code> - integer number provider.
+
+=== General ===
+'''[[Tag]]s'''
+* Added Entity Type tag <code>minecraft:punchable_projectiles</code> for projectiles which should be able to be punched and deflected toward the direction the player is looking.
+* Added Enchantment tag <code>minecraft:tooltip_order</code> controlling which order Enchantments are listed in tooltips.
+
+== Changes ==
+=== Items ===
+'''[[Written book]]'''
+* The limit on the amount of pages for a written book has been removed.
+
+=== Gameplay ===
+'''[[Effect]]s'''<ref>{{bug|MC-270954|||Won't Fix}}</ref>
+* [[Infested]]
+** Now has a 10% chance to spawn 1-2 silverfish instead of 5%.
+** Silverfish now spawn at the center of the entity's bounding box and fling out in the direction the entity is facing.
+* [[Oozing]]
+** Only spawns slimes in a given 5x5x5 area up to the max entity cramming count.
+* [[Weaving]]
+** Now more consistently spawns 2-3 cobwebs on death.
+** Players are now affected by the movement buff through cobwebs, affecting 50% of their normal speed instead of 25%.
+
+=== Command format ===
+'''Item sub-predicates'''
+* General rules of component predicates:
+** Unless otherwise specified, a field in predicate with the same name as a field in component that matches (i.e. has the same name as predicate) matches that field value
+** Those fields usually have the same type as in the components, but are optional.
+** Exceptions:
+*** List fields are replaced with collection matchers (see below)
+*** Integer and float fields are replaced with ranges
+*** Registry ids are replaced with a type that accepts id, list of ids or a tag
+* Collection matcher is a shared part of predicate used for matching collections. Every instance of this matcher has same fields with same functionality, with only difference being type of matched elementFields:
+** <code>size</code> - integer range to match against collection size
+** <code>contains</code> - a list of element predicates
+*** All conditions must match for predicate to pass
+*** Not all elements in tested container have to be matched
+*** Elements can be in any order
+*** Single element can match multiple predicates
+*** Examples (when matching item stacks):
+**** <code>{contents:[{item:diamond}]}</code> - matches when there is at least one diamond item
+**** <code>{contents:[{item:diamond}, {item:dirt}]}</code> - matches when there is at least one diamond item and at least one dirt item
+** <code>count</code> - a list of matchers on element counts
+*** Entry fields:
+**** <code>test</code> - element matcher
+**** <code>count</code> - optional integer range to check against number of elements passing <code>test</code>
+*** Examples (when matching item stacks):
+**** <code>{count:[{count:3,test:{items:diamond}}]}}</code> matches only when there are exactly 3 stacks of diamonds (no matter the stack size)
+
+'''Loot functions'''
+* Changed <code>set_contents</code>.
+** Unused field <code>type</code> has been removed
+** Added new mandatory field <code>component</code>:
+*** Describes target component to be filled with items
+*** Existing contents are replaced
+*** Allowed values: <code>container</code>, <code>bundle_contents</code>, <code>charged_projectiles</code>
+*** <code>bundle_contents</code> and <code>charged_projectiles</code> ignore empty stacks
+* Changed <code>set_custom_data</code>.
+** Field <code>tag</code> now accepts both SNBT data written as a string (existing format) and unflattened tags.
+
+=== General ===
+'''[[Data pack]]'''
+* Data pack version is now <code>39</code>.
+* Added new item sub-predicates.
+* Added new terrain adaptation type for structures: <code>encapsulate</code>
+** Density is added all around every piece of a structure
+** Ideal for structures that need to be entirely covered underground
+* The combination of <code>max_stack_size</code> and <code>max_damage</code> components is no longer allowed in commands and data pack definitions
+* Added a new option <code>body</code> in entity <code>equipment</code> sub-predicate to match the item in the body armor slot of an entity
+* The <code>saturation_modifier</code> field on the <code>food</code> component has been replaced with <code>saturation</code>
+** <code>saturation</code> is the exact value added to the player's saturation level
+** In respect to the former <code>saturation_modifier</code>, this is defined by <code>saturation = nutrition * saturation_modifier * 2</code>
+* Changed optional <code>equipment_loot_table</code> field in the <code>SpawnPotentials</code> of Monster Spawners and <code>spawn_potentials</code> of Trial Spawner configs.
+** Now named <code>equipment</code> instead of <code>equipment_loot_table</code>
+** Format: object with fields
+*** <code>loot_table</code> - A loot table used to generate the equipment
+*** <code>slot_drop_chances</code> - An optional map of equipment slot to specified drop chance
+**** Can also be a single value instead of a list to apply to all slots: e.g. <code>slot_drop_chances: 0.0f</code> applies a chance of 0% to all slots
+** e.g. <code>equipment: {loot_table: "minecraft:equipment/trial_chamber", slot_drop_chances: {"head": 0.0f, "chest": 0.25f, "legs": 1.0f, "feet": 0.25f}}</code>
+** If present, rolled items from the specified loot table are equipped to the mob that spawns.
+
+'''[[Language]]s'''
+* Added support for Viossa language.
+
+'''[[Particle]]s'''
+* Particle options in commands and in fields like <code>Particles</code> in Area Effect clouds now use the same representation as worldgen files (like existing biomes' ambient particle settings)
+* For example, command <code>/particle minecraft:dust 1.0 0.0 0.0 2.0 ...</code> becomes <code>/particle minecraft:dust{color:[1.0, 0.0, 0.0], scale:2.0} ...</code>
+* The syntax for particles without extra options (like <code>minecraft:villager</code>) remains unchanged
+* Changes to block particles (<code>minecraft:block</code>, <code>minecraft:block_marker</code>, <code>minecraft:falling_dust</code>, <code>minecraft:dust_pillar</code>) options:
+** Field <code>value</code> has been renamed to <code>block_state</code>
+** Field <code>block_state</code> now also accepts plain block name to represent default block state
+** Example transformations:
+*** <code>minecraft:block minecraft:redstone_lamp[lit=true]</code> -> <code>minecraft:block{block_state: {Name: "minecraft:redstone_lamp", Properties: {lit: "true"}}}</code>
+*** <code>minecraft:block minecraft:diamond_block</code> -> <code>minecraft:block{block_state: "minecraft:diamond_block"}</code>
+* Changes to <code>minecraft:item</code> options:
+** Field <code>value</code> has been renamed to <code>item</code>
+** Field <code>item</code> now also accepts plain item name to represent item stack with default components
+** <code>count</code> field is now ignored
+** Example transformations:
+*** <code>minecraft:item minecraft:dirt</code> -> <code>minecraft:item{item: {id: "minecraft:dirt"}}</code>
+*** <code>minecraft:item minecraft:dirt</code> -> <code>minecraft:item{item: "minecraft:dirt"}</code>
+* Changes to <code>dust_color_transition</code> options:
+** Field <code>fromColor</code> has been renamed to <code>from_color</code>
+** Field <code>toColor</code> has been renamed to <code>to_color</code>
+** Example transformation: <code>dust_color_transition 1.0 0.0 0.0 0.5 0.0 1.0 0.5</code> -> <code>dust_color_transition{from_color: [1.0f, 0.0f, 0.0f], scale: 0.5f, to_color: [0.0f, 1.0f, 0.5f]}</code>
+* Changes to <code>entity_effect</code> options:
+** Field <code>value</code> has been renamed to <code>color</code>
+** Field <code>color</code> now also accepts list of floats representing RGBA color
+
+'''[[Tag]]s'''
+* Removed Item tag <code>minecraft:tools</code> (overlapping with <code>minecraft:breaks_decorated_pots</code>), moving previous contents into that tag.
+
+== Experimental ==
+=== Additions ===
+==== Gameplay ====
+'''[[Advancement]]s'''
+* Added the following advancement:
+** Revaulting
+*** Unlock an ominous vault with an ominous trial key.
+
+=== Changes ===
+==== World generation ====
+'''[[Trial chambers]]'''
+* More consistently buried by terrain when found underground.
+* Remade <code>chamber_6</code> with variations, and renamed it to <code>assembly</code>.
+* Added a new trap dispenser style to chambers.
+* Fixed various broken jigsaw connections in the corridors.
+* Chamber 'Eruption':
+** Stopped tuff bricks from spawning in the air.
+** Added more lights to quadrants.
+
+==== Gameplay ====
+'''[[Ominous trial]]s'''
+* Mobs that can wear equipment now often spawn with enchanted weapons and armor.
+** Armor enchantments include Protection IV, Projectile Protection IV and Fire Protection IV.
+** Weapon enchantments include Sharpness I, Knockback I, Power I and Punch I.
+* Mobs that wear equipment no longer have a chance to drop their equipment on death.
+* Players are now chosen 50% of the time when an ominous trial spawner chooses which entity to drop projectiles on top of.
+* Projectiles now spawn more accurately above chosen entities.
+
+==== General ====
+'''[[Tag]]s'''
+* Added {{cd|mace}} to the {{cd|#breaks_decorated_pots}} item tag.
+* Added {{cd|wind_charge}}, and {{cd|breeze_wind_charge}} to the {{cd|#punchable_projectiles}} entity type tag.
+* Added {{cd|wind_burst}}, {{cd|density}}, and {{cd|breach}} to the {{cd|#tooltip_order}} enchantment tag.
+
+== Fixes ==
+{{fixes|fixedin=1.20.5 Pre-Release 1
+|;From released versions before 1.20
+|107353|Ghast fireballs move incorrectly when hit with Knockback enchantment.
+|165435|Can't trigger flying mode in Creative while standing in the middle of 2×2 magma block bubble column.
+|188497|{{cd|AngerTime}} and {{cd|AngryAt}} cannot be set on summon.
+|207353|Ghast fireballs and wind charges can't be redirected in melee if the attack does 0 damage.
+|229209|Loot table function {{cd|set_count}} doesn't work with unstackable items anymore.
+|;From 1.20
+|263315|Attack target of hoglins/zoglins can't be detected by {{cmd|execute on target}}.
+|;From 1.20.1
+|264456|Entity targeted by frogs and axolotls can't be detected by {{cmd|execute on target}}.
+|265390|{{cmd|Forceload}} command provides wrong output.
+|;From 1.20.4
+|268000|The client crashes when using {{cmd|give}} to give players a skull.
+|269496|You don't get any damage if you fight against the breeze in a minecart or in a boat.
+|;dev
+|267934|Sending {{cd|ClientboundTransferPacket}} followed by disconnect just kicks the player.
+|268346|Jump can be used with {{cd|generic.jump_strength}} set to 0 resulting in a speed boost.
+|268947|Flying cannot be initiated reliably when the {{cd|minecraft:generic.gravity}} attribute is increased.
+|269191|Old villagers can't trade.
+|269192|Breeze is not affected by the '{{cmd|execute on target}}' command.
+|269266|Area effect cloud particles from creeper explosions are incorrectly tinted.
+|269320|Books with more than 100 pages get cut off when upgraded.
+|269357|Flow and guster banner pattern descriptions display as raw translation strings.
+|269366|Mace doesn't break decorated pots unlike other tools.
+|269501|The text above the hotbar has no background, even when the "Text Background" setting is "Everywhere" in Spectator mode.
+|269508|Player keeps vertical momentum when jumping when landing on the ground from sonic boom.
+|269609|Wind charges can harm the ender dragon while it perches atop the end portal, unlike arrows and tridents.
+|269610|Wind charges have the capability to harm the wither when it has reached half health or less.
+|269680|Game crashes when trying to save after modifying item stack to have a {{cd|max_stack_size}} below its current stack size.
+|269707|Brewing stand slots have artificial maximum stack size of 64.
+|269765|Mace damage does not reset after a hit while still falling.
+|269933|{{cd|limit_count}} item modifier can create overstacked items.
+|269947|Clicking spam with mace causes very high damage.
+|269948|The subtitle for the "{{cd|minecraft:event.mob_effect.raid_omen}}" sound event displays as a raw translation string.
+|269949|New "Raid Omen" effect texture is using Programmer Art evoker as base.
+|269954|Striking non-living entities with a mace enchanted with Wind Burst propels the player upward, even when they are flying.
+|269955|When flying in Creative mode, hitting ender dragons with a mace enchanted with Wind Burst pushes the player upward, unlike when attacking other mobs.
+|269959|"Not a list" printed to console when loading into a world.
+|269963|Bad Omen is not removed when experimental features are disabled.
+|269974|Mobs with the Weaving effect, when dying, are unable to replace replaceable blocks with cobwebs.
+|269976|Wind Burst book available from villager trading.
+|269977|Wind Burst enchantment is obtainable in enchanting table.
+|269980|Wind Burst enchantment triggers from normal attacks rather than smash attacks.
+|269986|Inactive ominous trial spawner's top texture is mirrored.
+|269993|Hitting wind charges using mace with Wind Burst creates very high upwards momentum.
+|269999|Potions of Infestation, Oozing and Weaving can be obtained without experimental features enabled.
+|270001|The particle '{{cd|minecraft:item minecraft:air}}' crashes the client.
+|270004|Giving yourself an item with a Wind Burst enchantment level higher than 3, then hitting certain entities crashes the game.
+|270005|Mace smash attack can be done multiple times from a single fall.
+|270046|Mace's unique enchant is ineffective or no further effect if the level higher than max level, and causes error to be logged for wind burst.
+|270048|Vault textures are inconsistent.
+|270060|The glowing parts of trial spawner textures are inconsistent.
+|270094|Fletcher sells new tipped arrows without experimental features enabled.
+|270099|Killing a mob with Weaving effect places cobwebs even if {{cd|mobGriefing}} is disabled.
+|270119|The contents slot for the {{cmd|item}} command does not function with shot arrows, tridents, and fireballs.
+|270125|Wind Burst can be obtained from chest and fishing loot.
+|270161|Wind Burst enchantment is significantly stronger on vehicle entities.
+|270201|Fishing rod line does not account for the scale attribute in third-person.
+|270236|{{cd|area_effect_cloud}} and lingering potions causing {{cd|potion_contents.custom_color}} to be slightly transparent.
+|;previous
+|270387|Wind burst can launch the player when deflecting ghast fireballs.
+|270412|Wind charge item crash on non-experimental worlds.
+|270475|Container component slot -1 crash.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|1YrDRVUFM7c|jTxTBxZwfnc}}
+
+== References == 
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:1.20.5-pre1]]
+[[es:Java Edition 1.20.5 Pre-Release 1]]
+[[fr:Édition Java 1.20.5 Pre-Release 1]]
+[[ja:Java Edition 1.20.5 Pre-Release 1]]
+[[lzh:爪哇版一點二〇點五之預一]]
+[[pt:Edição Java 1.20.5 Pre-release 1]]
+[[ru:1.20.5-pre1 (Java Edition)]]
+[[uk:1.20.5 Pre-Release 1 (Java Edition)]]
+[[zh:Java版1.20.5-pre1]]

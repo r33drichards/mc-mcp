@@ -1,0 +1,168 @@
+{{Infobox version
+|title=Minecraft 20w28a
+|edition=Java
+|image=20w28a.jpg
+|image2=Java Edition 20w28a.png
+|type=Snapshot
+|date=July 8, 2020
+|clienthash=1af89d3bb666c848e5640715b6aaa4c0fc5ae7d0
+|jsonhash=e95b4a625a675e85fd64bbffcc1c7e4b3e5513ec
+|serverhash=1e36d315d96c29d8d32aa8fecbfb8efa4243a746
+|clientmap=a148f69e5d66f1e67e7223ec19ad018481f82920
+|servermap=0d80cc20b2d18516090166f2d00e9b96bf530e76
+|parent=1.16.2
+|prevparent=1.16.1
+|prev=20w27a
+|next=20w29a
+|nextparent=1.16.3
+}}<onlyinclude>
+
+'''20w28a''' is the second [[snapshot]] for [[Java Edition 1.16.2]], released on July 8, 2020,<ref name="20w28a">{{snap|20w28a|July 8, 2020}}</ref> which adds experimental support for custom [[biome]]s and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Tag]]s'''
+* Added the <code>base_stone_nether</code> block tag.
+** Contains netherrack, basalt, and blackstone.
+** Used to determine what blocks [[ancient debris]] can replace.
+* Added the <code>base_stone_overworld</code> block tag.
+** Contains stone, granite, diorite, and andesite.
+** Used to determine what blocks dirt, gravel, granite, diorite, andesite, coal ore, iron ore, gold ore, redstone ore, diamond ore, lapis lazuli ore, and infested stone can replace when generated as underground ores.
+* Added the <code>stone_crafting_materials</code> item tag.
+** Contains cobblestone and blackstone.
+** Used in the {{mono|furnace.json}} advancement and recipe files.
+** Used in the {{mono|brewing_stand.json}} recipe file.
+
+== Changes ==
+=== Blocks ===
+'''[[Brewing stand]]s'''
+* Can now be crafted with [[blackstone]].
+** Determined by the <code>stone_crafting_materials</code> item tag.
+
+'''[[End portal (block)|End portals]]'''
+* Now teleport the player centered on the end platform instead of at the north-west corner of the block.
+
+'''[[Furnace]]s'''
+* The crafting recipe and recipe book unlock now use the <code>stone_crafting_materials</code> item tag.
+** This change is not noticeable in-game as this tag has the same contents as the old <code>furnace_materials</code> item tag.
+
+'''[[Potted cactus]]'''
+* Model now uses a cullface for the top.
+* No longer has a hole in the bottom: [[File:Potted Cactus UNKVER4 (facing NWU).png|32px]].
+
+=== Items ===
+'''[[Totem of undying]]'''
+* Now gives [[Fire Resistance]] II for 40 seconds when activated.
+
+=== Mobs ===
+'''[[Villager]]s'''
+* Now emit green particles when joining a [[village]], setting a home [[bed]], or acquiring a job site or profession to match {{BE}}.
+
+=== Gameplay ===
+'''[[Bartering]]'''
+* Various weights and item amounts have been changed.
+* [[Blackstone]], [[spectral arrow]]s, and [[water bottle]]s can now be obtained through bartering.
+* [[Glowstone dust]] and [[magma cream]] can no longer be obtained from bartering.
+
+=== General ===
+'''[[Custom]]'''
+* Custom worlds now support custom [[biome]]s.
+
+'''[[Data pack]]s'''
+* There is now experimental support for a <code>[[Custom world generation|worldgen]]</code> folder in data packs.
+** <code>worldgen/biome</code> can contain biome definitions.
+** <code>worldgen/configured_carver</code> can contain definitions for world carver settings.
+** <code>worldgen/configured_feature</code> can contain definitions for feature placements.
+** <code>worldgen/configured_structure_feature</code> can contain definitions for structure placements.
+** <code>worldgen/configured_surface_builder</code> can contain definitions for surfaces.
+** <code>worldgen/processor_list</code> can contain sets of block processors.
+** <code>worldgen/template_pool</code> can contain pool definitions for jigsaw structures.
+* Custom biomes can now be used in the single biome/caves/floating islands [[world type]]s after adding the data pack containing the biome first.
+* Custom biomes can now be used in custom [[dimension]] generators.
+
+'''[[Java Edition distance effects|Distance effects]]'''
+* Blobs no longer use 32-bit floats, causing them to generate in the correct shape regardless of position in the world and preventing a crash that could occur if the world border was moved out further via mods.
+
+'''GPU warnlist'''
+* Changed to no longer explicitly warn against Mesa and Gallium renderers and X.Org vendors, but instead just warn against anything with a version below 3.0.
+
+'''[[Server]]s'''
+* Dedicated servers can now rate limit clients.
+** Dedicated servers can now kick clients that consistently send too many packets within a second.
+** Controlled with the <code>rate-limit</code> settings in <code>[[server.properties]]</code>.
+** The default rate limit of 0 means "no limit".
+
+'''[[Tag]]s'''
+* Changed the <code>furnace_materials</code> item tag to <code>stone_crafting_materials</code>.
+
+'''World creation'''
+* Changed the description of the <code>doDaylightCycle</code> [[Commands/gamerule|gamerule]] from "Advance in-game time" to "Advance time of day".
+
+== Fixes ==
+{{Fixes|fixedin=20w28a
+|;From released versions before 1.16
+|34661|Thorns enchantment causes double armor decay.
+|65953|Tags {{cd|IsBaby}} and {{cd|IsVillager}} cannot be changed from true to false with {{cmd|entitydata}}.
+|80032|Horses can suffocate when going through nether portals
+|121098|Entering a tall portal that takes you to a short portal from the top causes you to take suffocation damage
+|131587|Deep frozen ocean biome does not generate with ice on the surface.
+|172221|Hoglins, zoglins, ravagers, iron golems, and polar bears do not walk down a block if they are partially walking on air.
+|179369|Wandering traders are always invisible in the nether and the end.
+|182868|Rail updates are 4–5x times laggier since 1.14 if the rail is on top of a non-full cube.
+|185925|Casting issue: blob generation uses 32-bit floats, leading to precision loss and potential crashes.
+|;From 1.16
+|171363|In the Nether forest biomes, large fungi and small plants generate only on the topmost layer of nylium, leaving all lower layers devoid of flora.
+|173526|All minecarts can survive in lava.
+|174479|Cannot place sea pickles on soul sand.
+|174520|Soul particle texture is incorrect for the first frame.
+|176753|Piglins stand around dropped golden items if their {{cd|CanPickUpLoot}} tag is set to {{cd|0b}}.
+|181204|{{cd|doDaylightCycle}} button slightly incorrectly labeled.
+|181233|Mobs cannot spawn on wooden trapdoors, but can on iron and nether fungus trapdoors.
+|182430|Piglins continuously try and fail to pick up gold ingots if they cannot reach them.
+|185684|Enderman can teleport when hit in cases where they previously would not teleport.
+|186627|Undead mobs do not burn in daylight in custom dimensions.
+|187112|Extra space in "Keep Jigsaws" button in jigsaw block.
+|187126|Jigsaw block UI is not closed when pressing "Generate."
+|187129|Jigsaw blocks do not generate the correct structure until "Done" is pressed and the UI is reopened.
+|187598|Block hitboxes still cause semi-transparent blocks not to render behind them in lower than "Fabulous" graphics settings.
+|188459|Potted cactus still missing cullface argument for top.
+|188534|Potted cactus missing bottom face.
+|189769|Fungi grows through fire.
+|190098|Structure size and offset still limited to 32 for dedicated servers.
+|190852|Advancement announcement message has switched brackets for right-to-left languages.
+|190856|{{cmd|list uuids}} shows parentheses incorrectly for right-to-left languages.
+|190860|'/' (slash) in chat and command block shows legacy formatting symbol for right-to-left languages.
+|190891|Certain redstone circuits causing lag.
+|190892|Brackets in potion effects are reversed in right-to-left languages.
+|191501|Opening a world from earlier 1.14 releases in 1.16 causes villagers to vanish.
+|;From 1.16.1
+|191571|Switched square brackets for right-to-left languages.
+|191579|Book signing GUI has broken formatting for right-to-left languages.
+|191656|Right-to-left languages do not perform as expected in Creative search menu.
+|191947|Entities that tick in a nether portal for one gametick do not get sent to the Nether.
+|192306|Crimson and warped slabs use incorrect colors on maps.
+|;From the previous development version
+|193073|Game crashes when piglins or piglin brutes convert to zombified piglins.
+|193089|Mobs do not get damaged anymore if they are in lava and water at the same time.
+|193125|Cannot use "Inventory" key to write in recipe book, it closes GUI instead (Default: "E").
+|193659|Parrots do not imitate piglin brutes.
+|;priv
+|80482|Packets aren't acceptably rate limited
+|192522|Private issue}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|xcQhAth2bpQ}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:20w28a]]
+[[es:Java Edition 20w28a]]
+[[fr:Édition Java 20w28a]]
+[[ja:Java Edition 20w28a]]
+[[pt:Edição Java 20w28a]]
+[[ru:20w28a (Java Edition)]]
+[[zh:Java版20w28a]]

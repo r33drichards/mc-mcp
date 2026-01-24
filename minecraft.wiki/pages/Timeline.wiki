@@ -1,0 +1,148 @@
+{{For|a timeline of the game's history|Chronology of events}}
+{{stub}}
+{{Exclusive|java}}
+
+'''Timelines''' control game behavior and visuals based on the absolute day time through [[environment attribute]]s.
+
+== JSON format ==
+
+<div class="treeview" style="margin-block-end: 1em;">
+* {{nbt|compound}}: The root element of the timeline.
+** {{nbt|integer|period_ticks}}: Optional. Defines the duration in ticks over which the timeline will repeat. If omitted, the timeline will not repeat.
+** {{nbt|compound|tracks}}: A map between namespaced [[environment attribute]] IDs and a corresponding attribute track object.
+*** {{nbt|compound|}}: An attribute track.
+**** {{nbt|string}}{{nbt|compound|ease}}: The easing type used to ease the interpolation between keyframes (see below). Default is {{code|linear}}. Note that easing only has an effect for attributes which support interpolation.
+***** {{nbt|string}}: One of the simple easing types shown below.
+***** {{nbt|compound}}: A cubic Bézier curve.
+****** {{nbt|list|cubic_bezier}}: A list of 4 {{nbt|double}} doubles providing the coordinates of the 2 control points in the order x1, y1, x2, y2.
+**** {{nbt|string|modifier}}: The ID of an [[Environment attribute#Modifiers|environment attribute modifier]]. The default is {{code|override}}.
+**** {{nbt|list|keyframes}}: A list of keyframes for the track.
+***** {{nbt|compound}}: A keyframe.
+****** {{nbt|integer|ticks}}: A value between 0 and {{code|period_ticks}} (if specified) which defines the tick within the period at which the keyframe's value will be active.
+****** {{nbt|compound|value}}: The value for the attribute modifier.
+</div>
+
+=== Easing types ===
+
+{{wip|section=1|Adding graphs for each of the easing types would be helpful.}}
+
+An easing type specifies the interpolation easing between keyframes of an attribute track.
+
+Two easing types are available which do not interpolate into or out from keyframes:
+
+{| class="wikitable"
+|-
+! Easing type
+! Behavior
+|-
+| {{code|constant}}
+| Always selects the value from the previous keyframe.
+|-
+| {{code|linear}}
+| Linearly interpolates between the previous and next keyframes, also known as {{w|linear interpolation|lerp}}.
+|}
+
+The rest of the easing types are all variations of a set of interpolation kinds, resized and moved to fit each segment of the track. Each is available in three forms; {{code|in_}}, {{code|out_}}, and {{code|in_out_}}. {{code|in_}} applies the easing ''from'' the value of a keyframe after it's been passed, {{code|out_}} applies the easing ''into'' the value of a keyframe before it's been passed, and {{code|in_out_}} combines the two and applies the easing both ''from'' a keyframe and ''into'' the next one.
+
+The types of easing which support {{code|in_}}, {{code|out_}}, and {{code|in_out_}} are as follows:
+
+{| class="wikitable"
+|-
+! Interpolation kind
+!Ease in
+!Ease out
+!Ease in and out
+!Easing behavior
+!Ease-out formula
+|-
+| {{code|back}}
+|{{code|in_back}}
+|{{code|out_back}}
+|{{code|in_out_back}}
+|Pulls back beyond the target value before easing into it.
+|<math>y = 1 + 2.70158 (x - 1)^3 + 1.70158(x - 1)^2</math>
+|-
+| {{code|bounce}}
+|{{code|in_bounce}}
+|{{code|out_bounce}}
+|{{code|in_out_bounce}}
+|Bounces against the target value 3 times before stopping.
+|<math>f(x) = \begin{cases}
+    7.5625 x^2, & \text{if }0 \le x < \frac4{11} \\
+    7.5625 \left(x - \frac6{11}\right)^2 + \frac34, & \text{if }\frac4{11} \le x < \frac8{11} \\
+    7.5625 \left(x - \frac9{11}\right)^2 + \frac{15}{16}, & \text{if }\frac8{11} \le x < \frac{10}{11} \\
+    7.5625 \left(x - \frac{21}{22}\right)^2 + \frac{63}{64}, & \text{if }\frac{10}{11} \le x \le 1
+\end{cases}</math>
+|-
+| {{code|circ}}
+|{{code|in_circ}}
+|{{code|out_circ}}
+|{{code|in_out_circ}}
+|Uses a circular curve to ease into the target value.
+|<math>y = \sqrt{1 - (x - 1)^2}</math>
+|-
+| {{code|elastic}}
+|{{code|in_elastic}}
+|{{code|out_elastic}}
+|{{code|in_out_elastic}}
+|Wobbles around the target value 4 times.
+|<math>y = 2^{-10 x} \sin\left(\frac{2 \pi}3 (10 x - 0.75) \right) + 1</math>
+|-
+| {{code|sine}}
+|{{code|in_sine}}
+|{{code|out_sine}}
+|{{code|in_out_sine}}
+|Eases into the target value with a sinusoidal curve.
+|<math>y = \sin\left(\frac{\pi x}2\right)</math>
+|-
+| {{code|quad}}
+|{{code|in_quad}}
+|{{code|out_quad}}
+|{{code|in_out_quad}}
+|A quadratic curve with its origin at the target value.
+|<math>y = 1 - (1 - x)^2</math>
+|-
+| {{code|cubic}}
+|{{code|in_cubic}}
+|{{code|out_cubic}}
+|{{code|in_out_cubic}}
+|A cubic curve with its origin at the target value.
+|<math>y = 1 - (1 - x)^3</math>
+|-
+| {{code|quart}}
+|{{code|in_quart}}
+|{{code|out_quart}}
+|{{code|in_out_quart}}
+|A quartic curve with its origin at the target value.
+|<math>y = 1 - (1 - x)^4</math>
+|-
+| {{code|quint}}
+|{{code|in_quint}}
+|{{code|out_quint}}
+|{{code|in_out_quint}}
+|A quintic curve with its origin at the target value.
+|<math>y = 1 - (1 - x)^5</math>
+|-
+| {{code|expo}}
+|{{code|in_expo}}
+|{{code|out_expo}}
+|{{code|in_out_expo}}
+|An exponential curve with its origin at the starting value.
+|<math>y = 1 - 2^{-10 x}</math>
+|}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.11|dev=25w45a|Added timelines to data packs.}}
+|{{HistoryLine|java upcoming}}
+|{{HistoryLine||26.1|dev=snap3|Added a {{cd|clock}} field: a world clock ID, specifies which world clock the timeline is tied to.|Added an optional {{cd|time_markers}} field, an optional map between namespaced Time Marker IDs and either an int or a Time Marker object.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Zeitleiste]]
+[[ja:タイムライン]]
+[[pt:Linha do tempo]]
+[[zh:时间线定义格式]]

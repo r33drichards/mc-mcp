@@ -1,0 +1,111 @@
+{{about|the command that runs time profiler and function trace|the performance profiler|Commands/perf|the jvm profiler|Commands/jfr|other uses of "debug"|Debug}}
+{{exclusive|java}}
+{{Infobox command
+|name=debug
+|oplevel=3
+}}
+
+Starts or stops a time profiler session. Gets more detailed information of function execution.
+
+== Syntax ==
+<code>debug start</code>
+: Starts a new debug time profiler session.
+<code>debug stop</code>
+: Stops the active debug time profiler session.
+<code>debug function <name></code>
+: Used the same way as [[Commands/function|/function]] to get more detailed information of commands' execution. Could not be called directly or indirectly by {{cmd|return run}} or another {{cmd|debug function}}.
+
+== Arguments ==
+{{argument|name|function}}
+: {{arg desc|je=function}}
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/debug start|A debug profiling session has already been started.|fail}}
+{{Result table|cmd=/debug stop|There's no debug profiling session running.}}
+{{Result table|cmd=/debug function|The specified functions or function tags do not exist.}}
+{{Result table|cmd=/debug function|This command execution is caused by {{cmd|return run}} or another {{cmd|debug function}}.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|N/A|0|0}}
+{{Output table|cmd=/debug start|On success|N/A|1|0}}
+{{Output table|cmd=/debug stop|On success|N/A|1|the average tps (ticks per second) during debug profiling}}
+{{Output table|cmd=/debug function|On success|N/A|1|the total number of commands in the functions}}
+{{Output table}}
+
+== File structure ==
+=== Function trace ===
+When using {{cmd|debug function|link=none}}, a txt file titled '''debug-trace-yyyy-MM-dd_HH.mm.ss.txt''' is created in <samp>.minecraft/debug</samp>.
+
+In this file,
+*<code>[C] <command></code> means the <code><command></code> is executed.
+*<code>[M] <message></code> means a message is returned.
+*<code>[E] <message></code> means a failure message is returned.
+*<code>[R = <num>] <command></code> means the <code><command></code> returns a '''brigadier return value'''.
+*<code>[C] <command> -> <num></code> means the <code><command></code> is executed and returns a '''brigadier return value'''.
+*<code>[F] <function> size=<num></code> means a function is called.
+
+For most commands, the '''brigadier return value''' is equal to the result value that can be stored with <code>/execute store result</code>.
+
+But for <code>/execute ...</code> '''with one or more of the following subcommands''', each branch returns its success value as its '''brigadier return value''':
+* <code>... if ...</code> (not at the end)
+* <code>... unless ...</code> (not at the end)
+* <code>... as <targets> ...</code>
+* <code>... at <targets> ...</code>
+* <code>... positioned as <targets> ...</code>
+* <code>... rotated as <targets> ...</code>
+* <code>... facing entity <targets> <anchor> ...</code>
+
+Some commands like <code>/return</code> and <code>/function</code> have no brigadier return value.
+
+=== Profile result ===
+{{Outdated feature|section=1}}
+When using {{cmd|debug stop|link=none}}, a txt file titled '''profile-results-yyyy-MM-dd_HH.mm.ss.txt''' is created in <samp>.minecraft/debug</samp>, which includes the result of profile dump.
+=== Report ===
+{{Outdated feature|section=1}}
+When using {{cmd|debug report|link=none}}, a ZIP file is created with in <samp>.minecraft/debug/profiling</samp> the following structure:
+<div class=treeview>
+* '''debug-report-yyyy-MM-dd_HH.mm.ss.zip'''
+** '''levels'''
+*** '''minecraft''' or '''<other custom namespaces>'''
+**** '''overworld''' or '''the_end''' or '''the_nether''' or '''<other custom dimensions>'''
+***** '''block_entities.csv''': Contains a list of [[block entities]] in the world in the format <code>x,y,z,type</code>.
+***** '''chunks.csv''': Contains a list of chunk information in the format {{cd|x,z,level,in_memory,status,full_status,accessible_ready,ticking_ready,entity_ticking_ready,ticket,spawning,entity_count,block_entity_count}}.
+***** '''entities.csv''': Contains a list of [[entities]] in the world in the format {{cd|x,y,z,uuid,type,alive,custom_name}}.
+***** '''example_crash.txt''': An example crash file.
+***** '''stats.txt''': Contains some stats.
+** '''classpath.txt''': Contains the file paths of the external jars ''Minecraft'' uses.
+** '''example_crash.txt''': An example crash file.
+** '''gamerules.txt''': A plain text file containing a list of [[game rule]]s and their values (<code><gamerule>=<value></code>).
+** '''stats.txt''': Contains some stats.
+** '''threads.txt''': All running threads.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.3.1|dev=12w27a|Added {{cmd|debug|link=none}}.}}
+|{{HistoryLine||1.8|dev=14w31a|{{cmd|debug|link=none}} can now be run in single-player.
+|Added {{cmd|debug chunk|link=none}}.}}
+|{{HistoryLine||1.8.1|dev=pre1|Removed {{cmd|debug chunk|link=none}}.}}
+|{{HistoryLine||1.13|dev=18w03a|Added commands to the profiler.}}
+|{{HistoryLine||1.14.4|dev=pre1|Added {{cmd|debug report|link=none}}, used to get more detailed information while debugging performance.}}
+|{{HistoryLine||1.17|dev=21w15a|Added {{cmd|debug function|link=none}}.}}
+|{{HistoryLine|||dev=Pre-release 1|Removed {{cmd|debug report|link=none}}. Replaced by F3+L and {{cmd|perf|link=none}}.}}
+|{{HistoryLine||1.20.3|dev=23w41a|Now the result value of {{cmd|debug function|link=none}} is the total number of commands in the functions.
+|Now {{cmd|debug function|link=none}} cannot be called by {{cmd|debug function|link=none}}.}}
+|{{HistoryLine|||dev=23w44a|Now {{cmd|debug function|link=none}} cannot be called by {{cmd|return run}}.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/debug]]
+[[ja:コマンド/debug]]
+[[pt:Comandos/debug]]
+[[ru:Команды консоли/debug]]
+[[zh:命令/debug]]

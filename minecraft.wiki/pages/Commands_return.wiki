@@ -1,0 +1,99 @@
+{{exclusive|java}}
+{{Infobox command
+|name=return
+|oplevel=2
+}}
+A command that can be embedded inside a [[Function (Java Edition)|function]] to control its execution.
+
+It ends function execution and sets the successfulness and the return value of the function, which is returned to the {{cmd|function}} command as its [[Commands/function#Output|output values]], or the {{cmd|execute if function ...}} command to test.
+
+It can also end a forking {{cmd|execute}} command that has multiple [[Commands/execute#Subcommands and forking|branches]] at the first branch.
+
+== Usage ==
+By placing this command in a function, the function can be stopped at a certain line, and the return value and the successfulness of the function are set.
+* If the function is called by a {{cmd|function}} command, the '''return value''' and '''successfulness''' are returned to the {{cmd|function}} command as its [[Commands/function#Output|output values]], and then can be stored using {{cmd|execute store}}.
+* If the function is called by a {{cmd|execute if function}} command, the '''return value''' is checked whether it is not <code>0</code>.
+
+Like other commands, following a {{cmd|execute (if{{!}}unless) ... run}} or a forking {{cmd|execute}} command that may [[Commands/execute#Subcommands and forking|terminate]], this command can be restricted to only execute under certain conditions. With this, under different conditions a function can end at different lines, thus achieving more complex behaviors. For example, the following function simulates an if-else statement:
+<syntaxhighlight lang="mcfunction">
+# if (@s[tag=test1]) then return function("test1")
+execute if entity @s[tag=test1] run return run function test1
+# else if (@s[type=player]) then return function("test2")
+execute if entity @s[type=player] run return run function test2
+# else return function("test3")
+return run function test3
+</syntaxhighlight>
+
+Following a forking {{cmd|execute}} command that has multiple [[Commands/execute#Subcommands and forking|branches]], the {{cmd|execute}} command also ends after the first execution of the {{cmd|return|link=none}} command. So, only the first branch is executed. This can be used to ensure a command is executed only once. For example: <code>/execute as @e[type=zombie,sort=nearest] at @s if block ~ ~-1 ~ grass_block run '''return run''' tp @s Steve</code> teleports the nearest one zombie that is on a grass block to Steve, if such a zombie exists. Note this command in a function also ends the function.
+
+Followed by a forking {{cmd|execute}} command that has multiple [[Commands/execute#Subcommands and forking|branches]], the {{cmd|execute}} command also ends after the first branch execution.
+
+The only difference between <code>return run execute ... run <''command''></code> and <code>execute ... run return run <''command''></code> is that in the first instance, the {{cmd|return|link=none}} command always executes, and it returns a failure and a <code>0</code> value when the {{cmd|execute}} command terminates; While the {{cmd|return|link=none}} command in the second instance does not execute when the {{cmd|execute}} command terminates.
+
+Followed by a {{cmd|function}} command that calls multiple functions in a tag, the whole {{cmd|function}} command also ends after the first execution of the {{cmd|return|link=none}} command in any of the functions. See also the {{cmd|function}} article.
+
+The {{cmd|return|link=none}} command sets the return value and the successfulness of a function if it is executed in the function. They are returned to the {{cmd|function}} or the {{cmd|execute if function ...}} command that is calling the function. However, the {{cmd|return|link=none}} command itself also has its [[#Output|output values]]. Following a {{cmd|execute store ... run}} command, its <code>success</code> value and <code>result</code> value of the {{cmd|return|link=none}} command can be stored while it ends the {{cmd|execute}} command and the function. Directly executed in a command block, the success count of the {{cmd|return|link=none}} command is recorded by the command block.
+
+== Syntax ==
+<code>return <value></code>
+:Ends the function to which it belongs with a success, and sets the return value of the function to the specified integer value.
+<code>return fail</code>
+:Ends the function with a failure and a return value of <code>0</code>.
+<code>return run <''command''></code>
+:Executes the command specified in <code><''command''></code>, ends the function to which it belongs, and sets the '''successfulness''' and '''return value''' of the function to the '''<code>success</code> value''' and '''<code>result</code> value''' of that command. If the command is a forking {{cmd|execute}}, only the first branch is executed.
+
+== Arguments ==
+{{argument|value|integer}}
+: An integer value to use as the return value of the {{cd|function}}.
+: {{arg desc|je=integer}}
+{{argument|''command''}}
+: A command to execute.
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/return fail|Always.|fail}}
+{{Result table|cmd=/return run <''command''>|the {{cd|<''command''>}} fails (If the command is an {{cmd|execute}} command, the first branch fails)}}
+{{Result table|the {{cd|<''command''>}} is {{cmd|execute}}, and the {{cmd|execute}} command [[Commands/execute#Subcommands and forking|terminates]]}}
+{{Result table|the {{cd|<''command''>}} is {{cmd|function}}, and the {{cmd|function}} command is [[Commands/function#Result|void]]}}
+{{Result table|the {{cd|<''command''>}} is {{cmd|execute ... run function}}, and the {{cmd|function}} command in the first branch of {{cmd|execute}} command is void}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table|onlyje=1}}
+{{Output table|edition=je|cmd=/return <value>|On success|1|1|the value of {{cd|<value>}}.}}
+{{Output table|cmd=/return fail|On fail|0|0|0}}
+{{Output table|cmd=/return run <''command''>|On fail|0|0|0}}
+{{Output table|On success|1|1|the <code>result</code> value of {{cd|<command>}}. (If the command is {{cmd|execute}}, the <code>result</code> value of the first branch)}}
+{{Output table}}
+
+Above are the outputs of the {{cmd|return|link=none}} command itself. And the successfulness and the return value of the function are also set if the {{cmd|return|link=none}} command is executed in a function. The successfulness of the function equals to the <code>success</code> value of the {{cmd|return|link=none}} command. The return value of the function equals to the <code>result</code> value of the {{cmd|return|link=none}} command.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20|dev=23w16a|Added {{cd|return}}.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Added a new subcommand <code>run</code>.}}
+|{{HistoryLine|||dev=1.20.2 Pre-release 1|Temporarily removed syntax {{cmd|link=none|return run}}.}}
+|{{HistoryLine||1.20.3|dev=23w41a|Reintroduced subcommand <code>run</code>.}}
+|{{HistoryLine|||dev=23w44a|If {{cmd|link=none|function <''function tag''>}} runs multiple functions in combination with {{cmd|link=none|return run}}, execution stops after first {{cmd|link=none|return}} in any of the functions.
+|A single call to the {{cmd|link=none|function}} command always returns when run with {{cmd|link=none|return run}}. For example, {{cmd|link=none|return run execute ''[split context]'' run function ''<some function with conditional return>''}} always returns after processing the first context.
+|Added subcommand <code>fail</code>.
+|{{cmd|link=none|return run}} now always returns. If there are no valid results from returned command, function containing {{cmd|link=none|return run}} fails.
+|{{cmd|link=none|return run}} now propagates success value together with results value (previously it always set success to <code>1</code>).
+|{{cmd|link=none|return run}} now also allows storing values, which means {{cmd|link=none|execute store ... run return run ''some_command''}} both stores value and returns it outside function.}}
+|{{HistoryLine||1.20.5|dev=23w51a|Fixed a bug that <code>/return run function <function></code> does not return under some conditions.<ref>{{bug|MC-267194|||fixed}}</ref>}}
+}}
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/return]]
+[[ja:コマンド/return]]
+[[lzh:令/return]]
+[[pt:Comandos/return]]
+[[zh:命令/return]]

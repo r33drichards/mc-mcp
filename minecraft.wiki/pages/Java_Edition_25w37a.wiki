@@ -1,0 +1,195 @@
+{{Infobox version
+|title=Minecraft 25w37a
+|image=25w37a.jpg
+|image2=Java Edition 25w37a.png
+|edition=Java
+|type=Snapshot
+|date=September 9, 2025
+|jsonhash=a3b3ac6c93468a31e4a94f589d625f26e0305570
+|clienthash=2d091382632a915e9dd1690b658fe025bd4533bf
+|clientmap=23834bc959ea1cdb405ab147c01699c7ebe23676
+|serverhash=9675164bd7a8ec5a876a05ac96637c77e9d82a24
+|servermap=b5eb11bfa30cc782b5c8510691fe082afd6c1c22
+|parent=1.21.9
+|prevparent=1.21.8
+|prev=25w36b
+|next=1.21.9 Pre-Release 1
+|nextparent=1.21.10
+}}<onlyinclude>
+
+'''25w37a''' is the ninth and final [[snapshot]] for [[Java Edition 1.21.9]], released on September 9, 2025.<ref>{{snap|25w37a|id=a|September 9, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Game rule]]s'''
+* Added <code>spawnerBlocksEnabled</code> game rule controlling if [[spawner]] blocks should be enabled or not.
+** Default to <code>true</code>.
+
+== Changes ==
+=== Blocks ===
+'''[[Test instance block]]'''
+* Test instance blocks now preserve error markers between world reloads.
+
+=== Mobs ===
+'''General'''
+* Logic for choosing type of equipment for [[geared mobs]] has been tweaked to add [[copper]] as a possibility.
+** The initial roll to choose a type now chooses between [[leather]], [[copper]] and [[gold]].
+** The chance to increase an armor tier has increased from 9.5% to 10.87%.
+
+[[File:Copper Golem JE1 BE1.png|width=43x43]] '''[[Copper golem]]'''
+* The hitbox has been tweaked.
+** The hitbox is now 0.49 blocks in width to be able to pathfind through narrow spaces.
+* Can now open [[door]]s.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|87.0}}.
+
+'''[[Debug property|Debug features]]'''
+* Some debug features that were previously removed during compilation are now preserved and can be used by players.
+* Individual values can be enabled with JVM properties:
+** First, a global debug flag must be enabled with {{cd|-DMC_DEBUG_ENABLED}} or {{cd|1=-DMC_DEBUG_ENABLED=true}}.
+** Then, a specific feature can be enabled, for example {{cd|-DMC_DEBUG_BRAIN}} or {{cd|1=-DMC_DEBUG_BRAIN=true}}.
+** To get the list of all available debug properties, add {{cd|-DMC_DEBUG_PRINT_PROPERTIES}}.
+* Warning: this is debug code. It must be handled with extreme care.
+** This is an advanced feature, meant to help modders - it should not be used for normal play.
+** Features not guaranteed to work as intended.
+** It might crash the player's game or corrupt their worlds.
+** Individual options might be added, changed or removed without a notice.
+
+'''Game library updates'''
+* Rendering is now using OpenGL 3.3 core profile.
+
+'''[[Game mode switcher]]'''
+* Switching from [[Spectator mode]] to [[Creative mode]] no longer causes the player to stop flying.
+** Instead, flight now only gets disabled when switching game modes if the player is near the ground.
+*** A player is considered to be near the ground if there is a collidable surface (i.e. blocks, [[happy ghast]]s, [[boat]]s...) within 1 block below them.
+** Flight will not get disabled if the player was inside a block or collidable entity.
+*** This is to prevent players from suddenly falling through the ground.
+
+'''[[Game rule]]s'''
+*<code>enableCommandBlocks</code> was renamed to <code>commandBlocksEnabled</code>, to match ''Bedrock Edition''.
+
+'''[[Light]]'''
+* Ambient lighting on entities has been adjusted to be more visually in line with blocks and other parts of the game.
+** The underside of flat surfaces will now be lit from that direction, instead of the opposite direction.
+** This mainly affects models containing cubes that are either flat or "hollow" such as: worn [[armor]], worn [[elytra]], the outside layers on player skins, the ribcages of [[skeleton]]s or [[skeleton horse]]s, the feet of [[chicken]]s or [[frog]]s, the wings of [[phantom]]s or the [[ender dragon]], the fins on [[fish]], and more.
+
+'''[[Minecraft Server Management Protocol]]'''
+* Clients must authenticate to access the API.
+** Clients should supply an Authorization bearer token header with a server specific secret.
+** The secret is configured in the server properties file:
+*** <code>management-server-secret=</code>
+*** The secret should be exactly 40 alphanumeric characters (A-Z, a-z, 0-9).
+*** The secret will be automatically generated if the server property is empty.
+*** Unauthorized requests are rejected with 401 Unauthorized.
+* TLS is enabled by default.
+** Can be disabled in the server properties file:
+*** <code>management-server-tls-enabled=false</code>
+** Requires a keystore file to be set in the server properties file.
+*** <code>management-server-tls-keystore=path/to/keystore.p12</code>
+** The keystore file must be in PKCS12 format.
+** Keystore password can be set in the following ways, in order of priority.0
+*** Environment variable: <code>MINECRAFT_MANAGEMENT_TLS_KEYSTORE_PASSWORD</code>
+*** JVM argument: <code>-Dmanagement.tls.keystore.password=</code>
+*** Server property: <code>management-server-tls-keystore-password=</code>
+
+'''[[Options]]'''
+* Some sound sliders in the Music & Sound options now play a preview sound when adjusting the setting outside a world.
+* The Resource Pack and Data Pack selection screens now have a search box.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|69.0}}.
+
+'''[[Server properties]]'''
+* Default value of <code>management-server-port</code> was changed from <code>25585</code> to <code>0</code>, assigning an available port each time management server is started.
+* Added server property <code>management-server-tls-enabled</code> controlling whether the Minecraft Server Management Protocol uses TLS or not.
+** Defaults to <code>true</code>.
+* Added server property <code>management-server-tls-keystore</code> controlling the path to the keystore file used for TLS.
+** Defaults to an empty string.
+** A dedicated server won't start when TLS is enabled and no keystore is provided.
+* Added server property <code>management-server-tls-keystore-password</code> controlling the password to the keystore file used for TLS.
+** Defaults to an empty string.
+
+'''[[Shaders]]'''
+* A new <code>PER_FACE_LIGHTING</code> flag has been added to the following shaders:
+** <samp>core/entity.vsh</samp>
+** <samp>core/entity.fsh</samp>
+* When set, cardinal lighting will be computed separately for front- and back-faces.
+* As the game now requires OpenGL 3.3, the version of all shaders are bumped from <code>150</code> to <code>330</code>.
+
+'''[[Splashes]]'''
+* Changed the splash "Now on OpenGL 3.2 core profile!" to "Now on OpenGL 3.3 core profile!"
+
+'''[[Textures]]'''
+* Moved the result slot of <samp>gui/container/villager.png</samp> up by one pixel.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w37a
+|;From released versions before 1.21
+|220913|Parity issue: Adjusting slider in the sound settings when not being in a world does not play a sound of that category.
+|254052|{{cmd|locate}} doesn't work outside build limit.
+|;From 1.21.5
+|295841|Interactive collision check path is broken.
+|;From 1.21.8
+|301494|Falling particles no longer appear from floating sand or gravel.
+|301510|GUI sprites nine slice performance regression.
+|;dev
+|300076|Copper golems remain completely stationary while searching chests, causing them to float and making them unable to receive knockback or be pushed.
+|300299|Copper Golems can open chests that are blocked.
+|300723|Second armor layer is still not rendering properly on all pieces.
+|301294|Higher tiers of mob armor are unreasonably less common than they were before 25w31a.
+|301506|Parity issue: Copper golems can't open doors.
+|301531|Server Management Protocol returns wrong response for invalid method IDs.
+|301547|Switching from Spectator mode to Creative mode now makes you fall out of the sky.
+|301554|Management protocol doesn't support batched requests.
+|301558|Copper golems can't pathfind through thin blocks.
+|301563|When you have the darkness potion effect, the chat, letters and words in the pause menu, items, F3 will darken.
+|301564|Management protocol doesn't support string-based request IDs.
+|301574|The <code>spawnMonsters</code> game rule does not take effect when switched.
+|301593|Monsters can spawn from spawners with the "<code>spawnMonsters</code>" game rule set to <code>false</code>.
+|301599|Action key getting stuck on when entering an interface so you are unable to exit without it reopening instantly.
+|301620|Banner animation is not independent when two banners are rendered.
+|301661|Server Management Protocol prints some incorrectly formatted messages in the console.
+|301711|The name of the "<code>enableCommandBlocks</code>" game rule is inconsistent with Bedrock Edition.
+|301748|Striking a Lightning Rod with non-default oxidation level with Lightning keeps nearby redstone components powered.
+|301751|The client crashes when in the vicinity of a mannequin spawner.
+|301752|Mannequins with <code>profile.model</code> set to "<code>wide</code>" render as a Steve skin.
+|301758|Shield model clips through shelves.
+|301759|Elements within the realms “Worlds” tab are not selected in order when using the {{key|TAB}} key.
+|;prev
+|301766|Heads and skulls appear too high when placed on shelf.
+|301768|Structure blocks frame is not displayed when in spectator mode.
+|301785|Squid ink particles are yellow.
+|301811|Loot from suspicious blocks does not render while brushing.
+|301833|Text of <code>text_display</code> entities is darker when "<code>see_through</code>" property is set to <code>true</code>.
+|301869|The specification for the <code>minecraft:ip_bans</code> server management method says it returns an array of players even though it returns an array of <code>ip_ban</code> objects.
+|301870|Command feedback for successful {{cmd|ban}} and {{cmd|ban-ip}} commands with no specified reason can't be sent to the client.
+|301889|Documented return type does not match for clear methods in server managment protocol.
+|301891|Server management method <code>minecraft:bans/clear</code> clears allowlist, not bans.
+|301899|The output slot in the trading GUI is misaligned with other slots.
+|301903|Dropped chests, including variants, are no longer translated upward.
+|301935|Chests render on the bottom of shelves even though other items don't.
+|301952|Conduit visual bug.
+
+|otherissuescount=1
+}}</onlyinclude>
+* Fixed a bug where breaking a shelf while another player is interacting with it could lead to visual bugs in the player inventory.
+
+== Videos ==
+{{slicedlime|Bu1O2wH0BCg}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w37a]]
+[[fr:Édition Java 25w37a]]
+[[ja:Java Edition 25w37a]]
+[[lzh:二五週三七甲]]
+[[pt:Edição Java 25w37a]]
+[[ru:25w37a (Java Edition)]]
+[[uk:25w37a (Java Edition)]]
+[[zh:Java版25w37a]]

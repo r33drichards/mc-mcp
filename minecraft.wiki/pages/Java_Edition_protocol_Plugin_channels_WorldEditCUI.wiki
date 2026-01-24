@@ -1,0 +1,239 @@
+[http://www.enginehub.org/worldedit/ WorldEdit] uses [[plugin channel]]s to communicate with the clientside [http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1292886-worldeditcui/ WorldEditCUI] mod to display selections.  Client-side source code: https://github.com/Mumfrey/WorldEditCUI/
+
+This is a (very) rough documentation of those channels that I'll improve.
+
+== Selection types ==
+
+There are several types of selections.  Each type has a format used with current versions of WorldEditCUI and a second format used in older versions (usually a cube with similar edges).
+
+=== Cuboid ===
+
+A basic rectangular selection, with minimum and maximum points.
+
+Minimum protocol version: 0
+
+; Current version and legacy versions
+
+Shape ID is <code>cuboid</code>.
+
+If the selection has a position one (left click), it is sent with as a Point with an id of 0.  If the selection has a position two (right click), it is sent with as a Point with an id of 1.
+
+; Current version example
+
+Creating a cuboid from (9, 25, 32) to (19, 26, 45):
+
+<pre>
+s|cuboid
+p|0|9|25|32|1
+p|1|19|26|45|308
+</pre>
+
+=== Ellipsoid ===
+
+Ellipsoid selections form 3-dimensional ellipses and spheres.  They have a center, and then x, y, and z radii (measured from the center).
+
+Minimum protocol version: 1
+
+; Current version
+
+Shape ID is <code>ellipsoid</code>.
+
+An ellipsoid point with id 0 is sent for the center, and an ellipsoid point with id 1 is sent to set the radii (these are distances, not coordinates).
+
+; Current version example
+
+Creates an ellipsoid at 64, 72, 48 with radii of 2, 4, and 8.
+
+<pre>
+s|ellipsoid
+e|0|64|72|48
+e|1|2|4|8
+</pre>
+
+Creates a sphere with a radius of 24 at 128, 128, 128.
+
+<pre>
+s|ellipsoid
+e|0|128|128|128
+e|1|24|24|24
+</pre>
+
+; Legacy versions
+
+Ellipsoid regions are sent as cuboids with their minimum and maximum positions in legacy versions.
+
+=== Cylinder ===
+
+A vertical cylinder selection.
+
+Minimum protocol version: 1
+
+; Current version
+
+Shape ID is <code>cylinder</code>.
+
+A cylinder packet is sent with the center and radius, and then a min/max packet is sent to set the bottom and top of the selection.
+
+; Current version example
+
+Creates a cylinder centered on 24, 24 with radii of 8 and 4 starting at y=32 and ending at y=64.
+
+<pre>
+s|cylinder
+cyl|24|48|24|8|4
+mm|32|64
+</pre>
+
+; Legacy versions
+
+Sent as a cuboid with the minimum and maximum positions.
+
+=== 2D Polygon ===
+
+A 2-dimensional, flat polygon.
+
+Minimum protocol version: 0
+
+; Current and legacy versions
+
+Shape ID: <code>polygon2d</code>
+
+For all of the points in the selection, a Point 2D packet is sent with the point's x and z coordinates.  Then, a min/max packet is sent to set the bottom and top of the selection.
+
+; Current version example
+
+Creates a rotated square around 0, 0 that starts at y=32 and ends at y=70.
+
+<pre>
+s|polygon2d
+p2|0|0|25|1
+p2|1|25|0|25
+p2|2|0|-25|625
+p2|3|-25|0|1250
+mm|32|70
+</pre>
+
+=== 3D Polyhedron ===
+
+A 3-dimensional polygonal selection.
+
+Minimum protocol version: 3
+
+; Current version
+
+Shape ID is <code>polyhedron</code>.
+
+For each point in the polyhedron, a Point packet is sent with the x, y, and z coordinates.  Then, for each triangle in the selection, a Polygon packet is sent with vertices set to the index of each point that makes up the triangle.
+
+; Current version example
+
+Creates a [[Wikipedia:tetrahedron|tetrahedron]] around 9, 9, 9.
+
+<pre>
+s|polyhedron
+p|0|8|8|8|1
+p|1|8|8|10|3
+p|2|10|8|9|6
+p|3|9|10|9|10
+poly|0|1|2
+poly|0|1|3
+poly|0|2|3
+poly|1|2|3
+</pre>
+; Legacy versions
+
+Sent as a cuboid with the minimum and maximum positions.
+
+== Packet structure ==
+
+All communication is performed over the <code>WECUI</code> plugin channel.  The content sent on this channel is sent in the form of UTF8 strings, which are not length prefixed and take up the whole channel (length can be determined from the rest of the plugin channel packet's structure).  In other words, the entire payload is a single string.
+
+The content of the String is first an action, followed by a list of parameters separated by <code>|</code>.  To enable this packet, the client must first [[Plugin Channel#REGISTER|<code>REGISTER</code>]] the channel and then send a version packet.
+
+=== Version ===
+
+[https://github.com/sk89q/WorldEdit/blob/935de4c93db215d5573916899a5cc8eefe159bab/worldedit-core/src/main/java/com/sk89q/worldedit/LocalSession.java#L776-L784  Parsed in LocalSession.java]
+
+The version packet tells the server what types of selections it understands.  The version is a single integer, currently ranging from 0 to 3.  See the list of selection types for what various versions control.
+
+<code>v|{version}</code>
+
+Example:
+
+<code>v|3</code> tells the server that it is running the latest version.
+
+=== Shape ===
+
+The <code>s</code> packet tells the client the current selection shape.  The shape is determined from the shape ID of the selection (or its legacy shape ID).  Upon receiving this packet, all other data about the current selection is cleared by the client - the remaining data needs to be resent afterwards.
+
+<code>s|{shape}</code>
+
+Example:
+
+<code>s|cuboid</code> sets the current shape to cuboid and clears the current points on the selection.
+
+=== Point ===
+
+The <code>p</code> packet sets the location of one of the points in the current selection.  It has 5 fields, the ID, the x, y, and z coordinates, and the total area of the selection.
+
+The significance of each ID is defined by the current selection shape; they may be corners or vertices.
+
+<code>p|{id}|{x}|{y}|{z}|{total area}</code>
+
+Example:
+
+<code>p|0|4|5|6|1</code> sets the first selection point to 4, 5, 6 in a cuboid selection.
+<code>p|1|9|7|5|10</code> sets the second selection point to 9, 7, 5 in a cuboid selection, and (when following the previous selection) completes a cuboid from 4, 5, 6 to 9, 7, 5.
+
+=== Ellipsoid Point ===
+
+The <code>e</code> packet sets information about ellipsoids.  It has 4 fields: the id, and x, y, and z values.  If ID is 0, x, y, and z represent the center of the ellipsoid; if it's 1, x, y, and z are radii.
+
+<code>e|{id}|{x}|{y}|{z}</code>
+
+Example:
+
+<code>e|0|10|42|30</code> sets the center of the ellipsoid to 10, 42, 30.
+<code>e|1|5|4|3</code> sets the radii to 5, 4, and 3.
+<code>e|1|9|9|9</code> makes the ellipsoid a sphere with radius of 9.
+
+=== Point 2D ===
+
+The <code>p2</code> packet sets the location of one of the points in the current selection, two-dimensionally.  It has 4 fields: the id, the block x and z, and the total area.  This packet is used with polygonal selections, so there is no cap on the maximum ID.
+
+<code>p2|{id}|{x}|{z}|{area}</code>
+
+Example:
+
+<code>p2|0|4|9|1</code> sets the first point to 4, 9.
+
+=== Cylinder ===
+
+The <code>cyl</code> packet sets info about a cylindrical selection.  It has 5 fields: the x, y, and z of the center and then the radius x and z.  The y coordinate is the center of the cylinder; the height is later set with min/max.
+
+<code>cyl|{centerX}|{centerY}|{centerZ}|{radX}|{radZ}</code>
+
+Example:
+
+<code>cyl|5|10|5|2|2</code> creates a cylinder centered on 5, 10, 5 with a radius of 2.
+
+=== Min/Max ===
+
+The <code>mm</code> packet sets minimum and maximum Y coordinates of a 2D selection.  It has two fields, the minimum and the maximum.
+
+<code>mm|{min}|{max}</code>
+
+Example:
+
+<code>mm|7|20</code> sets the minimum Y coordinate to 7 and the maximum Y coordinate to 20.
+
+=== Polygon ===
+
+The <code>poly</code> packet sets polygons in a polyhedral selection.  It has an array of 3 (although it may be possible to add more) values, which are indexes in the points list.  Multiple poly packets do not overwrite the first one but instead add additional polygons.
+
+<code>poly|{vertex1}|{vertex2}|{vertex3}</code>
+
+Example:
+
+<code>poly|0|1|2</code> creates a triangle with vertices of point 0, point 1, and point 2.
+{{license wiki.vg}}

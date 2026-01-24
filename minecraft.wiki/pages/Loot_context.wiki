@@ -1,0 +1,242 @@
+{{exclusive|java}}
+
+A '''loot context''' is a set of parameters available to [[loot table]]s, [[predicate]]s, [[item modifier]]s, and number providers. As different uses have different available parameters, a loot context is used to determine if a given loot table or predicate is valid to that use case, allowing this check to be done when the data pack is loaded, rather than at runtime.
+
+== Loot context types and uses ==
+
+=== Used in loot tables ===
+These loot context types are used in [[loot tables]] and can be set as the {{nbt|string|type}} of a loot table.
+{| class="wikitable" data-description="Invocation methods for predicates and loot functions"
+! scope="col" | Loot context type
+! scope="col" | When it is used
+! scope="col" | Loot context parameters that ''are'' supplied
+! scope="col" | Loot context parameters that ''may be'' supplied
+|-
+| {{cd|empty}} || 
+* Used only by the hardcoded empty loot table. Supplies no loot context parameters. 
+* Specifying {{cd|"type":"empty"}} means no context parameters can be used in this loot table.
+| None || None
+|-
+| {{cd|chest}} ||
+* Opening of a container with loot table (can be {{BlockLink|barrel}}, {{BlockLink|chest}}, {{BlockLink|trapped chest}}, {{BlockLink|hopper}}, {{EntityLink|minecart with chest}}, {{EntityLink|id=oak boat with chest|boat with chest}}, {{EntityLink|minecart with hopper}}, {{BlockLink|dispenser}}, {{BlockLink|dropper}}, {{BlockLink|shulker box}}, {{BlockLink|id=shulker boxes|link=Dyed Shulker Box|dyed shulker box}}, and {{BlockLink|decorated pot}}).
+* The command {{cmd|loot &hellip; loot &lt;loot_table&gt;}}.
+|
+* '''Origin:''' The center of the chest.
+|
+* '''{{cd|this}} entity:''' The entity that opened the chest.
+|-
+| {{cd|fishing}} ||
+* [[Fishing]].
+* The command {{cmd|loot &hellip; fish &lt;loot_table&gt;}}.
+|
+* '''Origin:''' The position of the fishing bobber.
+* '''Tool:''' The fishing rod item that the player cast
+|
+* '''{{cd|this}} entity:''' The fishing bobber.
+|-
+| {{cd|entity}} ||
+* Loot from a living entity's death.
+* The command {{cmd|loot &hellip; kill &lt;target&gt;}}.
+|
+* '''{{cd|this}} entity:''' The entity that died.
+* '''Origin:''' The location of the entity's death.
+* '''Damage source:''' The source of the damage that caused the entity to die.
+|
+* '''{{cd|attacker}} entity:''' The entity that was the source of the final damage to the victim entity.
+* '''{{cd|direct_attacker}} entity:''' The entity that directly contacted the victim entity to kill them.
+* '''{{cd|attacking_player}} entity:''' The player that most recently damaged the victim entity.
+|-
+| {{cd|equipment}} ||
+* Used when equipping mobs spawned from a [[Monster Spawner]], [[Minecart with Monster Spawner]] or [[Trial Spawner]].
+|
+* '''Origin:''' The position of the entity being spawned.
+* '''{{cd|this}} entity:''' The entity being spawned.
+|
+|-
+| {{cd|archaeology}} ||
+* Using a [[brush]] on [[suspicious sand]] or [[suspicious gravel]] that has a loot table.
+|
+* '''Origin:''' The center of the suspicious block.
+* '''{{cd|this}} entity:''' The entity that used the brush on the suspicious block.
+* '''Tool:''' The tool used for brushing.
+|
+|-
+| {{cd|vault}} ||
+* Display of items inside of a {{BlockLink|vault}}.
+* Opening of a {{BlockLink|vault}}.
+|
+* '''Origin:''' The center of the vault.
+|
+* '''{{cd|this}} entity:''' The entity that opened the vault. Not present for item display inside vaults.
+* '''Tool:''' The item used as a key.
+|-
+| {{cd|gift}} ||
+* Gift from a cat, villager or sniffer.
+* Item laid by a chicken.
+|
+* '''Origin:''' The cat, villager or sniffer's location.
+* '''{{cd|this}} entity:''' The cat, villager or sniffer that gave the gift. / The chicken that laid the item.
+|
+|-
+| {{cd|barter}} ||
+* [[Bartering]] with piglins.
+|
+* '''{{cd|this}} entity:''' The piglin bartered with.
+|
+|-
+| {{cd|advancement_reward}} ||
+* Loot table set as an [[Advancement/JSON_format|advancement's reward]].
+|
+* '''{{cd|this}} entity:''' The player that gained the advancement.
+* '''Origin:''' The player's location when they gained the advancement.
+|
+|-
+| {{cd|generic}} || 
+* Not used. Supplies all loot context parameters.
+* Specifying {{cd|"type":"generic"}} or omitting it means no checking for context parameters in this loot table when loading the data pack.
+| N/A || N/A
+|-
+| {{cd|block}} ||
+* Loot from mining a block.
+* Loot from a block being exploded.
+* The command {{cmd|loot &hellip; mine &lt;pos&gt;}}.
+|
+* '''Block state:''' The block that was broken.
+* '''Origin:''' The center of the broken block.
+* '''Tool:''' The tool used to mine the block.
+|
+* '''{{cd|this}} entity:''' The player that mined the block, or the entity that caused the explosion.
+* '''Block entity:''' Any block entity data of the block that was broken, if it was a block entity.
+* '''Explosion radius:''' The radius of the explosion that broke the block, if broken via an explosion.
+|-
+| {{cd|shearing}} ||
+* Shearing a {{EntityLink|bogged}}, {{EntityLink|sheep}}, {{EntityLink|mooshroom}} or {{EntityLink|snow golem}}.
+|
+* '''Origin:''' The position of the entity being sheared.
+* '''{{cd|this}} entity:''' The entity being sheared.
+* '''Tool:''' The tool used for the interaction.
+|
+|-
+| {{cd|entity_interact}} ||
+* Using a [[brush]] on an {{EntityLink|armadillo}}.
+|
+* '''{{cd|target_entity}}:''' The entity being interacted with.
+* '''Tool:''' The tool used for the interaction.
+|
+* '''{{cd|interacting_entity}}:''' The player or entity that interacted.
+|-
+| {{cd|block_interact}} ||
+* Harvesting a {{BlockLink|beehive}}, {{BlockLink|cave vines}}, or {{BlockLink|sweet berry bush}}
+* Carving a {{BlockLink|pumpkin}}.
+|
+* '''Block state:''' The block that was interacted with.
+|
+* '''Block entity:''' Any block entity data of the block that was interacted with, if it is a block entity.
+* '''{{cd|interacting_entity}}:''' The player or entity that interacted.
+* '''Tool:''' The tool used for the interaction.
+|}
+
+=== Only used in predicates ===
+These loot contexts cannot be set at type of a loot table. Instead, they are used for other invocation of [[predicate]]s and [[item modifier]]s.
+{| class="wikitable" data-description="Invocation methods for predicates"
+! scope="col" | Loot context type
+! scope="col" | When it is used
+! scope="col" | Loot context parameters that ''are'' supplied
+! scope="col" | Loot context parameters that ''may be'' supplied
+|-
+| {{cd|command}} ||
+* Used internally by commands such as {{cmd|item modify}} or {{cmd|execute (if{{!}}unless) predicate}}.
+| 
+* '''Origin:''' The position where the command is run.
+|
+* '''{{cd|this}} entity:''' The entity that is {{cd|@s}} when the command is run.
+|-
+| {{cd|selector}} ||
+* Used internally by the {{cd|predicate}} [[Target selectors|target selector]] argument.
+|
+* '''Origin:''' The position of the entity being checked.
+* '''{{cd|this}} entity:''' The entity being checked.
+|
+|-
+| {{cd|advancement_entity}} ||
+* Used internally when an advancement invokes a predicate on an entity.
+|
+* '''{{cd|this}} entity:''' The entity being checked.
+* '''Origin:''' The position of the player who triggers this advancement criterion.
+|
+|-
+| {{cd|advancement_location}}||
+* Used internally when an advancement invokes a predicate on the location of a block where an item was used on.
+|
+* '''{{cd|this}} entity:''' The player to gain the advancement.
+* '''Origin:''' The center of the block that was interacted with.
+* '''Tool:''' The item used to interact with the block.
+* '''Block state:''' The block that was interacted with.
+|
+|-
+| {{cd|block_use}}||
+* Used internally when an advancement invokes a predicate on {{cd|default_block_use}} trigger.
+|
+* '''{{cd|this}} entity:''' The player to gain the advancement.
+* '''Origin:''' The center of the block that was interacted with.
+* '''Block state:''' The block that was interacted with.
+|
+|-
+| {{cd|enchanted_damage}} || rowspan="5"|
+* Used by enchantments invoking predicates, see {{slink|Custom enchantment|Effect components}}
+|
+* '''{{cd|this}} entity:''' The attacked entity.
+* '''Enchantment level''': The level of the enchantment currently evaluated
+* '''Origin''': Position of the event {{more info}}
+* '''Damage source''': The damage source of the attack that caused the enchantment to trigger
+|
+* '''{{cd|attacker}} entity:''' The attacking entity.
+* '''{{cd|direct_attacker}} entity:''' The projectile entity used in the attack.
+|-
+| {{cd|enchanted_item}}
+|
+* '''Tool:''' The item enchanted with the evaluated enchantment.
+* '''Enchantment level''': The level of the enchantment currently evaluated
+|
+|-
+| {{cd|enchanted_location}}
+|
+* '''{{cd|this}} entity:''' The attacked entity.
+* '''Enchantment level''': The level of the enchantment currently evaluated
+* '''Origin''': Position of the event {{more info}}
+* '''Enchantment active status''': Whether the enchantment was already active before the current evaluation
+|
+|-
+| {{cd|enchanted_entity}}
+|
+* '''{{cd|this}} entity:''' The attacked entity.
+* '''Enchantment level''': The level of the enchantment currently evaluated
+* '''Origin''': Position of the event {{more info}}
+|
+|-
+| {{cd|hit_block}}
+|
+* '''{{cd|this}} entity:''' The entity that hit the block.
+* '''Enchantment level''': The level of the enchantment currently evaluated
+* '''Origin''': Center of the block that was hit
+* '''Block state''': The block that was hit
+|
+|-
+| {{cd|villager_trade}}
+{{upcoming|je 26.1}}
+| Used for evaluating [[villager trade definition|villager trades]].
+|
+* '''Origin''': The position of the villager or wandering trader
+* '''{{cd|this}} entity:''' The villager or wandering trader.
+|}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Data packs]]
+
+[[de:Beutekontext]]
+[[fr:Contexte de butin]]
+[[ja:ルート文脈]]
+[[pt:Contexto de saque]]
+[[zh:战利品上下文]]

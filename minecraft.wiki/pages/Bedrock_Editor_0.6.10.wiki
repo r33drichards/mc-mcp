@@ -1,0 +1,57 @@
+{{More images}}
+{{Infobox version
+| title = v0.6.10
+| edition = Editor
+| type =
+| date = August 1, 2024
+| client = 1.21.30.21
+| prevparent = 0.6.0
+| prev = 0.6.9
+| next = 0.6.11
+| nextparent = 0.7.0
+}}
+'''Bedrock Editor v0.6.10''' is a minor alpha release for the [[Bedrock Editor]] released on August 1, 2024, which updates the Client Widget System and API changes.<ref>https://github.com/Mojang/minecraft-editor/discussions/187</ref><ref>https://feedback.minecraft.net/hc/en-us/articles/28896769176845</ref>
+
+== Changes ==
+'''Client Widget System'''
+* Revamped Client Widget System:
+** Refactored the Client Widget system to use components for base widget functionality.
+** Added Editor Client Renderer Helper Service to aid with Editor in-world widget rendering.
+** Changed Gizmo movement to be completely free moving and snap to grid on release.
+** Added new widget components for Entities, Text, Gizmos, Height Guide, and basic Render Primitives.
+'''{{cd|PropertyPane}} API'''
+* Additional updates to the {{cd|PropertyPane}} API:
+** Removed {{cd|IPropertyPane}} {{cd|addBlockPicker}} and {{cd|addEntityPicker}} methods in favor of {{cd|addComboBox}} API that leverages type safe {{cd|IObservableProp}} value.
+*** Added interfaces {{cd|IComboBoxPropertyItem}} and {{cd|IComboBoxPropertyItemOptions}}.
+*** Combo box supports different data types for additional validation with {{cd|ComboBoxPropertyItemDataType}}. Entity and Block types work similarly to the old component, Custom type allows user defined list and it's the default.
+** Added an alternative Property Pane {{cd|addNumber}} API that leverages type safe {{cd|IObservableProp}} value API.
+*** Added interfaces {{cd|INumberPropertyItem}} and {{cd|INumberPropertyItemOptions}} for the new property item.
+*** Renamed function to create property bag number item to {{cd|addNumber_deprecated}}.
+** Updated theme colors for input fields, and center aligned number input field values.
+** Added an alternative Property Pane {{cd|addDropdown}} API that leverages type safe {{cd|IObservableProp}} value.
+*** Added interfaces {{cd|ropdownPropertyItem}}, {{cd|IDropdownPropertyItemOptions}} and {{cd|IDropdownPropertyItemEntry}} for the new property item. Each dropdown entry now supports {{cd|imageData?: ImageResourceData}} property to render an image.
+*** Renamed function to create property bag number item to {{cd|addDropdown_deprecated}}.
+** Added an alternative Property Pane {{cd|addColorPicker}} API that leverages type safe {{cd|IObservableProp}} value API.
+*** Added interfaces {{cd|IColorPickerPropertyItem}} and {{cd|IColorPickerPropertyItemOptions}} for the new property item.
+*** Renamed function to create property bag color picker item to {{cd|addColorPicker_deprecated}}.
+** Added an alternative Property Pane {{cd|addString}} API that leverages type safe {{cd|IObservableProp}} value API.
+*** Added interfaces {{cd|IStringPropertyItem}} and {{cd|IStringPropertyItemOptions}} for the new property item.
+*** Renamed function to create property bag string item to {{cd|addString_deprecated}}.
+'''Other'''
+* Added the following functions to {{cd|ExtensionContext.settings.theme}}: {{cd|addNewTheme(name: string): void}}, {{cd|deleteTheme(name: string): void}}, {{cd|getCurrentTheme(): string}}, and {{cd|updateThemeColor(name: string, key: ThemeSettingsColorKey, newColor: minecraftserver.RGBA): void}}. These functions will throw if {{cd|minecraft:default}} or any other built-in theme is passed to them. {{cd|updateThemeColor}} and {{cd|deleteTheme}} will also throw if the theme does not exist.
+* Added block image support to block picker modal.
+* Added validation to prevent adding already existing block in a probability palette item.
+
+== Fixes ==
+* Fixed theming and content alignment issues for the dropdown UI elements.
+* Fixed missing Summon Tool icon.
+* Fixed a bug where typing certain characters in the block or entity picker caused an error.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Editor versions|alpha}}
+
+[[pt:Bedrock Editor 0.6.10]]
+[[uk:0.6.10 (Bedrock Editor)]]

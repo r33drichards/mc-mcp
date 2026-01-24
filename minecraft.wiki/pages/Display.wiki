@@ -1,0 +1,154 @@
+{{Work in progress}}
+{{exclusive|java}}
+{{Infobox entity
+| image = Blank.png
+| health = None
+| behavior = None
+| size = None
+}}
+
+'''Display''' entities are [[entities]] useful for map or data pack creators to display various things. There are '''Block Displays''', '''Item Displays''' and '''Text Displays''', which are used to display blocks, items and texts respectively. They can be created only with the {{cmd|summon}} or {{cmd|execute summon}} command.
+
+== Behavior ==
+Much like [[marker]]s, display entities do not move, do not take damage, do not make sounds, and have no collision. They do not obstruct the placement of blocks, nor do they push players or other entities away from their own position. Unlike [[marker]]s, display entities are sent to the client for rendering and do count toward in the {{cd|E}} value (total amount of entities) listed on the [[debug screen]].
+
+Display entities have no hitbox. Using the [[Debug screen#More debug-keys|debug key combination]] {{Key|F3+B}}, which normally draws the hitboxes of all visible entities, does not show a hitbox for display entities. Using {{Key|F3+I}} while aiming at a display entity does not copy the entity data to the clipboard.
+
+== Usage ==
+Display entities can be summoned only by [[commands]]. Block Displays, Item Displays, and Text Displays have the default NBT data of <code><nowiki>{block_state:{Name:"minecraft:air"}}</nowiki></code>, <code><nowiki>{item:{id:"minecraft:air",count:0}}</nowiki></code>, and <code>{text:'{"text":""}'}</code> respectively and so, if spawned without any NBT data specified, they are not visible. By modifying the entities' data one can easily edit their display content and other visual effects, and rotate, scale, or translate the model.
+
+=== Item Displays ===
+Item Display entities can display any item in the game using the {{cd|item}} tag.
+
+Using the Item Display entity with {{cd|[[model|custom_model_data]]}} (optional) you can easily display any custom model.
+
+For the Item Display entity, in addition to directly modifying the NBT, the displayed item can also be modified using the {{cmd|loot}} and {{cmd|item}} commands with the [[slot]] {{cd|container.0}}.
+
+Per default, the location of an item display without transformations represents the center of the item.
+
+=== Block Displays ===
+{{Wip|section=1}}
+Block Display entities can display any block in the game using the {{cd|block_state}} tag.
+
+The location of a block display without transformations represents the north-west-bottom (negative XYZ) corner of the block.
+
+=== Text Displays ===
+{{Wip|section=1}}
+Text Display entities can display any text using the {{cd|text}} tag.
+
+The displayed text is only visible from one side, which is without transformations the direction the text display is rotated towards.
+
+The location of a text display without transformations represents the bottom center of the text.
+
+[[File:Text Display.png|Image of a Text Display spawned with <code><nowiki>/summon text_display ~ ~2 ~ {transformation:{left_rotation:[0f,0f,0f,1f], right_rotation:[0f,0f,0f,1f], translation:[0f,0f,0f], scale:[8f,8f,8f]},text:{bold:true, color:gold, text:"The (Better) Minecraft Wiki"}}</nowiki></code>.|thumb]]
+
+=== Interpolation ===
+Some visual effects of these entities can be interpolated over game time to display '''gradient animation'''.
+
+All fields marked as '''"Interpolated"''' in [[#Entity data]] below can be interpolated. These properties do not interpolate independently of each other.
+
+<u>Any change to any of these properties causes client to record both the previous and changed values of these properties.</u> Since server synchronizes entities with the client at most once per game tick, multiple changes within one game tick still count as a single change.
+
+The entity rendering is interpolated over time between the previous values and the current values. The game time to start interpolation (entity fully in previous state) is {{cd|start_interpolation}} (gametime, in game ticks). Trying to set a value less than 0 sets it to the current game time. The game time when interpolation ends (entity fully in current state) is {{cd|start_interpolation + interpolation_duration}} (gametime, in game ticks).
+
+== Data values ==
+
+=== ID ===
+{{ID table
+|edition=java
+|firstcolumnname=Entity
+|generatetranslationkeys=y
+|displayname=Block Display
+|nameid=block_display
+|translationkey=entity.minecraft.block_display
+|spritetype=block
+|spritename=air
+}}
+{{ID table
+|displayname=Item Display
+|nameid=item_display
+|translationkey=entity.minecraft.item_display
+|spritetype=block
+|spritename=air
+}}
+{{ID table
+|displayname=Text Display
+|nameid=text_display
+|translationkey=entity.minecraft.text_display
+|spritetype=block
+|spritename=air
+|foot=1
+}}
+
+=== Entity data ===
+{{see also|Entity format}}
+
+Display entities have entity data associated with them that contain various properties of the [[entity]].
+
+<section begin="entity data"/>'''Item Display'''
+<section begin="item entity data"/><div class="treeview">
+* {{nbt|compound}} Entity data
+** {{nbt inherit/entity}}
+** {{nbt inherit/display entity}}
+** {{nbt|compound|item}}: The item to display.
+*** {{nbt inherit/itemnoslot}}
+** {{nbt|string|item_display}}: The model to display. Describes item model transform applied to item (as defined in <code>display</code> field in [[model]] JSON). Can be <code>none</code>, <code>thirdperson_lefthand</code>, <code>thirdperson_righthand</code>, <code>firstperson_lefthand</code>, <code>firstperson_righthand</code>, <code>head</code>, <code>gui</code>, <code>ground</code>, and <code>fixed</code>.{{verify|Is there also an on_shelf option?}} Defaults to <code>none</code>.
+</div><section end="item entity data"/>
+
+'''Block Display'''
+<section begin="block entity data"/><div class="treeview">
+* {{nbt|compound}} Entity data
+** {{nbt inherit/entity}}
+** {{nbt inherit/display entity}}
+** {{nbt|compound|block_state}}: The block state to display.
+*** {{nbt inherit/block state}}
+</div><section end="block entity data"/>
+
+'''Text Display'''
+<section begin="text entity data"/><div class="treeview">
+* {{nbt|compound}} Entity data
+** {{nbt inherit/entity}}
+** {{nbt inherit/display entity}}
+** {{nbt|string|alignment}}: Text alignment direction. Can be <code>center</code>, <code>left</code>, and <code>right</code>. Defaults to <code>center</code>.
+** {{nbt|int|background}}: The background color, arranged by ARGB. Since pixels with an alpha channel less than 0.1 are discarded when rendering in vanilla [[shader]], the background becomes fully transparent when A is less than 26 (0x1A). Defaults to 1073741824 (0x40000000). Interpolated.
+** {{nbt|bool|default_background}}: If true, rendering uses default text background color (same as in chat), which overrides {{nbt|int|background}}. Defaults to <code>false</code>.
+** {{nbt|int|line_width}}: Maximum line width used to split lines (note: new line can be also added with {{cd|\n}} characters). Defaults to 200.
+** {{nbt|bool|see_through}}: Whether the text is visible through blocks. Defaults to <code>false</code>.
+** {{nbt|bool|shadow}}: Whether the text is displayed with shadow. Defaults to <code>false</code>.
+** {{nbt|string|text}}: The text to be displayed in the format of [[raw JSON text]], which are resolved with the context of the display entity.
+** {{nbt|byte|text_opacity}}: Alpha value of rendered text. Value ranges from 0 to 255. Values up to 3 are treated as fully opaque (255). Similar to the background, the text rendering is discarded for values between 4 and 26. NBT stores the value as signed byte, -128 to 127. Defaults to -1, which represents 255 and is completely opaque. SNBT to NBT handles conversion from unsigned to signed, but if needed, replace values greater than 127 with <code>''alpha''-256</code> or <code>''alpha''UB</code>. Interpolated.
+</div><section end="text entity data"/><section end="entity data"/>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.19.4|dev=23w06a|Added Block Display, Item Display and Text Display.}}
+|{{HistoryLine|||dev=Pre-release 4|When a new interpolation is started, it now starts from the current state instead of the final state.}}
+|{{HistoryLine|||dev=Release Candidate 1|Interpolation always starts at the beginning on client tick.|Field {{cd|interpolation_start}} is replaced with {{cd|start_interpolation}}, with a different meaning.|{{cd|start_interpolation}} describes amount of ticks from the start of next client tick after receiving an update to start of interpolation. For example, value 0 means that interpolation starts at the beginning of next client tick after receiving the update.|{{cd|start_interpolation}} is not stored in entity data. When using {{cmd|data}} commands, if interpolated value is updated, but {{cd|start_interpolation}} is not present in modified tag, interpolation continues from the time of previous update, but with new values.}}
+|{{HistoryLine||1.20|dev=23w12a|Previous values are now always discarded if {{cd|interpolation_duration}} is 0.
+|Made sure that render properties are applied at the same time (so {{cd|block_state}} is applied at the same time as {{cd|transformation}}, i.e. at next tick after receiving update).
+|Entities are not rendered unless initial data is received. That means display entities might not show on the first tick.}}
+|{{HistoryLine|||dev=23w16a|{{cd|item_display}} items have been rotated 180 degrees around Y axis to better match {{cd|transformation}} applied when rendering items on [[armor stand]] head and in [[item frame]]s.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Display entities now start updating their client-side position and rotation on the first tick after an update.
+|On the server, position and rotation are still updated immediately.
+|Duration of this interpolation is controlled by the field <code>teleport_duration</code>.
+|Note: behavior while riding remains unchanged from previous versions.}}
+}}
+
+== Gallery ==
+<gallery>
+File:Sunny and the End look at a display entity.jpg|"[[Sunny]] reading the changelog on a display entity in [[the End]]."<ref>{{mcnet|minecraft-java-edition-1-19-4|Minecraft Java Edition 1.19.4|March 14, 2023|Staff}}</ref>
+</gallery>
+
+== References ==
+<references />
+
+== Navigation ==
+{{Navbox entities|Other}}
+
+[[de:Darsteller]]
+[[es:Holograma]]
+[[fr:Entité d'affichage]]
+[[ja:表示エンティティ]]
+[[pt:Entidade-exibição]]
+[[zh:展示实体]]

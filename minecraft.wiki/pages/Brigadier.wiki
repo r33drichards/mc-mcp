@@ -1,0 +1,139 @@
+{{exclusive|java}}
+{{Infobox program
+| title=Brigadier
+| version = [https://github.com/Mojang/brigadier/releases/latest 1.0.18]
+| source available = [https://github.com/Mojang/brigadier/ Yes]
+| programming language = [[wikipedia:Java (programming language)|Java]]
+| author = [[File:Mojang Studios logo.svg|x20px|link=Mojang Studios]] [[Mojang Studios]]
+| license = MIT License
+}}
+
+{{quote|I'm so proud of that name! Brigadier is the name of the command engine that Minecraft uses.|[[Dinnerbone]]|Brigadier<ref>{{Mcnet|programmers-play-minecrafts-inner-workings|Programmers: Play with Minecraft's Inner Workings!}}</ref>|Nathan Adams Mojang avatar.png}}
+
+'''Brigadier''' is a [[command]] parser and dispatcher, designed and developed for {{el|je}},<ref>{{link|url=https://github.com/Mojang/brigadier|title=Mojang/brigadier: Brigadier is a command parser & dispatcher, designed and developed for Minecraft: Java Edition.|website=GitHub}}</ref> mainly maintained by [[Dinnerbone]].<ref>{{link|url=https://github.com/Mojang/brigadier/graphs/contributors|title=Contributors to Mojang/brigadier|website=GitHub}}</ref> It is the first library used by ''Java Edition'' that [[Mojang]] has released under an open-source license.<ref>{{tweet|Dinnerbone|1045022190079479809|We just pulled in our very first community contributed code into a Minecraft Java Edition official library. Woo! 🎉 Want to help out? The first library we've opened is our command engine - it's MIT licensed so you can freely use it in your own projects!}}</ref>
+
+== Usage ==
+Brigadier is used for parsing and executing string commands.
+
+=== Features ===
+* Define command nodes with argument or literal branches
+** [[Commands#List and summary of commands|All the commands available in ''Java Edition'']] are actually the literal branches available for the root command nodes instead of the actual executed commands.<ref>{{Link|url=https://github.com/Mojang/brigadier/pull/8#discussion_r220457388|quote=I'd argue that most people identify command by first literal after root, so that would make "command" a sub-tree and not just path leading to leaf node. /bikeshedding|author=[[Bartosz Bok|boq]]|title=Added copyright header, LICENSE, and README.md by Dinnerbone · Pull Request #8 · Mojang/brigadier|website=Mojang/brigadier – GitHub}}</ref>
+* Modify/fork command source in command contexts
+** {{cmd|execute as ''[[Target selectors|<target selector>]]''}} may modify the command source to be multiple when multiple entities are [[Target selectors|selected]]
+* Active inspection on command parsing<ref>{{Link|url=https://github.com/Mojang/brigadier#inspecting-a-command|title=Inspecting a command|website=Mojang/brigadier – GitHub}}</ref>
+* Listing all possible commands from current command node<ref>{{Link|url=https://github.com/Mojang/brigadier#displaying-usage-info|title=Displaying usage info|website=Mojang/brigadier – GitHub}}</ref>
+* Handle command result real-time on execution success/failure
+** {{cmd|execute store}} can store the command result to [[Block entity format|block]]/[[Entity format|entity]] NBT data or [[scoreboard]]
+* Recursive command node redirection
+** {{cmd|execute run}} redirects to the root node of the vanilla command dispatcher
+
+== Limitations and issues ==
+
+Brigadier has various numbers of limitations while executing the command, such as the numeric limitations on integer data types such as {{command|effect}}, {{command|weather}}, and floating-point data types such as {{command|time}}, making many integer values parsed in the commands inaccessible.
+<!-- According to the mentioned limitations and issues above, these are expected to get bug fixes in the future. Please do not address the future fix version until verified. -->
+
+== Minecraft argument types ==
+{{Disclaimer|section=Minecraft argument types}}
+<!-- I wasn't quite sure what disclaimer to put here, but I think this one works. Also I was told by Outrowed‬ on the talk page (can't find the topic anymore) that it was unusual for the minecraft wiki to include information on modding, but that it was probably alright for me to add it (especially since I found other sources lacking in this information) -->More general documentation on brigadier and its use can be found at the [https://github.com/Mojang/brigadier github repository], however this is information specifically on the argument types added and used in Minecraft. While basic implementation of commands may vary by mod loader, these argument types are mostly consistent. Your chosen mod loader probably has its own documentation for how to actually register commands using Brigadier.
+{| class="wikitable"
+|+Argument types
+!Class name
+!Description
+!Example
+|-
+|<code>Commands.literal</code>
+|A fixed keyword that must be typed exactly.
+|<code>/[[Commands/datapack|datapack]] '''list'''</code>
+|-
+|<code>StringArgumentType.greedyString</code>
+|Will match the longest possible string of letters (only works at the very end of a command).
+|<code>/[[Commands/say|say]] '''all of this will be in the greedy string'''</code>
+|-
+|<code>StringArgumentType.word</code>
+|Will match the longest string of letters without spaces.
+|<code>/[[Commands/tag|tag]] @s add '''oneword'''</code>
+|-
+|<code>StringArgumentType.string</code>
+|Will match the longest string of letters without spaces, unless surrounded by quotation marks. Similar to <code>greedyString</code>, but can have more arguments afterwards.
+|<code>/[[Commands/datapack|datapack]] enable '''"multiple words"''' last</code>
+|-
+|<code>BoolArgumentType.bool</code>
+|Can only be <code>true</code> or <code>false</code>.
+|<code>/[[Commands/gamerule|gamerule]] keepInventory '''true'''</code>
+|-
+|<code>IntegerArgumentType.integer</code>
+|A Java <code>int</code>. Must be a whole number. This argument can optionally have a minimum value, or a minimum ''and'' maximum value.
+|<code>/[[Commands/scoreboard|scoreboard]] players set @s objective '''100'''</code>
+|-
+|<code>LongArgumentType.longArg</code>
+|A Java <code>long</code>. Must be a whole number. Similar to int, but can store much larger numbers. This argument can optionally have a minimum value, or a minimum ''and'' maximum value.
+|'''Not used in any commands'''
+|-
+|<code>FloatArgumentType.floatArg</code>
+|A Java <code>float</code> (6 digits of precision). Can have decimals. This argument can optionally have a minimum value, or a minimum ''and'' maximum value.
+|<code>/[[Commands/playsound|playsound]] minecraft:ambient.cave master @s ~ ~ ~ '''1.23456'''</code>
+|-
+|<code>DoubleArgumentType.doubleArg</code>
+|A Java <code>double</code> (15 digits of precision). Can have decimals. This argument can optionally have a minimum value, or a minimum ''and'' maximum value.
+|<code>/[[Commands/attribute|attribute]] @s minecraft:generic.movement_speed base set '''12.345678912345'''</code>
+|}
+(See more about Java <code>int</code>s, <code>long</code>s, <code>float</code>s, and <code>double</code>s [https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html here])
+
+== History ==
+{{HistoryTable
+|{{HistoryLine||October 25, 2014|link=https://bugs.mojang.com/browse/MC-10880?focusedCommentId=205438&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#comment-205438|Dinnerbone mentions Brigadier in the comments on {{bug|MC-10880}}.}}
+|{{HistoryLine||July 27, 2017|link={{tweet|Dinnerbone|890548451372564480}}|Dinnerbone discloses a non-obfuscated command parser library called "brigadier".}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=17w45a|[[Command]]s are now handled with Brigadier.
+|''Minecraft'' introduces Brigadier as a dependency.
+}}
+|{{HistoryLine||September 26, 2018|link={{tweet|Dinnerbone|1045022190079479809}}|Brigadier is open sourced under the MIT License.<ref>[https://github.com/Mojang/brigadier/pull/8#issue-217673918 "Preparation for OSS :)" - Preparing for the open source software]  – Mojang/brigadier – GitHub</ref>}}
+|{{HistoryLine||1.14|dev=19w08a|Now allows single quotes for strings in commands.<ref>{{Link|url=https://github.com/Mojang/brigadier/pull/52|title=Allow single quote in strings by boq · Pull Request #52 |website=Mojang/brigadier – GitHub}}</ref>}}
+}}
+
+=== Version history ===
+
+{| class=wikitable
+! Version !! Date !! Changes
+|-
+! 1.0.15
+| September 26, 2018<ref>{{cite|url=https://github.com/Mojang/brigadier/releases/tag/1.0.15|title=Release 1.0.15 &middot; Mojang/brigadier|website=GitHub}}</ref>
+|
+*Initial release
+|-
+! 1.0.17
+| February 19, 2019<ref>{{cite|url=https://github.com/Mojang/brigadier/releases/tag/1.0.17|title=Release 1.0.17 &middot; Mojang/brigadier|website=GitHub}}</ref>
+|
+*Allow single quotes in strings
+*Added <code>long</code> argument
+*Implement calculation of suggestions for any text position
+*No longer depend on Guava
+|-
+! 1.0.18
+| July 16, 2021<ref>{{cite|url=https://github.com/Mojang/brigadier/releases/tag/1.0.18|title=Release 1.0.18 &middot; Mojang/brigadier|website=GitHub}}</ref>
+|
+*Performance optimizations
+|}
+
+== Gallery ==
+<gallery>
+execute graph.svg|The {{cmd|execute}} command tree, which utilizes an overwhelming amount of the brigadier features.
+tag graph.svg|The {{cmd|tag}} command tree, showing the difference between actual executed commands (red nodes) versus the first literal after the root (the "tag" box)
+msg graph.svg|The {{cmd|msg}} command tree, showing that aliases have been implemented by brigadier's command node redirection functionality (dashed lines)
+</gallery>
+
+<!-- Uncomment when dfu page is done
+== See also ==
+* [[Data Fixer Upper]]: Another open-source library used for updating {{el|je}}'s saves across data versions.
+-->
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[fr:Brigadier]]
+[[ja:Brigadier]]
+[[pt:Brigadier]]
+[[zh:Brigadier]]

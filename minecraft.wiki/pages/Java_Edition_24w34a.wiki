@@ -1,0 +1,236 @@
+{{Dangerous version|Using a [[bucket]] in most cases deletes the bucket.<ref name="bucket">{{bug|MC-275757}}</ref>|type=data-loss|version=development|edition=Java}}
+{{Infobox version
+| title = Minecraft 24w34a
+| image = 24w34a.jpg
+| image2 = Java Edition 24w34a.png
+| edition = Java
+| type = Snapshot
+| date = August 21, 2024
+| jsonhash = 17e3b903641353554e4b1728df2b62b97562d0ab
+| clienthash = f252db3368f588fa8c946dcbeed712bfe109e816
+| clientmap = 852be4d787be546e91b5c9b611c9cb692d8e6922
+| serverhash = ff16e26392a5ced7cfe52ffdc5461cd646b9b65d
+| servermap = 9a187ebcd24ee307f7d635db94d7f9b814cd02f6
+| parent = 1.21.2
+| prevparent = 1.21.1
+| prev = 24w33a
+| next = 24w35a
+| nextparent = 1.21.3
+}}<onlyinclude>
+
+'''24w34a''' is the second [[snapshot]] for [[Java Edition 1.21.2]], released on August 21, 2024.<ref>{{snap|24w34a|August 21, 2024}}</ref> It contains some tweaks to experimental features, as well as some technical changes and optimizations.
+
+== Additions ==
+=== Command format ===
+'''[[Data component format]]'''
+* Added <code>minecraft:consumable</code> item stack component.
+<div class="treeview">
+:* {{nbt|compound|minecraft:consumable}}: If present, this item can be consumed on use.
+:** {{nbt|float|consume_seconds}}: The amount of seconds it takes for a player to consume the item. Defaults to 1.6.
+:** {{nbt|string|animation}}: The animation used during consumption of the item. Must be one of {{cd|none|eat|drink|block|bow|spear|crossbow|spyglass|toot_horn|brush|d=or}}. Defaults to <code>eat</code>.
+:** {{nbt|string}}{{nbt|compound|sound}}: Sound event, the sound used during and on completion of the item's consumption. Defaults to <code>entity.generic.eat</code>.
+:*** {{nbt inherit/sound event|sounds}}
+:** {{nbt|bool|has_consume_particles}}: Whether consumption particles are emitted while consuming this item. Defaults to <code>true</code>.
+:** {{nbt|list|on_consume_effects}}: An optional list of effects which take place as a result of consuming this item.
+:*** {{nbt|compound}}: A single consume effect.
+:**** {{nbt|string|type}}: The kind of consume effect. Must be one of {{cd|apply_effects|remove_effects|clear_all_effects|teleport_randomly|play_sound|d=or}}.
+:**** ''If '''type''' is <code>apply_effects</code>'':
+:***** {{nbt|list|effects}}: A list of [[effect]] instances applied once consumed.
+:****** {{nbt|compound}}: A single effect.
+:******* {{nbt|string|id}}: The ID of the effect.
+:******* {{nbt|byte|amplifier}}: The amplifier of the effect, with level I having value 0. Optional, defaults to 0.
+:******* {{nbt|int|duration}}: The duration of the effect in [[tick]]s. Value -1 is treated as infinity. Values 0 or less than -2 are treated as 1. Optional, defaults to 1 tick.
+:******* {{nbt|boolean|ambient}}: Whether or not this is an effect provided by a beacon and therefore should be less intrusive on the screen. Optional, defaults to <code>false</code>.
+:******* {{nbt|boolean|show_particles}}: Whether or not this effect produces particles. Optional, defaults to <code>true</code>.
+:******* {{nbt|boolean|show_icon}}: Whether or not an icon should be shown for this effect. Optional, defaults to <code>true</code>.
+:***** {{nbt|float|probability}}: The probability the above effects are applied once consumed. Defaults to 1.0.
+:**** ''If '''type''' is <code>remove_effects</code>'':
+:***** {{nbt|list}}{{nbt|string|effects}}: A set of effects removed once consumed, as either a single ID or list of IDs.
+:**** ''If '''type''' is <code>clear_all_effects</code>'': Clears all effects of the consumer.
+:**** ''If '''type''' is <code>teleport_randomly</code>'':
+:***** {{nbt|float|diameter}}: The diameter that the consumer is teleported within. Defaults to 16.0.
+:**** ''If '''type''' is <code>play_sound</code>'':
+:***** {{nbt|string}}{{nbt|compound|sound}}: The sound event played once when consumed.
+:****** {{nbt inherit/sound event|sounds}}
+</div>
+
+:* e.g. <code>consumable={consume_seconds:3.0, animation:'eat', sound:'entity.generic.eat', has_consume_particles:true, on_consume_effects:[{type:'minecraft:clear_all_effects'}]}</code>
+
+
+* Added <code>minecraft:use_cooldown</code> item stack component.
+<div class="treeview">
+:* {{nbt|compound|minecraft:use_cooldown}}: If present, this item applies a cooldown to all items of the same type when it is used.
+:** {{nbt|float|seconds}}: The amount of seconds the cooldown takes place for.
+:** {{nbt|string|cooldownGroup}}<ref group="note">The name for the "cooldown group" does not follow the usual snake_case format, and is different to what is written in the changelog. See {{bug|Mc-275837}}.</ref>: Optional namespaced id representing the cooldown group. If present, the item is a part of a cooldown group and no longer shares cooldowns with its base item type, but instead with any other items that are part of the same cooldown group.</div>
+
+:* e.g. <code>use_cooldown={seconds:1.5, cooldown_group:"minecraft:custom_weapon"}</code>
+
+
+* Added <code>minecraft:use_remainder</code> item stack component.
+<div class="treeview">
+:* {{nbt|compound|minecraft:use_remainder}}: If present, replaces the item with a remainder item if its stack count decreases after use.
+:** {{nbt inherit/itemnoslot}}
+</div>
+
+:* e.g. <code>use_remainder={id:'minecraft:stick', count:1}</code>
+
+== Changes ==
+=== Items ===
+'''General'''
+* Drinking a [[milk bucket]] in Creative mode no longer gives the player an empty bucket.
+
+=== Mobs ===
+'''[[Blaze]]'''
+* Changed the texture for the bottom face of a blaze's rods were changed from [[File:Blaze rods_JE1_(facing_NWU).png|32px]] to [[File:Blaze rods_JE2_(facing_NWU).png|32px]].
+
+=== Non-mob entities ===
+'''Projectiles'''
+* [[Arrow]]s, [[trident]]s and [[fishing bobber]]s<ref group="note">Although claimed by [https://www.minecraft.net/en-us/article/minecraft-snapshot-24w34a minecraft.net] that fishing bobbers bounce on the world border, they don't and instead behave the same way as they did before.</ref> now bounce on the [[world border]] if hit.
+* Other projectiles such as [[ender pearl]]s and [[snowball]]s no longer go through the world border.
+
+=== Command format ===
+'''[[Data component format]]'''
+* <code>food</code> item stack component
+** The food component has been changed to become a data container which only holds the food stats applied when the item is consumed.
+*** This component no longer gives it the ability to be consumed, and can be done instead with the new consumable component.
+*** Removed the <code>eat_seconds</code>, <code>using_converts_to</code> and <code>effects</code> fields.
+
+=== Gameplay ===
+'''[[Recipe book]]'''
+* Now repeats the last selected recipe when a "selected" key is pressed (space or enter key).
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>50</code>.
+
+'''Performance'''
+* Framerate has been improved when using higher render distances.
+* Significantly reduced the performance impact when turning the camera.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>36</code>.
+
+'''[[Shaders]]'''
+* Shader program configurations can now specify preprocessor define directives to apply to their linked shaders.
+** Many shader implementations have been merged by making use of this.
+* The format of core shader and post-processing shader configurations have been consolidated.
+* The <code>rendertype_entity_glint_direct</code> shader has been removed (replaced by <code>rendertype_entity_glint</code>)
+* The <code>rendertype_entity_translucent_cull</code> shader has been removed (replaced by <code>rendertype_item_entity_translucent_cull</code>)
+
+== Experimental ==
+'''[[Bundle]]s'''
+* The tooltip now fits 3 rows and can always show at least 8 item types.
+
+'''[[Redstone Experiments]]'''
+* [[Redstone wire]] updates now have a left-first preference, meaning the left side is updated first if both sides of a fork have equal power.
+** This removes most of the random behavior.
+** The remaining edge cases which are still random are situations where the wire gets powered from above or below without enough context.
+
+'''[[Minecart Improvements]]'''
+* Minecarts no longer forcefully snap to the center of a block when landing on a rail.
+** Minecarts snap to corners along the diagonal, and snap after being pushed by a piston.
+** This allows for piston bolts and similar contraptions.
+* Dispensers are allowed to stack minecarts again.
+* Minecarts now more easily come to rest at opposing slopes.
+* Minecarts no longer tilt during a short fall, or when they are falling straight down.
+* Minecarts are now placed (or dispensed) with the correct rotation straight away when put on rails.
+** They are also placed with the correct rotation onto slopes.
+* Minecarts no longer phase through blocks on slopes when going up or down, they collide instead.
+
+== Fixes ==
+{{Fixes|fixedin=24w34a
+|;From released versions before 1.21
+|73178|Villagers' "{{cd|CanPickUpLoot}}" tag cannot be set to zero.
+|144327|The bottom face texture of a blaze's rods is the same as their top face texture.
+|191431|Player spectator head is invisible/does not render in the inventory after switching to "Fabulous!".
+|249414|The "Shader {{cd|rendertype_entity_translucent_emissive}} could not find sampler named {{cd|Sampler2}} in the specified shader program." warning is logged in the game output console when launching the game.
+|269376|Breeze fires wind charge from center of hitbox.
+|269715|Food won't be eaten when the component {{cd|food.eat_seconds}} is less than 0.05.
+|;From 1.21
+|272643|Items containing {{cd|using_converts_to}} cannot be stacked with the original items after restarting the world.
+|273329|Drinking milk buckets in Creative mode gives empty buckets.
+|273629|Adding effects with an {{cd|effects_changed}} advancement causes a packet error ({{cd|ConcurrentModificationException}}) if it was triggered by milk.
+|276936|Foxes eat soup won't leave the bowl.
+|;From 1.21.1
+|275998|Menu blur turns glowing outlines black.
+|;previous
+|275203|Minecarts always spawn facing east/west and move upward slightly when being placed on rails.
+|275209|It's impossible to put water in a cauldron underwater.
+|275210|Minecarts can phase through blocks when travelling diagonally upwards.
+|275211|The enchantment glint isn't visible on dropped items.
+|275213|Hand animation still plays when trying to put lava or powder snow in an underwater cauldron.
+|275218|"Minecart rolls" sound does not play when on tracks after de-railing then re-railing.
+|275219|Hand animation still plays in Creative when trying to use minecarts inside each other on the same rail.
+|275221|Baby polar bear model is messed up in 24w33a.
+|275224|Minecart items desync when using them on a rail with a minecart above it.
+|275226|Enchantment glint is not visible on items held by player and mobs in third-person.
+|275229|Minecarts behave strangely on bubble columns.
+|275230|The game crashes when opening the inventory while in Spectator mode.
+|275232|The mining fatigue animation appears too close.
+|275236|Gamerule {{cd|minecartMaxSpeed}} doesn't affect downward velocity.
+|275237|Cannot rename written book in an anvil.
+|275241|Minecarts continue to produce sound for a short while after being stopped.
+|275246|Crash after attempting to move item from off-hand in Creative inventory.
+|275248|Torches no longer have bottom faces.
+|275249|"FOV Effects" slider incorrectly modifying zoom values on the spyglass.
+|275252|Player head angle when crawling is now strange.
+|275270|Minecart not oriented correctly when placed on a sloped unpowered powered rail.
+|275271|Crash after attempting to move item to hotbar slot in Creative inventory.
+|275273|Baby mooshroom uses wrong scale.
+|275276|Minecarts can phase through blocks at the bottom of a slant.
+|275277|Trial chambers' {{cd|encounter_4}} trap often does not hit the player.
+|275289|There are empty chests in some chambers even after 24w33a.
+|275293|Internal exception when picking blocks not in hotbar but in inventory in Survival mode.
+|275296|Emissive textures are not emissive in the player's hand.
+|275297|Failing selectors and fake players in "score" selector result in an unexpected error.
+|275307|Hand doesn't show up when switching from Spectator mode.
+|275310|Cannot enchant armor in enchanting table.
+|275319|End crystals in 24w33a appear to be slightly smaller than in previous versions.
+|275323|Pressing {{key|F3 + A}} to reload chunks crashes the game.
+|275328|Enchantment glint is not visible on items in item frames.
+|275329|As of 24w33a zombie villagers no longer raise their arms to attack.
+|275332|The rotation of a wall/ceiling lever and buttons does not affect the update order of wire in Redstone Experiment.
+|275343|Projectiles stuck in the world border can float in the air if the border size is changed.
+|275361|Baby zombie variant arms disconnect from their body when attacking.
+|275377|Derailed minecarts snap onto nearby rails after falling down.
+|275397|Redstone dust doesn't update properly.
+|275436|Cannot enchant books in enchanting table.
+|275467|Minecarts can launch the player hundreds of thousands of blocks upwards if they derail inside cobwebs or powdered snow.
+|275473|Slim model's arms are now lower than the torso by 0.5 pixels.
+|275479|Dispensers cannot place minecarts onto rails if there is a minecart one block away.
+|275482|Minecarts do not pick up mobs like they used to.
+|275486|Enchantable data component doesn't work with items that only have enchantments through a data pack.
+|275498|Clocks, compasses and recovery compasses don't function in item frames.
+|275553|Minecarts which exit the End onto no rails are left permamentally tilted.
+|275554|Minecarts between two downward slopes will shake violently and never settle.
+|275566|Game crash when trying to open various GUIs with Fabulous graphics.
+|275569|Outer layer of the skin shows when disabled until going into third-person.
+|275628|Minecarts transitioning from even to downward rails, derail above a certain speed.
+|275631|You cannot stop a minecart by standing in the way if it's on an ascending track.
+|275677|Minecarts sometimes aren't affected by cobwebs when moving upwards.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|owsnnqquxVI|nZCG2Gd5KUw|mLO_iRDFgXc}}
+
+== Trivia ==
+[[File:24w34a.jpg|thumb|right|The banner image for this version.]]
+* The banner image for this snapshot is a reference to {{wikipedia|octree}}, a data structure in which each node has eight children. Octrees are used as a culling technique for performance optimization in this snapshot.
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w34a]]
+[[es:Java Edition 24w34a]]
+[[fr:Édition Java 24w34a]]
+[[ja:Java Edition 24w34a]]
+[[pt:Edição Java 24w34a]]
+[[ru:24w34a (Java Edition)]]
+[[uk:24w34a (Java Edition)]]
+[[zh:Java版24w34a]]

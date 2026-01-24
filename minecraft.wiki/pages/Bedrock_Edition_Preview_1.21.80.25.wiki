@@ -1,0 +1,254 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.8025.0<br>'''Android''': 1.21.80.25
+| image = Bedrock 1.21.80.25 PatchNotes.jpeg
+| image2 = Bedrock 1.21.80.25.png
+| build = 32255816
+| editorver = 0.9.4
+| versioncode = '''Android''':<br />
+952108025 (armeabi-v7a, 34)<br />
+962108025 (x86, 34)<br />
+972108025 (arm64-v8a, 34)<br />
+982108025 (x86_64, 34)
+| date = April 3, 2025
+| server = 1.21.80.25 - 1.21.80.26
+| serverdl = '''Server (1.21.80.25):'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.80.25.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.80.25.zip Linux]<br>
+'''Server (1.21.80.26):'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.80.26.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.80.26.zip Linux]
+| parent = 1.21.80
+| prevparent = 1.21.73
+| prev = Preview 1.21.80.22
+| next = Preview 1.21.80.27
+| nextparent = 1.21.81
+}}<onlyinclude>
+'''Beta 1.21.80.25''' (ChromeOS, Android) or '''Preview 1.21.80.25''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fourth beta/''Preview'' version for [[Bedrock Edition 1.21.80]], released on April 3, 2025,<ref>{{cite|url=https://www.minecraft.net/de-de/article/minecraft-preview-1-21-80-24|title=Minecraft Preview 1.21.80.25|website=Minecraft.net|date=April 3, 2025}}</ref><ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/35553766599437-Minecraft-Beta-Preview-1-21-80-25|title=Minecraft Beta & Preview - 1.21.80.25|website=Minecraft Feedback|date=April 3, 2025}}</ref> which adds [[dried ghast]]s, [[ghastling]]s, [[happy ghast]]s, [[harness]]es, [[Vibrant Visuals]], and fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Flowers]], [[Bamboo]], [[Hanging Roots]], [[Mangrove Propagule]], [[Nether Sprouts]], [[Coral Fan]]s, [[Coral]] plants, double tall [[plants]], [[Pointed Dripstone]], [[Tall Grass]], and [[Dry Grass]]'''
+* They now have the same random offset range and values as {{JE}}.
+
+=== General ===
+'''[[Settings]]'''
+* Enabled Filter Profanity toggle on PlayStation platforms.
+
+=== Technical ===
+'''[[API]]'''
+*Moved {{cd|enum Difficulty}} from {{cd|beta}} to {{cd|v1.19.0}}.
+*{{cd|World}}
+**Moved {{cd|getDifficulty(): Difficulty}} from {{cd|beta}} to {{cd|v1.19.0}}.
+**Moved {{cd|setDifficulty(difficulty: Difficulty): void}} from {{cd|beta}} to {{cd|v1.19.0}}.
+*Moved the following {{cd|Player methods}} from {{cd|beta}} to {{cd|v1.19.0}}.
+*Renamed {{cd|BoundingBox}} to {{cd|BlockBoundingBox}} and released from {{cd|beta}} to {{cd|v1.19.0}}.
+*Renamed {{cd|BoundingBoxUtils}} to {{cd|BlockBoundingBoxUtils}}.
+*Moved {{cd|dimension.placeFeature}} and {{cd|dimension.placeFeatureRule}} from {{cd|beta}} to {{cd|v1.19.0}}.
+
+'''[[Biome]]s'''
+*Removed remainder of support for unused {{cd|minecraft:consolidated_features}} and {{cd|minecraft:legacy_world_generation_rules}} JSON components.
+
+'''Blocks'''
+*New {{cd|render_method}} type available for {{cd|minecraft:material_instances}}. They are meant to support the same behavior of block turning opaque in the far rendering like Leaves in contrast to other disappearing like bamboo stalk.
+**{{cd|render_method}}: {{cd|blend_to_opaque}}
+**{{cd|render_method}}: {{cd|alpha_test_to_opaque}}
+**{{cd|render_method}}: {{cd|alpha_test_single_sided_to_opaque}}
+*The field {{cd|tint_method}} in the {{cd|minecraft:map_color}} component no longer requires the "upcoming creator features" toggle.
+*The field {{cd|tint_method}} in the {{cd|minecraft:destruction_particles}} component no longer requires the "upcoming creator features" toggle.
+*The field {{cd|tint_method}} in the {{cd|minecraft:material_instances"}} component no longer requires the "upcoming creator features" toggle.
+
+'''Components'''
+*Introduced a {{cd|drop_item_y_offset}} parameter to the {{cd|minecraft:interact}} component.
+**Defines a custom y-axis offset for when an item is dropped.
+**Requires {{cd|drop_item_slot}} to be specified.
+*The {{cd|minecraft:leashable}} component's {{cd|on_unleash}} trigger triggers on the leash breaking with format version {{cd|1.21.80}} and later.
+**The old behavior is still available to opt in to by setting {{cd|on_unleash_interact_only}} to {{cd|true}}.
+
+'''Entity Filters'''
+*Added new entity filter {{cd|has_equipment_tag}}, works like {{cd|has_equipment}} but takes an item tag instead of an item name.
+
+'''Graphical'''
+*Added support for multiple locators for use with leashes for rendering multiple ropes between two entities.
+*{{cd|multi_lead_n}}:
+**Where {{cd|n {{=}} {1, 2, 3, 4<nowiki>}</nowiki>}} defines locators when the entity is leashed to a different entity.
+**Used if and only if it has a corresponding {{cd|multi_lead_hold_n}} and the number n is equal on the two entites.
+*{{cd|multi_lead_hold_n}}
+**Where {{cd|n {{=}} {1, 2, 3, 4<nowiki>}</nowiki>}} defines locators where the entity is leashing a different entity.
+**Used if and only if it has a corresponding {{cd|multi_lead_n}} and the number n is equal on the two entites.
+*{{cd|lead}}
+**is set to origin if it is not defined in the geo.
+*{{cd|lead_hold}}
+**is set to origin if it is not defined in the geo.
+
+'''Items'''
+*Bundles' open icons are now specified via {{cd|IconItemComponent}}. This addresses the issue where a missing texture would appear for an opened custom Bundle. Bundle icon paths have also now be separated into unique keys in {{cd|item_texture.json}}.
+
+'''[[Molang]]'''
+*Added {{cd|query.has_any_leashed_entity_of_type}} which takes a list of entity identities and checks if the actor has any of the listed entities leashed. Available on both the client and the server.
+**Usage: {{cd|query.has_any_leashed_entity_of_type( 'minecraft:sheep', 'minecraft:creeper' )}}
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Custom Components V2", "Drop 2 2025", "Experimental Creator Camera Features" and "Vibrant Visuals" experimental toggles.
+
+=== Additions ===
+==== Blocks ====
+'''[[File:Dried Ghast JE1 BE1.png|class=pixel-image|width=33x33]] [[Dried Ghast]]'''
+* Found in [[Nether fossils]] in [[Soul Sand Valley|soul sand valleys]].
+* Can be crafted with 1 bone block and 8 ghast tears.
+{{Crafting
+|A1 = Ghast Tear
+|B1 = Ghast Tear
+|C1 = Ghast Tear
+|A2 = Ghast Tear
+|B2 = Bone Block
+|C2 = Ghast Tear
+|A3 = Ghast Tear
+|B3 = Ghast Tear
+|C3 = Ghast Tear
+|Output = Dried Ghast
+|ignoreusage=1
+}}
+* When [[waterlogged]], it undergoes 3 states over about 20 minutes until it spawns a [[ghastling]] mob.
+* Makes sounds and shows particles depending on state.
+* If mined during the waterlogging, it will revert to its "dry" state regardless of what state it has reached during waterlogging.
+* Will revert states back to its initial "dry" state when it is taken away from being waterlogged, using the same time scale.
+
+==== Items ====
+'''{{animate|White Harness.png;Light Gray Harness.png;Gray Harness.png;Black Harness.png;Brown Harness.png;Red Harness.png;Orange Harness.png;Yellow Harness.png;Lime Harness.png;Green Harness.png;Cyan Harness.png;Light Blue Harness.png;Blue Harness.png;Purple Harness.png;Magenta Harness.png;Pink Harness.png|32px|class=pixel-image}} [[Harness]]'''
+* Crafted out of 3 leather, 2 glass and 1 wool, the harness will have the same color as the wool used when crafting.
+{{Crafting
+|A1 = Leather
+|B1 = Leather
+|C1 = Leather
+|A2 = Glass
+|B2 = Matching Wool
+|C2 = Glass
+|Output = Matching Harness
+|ignoreusage = 1
+}}
+* Can be re-dyed.
+{{Crafting
+|B2 = Any Harness
+|C2 = Matching Dye
+|Output = Matching Harness
+|ignoreusage = 1
+}}
+* Can only be equipped on a happy ghast.
+* Allows up to 4 players to mount the happy ghast.
+* Can be removed from the happy ghast using [[shears]] but only when no players are mounted.
+
+'''[[File:Happy_Ghast_Spawn_Egg_(pre-release).png|class=pixel-image|width=32x32]] [[Happy Ghast Spawn Egg]]'''
+* Used to spawn a [[happy ghast]].
+
+==== Mobs ====
+'''[[File:Happy_Ghast.gif|width=37x37]] [[Happy Ghast]]'''
+* A rideable entity, which can be equipped with a [[harness]] and ridden by up to four players.
+* Can be stood on, similar to a Shulker.
+* When not being ridden, will approach players holding [[Snowball|snowballs]].
+* [[File:Ghastling (pre-release).gif|32px]] Baby versions are called [[ghastling]]s.
+** Spawned after a [[Dried Ghast|dried ghast]] gets hydrated in [[water]].
+** Can be fed [[snowball]]s to speed up their growth.
+** Can be summoned using the command: {{cmd|/summon happy_ghast ~ ~ ~ ~ ~ minecraft:spawn_baby}}.
+
+==== Gameplay ====
+'''[[Game rule]]s'''
+* Added the game rule command {{cd|locatorBar}} to enable or disable the [[locator bar]] feature.
+
+'''[[Vibrant Visuals]]'''
+[[File:Vibrant Visuals menu (Bedrock Preview 1.21.80.25).png|thumb|Vibrant Visuals settings]]
+* A form of [[Shader|Shaders]] for ''Bedrock Edition''.
+* It is customizable and has two different built-in forms: Favor Performance, and Favor Visuals. Specific feature and visual settings can also be adjusted by expanding "Vibrant Visuals Options".
+
+==== Technical ====
+'''API'''
+:{{cd|@minecraft/server 2.0.0-beta}}
+*Added {{cd|CustomCommandOrigin}} to custom command script callback.
+*Added {{cd|CustomCommandSource}} enum.
+*Renamed {{cd|CustomCommandPermissionLevel}} to {{cd|CommandPermissionLevel}}.
+*Renamed {{cd|CustomCommandParamType.Position}} to {{cd|CustomCommandParamType.Location}}.
+*{{cd|BlockCustomComponent}} now take an optional {{cd|CustomComponentParameters}} object for Custom Components V2 experiment as a second argument to event callbacks in {{cd|2.0.0-beta}}.
+*{{cd|CustomComponentParameters}} added to {{cd|2.0.0-beta}}.
+**params property added to {{cd|CustomComponentparameters}} to {{cd|2.0.0-beta}}.
+*{{cd|ItemCustomComponent}} now take an optional {{cd|CustomComponentParameters}} object for Custom Components V2 experiment as a second argument to event callbacks in {{cd|2.0.0-beta}}.
+*{{cd|EntityFrictionModifierComponent}} has been changed to read-only in version {{cd|2.0.0-beta}}.
+
+:{{cd|@mincraft/server-admin}}
+*Added {{cd|AsyncPlayerJoinBeforeEvent}}
+**Added {{cd|beforeEvents.asyncPlayerJoin}}, {{cd|AsyncPlayerJoinBeforeEvent}}, and {{cd|AsyncPlayerJoinBeforeEventSignal}} to allow creators to delay players joining the world.
+**{{cd|AsyncPlayerJoinBeforeEventSignal.subscribe}} is different than other events because the callback it accepts returns a promise. Once the promise is resolved, the player will join the world, or if the promise is rejected the player will be disconnected without joining the server. The player will be at the loading screen while the promise is pending.
+
+'''Blocks'''
+*When Custom Components V2 experiment is enabled, {{cd|minecraft:custom_components}} component is deprecated in {{cd|1.21.80}} and higher format versions.
+*When Custom Components V2 experiment is enabled, custom components are flattened inline with other components and allow parameters in {{cd|1.21.80}} and higher format versions. Example:
+<syntaxhighlight lang="c++">
+"components": {
+    "example_namespace:example_component": {
+        "someParam": 3,
+        "anotherParam": "test"
+    }
+}</syntaxhighlight>
+
+'''Cameras'''
+*Changed approach for the easing between moving targets under the Experimental Creator Camera Features toggle.
+
+'''Experiments'''
+*Added Drop 2 2025 experiment.
+*Added Custom Components V2 experiment.
+*Added Vibrant Visuals experiment.
+
+'''Graphical'''
+*Added a new lighting model for clouds in the Deferred Technical Preview. The lighting parameters can not be configured at this time.
+*Increased the range of cloud rendering in the Deferred Technical Preview.
+*Added pixelated reflections to the Deferred Technical Preview. This new effect will cause reflections to align to the texel grid of textures in the world.
+*Added pixelated shadows to the Deferred Technical Preview. This new effect can be controlled with the new shadows JSON schema, {{cd|shadows/global.json}}. This file adds new settings that control the style of shadows in the game. Available parameters are {{cd|shadow_stlye}}, which can be {{cd|soft_shadows}} or {{cd|blocky_shadows}}, and {{cd|texel_size}}. {{cd|soft_shadows}} are the default style, while {{cd|blocky_shadows}} results in shadows that are pixelated in appearance. When {{cd|blocky_shadows}} are enabled, {{cd|texel_size}} controls the size of the pixelation effect. {{cd|texel_size}} should be equivalent to the block texture size in order to achieve a one to one mapping between the pixels in a texture and the pixelated effect created by enabling {{cd|blocky_shadows}}, but this is not required. An example version of what {{cd|shadows/global.json}} could look like is as follows:
+<syntaxhighlight lang="c++">
+{
+  "format_version": "1.21.80",
+  "minecraft:shadow_settings": {
+   "shadow_style": "blocky_shadows",
+   "texel_size": 16
+  }
+}</syntaxhighlight>
+
+'''Items'''
+*When Custom Components V2 experiment is enabled, minecraft:custom_components component is deprecated in {{cd|1.21.80}} and higher format versions.
+*When Custom Components V2 experiment is enabled, custom components are flattened inline with other components and allow parameters in {{cd|1.21.80}} and higher format versions. Example:
+<syntaxhighlight lang="c++">
+"components": {
+   "example_namespace:example_component": {
+       "someParam": 3,
+       "anotherParam": "test"
+   }
+}</syntaxhighlight>
+
+=== Changes ===
+==== Mobs ====
+'''[[Ghast]]'''
+*Updated the ghast texture to be higher resolution. This makes it in line with the new happy ghast.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.80.25 Preview
+|;old
+|121484|Shields do not take durability damage from explosions
+|166344|Farmer villagers won't harvest grown crops - they just stare at them
+|186699|Setting the gamerule {{cd|doLimitedCrafting}} to {{cd|true}} does not stop players from crafting unknown recipes
+|189739|Custom skin set to Wide model changes to Slim model after restarting the game
+|190625|Credits music does not plays when the game is paused
+|otherissuescount=2}}
+'''Other'''
+*Fixed a bug that a player can sprint in water faster than swimming.
+*Fixed a bug where incorrect Json errors would appear for valid item texture references.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.80 betas]]
+
+[[de:Bedrock Edition beta 1.21.80.25]]
+[[ja:Bedrock Edition Preview 1.21.80.25]]
+[[lzh:基石版一點二一點八〇點二五]]
+[[pt:Edição Bedrock Preview 1.21.80.25]]
+[[ru:Preview 1.21.80.25 (Bedrock Edition)]]
+[[uk:Preview 1.21.80.25 (Bedrock Edition)]]
+[[zh:基岩版1.21.80.25]]

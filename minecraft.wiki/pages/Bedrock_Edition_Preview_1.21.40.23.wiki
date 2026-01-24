@@ -1,0 +1,132 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.4023.0<br>'''Android, iOS, iPadOS''': 1.21.40.23
+| image = Bedrock 1.21.40.23.png
+| build = 27998127
+| editorver = 0.7.3
+| versioncode = '''Android''':<br />
+952104023 (armeabi-v7a, 34)<br />
+962104023 (x86, 34)<br />
+972104023 (arm64-v8a, 34)<br />
+982104023 (x86_64, 34)<br />
+| date = September 25, 2024
+| server = 1.21.40.23
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.40.23.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.40.23.zip Linux]
+| parent = 1.21.40
+| prevparent = 1.21.31
+| prev = Preview 1.21.40.22
+| next = Preview 1.21.40.25
+| nextparent = 1.21.41
+}}<onlyinclude>
+'''Beta 1.21.40.23''' (ChromeOS, Android) or '''Preview 1.21.40.23''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fourth beta/''Preview'' version for [[Bedrock Edition 1.21.40]], released on September 25, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/30556182663437|title=Minecraft Beta & Preview - 1.21.40.23|website=Minecraft Feedback|date=September 25, 2024}}</ref> which fixes bugs.
+
+== Changes ==
+=== General ===
+'''[[Accessibility]]'''
+*Added text-to-speech voiceover for items in [[Marketplace Pass]] content tab and [[Realm]]s content tab.
+
+'''[[Experiments]]'''
+*Removed the "Bundles" experimental toggle.
+
+'''UI'''
+*Added support for unread [[Realms Stories]] badge notifications on the new play screen (''Preview'' Only).
+*Added the possibility to edit the thumbnail of a world in the new OreUI edit world screen.
+<gallery>Preview 1.21.40.23 world thumbnail editor 01.jpg
+Preview 1.21.40.23 world thumbnail editor 02.jpg</gallery>
+
+=== Items ===
+'''[[Bundle]]s'''
+*They have been de-experimentified and are now available during normal gameplay.
+*Bundle icon now matches {{JE}}.
+
+=== Technical ===
+'''Components'''
+*The {{cd|minecraft:damage_sensor}} component's {{cd|deals_damage}} field now supports three values:
+**{{cd|yes}}, received damage is applied to the entity.
+**{{cd|no}}, received damage is not applied to the entity.
+**{{cd|no_but_side_effects_apply}}, received damage is not applied to the entity, but the side effects of the attack are.
+***This means that the attacker's weapon loses durability, enchantment side effects are applied, etc.
+**Pre-existing content will be automatically updated to maintain its original behavior.
+
+'''Items'''
+*The {{cd|minecraft:bundle_interaction}}, and {{cd|minecraft:bundle_interaction}} item components have been de-experimentified.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", and "Focus Target Camera" experimental toggles.
+=== Additions ===
+==== Technical ====
+'''Add-Ons and Script Engine'''
+*Added {{cd|replace_block_item}} field to the {{cd|minecraft:block_placer}} item component. This field allows player to specify that this item should replace the default item created for the data-driven block it places. To use this field, the identifier of the item must match the identifier of the block it places. This field is optional and defaults to {{cd|false}}.
+
+'''[[Commands/camera|Cameras]]'''
+*Added horizontal and vertical rotation limits to the Focus Target Camera experimental toggle.
+*Added {{cd|continue_targeting}} bool to the Focus Target Camera experimental toggle for tracking entities outside of set rotation limits.
+
+'''Graphical'''
+*Added the ability to data-drive the ambient light in the Deferred Technical Preview. The ambient light is used as the indirect specular contribution when SSR and IBL are not available or when they are insufficient to illuminate metal objects in low light conditions. It is also used as the minimum value that ambient contribution can have, thus avoiding scenes from being completely black if no light sources are present. See updated documentation on the Creator portal for more information.
+
+=== Changes ===
+==== Technical ====
+'''[[Behavior Pack]]s'''
+*Updated references to old block names in remaining behavior pack files.
+
+'''Graphical'''
+*Made a breaking schema change to JSON files associated with the Deferred Technical Preview to hoist the {{cd|format_version}} field out to the root level. The following files are affected:
+**{{cd|atmospherics/atmospherics.json}}
+**{{cd|color_grading/color_grading.json}}
+**{{cd|lighting/global.json}}
+**{{cd|pbr/global.json}}
+**{{cd|point_lights/global.json}}
+**{{cd|water/water.json}}
+*For example, the previous schema for {{cd|lighting/global.json}} was:
+<pre>{
+    "minecraft:lighting_settings": {
+        "format_version": "1.21.40",
+        ...
+    }
+}</pre>
+*But should now be written as:
+<pre>{
+    "format_version": "1.21.40",
+    "minecraft:lighting_settings": {
+        ...
+    }
+}</pre>
+
+'''Stability and Performance'''
+*Worlds created with Experimental Custom Biomes before [[Caves & Cliffs]] update will have their Custom Biomes in Chunks replaced with a default Biome (Ocean for Overworld)
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.40.23 Preview
+|;old
+|185132|Shields, spyglass, trident, crossbow and bow glitch out when a photo is taken using the photograph button on the pause screen
+|185316|Horse armor does not render on a horse when using resource packs with a minimum engine version of 1.17.0 or lower
+|185457|Bundle fullness bar can not be seen when in another bundle
+|185481|Empty bundle shows progress bar when selected
+|185519|Bundle texture is inconsistent between Java & Bedrock Edition
+|186676|Trading for emeralds using second slot causes game to crash
+|;previous
+|186627|Ghost blocks appear when placing blocks on vaults
+|186684|Water is no longer transparent
+|otherissuescount=6}}
+'''Other'''
+*Bundle dye recipes are now unlocked when getting dye instead of undyed variant.
+*Issue where some commands did not recognize certain block or item names has been fixed.
+*New Beta options in {{cd|minecraft:looked_at}} and {{cd|minecraft:home}} entity components now properly require that {{cd|use_beta_features}} is specified in the root JSON object.
+*Fixed a crash that could occur with {{cd|getDimension}} when called within {{cd|onBeforeActorRemove}} on an entity that was invalid.
+*Custom biome ids are now assigned with values starting at 30,000 and are stored in {{cd|BiomeIdsTable}} in world data so their id assignments persist for the duration of the world.
+*Fixed a bug with point light shadows that would cause circles to appear on nearby surfaces. As a consequence, the edges of point light shadows are now jagged. This will be resolved in a later update.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.40 betas]]
+
+[[de:Bedrock Edition beta 1.21.40.23]]
+[[pt:Edição Bedrock Preview 1.21.40.23]]
+[[uk:Preview 1.21.40.23 (Bedrock Edition)]]
+[[zh:基岩版1.21.40.23]]

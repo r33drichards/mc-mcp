@@ -1,0 +1,124 @@
+{{exclusive|java}}
+When [[Particles (Java Edition)|particles]] are spawned using the {{cmd|particle}} command, by [[Biome definition|biomes]] or [[Enchantment definition|enchantments]], they can be configured using [[NBT]] or [[JSON]] data.
+
+== Usage ==
+When referenced from a [[custom biome|biome]] or [[custom enchantment|enchantment]] definition, a particle is defined using:
+<div class=treeview>
+* {{nbt|compound}}: The particle object<section begin="json format" />
+** {{nbt|string|type}}: The id of the particle type, see [[Particles (Java Edition)]] for valid options
+** Additional fields based on the type, {{#ifeq:{{PAGENAME}}|Particle format|[[#Configurations of particle types|see below]]|see {{slink|Particle format|Configurations of particle types}}}}<section end="json format" />
+</div>
+
+== Configurations of particle types ==
+Some particle types have configurations that need to be specified. These types and the configuration fields are:
+
+<div class=treeview>
+* '''block''', '''block_crumble''', '''block_marker''', '''dust_pillar''', and '''falling_dust'''
+** {{nbt|compound|block_state}}: Contains the block state used for the particle.
+*** {{nbt inherit/block_state}}
+** '''Alternative syntax:'''
+** {{nbt|string|block_state}}: The [[resource location]] of the block to use.
+</div>
+
+<div class=treeview>
+* '''dragon_breath'''
+** {{nbt|float|power}}: Optional, defaults to {{cd|1.0}} &mdash; Scaling of the velocity after randomness.
+</div>
+
+<div class=treeview>
+* '''dust'''
+** {{nbt|int}}{{nbt|list|color}}: Three floats representing the red, green, and blue components of the dust color. Each value must be between 0 and 1. Can alternatively be an rgb packed integer.
+** {{nbt|float|scale}}: Controls the size scale multiplier and lifetime multiplier of the particle. The particle's lifetime is a random integer from 8 to 40 game ticks, then multiplied by this scale value, with a minimum of 0.01 and a maximum of 4.
+</div>
+
+<div class=treeview>
+* '''dust_color_transition'''
+** {{nbt|list|from_color}}: Three floats representing the red, green, and blue components of the start color. Each should be from 0 to 1. If any color value is less than 0 or higher than 1, the particle color has undefined behavior.
+** {{nbt|list|to_color}}: Three floats representing the red, green, and blue components of the end color. Each should be from 0 to 1. If any color value is less than 0 or higher than 1, the particle color has undefined behavior.
+** {{nbt|float|scale}}: Controls the size scale multiplier and lifetime multiplier of the particle. The particle's lifetime is a random integer from 8 to 40 game ticks, then multiplied by this scale value, with a minimum of 0.01 and a maximum of 4.
+</div>
+
+<div class=treeview>
+* '''effect''', '''instant_effect'''
+** {{nbt|float|power}}: Optional, defaults to {{cd|1.0}} &mdash; Scaling of the velocity after randomness.
+** {{nbt|list}}{{nbt|int|color}}: Optional, defaults to white &mdash; {{nbt color}}
+</div>
+
+<div class=treeview>
+* '''entity_effect'''
+** {{nbt|list}}{{nbt|int|color}}: {{nbt color|alpha=1}}
+</div>
+
+<!-- when 1.21.9 is released, merge with entity_effect above -->
+<div class=treeview>
+* '''flash'''
+** {{nbt|list}}{{nbt|int|color}}: {{nbt color|alpha=1}}
+</div>
+
+<div class=treeview>
+* '''item'''
+** {{nbt|compound|item}}: Contains the item data used for the particle.
+*** {{nbt inherit/itemnocount}}
+** '''Alternative syntax:'''
+** {{nbt|string|item}}: The [[resource location]] of the item to use.
+</div>
+
+<div class=treeview>
+* '''sculk_charge'''
+** {{nbt|float|roll}}: The angle the particle displays at in {{w|Radian|radians}}.
+</div>
+
+<div class=treeview>
+*'''shriek'''
+** {{nbt|int|delay}}: The delay in ticks.
+</div>
+
+<div class=treeview>
+* '''trail'''
+** {{nbt|list|target}}: The coordinates the trail particles will go to.
+** {{nbt|int|color}}: The particle color, as an RGB integer.
+** {{nbt|int|duration}}: The number of ticks the particle will take to travel to the target.
+</div>
+
+<div class=treeview>
+*'''vibration'''
+** {{nbt|compound|destination}}: The destination.
+*** {{nbt|string|type}}: Must be <code>block</code>.
+*** {{nbt|list|pos}}: The block position.
+**** {{nbt|int}}: X
+**** {{nbt|int}}: Y
+**** {{nbt|int}}: Z
+** {{nbt|int|arrival_in_ticks}}: The duration of the move.
+</div>
+
+All other types don't have any configuration.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20.5|dev=24w14a|Added particle types {{cd|dust_pillar|infested|item_cobweb|ominous_spawning|raid_omen|small_gust|trial_omen|trial_spawner_detection_ominous|d=and}}.}}
+|{{HistoryLine|||dev=pre1|Particle options in SNBT format are now used in the {{cmd|particle}} command.
+|Changes to <code>item</code> particle: renamed <code>value</code> field to <code>item</code>, now also allows a string item ID as shorthand.
+|Changes to <code>block</code> particle: renamed <code>value</code> field to <code>block_state</code>, now also allows a string block ID as shorthand.
+|Changes to <code>entity_effect</code> particle: renamed <code>value</code> field to <code>color</code>, now also allows a list of 4 floats.
+|Changes to <code>dust_color_transition</code> particle: renamed <code>fromColor</code> to <code>from_color</code> and <code>toColor</code> to <code>to_color</code>.}}
+|{{HistoryLine||1.21.4|Added particle types {{cd|block_crumble}} and {{cd|trail}}.}}
+|{{HistoryLine||1.21.5|dev=25w04a|The particle type {{cd|tinted_leaves}} now has a parameter: {{cd|color}}}}
+|{{HistoryLine||1.21.9|dev=25w36a|{{cd|dragon_breath}} now optionally takes a {{cd|power}} parameter, which is multiplied onto its initial velocity, after all randomness.
+|{{cd|instant_effect}} and {{cd|effect}} now optionally take {{cd|power}} and {{cd|color}} parameters.
+|{{cd|flash}} now requires a {{cd|color}} parameter.}}
+}}
+
+== See also ==
+* [[Biome definition]]
+* [[Enchantment definition]]
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{Navbox particles}}
+
+[[de:Partikeldaten]]
+[[fr:Format de particule]]
+[[pt:Formato de partícula]]
+[[uk:Формат частинок]]
+[[zh:粒子数据格式]]

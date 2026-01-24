@@ -1,0 +1,105 @@
+{{DISPLAYTITLE:''Bedrock Edition'' installation files}}
+The '''installation files''' for {{BE}} contain the game program as well as resources required to run the game, such as [[resource pack|resource packs]], [[behavior pack|behavior packs]], [[skin pack|skin packs]] and [[Vibrant Visuals]] configurations. On the Windows version of {{BE}}, those are located in {{file|directory|'''Minecraft for Windows'''|inline=1}} or {{file|directory|'''Minecraft Preview for Windows'''|inline=1}}.
+
+== Location ==
+=== Windows ===
+On Windows, the files are located under the {{cd|''&lt;installation drive&gt;''\XboxGames\Minecraft for Windows}} (or {{cd|..\Minecraft Preview for Windows}} for ''[[Minecraft Preview|Preview]]'') directory. This directory contains a few unknown files and a {{file|directory|Content|inline=1}} directory containing all data. The {{cd|XboxGames}} directory may also be located on other {{w|Disk partitioning|partition}} depending on the game's installation folder, which is configured in Microsoft Store or the Xbox app.<ref>https://www.elevenforum.com/t/change-game-installation-options-in-microsoft-store-and-xbox-app-in-windows-11.19791/</ref>
+
+The main {{file|directory|Content|inline=1}} directory can also be accessed from the old UWP storage location in {{cd|%PROGRAMFILES%\WindowsApps}}. The directory's name is different based on each versions:
+* For release versions, it is formatted like {{cd|MICROSOFT.MINECRAFTUWP_''<internal version>''_x64__8wekyb3d8bbwe}}.
+* For ''[[Minecraft Preview]]'', it is formatted like {{cd|Microsoft.MinecraftWindowsBeta_''<internal version>''_x64__8wekyb3d8bbwe}}.
+* For ''[[Minecraft Education]]'', it is formatted like {{cd|Microsoft.MinecraftEducationEdition_''<internal version>''_x64__8wekyb3d8bbwe}}
+
+=== Android ===
+
+On Android, the files are located inside {{w|APK}} files. Those are based on ZIP archives, and can be opened with an archive tool that supports this format. The assets present in the {{File|directory|Content|inline=1}} directory on Windows are located in the <code>install_pack.apk</code> split, inside the {{File|directory|assets|inline=1}} directory.
+
+When the game is installed, the APK files are installed into <code>/data/app</code>. While this directory is not readable without root, it is possible to access the APK files using {{w|Android Debug Bridge}} (ADB) or third-party tools like [https://f-droid.org/en/packages/com.smartpack.packagemanager/ Package Manager].
+
+== Directory structure ==
+<div class="treeview">
+* {{File|directory|Content}}
+** {{File|directory|behavior_packs}}: Contains imported [[behavior pack]]s for signed out players.
+** {{File|directory|data}}: The directory containing all vanilla resources for the game.
+*** {{File|directory|behavior_packs}}: Contains [[Behavior pack#Internal behavior packs|vanilla behavior packs]].
+*** {{File|directory|credits}}: Contains the texts for the [[credit sequence]].
+**** {{File|file|credits.json}}: Contains [[Mojang staff]] and other people who have worked on ''[[Minecraft: Bedrock Edition]]''.
+**** {{File|file|end.txt}}: Contains the [[End Poem]].
+**** {{File|file|quote.txt}}: Contains the quotation added at the end of the credit sequence.
+*** {{File|directory|definitions}}: Contains various built-in definitions of certain things in the game.
+**** {{File|dir|attachables}}: Contains attachable definitions for [[armor]]s and gears, include all variants of helmet, chestplate, leggings, and boots; bow, crossbow, elytra, shield, trident, and turtle helmet.
+**** {{File|dir|feature_rules}}: Contains rules for the features generated in the world.
+**** {{File|dir|features}}: Contains [[feature]]s generated in the world.
+**** {{File|dir|persona}}: Contains appearance definitions for the default characters. They dictate what the character should wear, such as hair, shirt, pants, etc.
+**** {{File|dir|sdl_layouts}}: Contains the JSON UI files for the Character Creator menu.{{verify}}
+**** {{File|dir|spawn_groups}}: Contains spawning mechanics for each individual wave of [[raid]]s.
+*** {{File|directory|fonts}}: Contains a singular font file, see below.
+**** {{File|file|Mojangles.ttf}}: The [[Mojangles]] {{w|TrueType}} font file used in the game.
+*** {{File|directory|gui}}: Contains [[Ore UI]] resources, such as UI definitions (HTML, CSS, and JavaScript), images, fonts, etc.
+**** {{File|directory|dist/hbui}}: {{cd|hbui}} stands for '''H'''umming'''b'''ird '''U'''I, which is the former name for Ore UI, the framework used in building the game's [[user interface]].
+*** {{File|directory|icu}}: {{info needed|might be related to ICU Unicode (https://icu.unicode.org/)}}
+*** {{File|directory|ray_tracing}}: Contains some resources for [[RTX]], including textures.
+*** {{File|directory|renderer}}: Contains configurations for [[Vibrant Visuals]].
+*** {{File|directory|resource_packs}}: Contains [[Resource pack#Internal resource packs|vanilla resource packs]].
+*** {{File|directory|skin_packs}}: Contains [[Skin pack#Internal skin packs|vanilla skin packs]].
+*** {{File|directory|store}}: Contains terms of use texts for both [[Realms]] subscriptions, including translations.
+*** {{File|file|bootstrap.json}}: {{info needed}}
+*** {{File|file|bootstrap_creator.json}}: {{info needed}}
+*** {{File|file|def_action_test.json}}: {{info needed}}
+*** {{File|file|profanity_filter.wlist}}: The [[profanity filter]] list encoded in {{w|Base64}}.
+*** {{File|file|texture_backwards_compatibility_mapping.json}}: A [[JSON]] file used by the game to map texture compatibility in resource pack.
+*** {{File|file|uniforms.json}}: {{info needed}}
+** {{File|directory|development_behavior_packs}}: Contains manually imported [[behavior pack]]s for signed out players.
+** {{File|directory|development_resource_packs}}: Contains manually imported [[resource pack]]s for signed out players.
+** {{File|directory|development_skin_packs}}: Contains manually imported [[skin pack]]s for signed out players.
+** {{File|directory|Installers}}
+*** {{File|file|GameInputRedist.msi}}: The installer program for Microsoft GameInput, an application used for controller, keyboard, and mouse inputs.
+** {{File|directory|resource_packs}}: Contains imported [[resource pack]]s for signed out players.
+** {{File|file|appxmanifest.xml}}: App package manifest.<ref name="msix-package">https://learn.microsoft.com/en-us/windows/msix/overview</ref>
+** {{File|file|cohtml.WindowsDesktop.dll}}: Coherent Gameface's HTML engine for [[Ore UI]].<ref name="coherent-gameface-dll">https://docs.coherent-labs.com/cpp-gameface/integration/setup_guide_native/</ref>
+** {{File|file|cohtml_icuuc.dll}}: Coherent Gameface and Unicode Internationalization.<ref>https://unicode-org.github.io/icu/userguide/icu4c/</ref>
+** {{File|file|dxcompiler.dll}}: {{info needed}}
+** {{File|file|dxil.dll}}: {{info needed}}
+** {{File|file|fmod.dll}}: {{w|FMOD}} audio processing library. All sound files in the vanilla resource packs are encoded in {{cd|.fsb}}, which requires this library.
+** {{File|file|HttpServer.UWP.dll}}: Library related to Coherent Gameface's {{w|HTTP server}}.<ref name="coherent-gameface-dll"/>
+** {{File|file|gamelaunchhelper.exe}}: Alternative executable for launching the game.
+** {{File|file|LargeLogo.png}}: The large version (480&times;480) of the app icon.
+** {{File|file|layout.xml}}: {{info needed}}
+** {{File|file|layout_50dd1acc-7556-5abd-21b7-e1d945549a4d.xml}}: {{info needed}}
+** {{File|file|Logo.png}}: The default version (150x150) of the app icon.
+** {{File|file|[[:File:MCSplashScreen.png|MCSplashScreen.png]]}}: The red [[Mojang Studios]] splash screen shown on startup.
+** {{File|file|MediaDecoders.WindowsDesktop.dll}}: Library related to Coherent Gameface, likely for [[w:Data compression|media encoding]].<ref name="coherent-gameface-dll"/>
+** {{File|file|MicrosoftGame.Config.exe}}: {{info needed}}
+** {{File|file|Minecraft.Windows.exe}}: The main executable for the ''Bedrock Edition'' GDK app (encrypted).
+** {{File|file|Minecraft.Windows.exp}}: {{info needed}}
+** {{File|file|minecraftIcon.ico}}: The app icon which shows on the top of the app window (not in ''Preview'').
+** {{File|file|minecraftPreviewIcon.ico}}: The ''[[Minecraft Preview]]'' app icon which shows on the top of the app window (not in full release).
+** {{File|file|nvngx_dlss.dll}}: Library for NVIDIA {{w|DLSS}} functionality.<ref>https://github.com/NVIDIA/DLSS/blob/main/lib/Windows_x86_64/rel/nvngx_dlss.dll</ref>
+** {{File|file|PlayFabMultiplayerGDK.dll}}: Likely related to multiplayer support via [https://azure.microsoft.com/en-us/products/playfab Azure PlayFab].
+** {{File|file|RenoirCore.WindowsDesktop.dll}}: Coherent Labs' Renoir Graphics Library.<ref name="coherent-gameface-dll"/><ref>https://coherent-labs.com/posts/introducing-renoir-graphics-library/</ref>
+** {{File|file|resources.pri}}: Resources file containing localized strings and assets.<ref>https://learn.microsoft.com/en-us/windows/uwp/app-resources/resource-management-system</ref>
+** {{File|file|SmallLogo.png}}: The small version (44x44) of the app icon.
+** {{File|file|SmallLogo.png}}: The Microsoft Store version (100x100) of the app icon.
+** {{File|file|v8.dll}}: Library related to [[w:V8_(JavaScript_engine)|V8]] JavaScript engine used for Coherent Gameface.<ref name="coherent-gameface-dll"/>
+** {{File|file|v8_libbase.dll}}: Library related to V8 JavaScript engine used for Coherent Gameface.<ref name="coherent-gameface-dll"/>
+** {{File|file|v8_libplatform.dll}}: Library related to V8 JavaScript engine used for Coherent Gameface.<ref name="coherent-gameface-dll"/>
+** {{File|file|v8_zlib.dll}}: {{w|Zlib}} compression library related to the V8 JavaScript engine used for Coherent Gameface.<ref name="coherent-gameface-dll"/>
+** {{File|file|WinPixEventRuntime.dll}}: {{info needed}}
+** {{File|file|XCurl.dll}}: Library which implements [https://curl.haxx.se/libcurl/ libCurl] APIs while being GDK compliant.<ref>https://learn.microsoft.com/en-us/gaming/gdk/docs/features/console/networking/web-requests/intro-xcurl</ref> Likely used for HTTP requests.
+</div>
+
+== History ==
+{{expand section}}
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.21.120|dev=Preview 1.21.120.21|''Minecraft'' for Windows is now a GDK application instead of a UWP application, moving the main content directory from {{cd|%PROGRAMFILES%\WindowsApps}} to {{cd|''<installation drive>''\XboxGames}}. The game can now also be installed to a drive other than the main system drive. With this change, the {{File|file|AppxBlockMap.xml}} and {{File|file|AppxSignature.p7x}} files are no longer included.}}
+|{{HistoryLine||1.21.130|dev=Preview 1.21.130.26|Added {{cd|minecraftIcon.ico}}/{{cd|minecraftPreviewIcon.ico}} in order to fix {{bug|MCPE-227849}}.}}
+}}
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Development]]

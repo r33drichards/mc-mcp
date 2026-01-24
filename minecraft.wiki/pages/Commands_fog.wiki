@@ -1,0 +1,92 @@
+{{exclusive|bedrock|education}}
+{{Infobox command
+|name=fog
+|oplevel=1
+|cheat=1
+}}
+Used for managing active [[fog]] settings for players.
+
+== Usage ==
+{{main|Fog}}
+Fog settings pushed by this command are stored in each player's NBT data in a data structure similar to [[wikipedia:Stack (abstract data type)|stack]].
+
+In this data structure, each element is in the format of <code>(''fogSettingID'', ''userProvidedId'')</code>. Multiple elements can share a same fogSettingID or userProvidedId. Duplicate elements are valid.
+
+To push a new element into it, both fogSettingID and userProvidedId are required. To pop an element, userProvidedId is required. It searches from the top (newest) of the "stack", the first element with the specific userProvidedId is popped. All elememts with a specific userProvidedId can be removed together with <code>remove</code> mode. If you forget the userProvidedId of an element, then the only way to remove the elememt is editing the player's NBT via an NBT editor.
+
+Each [[Fog definition|fog setting]] has fog effects of one or more of the six fog types (air, weather, water, lava, lava_resistance, powder_snow), for both classic graphics modes and [[Vibrant Visuals]], and some other settings. When rendering, all fog settings in this are applied one by one from the bottom (oldest) to the top (newest) of this "stack". The fog effects defined in the later fog setting overrides the earlier's. Each fog type works independently.
+
+Vanilla fog settings (biome fog, powder snow fog, etc) are applied before all fog settings in this "stack".
+
+== Syntax ==
+
+: <code>fog <victim: target> push <fogID: string> <userProvidedId: string></code>
+:: Pushes a fog setting into the fog "stack" of targeted players.
+: <code>fog <victim: target> <mode: delete> <userProvidedId: string></code>
+:: Pops a fog setting from the fog "stack", or removes all the fog settings with the specified userProvidedId from the "stack" of targeted players.
+
+== Arguments ==
+
+{{argument|be=1|victim: target|CommandSelector<player>}}
+: Specifies the player(s) to be targeted.
+: {{arg desc|type=player|be=player}} And it should be of player type.
+
+{{argument|be=1|fogID: string|basic_string}}
+: Specifies a fog setting.
+: {{arg desc|be=basic_string}} Should be a fog setting name defined under the Json path <code>"minecraft:fog_settings"."identifier"</code> in the <samp><resource_pack>/fogs/<fog_setting>.json</samp> file). See [[Fog#Vanilla fog settings]] for IDs of vanilla fog settings.
+
+{{argument|be=1|mode: delete|enum}}
+: Specifies whether to pop or remove the fog "stack".
+: Must be one of <code>pop</code> and <code>remove</code>.
+
+{{argument|be=1|userProvidedId: string|basic_string}}
+: Specified the userProvidedId.
+: {{arg desc|be=basic_string}}
+
+== Result ==
+
+{{Result table|onlybe=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.||unparseable}}
+{{Result table|<code>victim: target</code> is a target selector that is not in [[Target selectors#Player type and single type|player type]].||fail}}
+{{Result table|<code>victim: target</code> fails to resolve to one or more online players (named players must be online).}}
+{{Result table|cmd=fog ... push ...|If the specified fog setting does not exist.}}
+{{Result table|cmd=fog ... <mode: delete> ...|If there's no element with the specified userProvidedId in the fog "stack" of all targeted players.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table|onlybe=1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|The number of targeted players}}
+{{Output table}}
+
+== Examples ==
+{{see also|Fog#Bedrock Edition}}
+
+<code>/fog @p push minecraft:fog_basalt_deltas test:fog</code>
+: Gives the nearest player the [[basalt deltas]] fog.
+
+<code>/fog @p pop test:fog</code> or <code>/fog @p remove test:fog</code>
+: Removes this fog from the nearest player.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.100|dev=beta 1.16.100.54|Added {{cmd|fog|link=none}}.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/fog?view=minecraft-bedrock-stable|title=<code>/fog</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[Category:Data driven id lists in Bedrock Edition]]
+
+[[de:Befehl/fog]]
+[[lzh:令/fog]]
+[[pt:Comandos/fog]]
+[[ru:Команды консоли/fog]]
+[[zh:命令/fog]]

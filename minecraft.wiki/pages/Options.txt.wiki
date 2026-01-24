@@ -1,0 +1,6362 @@
+{{DISPLAYTITLE:options.txt}}
+'''options.txt''' is the file that stores all the options changeable in the in-game [[options]]/[[settings]] menu and various other information the game needs to store after quitting. It is found in the <code>[[.minecraft]]</code> folder {{in|java|lc=}} or in the <code>[[com.mojang]]/minecraftpe</code> folder {{in|bedrock|lc=}}, and can be edited with any basic text editor to change options. Most settings can be changed in-game, but a few can be changed only by editing this file. The options.txt file for the latest version of the game is not backward-compatible with older versions of the game, and if older versions are played in the same directory as a newer version, options.txt can be reset back to its default settings.
+
+== Options ==
+
+=== ''Java Edition'' ===
+{{needs update|section=1}}
+Each line represents a single option or piece of data, with the option followed by a colon followed by the value of that option. A list of all available key/button numbers for the [[controls]] options is available at [[key codes]].<!--
+Options already added in snapshots for an unreleased version should use "&ndash;" to replace its line number. Give them numbers when stable release released.-->
+{| class="wikitable sortable" style="width: 100%" data-description="List of options"
+|-
+! scope="col" style="width: 5%;" | #<ref group="N" name="numbering">This is the line number of the option in the "options.txt" file; options are not actually numbered in any way in options.txt itself.</ref>
+! scope="col" | Option name
+! scope="col" class="unsortable" | Explanation
+! scope="col" | Valid values
+! scope="col" | Default value
+! scope="col" | Version added
+|-
+! scope="row" | 1
+| version
+| [[Data version]] of the client version this file was last saved in; used for upgrading default settings. If this field is missing, the file is discarded and replaced with the defaults. (numeric)
+| 
+| {{data version|Java Edition {{v|java|link=none}}}}<br>(for latest release {{v|java}})
+| [[Java Edition 1.10-pre1|1.10-pre1]] ([[Java Edition 1.10|1.10]])
+|-
+! scope="row" | 2
+| ao
+| Smooth lighting 
+| true/false
+| true
+|
+|-
+! scope="row" | 3
+| biomeBlendRadius
+| Radius for which biome blending should happen
+| 0–7
+| 2
+| [[Java Edition 18w15a|18w15a]] ([[Java Edition 1.13|1.13]])
+|-
+! scope="row" | 4
+| enableVsync
+| Whether [[wikipedia:Screen tearing#V-sync|v-sync]] (vertical synchronization) is enabled
+| true/false
+| true
+|
+|-
+! scope="row" | 5
+| entityDistanceScaling
+| The maximum distance from the player that entities render
+| 0.5-5.0
+| 1.0
+|
+|-
+! scope="row" | 6
+| entityShadows
+| Whether to display entity shadows
+| true/false
+| true
+|
+|-
+! scope="row" | 7
+| forceUnicodeFont
+| Whether Unicode font should be used
+| true/false
+| false
+|
+|-
+! scope="row" | 8
+| japaneseGlyphVariants
+| Uses Japanese variants of CJK (Chinese, Japanese, and Korean) characters in the default font
+| true/false
+| false
+| 
+|-
+! scope="row" | 9
+| fov
+| How large the field of view is (floating-point). The in-game value is counted in degrees, however, the ''options.txt'' isn't. The value is converted into degrees with the following formula: <code>degrees = 40 * value + 70</code>
+|<nowiki>-1–1</nowiki>
+| 0.0
+|
+|-
+! scope="row" | 10
+| fovEffectScale
+| FOV Effects (how much the field of view changes when sprinting, having [[Speed]] or [[Slowness]] etc.)
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 11
+| darknessEffectScale
+| Darkness Pulsing (how much the [[Darkness]] effect pulses)
+| 0–1
+| 1.0
+| [[Java Edition 22w15a|22w15a]] ([[Java Edition 1.19|1.19]])
+|-
+! scope="row" | 12
+| glintSpeed
+| The speed of visual [[glint]] on enchanted items
+| 0-1
+| 0.5
+| 
+|-
+! scope="row" | 13
+| glintStrength
+| The strength of visual [[glint]] on enchanted items
+| 0-1
+| 0.75
+| 
+|-
+! scope="row" | 14
+| prioritizeChunkUpdates
+| Chunk section update strategy
+| 0–2 (Threaded, Semi Blocking, Fully Blocking)
+| 0 (Threaded)
+| [[Java Edition 21w37a|21w37a]] ([[Java Edition 1.18|1.18]])
+|-
+! scope="row" | 15
+| fullscreen
+| Whether the game attempts to go fullscreen at startup
+| true/false
+| false
+|
+|-
+! scope="row" | 16
+| {{anchor|gamma}} gamma
+| Brightness
+| 0–1 (Note: values below 0 and above 1 are invalid and inaccessible on vanilla, even via editing the options.txt file.<ref>{{bug|MC-51418|||Fixed}}</ref>)
+| 0.5
+|
+|-
+! scope="row" | 17
+| graphicsMode
+| Whether Fast (less detailed), Fancy (more detailed), or ''Fabulous!'' (most detailed) graphics are turned on
+| 0-2 (Fast, Fancy, ''Fabulous!'')
+| 1 (Fancy)
+|
+|-
+! scope="row" | 18
+| guiScale
+| Size of interfaces
+| 0 (Auto) or 1+ for size. Upper limit based on window resolution.
+| 0 (Auto)
+|
+|-
+! scope="row" | 19
+| maxFps
+| The maximum framerate
+| 10–260
+| 120
+|
+|-
+! scope="row" | 20
+| inactivityFpsLimit
+| Limits FPS to a certain amount whether the player is AFK (Away From Keyboard) or Minecraft is minimized.
+| afk/minimized
+| afk
+| 
+|-
+! scope="row" | 21
+| mipmapLevels
+| Amount by which distant textures are smoothed
+| 0–4
+| 4
+|
+|-
+! scope="row" | 22
+| narrator
+| Setting of the [[Multiplayer#Narrator|Narrator]]
+| 0–3
+| 0
+| [[Java Edition 17w06a|17w06a]] ([[Java Edition 1.12|1.12]])
+|-
+! scope="row" | 23
+| particles
+| Amount of particles (such as rain, potion effects, etc.)
+| 0–2 (All, Decreased, Minimal)
+| 0 (All)
+|
+|-
+! scope="row" | 24
+| reducedDebugInfo
+| Whether to show reduced information on the [[Debug screen]]
+| true/false
+| false
+|
+|-
+! scope="row" | 25
+| renderClouds
+| Whether to display [[clouds]]
+| true/false/fast
+| true
+|
+|-
+! scope="row" | 26
+| renderDistance
+| The render distance in the chunk radius from the player
+| 2–32 without external editing of options.txt; maximum is further limited to 16 on 32-bit machines and machines with less than 1 gigabyte of memory
+| 12 (64-bit), 8 (32-bit)
+|
+|-
+! scope="row" | 27
+| simulationDistance
+| The [[simulation distance]] in the chunk radius from the player
+| 5–32 without external editing of options.txt; maximum is further limited to 16 on 32-bit machines and machines with less than 1 gigabyte of memory
+| 12 (64-bit), 8 (32-bit)
+| [[Java Edition 21w38a|21w38a]] ([[Java Edition 1.18|1.18]])
+|-
+! scope="row" | 28
+| screenEffectScale
+| Distortion Effects (how intense the effects of [[Nausea]] and [[nether portal]]s are)
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 29
+| soundDevice
+| Sound device to be used
+| String
+|
+| [[Java Edition 21w37a|21w37a]] ([[Java Edition 1.18|1.18]])
+|-
+! scope="row" | 30
+| autoJump
+| Whether auto-jump is enabled
+| true/false
+| false
+| 
+|-
+! scope="row" | 31
+| rotateWithMinecart
+| Whether the player's direction changes with the direction of the [[minecart]] they are riding
+| true/false
+| false
+|
+|-
+! scope="row" | 32
+| operatorItemsTab
+| Whether the player has access to the "Operator Utilities" tab in the [[Creative inventory]]
+| true/false
+| false
+|
+|-
+! scope="row" | 33
+| autoSuggestions
+| True if brigadier's command suggestion UI should always be shown, instead of just when pressing tab
+| true/false
+| true
+| [[Java Edition 17w47a|17w47a]] ([[Java Edition 1.13|1.13]])
+|-
+! scope="row" | 34
+| chatColors
+| Whether colored chat is allowed
+| true/false
+| true
+|
+|-
+! scope="row" | 35
+| chatLinks
+| Whether links show as links or just text in the chat (true/false [links/plaintext])
+| true/false
+| true
+|
+|-
+! scope="row" | 36
+| chatLinksPrompt
+| Whether clicking on links in chat needs confirmation before opening them
+| true/false
+| true
+|
+|-
+! scope="row" | 37
+| discrete_mouse_scroll
+| Ignores scrolling set by operating system
+| true/false
+| false
+|
+|-
+! scope="row" | 38
+| invertYMouse
+| Whether mouse is inverted or not
+| true/false
+| false
+|
+|-
+! scope="row" | 39
+| realmsNotifications
+| Whether Realms invites are alerted on the main menu
+| true/false
+| true
+|
+|-
+! scope="row" | 40
+| showSubtitles
+| If [[subtitles]] are shown
+| true/false
+| false
+|
+|-
+! scope="row" | 41
+| directionalAudio
+| If [[wikipedia:Directional_sound|Directional Audio]] is enabled
+| true/false
+| false
+| [[Java Edition 22w11a|22w11a]] ([[Java Edition 1.19|1.19]])
+|-
+! scope="row" | 42
+| touchscreen
+| Whether touchscreen controls are used
+| true/false
+| false
+|
+|-
+! scope="row" | 43
+| bobView
+| Whether or not the camera bobs up and down as the player walks
+| true/false
+| true
+|
+|-
+! scope="row" | 44
+| toggleCrouch
+| Whether the sneak key must be pressed or held to activate sneaking
+| true/false
+| false
+|
+|-
+! scope="row" | 45
+| toggleSprint
+| Whether the sprint key must be pressed or held to activate sprinting
+| true/false
+| false
+|
+|-
+! scope="row" | 46
+| darkMojangStudiosBackground
+| Whether the Mojang Studios loading screen appears monochrome
+| true/false
+| false
+| [[Java Edition 21w13a|21w13a]] ([[Java Edition 1.17|1.17]])
+|-
+! scope="row" | 47
+| hideLightningFlashes
+| Hide lightning flashes (visual effect)
+| true/false
+| false
+| [[Java Edition 21w37a|21w37a]] ([[Java Edition 1.18|1.18]])
+|-
+! scope="row" | 48
+| hideSplashTexts
+| Whether [[splash]] texts are shown on the [[title screen]]
+| true/false
+| false
+| 
+|-
+! scope="row" | 49
+| mouseSensitivity
+| How much a mouse movement changes the position of the camera
+| 0–1
+| 0.5
+|
+|-
+! scope="row" | 50
+| damageTiltStrength
+| The amount of camera shake when the player is being hurt.
+| 0-1
+| 1.0
+|
+|-
+! scope="row" | 51
+| highContrast
+| Enhances the contrast of UI elements
+| true/false
+| false
+|
+|-
+! scope="row" | 52
+| highContrastBlockOutline
+| Makes targeted [[block]] outlines more visible
+| true/false
+| false
+|
+|-
+! scope="row" | 53
+| narratorHotKey
+| Pressing <kbd>Ctrl</kbd> + <kbd>B</kbd> does not open narrator if it is turned off
+| true/false
+| true
+| [[Java Edition 23w33a|23w33a]] ([[Java Edition 1.20.2|1.20.2]])
+|-
+! scope="row" | 54
+| resourcePacks
+| A list of active resource packs, with pack names in quotes, separated with commas
+| String
+| []
+|
+|-
+! scope="row" | 55
+| incompatibleResourcePacks
+| A list of active resource packs that are marked as incompatible with the current ''Minecraft'' version, with pack names in quotes, separated with commas
+| String
+| []
+|
+|-
+! scope="row" | 56
+| lastServer
+| Address of last server used with Direct Connection
+| String
+| 
+|
+|-
+! scope="row" | 57
+| lang
+| Language to be used
+| String
+| en_us
+|
+|-
+! scope="row" | 58
+| chatVisibility
+| What is seen in chat
+| 0–2 (Shown, Commands only, Hidden)
+| 0 (Shown)
+|
+|-
+! scope="row" | 59
+| chatOpacity
+| Opacity of the chat
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 60
+| chatLineSpacing
+| Spacing between text in chat
+| 0–1
+| 0.0
+|
+|-
+! scope="row" | 61
+| textBackgroundOpacity
+| Opacity of text background
+| 0–1
+| 0.5
+|
+|-
+! scope="row" | 62
+| backgroundForChatOnly
+| Toggles if the background is only in chat or if it's everywhere
+| true/false
+| true
+|
+|-
+! scope="row" | 63
+| hideServerAddress
+| Has no effect in modern versions
+| true/false
+| false
+|
+|-
+! scope="row" | 64
+| advancedItemTooltips
+| Whether hovering over items in the [[inventory]] shows its [[Java Edition data values|ID]] and [[Item durability|durability]]; toggled by pressing {{key|F3+H}}
+| true/false
+| false
+|
+|-
+! scope="row" | 65
+| pauseOnLostFocus
+| Whether switching out of ''Minecraft'' without pressing {{key|Esc}} or opening an in-game interface automatically pauses the game; toggled by pressing {{key| F3+P}}
+| false
+| true
+|[[Java Edition 12w34a|12w34a]] ([[Java Edition 1.4.2|1.4.2]])
+|-
+! scope="row" | 66
+| overrideWidth
+| Width to open ''Minecraft'' with in pixels (0 means default to the ''Minecraft'' settings); no in-game control
+| Integer
+| 0
+|
+|-
+! scope="row" | 67
+| overrideHeight
+| Height to open ''Minecraft'' with in pixels (0 means default to the ''Minecraft'' settings); no in-game control
+| Integer
+| 0
+|
+|-
+! scope="row" | 68
+| chatHeightFocused
+| How tall the chat span is
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 69
+| chatDelay
+| How much delay there is between text
+| 0–6
+| 0.0
+|
+|-
+! scope="row" | 70
+| chatHeightUnfocused
+| How tall the maximum chat span is, when the chat button is not pressed
+| 0–1
+| 0.4375
+|
+|-
+! scope="row" | 71
+| chatScale
+| The scale/size of the text in the chat
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 72
+| chatWidth
+| The span width of the chat
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 73
+| notificationDisplayTime
+| Changes how long [[toast]] notifications (advancements, new recipes, etc.) display on screen
+| 0-1
+| 1.0
+| 
+|-
+! scope="row" | 74
+| useNativeTransport
+| Whether to use a Netty EpollSocketChannel for connections to servers instead of a NioSocketChannel (only applies if EPOLL is available on the user's system)
+| true/false
+| true
+|
+|-
+! scope="row" | 75
+| mainHand
+| Whether the main hand appears as left or right
+| left/right
+| right
+|
+|-
+! scope="row" | 76
+| attackIndicator
+| When hitting, how the attack indicator is shown on screen
+| 0–2 (Off, Crosshair, Hotbar)
+| 1 (Crosshair)
+|
+|-
+! scope="row" | 77
+| tutorialStep
+| Next stage of [[tutorial hints]] to display
+| movement, find_tree, punch_tree, open_inventory, craft_planks, none
+| movement
+| [[Java Edition 17w06a|17w06a]] ([[Java Edition 1.12|1.12]])
+|-
+! scope="row" | 78
+| mouseWheelSensitivity
+| Allows making the mouse wheel more sensitive (see {{bug|MC-123773}})
+| 1–10
+| 1.0
+| [[Java Edition 18w21a|18w21a]] ([[Java Edition 1.13|1.13]])
+|-
+! scope="row" | 79
+| rawMouseInput
+| Ignores acceleration set by the operating system
+| true/false
+| true
+|
+|-
+! scope="row" | 80
+| glDebugVerbosity
+| LWJGL log info level (only on some machines)
+| 0-4 (none, HIGH, MEDIUM, LOW, NOTIFICATION)
+| 1
+| [[Java Edition 1.13-pre2|1.13-pre2]] ([[Java Edition 1.13|1.13]])
+|-
+! scope="row" | 81
+| skipMultiplayerWarning
+| Whether to skip the legal disclaimer when entering the multiplayer screen
+| true/false
+| false
+| [[Java Edition 1.15.2 Pre-Release 1|1.15.2 Pre-Release 1]] ([[Java Edition 1.15.2|1.15.2]])
+|-
+! scope="row" | 82
+| hideMatchedNames
+| Some servers send chat messages in non-standard formats. With this option on, the game attempts to apply chat hiding anyway by matching the text in messages.
+| true/false
+| true
+| [[Java Edition 1.16.4 Release Candidate 1|1.16.4 Release Candidate 1]] ([[Java Edition 1.16.4|1.16.4]])
+|-
+! scope="row" | 83
+| joinedFirstServer
+| Whether the player has joined a [[server]] before. If false, the [[Social interactions]] [[tutorial hint]] appears when joining a server.
+| true/false
+| false
+| [[Java Edition 1.16.4 Pre-release 1|1.16.4 Release Candidate 1]] ([[Java Edition 1.16.4|1.16.4]])
+|-
+! scope="row" | 84
+| syncChunkWrites
+| Whether to open region files in synchronous mode
+| true/false
+| true (Windows), false (other systems)
+|
+|-
+! scope="row" | 85
+| showAutosaveIndicator
+| Whether to show [[autosave]] indicator on the right-bottom of the screen
+| true/false
+| true
+| [[Java Edition 21w42a|21w42a]] ([[Java Edition 1.18|1.18]])
+|-
+! scope="row" | 86
+| allowServerListing
+| Whether to allow player's ID to be shown in the player list shown on the multiplayer screen
+| true/false
+| true
+| [[Java Edition 1.18 Pre-release 2|1.18-pre2]] ([[Java Edition 1.18|1.18]])
+|-
+! scope="row" | 87
+| onlyShowSecureChat
+| Toggles whether the chat displays cryptographically signed messages
+| true/false
+| false
+|
+|-
+! scope="row" | 88
+| panoramaScrollSpeed
+| Changes the scrolling speed of the [[panorama]] in the main menu
+| 0-1
+| 1.0
+|
+|-
+! scope="row" | 89
+| telemetryOptInExtra
+| {{info needed}}
+| true/false
+| false
+| 
+|-
+! scope="row" | 90
+| onboardAccessibility
+| False prevents the narrator welcome screen from appearing after the user's first launch. 
+| true/false
+| true
+|
+|-
+! scope="row" | 91
+| menuBackgroundBlurriness
+| Changes the blurriness of menu background
+| 0-1
+| 0
+|
+|-
+! scope="row" | 92
+| startedCleanly
+| {{info needed}}
+| true/false
+| true
+|
+|-
+! scope="row" | 93
+| key_key.attack
+| Attack control
+| [[Key codes]]
+| key.mouse.left
+|
+|-
+! scope="row" | 94
+| key_key.use
+| Use Item control
+| [[Key codes]]
+| key.mouse.right
+|
+|-
+! scope="row" | 95
+| key_key.forward
+| Forward control
+| [[Key codes]]
+| key.keyboard.w
+|
+|-
+! scope="row" | 96
+| key_key.left
+| Left control
+| [[Key codes]]
+| key.keyboard.a
+|
+|-
+! scope="row" | 97
+| key_key.back
+| Back control
+| [[Key codes]]
+| key.keyboard.s
+|
+|-
+! scope="row" | 98
+| key_key.right
+| Right control
+| [[Key codes]]
+| key.keyboard.d
+|
+|-
+! scope="row" | 99
+| key_key.jump
+| Jump control
+| [[Key codes]]
+| key.keyboard.space
+|
+|-
+! scope="row" | 100
+| key_key.sneak
+| Sneak control
+| [[Key codes]]
+| key.keyboard.left.shift
+|
+|-
+! scope="row" | 101
+| key_key.sprint
+| Sprint control
+| [[Key codes]]
+| key.keyboard.left.control
+|
+|-
+! scope="row" | 102
+| key_key.drop
+| Drop control
+| [[Key codes]]
+| key.keyboard.q
+|
+|-
+! scope="row" | 103
+| key_key.inventory
+| Inventory control
+| [[Key codes]]
+| key.keyboard.e
+|
+|-
+! scope="row" | 104
+| key_key.chat
+| Chat control
+| [[Key codes]]
+| key.keyboard.t
+|
+|-
+! scope="row" | 105
+| key_key.playerlist
+| List Players control
+| [[Key codes]]
+| key.keyboard.tab
+|
+|-
+! scope="row" | 106
+| key_key.pickItem
+| Pick Block control
+| [[Key codes]]
+| key.mouse.middle
+|
+|-
+! scope="row" | 107
+| key_key.command
+| Command control
+| [[Key codes]]
+| key.keyboard.slash
+|
+|-
+! scope="row" | 108
+| key_key.socialInteractions
+| Social Interaction control
+| [[Key codes]]
+| key.keyboard.p
+|
+|-
+! scope="row" | 109
+| key_key.screenshot
+| Screenshot control
+| [[Key codes]]
+| key.keyboard.f2
+|
+|-
+! scope="row" | 110
+| key_key.togglePerspective
+| Perspective control
+| [[Key codes]]
+| key.keyboard.f5
+|
+|-
+! scope="row" | 111
+| key_key.smoothCamera
+| Mouse Smoothing control
+| [[Key codes]]
+| key.keyboard.unknown
+|
+|-
+! scope="row" | 112
+| key_key.fullscreen
+| Fullscreen control
+| [[Key codes]]
+| key.keyboard.f11
+|
+|-
+! scope="row" | 113
+| key_key.spectatorOutlines
+| Visibility of player outlines in Spectator Mode control
+| [[Key codes]]
+| key.keyboard.unknown
+|
+|-
+! scope="row" | 114
+| key_key.swapOffhand
+| Swapping of items between both hands control
+| [[Key codes]]
+| key.keyboard.f
+|
+|-
+! scope="row" | 115
+| key_key.saveToolbarActivator
+| Save current toolbar to a [[Saved Hotbars]] slot (in Creative Mode)
+| [[Key codes]]
+| key.keyboard.c
+| [[Java Edition 17w06a|17w06a]] ([[Java Edition 1.12|1.12]])
+|-
+! scope="row" | 116
+| key_key.loadToolbarActivator
+| Load toolbar from a [[Saved Hotbars]] slot (in Creative Mode)
+| [[Key codes]]
+| key.keyboard.x
+| [[Java Edition 17w06a|17w06a]] ([[Java Edition 1.12|1.12]])
+|-
+! scope="row" | 117
+| key_key.advancements
+| Open the [[Advancements]] screen
+| [[Key codes]]
+| key.keyboard.l
+| [[Java Edition 17w06a|17w06a]] ([[Java Edition 1.12|1.12]])
+|-
+! scope="row" | 118
+| key_key.hotbar.1
+| Hotbar Slot 1 control
+| [[Key codes]]
+| key.keyboard.1
+|
+|-
+! scope="row" | 119
+| key_key.hotbar.2
+| Hotbar Slot 2 control
+| [[Key codes]]
+| key.keyboard.2
+|
+|-
+! scope="row" | 120
+| key_key.hotbar.3
+| Hotbar Slot 3 control
+| [[Key codes]]
+| key.keyboard.3
+|
+|-
+! scope="row" | 121
+| key_key.hotbar.4
+| Hotbar Slot 4 control
+| [[Key codes]]
+| key.keyboard.4
+|
+|-
+! scope="row" | 122
+| key_key.hotbar.5
+| Hotbar Slot 5 control
+| [[Key codes]]
+| key.keyboard.5
+|
+|-
+! scope="row" | 123
+| key_key.hotbar.6
+| Hotbar Slot 6 control
+| [[Key codes]]
+| key.keyboard.6
+|
+|-
+! scope="row" | 124
+| key_key.hotbar.7
+| Hotbar Slot 7 control
+| [[Key codes]]
+| key.keyboard.7
+|
+|-
+! scope="row" | 125
+| key_key.hotbar.8
+| Hotbar Slot 8 control
+| [[Key codes]]
+| key.keyboard.8
+|
+|-
+! scope="row" | 126
+| key_key.hotbar.9
+| Hotbar Slot 9 control
+| [[Key codes]]
+| key.keyboard.9
+|
+|-
+! scope="row" | 127
+| soundCategory_master
+| The volume of all sounds
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 128
+| soundCategory_music
+| The volume of gameplay music
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 129
+| soundCategory_record
+| The volume of music/sounds from jukeboxes and note blocks
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 130
+| soundCategory_weather
+| The volume of rain and thunder
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 131
+| soundCategory_block
+| The volume of blocks
+| 0-1
+| 1.0
+|
+|-
+! scope="row" | 132
+| soundCategory_hostile
+| The volume of hostile and neutral mobs
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 133
+| soundCategory_neutral
+| The volume of passive mobs
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 134
+| soundCategory_player
+| The volume of players
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 135
+| soundCategory_ambient
+| The volume of cave sounds and fireworks
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 136
+| soundCategory_voice
+| The volume of voices
+| 0–1
+| 1.0
+|
+|-
+! scope="row" | 137
+| modelPart_cape
+| Whether the cape is shown
+| true/false
+| true
+|
+|-
+! scope="row" | 138
+| modelPart_jacket
+| Whether the "Jacket" skin layer is shown
+| true/false
+| true
+|
+|-
+! scope="row" | 139
+| modelPart_left_sleeve
+| Whether the "Left Sleeve" skin layer is shown
+| true/false
+| true
+|
+|-
+! scope="row" | 140
+| modelPart_right_sleeve
+| Whether the "Right Sleeve" skin layer is shown
+| true/false
+| true
+|
+|-
+! scope="row" | 141
+| modelPart_left_pants_leg
+| Whether the "Left Pants Leg" skin layer is shown
+| true/false
+| true
+|
+|-
+! scope="row" | 142
+| modelPart_right_pants_leg
+| Whether the "Right Pants Leg" skin layer is shown
+| true/false
+| true
+|
+|-
+! scope="row" | 143
+| modelPart_hat
+| Whether the "Hat" skin layer is shown
+| true/false
+| true
+|
+|-
+! scope="row" | {{tooltip|144|Appear at the last line of the file by default.}}
+| fullscreenResolution
+| Changes the resolution of the game when in fullscreen mode. The only values allowed are the values supported by the user's monitor, shown when changing the screen resolution in the operating system settings. Setting this option to a value not supported by the monitor resets the option to "Current". When set to "Current", this option is absent from options.txt.
+| <width>x<height>@<refresh rate>:<color bits>
+| Absent
+|
+|}
+
+=== ''Bedrock Edition'' ===
+{| class="wikitable sortable" style="width: 100%" data-description="List of options"
+|-
+! scope="col" style="width: 5%;" | #<ref group="N" name="numbering"/>
+! scope="col" | Option name
+! scope="col" class="unsortable" | Explanation
+! scope="col" | Valid values
+! scope="col" | Default value
+! scope="col" | Version added
+|-
+! scope="row" | 1
+| mp_username
+| The name of the player.
+| 
+| Player
+| [[Pocket Edition v0.7.0 alpha|0.7.0]]
+|-
+! scope="row" | 2
+| game_difficulty_new
+| Whether the player is new to the game and the game starts with [[Title screen#Quick world creation|quick world creation]].
+| 0/1
+| 1
+| [[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 1|build 1]])
+|-
+! scope="row" | 3
+| game_thirdperson
+| Number used to identify first person, third person front, and third person back.
+| 0/1/2
+| 0
+| [[Pocket Edition v0.7.0 alpha|0.7.0]]
+|-
+! scope="row" | 4
+| ctrl_interactionModel
+| The control mode used for touch controls.
+| 0: Joystick & tap to interact / 1: Joystick & aim crosshair / 2: D-pad & tap to interact
+| 0
+| [[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 1|build 1]])
+|-
+! scope="row" | 5
+| ctrl_restoreInteractionModelToClassic
+| {{info needed}}
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|-
+! scope="row" | 6
+| gfx_alwayshighlighthoveringboxincrosshair
+| Whether block are always highlighted by the crosshair or only when tapped when using joystick touch controls with a crosshair.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 7
+| gfx_showActionButton
+| Whether buttons on the touchscreen are shown to interact with blocks and entities when using joystick touch controls with a crosshair.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 8
+| gfx_showBlockSelectButton
+| Whether to show a pick block button in touch controls.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 9
+| gfx_showToggleCameraPerspectiveButton
+| Whether a button to toggle the camera perspective is shown on touch controls.
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.70|1.21.70]]
+|-
+! scope="row" | 10
+| ctrl_sprintonmovement
+| Whether the player can sprint using the joystick in touch controls.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 11
+| ctrl_moveStickVisible
+| Whether the joystick is visible in touch controls.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 12
+| gfx_thumbstickopacity
+| Controls the opacity of the thumbstick in touch controls.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 13
+| ctrl_defaultMoveStickVisible
+| Whether the thumbstick in touch controls is always visible.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 14
+| ctrl_creativeDelayedBlockBreaking
+| Toggles delayed block breaking in Creative mode in touch controls.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 15
+| ctrl_top_button_scale
+| The size of the top buttons on the HUD in touch controls.
+| 0: Small / 1: Medium / 2: Big
+| 0
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|-
+! scope="row" | 16
+| gfx_wysiwygX
+| {{info needed}}
+| {{info needed}}
+| 0.5
+|
+|-
+! scope="row" | 17
+| gfx_wysiwygY
+| {{info needed}}
+| {{info needed}}
+| 0.5
+|
+|-
+! scope="row" | 18
+| gfx_wysiwygScale
+| {{info needed}}
+| {{info needed}}
+| 1
+|
+|-
+! scope="row" | 19
+| ctrl_enableNewTouchControlSchemes
+| {{info needed}}
+| {{info needed}}
+| 1
+|[[Bedrock Edition 1.18.30|1.18.30]]
+|-
+! scope="row" | 20
+| mp_server_visible
+| {{info needed}}
+| {{info needed}}
+| 1
+| [[Pocket Edition v0.7.0 alpha|0.7.0]]
+|-
+! scope="row" | 21
+| mp_xboxlive_visible
+| {{info needed}}
+| {{info needed}}
+| 1
+| [[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 10|build 10]])
+|-
+! scope="row" | 22
+| mp_nex_visble
+| {{info needed}}
+| {{info needed}}
+| 1
+|
+|-
+! scope="row" | 23
+| mp_psn_visble
+| {{info needed}}
+| {{info needed}}
+| 1
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|-
+! scope="row" | 24
+| game_language
+| The [[language]] that the game has selected.
+| Any valid language code.<ref group="N" name="lang">See in-game codes in [[Language]]</ref>
+| Blank<ref group="N" name="empty">By default, this field is empty</ref>
+| [[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 1|build 1]])
+|-
+! scope="row" | 25
+| game_skintypefull
+| The unique identifier of the current skin being used.
+| Any UUID with a matching skin stored on the device.
+| Randomly selected between the nine [[default skins]]: {{collapse|content=c18e65aa-7b21-4637-9b63-8ad63622ef01_Alex<br>c18e65aa-7b21-4637-9b63-8ad63622ef01_Ari<br>c18e65aa-7b21-4637-9b63-8ad63622ef01_Efe<br>c18e65aa-7b21-4637-9b63-8ad63622ef01_Kai<br>c18e65aa-7b21-4637-9b63-8ad63622ef01_Makena<br>c18e65aa-7b21-4637-9b63-8ad63622ef01_Noor<br>c18e65aa-7b21-4637-9b63-8ad63622ef01_Steve<br>c18e65aa-7b21-4637-9b63-8ad63622ef01_Sunny<br>c18e65aa-7b21-4637-9b63-8ad63622ef01_Zuri}}
+| [[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 4|build 4]])
+|-
+! scope="row" | 26
+| game_lastcustomskinnew
+| The filepath of the last imported skin file.
+| Filepath of {{File|directory|'''[[com.mojang]]'''|inline=1}} followed by /custom_skins/''file name''.png
+| Standard.Dummy
+| [[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 4|build 4]])
+|-
+! scope="row" | 27
+| game_recentskin1
+| The skin used before it was last changed.{{verify|Is this the correct order, or is it reversed?}}
+| [[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+| Blank<ref group="N" name="empty"/>
+|
+|-
+! scope="row" | 28
+| game_recentskin2
+| The second most recent skin used.{{verify}}
+| [[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+| Blank<ref group="N" name="empty"/>
+|
+|-
+! scope="row" | 29
+| game_recentskin3
+| The third most recent skin used.{{verify}}
+| [[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+| Blank<ref group="N" name="empty"/>
+|
+|-
+! scope="row" | 30
+| game_haseverloggedintoxbl
+| Whether the user has ever logged into Xbox Live.
+| 0/1
+| 0
+| [[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+|-
+! scope="row" | 31
+| game_haschosennottosignintoxbl
+| Whether the user is currently signed out of Xbox Live.
+| 0/1
+| 1
+| [[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+|-
+! scope="row" | 32
+| game_hasshownsocialdrawer
+| {{info needed}}
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+! scope="row" | 33
+| dvce_filestoragelocation
+| Where the game files are stored.
+| {{info needed}}
+| 2{{verify|This is the default value on iOS and Windows. Not sure if it varies from platform to platform.}}
+|[[Bedrock Edition 1.18.0|1.18.0]]
+|-
+! scope="row" | 34
+| ctrl_islefthanded
+| Whether the touch d-pad should be on the left or the right.
+| 0/1
+| 0
+| [[Pocket Edition v0.7.0 alpha|0.7.0]]
+|-
+! scope="row" | 35
+| ctrl_joystickVisibility
+| Whether the joystick in touch controls is visible when unused.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 36
+| ctrl_staticJoystick
+| Wether the joystick in touch controls can be moved on the screen.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 37
+| ctrl_usetouchjoypad
+| Whether or not Split Touch controls is enabled.
+| 0/1
+| 0
+| [[Pocket Edition v0.7.0 alpha|0.7.0]]
+|-
+! scope="row" | 38
+| ctrl_swapjumpandsneak
+| Whether the jump and sneak buttons should be swapped.
+| 0/1
+| 0
+| [[Pocket Edition Alpha 0.12.1|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 2|build 2]])
+|-
+! scope="row" | 39
+| gfx_viewdistance
+| The player's render distance, measured in blocks.
+| 80-1536
+| Varies depending on the device.
+|
+|-
+! scope="row" | 40
+| gfx_particleviewdistance
+| {{info needed}}
+| {{info needed}}
+| 0.5
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+|-
+! scope="row" | 41
+| gfx_viewbobbing
+| Toggles view bobbing.
+| 0/1
+| 1
+| [[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 1|build 1]])
+|-
+! scope="row" | 42
+| gfx_damagebobbing
+| Adjusts screen bobbing when taking [[damage]].
+| 0-1
+| 1
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|-
+! scope="row" | 43
+| gfx_transparentleaves
+| Toggles transparent leaves.
+| 0/1
+| 1
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+|-
+! scope="row" | 44
+| gfx_smoothlighting
+| Toggles smooth lighting.
+| 0/1
+| 1
+|[[Pocket Edition 1.1.0|1.1.0]]
+|-
+! scope="row" | 45
+| gfx_fancyskies
+| Whether the sun, moon, clouds, stars, and different sky colors are visible.
+| 0/1
+| 1
+| [[Pocket Edition v0.7.0 alpha|0.7.0]]
+|-
+! scope="row" | 46
+| gfx_field_of_view
+| The player's field of view, measured in degrees. 
+| 30-110 
+| 60
+| [[Pocket Edition Alpha 0.12.1|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 3|build 3]])
+|-
+! scope="row" | 47
+| gfx_msaa
+| The level of in-game [[wikipedia:Multisample anti-aliasing|multisample anti-aliasing]].
+| 1-16 (power of 2)
+| 1
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+|-
+! scope="row" | 48
+| gfx_texel_aa_2
+| {{info needed}}
+| {{info needed}}
+| 0
+|
+|-
+! scope="row" | 49
+| gfx_gamma
+| The brightness level of the player's screen.
+| 0-1
+| 0.5
+| [[Pocket Edition v0.10.0 alpha|0.10.0]] ([[Pocket Edition v0.10.0 alpha build 1|build 1]])
+|-
+! scope="row" | 50
+| gfx_multithreaded_renderer
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+|-
+! scope="row" | 51
+| gfx_vsync
+| Whether [[wikipedia:Screen tearing#V-sync|v-sync]] (vertical synchronization) is enabled
+| 0/1
+| 0
+|[[Bedrock Edition 1.9.0|1.9.0]]
+|-
+! scope="row" | 52
+| dev_file_watcher
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|[[Bedrock Edition 1.9.0|1.9.0]]
+|-
+! scope="row" | 53
+| gfx_max_framerate
+| The maximum framerate (0 means unlimited)
+| 0-250
+| 0
+|
+|-
+! scope="row" | 54
+| gfx_fullscreen
+| Whether or not fullscreen is enabled
+| 0/1
+| 0
+| [[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 1|build 1]])
+|-
+! scope="row" | 55
+| show_advanced_video_settings
+| Whether the "Advanced Video Settings" are shown, which include options for ray tracing and upscaling. Unused since these settings have been merged in graphics options dropdowns.
+| 0/1
+| 0
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 56
+| gfx_guiscale_offset
+| How much to scale the UI, relative to the game's predetermined scale (based on the screen/window size).
+| Theoretically any number, but generally an integer between -1 and 2 on most screen sizes.
+| 0
+|
+|-
+! scope="row" | 57
+| gfx_splitscreen_guiscale_offset
+| The offset of GUIs when using splitscreen.
+| 0-1
+| 0
+|
+|-
+! scope="row" | 58
+| gfx_safe_zone_x
+| The horizontal offset of the screen.
+| 0-1
+| 1
+|[[Bedrock Edition 1.2.9|1.2.9]]
+|-
+! scope="row" | 59
+| gfx_safe_zone_y
+| The vertical offset of the screen.
+| 0-1
+| 1
+|[[Bedrock Edition 1.2.9|1.2.9]]
+|-
+! scope="row" | 60
+| gfx_safe_zone_all
+| The scale offset of the screen.
+| 0-1
+| 1
+|
+|-
+! scope="row" | 61
+| gfx_safe_zone_pos_x
+| {{info needed}}
+| 0-1
+| 1
+|
+|-
+! scope="row" | 62
+| gfx_safe_zone_pos_y
+| {{info needed}}
+| 0-1
+| 0
+|
+|-
+! scope="row" | 63
+| gfx_ui_profile
+| Whether to use the Pocket UI instead of the Classic UI.
+| 0/1
+| 1 on mobile devices, 0 on other platforms.
+|
+|-
+! scope="row" | 64
+| audio_main
+| The volume of all sounds.
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 65
+| audio_sound
+| The volume of sound effects.
+| 0-1
+| 1
+| [[Pocket Edition v0.7.0 alpha|0.7.0]]
+|-
+! scope="row" | 66
+| audio_music
+| The volume of gameplay [[music]].
+| 0-1
+| 1
+| [[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 1|build 1]])
+|-
+! scope="row" | 67
+| audio_ambient
+| The volume of ambient sounds.
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 68
+| audio_block
+| The volume of blocks.
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 69
+| audio_hostile
+| The volume of hostile mobs.
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 70
+| audio_neutral
+| The volume of friendly creatures.
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 71
+| audio_record
+| The volume of music/sounds from [[Jukebox|jukeboxes]] and [[Note Block|note blocks]].
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 72
+| audio_player
+| The volume of players.
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 73
+| audio_weather
+| The volume of weather.
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 74
+| audio_teksttospeech
+| The volume of text to speech.
+| 0-1
+| 1
+|[[Bedrock Edition 1.16.210|1.16.210]]
+|-
+! scope="row" | 75
+| store_has_purchased_coins
+| Whether the user has ever bought [[Marketplace|minecoins]].
+| 0/1
+| 0
+|
+|-
+! scope="row" | 76
+| switch_coin_debug
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+|-
+! scope="row" | 77
+| manuallyTrackedAchievements
+| This stores which [[achievements]] are manually added to the "In progress" category. The format is +''achievement number'', where the achievement number is based on the order of achievements. Multiple achievements are separated by a <code>;</code>.
+| 
+| 
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+! scope="row" | 78
+| startup_statistics
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+|-
+! scope="row" | 79
+| dev_debug_hud
+| Whether the debug info in ''[[Minecraft Preview]]'' is enabled, does nothing in full releases.
+| 0: enabled / 1: disabled
+| 0
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|-
+! scope="row" | 80
+| old_game_version_major
+| The first number in the current version.
+| 
+| 0{{verify}}
+| [[Pocket Edition v0.8.1 alpha|0.8.1]]
+|-
+! scope="row" | 81
+| old_game_version_minor
+| The second number in the current version, used to store major updates.
+| 
+| 0{{verify}}
+| [[Pocket Edition v0.8.1 alpha|0.8.1]]
+|-
+! scope="row" | 82
+| old_game_version_patch
+| The third number in the current version, used to store minor updates/hotfixes.
+| 
+| 0{{verify}}
+| [[Pocket Edition v0.8.1 alpha|0.8.1]]
+|-
+! scope="row" | 83
+| old_game_version_revision
+| The fourth number in the current version, used for internal versioning.
+| 
+| 0{{verify}}
+| [[Bedrock Edition 1.12.0|1.12.0]]
+|-
+! scope="row" | 84
+| old_game_version_beta
+| The fifth number in the current version, used for betas (0 if not playing beta).
+| 
+| 0{{verify}}
+| [[Pocket Edition v0.8.1 alpha|0.8.1]]
+|-
+! scope="row" | 85
+| fail_realms_purchase_fulfillment
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 86
+| realms_show_friend_invites_only
+| Whether the list of invites to Realms should show invites only from in-game friends.
+| 0/1
+| 1
+| [[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 2|build 2]])
+|-
+! scope="row" | 87
+| number_of_owned_realms
+| The number of Realms that the player owns.
+| 
+| 0
+|
+|-
+! scope="row" | 88
+| number_of_friends_realms
+| The number of Realms the player has access to.
+| 
+| 0
+|
+|-
+! scope="row" | 89
+| realms_view_upsell_screen_count
+| {{info needed}}
+| 
+| 3
+|
+|-
+! scope="row" | 90
+| realms_ore_ui_moderation
+| Whether the [[edit world]] screen for worlds on ''Minecraft'' [[Realms]] uses the [[Ore UI]] version instead of the Classic UI version. The Ore UI version of the edit world screen is only available in ''[[Preview]]'' and this value always resets to 0 outside of ''Preview''.
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+! scope="row" | 91
+| realms_ore_ui_purchase_enabled
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 92
+| MultipleSwitchRealms
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+| [[1.21.80]]
+|-
+! scope="row" | 93
+| realms_enable_subpacks
+| {{info needed}}
+| 0/1
+| 1
+| [[1.21.80]]
+|-
+! scope="row" | 94
+| shown_ratings_prompt
+| Whether the "Do you like Minecraft" pop-up has appeared.
+| 0/1
+| 0
+|[[Bedrock Edition 1.5.0|1.5.0]]
+|-
+! scope="row" | 95
+| save_and_quit_count 
+| The number of times the player has exited a world, which determines when the "Do you like Minecraft" pop-up appears.
+| 
+| 1
+|[[Bedrock Edition 1.5.0|1.5.0]]
+|-
+! scope="row" | 96
+| show_worlds_trial_button
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+|-
+! scope="row" | 97
+| allow_cellular_data
+| Whether to use cellular data to connect with online services.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 98
+| auto_update_mode
+| Whether to update Marketplace packs automatically over cellular data or wi-fi.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 99
+| auto_update_enabled
+| Whether to update Marketplace packs automatically.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 100
+| websocket_enabled
+| Whether the game allows to connect to WebSocket servers.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 101
+| websocket_encryption
+| Whether the game only allows encrypted WebSocket server connections.
+| 0/1
+| 0
+|[[Pocket Edition 1.1.0|1.1.0]]
+|-
+! scope="row" | 102
+| text_to_speech_discovered
+| Whether the device has support for text to speech.
+| 0/1
+| 0
+|[[Bedrock Edition 1.11.0|1.11.0]]
+|-
+! scope="row" | 103
+| monitor_platform_text_to_speech
+| Toggles text to speech with the device's settings.
+| 0/1
+| 1
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|-
+! scope="row" |
+| enable_gameplay_subtitles{{upcoming|be 26.0}}
+| Toggles [[closed captions]]
+| 0/1
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" | 104
+| chat_text_to_speech
+| Toggles text to speech for chat messages.
+| 0/1
+| 0
+|[[Pocket Edition 1.0.0|1.0.0]]
+|-
+! scope="row" | 105
+| ui_text_to_speech
+| Toggles text to speech in menu screens.
+| 0/1
+| 0
+|[[Bedrock Edition 1.11.0|1.11.0]]
+|-
+! scope="row" | 106
+| open_chat_message
+| Toggles to show the "Press {{key|T}}, {{key|RETURN}}, or {{key|Gamepad Button8}} to open chat" message in the chat.
+| 0/1
+| 1
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|-
+! scope="row" | 107
+| ctrl_sensitivity2_mouse 
+| The sensitivity when using mouse controls.
+| 0-1
+| 0.6
+|
+|-
+! scope="row" | 108
+| ctrl_sensitivity_touch
+| The sensitivity when using touch controls.
+| 0-1
+| 0.6
+|
+|-
+! scope="row" | 109
+| ctrl_sensitivity2_gamepad
+| The sensitivity when using a console controller.
+| 0-1
+| 0.6
+|
+|-
+! scope="row" | 110
+| ctrl_smoothrotationseed
+| The sensitivity of the camera movement keys when using [[full keyboard gameplay]].
+| 0-1
+| 0.1
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 111
+| ctrl_invertmouse_mouse
+| Whether the vertical camera movement on the mouse is inversed.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 112
+| ctrl_invertmouse_touch
+| Whether the vertical camera movement on touch controls is inverted.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 113
+| ctrl_invertmouse_gamepad
+| Wether the vertical camera movement on a console controller is inverted.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 114
+| ctrl_autojump_mouse
+| Toggles auto-jump for mouse controls.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 115
+| ctrl_autojump_touch
+| Toggles auto-jump for touch controls.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 116
+| ctrl_autojump_gamepad
+| Toggles auto-jump for console controllers.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 117
+| ctrl_fullkeyboardgameplay
+| Toggles [[full keyboard gameplay]]. If set to 1, all controls are on the keyboard, and the mouse is not used.
+| 0/1
+| 0
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 118
+| feedback_destroy_vibration_mouse
+| Whether to vibrate when breaking block, for keyboard & mouse controls.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 119
+| feedback_destroy_vibration_touch
+| Whether to vibrate when breaking block, for touch controls.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 120
+| feedback_destroy_vibration_gamepad
+| Whether to vibrate when breaking block, for console controllers.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 121
+| feedback_split_vibration_mouse
+| Whether to vibrate when splitting items in a GUI, for keyboard & mouse controls.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 122
+| feedback_split_vibration_touch
+| Whether to vibrate when splitting items in a GUI, for touch controls.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 123
+| feedback_split_vibration_gamepad
+| Whether to vibrate when splitting items in a GUI, for console controllers.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 124
+| gfx_toggleclouds
+| Whether to show the clouds. (Note: <code>gfx_fancyskies</code> must also be on).
+| 0/1
+| 1
+|
+|-
+! scope="row" | 125
+| ctrl_togglecrouch_mouse
+| Whether the sneak button toggles sneaking, as opposed to holding the button to sneak, when using keyboard controls.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 126
+| ctrl_togglecrouch_touch
+| Whether the sneak button toggles sneaking, as opposed to holding the button to sneak, when using touch controls.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 127
+| ctrl_togglecrouch_gamepad
+| Whether the sneak button toggles sneaking, as opposed to holding the button to sneak, when using a console controller.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 128
+| ctrl_sneak
+| Whether the sneak button toggles sneaking, as opposed to holding the button to sneak, when using touch controls with a joystick.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 129
+| crossplatform_toggle
+| {{info needed}}
+| 0/1
+| 1
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|-
+! scope="row" | 130
+| last_xuid
+| The logged Xbox account xuid (in decimal number)
+| 
+| Blank<ref group="N" name="empty"/>
+|
+|-
+! scope="row" | 131
+| gfx_hidepaperdoll
+| Whether to hide the paper doll. If turned on, the [[HUD]] must also be displayed.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 132
+| gfx_tooltips
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+|-
+! scope="row" | 133
+| show_learning_Prompts
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+|-
+! scope="row" | 134
+| show_control_tips
+| Whether to show controller hints for controller controls.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 135
+| show_control_tips_overridden
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+|-
+! scope="row" | 136
+| gfx_classic_box_selection
+| Whether to show the outline selection when aiming at blocks with the crosshair.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 137
+| gfx_splitscreen
+| Toggles splitscreen mode between horizontal and vertical.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 138
+| gfx_hidehud
+| Whether to hide the [[heads-up display]]. If turned off, the player's hand is still visible, but the coordinates and paper doll are not.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 139
+| gfx_hidehand
+| Whether to hide the player's hand. If turned on, the player's hand appears regardless of <code>gfx_hidhud</code>.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 140
+| gfx_ingame_player_names
+| Whether or not in-game player nametags are shown.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 141
+| gfx_splitscreen_ingame_player_names
+| Whether or not in-game player nametags are shown when playing in splitscreen.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 142
+| gfx_interface_opacity
+| Adjusts the opacity of the HUD.
+| 0-1
+| 1
+|
+|-
+! scope="row" | 143
+| gfx_splitcreen_interface_opacity
+| Adjusts the opacity of the HUD while in splitscreen.
+| 0-1
+| 1
+|
+|-
+! scope="row" | 144
+| gfx_hud_background_opacity
+| Adjusts the opacity of text shown on the HUD.
+| 0-1
+| 0.6
+| [[Bedrock Edition 1.16.0|1.16.0]]
+|-
+! scope="row" | 145
+| gfx_actionbar_background_opacity
+| Adjusts the opacity of text shown on the [[action bar]].
+| 0-1
+| 0.6
+| [[Bedrock Edition 1.16.0|1.16.0]]
+|-
+! scope="row" | 146
+| gfx_chat_background_opacity
+| Adjusts the opacity of [[chat]] messages shown on the HUD.
+| 0-1
+| 0.7
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+
+! scope="row" | 147
+| game_ackautosave
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+|-
+! scope="row" | 148
+| gfx_showautosaveicon
+| Whether or not to show the [[autosave]] icon when autosaving.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 149
+| gfx_has_set_safe_zone
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+|-
+! scope="row" | 150
+| gfx_field_of_view_toggle
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+|-
+! scope="row" | 151
+| gfx_gamepad_cursor
+| Whether to show a cursor in the GUI while using a console controller.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 152
+| gamma_calibration
+| The brightness when using [[Vibrant Visuals]].
+| 0.25-1.5
+| 1
+|[[Bedrock Edition 1.21.20|1.21.20]]
+|-
+! scope="row" | 153
+| has_set_hdr_brightness
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|[[Bedrock Edition 1.21.20|1.21.20]]
+|-
+! scope="row" | 154
+| ctrl_hotbarOnlyTouch
+| Whether touch controls should be used only for the hotbar.
+| 0/1
+| 0
+|[[Bedrock Edition 1.2.13|1.2.13]]
+|-
+! scope="row" | 155
+| gfx_gamepad_cursor_sensitivity
+| The sensitivity of the cursor when using a console controller.
+| 0-1
+| 1
+|[[Bedrock Edition 1.2.10|1.2.10]]
+|-
+! scope="row" | 156
+| realms_sunset_tier
+| {{info needed}}
+| -1/0/1{{verify}}
+| -1
+| 
+|-
+! scope="row" | 157
+| has_shown_being_sunset_notice
+| Whether to show a warning when support for this platform is being sunset in the near future.
+| 0/1
+| 0
+| [[Bedrock Edition 1.16.10|1.16.10]]
+|-
+! scope="row" | 158
+| has_shown_sunset_notice
+| Whether to show a warning when support for this platform has been sunset.
+| 0/1
+| 0
+| [[Bedrock Edition 1.16.10|1.16.10]]
+|-
+! scope="row" | 159
+| game_showplatformnetworkconnect
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+|-
+! scope="row" | 160
+| screen_animations
+| Whether or not smooth screen transitions are enabled.
+| 0/1
+| 1
+|[[Bedrock Edition 1.2.13|1.2.13]]
+|-
+! scope="row" | 161
+| ctrl_swap_gamepad_ab_buttons
+| Whether to swap the A and B buttons on a controller (by default, these are jumping and sneaking, respectively).
+| 0/1
+| 0
+|[[Bedrock Edition 1.2.13|1.2.13]]
+|-
+! scope="row" | 162
+| ctrl_swap_gamepad_xy_buttons
+| Whether to swap the X and Y buttons on a controller (by default, these are crafting and inventory, respectively).
+| 0/1
+| 0
+|[[Bedrock Edition 1.2.13|1.2.13]]
+|-
+! scope="row" | 163
+| ctrl_clear_hotbar
+| Whether the option to instantly clear the hotbar while in a GUI is available, for console controllers.
+| 0/1
+| 0
+|[[Bedrock Edition 1.17.30|1.17.30]]
+|-
+! scope="row" | 164
+| gfx_bubble_particles
+| Toggles bubble [[Particles (Bedrock Edition)|particles]] and fancy [[Bubble Columns|bubble columns]].
+| 0/1
+| 1
+|[[Bedrock Edition 1.5.0|1.5.0]]
+|-
+! scope="row" | 165
+| game_showplatformpremiumupsell
+| {{info needed}}
+| 0/1
+| 0
+|[[Bedrock Edition 1.5.0|1.5.0]]
+|-
+! scope="row" | 166
+| chat_color_code
+| The color used in the [[chat]] window. See the [[formatting codes]] page for details.
+| 
+| §f
+|[[Bedrock Edition 1.8.0|1.8.0]]
+|-
+! scope="row" | 167
+| chat_font_size
+| The font size used in the chat window.
+| 
+| 12
+|[[Bedrock Edition 1.10.0|1.10.0]]
+|-
+! scope="row" | 168
+| chat_line_spacing
+| The line spacing in the chat window.
+| 
+| 1
+|[[Bedrock Edition 1.7.0|1.7.0]]
+|-
+! scope="row" | 169
+| chat_mentions_color_code
+| The color used to mention other players (e.g., @Player). See the [[formatting codes]] page for details.
+| 
+| §e
+|[[Bedrock Edition 1.8.0|1.8.0]]
+|-
+! scope="row" | 170
+| chat_typeface
+| The font used in the chat between [[Mojangles]] or [[Noto Sans]].
+| 0/1
+| 0
+|[[Bedrock Edition 1.10.0|1.10.0]]
+|-
+! scope="row" | 171
+| content_log_file
+| Enables a content log file.
+| 0/1
+| 0
+|[[Bedrock Edition 1.12.0|1.12.0]]
+|-
+! scope="row" | 172
+| content_log_gui
+| Enables the content log GUI in the Creator settings tab.
+| 0/1
+| 0
+|[[Bedrock Edition 1.12.0|1.12.0]]
+|-
+! scope="row" | 173
+| content_log_gui_level
+| Adjusts the minimum content log level.
+| 0/1/2/3/4
+| 2
+|
+|-
+! scope="row" | 174
+| content_log_gui_show_on_errors
+| Whether the content log GUI is opened in-game on an error.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 175
+| gameplay_tips_enabled
+| Toggles [[tutorial hints]].
+| 0/1
+| 0
+|[[Bedrock Edition 1.9.0|1.9.0]]
+|-
+! scope="row" | 176
+| gameplay_tips_enabled_for_debug
+| {{info needed}}
+| 0/1
+| 1
+|[[Bedrock Edition 1.9.0|1.9.0]]
+|-
+! scope="row" | 177
+| pause_feature_enabled
+| Whether the game is paused in the [[pause menu]] in singleplayer.
+| 0/1
+| 1
+|[[Bedrock Edition 1.21.60|1.21.60]]
+|-
+! scope="row" | 178
+| game_tips_animation_enabled
+| Toggles the animation of tutorial hints.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 179
+| iap_owning_account
+| {{info needed}}
+| 
+| Blank<ref group="N" name="empty"/>
+|[[Bedrock Edition 1.9.0|1.9.0]]
+|-
+! scope="row" | 180
+| last_minecraft_id
+| {{info needed}}
+| 
+| Blank<ref group="N" name="empty"/>
+|[[Bedrock Edition 1.9.0|1.9.0]]
+|-
+! scope="row" | 181
+| last_title_account_id
+| {{info needed}}
+| 
+| Blank<ref group="N" name="empty"/>
+|
+|-
+! scope="row" | 182
+| show_camera_tip_times_remain
+| The amount of camera [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 183
+| show_movement_tip_times_remain
+| The amount of movement [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 184
+| show_flying_tip_times_remain
+| The amount of flying [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 185
+| show_fly_up_tip_times_remain
+| The amount of fly up [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 186
+| show_fly_down_tip_times_remain
+| The amount of fly down [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 187
+| show_stop_flying_tip_times_remain
+| The amount of stop flying [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 188
+| show_jump_tip_times_remain
+| The amount of jump [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 189
+| show_swim_tip_times_remain
+| The amount of swim [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 190
+| show_break_block_tip_times_remain
+| The amount of break block [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 191
+| show_place_block_tip_times_remain
+| The amount of place block [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 192
+| show_open_inventory_tip_times_remain
+| The amount of open inventory [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 193
+| show_sneak_tip_times_remain
+| The amount of sneak [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 194
+| show_stop_sneaking_tip_times_remain
+| The amount of stop sneaking [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 195
+| show_place_crafting_table_tip_times_remain
+| The amount of place crafting table [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 196
+| show_use_crafting_table_tip_times_remain
+| The amount of use crafting table [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 197
+| show_hotbar_scrolling_tip_times_remain
+| The amount of hotbar scrolling [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 198
+| show_chat_tip_times_remain
+| The amount of chat [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.21.20|1.21.20]]
+|-
+! scope="row" | 199
+| show_emote_tip_times_remain
+| The amount of emote [[tutorial hints]] that is yet to be shown.
+| 
+| 3
+|[[Bedrock Edition 1.20.70|1.20.70]]
+|-
+! scope="row" | 200
+| day_one_experience_completed
+| Whether the player has completed one in-game day.
+| 0/1
+| 0
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|-
+! scope="row" | 201
+| is_legacy_player
+| {{info needed}}
+| 0/1
+| 1
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|-
+! scope="row" | 202
+| toast_notification_duration
+| The duration of toast notifications.
+| 0/1/2
+| 0
+|
+|-
+! scope="row" | 203
+| chat_message_duration
+| The duration of chat messages shown on the HUD.
+| 0/1/2
+| 1
+|
+|-
+! scope="row" | 204
+| dev_enable_texture_hot_reloader
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 205
+| playfab_commerce_enabled
+| {{info needed}}
+| 0/1
+| 0
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|-
+! scope="row" | 206
+| do_not_show_multiplayer_online_safety_warning
+| Whether the game should show the online safety warning when attempting to play a [[multiplayer]] world or server.
+| 0/1
+| 0
+|[[Bedrock Edition 1.14.60|1.14.60]]
+|-
+! scope="row" | 207
+| only_show_trusted_skins
+| Whether or not user uploaded skins are rendered.
+| 0/1
+| 1
+|[[Bedrock Edition 1.14.60|1.14.60]]
+|-
+! scope="row" | 208
+| filter_profanity
+| Whether the game should use profanity filtering in the chat.
+| 0/1
+| 1
+|[[Bedrock Edition 1.21.60|1.21.60]]
+|-
+! scope="row" | 209
+| camera_shake
+| Whether the camera could visually shake affected by gameplay.
+| 0/1
+| 1
+|[[Bedrock Edition 1.16.100|1.16.100]]
+|-
+! scope="row | 210
+| hide_endflash
+| Whether [[End flashes]] can happen.
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+! scope="row | 211
+| enable_dithering_blocks
+| Whether dithering is enabled for blocks, such as [[sugar cane]].
+| 0/1
+| 1
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+! scope="row | 212
+| enable_dithering_mobs
+| Whether dithering is enabled for mobs.
+| 0/1
+| 1
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+! scope="row" | 213
+| gfx_gui_accessibility_scaling
+| Enables a larger version of the GUI.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 214
+| raytracing_viewdistance
+| The render distance when the graphics mode is set to Ray Traced.
+| 0-128<ref name="deferred_viewdistance" group="N" />
+| Varies depending on the device.
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 215
+| deferred_viewdistance
+| The render distance when the graphics mode is set to [[Vibrant Visuals]].
+| 0-128<ref group="N" name="deferred_viewdistance">Theoratically any value, but the game only loads chunks in the range 0-128 chunks. Values above 128 may result in unexpected behavior and crashes.</ref>
+| Varies depending on the device.
+|[[Bedrock Edition 1.20.30|1.20.30]]
+|-
+! scope="row" | 216
+| upscaling_percentage
+| The resolution used for upscaling when the graphics mode is set to Vibrant Visuals.
+| 0-100
+| 0
+|[[Bedrock Edition 1.21.40|1.21.40]]
+|-
+! scope="row" | 217
+| upscaling_mode
+| The upscaling mode used for Vibrant Visuals.
+| 0: TAAU / 1: Bilinear
+| 1
+| [[Bedrock Edition 1.21.60|1.21.60]]
+|-
+! scope="row" | 218
+| gfx_upscaling
+| Whether upscaling is enabled when the graphics mode is set to Ray Traced.
+| 0/1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|-
+! scope="row" | 219
+| new_edit_world_screen_beta
+| {{info needed}}
+| 0/1
+| 1
+|[[Bedrock Edition 1.20.60|1.20.60]]
+|-
+! scope="row" | 220
+| ctrl_spyglassdamp_mouse
+| The sensitivity of the mouse while using a [[spyglass]].
+| 0-1
+| 0.5
+|[[Bedrock Edition 1.17.0|1.17.0]]
+|-
+! scope="row" | 221
+| ctrl_spyglassdamp_touch
+| The sensitivity of the joystick while using a [[spyglass]].
+| 0-1
+| 0.5
+|[[Bedrock Edition 1.17.0|1.17.0]]
+|-
+! scope="row" | 222
+| ctrl_spyglassdamp_gamepad
+| The sensitivity of the console controller while using a [[spyglass]].
+| 0-1
+| 0.5
+|[[Bedrock Edition 1.17.0|1.17.0]]
+|-
+! scope="row" | 223
+| ctrl_dwellbeforedragtime
+| {{info needed}}
+| {{info needed}}
+| 180
+|
+|-
+! scope="row" | 224
+| ctrl_stacksplittingtriggertime
+| The time while holding needed to start splitting a stack of items in the inventory.
+| 
+| 525
+|
+|-
+! scope="row" | 225
+| show_render_distance_warning_modal
+| Whether to show a warning message when trying to set the render distance above the recommended value.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 226
+| dev_marketplace_rotation_speed_multiplier
+| The rotation speed of skins in the Marketplace.
+| 
+| 0
+|
+|-
+! scope="row" | 227
+| dev_marketplace_toggle_all_skins_rotate
+| Whether skins in the Marketplace are visually rotating.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 228
+| has_shown_storage_location_warning
+| Whether a warning about the storage location has ever been shown.
+| 0/1
+| 0
+|[[Bedrock Edition 1.18.0|1.18.0]]
+|-
+! scope="row" | 229
+| game_event_retention_ticks
+| {{info needed}}
+| {{info needed}}
+| 0
+|
+|-
+! scope="row" | 230
+| deep_dark_debug_render
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 231
+| copy_coordinate_ui
+| Whether the coordinates and buttons to copy them are shown in the chat menu.
+| 0/1
+| 0
+|[[Bedrock Edition 1.19.10|1.19.10]]
+|-
+! scope="row" | 232
+| serverbound_client_diagnostics_enabled
+| Starts a diagnostics capture session at level load.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 233
+| script_debugger_auto_attach
+| Attempt to attach script debugger at level load, requires that either inbound port or connect address is set and that inbound or outbound connections are enabled.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 234
+| script_debugger_auto_attach_timeout
+| Amount of time to wait at world load for debugger to attach.
+| 0-1
+| 0
+|
+|-
+! scope="row" | 235
+| script_debugger_attach_mode
+| Whether to connect to the debugger at the specified port, or listen to inbound connect attempts from the debugger on the specified port.
+| 0: connect / 1: listen
+| 1
+|
+|-
+! scope="row" | 236
+| script_debugger_host
+| The specified host to connect with the debugger.
+| 
+| localhost
+|
+|-
+! scope="row" | 237
+| script_debugger_port
+| The specified port to connect with or listen to the debugger.
+| 
+| 19144
+|
+|-
+! scope="row" | 238
+| script_debugger_passcode
+| The passcode used for the debugger.
+| 
+| Blank<ref group="N" name="empty"/>
+|
+|-
+! scope="row" | 239
+| script_debugger_passcode_required
+| VSCode will prompt user for passcode to connect.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 240
+| script_watchdog_slow_warning
+| Enables the watchdog for slow script.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 241
+| script_watchdog_spike_warning
+| Enables the watchdog for single tick spikes.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 242
+| script_watchdog_slow_threshold
+| Sets the watchdog threshold for single tick spikes.
+| 5-50
+| 10
+|
+|-
+! scope="row" | 243
+| script_watchdog_spike_threshold
+| Sets the watchdog threshold for slow scripts over multiple ticks.
+| 50-500
+| 100
+|
+|-
+! scope="row" | 244
+| script_watchdog_hang_threshold
+| Sets the watchdog threshold for single tick hangs.
+| 3-100
+| 10
+|
+|-
+! scope="row" | 245
+| device_info_memory_tier_override
+| Saves and shuts down the world when the combined script memory usage exceeds the given threshold.
+| 1/2/3/4/5
+| 4
+|
+|-
+! scope="row" | 246
+| device_info_use_memory_tier_override
+| Whether to use {{Code|device_info_memory_tier_override}} instead of an automatic memory tier.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 247
+| darkness_effect_modifier
+| Changes the influence of the [[Darkness]] effect.
+| 0-1
+| 1
+|
+|-
+! scope="row" | 248
+| glint_strength
+| Changes the transparency of visual [[Enchantment glint|glint]] on enchanted items.
+| 0-1
+| 0.75
+|[[Bedrock Edition 1.19.80|1.19.80]]
+|-
+! scope="row" | 249
+| glint_speed
+| Changes the speed of visual glint on enchanted items.
+| 0-1
+| 0.5
+|[[Bedrock Edition 1.19.80|1.19.80]]
+|-
+! scope="row" | 250
+| touch_control_selection_screen
+| Enables a button to change the touch control mode.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 251
+| enable_braze
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 252
+| device_lost_telemetry_enabled
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 253
+| gfx_resizableui
+| Toggles the ability to customize the location, scale, and opacity of buttons in touch controls.
+| 0/1
+| 1
+|
+|-
+! scope="row" | 254
+| gfx_hotbarScale
+| Adjusts the scale of the [[hotbar]]
+| 0-1
+| 1
+|
+|-
+! scope="row" | 255
+| gfx_moveStickX
+| The horizontal location of the move joystick.
+| 0-1
+| 0.15
+|
+|-
+! scope="row" | 256
+| gfx_moveStickY
+| The vertical location of the move joystick.
+| 0-1
+| 0.55
+|
+|-
+! scope="row" | 257
+| gfx_moveStickScale
+| The size of the move joystick.
+| 
+| 1
+|
+|-
+! scope="row" | 258
+| gfx_altStickX
+| The horizontal location of the alternative move joystick.
+| 0-1
+| 0.85
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|-
+! scope="row" | 259
+| gfx_altStickY
+| The vertical location of the alternative move joystick.
+| 0-1
+| 0.55
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|-
+! scope="row" | 260
+| gfx_altStickScale
+| The size of the alternative move joystick.
+| 
+| 1
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|-
+! scope="row" | 261
+| gfx_touchButton1X
+| The horizontal location of the place block button.
+| 0-1
+| 0.925
+|
+|-
+! scope="row" | 262
+| gfx_touchButton1Y
+| The vertical location of the place block button.
+| 0-1
+| 0.4
+|
+|-
+! scope="row" | 263
+| gfx_touchButton1Scale
+| The scale of the place block button.
+| 
+| 1
+|
+|-
+! scope="row" | 264
+| gfx_touchButton1Opacity
+| The opacity of the place block button.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 265
+| gfx_touchButton2X
+| The horizontal location of the attack/destroy button.
+| 0-1
+| 0.825
+|
+|-
+! scope="row" | 266
+| gfx_touchButton2Y
+| The vertical location of the attack/destroy button.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 267
+| gfx_touchButton2Scale
+| The scale of the attack/destroy button.
+| 
+| 1
+|
+|-
+! scope="row" | 268
+| gfx_touchButton2Opacity
+| The opacity of the attack/destroy button.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 269
+| gfx_touchButton3X
+| The horizontal location of the sneak button.
+| 0-1
+| 0.925
+|
+|-
+! scope="row" | 270
+| gfx_touchButton3Y
+| The vertical location of the sneak button.
+| 0-1
+| 0.6
+|
+|-
+! scope="row" | 271
+| gfx_touchButton3Scale
+| The scale of the sneak button.
+| 
+| 1
+|
+|-
+! scope="row" | 272
+| gfx_touchButton3Opacity
+| The opacity of the sneak button.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 273
+| gfx_touchButton4X
+| The horizontal location of the sprint button.
+| 0-1
+| 0.825
+|
+|-
+! scope="row" | 274
+| gfx_touchButton4Y
+| The vertical location of the sprint button.
+| 0-1
+| 0.7
+|
+|-
+! scope="row" | 275
+| gfx_touchButton4Scale
+| The scale of the sprint button.
+| 
+| 1
+|
+|-
+! scope="row" | 276
+| gfx_touchButton4Opacity
+| The opacity of the sprint button.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 277
+| gfx_touchButton5X
+| The horizontal location of the jump button.
+| 0-1
+| 0.925
+|
+|-
+! scope="row" | 278
+| gfx_touchButton5Y
+| The vertical location of the place jump button.
+| 0-1
+| 0.8
+|
+|-
+! scope="row" | 279
+| gfx_touchButton5Scale
+| The scale of the place jump button.
+| 
+| 1
+|
+|-
+! scope="row" | 280
+| gfx_touchButton5Opacity
+| The opacity of the place jump button.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 281
+| gfx_touchButton6X
+| The horizontal location of the pick block button.
+| 0-1
+| 0.266
+|
+|-
+! scope="row" | 282
+| gfx_touchButton6Y
+| The vertical location of the pick block button.
+| 0-1
+| 0.8
+|
+|-
+! scope="row" | 283
+| gfx_touchButton6Scale
+| The scale of the pick block button.
+| 0
+| 1
+|
+|-
+! scope="row" | 284
+| gfx_touchButton6Opacity
+| The opacity of the pick block button.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 285
+| gfx_touchDpadX
+| The horizontal location of the D-Pad.
+| 0-1
+| 0.12
+|
+|-
+! scope="row" | 286
+| gfx_touchDpadY
+| The vertical location of the D-Pad.
+| 0-1
+| 0.75
+|
+|-
+! scope="row" | 287
+| gfx_touchDpadScale
+| The scale of the D-Pad.
+| 
+| 1.2
+|
+|-
+! scope="row" | 288
+| gfx_touchDpadOpacity
+| The opacity of the D-Pad.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 289
+| gfx_classicButton1X
+| The horizontal location of the jump button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.9
+|
+|-
+! scope="row" | 290
+| gfx_classicButton1Y
+| The vertical location of the jump button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.75
+|
+|-
+! scope="row" | 291
+| gfx_classicButton1Scale
+| The scale of the jump button when using D-pad & tap to interact control mode.
+| 
+| 1.2
+|
+|-
+! scope="row" | 292
+| gfx_classicButton1Opacity
+| The opacity of the jump button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 293
+| gfx_classicButton2X
+| The horizontal location of the fly/swim up button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.9
+|
+|-
+! scope="row" | 294
+| gfx_classicButton2Y
+| The vertical location of the fly/swim up button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.75
+|
+|-
+! scope="row" | 295
+| gfx_classicButton2Scale
+| The scale of the fly/swim up button when using D-pad & tap to interact control mode.
+| 
+| 1.2
+|
+|-
+! scope="row" | 296
+| gfx_classicButton2Opacity
+| The opacity of the fly/swim up button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 297
+| gfx_classicButton3X
+| The horizontal location of the fly/swim down button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.9
+|
+|-
+! scope="row" | 298
+| gfx_classicButton3Y
+| The vertical location of the fly/swim down button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.89
+|
+|-
+! scope="row" | 299
+| gfx_classicButton3Scale
+| The scale of the fly/swim down button when using D-pad & tap to interact control mode.
+| 
+| 1.2
+|
+|-
+! scope="row" | 300
+| gfx_classicButton3Opacity
+| The opacity of the fly/swim down button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 301
+| gfx_classicButton4X
+| The horizontal location of the pick block button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.75
+|
+|-
+! scope="row" | 302
+| gfx_classicButton4Y
+| The vertical location of the pick block button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.75
+|
+|-
+! scope="row" | 303
+| gfx_classicButton4Scale
+| The scale of the pick block button when using D-pad & tap to interact control mode.
+| 
+| 1.2
+|
+|-
+! scope="row" | 304
+| gfx_classicButton4Opacity
+| The opacity of the pick block button when using D-pad & tap to interact control mode.
+| 0-1
+| 0.5
+|
+|-
+! scope="row" | 305
+| realmsplus_lastshowngoogleholddate
+| {{info needed}}
+| Date: YYYY-MM-DDTHH:MM:SSZ
+| 1970-01-01T00:00:00Z
+|
+|-
+! scope="row" | 306
+| ctrl_resetOnStart
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 307
+| gpu_validation_enabled
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 308
+| gpu_validation_verbose
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 309
+| gpu_validation_outputmanager_enabled
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 310
+| gpu_validation_disable_errorsupress
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 311
+| load_renderdocdll
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 312
+| graphics_mode
+| Changes the game's [[graphics]] mode.
+| 0: Simple / 1: Fancy / 2: Vibrant Visuals / 3: Ray Traced
+| 2
+|[[Bedrock Edition 1.21.80|1.21.80]]
+|-
+! scope="row" | 313
+| graphics_api
+| {{info needed}}
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+! scope="row" | 314
+| graphics_quality_preset_mode
+| The quality of [[Vibrant Visuals]].
+| 0: Favor Performance / 1: Favor Visuals / 2: Custom
+| 0
+| [[1.21.60]]
+|-
+! scope="row" | 315
+| shadow_quality
+| The quality of shadows in [[Vibrant Visuals]].
+| 0: Low / 1: Medium / 2: High / 3: Ultra
+| 1
+| [[Bedrock Edition 1.20.30|1.20.30]]
+|-
+! scope="row" | 316
+| cloud_quality
+| The quality of clouds in [[Vibrant Visuals]].
+| 0: Low / 1: Medium / 2: High / 3: Ultra
+| 1
+| [[1.21.100]]
+|-
+! scope="row" | 317
+| point_light_shadow_quality
+| The quality of point light shadows in [[Vibrant Visuals]].
+| 0: Off / 1: Low / 2: Medium / 3: High / 4: Ultra
+| 2
+| [[Bedrock Edition 1.20.80|1.20.80]]
+|-
+! scope="row" | 318
+| point_light_loding_quality
+| The quality of point light loding in [[Vibrant Visuals]].
+| 0: Off / 1: Low / 2: Medium / 3: High / 4: Ultra
+| 1
+| [[Bedrock Edition 1.20.30|1.20.30]]
+|-
+! scope="row" | 319
+| volumetric_fog_quality
+| The quality of volumetric fog in [[Vibrant Visuals]].
+| 0: Off / 1: Low / 2: Medium / 3: High / 4: Ultra
+| 2
+| [[Bedrock Edition 1.20.60|1.20.60]]
+|-
+! scope="row" | 320
+| reflections_quality
+| The quality of reflections in [[Vibrant Visuals]].
+| 0: Off / 1: Low / 2: Medium / 3: High / 4: Ultra
+| 2
+| [[Bedrock Edition 1.21.20|1.21.20]]
+|-
+! scope="row" | 321
+| bloom_strength
+| The amount of bloom in [[Vibrant Visuals]].
+| 0-1
+| 1
+| [[Bedrock Edition 1.20.30|1.20.30]]
+|-
+! scope="row" | 322
+| bloom_custom_strength
+| {{info needed|How is this different from bloom_strength?}}
+| 0-1
+| 0
+| [[Bedrock Edition 1.20.30|1.20.30]]
+|-
+! scope="row" | 323
+| do_not_show_multiplayer_ip_safety_warning
+| Whether to show the warning message when trying show the IP adress of a custom server.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 324
+| do_not_show_worlds_without_entitlement_warning
+| Whether to show the warning message when trying to play a world without a name.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 325
+| do_not_show_old_worlds_warning
+| Whether to show the warning message when trying to play an [[Old]] world.
+| 0/1
+| 0
+|[[Bedrock Edition 1.18.0|1.18.0]]
+|-
+! scope="row" | 326
+| do_not_hardcore_mode_warning
+| Whether to show the warning message when trying to create a [[Hardcore]] world.
+| 0/1
+| 0
+|[[Bedrock Edition 1.20.80|1.20.80]]
+|-
+! scope="row" | 327
+| do_not_show_experimental_worlds_warning
+| Whether to show the warning message when trying to play or create a world with [[experiments]] enabled.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 328
+| do_not_show_using_external_storage_warning
+| Whether to show the warning message when using external storage.
+| 0/1
+| 0
+|[[Bedrock Edition 1.18.0|1.18.0]]
+|-
+! scope="row" | 329
+| do_not_show_hidden_local_worlds_warning
+| Whether to show the warning message when locally stored worlds created from a template are hidden without having access to the template.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 330
+| do_not_show_hidden_alternative_storage_worlds_warning
+| Whether to show the warning message when external stored worlds are hidden.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 331
+| do_not_show_alternative_storage_has_worlds
+| Whether to show a message when there are worlds external stored.
+| 0/1
+| 0
+|[[Bedrock Edition 1.18.0|1.18.0]]
+|-
+! scope="row" | 332
+| do_not_show_addon_stacking_warning
+| Whether to show the warning when [[Add-On|add-on]]s are being stacked.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 333
+| do_not_show_slow_connection_warning
+| Whether to show the warning when the player's connection is slow while playing in [[multiplayer]].
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.80|1.21.80]]
+|-
+! scope="row" | 334
+| do_not_show_realms_moderation_deletion_warning
+| Whether a warning message should be shown when attempting to delete an expired Realm.
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+! scope="row" |
+| do_not_show_realms_region_ping_warning{{upcoming|be 26.0}}
+| Whether to show a warning when the server region for a Realms server is set to one with a high ping.
+| 0/1
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" | 335
+| do_not_show_friends_list_ftue
+| Whether to show a tooltip in the [[pause menu]] that the list of players has been moved to the [[social]] drawer.
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+! scope="row" | 336
+| emoteChat
+| Whether to show a message in the chat when a player uses an [[emote]].
+| 0/1
+| 1
+|[[Bedrock Edition 1.16.0|1.16.0]]
+|-
+! scope="row" | 337
+| loading_tips_index
+| Whether the player has reached the second level of Survival [[loading tips]] shown in the loading world screen.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 338
+| nether_reached
+| Whether the player has ever entered the [[Nether]], unlocks the third level of Survival loading tips.
+| 0/1
+| 0
+|[[Bedrock Edition 1.20.50|1.20.50]]
+|-
+! scope="row" | 339
+| has_dismissed_new_player_flow
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 340
+| ctrl_improvedInputResponse
+| Toggles the Improved Input Response feature, which reduces the delay between an input and the game's response.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 341
+| app_launched_count
+| The total amount the player has launched the game.
+| 
+| 0
+|
+|-
+! scope="row" | 342
+| gfx_debug_trace
+| {{info needed}}
+| 0/1
+| 0
+|
+|-
+! scope="row" | 343
+| xbl_use_remote_connect
+| Whether to use a login code to sign in with a Microsoft account on non-Windows devices.
+| 0/1
+| 0
+|
+|-
+! scope="row" | 344
+| worlds_friends_servers_SISU_third_session
+| {{info needed}}
+| 0/1
+| 1
+|
+|-
+! scope="row" | 345
+| show_free_preview_realm_available_new_icon
+| {{info needed}}
+| 0/1
+| 1
+|
+|-
+! scope="row" | 346
+| ecomode_toggle
+| {{info needed}}
+| 0/1
+| 1
+|
+|-
+! scope="row" | 347
+| playScreenWorldLayoutMode
+| Toggles the layout of the world tab in the [[Play screen]] between list and gallery.
+| 1: Gallery / 2: List
+| 1
+|[[Bedrock Edition 1.20.30|1.20.30]]
+|-
+! scope="row" | 348
+| do_not_show_manage_showcase_clear_warning
+| Whether to show the warning message when the player attempts to clear the showcase gallery.
+| 0/1
+| 0
+|[[Bedrock Edition 1.21.30|1.21.30]]
+|-
+! scope="row" | 349
+| do_not_show_manage_showcase_replace_warning
+| Whether to show the warning message when the player attempts to replace a screenshot in the showcase gallery.
+| 0/1
+| 0
+|[[Bedrock Edition 1.21.30|1.21.30]]
+|-
+! scope="row" | 350
+| new_player_flow_v3_abc_test_group
+| {{info needed}}
+| {{info needed}}
+| 1
+|
+|-
+! scope="row" |
+| new_player_path_tutorial_mode_ab_test_group{{upcoming|be 26.0}}
+| {{info needed}}
+| {{info needed}}
+| 1
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" | 351
+| partyInviteReceivedFilter
+| Whether [[party]]{{upcoming|be 26.0}} invites are shown from any player or only in-game friends.
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 352
+| partyPrivacy
+| Changes the default state of the party privacy setting, either "Friends only" or "Open".
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 353
+| partyInviteSendPrivileges
+| Whether members of a party can invite players or not.
+| 0/1
+| 1
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 354
+| frame_pacing_enabled
+| Whether to enable frame pacing on mobile devices.
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 355
+| options_version_major
+| The first number in the version of the game.
+| 
+| 1
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 356
+| options_version_minor
+| The second number in the version of the game, used for major updates.
+|
+| 21 (26 in ''Preview'')
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 357
+| options_version_patch
+| The third number in the version of the game, used for minor updates.
+|
+| 130 (0 in ''Preview'')
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 358
+| options_version_revision
+| The fourth number in the version of the game, used for internal versioning.
+| 
+| 4 (27 in ''Preview'')
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" | 359
+| graphics_mode_switch
+| Whether the graphics mode option can be changed in-game.
+| 0/1
+| 0
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+! scope="row" |
+| command_macros_enabled{{upcoming|be 26.0}}
+| Whether [[command]] macros are enabled.
+| 0/1
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_0{{upcoming|be 26.0}}
+| The command entered for the first command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_1{{upcoming|be 26.0}}
+| The command entered for the second command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_2{{upcoming|be 26.0}}
+| The command entered for the third command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_3{{upcoming|be 26.0}}
+| The command entered for the fourth command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_4{{upcoming|be 26.0}}
+| The command entered for the fifth command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_5{{upcoming|be 26.0}}
+| The command entered for the sixth command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_6{{upcoming|be 26.0}}
+| The command entered for the seventh command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_7{{upcoming|be 26.0}}
+| The command entered for the eighth command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_8{{upcoming|be 26.0}}
+| The command entered for the ninth command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| command_macro_command_9{{upcoming|be 26.0}}
+| The command entered for the tenth command macro slot.
+| 
+| 
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" | 360
+| gamepadMappingVersion
+| The version type used for the controller controls layout.
+| 0/1/2/3
+| 1
+|
+|-
+! scope="row" | 361
+| ctrl_type_0_key.jump
+| The jump key when using a controller.
+| 
+| 1
+|
+|-
+! scope="row" | 362
+| ctrl_type_0_key.drop
+| The drop item key when using a controller.
+| 
+| 6
+|
+|-
+! scope="row" | 363
+| ctrl_type_0_key.attack
+| The attack key when using a controller.
+| 
+| -99
+|
+|-
+! scope="row" | 364
+| ctrl_type_0_key.use
+| The use key when using a controller.
+| 
+| -100
+|
+|-
+! scope="row" | 365
+| ctrl_type_0_container.crafting
+| The crafting key when using a controller.
+| 
+| 3
+|
+|-
+! scope="row" | 366
+| ctrl_type_0_key.inventory
+| The open inventory key when using a controller.
+| 
+| 4
+|
+|-
+! scope="row" | 367
+| ctrl_type_0_key.cycleItemLeft
+| The cycle item left key when using a controller.
+| 
+| 11
+|
+|-
+! scope="row" | 368
+| ctrl_type_0_key.cycleItemRight
+| The cycle item right key when using a controller.
+| 
+| 12
+|
+|-
+! scope="row" | 369
+| ctrl_type_0_key.togglePerspective
+| The toggle perspective key when using a controller.
+| 
+| 5
+|
+|-
+! scope="row" | 370
+| ctrl_type_0_key.sneak
+| The sneak key when using a controller.
+| 
+| 2
+|
+|-
+! scope="row" | 371
+| ctrl_type_0_key.sprint
+| The sprint key when using a controller.
+| 
+| 9
+|
+|-
+! scope="row" | 372
+| ctrl_type_0_key.flyUpSlow
+| The fly up slow key when using a controller.
+| 
+| 0
+|
+|-
+! scope="row" | 373
+| ctrl_type_0_key.flyDownSlow
+| The fly down slow key when using a controller.
+| 
+| 10
+|
+|-
+! scope="row" | 374
+| ctrl_type_0_key.emote
+| The emote key when using a controller.
+| 
+| 7
+| [[Bedrock Edition 1.16.0|1.16.0]]
+|-
+! scope="row" | 375
+| ctrl_type_0_key.mobeffectsandinteractwithtoast
+| The view status effects & open notifications key when using a controller.
+| 
+| 13
+|
+|-
+! scope="row" | 376
+| ctrl_type_0_key.chat
+| The open chat key when using a controller.
+| 
+| 8
+|
+|-
+! scope="row" | 377
+| ctrl_type_0_key.left
+| The move left key when using a controller.
+| 
+| 18
+|
+|-
+! scope="row" | 378
+| ctrl_type_0_key.right
+| The move right key when using a controller.
+| 
+| 17
+|
+|-
+! scope="row" | 379
+| ctrl_type_0_key.back
+| The move backward key when using a controller.
+| 
+| 16
+|
+|-
+! scope="row" | 380
+| ctrl_type_0_key.forward
+| The jump key when using a controller.
+| 
+| 19
+|
+|-
+! scope="row" | 381
+| ctrl_type_0_key.pickItem
+| The pick block control key when using a controller.
+| 
+| 0
+|
+|-
+! scope="row" | 382
+| keyboard_type_0_key.attack
+| The attack key when using a keyboard and mouse.
+| 
+| -99
+|
+|-
+! scope="row" | 383
+| keyboard_type_0_key.pickItem
+| The pick block key when using a keyboard and mouse.
+|
+| -97
+|
+|-
+! scope="row" | 384
+| keyboard_type_0_key.use
+| The use key when using a keyboard and mouse.
+| 
+| -98
+|
+|-
+! scope="row" | 385
+| keyboard_type_0_key.drop
+| The drop key when using a keyboard and mouse.
+| 
+| 81
+|
+|-
+! scope="row" | 386
+| keyboard_type_0_key.hotbar.1
+| The select hotbar slot 1 key when using a keyboard and mouse.
+| 
+| 49
+|
+|-
+! scope="row" | 387
+| keyboard_type_0_key.hotbar.2
+| The select hotbar slot 2 key when using a keyboard and mouse.
+| 
+| 50
+|
+|-
+! scope="row" | 388
+| keyboard_type_0_key.hotbar.3
+| The select hotbar slot 3 key when using a keyboard and mouse.
+| 
+| 51
+|
+|-
+! scope="row" | 389
+| keyboard_type_0_key.hotbar.4
+| The select hotbar slot 4 key when using a keyboard and mouse.
+| 
+| 52
+|
+|-
+! scope="row" | 390
+| keyboard_type_0_key.hotbar.5
+| The select hotbar slot 5 key when using a keyboard and mouse.
+| 
+| 53
+|
+|-
+! scope="row" | 391
+| keyboard_type_0_key.hotbar.6
+| The select hotbar slot 6 key when using a keyboard and mouse.
+| 
+| 54
+|
+|-
+! scope="row" | 392
+| keyboard_type_0_key.hotbar.7
+| The select hotbar slot 7 key when using a keyboard and mouse.
+| 
+| 55
+|
+|-
+! scope="row" | 393
+| keyboard_type_0_key.hotbar.8
+| The select hotbar slot 8 key when using a keyboard and mouse.
+| 
+| 56
+|
+|-
+! scope="row" | 394
+| keyboard_type_0_key.hotbar.9
+| The select hotbar slot 9 key when using a keyboard and mouse.
+| 
+| 57
+|
+|-
+! scope="row" | 395
+| keyboard_type_0_key.inventory
+| The open inventory key when using a keyboard and mouse.
+| 
+| 69
+|
+|-
+! scope="row" | 396
+| keyboard_type_0_key.togglePerspective
+| The toggle perspective key when using a keyboard and mouse.
+| 
+| 116
+|
+|-
+! scope="row" | 397
+| keyboard_type_0_key.jump
+| The jump key when using a keyboard and mouse.
+| 
+| 32
+|
+|-
+! scope="row" | 398
+| keyboard_type_0_key.declineToast{{until|be 26.0}}
+| The decline [[toasts|toast]] key when using a keyboard and mouse.
+| 
+| 77
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+! scope="row" | 399
+| keyboard_type_0_key.sneak
+| The sneak key when using a keyboard and mouse.
+| 
+| 16
+|
+|-
+! scope="row" | 400
+| keyboard_type_0_key.sprint
+| The sprint key when using a keyboard and mouse.
+| 
+| 17
+|
+|-
+! scope="row" | 401
+| keyboard_type_0_key.left
+| The strafe left key when using a keyboard and mouse.
+| 
+| 65
+|
+|-
+! scope="row" | 402
+| keyboard_type_0_key.right
+| The strafe right key when using a keyboard and mouse.
+| 
+| 86
+|
+|-
+! scope="row" | 403
+| keyboard_type_0_key.back
+| The walk backward key when using a keyboard and mouse.
+| 
+| 83
+|
+|-
+! scope="row" | 404
+| keyboard_type_0_key.forward
+| The walk forward key when using a keyboard and mouse.
+| 
+| 87
+|
+|-
+! scope="row" | 405
+| keyboard_type_0_key.mobEffects
+| The view status effects key when using a keyboard and mouse.
+| 
+| 90
+|
+|-
+! scope="row" | 406
+| keyboard_type_0_key.chat
+| The chat key when using a keyboard and mouse.
+| 
+| 84,13
+|
+|-
+! scope="row" | 407
+| keyboard_type_0_key.command
+| The open command key when using a keyboard and mouse.
+| 
+| 191
+|
+|-
+! scope="row" | 408
+| keyboard_type_0_key.copyCoordinates
+| The copy coordinates key when using a keyboard and mouse.
+| 
+| 67
+|[[Bedrock Edition 1.19.30|1.19.30]]
+|-
+! scope="row" | 409
+| keyboard_type_0_key.copyFacingCoordinates
+| The copy facing coordinates key when using a keyboard and mouse.
+| 
+| 88
+|[[Bedrock Edition 1.19.30|1.19.30]]
+|-
+! scope="row" | 410
+| keyboard_type_0_key.emote
+| The [[emote]] key when using a keyboard and mouse.
+| 
+| 66
+| [[Bedrock Edition 1.16.0|1.16.0]]
+|-
+! scope="row" | 411
+| keyboard_type_0_key.screenshot
+| The [[screenshot]] key when using a keyboard and mouse.
+| 
+| 113
+|-
+! scope="row" | 412
+| keyboard_type_0_key.menuTabLeft
+| The menu tab left key when using a keyboard and mouse.
+| 
+| 219
+|[[Bedrock Edition 1.6.0|1.6.0]]
+|-
+! scope="row" | 413
+| keyboard_type_0_key.menuTabRight
+| The menu tab right key when using a keyboard and mouse.
+| 
+| 221
+|[[Bedrock Edition 1.6.0|1.6.0]]
+|-
+! scope="row" | 414
+| keyboard_type_0_key.menuCancel
+| The menu cancel key when using a keyboard and mouse.
+| 
+| -95
+|
+|-
+! scope="row" | 415
+| keyboard_type_0_key.interactwithtoast
+| The open notifications key when using a keyboard and mouse.
+| 
+| 78
+|
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.0{{upcoming|be 26.0}}
+| The key to execute the first command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.1{{upcoming|be 26.0}}
+| The key to execute the second command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.2{{upcoming|be 26.0}}
+| The key to execute the third command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.3{{upcoming|be 26.0}}
+| The key to execute the fourth command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.4{{upcoming|be 26.0}}
+| The key to execute the fifth command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.5{{upcoming|be 26.0}}
+| The key to execute the sixth command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.6{{upcoming|be 26.0}}
+| The key to execute the seventh command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.7{{upcoming|be 26.0}}
+| The key to execute the eighth command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.8{{upcoming|be 26.0}}
+| The key to execute the ninth command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.9{{upcoming|be 26.0}}
+| The key to execute the tenth command macro.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" | 416
+| keyboard_type_1_key.lookUpSlight
+| The look up slight key when using full keyboard gameplay.
+| 
+| 109
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 417
+| keyboard_type_1_key.lookDownSlight
+| The look down slight key when using full keyboard gameplay.
+| 
+| 107
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 418
+| keyboard_type_1_key.lookUpRight
+| The look up right key when using full keyboard gameplay.
+| 
+| 105
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 419
+| keyboard_type_1_key.lookUp
+| The look up key when using full keyboard gameplay.
+| 
+| 104
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 420
+| keyboard_type_1_key.lookUpLeft
+| The look up left key when using full keyboard gameplay.
+| 
+| 103
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 421
+| keyboard_type_1_key.lookRight
+| The look right key when using full keyboard gameplay.
+| 
+| 102
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 422
+| keyboard_type_1_key.lookCenter
+| The look center key when using full keyboard gameplay.
+| 
+| 101,35,220
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 423
+| keyboard_type_1_key.lookLeft
+| The look left key when using full keyboard gameplay.
+| 
+| 100
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 424
+| keyboard_type_1_key.lookDownRight
+| The look down right key when using full keyboard gameplay.
+| 
+| 99
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 425
+| keyboard_type_1_key.lookDown
+| The look down key when using full keyboard gameplay.
+| 
+| 98
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 426
+| keyboard_type_1_key.lookDownLeft
+| The look down left key when using full keyboard gameplay.
+| 
+| 97
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 427
+| keyboard_type_1_key.lookUpSmooth
+| The look up smooth key when using full keyboard gameplay.
+| 
+| 38
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 428
+| keyboard_type_1_key.lookDownSmooth
+| The look down smooth key when using full keyboard gameplay.
+| 
+| 40
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 429
+| keyboard_type_1_key.lookLeftSmooth
+| The look left smooth key when using full keyboard gameplay.
+| 
+| 37
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 430
+| keyboard_type_1_key.lookRightSmooth
+| The look right smooth key when using full keyboard gameplay.
+| 
+| 39
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 431
+| keyboard_type_1_key.cycleItemLeft
+| The cycle item left key when using full keyboard gameplay.
+| 
+| 33
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 432
+| keyboard_type_1_key.cycleItemRight
+| The cycle item right key when using full keyboard gameplay.
+| 
+| 34
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 433
+| keyboard_type_1_key.interactwithtoast
+| The open notifications key when using full keyboard gameplay.
+| 
+| 78
+|
+|-
+! scope="row" | 434
+| keyboard_type_1_key.attack
+| The attack key when using full keyboard gameplay.
+| 
+| 81
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 435
+| keyboard_type_1_key.pickItem
+| The pick block key when using full keyboard gameplay.
+| 
+| 88
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 436
+| keyboard_type_1_key.use
+| The use key when using full keyboard gameplay.
+| 
+| 69
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 437
+| keyboard_type_1_key.drop
+| The drop key when using full keyboard gameplay.
+| 
+| 90
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 438
+| keyboard_type_1_key.hotbar.1
+| The select hotbar slot 1 key when using full keyboard gameplay.
+| 
+| 49
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 439
+| keyboard_type_1_key.hotbar.2
+| The select hotbar slot 2 key when using full keyboard gameplay.
+| 
+| 50
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 440
+| keyboard_type_1_key.hotbar.3
+| The select hotbar slot 3 key when using full keyboard gameplay.
+| 
+| 51
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 441
+| keyboard_type_1_key.hotbar.4
+| The select hotbar slot 4 key when using full keyboard gameplay.
+| 
+| 52
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 442
+| keyboard_type_1_key.hotbar.5
+| The select hotbar slot 5 key when using full keyboard gameplay.
+| 
+| 53
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 443
+| keyboard_type_1_key.hotbar.6
+| The select hotbar slot 6 key when using full keyboard gameplay.
+| 
+| 54
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 444
+| keyboard_type_1_key.hotbar.7
+| The select hotbar slot 7 key when using full keyboard gameplay.
+| 
+| 55
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 445
+| keyboard_type_1_key.hotbar.8
+| The select hotbar slot 8 key when using full keyboard gameplay.
+| 
+| 56
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 446
+| keyboard_type_1_key.hotbar.9
+| The select hotbar slot 9 key when using full keyboard gameplay.
+| 
+| 57
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 447
+| keyboard_type_1_key.inventory
+| The open inventory key when using full keyboard gameplay.
+| 
+| 67
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 448
+| keyboard_type_1_key.togglePerspective
+| The toggle perspective key when using full keyboard gameplay.
+| 
+| 116
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 449
+| keyboard_type_1_key.declineToast
+| The decline [[toasts|toast]] key when using full keyboard gameplay.
+| 
+| 77
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+! scope="row" | 450
+| keyboard_type_1_key.jump
+| The jump key when using full keyboard gameplay.
+| 
+| 32
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 451
+| keyboard_type_1_key.sneak
+| The sneak key when using full keyboard gameplay.
+| 
+| 16
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 452
+| keyboard_type_1_key.sprint
+| The sprint key when using full keyboard gameplay.
+| 
+| 17
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 453
+| keyboard_type_1_key.left
+| The strafe left key when using full keyboard gameplay.
+| 
+| 65
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 454
+| keyboard_type_1_key.right
+| The strafe right key when using full keyboard gameplay.
+| 
+| 68
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 455
+| keyboard_type_1_key.back
+| The walk backward key when using full keyboard gameplay.
+| 
+| 83
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 456
+| keyboard_type_1_key.forward
+| The walk forward key when using full keyboard gameplay.
+| 
+| 87
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 457
+| keyboard_type_1_key.mobEffects
+| The view status effects key when using full keyboard gameplay.
+| 
+| 9
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 458
+| keyboard_type_1_key.chat
+| The chat key when using full keyboard gameplay.
+| 
+| 84, 13
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 459
+| keyboard_type_1_key.command
+| The open command key when using full keyboard gameplay.
+| 
+| 191
+|[[Bedrock Edition 1.4.0|1.4.0]]
+|-
+! scope="row" | 460
+| keyboard_type_1_key.emote
+| The [[emote]] key when using full keyboard gameplay.
+| 
+| 66
+| [[Bedrock Edition 1.16.0|1.16.0]]
+|-
+! scope="row" | 461
+| keyboard_type_1_key.screenshot
+| The [[screenshot]] key when using full keyboard gameplay.
+| 
+| 113
+| [[Bedrock Edition 1.16.0|1.16.0]]
+|-
+! scope="row" | 462
+| keyboard_type_1_key.menuTabLeft
+| The menu tab left key when using full keyboard gameplay.
+| 
+| 219
+|
+|-
+! scope="row" | 463
+| keyboard_type_1_key.menuTabRight
+| The menu tab right key when using full keyboard gameplay.
+| 
+| 221
+|
+|-
+! scope="row" | 464
+| keyboard_type_1_key.menuCancel
+| The menu cancel key when using full keyboard gameplay.
+| 
+| 80
+|
+|-
+! scope="row" | 465
+| keyboard_type_1_key.copyCoordinates
+| The copy coordinates key when using full keyboard gameplay.
+| 
+| 0
+|[[Bedrock Edition 1.19.30|1.19.30]]
+|-
+! scope="row" | 466
+| keyboard_type_1_key.copyFacingCoordinates
+| The copy facing coordinates key when using full keyboard gameplay.
+| 
+| 0
+|[[Bedrock Edition 1.19.30|1.19.30]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.0{{upcoming|be 26.0}}
+| The key to execute the first command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.1{{upcoming|be 26.0}}
+| The key to execute the second command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.2{{upcoming|be 26.0}}
+| The key to execute the third command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.3{{upcoming|be 26.0}}
+| The key to execute the fourth command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.4{{upcoming|be 26.0}}
+| The key to execute the fifth command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.5{{upcoming|be 26.0}}
+| The key to execute the sixth command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.6{{upcoming|be 26.0}}
+| The key to execute the seventh command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.7{{upcoming|be 26.0}}
+| The key to execute the eighth command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.8{{upcoming|be 26.0}}
+| The key to execute the ninth command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|-
+! scope="row" |
+| keyboard_type_0_key.commandmacro.9{{upcoming|be 26.0}}
+| The key to execute the tenth command macro when using full keyboard gameplay.
+| 
+| 0
+| [[Bedrock Edition 26.0|26.0]]
+|}
+
+== Removed options ==
+{{info needed section|removed options}}
+=== ''Java Edition'' ===
+{| class="wikitable sortable" style="width: 100%" data-description="List of options"
+|-
+! scope="col" |Option name
+! scope="col" class="unsortable" |Explanation
+! scope="col" |Valid values
+! scope="col" |Default value
+! scope="col" |First added
+!Officially added
+! scope="col" |First removed
+!Officially removed
+|-
+|advancedOpengl
+|
+|
+| FALSE
+|[[b1.6-tb3]]
+|[[b1.9-pre1]]
+|[[14w30a]]
+|[[1.8-pre1]]
+|-
+|allowBlockAlternatives
+|Whether alternative block models are used
+|true/false
+|TRUE
+|[[14w28a]]
+|[[1.8-pre1]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|anaglyph3d
+|Whether 3D mode is turned on
+|true/false
+|FALSE
+|[[c0.24_st_03]]
+|[[b1.9-pre1]]
+|[[17w43a]]
+|[[1.13-pre1]]
+|-
+|anisotropicFiltering
+|
+|
+|1
+|[[13w38a]]
+|[[Java Edition 1.7|1.7]]
+|[[14w25a]]
+|[[1.8-pre1]]
+|-
+|chunksPerFrame
+|
+|
+|2
+|[[1.8.2-pre1]]
+|[[1.8.2-pre1]]
+|[[1.8.2-pre2]]
+|[[1.8.2-pre2]]
+|-
+| difficulty
+| The world difficulty. Has no effect after 1.7.2
+| 0–3 (Peaceful, Easy, Normal, Hard)
+| 2 (Normal)
+|
+|
+|[[22w12a]]{{verify}}
+|[[Java Edition 1.19|1.19]]
+|-
+| clouds
+|
+|
+|TRUE
+|[[b1.9-pre5]]
+|[[b1.9-pre5]]
+|[[14w25a]]
+|[[1.8-pre1]]
+|-
+|enableWeakAttacks
+|When false, the client will ignore attempts to attack when weapon cooldown is less than 75% recharged.
+|
+|FALSE
+|[[1.9.1-pre1]]
+|[[1.9.1-pre1]]
+|[[19w08a]]
+|[[1.14 Pre-Release 1]]
+|-
+|fancyGraphics
+|Whether fancy (more detailed) graphics are turned on
+|true/false
+|TRUE
+|[[inf-20100615]]
+|[[b1.9-pre1]]
+|[[20w27a]]
+|[[1.16-pre1]]
+|-
+|fboEnable
+|Whether Framebuffer Objects is turned on
+| true/false
+|TRUE
+|[[13w38a]]
+|[[Java Edition 1.7|1.7]]
+|[[18w44a]]
+|[[1.14 Pre-Release 1]]
+|-
+|fpsLimit
+|
+|
+|1
+|[[b1.7_01]]
+|[[b1.9-pre1]]
+|[[13w38a]]
+|[[Java Edition 1.7|1.7]]
+|-
+|grayscale
+|
+| true/false
+|FALSE
+|[[2point0-blue]]
+|
+|[[2point0-red]]
+|
+|-
+|heldItemTooltips
+| Whether switching between items shows the name of the item; no in-game control
+| true/false
+|TRUE
+|[[12w50a]]
+|[[Java Edition 1.4.6|1.4.6]]
+|[[23w06a]]
+|[[Java Edition 1.19.4|1.19.4]]
+|-
+|key_Back
+|
+|
+| 31
+|[[c0.0.23a_01]]
+|
+|[[b1.1-2]]
+|
+|-
+| key_Build
+|
+|
+|48
+|[[c0.0.23a_01]]
+|
+| colspan="2" |[[in-20091231-2]]
+|-
+|key_Chat
+|
+|
+| 20
+|[[c0.0.23a_01]]
+|
+|[[b1.1-2]]
+|
+|-
+|key_Drop
+|
+|
+|16
+|[[in-20091231-2]]
+|
+|[[b1.1-2]]
+|
+|-
+|key_Forward
+|
+|
+|17
+|[[c0.0.23a_01]]
+|
+|[[b1.1-2]]
+|
+|-
+|key_Inventory
+|
+|
+|23
+|[[in-20091231-2]]
+|
+|[[b1.1-2]]
+|
+|-
+|key_Jump
+|
+|
+|57
+|[[c0.0.23a_01]]
+|
+|[[b1.1-2]]
+|
+|-
+|key_key.boss_mode
+|
+|
+|key.keyboard.b
+| colspan="2" |[[3D Shareware v1.34]]
+|[[19w14a]]
+|
+|-
+|key_key.decrease_view
+|
+|
+|key.keyboard.f8
+| colspan="2" |[[3D Shareware v1.34]]
+|[[19w14a]]
+|
+|-
+|key_key.fog
+|
+|
+|33
+|[[b1.1-2]]
+|
+|[[b1.8]]
+|
+|-
+|key_key.increase_view
+|
+|
+| key.keyboard.f7
+| colspan="2" |[[3D Shareware v1.34]]
+|[[19w14a]]
+|
+|-
+|key_key.streamCommercial
+| Stream Commercial control
+|
+|0 (none)
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+| key_key.streamPauseUnpause
+|Pause/Unpause Stream control
+|
+|65 (F7)
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|key_key.streamStartStop
+| Start/Stop Stream control
+|
+|64 (F6)
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|key_key.streamToggleMic
+|Microphone input control
+|
+|0 (none)
+|[[13w47d]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|key_key.swapHands
+|Swapping of items between hands control; renamed to key_key.swapOffhand
+|true/false
+|33
+|[[15w31a]]
+|[[1.9-pre1]]
+|[[20w27a]]
+|[[1.16-pre3]]
+|-
+|key_Left
+|
+|
+|30
+|[[c0.0.23a_01]]
+|
+|[[b1.1-2]]
+|
+|-
+|key_Load location
+|
+|
+|19
+|[[c0.0.23a_01]]
+|
+|[[a1.0.10]]
+|
+|-
+|key_Right
+|
+|
+|32
+|[[c0.0.23a_01]]
+|
+|[[b1.1-2]]
+|
+|-
+|key_Save location
+|
+|
+|28
+|[[c0.0.23a_01]]
+|
+|[[a1.0.10]]
+|
+|-
+| key_Sneak
+|
+|
+| 42
+|[[a1.1.1]]
+|
+|[[b1.1-2]]
+|
+|-
+|key_Toggle fog
+|
+|
+|33
+|[[c0.0.23a_01]]
+|
+|[[b1.1-2]]
+|
+|-
+|limitFramerate
+|
+|
+|FALSE
+|[[c0.27_st]]
+|
+|[[b1.7_01]]
+|
+|-
+|music
+|
+|
+|TRUE
+|[[c0.0.23a_01]]
+|[[b1.9-pre1]]
+|[[13w36a]]
+|[[1.7]]
+|-
+|postProcessEnable
+|
+|
+|TRUE
+|[[13w38a]]
+|
+|[[13w38b]]
+|
+|-
+| saturation
+|No in-game control. Never did anything.
+| 0-1
+| 0.0
+|[[13w38a]]
+|[[1.7]]
+|[[19w08a]]
+|[[1.14 Pre-Release 1]]
+|-
+|serverTextures
+|
+|
+|TRUE
+|[[12w18a]]
+|[[1.3]]
+|[[14w17a]]
+|[[1.7.6-pre1]]
+|-
+|shieldAnimation
+|
+|
+|TRUE
+|[[Combat Test 3]]
+|
+| colspan="2" |[[Combat Test 4]]
+|-
+|showCape
+|
+|
+|TRUE
+|[[12w41a]]
+|[[1.4]]
+|[[14w03a]]
+|[[1.8-pre1]]
+|-
+|showFrameRate
+|
+|
+| FALSE
+|[[c0.0.23a_01]]
+|
+|[[a1.1.1]]
+|
+|-
+|showInventoryAchievementHint
+|Whether the "Press 'E' to open your inventory" text appears in the upper right corner of the screen upon initially spawning; no in-game control
+|true/false
+|TRUE
+|[[13w36a]]
+|[[1.7]]
+|[[17w13a]]
+|[[1.12-pre1]]
+|-
+|skin
+|
+|
+|Default
+|[[a1.2.2-1]]
+|[[b1.9-pre1]]
+|[[13w36a]]
+|[[1.7]]
+|-
+|snooperEnabled
+|Whether snooper functionality is turned on
+|true/false
+| TRUE
+|[[12w30a]]
+|[[1.3]]
+|[[21w43a]]
+|[[1.18-pre1]]
+|-
+|sound
+|
+|
+|TRUE
+|[[c0.0.23a_01]]
+|[[b1.9-pre1]]
+|[[13w36a]]
+|[[1.7]]
+|-
+|soundCategory_animals
+|
+|
+| 1.0
+|[[13w36a]]
+|
+|[[13w42a]]
+|
+|-
+|soundCategory_blocks
+|
+|
+|1.0
+|[[13w36a]]
+|
+|[[13w42a]]
+|
+|-
+|soundCategory_mobs
+|
+|
+|1.0
+|[[13w36a]]
+|
+|[[13w42a]]
+|
+|-
+|soundCategory_players
+|
+|
+|1.0
+|[[13w36a]]
+|
+|[[13w42a]]
+|
+|-
+|soundCategory_records
+|
+|
+|1.0
+|[[13w36a]]
+|
+|[[13w42a]]
+|
+|-
+| streamBytesPerPixel
+|The total bytes-per-pixel (BPP) for livestream output
+|0-1
+|0.5
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+| streamChatEnabled
+|If the Twitch chat is copied into the Minecraft chat
+|0/1 (true/false)
+|0
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamChatUserFilter
+|The above but whether it is to be censored
+|0/1 (true/false)
+| 0
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamCompression
+|Whether to compress the livestream's video output
+|0/1 (false/true)
+| 1
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamFps
+|The output FPS of the livestream.
+|
+|0.31690142
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamKbps
+|The bitrate (Kbps) of the video when livestreaming.
+|
+|0.5412844
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamMicToggleBehavior
+| Used to toggle microphone output
+|0/1 (false/true)
+|0
+|[[13w47d]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamMicVolume
+|Microphone's output volume when livestreaming
+|0-1
+|1.0
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamPreferredServer
+|The preferred ingest server of the livestream.
+|
+|
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamSendMetadata
+|Whether to send extra metadata in the livestream
+|true/false
+|TRUE
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|streamSystemVolume
+|System's output volume when livestreaming
+|0-1
+|1.0
+|[[13w47a]]
+|[[1.7.3]]
+|[[15w31a]]
+|[[1.9-pre1]]
+|-
+|uploadsPerFrame
+|
+|
+|16
+|[[1.8.2-pre2]]
+|[[1.8.2-pre2]]
+|[[1.8.2-pre5]]
+|[[1.8.2-pre5]]
+|-
+|useVbo
+| Whether Vertex Buffer Objects is turned on
+|true/false
+|FALSE
+|[[14w29a]]
+|[[1.8-pre1]]
+|[[18w44a]]
+|[[1.14 Pre-Release 1]]
+|-
+|viewDistance
+|
+|
+|0
+|[[c0.0.23a_01]]
+|[[b1.9-pre1]]
+|[[13w38a]]
+|[[Java Edition 1.7|1.7]]
+|-
+|skipRealms32bitWarning
+| Whether to skip the 32-bit environment warning when entering the Realms screen{{verify}}
+| true/false
+| false
+| [[Java Edition 1.18.2 Pre-release 1|1.18.2 Pre-release 1]] ([[Java Edition 1.18.2|1.18.2]])
+|
+|[[24w14a]]
+|[[1.20.5]]
+|-
+| hideBundleTutorial
+| Whether the player has seen the bundle tutorial hint when trying to use a bundle.
+| true/false
+| false
+|
+|
+|
+|
+|}
+
+=== ''Bedrock Edition'' ===
+{| class="wikitable sortable" style="width: 100%" data-description="List of options"
+|-
+! scope="col" |Option name
+! scope="col" class="unsortable" |Explanation
+! scope="col" |Valid values
+! scope="col" |Default value
+! scope="col" | Version added
+! scope="col" | Version removed
+|-
+|game_difficulty
+|Set the game difficulty.
+|0/2
+|2
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|[[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 1|build 1]])
+|-
+|gfx_pixeldensity
+|Controlled the size of the d-pad and the chat button.
+| Varies depending on the device.
+|Varies depending on the device.
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|[[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 1|build 1]])
+|-
+|ctrl_sensitivity
+|The sensitivity of the camera movement.
+|0–1
+| 0.5
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|
+|-
+|ctrl_invertmouse
+|Inverted camera movement.
+|0/1
+|0
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|
+|-
+|ctrl_usetouchscreen
+|{{info needed}}
+|0/1
+|1
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|
+|-
+|feedback_vibration
+|Whether to vibrate when a block is broken.
+|0/1
+|1
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|
+|-
+|gfx_renderdistance
+|Controlled which tick the view distance slider was on ([[Pocket Edition v0.7.0 alpha#General|more info]]).
+|Varies depending on the version.
+| Varies depending on the version.
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+| [[Pocket Edition v0.9.0 alpha|0.9.0]] ([[Pocket Edition v0.9.0 alpha build 1|build 1]])
+|-
+|gfx_animatetextures
+| Toggled [[water]], [[lava]], and [[fire]] animations.
+|0/1
+|1
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|-
+|gfx_ao
+|Toggled smooth lighting.
+|0/1
+| 1
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|[[Pocket Edition v0.8.0 alpha|0.8.0]] ([[Pocket Edition v0.8.0 alpha build 2|build 2]])
+|-
+|gfx_hidegui
+|Whether to hide the [[heads-up display]] and the player's hand.
+|0/1
+|0
+|[[Pocket Edition v0.7.0 alpha|0.7.0]]
+|
+|-
+|game_ordercraftable
+|Corresponds with the "Show craftable recipes first" toggle in-game.{{info needed}}
+|0/1
+|1
+|[[Pocket Edition v0.8.0 alpha|0.8.0]] ([[Pocket Edition v0.8.0 alpha build 1|build 1]])
+|[[Pocket Edition v0.8.0 alpha|0.8.0]] ([[Pocket Edition v0.8.0 alpha build 2|build 2]])
+|-
+|gfx_renderdistance_new
+|The player's render distance, measured in blocks.
+|The range available without editing depends on the device's capabilities.{{needs testing}}
+|Varies depending on the device.{{needs testing}}
+|[[Pocket Edition v0.9.0 alpha|0.9.0]] ([[Pocket Edition v0.9.0 alpha build 1|build 1]])
+|
+|-
+|dev_autoloadlevel
+|On startup, the game would automatically load in the first level on the world selection screen.
+|0/1
+|0
+|[[Pocket Edition v0.9.0 alpha|0.9.0]] ([[Pocket Edition v0.9.0 alpha build 1|build 1]])
+|
+|-
+|dev_showchunkmap
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.9.0 alpha|0.9.0]] ([[Pocket Edition v0.9.0 alpha build 1|build 1]])
+|
+|-
+|dev_showchunkmap
+|Second dev_showchunkmap line directly below the other one. It is not known whether the two behaved differently.
+|{{info needed}}
+|0
+|[[Pocket Edition v0.9.0 alpha|0.9.0]] ([[Pocket Edition v0.9.0 alpha build 4|build 4]])
+|[[Pocket Edition v0.9.0 alpha|0.9.0]] ([[Pocket Edition v0.9.0 alpha build 5|build 5]])
+|-
+|game_flatworldlayers
+|Controlled which layers would generate in [[flat]] worlds.
+|{{info needed}}
+|[7,3,3,2]
+|[[Pocket Edition v0.9.0 alpha|0.9.0]] ([[Pocket Edition v0.9.0 alpha build 5|build 5]])
+|
+|-
+|dev_disablefilesystem
+|Disabled [[chunk]] data from saving. This would also reset chunk data for any accessed worlds and generate a new world with the same [[Seed (world generation)|seed]].
+|0/1
+|0
+|[[Pocket Edition v0.9.0 alpha|0.9.0]] ([[Pocket Edition v0.9.0 alpha build 5|build 5]])
+|
+|-
+|game_limitworldsize
+|Set the world limits to Old world type.
+|{{info needed}}
+|0
+|[[Pocket Edition v0.9.2 alpha|0.9.2]]
+|
+|-
+|game_skintype
+|The type of [[skin]] the player is using. 0 and 1 are custom skins with Steve's and Alex's dimensions respectively, 2 is Alex's skin, and 3 is Steve's skin.
+|0/1/2/3
+|3
+|[[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 1|build 1]])
+|[[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 4|build 4]])
+|-
+|game_lastcustomskin
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 1|build 1]])
+|[[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 4|build 4]])
+|-
+|ctrl_autojump
+|Toggles auto-jump.
+|0/1
+|0
+|[[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 1|build 1]])
+|
+|-
+|ctrl_keyboardlayout
+|Which keyboard layout the game controls are mapped to. 0 is QWERTY, 1 is QWERTZ, 2 is AZERTY, and 3 is QZERTY.
+|0/1/2/3
+|0
+|[[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 1|build 1]])
+|
+|-
+|ctrl_gamePadMap
+|{{info needed}}
+|{{info needed}}
+|Varies depending on the version.
+|[[Pocket Edition v0.12.1 alpha|0.12.1]] ([[Pocket Edition v0.12.1 alpha build 1|build 1]])
+|
+|-
+|gfx_guiscale
+|How much to scale the UI, relative to the game's predetermined scale (based on the screen/window size).
+|Varies depending on the device.
+|0
+|[[Pocket Edition v0.14.0 alpha|0.14.0]] ([[Pocket Edition v0.14.0 alpha build 1|build 1]])
+|
+|-
+|game_automationserverretrytime
+|{{info needed}}
+|{{info needed}}
+|30
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|gfx_texel_aa
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_stutter_turn
+|{{info needed}}
+|{{info needed}}
+|1
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_head_steering
+|{{info needed}}
+|{{info needed}}
+|1
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_stereo
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_hud_at_top
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_hud_drift
+|{{info needed}}
+|{{info needed}}
+|1
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_linear_jump
+|{{info needed}}
+|{{info needed}}
+|1
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_linear_motion
+|{{info needed}}
+|{{info needed}}
+|1
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_sticky_mining
+|{{info needed}}
+|{{info needed}}
+|1
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_use_comfort_controls
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|vr_show_comfort_selection_screen
+|{{info needed}}
+|{{info needed}}
+|1
+|[[Pocket Edition v0.14.2 alpha|0.14.2]]
+|
+|-
+|dev_enable_profiler
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+|
+|-
+|dev_uselocalserver
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+|
+|-
+|dev_connection_quality
+|{{info needed}}
+|{{info needed}}
+|0
+|[[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+|
+|-
+| gfx_async_texture_loads
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|
+|-
+| gfx_show_async_texture_loads
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|
+|-
+| gfx_max_dequed_textures_per_frame
+| {{info needed}}
+| {{info needed}}
+| 16
+|[[Bedrock Edition 1.14.0|1.14.0]]
+|
+|-
+| gfx_texture_load_delay
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|[[Bedrock Edition 1.14.0|1.14.0]]
+|
+|-
+| do_not_show_gfx_driver_outdated
+| Whether a warning should be shown when the graphics driver is outdated for ray tracing.
+| 0/1
+| 1
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|[[Bedrock Edition 1.21.80|1.21.80]]
+|-
+| do_not_show_gfx_driver_outdated_version
+| The version of the outdated graphics driver warning, depends on the graphics card.
+|
+| Blank
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|[[Bedrock Edition 1.21.80|1.21.80]]
+|-
+| gfx_raytracing
+| Enables ray tracing for supported hardware.
+| 0/1
+| 0
+|[[Bedrock Edition 1.16.200|1.16.200]]
+|[[Bedrock Edition 1.21.80|1.21.80]]
+|-
+| game_hasshownpatchnotice
+| Whether the game has shown the notice for the most recent update.{{verify}}
+| 0/1
+| 0
+|
+|[[Bedrock Edition 1.21.80|1.21.80]]
+|-
+| game_lastshownrealmsenddate
+| {{info needed}}
+| 
+| 1970-01-01T00:00:00Z
+|[[Bedrock Edition 1.13.0|1.13.0]]
+|[[Bedrock Edition 1.21.80|1.21.80]]
+|-
+| gfx_fancygraphics
+| Toggles fancy graphics.
+| 0/1
+| 1
+| [[Pocket Edition v0.7.0 alpha|0.7.0]]
+|[[Bedrock Edition 1.21.80|1.21.80]]
+|-
+| hdr_brightness
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+|[[Bedrock Edition 1.21.80|1.21.80]]
+|-
+| mp_prev_app_name
+| {{info needed}}
+|
+| Player
+|
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+| new_video_settings
+| {{info needed}}
+| 0/1
+| 0
+|
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+| playScreenShowLanWorlds
+| Toggles to show LAN worlds in the worlds list.
+| 0/1
+| 0
+|
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+| keyboard_type_0_key.toggleRenderer
+| The toggle renderer key when using a keyboard and mouse.
+| 
+| 186
+|
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+| keyboard_type_1_key.toggleRenderer
+| The toggle renderer key when using full keyboard gameplay.
+| 
+| 186
+|
+| [[Bedrock Edition 1.21.90|1.21.90]]
+|-
+| gfx_vr_transparentleaves
+| Toggles transparent leaves when using VR.
+| 0/1
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| gfx_vr_smoothlighting
+| Toggles smooth lighting when using VR.
+| 0/1
+| 1
+|
+|[[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_cameraMovement
+| {{info needed}}
+| 0-1
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_snapAngle
+| {{info needed}}
+| {{verify}}
+| 2
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_stutter_turn_constant_time
+| {{info needed}}
+| {{verify}}
+| 1
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_stutter_turn_sound
+| {{info needed}}
+| {{verify}}
+| 1
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_movement
+| {{info needed}}
+| {{verify}}
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_jump
+| {{info needed}}
+| {{verify}}
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_headSteering
+| {{info needed}}
+| {{verify}}
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_stickyMining
+| {{info needed}}
+| {{verify}}
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_hudPosition
+| {{info needed}}
+| {{verify}}
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_sensitivity
+| The sensitivity when using VR.
+| 0-1
+| 0.5
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_gamma
+| The gamma level of the player's screen when using VR.
+| 0/1{{verify}}
+| 0
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_particle_view_dist
+| The particle view distance when playing VR.
+| {{info needed}}
+| 0.25
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_hud_distance
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_hmd_displacement
+| {{info needed}}
+| {{info needed}} 
+| 0
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_renderdistance
+| The view distance when using VR.
+| Must be a number.{{info needed|What is the range of possible values?}}
+| 128 on iOS, 336 on Windows{{info needed|What is the default on other devices?.}}
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_autojump
+| Toggles auto-jump when using VR.
+| 0/1
+| 1
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_stereorendering
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_use_normal_hit
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_use_red_flash
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_rstick_pitch_assist
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_rstick_gazeadjust
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_gaze_pitch_boost
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+| [[Pocket Edition v0.14.2 alpha|0.14.2]]
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_living_room_cursor_centered
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_tap_turn
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_tapturn_sensitivity
+| {{info needed}}
+| 0-1{{verify}}
+| 0.375
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_wheelturn_sensitivity
+| {{info needed}}
+| {{info needed}}
+| 50
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_180_turns
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_livingroom_hint_time
+| {{info needed}}
+| {{info needed}}
+| 32000
+| [[Pocket Edition v0.15.0 alpha|0.15.0]] ([[Pocket Edition v0.15.0 alpha build 1|build 1]])
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_mirror_texture
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_hand_controls_item
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_hand_pointer
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_hands_visible
+| {{info needed}}
+| 0/1{{verify}}
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_ui_mouse_sensitivity
+| {{info needed}}
+| 0/1{{verify}}
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_msaa
+| Whether or not [[wikipedia:Multisample anti-aliasing|multisample anti-aliasing]] is enabled when using VR.
+| 0/1
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| gfx_vr_classic_box_selection
+| Whether to show the outline selection when aiming at blocks with the crosshair in VR.
+| 0/1
+| 0
+|
+|[[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_hide_hud
+| Whether to hide the HUD when using VR.
+| 0/1
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| vr_hide_hand
+| Whether to hide the player's hand when using VR.
+| 0/1
+| 0
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| gfx_dynamictextures
+| Whether the game can automatically adjust the texture limit for a better experience.
+| 0/1
+| 1
+|
+| [[Bedrock Edition 1.21.100|1.21.100]]
+|-
+| partyVisibility
+| The current visibility of a hosted party, either "Open" or "Invite only".
+| 0/1
+| 1
+| [[Bedrock Edition 1.21.90|1.21.90]]
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_container.crafting
+| The crafting key when using a Nintendo Switch controller.
+| 
+| 3
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.attack
+| The attack key when using a Nintendo Switch controller.
+| 
+| 12
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.back
+| The move backward key when using a Nintendo Switch controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.chat
+| The open chat key when using a Nintendo Switch controller.
+| 
+| 5
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.cycleItemLeft
+| The cycle item left key when using a Nintendo Switch controller.
+| 
+| 7
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.cycleItemRight
+| The cycle item right key when using a Nintendo Switch controller.
+| 
+| 8
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.drop
+| The drop item key when using a Nintendo Switch controller.
+| 
+| 6
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.emote
+| The emote key when using a Nintendo Switch controller.
+| 
+| 0
+| [[Bedrock Edition 1.16.0|1.16.0]]
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.flyDownSlow
+| The fly down slow key when using a Nintendo Switch controller.
+| 
+| 10
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.flyUpSlow
+| The fly up slow key when using a Nintendo Switch controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.forward
+| The jump key when using a Nintendo Switch controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.interactwithtoast
+| The open notifications key when using a Nintendo Switch controller.
+| 
+| 13
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.inventory
+| The open inventory key when using a Nintendo Switch controller.
+| 
+| 4
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.jump
+| The jump key when using a Nintendo Switch controller.
+| 
+| 1
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.left
+| The move left key when using a Nintendo Switch controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.mobEffects
+| The view status effects key when using a Nintendo Switch controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.pickItem
+| The pick block key when using a Nintendo Switch controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.right
+| The move right key when using a Nintendo Switch controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.screenshot
+| The [[screenshot]] key when using a Nintendo Switch controller.
+| 
+| 0
+| 
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.sneak
+| The sneak key when using a Nintendo Switch controller.
+| 
+| 2
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.sprint
+| The sprint key when using a Nintendo Switch controller.
+| 
+| 9
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.togglePerspective
+| The toggle perspective key when using a Nintendo Switch controller.
+| 
+| 15
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_1_key.use
+| The use key when using a Nintendo Switch controller.
+| 
+| 11
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_container.crafting
+| The crafting key when using a PlayStation controller.
+| 
+| 3
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.attack
+| The attack key when using a PlayStation controller.
+| 
+| -99
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.back
+| The move backward key when using a PlayStation controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.chat
+| The open chat key when using a PlayStation controller.
+| 
+| 8
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.cycleItemLeft
+| The cycle item left key when using a PlayStation controller.
+| 
+| 11
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.cycleItemRight
+| The cycle item right when using a PlayStation controller.
+| 
+| 12
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.drop
+| The drop item key when using a PlayStation controller.
+| 
+| 6
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.emote
+| The emote key when using a PlayStation controller.
+| 
+| 0
+| [[Bedrock Edition 1.16.0|1.16.0]]
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.flyDownSlow
+| The fly down slow key when using a PlayStation controller.
+| 
+| 10
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.flyUpSlow
+| The fly up slow key when using a PlayStation controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.forward
+| The jump key when using a PlayStation controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.interactwithtoast
+| The open notifications key when using a PlayStation controller.
+| 
+| 13
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.inventory
+| The open inventory key when using a PlayStation controller.
+| 
+| 4
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.jump
+| The jump key when using a PlayStation controller.
+| 
+| 1
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.left
+| The move left key when using a PlayStation controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.mobEffects
+| The view status effects key when using a PlayStation controller.
+| 
+| 7
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.pickItem
+| The pick block control key when using a PlayStation controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.right
+| The move right key when using a PlayStation controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.screenshot
+| The [[screenshot]] key when using a PlayStation controller.
+| 
+| 0
+| 
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.sneak
+| The sneak key when using a PlayStation controller.
+| 
+| 2
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.sprint
+| The sprint key when using a PlayStation controller.
+| 
+| 9
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.togglePerspective
+| The toggle perspective key when using a PlayStation controller.
+| 
+| 15
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_2_key.use
+| The use key when using a PlayStation controller.
+| 
+| -100
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.jump
+| The jump key when using a VR motion controller.
+| 
+| 1
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.attack
+| The attack key when using a VR motion controller.
+| 
+| -99
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.use
+| The use key when using a VR motion controller.
+| 
+| 12
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.inventory
+| The open inventory key when using a VR motion controller.
+| 
+| 2
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.cycleItemLeft
+| The cycle item left key when using a VR motion controller.
+| 
+| 11
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.cycleItemRight
+| The cycle item right key when using a VR motion controller.
+| 
+| -100
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.togglePerspective
+| The toggle perspective key when using a VR motion controller.
+| 
+| 4
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.sneak
+| The sneak key when using a VR motion controller.
+| 
+| 3
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.sprint
+| The sprint key when using a VR motion controller.
+| 
+| 9
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.drop
+| The fly up slow key when using a VR motion controller.
+| 
+| 10
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.pickItem
+| The pick block control key when using a VR motion controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.emote
+| The emote key when using a VR motion controller.
+| 
+| 0
+| [[Bedrock Edition 1.16.0|1.16.0]]
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.screenshot
+| The [[screenshot]] key when using a VR motion controller.
+| 
+| 0
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| ctrl_type_3_key.mobeffectsandinteractwithtoast
+| The view status effects & open notifications key when using a VR motion controller.
+| 
+| 13
+|
+| [[Bedrock Edition 1.21.111|1.21.111]]
+|-
+| owners_can_require_opt_in
+| Whether the player can require members from an owned [[Realms|Realm]] to opt in to the [[Realms Stories#Timeline|Timeline]].
+| 0/1
+| 1
+| [[Bedrock Edition 1.21.70|1.21.70]]
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+| ctrl_sensitivity2_motioncontroller
+| The sensitivity when using a VR motion controller.
+| 0-1
+| 0.6
+|
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+| ctrl_invertmouse_motioncontroller
+| Whether the vertical camera movement on a VR motion controller is inverted.
+| 0/1
+| 0
+|
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-	
+| ctrl_autojump_motioncontroller
+| Toggles auto-jump for VR motion controllers.
+| 0/1
+| 1
+|
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-	
+| feedback_destroy_vibration_motioncontroller
+| Whether to vibrate when breaking block, for VR motion controllers.
+| 0/1
+| 1
+|
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-	
+| feedback_split_vibration_motioncontroller
+| Whether to vibrate when splitting items in a GUI, for VR motion controllers.
+| 0/1
+| 1
+|
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+| ctrl_togglecrouch_motioncontroller
+| Whether the sneak button toggles sneaking, as opposed to holding the button to sneak, when using a VR motion controller.
+| 0/1
+| 0
+|
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+| realmsplus_upgradenotice_state
+| {{info needed}}
+| 0-4{{verify}}
+| 0
+|[[Bedrock Edition 1.13.0|1.13.0]]
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-	
+| ctrl_spyglassdamp_motioncontroller
+| The sensitivity of the VR motion controller while using a [[spyglass]].
+| 0-1
+| 0.5
+|
+| [[Bedrock Edition 1.21.120|1.21.120]]
+|-
+| gfx_dpadscale
+| The scale of the D-Pad in touch controls.
+| 0-1
+| 0.5
+| [[Pocket Edition v0.11.0 alpha|0.11.0]] ([[Pocket Edition v0.11.0 alpha build 1|build 1]])
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|-
+	
+| do_not_show_cloud_upload_prompt
+| {{info needed}}
+| 0/1
+| 0
+|
+| [[Bedrock Edition 1.21.130|1.21.130]]
+|}
+
+== Notes ==
+<references group="N" />
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{Navbox Bedrock Edition}}
+
+[[de:Options.txt]]
+[[es:Options.txt]]
+[[fr:Options.txt]]
+[[it:Options.txt]]
+[[ja:Options.txt]]
+[[nl:Options.txt]]
+[[pl:Options.txt]]
+[[pt:Options.txt]]
+[[ru:Options.txt]]
+[[th:Options.txt]]
+[[uk:Options.txt]]
+[[zh:客户端选项文件格式]]

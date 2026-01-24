@@ -1,0 +1,310 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.20.0<br>'''Android, iOS, iPadOS''': 1.21.0.20
+| image = Bedrock 1.21.0.20 PatchNotes.jpeg
+| image2 = Bedrock 1.21.0.20.png
+| build = 23361307
+| editorver = 0.5.11
+| versioncode = '''Android''':<br />
+952100020 (armeabi-v7a, 34)<br />
+962100020 (x86, 34)<br />
+972100020 (arm64-v8a, 34)<br />
+982100020 (x86_64, 34)<br />
+| date = '''Windows, Xbox, Android, PlayStation 4:''' April 3, 2024<br>'''iOS, iPadOS:''' April 4, 2024
+| server = 1.21.0.20
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.0.20.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.0.20.zip Linux]
+| parent = 1.21.0
+| prevparent = 1.20.81
+| prev = 
+| next = Preview 1.21.0.21
+| nextparent = 1.21.1
+}}<onlyinclude>
+'''Beta 1.21.0.20''' (Android) or '''Preview 1.21.0.20''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the first beta/''Preview'' version for [[Bedrock Edition 1.21.0]], released on April 3–4, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/25581734759309|title=Minecraft Beta & Preview - 1.21.0.20|website=Minecraft Feedback|date=April 3, 2024}}</ref><ref>{{Mcnet|minecraft-preview-1-21-0-20|Minecraft Preview 1.21.0.20|April 3, 2024|Jay Wells}}</ref> which adds [[ominous event]]s and some new [[effect]]s under [[experimental gameplay]], new UI, and [[Hardcore]] mode, and fixes bugs.
+
+== Additions ==
+=== Gameplay ===
+'''[[Hardcore]]'''
+*Added hardcore mode.
+*Can be enabled when creating a new world.
+*In this mode, the player has only one life and the maximum difficulty is turned on.
+*After death, the player can either leave the world or switch to [[Spectator]] mode.
+
+'''[[Game rule]]s'''
+*Added a new game rule to control decay of drops from [[TNT]] explosions, named {{cd|tntExplosionDropDecay}}.
+**The rule can be set to {{cd|true}} to re-enable the previous behavior where not all blocks would drop when exploded by TNT.
+
+== Changes ==
+=== Blocks ===
+'''[[Short Grass|Grass]] and [[Fern]]'''
+* The different [[block states]] for the <code>tallgrass</code> ID have now been split up into their own IDs.
+{|class="mw-collapsible mw-collapsed wikitable"
+! [[Bedrock Edition data values|Old ID]]
+! [[Bedrock Edition data values|New ID]]
+|-
+| rowspan="12" | {{BlockSprite|short-grass}} <code>tallgrass</code>
+| {{BlockSprite|short-grass}} <code>short_grass</code>
+|-
+| {{BlockSprite|fern}} <code>fern</code>
+|}
+
+=== General ===
+'''[[Settings]]'''
+*Changed the default "Anti Aliasing" video setting to "2" instead of "4" for better performance with minimal visual degradation.
+
+'''Updated [[World Options|Edit World]] Screen'''
+*Export World or Export as Template if clear player data is set it will be applied in a copy and then exported. (''Preview'' only)
+
+'''Profile Screen'''
+*Profile screen is being updated with improved navigation.
+*In the new Play Screen UI you can access Profile from the Play menu.
+**Open the Friends Drawer and click on your friends to see their profiles, or click “Search for Players” from the Friends Drawer to find new profiles.
+*In the old UI, click “Add Friends” from the Friends tab and search for friends. Click on them to view their profiles.
+[[File:New UI - Profile Screen Menu (Bedrock Preview 1.21.0.20).png|380px|thumb|New Profile Screen.]]
+
+=== Technical ===
+'''[[API]]'''
+*{{cd|ScreenDisplay}}
+**Moved {{cd|getHiddenHudElements(): HudElements[]}} from {{cd|beta}} to {{cd|11.0}}.
+**Moved {{cd|isForcedHidden(hudElement: HudElements): boolean}} from {{cd|beta}} to {{cd|11.0}}.
+**Moved {{cd|resetHudElements(): void}} from {{cd|beta}} to {{cd|11.0}}.
+**Moved {{cd|setHudVisibility(visible: HudVisibility, hudElements?: HudElements[]): void}} from {{cd|beta}} to {{cd|11.0}}.
+**Moved {{cd|hideAllExcept(hudElements?: HudElements[]): void}} from {{cd|beta}} to {{cd|11.0}}.
+*{{cd|HudElement}}
+**Moved {{cd|HudElementenum}} from {{cd|beta}} to {{cd|11.0}}.
+**Moved {{cd|HudElementsCount}} from {{cd|beta}} to {{cd|11.0}}.
+*{{cd|HudVisibility}}
+**Moved {{cd|HudVisibilityenum}} from {{cd|beta}} to {{cd|11.0}}.
+**Moved {{cd|HudVisibilityCount}} from {{cd|beta}} to {{cd|11.0}}.
+*Moved {{cd|WeatherChangeBeforeEvent}} from {{cd|beta}} to {{cd|11.0}}.
+*{{cd|BlockPermutation}}
+**Removed function {{cd|clone}}.
+*Creator Settings UI
+**Watchdog settings.
+**Increase script hang threshold.
+**Disable/Enable slow script warnings and adjust threshold.
+**Disable/Enable script spike warnings and adjust threshold.
+**Removed {{cd|disableWatchdogmethod}}.
+**Added {{cd|disableWatchdogTimingWarnings}} to disable spike and slow warnings per behavior pack.
+*Released {{cd|ItemEnchantableComponent}} from {{cd|beta}} to {{cd|11.0}}. 
+*Released Enchantment APIs from {{cd|beta}} to {{cd|11.0}}.
+**interface {{cd|Enchantment}}.
+**enum {{cd|EnchantmentSlot}}.
+**class {{cd|EnchantmentType}}.
+**class {{cd|EnchantmentTypes}}.
+*Added new interface {{cd|EntityFilter}} with many of the existing options from {{cd|EntityRaycastOptions}}.
+*{{cd|EntityRaycastOptions}} now inherits from {{cd|EntityFilter}}.
+*{{cd|EntityQueryOptions}} now inherits from {{cd|EntityFilter}}.
+*Removed property {{cd|blockFilter}} (and several others, now moved to {{cd|EntityFilter}}) from {{cd|BlockRaycastOptions}}.
+*{{cd|BlockRaycastOptions}} now inherits from {{cd|BlockFilter}}.
+*Released {{cd|BlockFilter}} to {{cd|4.0}}.
+*Released {{cd|volume}} from {{cd|beta}} to {{cd|v1.11.0}}.
+
+'''[[Molang]]'''
+*Added Molang {{cd|state_time -> number}} for animation controllers, which returns the time in seconds spent in the current controller state (inclusive of blend time). Requires "Upcoming Creator Features" experimental toggle.
+
+'''[[server.properties]]'''
+*Removed {{cd|server-authoritative-block-breaking}} from the default {{cd|server.properties}}.
+*Removed {{cd|server-authoritative-sound}} from {{cd|server.properties}}.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Update 1.21" and "Beta APIs" experimental toggles.
+
+<!--The official changelog for this Preview contains information that is pasted from Java Edition's recent changelogs, do NOT rely on it for info. Verify everything before adding it to main articles, there is misinformation present.-->
+=== Additions ===
+==== Blocks ====
+'''[[Ominous Trial Spawner]]'''
+*A more powerful active phase of the [[Trial Spawner]] with unique challenges and rewards.
+**Provides a more challenging experience that players can opt into for better rewards.
+*If a Trial Spawner detects a player that has the [[Trial Omen]] effect, the spawner will become Ominous if:
+**It is not in cooldown.
+**It is in cooldown but was not Ominous during its last activation.
+***Making it Ominous this way will bypass the cooldown.
+**While active, it will:
+***Glow blue instead of orange.
+***Emit soul flames instead of normal flames.
+***More commonly spawn mobs with equipment if they can wear it.
+****The equipment these mobs wear have Armor Trims applied from the Trial Chambers.
+***Periodically spawn potions and projectiles on top of unsuspecting players and mobs.
+**Becoming Ominous will despawn any existing mobs it spawned and reset its challenge.
+***It will stay Ominous until it has been defeated and its cooldown has finished.
+***When defeated, it will eject a different set of loot than normal Trial Spawners.
+
+'''[[Ominous Vault]]'''
+*A variant of [[Vault]]s that have a different texture and emit soul flames instead of normal flames.
+*These can be found throughout the [[Trial Chambers]] in harder to find places and require an Ominous Trial Key to unlock.
+**These Vaults hold a more valuable set of rewards than the standard Vaults unlocked by Trial Keys.
+
+==== Gameplay ====
+'''[[Ominous Events]]'''
+*Bad Omen has been expanded to give access to an optional experience in Trial Chambers.
+*These optional experiences accessed through Bad Omen are now known as Ominous Events.
+**They are more challenging than usual, and are designed to shake up the experience in unique ways.
+**Illager [[Raid]]s are an example of an existing Ominous Event.
+*Bad Omen is getting some changes with this redesign:
+**It has a new, shadowy icon and a sound for being applied to the player.
+**It is no longer given to players that defeat a Raid Captain outside a Raid.
+***Instead, players can gain access to Bad Omen by consuming a new Ominous Bottle.
+
+'''[[Ominous Trial]]s'''
+*A new Ominous Event that can be accessed by exploring a [[Trial Chamber]] with [[Bad Omen]].
+*This event will have players facing more powerful [[Trial Spawner]]s.
+
+'''[[Effect]]s'''
+*The following effects have been added:
+**[[Wind Charged]]
+***Affected entities will emit a [[Wind Burst|wind burst]] upon death.
+**[[Weaving]]
+***Affected entities will spread Cobweb blocks upon death.
+***Non-player entities with this effect can walk through [[Cobweb]] at normal speeds.
+**[[Oozing]]
+***Affected entities will spawn two [[Slime]]s upon death.
+**[[Infested]]
+***Affected entities have a 5% chance to spawn 1-2 [[Silverfish]] when hurt.
+*These effects can be encountered while taking on an Ominous Trial Spawner.
+**Spawners in an area will select a unique effect for the duration of their challenge, and drop them as lingering potions onto mobs and players nearby.
+* [[Trial Omen]]
+** A variant that Bad Omen can transform into if the player is within detection range of a [[Trial Spawner]] that is not Ominous.
+** The Trial Omen has a duration of 15 minutes multiplied by the transformed Bad Omen's level.
+** Players that have Trial Omen are surrounded by ominous particles.
+*Some mobs are immune to these effects.
+**Slimes are immune to Oozing.
+**Silverfish are immune to Infested.
+
+==== Items ====
+'''[[Ominous Bottle]]'''
+*An item which can be consumed by players to receive the Bad Omen effect for 1 hour and 40 minutes.
+**Comes in 5 variations, one for each Bad Omen level.
+**The bottle breaks when consumed.
+**Can be stacked to 64.
+*Can be found uncommonly in any [[Vault]]s that are unlocked with [[Trial Keys]], and is dropped by Raid Captains when defeated outside a [[Raid]].
+
+'''[[Ominous Trial Key]]'''
+*A new variant of the Trial Key which can only be obtained by defeating an Ominous Trial Spawner.
+*They can be used to unlock [[Ominous Vault]]s.
+
+'''[[Potion]]s'''
+*The following potions have been added:
+**[[Potion of Wind Charging]]
+***Affected entities will emit a [[Wind Burst|wind burst]] upon death.
+***Brewed with an Awkward Potion and a [[Breeze Rod]].
+**[[Potion of Weaving]]
+***Affected entities will spread Cobweb blocks upon death.
+***Non-player entities with this effect can walk through [[Cobweb]] at normal speeds.
+***Brewed with an Awkward Potion and a Cobweb block.
+**[[Potion of Oozing]]
+***Affected entities will spawn two [[Slime]]s upon death.
+***Brewed with an Awkward Potion and a [[Slime Block]].
+**[[Potion of Infestation]]
+***Affected entities have a 5% chance to spawn 1-2 [[Silverfish]] when hurt.
+***Brewed with an Awkward Potion and a [[Stone]] block.
+
+=== Changes ===
+==== Blocks ====
+'''[[Trial Spawner]]'''
+*Trial Spawner activates only if it is in the line of sight of a player.
+*Ominous Trial Spawners in the same room are more likely to spawn the same selection of projectiles.
+*Becoming Ominous will despawn any existing mobs it spawned and reset its challenge.
+*Trial Spawner in Ominous state spawns mobs with equipment they can wear.
+**That equipment will have Armor Trims from the Trial Chambers.
+
+'''[[Heavy Core]]'''
+*Pushing a heavy core with a [[piston]] now moves the block, instead of popping it off.
+*Heavy cores can now be pulled by [[sticky piston]]s.
+*The [[Map item format#Base colors|base color]] of heavy cores on [[map]]s is now <code>METAL</code>.
+
+==== World generation ====
+'''[[Trial Chambers]]'''
+*Trial chambers now generate slightly more rarely and a bit more spaced out from each other.
+
+==== Technical ====
+'''[[API]]'''
+*Added {{cd|ItemComponentMineBlockEvent}} for {{cd|beta}}.
+*Event Signals
+**Unsubscribe is no longer marked as {{cd|@throws}}. It does not throw exceptions and never has.
+*Added {{cd|getAll}} to {{cd|beta}}.
+*Added {{cd|PlayerInputPermissions}} and {{cd|inputPermissions}} for enabling & disabling categories of player input permissions.
+*Added {{cd|InputPermissionCategory}}.
+*Added {{cd|afterEvents.playerInputPermissionCategoryChange}} for listening to changes to a players input permissions.
+*Added {{cd|ignoreBlockCollision}} to {{cd|EntityRaycastOptions}} which when {{cd|true}}, will make the raycast not stop on block collision.
+*Added {{cd|includePassableBlocks}} to {{cd|EntityRaycastOptions}} which when {{cd|true}}, passable blocks like vines and flowers will be considered as blocks that {{cd|stop}} the raycast.
+*Added {{cd|includeLiquidBlocks}} to {{cd|EntityRaycastOptions}} which when {{cd|true}}, liquid blocks will be considered as blocks that stop the raycast.
+*Added {{cd|ItemComponentHitEntityEvent}} and {{cd|ItemComponentBeforeDurabilityDamageEvent}} for {{cd|beta}}.
+
+'''[[Deferred Rendering Pipeline]]'''
+*Extended Texture Set support to [[particles]] in the Deferred Technical Preview.
+
+'''[[NBT]] data'''
+*Added optional {{cd|equipment_loot_table}} to the spawn data present in {{cd|spawn_potentials}} of [[trial spawner]] configs.
+**If present, rolled items from the specified loot table will be equipped to the mob that spawns.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.0.20 Preview
+|;old
+|44845|Crossbow missing "Draw" and "Release" tooltips
+|44848|Lectern missing "Read Book" tooltip when not holding an item
+|56036|TNT Does Not Have 100% Drop Rate
+|99315|Mobs cannot spawn on south or east slopes or in 1-wide tunnels made of solid blocks
+|105535|Sinking through boat when jumping out the boat
+|120687|Player sinks through boat when standing on it while it moves up.
+|157688|Switch can't place doors
+|159959|Ui / Menu shrinks when switch is put back into the docking station
+|163023|Xbox: No response when pressing some or all buttons on the controller
+|170890|Pressing {{Keys|Enter}} in chat doesn't send messages or commands on Xbox
+|175550|Game freezes at 35-41% after newest update
+|176505|{{Keys|ALT}} key does not work on Android[,] iOS[, and iPadOS]
+|176878|Right {{Keys|shift}} key is not registering
+|177037|Breezes do not avoid dangerous blocks when jumping
+|178507|Sniffer, Camel, Breeze sound effects do not play when off-screen
+|178858|The 1.20.60 update changed player sprint-jump behavior.
+|178900|Wind charges can hit breezes.
+|179304|Wind charges can destroy end crystals.
+|179193|Wind charges can collide with eachother.
+|179910|Heavy core will be broken when pushed by a piston.
+|179911|Heavy core cannot be pulled by a sticky piston.
+|180109|Cobweb Placing and breaking sounds does not have new sounds.
+|otherissuescount=24}}
+'''Others'''
+*Cauldrons filled with potions now keep the color of the potion when pushed by a Piston.
+*Containers being cloned over no longer keep their container screens open and cause crashes.
+*Items drops from blocks destroyed in an explosion now get merged into bigger item stacks before spawning in the world.
+*On touch devices players can once again distribute a selected item stack over multiple slots by dragging it over them.
+*The Game Tip for sneaking now resolves itself properly when the player sneaks.
+*Fixed an issue where the ‘Let It Go’ trophy did not unlock on PlayStation®4.
+*When using an item on an entity, it is now necessary to release the use button before being able to use it again, which prevents players from inadvertently consuming items themselves when interacting with entities.
+*Fixed crashes that could occur when creating worlds on new Realms and backing out at the Online Safety dialog box.
+*Updated the "Are you sure you want to opt out?" Realms Stories modal to ensure players know they can opt in later. (''Preview'' only)
+*Fixed inconsistent displaying of unread badges for new posts in the Story Feed tab. (''Preview'' only)
+*The Realms Stories New Post screen now enumerates its active buttons with text-to-speech on. (''Preview'' only)
+*Support prevention of app/flow restart when dark mode toggled on or off on across Android devices.
+*Removed faulty hotbar scale setting for Pocket UI.
+*Fixed a crash when entity identifier was too complex.
+*Fixed a problem where teleporting while using an item with a long use duration could leave it in an unresponsive state until the use duration elapsed.
+*Fixed bug where users could not navigate through inventory using keyboard in touch devices.
+*Fixed banner staffs not being lit while held in hand from first-person view in the Deferred Technical Preview.
+*Fixed hunger element so that its visibility can be changed with the {{cmd|hud}} command.
+*Added missing indentation to list items in some models, which should make those lists easier to read.
+*On touch devices, when moving items between different slots, the icon no longer appears as duplicated between the moving item and the destination slot.
+*On touch devices, when moving enchanted items between different slots, the moving icon is now rendered correctly.
+*On touch devices, stack-splitting UI no longer appears for unstackable items.
+*On touch devices, items from Creative Inventory are now unselectable.
+*On touch devices, it is now possible to swap two identical items.
+{{fixes|project=REALMS|fixedin=1.21.0.20 Preview
+|;old
+|11707|Blocks reappear after breaking in Creative if "delayed block breaking" is turned off
+|otherissuescount=0}}</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.0 betas]]
+[[de:Bedrock Edition beta 1.21.0.20]]
+[[es:Bedrock Edition Preview 1.21.0.20]]
+[[fr:Édition Bedrock Preview 1.21.0.20]]
+[[pt:Edição Bedrock Preview 1.21.0.20]]
+[[ru:Preview 1.21.0.20 (Bedrock Edition)]]
+[[uk:Preview 1.21.0.20 (Bedrock Edition)]]
+[[zh:基岩版1.21.0.20]]

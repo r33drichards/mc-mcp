@@ -1,0 +1,153 @@
+{{Infobox version
+|edition=Java
+|image=Java Edition 14w30a.png
+|type=Snapshot
+|date=July 23, 2014
+|parent=1.8
+|clienthash=e335e50b527fe15c82242a0a8ce8ad4e5fdcf513
+|jsonhash=8d57966d0f23a9f97af540709f1b51bd8d02b21d
+|serverhash=cb7bd4bebcb40c128a571c8f15fe1990b1f50a32
+|exehash=b9912d88d068bb60df5b1b37f7ee75118e83a042
+|prevparent=1.7.10
+|prev=14w29b
+|next=14w30b
+|nextparent=1.8.1
+}}<onlyinclude>
+
+'''14w30a''' is the thirty-eighth [[snapshot]] for [[Java Edition 1.8]], released on July 23, 2014,<ref>{{cite|url=https://web.archive.org/web/20140727061744/https://mojang.com/2014/07/minecraft-snapshot-14w30a/|title=Minecraft snapshot 14w30c|date=July 23, 2014|website=Mojang.com|author=[[Dinnerbone]]}}</ref><ref>{{tweet|Dinnerbone|491937730931093505|Here's a minecraft snapshot, hot and fresh from the oven!|July 23, 2014}}</ref> which adds [[banner]]s.
+
+== Additions ==
+=== Blocks ===
+'''[[Banner]]s'''
+* Over 16&times;400<sup>6</sup> possible combinations &ndash; 6.5536&times;10<sup>16</sup>.
+* Crafted like a sign, just with one color of wool instead of planks.
+* Can be stacked to 16.
+* Most patterns are created by arranging dyes in certain ways around a banner on a crafting table.
+** The dyes cannot be shifted or flipped even if there is space, known as a fixed recipe.
+* Additional patterns: creeper, skull & crossbones, brick, and flower - making these without dyes results in a black pattern, one can use dyes to get different colors (items: creeper skull, wither skeleton skull, brick block, oxeye daisy).
+* 33 crafting recipes which produce different patterns.
+* Up to 6 layers of patterns possible.
+* Can be placed on walls or on the ground (16 rotations possible).
+* Sway as if blown by wind.
+* Can be cloned by crafting them together with a blank banner.
+* Can be worn as headgear (but only using commands).
+* Top-most layer can be removed using cauldrons.
+
+=== Command format ===
+'''[[NBT format]]'''
+* New <code>Silent</code> tag for entities.
+** Setting to 1 disables sound produced by that entity, such as idle and hurt sounds.
+
+=== General ===
+'''[[Statistics]]'''
+* <code>stat.talkedToVillager</code>
+** Detects how many times the player has talked to villagers (opened the trading GUI).
+* <code>stat.tradedWithVillager</code>
+** Detects how many times the player has traded with villagers.
+
+== Changes ==
+=== Blocks ===
+'''[[Mob head]]s'''
+* Made creeper, skeleton and zombie heads available in Survival.
+* Creepers, skeletons, wither skeletons, and zombies drop their heads when killed by charged creepers. Wither skeletons continue to have heads as [[rare drops]].
+* Skulls worn on heads are now bigger so the second skin layer no longer peeks through.
+* Player and mob heads in inventories and held by mobs/players now display the actual head.
+
+=== Command format ===
+'''{{cmd|summon}}'''
+* {{cmd|summon}} command can now summon lightning using {{cmd|summon LightningBolt}}.
+
+=== Gameplay ===
+'''Lighting'''
+* Completely fixed black spots.
+* Players need to reload old worlds for them to be fixed.<ref>{{tweet|SeargeDP|491938604827295744|Black shadow patches are not automatically fixed in existing worlds, but should not show up anymore on new worlds and chunks.|July 23, 2014}}</ref>
+
+=== World generation ===
+'''[[Nether fortress]]'''
+* Chests now have the possiblity of containing obsidian.
+
+=== General ===
+'''F3 [[debug screen]]'''
+* Now displays how many chunk sections are being rendered currently and how many chunk sections are out of view in percent, the [[wikipedia:OpenGL|OpenGL]] version, display size, vendor and GPU.
+* "Vanilla" added to the version number. e.g., "Minecraft 14w30b (14w30b/Vanilla)".
+** Presumably this says something different if modded.{{more info}}
+* {{key|F3+H}} tooltips now show how many NBT tags an item has.
+* Block names no longer contain blockstate data in brackets next to their name (in the view of a block's name and data along the right side of the screen).
+* Data is still shown in separate rows beneath the name.
+'''Animations'''
+* Third person sword [[blocking]] position slightly tweaked
+* Block hitting animation redone
+* Punching while blocking, shooting an arrow, drinking a potion, and eating removed
+* Rod scaling tweaked
+* Removed armor turning red when hit
+* Items are now positioned a little higher and further left during their eating/drinking animation in first person view<ref>{{bug|MC-273056}}</ref>
+
+'''Video settings'''
+* Render distance slider now goes up to 32 when using 64-bit Java.
+** Requires 2 GB of allocated RAM.
+* Removed Advanced OpenGL.
+
+'''Performance improvements'''
+* Rewrote chunk sorting.
+* Ported over the visibility culling code from MCPE to avoid rendering invisible stuff.
+* Threaded chunk rebuilds.
+
+== Bugs ==
+'''[[Java Edition distance effects/Historical effects|Distance effects]]'''
+* Chunks detach and jitter at high coordinates if VBOs are disabled.
+
+== Fixes ==
+{{fixes|fixedin=14w30a|prefix=Minecraft
+|;old
+|7508|Lighting error due to <code>Chunk.heightMap</code> ignoring block at the top level of an <code>ExtendedBlockStorage</code> instance (off by 1 error).
+|30568|{{cmd|summon}} command can't summon lightning.
+|32514|The well in a desert village is made out of the wrong material/cobblestone.
+|58823|<code>options.txt</code> has <code>advancedOpengl:true</code> also for graphic cards without Advanced OpenGL in video settings.
+|;dev
+|46225|Falling sand can replace pistons, destroying them.
+|56897|Chunks don't render.
+|57895|Stairs are backwards in the creative inventory and hotbar.
+|58790|Sign with {{cmd|give}} / {{cmd|replaceitem}} doesn't update player inventory.
+|59259|Breaking block below tall plants causes them to drop two items.
+|59979|Bug in the {{key|F3}} menu.
+|60301|Broken resource packs: game crashes when I try to load 14w27a/b.
+|60552|Flower pots with metadata placed in 1.7 will not render in 1.8 snapshots/metadata not removed.
+|61191|Sandstone stairs bug in desert villages.
+|62127|Turning off VSync crashes the game.
+|62138|"#PLAYER" appears on sidebar.
+|62180|{{cmd|testfor @p}} doesn't consider x, y, z anymore.
+|62493|"{{cmd|worldborder get}}" can display invalid size using "{{cmd|worldborder add}}".
+|62655|Cubic player selector always finds player if there are more than 31 entities around.
+|;prev
+|62170|Carpet has incorrect height.
+|62223|Crash in Video Settings menu.
+|62240|Command selector parameters <code>dx</code>, <code>dy</code> and <code>dz</code> don't work.
+|62267|Game crashes when trying to enable VSync.
+|62342|Slabs can not be placed in adventure mode with tag <code>CanPlaceOn</code>.
+|62349|<code>Hopper: java.lang.NullPointerException: Saving entity NBT</code>.
+|62379|Spawners (dungeons, strongholds, etc...) can spawn mobs outside of worldborder.
+|62419|<code><nowiki>Hopper: java.lang.IllegalArgumentException: Cannot get property bcy{name{{=}}half, clazz=class ats, values{{=}}[upper, lower]} as it does not exist in bch{block=minec</nowiki></code>.
+|62499|{{cmd|replaceitem block}} has incorrect syntax.
+|62504|{{cmd|kill}} adds 214748364 / 0xCCCCCCC to "Damage Taken" statistics.
+|62507|Overlapping dungeons don't spawn correctly.
+|62558|Rendering empty chunks/cubes in 14w29b (or number of rendered chunks on debug screen (C) is wrong).
+|62736|{{cmd|ReplaceItem}} command not updated when the command was executed with a sign.
+|62789|Chunks containing paintings may be wiped and regenerated upon load.
+}}</onlyinclude>
+
+== Trivia ==
+* 14w30a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:14w30a]]
+[[es:Java Edition 14w30a]]
+[[fr:Édition Java 14w30a]]
+[[ja:Java Edition 14w30a]]
+[[pt:Edição Java 14w30a]]
+[[ru:14w30a (Java Edition)]]
+[[zh:Java版14w30a]]

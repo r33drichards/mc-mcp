@@ -1,0 +1,1417 @@
+{{exclusive|java}}
+{{wip|See [[Minecraft_Wiki:Projects/Hardcoded_item|Projects/Hardcoded item]] for more information}}
+{{project|Hardcoded item}}
+{{cleanup}}
+
+'''Hardcoded item properties''' are aspects of [[item]]s which are tied to the [[Identifier#Java Edition usage|IDs]] and cannot be customized fully via the use of [[commands]] or [[data pack]]s.
+
+Many of the properties associated with items in the game have been made controllable with the newly-introduced [[data component format]]; this intends to track things that aren't controllable via components or [[item tag]]s.
+
+{{TOC|none|limit=2}}
+
+== Code structure ==
+
+There are at least three ways in which the game code describes the properties of an item. 
+
+=== Item.Properties ===
+In class {{jcp|net.minecraft.world.item.Item.Properties}}, the game defines a series of functions that can be applied to an item and change its properties. However, the vast majority of these properties ultimately only modify the item's [[data components]].
+
+However, even though it's possible to change the components of item stacks, data packs cannot change the default components of the items themselves. 
+
+A complete list of default components can be seen at [https://github.com/misode/mcmeta/blob/1.21.11-diff/items misode/mcmeta].
+
+A notable exception is the {{cd|craftRemainder}} property, which defines which item will remain in a recipe when using the item as a recipe. See below for a list of all craft reminders:
+
+{| class="wikitable sortable collapsible"
+!Item !! Craft remainder !! Vanilla use 
+|-
+| {{ItemLink|Milk Bucket}}  || {{ItemLink|Bucket}} || [[Cake]] recipe
+|-
+| {{ItemLink|Lava Bucket}}  || {{ItemLink|Bucket}} || Fuel remainder in [[smelting]]
+|-
+| {{ItemLink|Water Bucket}}  || {{ItemLink|Bucket}} || None
+|-
+| {{ItemLink|Honey Bottle}}  || {{ItemLink|Glass Bottle}} || [[Honey block]] and [[sugar]] recipes.
+|-
+| {{ItemLink|Dragon's Breath}}  || {{ItemLink|Glass Bottle}} || Ingredient remainder in [[brewing]].{{note|With two or more dragon's breath in the brewing stand, after the brewing process, a glass bottle drops as an [[Item (entity)|entity]]. However, with one dragon's breath in the brewing stand, the glass bottle is consumed and cannot be retrieved.<ref>{{bug|MC-259583}}</ref>}}
+|}
+
+All craft remainder can also be used in custom [[recipe]]s via [[data pack]]s. In code is also used in the craft display item, however it apparently hasn't been implemented in the game.{{info needed}}
+
+Another exception is the item {{cd|descriptionId}}, which can be {{cd|''minecraft.item.<id>''}} or {{cd|''minecraft.block.<id>''}}. Although its primary use is for the item name, which is customizable by the {{cd|[[data components#item_name|item_name]]}} component, this description id is also used for other things, such as portion names and disc fragment descreipition.
+
+Most of the {{cd|Item.Properties}} applied to items are applied from the item's record in {{jcp|net.minecraft.world.item.Items}}.
+
+=== Item subclasses (code structure) ===
+
+In the {{jcp|net.minecraft.world.item}} package, there are many classes that define properties for a certain item or a certain set of items; these classes extend the {{jcp|net.minecraft.world.item.Item}} class. A large part of the hardcoded item properties come from here.
+
+These classes have {{cd|[something]Item}} as their name, such as {{cd|DyeItem}}, {{cd|HoeItem}}, and {{cd|NameTagItem}}.
+
+In many cases, when an item is registered in {{jcp|net.minecraft.world.item.Items}}, it is already created as a new instance of one of these classes.
+
+Some of them are abstract classes, not having any item that is restricted as a new instance of that class; however, these classes are extended by other classes, and so on until reaching a class that is at least one item, which is then restricted as a new instance of the class.
+
+Most of the properties of an item defined as belonging to a specific subclass are defined within the subclass itself. However, sometimes in other classes, {{cd|instanceof}} is used to test if a certain item is an item of that class, and thus new properties can be defined for the item.
+
+==== List ====
+
+The table below shows the classes that extend {{jcp|net.minecraft.world.item.Item}} and the IDs of the items that are restricted as instances of them (in {{jcp|net.minecraft.world.item.Items}}).
+
+See {{slink||Item subclasses}} for details.
+
+{| class="wikitable sortable collapsed collapsible"
+!Class !!Items (id)
+|-
+|AirItem || air
+|-
+|ArmorStandItem || armor_stand
+|-
+|ArrowItem || arrow
+|-
+|AxeItem || wooden_axe, copper_axe, stone_axe, golden_axe, iron_axe, diamond_axe
+|-
+|BannerItem || white_banner, orange_banner, magenta_banner, light_blue_banner, yellow_banner, lime_banner, pink_banner, gray_banner, light_gray_banner, cyan_banner, purple_banner, blue_banner, brown_banner, green_banner, red_banner, black_banner
+|-
+|BedItem || white_bed, orange_bed, magenta_bed, light_blue_bed, yellow_bed, lime_bed, pink_bed, gray_bed, light_gray_bed, cyan_bed, purple_bed, blue_bed, brown_bed, green_bed, red_bed, black_bed
+|-
+|BlockItem || {{Collapse|
+content=15 items with {{cd|createBlockItemWithCustomItemName}}:
+
+resin_clump, redstone, string, wheat_seeds, cocoa_beans, pumpkin_seeds, melon_seeds, nether_wart, carrot, potato, torchflower_seeds, pitcher_pod, beetroot_seeds, sweet_berries, glow_berries
+
+989 items with {{cd|registerBlock}}:
+
+See [[Java_Edition_data_values/Blocks]]
+}}
+|-
+|BoatItem || cherry_boat, birch_chest_boat, birch_boat, acacia_chest_boat, acacia_boat, spruce_chest_boat, spruce_boat, pale_oak_chest_boat, pale_oak_boat, oak_chest_boat, oak_boat, mangrove_chest_boat, mangrove_boat, jungle_chest_boat, jungle_boat, dark_oak_chest_boat, dark_oak_boat, cherry_chest_boat, bamboo_raft, bamboo_chest_raft
+|-
+|BoneMealItem || bone_meal
+|-
+|BottleItem || glass_bottle
+|-
+|BowItem || bow
+|-
+|BrushItem || brush
+|-
+|BucketItem || bucket, water_bucket, lava_bucket
+|-
+|BundleItem || bundle, white_bundle, orange_bundle, magenta_bundle, light_blue_bundle, yellow_bundle, lime_bundle, pink_bundle, gray_bundle, light_gray_bundle, cyan_bundle, purple_bundle, blue_bundle, brown_bundle, green_bundle, red_bundle, black_bundle
+|-
+|CompassItem || compass
+|-
+|CrossbowItem || crossbow
+|-
+|DebugStickItem || debug_stick
+|-
+|DiscFragmentItem || disc_fragment_5
+|-
+|DoubleHighBlockItem || {{Collapse|
+content=small_dripleaf, sunflower, lilac, rose_bush, peony, tall_grass, large_fern, iron_door, oak_door, spruce_door, birch_door, jungle_door, acacia_door, cherry_door, dark_oak_door, pale_oak_door, mangrove_door, bamboo_door, crimson_door, warped_door, copper_door, exposed_copper_door, weathered_copper_door, oxidized_copper_door, waxed_copper_door, waxed_exposed_copper_door, waxed_weathered_copper_door, waxed_oxidized_copper_door}}
+|-
+|DyeItem || white_dye, orange_dye, magenta_dye, light_blue_dye, yellow_dye, lime_dye, pink_dye, gray_dye, light_gray_dye, cyan_dye, purple_dye, blue_dye, brown_dye, green_dye, red_dye, black_dye
+|-
+|EggItem || egg, blue_egg, brown_egg
+|-
+|EmptyMapItem || map
+|-
+|EndCrystalItem || end_crystal
+|-
+|EnderEyeItem || ender_eye
+|-
+|EnderpearlItem || ender_pearl
+|-
+|ExperienceBottleItem || experience_bottle
+|-
+|FireChargeItem || fire_charge
+|-
+|FireworkRocketItem || firework_rocket
+|-
+|FishingRodItem || fishing_rod
+|-
+|FlintAndSteelItem || flint_and_steel
+|-
+|FoodOnAStickItem || carrot_on_a_stick, warped_fungus_on_a_stick
+|-
+|GameMasterBlockItem || command_block, repeating_command_block, chain_command_block, structure_block, jigsaw, test_block, test_instance_block
+|-
+|GlowInkSacItem || glow_ink_sac
+|-
+|HangingEntityItem || painting
+|-
+|HangingSignItem || warped_hanging_sign, spruce_hanging_sign, pale_oak_hanging_sign, oak_hanging_sign, mangrove_hanging_sign, jungle_hanging_sign, dark_oak_hanging_sign, crimson_hanging_sign, cherry_hanging_sign, birch_hanging_sign, bamboo_hanging_sign, acacia_hanging_sign
+|-
+|HoeItem || wooden_hoe, copper_hoe, stone_hoe, golden_hoe, iron_hoe, diamond_hoe
+|-
+|HoneycombItem || honeycomb
+|-
+|InkSacItem || ink_sac
+|-
+|InstrumentItem || goat_horn
+|-
+|Item || All, see [[Java_Edition_data_values/Items]]
+|-
+|ItemFrameItem || item_frame
+|-
+|KnowledgeBookItem || knowledge_book
+|-
+|LeadItem || lead
+|-
+|LingeringPotionItem || lingering_potion
+|-
+|MaceItem || mace
+|-
+|MapItem || filled_map
+|-
+|MinecartItem || minecart, chest_minecart, furnece_minecart, tnt_minecart, hopper_minecart, command_block_minecart
+|-
+|MobBucketItem || pufferfish_bucket, salmon_bucket, cod_bucket, tropical_fish_bucket, axolotl_bucket, tadpole_bucket
+|-
+|NameTagItem || name_tag
+|-
+|PlaceOnWaterBlockItem || lily_pad, frogspawn
+|-
+|PlayerHeadItem || player_head
+|-
+|PotionItem || potion
+|-
+|ProjectileWeaponItem || 
+|-
+|ScaffoldingBlockItem || scaffolding
+|-
+|ShearsItem || shears
+|-
+|ShieldItem || shield
+|-
+|ShovelItem || wooden_shovel, copper_shovel, stone_shovel, golden_shovel, iron_shovel, diamond_shovel
+|-
+|SignItem || warped_sign, spruce_sign, pale_oak_sign, oak_sign, mangrove_sign, jungle_sign, dark_oak_sign, crimson_sign, cherry_sign, birch_sign, bamboo_sign, acacia_sign
+|-
+|SmithingTemplateItem || 
+{{Collapse|
+content= netherite_upgrade_smithing_template, sentry_armor_trim_smithing_template, dune_armor_trim_smithing_template, coast_armor_trim_smithing_template, wild_armor_trim_smithing_template, ward_armor_trim_smithing_template, eye_armor_trim_smithing_template, vex_armor_trim_smithing_template, tide_armor_trim_smithing_template, snout_armor_trim_smithing_template, rib_armor_trim_smithing_template, spire_armor_trim_smithing_template, wayfinder_armor_trim_smithing_template, shaper_armor_trim_smithing_template, silence_armor_trim_smithing_template, raiser_armor_trim_smithing_template, host_armor_trim_smithing_template, flow_armor_trim_smithing_template, bolt_armor_trim_smithing_template
+}}
+|-
+|SnowballItem || snowball
+|-
+|SolidBucketItem || powder_snow_bucket
+|-
+|SpawnEggItem || 
+{{Collapse|
+content=chicken_spawn_egg, cow_spawn_egg, pig_spawn_egg, sheep_spawn_egg, camel_spawn_egg, donkey_spawn_egg, horse_spawn_egg, mule_spawn_egg, cat_spawn_egg, parrot_spawn_egg, wolf_spawn_egg, armadillo_spawn_egg, bat_spawn_egg, bee_spawn_egg, fox_spawn_egg, goat_spawn_egg, llama_spawn_egg, ocelot_spawn_egg, panda_spawn_egg, polar_bear_spawn_egg, rabbit_spawn_egg, axolotl_spawn_egg, cod_spawn_egg, dolphin_spawn_egg, frog_spawn_egg, glow_squid_spawn_egg, nautilus_spawn_egg, pufferfish_spawn_egg, salmon_spawn_egg, squid_spawn_egg, tadpole_spawn_egg, tropical_fish_spawn_egg, turtle_spawn_egg, allay_spawn_egg, mooshroom_spawn_egg, sniffer_spawn_egg, copper_golem_spawn_egg, iron_golem_spawn_egg, snow_golem_spawn_egg, trader_llama_spawn_egg, villager_spawn_egg, wandering_trader_spawn_egg, bogged_spawn_egg, camel_husk_spawn_egg, drowned_spawn_egg, husk_spawn_egg, parched_spawn_egg, skeleton_spawn_egg, skeleton_horse_spawn_egg, stray_spawn_egg, wither_spawn_egg, wither_skeleton_spawn_egg, zombie_spawn_egg, zombie_horse_spawn_egg, zombie_nautilus_spawn_egg, zombie_villager_spawn_egg, cave_spider_spawn_egg, spider_spawn_egg, breeze_spawn_egg, creaking_spawn_egg, creeper_spawn_egg, elder_guardian_spawn_egg, guardian_spawn_egg, phantom_spawn_egg, silverfish_spawn_egg, slime_spawn_egg, warden_spawn_egg, witch_spawn_egg, evoker_spawn_egg, pillager_spawn_egg, ravager_spawn_egg, vindicator_spawn_egg, vex_spawn_egg, blaze_spawn_egg, ghast_spawn_egg, happy_ghast_spawn_egg, hoglin_spawn_egg, magma_cube_spawn_egg, piglin_spawn_egg, piglin_brute_spawn_egg, strider_spawn_egg, zoglin_spawn_egg, zombified_piglin_spawn_egg, ender_dragon_spawn_egg, enderman_spawn_egg, endermite_spawn_egg, shulker_spawn_egg
+
+}}
+|-
+|SpectralArrowItem || spectral_arrow
+|-
+|SplashPotionItem || splash_potion
+|-
+|SpyglassItem || spyglass
+|-
+|StandingAndWallBlockItem || torch, soul_torch, copper_torch, tube_coral_fan, brain_coral_fan, bubble_coral_fan, fire_coral_fan, horn_coral_fan, dead_tube_coral_fan, dead_brain_coral_fan, dead_bubble_coral_fan, dead_fire_coral_fan, dead_horn_coral_fan, redstone_torch, skeleton_skull, wither_skeleton_skull, zombie_head, creeper_head, dragon_head, piglin_head
+|-
+|ThrowablePotionItem || 
+|-
+|TippedArrowItem || tipped_arrow
+|-
+|TridentItem || trident
+|-
+|WindChargeItem || wind_charge
+|-
+|WritableBookItem || writable_book
+|-
+|WrittenBookItem || written_book
+|-
+|}
+
+=== Items class member access ===
+
+In many parts of the game's code, within many contexts, direct access to an item's restricted area is used, by {{jcp|net.minecraft.world.item.Items}} member access, allowing to determine a property of that item.
+
+In certain cases, this item call only serves to create the vanilla datapack, for example by creating [[item tags]], [[Recipe#Java_Edition_JSON_format|recipes]], [[loot table]]s and [[Villager_trade_definition|trades]]{{Upcoming|26.1}}. Therefore, this is a property that can be fully controlled by [[datapacks]]. However, it's worth noting that many of these properties that we can fully control through data packs (and not through components) can only be controlled by the item's ID, not by its components.
+
+Furthermore, in some cases, it creates a new instance of the item. This could be due to an item origin not controlled by a loot table (such as equipment or wither flowers), a visual effect (such as using items in a GUI), or some other use (such as a mob using an item as a projectile). In these cases, we are not strictly talking about an item property, as we are not discussing how a pre-existing item modifies the game.{{note|It is possible for certain properties of item A to cause the creation of a new instance of item B, but in these cases it will be a property of item A and not item B.}}
+
+==== List ====
+{{in dev|java||26.1|section=1}}
+The table below shows all the classes (except {{jcp|net.minecraft.client}} classes) that has a {{jcp|net.minecraft.world.item.Items}} memmber access, and the number of uses in each class. According to the code of [[26.1 Snapshot 3]]. 
+
+{| class="wikitable sortable collapsed collapsible"
+!Class !!Usages
+|-
+| {{jcp|net.minecraft.advancements.criterion.EntityEquipmentPredicate}} || 1
+|-
+| {{jcp|net.minecraft.advancements.criterion.KilledByArrowTrigger.TriggerInstance}} || 2
+|-
+| {{jcp|net.minecraft.core.cauldron.CauldronInteraction}} || 51
+|-
+| {{jcp|net.minecraft.core.dispenser.DispenseItemBehavior}} || 64
+|-
+| {{jcp|net.minecraft.core.registries.BuiltInRegistries}} || 1
+|-
+| {{jcp|net.minecraft.data.advancements.packs.VanillaAdventureAdvancements}}{{font color|#FF0000|*}} || 38
+|-  
+| {{jcp|net.minecraft.data.advancements.packs.VanillaHusbandryAdvancements}}{{font color|#FF0000|*}} || 33
+|-
+| {{jcp|net.minecraft.data.advancements.packs.VanillaNetherAdvancements}}{{font color|#FF0000|*}} || 17
+|-
+| {{jcp|net.minecraft.data.advancements.packs.VanillaStoryAdvancements}}{{font color|#FF0000|*}} || 13
+|-
+| {{jcp|net.minecraft.data.advancements.packs.VanillaTheEndAdvancements}}{{font color|#FF0000|*}} || 5
+|-
+| {{jcp|net.minecraft.data.loot.BlockLootSubProvider}}{{font color|#FF0000|*}} || 10
+|-
+| {{jcp|net.minecraft.data.loot.packs.TradeRebalanceChestLoot}}{{font color|#FF0000|*}} || 5
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaArchaeologyLoot}}{{font color|#FF0000|*}} || 6
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaBlockInteractLoot}}{{font color|#FF0000|*}} || 4
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaBlockLoot}}{{font color|#FF0000|*}} || 46
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaChargedCreeperExplosionLoot}}{{font color|#FF0000|*}} || 1
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaChestLoot}}{{font color|#FF0000|*}} || 63
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaEntityInteractLoot}}{{font color|#FF0000|*}} || 1
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaEntityLoot}}{{font color|#FF0000|*}} || 62
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaEquipmentLoot}}{{font color|#FF0000|*}}|| 3
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaFishingLoot}}{{font color|#FF0000|*}} || 3
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaGiftLoot}}{{font color|#FF0000|*}} || 21
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaPiglinBarterLoot}}{{font color|#FF0000|*}} || 1
+|-
+| {{jcp|net.minecraft.data.loot.packs.VanillaShearingLoot}}{{font color|#FF0000|*}} || 4
+|-
+| {{jcp|net.minecraft.data.recipes.RecipeProvider}}{{font color|#FF0000|*}} || 23
+|-
+| {{jcp|net.minecraft.data.recipes.packs.VanillaRecipeProvider}}{{font color|#FF0000|*}} || 579
+|-
+| {{jcp|net.minecraft.data.tags.VanillaItemTagsProvider}}{{font color|#FF0000|*}} || 115
+|-
+| {{jcp|net.minecraft.server.network.ServerGamePacketListenerImpl}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.Entity}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.EntityType}}{{font color|#FF681F|**}} || 20
+|-
+| {{jcp|net.minecraft.world.entity.Leashable}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.LivingEntity}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.Mob}} || 25
+|-
+| {{jcp|net.minecraft.world.entity.ai.behavior.CelebrateVillagersSurvivedRaid}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.ai.behavior.CrossbowAttack}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.ai.behavior.TradeWithVillager}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.ai.behavior.UseBonemeal}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.ai.behavior.WorkAtComposter}} || 5
+|-
+| {{jcp|net.minecraft.world.entity.ai.goal.BegGoal}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.ai.goal.OfferFlowerGoal}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.ai.goal.RangedBowAttackGoal}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.ai.goal.RemoveBlockGoal}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.Bucketable}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.armadillo.Armadillo}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.axolotl.Axolotl}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.animal.cow.AbstractCow}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.animal.cow.MushroomCow}} || 4
+|-
+| {{jcp|net.minecraft.world.entity.animal.equine.AbstractChestedHorse}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.animal.equine.AbstractHorse}} || 7
+|-
+| {{jcp|net.minecraft.world.entity.animal.equine.Llama}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.equine.SkeletonTrapGoal}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.equine.ZombieHorse}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.fish.Cod}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.fish.Pufferfish}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.fish.Salmon}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.fish.TropicalFish}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.fox.Fox}}{{font color|#FF681F|**}} || 7
+|-
+| {{jcp|net.minecraft.world.entity.animal.fox.Fox.FoxEatBerriesGoal}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.animal.frog.Tadpole}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.goat.Goat}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.animal.golem.CopperGolem}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.animal.golem.IronGolem}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.golem.SnowGolem}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.animal.nautilus.AbstractNautilus}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.pig.Pig}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.animal.sheep.Sheep}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.sniffer.Sniffer}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.animal.wolf.Wolf}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.boss.enderdragon.EndCrystal}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.boss.wither.WitherBoss}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.decoration.ArmorStand}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.decoration.GlowItemFrame}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.decoration.ItemFrame}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.decoration.LeashFenceKnotEntity}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.decoration.painting.Painting}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.monster.Creeper}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.CrossbowAttackMob}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.EnderMan}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.Monster}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.Strider}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.monster.Vex}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.Witch}}{{font color|#FF681F|**}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.monster.illager.Illusioner}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.monster.illager.Pillager}} || 6
+|-
+| {{jcp|net.minecraft.world.entity.monster.illager.Vindicator}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.monster.piglin.Piglin}} || 8
+|-
+| {{jcp|net.minecraft.world.entity.monster.piglin.PiglinAi}} || 4
+|-
+| {{jcp|net.minecraft.world.entity.monster.piglin.PiglinBrute}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.monster.skeleton.AbstractSkeleton}} || 5
+|-
+| {{jcp|net.minecraft.world.entity.monster.skeleton.Bogged}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.skeleton.WitherSkeleton}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.zombie.Drowned}} || 6
+|-
+| {{jcp|net.minecraft.world.entity.monster.zombie.Drowned.DrownedTridentAttackGoal}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.zombie.Husk}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.zombie.Zombie}} || 4
+|-
+| {{jcp|net.minecraft.world.entity.monster.zombie.ZombieVillager}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.monster.zombie.ZombifiedPiglin}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.npc.villager.Villager}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.npc.villager.VillagerProfession}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader}} || 4
+|-
+| {{jcp|net.minecraft.world.entity.player.Player}} || 3
+|-
+| {{jcp|net.minecraft.world.entity.projectile.EyeOfEnder}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.FireworkRocketEntity}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.projectile.FishingHook}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.projectile.ProjectileUtil}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.arrow.Arrow}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.projectile.arrow.SpectralArrow}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.arrow.ThrownTrident}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.hurtingprojectile.Fireball}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEgg}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownExperienceBottle}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownLingeringPotion}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.raid.Raid}} || 1
+|-
+| {{jcp|net.minecraft.world.entity.vehicle.minecart.Minecart}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.vehicle.minecart.MinecartChest}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.vehicle.minecart.MinecartCommandBlock}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.vehicle.minecart.MinecartFurnace}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.vehicle.minecart.MinecartHopper}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.vehicle.minecart.MinecartSpawner}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.entity.vehicle.minecart.MinecartTNT}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.inventory.AnvilMenu}} || 1
+|-
+| {{jcp|net.minecraft.world.inventory.BrewingStandMenu.PotionSlot}} || 1
+|-
+| {{jcp|net.minecraft.world.inventory.CartographyTableMenu}} || 5
+|-
+| {{jcp|net.minecraft.world.inventory.EnchantmentMenu}} || 5
+|-
+| {{jcp|net.minecraft.world.inventory.FurnaceFuelSlot}} || 1
+|-
+| {{jcp|net.minecraft.world.inventory.GrindstoneMenu}} || 2
+|-
+| {{jcp|net.minecraft.world.item.BottleItem}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.item.BucketItem}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.BundleItem}}{{font color|#FF0000|*}} || 33
+|-
+| {{jcp|net.minecraft.world.item.CompassItem}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.CreativeModeTabs}}{{font color|#FF681F|**}} || 1,695
+|-
+| {{jcp|net.minecraft.world.item.CrossbowItem}} || 3
+|-
+| {{jcp|net.minecraft.world.item.FoodOnAStickItem}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.HoeItem}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.Item}} || 2
+|-
+| {{jcp|net.minecraft.world.item.Items}} || 1,496
+|-
+| {{jcp|net.minecraft.world.item.ItemStack}} || 3
+|-
+| {{jcp|net.minecraft.world.item.ItemStackTemplate}} || 1
+|-
+| {{jcp|net.minecraft.world.item.MapItem}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.PotionItem}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.ProjectileWeaponItem}} || 2
+|-
+| {{jcp|net.minecraft.world.item.alchemy.PotionBrewing}} || 57
+|-
+| {{jcp|net.minecraft.world.item.crafting.BlastingRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.CampfireCookingRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.FireworkRocketRecipe}} || 4
+|-
+| {{jcp|net.minecraft.world.item.crafting.FireworkStarFadeRecipe}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.FireworkStarRecipe}} || 5
+|-
+| {{jcp|net.minecraft.world.item.crafting.Ingredient}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.MapCloningRecipe}} || 2
+|-
+| {{jcp|net.minecraft.world.item.crafting.MapExtendingRecipe}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.ShapedRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.ShapelessRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.ShieldDecorationRecipe}} || 2
+|-
+| {{jcp|net.minecraft.world.item.crafting.SmeltingRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.SmithingTransformRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.SmithingTrimRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.SmokingRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.StonecutterRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.crafting.TippedArrowRecipe}} || 3
+|-
+| {{jcp|net.minecraft.world.item.crafting.TransmuteRecipe}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.enchantment.EnchantmentHelper}} || 5
+|-
+| {{jcp|net.minecraft.world.item.enchantment.Enchantments}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.item.trading.TradeRebalanceVillagerTrades}}{{font color|#FF0000|*}} || 59
+|-
+| {{jcp|net.minecraft.world.item.trading.VillagerTrades}}{{font color|#FF0000|*}} || 220
+|-
+| {{jcp|net.minecraft.world.level.block.BambooSaplingBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.BeehiveBlock}} || 5
+|-
+| {{jcp|net.minecraft.world.level.block.BeetrootBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.BubbleColumnBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.CandleCakeBlock}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.CarrotBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.CaveVinesBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.CaveVinesPlantBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.ChiseledBookShelfBlock}} || 2
+|-
+| {{jcp|net.minecraft.world.level.block.ComposterBlock}} || 117
+|-
+| {{jcp|net.minecraft.world.level.block.ComposterBlock.OutputContainer}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.CropBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.LightBlock}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.NetherWartBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.PotatoBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.PowderSnowBlock}} || 2
+|-
+| {{jcp|net.minecraft.world.level.block.PumpkinBlock}} || 2
+|-
+| {{jcp|net.minecraft.world.level.block.RespawnAnchorBlock}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.SimpleWaterloggedBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.SweetBerryBushBlock}}{{font color|#FF681F|**}} || 2
+|-
+| {{jcp|net.minecraft.world.level.block.TntBlock}} || 2
+|-
+| {{jcp|net.minecraft.world.level.block.TorchflowerCropBlock}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.TripWireBlock}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.WeatheringCopperGolemStatueBlock}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.WitherSkullBlock}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity}} || 4
+|-
+| {{jcp|net.minecraft.world.level.block.entity.BrewingStandBlockEntity}} || 2
+|-
+| {{jcp|net.minecraft.world.level.block.entity.DecoratedPotBlockEntity}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.entity.DecoratedPotPatterns}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.entity.FuelValues}} || 1
+|-
+| {{jcp|net.minecraft.world.level.block.entity.PotDecorations}} || 3
+|-
+| {{jcp|net.minecraft.world.level.block.entity.vault.VaultConfig}} || 1
+|-
+| {{jcp|net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorPresets.Bootstrap}}{{font color|#FF681F|**}} || 3
+|-
+| {{jcp|net.minecraft.world.level.levelgen.structure.structures.EndCityPieces.EndCityPiece}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.material.EmptyFluid}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.material.LavaFluid}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.material.WaterFluid}}{{font color|#FF681F|**}} || 1
+|-
+| {{jcp|net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction}} || 3
+|-
+| {{jcp|net.minecraft.world.level.storage.loot.functions.ExplorationMapFunction}} || 1
+|-
+| {{jcp|net.minecraft.world.level.storage.loot.functions.FillPlayerHead}} || 1
+|-
+| {{jcp|net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction}} || 2
+|-
+| {{jcp|net.minecraft.world.level.storage.loot.functions.SetStewEffectFunction}} || 1
+|-
+|}
+
+{{font color|#FF0000|*}} Classes marked with one red asterisk indicate that all items within that class are used only for generating the vanilla datapack.
+
+{{font color|#FF681F|**}} Classes marked with two orange asterisks indicate that all items within them are new, representing an item's origin, visual use, etc., and not a property of a pre-existing item.
+
+See {{slink||Items member access}}, for details of the classes without asterisks.
+
+== Item subclasses ==
+This section is in progress. Only subsections marked with an asterisk ({{font color|#BFFF00|*}}) isn't empty.
+
+{{columns-list|colwidth=16em|
+* {{BlockLink|air|AirItem|link=#AirItem}}
+* {{ItemLink|armor stand|ArmorStandItem|link=#ArmorStandItem}}
+* {{ItemLink|arrow|ArrowItem|link=#ArrowItem}}
+* {{ItemLink|axes|AxeItem|link=#AxeItem}}
+* {{BlockLink|banners|BannerItem|link=#BannerItem}}
+* {{ItemLink|beds|BedItem|link=#BedItem}}
+* {{BlockLink|grass-block|BlockItem|link=#BlockItem}}
+* {{ItemLink|boats|BoatItem|link=#BoatItem}}
+* {{ItemLink|bone meal|BoneMealItem|link=#BoneMealItem}}
+* {{ItemLink|glass bottle|BottleItem|link=#BottleItem}}
+* {{ItemLink|bow|BowItem|link=#BowItem}}
+* {{ItemLink|brush|BrushItem|link=#BrushItem}}
+* {{ItemLink|bucket|BucketItem|link=#BucketItem}}
+* {{ItemLink|bundles|BundleItem|link=#BundleItem}}
+* {{ItemLink|compass|CompassItem|link=#CompassItem}}
+* {{ItemLink|crossbow|CrossbowItem|link=#CrossbowItem}}
+* {{ItemLink|debug stick|DebugStickItem|link=#DebugStickItem}}
+* {{ItemLink|disc fragment 5|DiscFragmentItem|link=#DiscFragmentItem}}{{font color|#BFFF00|*}}
+* {{BlockLink|small dripleaf|DoubleHighBlockItem|link=#DoubleHighBlockItem}}
+* {{ItemLink|dye|DyeItem|link=#DyeItem}}{{font color|#BFFF00|*}}
+* {{ItemLink|eggs|EggItem|link=#EggItem}}
+* {{ItemLink|map|EmptyMapItem|link=#EmptyMapItem}}
+* {{ItemLink|end crystal|EndCrystalItem|link=#EndCrystalItem}}
+* {{ItemLink|eye of ender|EnderEyeItem|link=#EnderEyeItem}}
+* {{ItemLink|ender pearl|EnderpearlItem|link=#EnderpearlItem}}
+* {{ItemLink|bottle-o'-enchanting|ExperienceBottleItem|link=#ExperienceBottleItem}}
+* {{ItemLink|fire charge|FireChargeItem|link=#FireChargeItem}}
+* {{ItemLink|firework rocket|FireworkRocketItem|link=#FireworkRocketItem}}
+* {{ItemLink|fishing rod|FishingRodItem|link=#FishingRodItem}}
+* {{ItemLink|flint and steel|FlintAndSteelItem|link=#FlintAndSteelItem}}
+* {{ItemLink|carrot on a stick|FoodOnAStickItem|link=#FoodOnAStickItem}}
+* {{BlockLink|command blocks|GameMasterBlockItem|link=#GameMasterBlockItem}}
+* {{ItemLink|glow ink sac|GlowInkSacItem|link=#GlowInkSacItem}}
+* {{ItemLink|painting|HangingEntityItem|link=#HangingEntityItem}}
+* {{BlockLink|hanging signs|HangingSignItem|link=#HangingSignItem}}
+* {{ItemLink|hoes|HoeItem|link=#HoeItem}}
+* {{ItemLink|honeycomb|HoneycombItem|link=#HoneycombItem}}
+* {{ItemLink|ink sac|InkSacItem|link=#InkSacItem}}
+* {{ItemLink|goat horn|InstrumentItem|link=#InstrumentItem}}
+* {{EntityLink|Item|Item|link=#Item}}
+* {{ItemLink|item frame|ItemFrameItem|link=#ItemFrameItem}}
+* {{ItemLink|knowledge book|KnowledgeBookItem|link=#KnowledgeBookItem}}
+* {{ItemLink|lead|LeadItem|link=#LeadItem}}
+* {{ItemLink|lingering potion|LingeringPotionItem|link=#LingeringPotionItem}}
+* {{ItemLink|mace|MaceItem|link=#MaceItem}}
+* {{ItemLink|filled map|MapItem|link=#MapItem}}
+* {{ItemLink|minecart|MinecartItem|link=#MinecartItem}}
+* {{ItemLink|bucket-of-aquatic-mob|MobBucketItem|link=#MobBucketItem}}
+* {{ItemLink|name tag|NameTagItem|link=#NameTagItem}}{{font color|#BFFF00|*}}
+* {{BlockLink|lily pad|PlaceOnWaterBlockItem|link=#PlaceOnWaterBlockItem}}
+* {{ItemLink|heads|PlayerHeadItem|link=#PlayerHeadItem}}
+* {{ItemLink|potion|PotionItem|link=#PotionItem}}{{font color|#BFFF00|*}}
+* {{ItemLink|crossbow-arrow|
+ProjectileWeaponItem|link=#ProjectileWeaponItem}}
+* {{BlockLink|scaffolding|
+ScaffoldingBlockItem|link=#ScaffoldingBlockItem}}
+* {{ItemLink|shears|ShearsItem|link=#ShearsItem}}
+* {{ItemLink|shield|ShieldItem|link=#ShieldItem}}{{font color|#BFFF00|*}}
+* {{ItemLink|shovels|ShovelItem|link=#ShovelItem}}
+* {{ItemLink|signs|SignItem|link=#SignItem}}
+* {{ItemLink|smithing templates|
+SmithingTemplateItem|link=#SmithingTemplateItem}}
+* {{ItemLink|snowball|SnowballItem|link=#SnowballItem}}
+* {{ItemLink|powder snow bucket|SolidBucketItem|link=#SolidBucketItem}}
+* {{ItemLink|creeper spawn egg|SpawnEggItem|link=#SpawnEggItem}}
+* {{ItemLink|spectral arrow|SpectralArrowItem|link=#SpectralArrowItem}}
+* {{ItemLink|splash potion|SplashPotionItem|link=#SplashPotionItem}}
+* {{ItemLink|spyglass|SpyglassItem|link=#SpyglassItem}}
+* {{BlockLink|torches|
+StandingAndWallBlockItem|link=#StandingAndWallBlockItem}}
+* {{ItemLink|splash-potion-of-health-boost|
+ThrowablePotionItem|link=#ThrowablePotionItem}}
+* {{ItemLink|tipped arrow|TippedArrowItem|link=#TippedArrowItem}}
+* {{ItemLink|trident|TridentItem|link=#TridentItem}}
+* {{ItemLink|wind charge|WindChargeItem|link=#WindChargeItem}}
+* {{ItemLink|Book and Quill|WritableBookItem|link=#WritableBookItem}}{{font color|#BFFF00|*}}
+* {{ItemLink|written book|WrittenBookItem|link=#WrittenBookItem}}{{font color|#BFFF00|*}}
+}}
+
+===AirItem===
+{{empty section}}
+===ArmorStandItem===
+{{empty section}}
+===ArrowItem===
+{{empty section}}
+===AxeItem===
+{{empty section}}
+===BannerItem===
+{{empty section}}
+===BedItem===
+{{empty section}}
+===BlockItem===
+{{empty section}}
+===BoatItem===
+{{empty section}}
+===BoneMealItem===
+{{empty section}}
+===BottleItem===
+{{empty section}}
+===BowItem===
+{{empty section}}
+===BrushItem===
+{{empty section}}
+===BucketItem===
+{{empty section}}
+===BundleItem===
+{{empty section}}
+===CompassItem===
+{{empty section}}
+===CrossbowItem===
+{{empty section}}
+===DebugStickItem===
+{{empty section}}
+===DiscFragmentItem===
+
+{| class="wikitable"
+|+ style="text-align: left | DiscFragmentItem
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|Disc Fragment}}}}
+|-
+|}
+
+'''appendHoverText'''
+
+Define the first line of the tooltip as the translation of {{cd|''item.minecraft.disc_fragment.desc''}} in gray ({{color|11184810}}).
+
+This line cannot be hidden by the [[Data_component_format#tooltip_display|{{cd|tooltip_display}}]] component, except to completely hide the tooltip with '''hide_tooltip'''=true.
+
+===DispensibleContainerItem===
+{{empty section}}
+===DoubleHighBlockItem===
+{{empty section}}
+===DyeItem===
+
+{| class="wikitable"
+|+ style="text-align: left | DyeItem
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|White Dye}}
+*{{ItemLink|Orange Dye}}
+*{{ItemLink|Light Blue Dye}}
+*{{ItemLink|Yellow Dye}}
+*{{ItemLink|Lime Dye}}
+*{{ItemLink|Pink Dye}}
+*{{ItemLink|Gray Dye}}
+*{{ItemLink|Light Gray Dye}}
+*{{ItemLink|Cyan Dye}}
+*{{ItemLink|Purple Dye}}
+*{{ItemLink|Blue Dye}}
+*{{ItemLink|Brown Dye}}
+*{{ItemLink|Green Dye}}
+*{{ItemLink|Red Dye}}
+*{{ItemLink|Black Dye}}
+}}
+|-
+! Implements
+|
+{{flatlist|
+*{{cd|SignApplicator}}
+}}
+|-
+|}
+
+Each item is associated with a {{cd|''dyeColor''}}, that is a list with a ID, name, texture diffuse color, map color, firework color and text color. See [[Dye#Color_values]] and color in [[Text_component_format#Java_Edition|text component format]]. From [[map color]] the white color is {{cd|''SNOW''}}, lime is {{cd|''COLOR_LIGHT_GREEN''}} and the other colors are {{cd|''COLOR_<COLOR NAME>''}}. 
+
+'''interactLivingEntity'''
+
+The interaction is only successful when the interacting entity is a non-sheared live [[sheep]] of a different color than the dye color.
+In case of success, the [[sound]] dye use is played, set the sheep color (using the id) and shrink the item stack by one.
+
+'''getDyeColor'''
+
+Get the {{cd|''dyeColor''}} associated with the item. All usages below:
+
+* {{jcp|net.minecraft.world.entity.animal.feline.Cat}} and {{jcp|net.minecraft.world.entity.animal.wolf.Wolf}}: In {{cd|mobInteract}}, if the animal is tame by the player and the color of the collar is different, set the collar color and remove one item from the item stack. For [[cat]]s, also set '''PersistenceRequired''' to true.
+* {{jcp|net.minecraft.world.inventory.LoomMenu}}: In {{cd|setupResultSlot}}, to set the banner pattern color in the [[loom]] menu
+* {{jcp|net.minecraft.world.item.DyeColor}}: In {{cd|getMixedColor}}. This function receives two {{cd|''dyeColor''}}, transforms them into dyes, and use they in [[crafting]] input. If the result is a dye, its DyeColor is returned. Otherwise, it returns a random color between the two received. It is Used to choose the collar color for baby cats and [[wolf]]s, and the baby sheep color, based on the parents' colors.
+* {{jcp|net.minecraft.world.item.DyeItem}}: In {{cd|tryApplyToSign}}, see below.
+* {{jcp|net.minecraft.world.item.component.DyedItemColor}}: In {{cd|applyDyes}}. This function changes the [[Data_component_format#dyed_color|{{cd|dyed_color}}]] component of an item based on a list of dyes. See [[Dye#Dye_mixing_formula|'dye mixing formula']] for more details. Used for armor dye recipe and for a randomly armor dye for trading.
+* {{jcp|net.minecraft.world.item.crafting.FireworkStarFadeRecipe}} and {{jcp|net.minecraft.world.item.crafting.FireworkStarRecipe}}: In {{cd|assemble}}. Used for the result of [[firework star]] special recipes, added the {{cd|fireworkColor}} to colors and {{cd|fede_colores}} from [[Data_component_format#firework_explosion|{{cd|firework explosion}}]] component. These recipes cannot be customized by datapacks.
+
+'''byColor'''
+
+A function that receives a {{cd|''dyeColor''}} and returns a dye. Used to create vanilla recipes (fully controlled by datapacks!). There are other uses, but these are only uses that assist with {{cd|getDyeColor}}, all of which are listed above.
+
+'''tryApplyToSign'''
+
+Try changing the text color on the sign, on the side being interacted with, to the color of the dye. 
+
+In case of success, the dye used sound is played and returns true. Otherwise, returns false.
+
+==== Usage in instanceof ====
+In other classes, some items are states of being an instance of {{jcp|net.minecraft.world.item.DyeItem}}, meaning they are one of the dyes. All these uses are listed below:
+
+* {{jcp|net.minecraft.world.entity.animal.feline.Cat}} and {{jcp|net.minecraft.world.entity.animal.wolf.Wolf}}: In {{cd|mobInteract}}, for test if the item is a dye before applying the {{cd|getDyeColor}} function to color the color. 
+** In {{jcp|net.minecraft.world.entity.animal.feline.Cat}}, it is also used to prevent the item from being used as food for the cat tamed by the player, even if the item is in the [[item_tag#cat_food|#cat_food]] tag and not being used (because it is the same color as the old collar). However, for untamed cats, the dye can be used as food. 
+
+* {{jcp|net.minecraft.world.inventory.LoomMenu}}: Used twice:
+** In {{cd|{{jcp|dyeslot.mayPlace}}}}: Returns true iff the item is a dye. Used to allow items to be used in the [[loom]] dye slot.
+** In {{cd|quickMoveStack}}: Used to allow dyes to be moved from the inventory to the loom dye slot with a quick click (click + Shift). 
+*** This also prevents quick clicking from moving dyes to the pattern slot (even when the [[Data_component_format#provides_banner_patterns|{{cd|provides_banner_patterns}}]] component is present) or moving them between storage slots and hotbar slots and vice versa, when the loom menu is open. Even if the dye fails to move to the dye slot. 
+
+*{{jcp|net.minecraft.world.item.crafting.ArmorDyeRecipe}}, {{jcp|net.minecraft.world.item.crafting.FireworkStarFadeRecipe}}, and {{jcp|net.minecraft.world.item.crafting.FireworkStarRecipe}}: In each of these classes, used twice:
+** In {{cd|matches}}: To test if the items in the crafting input can be used for one of these special recipes.
+** In {{cd|assemble}}: Used for the result of the special recipes, to test if the item is a dye before applying {{cd|applyDyes}} or {{cd|getDyeColor}}.
+
+===EggItem===
+{{empty section}}
+===EmptyMapItem===
+{{empty section}}
+===EndCrystalItem===
+{{empty section}}
+===EnderEyeItem===
+{{empty section}}
+===EnderpearlItem===
+{{empty section}}
+===ExperienceBottleItem===
+{{empty section}}
+===FireChargeItem===
+{{empty section}}
+===FireworkRocketItem===
+{{empty section}}
+===FishingRodItem===
+{{empty section}}
+===FlintAndSteelItem===
+{{empty section}}
+===FoodOnAStickItem===
+{{empty section}}
+===GameMasterBlockItem===
+{{empty section}}
+===GlowInkSacItem===
+{{empty section}}
+===HangingEntityItem===
+{{empty section}}
+===HangingSignItem===
+{{empty section}}
+===HoeItem===
+{{empty section}}
+===HoneycombItem===
+{{empty section}}
+===InkSacItem===
+{{empty section}}
+===InstrumentItem===
+{{empty section}}
+===Item===
+{{empty section}}
+===ItemFrameItem===
+{{empty section}}
+===KnowledgeBookItem===
+{{empty section}}
+===LeadItem===
+{{empty section}}
+===LingeringPotionItem===
+{{empty section}}
+===MaceItem===
+{{empty section}}
+===MapItem===
+{{empty section}}
+===MinecartItem===
+{{empty section}}
+===MobBucketItem===
+{{empty section}}
+===NameTagItem===
+{{info needed section|At what point in the code is the name tag prevented from being used in the [[Ender Dragon]]?}}
+
+{| class="wikitable"
+|+ style="text-align: left | NameTagItem
+|-
+! Items
+|
+*{{ItemLink|Name Tag}}
+|-
+|}
+
+'''interactLivingEntity'''
+
+The interaction will only be successful, instead of pass, when:
+* The item has a [[Data_component_format#custom_name|{{cd|custom_name}}]] component;
+* The entity isn't a [[player]], [[leash knot]], [[lightning bolt]], or [[fishing bobber]].
+
+If the entity is alive, sets its {{cd|CustomName}} to be the same as the name tag. If the entity is a mob, also sets {{cd|PersistenceRequired}} true. Shrink the item stack of the item by one.
+
+===PlaceOnWaterBlockItem===
+{{empty section}}
+===PlayerHeadItem===
+{{empty section}}
+===PotionItem===
+
+
+{| class="wikitable"
+|+ style="text-align: left | PotionItem
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|Potion}}
+*{{ItemLink|Splash Potion}} 
+*{{ItemLink|Lingering Potion}} }}
+|-
+! Implementations
+|
+{{flatlist|
+*{{cd|SplashPotionItem}}
+*{{cd|ThrowablePotionItem}}
+*{{cd|LingeringPotionItem}} 
+}}
+|-
+|}
+
+'''UseOn'''
+
+The interaction will only be successful when:
+* the face of the interacted block was not directed downwards,
+* the block is in the [[Block_tag_(Java_Edition)#convertable_to_mud|#convertable_to_mud]] tag, and
+* the potion's content is water.
+
+In case of success, apply in the following order:
+# Play [[sound]] generic splash ([[sounds.json/Java_Edition_values|''entity.generic.splash'']]),
+# Set [[glass bottle]] in hand,
+# Send splash [[Particles_(Java_Edition)|particles]],
+# Play bottle empty sound ({{cd|''item.bottle.empty''}}),  
+# Produce the [[game event]] {{cd|fluid_place}}, 
+# Convert the block to [[mud]].
+
+'''getName'''
+
+If the item has the component {{cd|[[potion_contents]]}}, the name name is defined from it. The item uses the translation key {{cd|''item.minecraft.<item type>.effect.<potion name>''}}, where ''<potion name>'' is the custom name of the potion contents, if available, else is the name of the potion in potion contents (see [[Potion#Item_data]]), if available, else is "''empty''".   
+
+This name will replace the name defined by [[Data_component_format#item_name|{{cd|item_name}}]]. However, it can still be replaced by the [[Data_component_format#custom_name|{{cd|custom_name}}]], if available.
+
+===ProjectileItem===
+{{empty section}}
+===ProjectileWeaponItem===
+{{empty section}}
+===ScaffoldingBlockItem===
+{{empty section}}
+===ShearsItem===
+{{empty section}}
+===ShieldItem===
+
+{| class="wikitable"
+|+ style="text-align: left | ShieldItem
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|Shield}}
+}}
+|-
+|}
+
+'''getName'''
+
+If the item has the component [[Data_component_format#base_color|'''base_color''']], the name name is defined from it. The item uses the translation key {{cd|''item.minecraft.shield.<color>''}}.
+
+This name will replace the name defined by [[Data_component_format#item_name|'''item_name''']] component. However, it can still be replaced by the [[Data_component_format#custom_name|'''custom_name''']] component, if available.
+
+===ShovelItem===
+{{empty section}}
+===SignItem===
+{{empty section}}
+===SmithingTemplateItem===
+{{empty section}}
+===SnowballItem===
+{{empty section}}
+===SolidBucketItem===
+{{empty section}}
+===SpawnEggItem===
+{{empty section}}
+===SpectralArrowItem===
+{{empty section}}
+===SplashPotionItem===
+{{empty section}}
+===SpyglassItem===
+{{empty section}}
+===StandingAndWallBlockItem===
+{{empty section}}
+===ThrowablePotionItem===
+{{empty section}}
+===TippedArrowItem===
+{{empty section}}
+===TridentItem===
+{{empty section}}
+===WindChargeItem===
+{{empty section}}
+===WritableBookItem===
+
+{| class="wikitable"
+|+ style="text-align: left | WritableBookItem
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|Book and Quill}}
+ }}
+|-
+|}
+
+'''use'''
+
+Open item GUI and increases the '''used''' [[statistics]] by one. Success always returns.
+
+''Note:''
+
+The item GUI depends on the components [[Data_component_format#writable_book_content|'''writable_book_content''']] and [[Data_component_format#written_book_content|'''written_book_content''']]. So that:
+* If the item does not have both components: nothing is open, but there is still an increase in statistics and usage animation,
+* If the item has only one of these components: the corresponding GUI opens, 
+* If both components are present: both GUIs open, but the written book content GUI completely overlays the writable book content GUI (which the player can see briefly on the screen).
+
+Therefore, the GUI are entirely dependent on the components and independent of the item ID. Although it is only possible to open them with items book and quill and [[written book]], since only these items attempt to open the GUI.
+
+===WrittenBookItem===
+{| class="wikitable"
+|+ style="text-align: left | WrittenBookItem
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|Written Book}}
+ }}
+|-
+|}
+
+'''use'''
+
+Completely identical to {{cd|WritableBookItem}}, see the subsection above.
+
+== Items member access ==
+
+'''Blocks'''
+
+{{columns-list|colwidth=16em|
+*{{BlockLink|Cauldron-top|{{jcp|net.minecraft.core.cauldron.CauldronInteraction}}|link=#CauldronInteraction}}
+*{{BlockLink|Dispenser|{{jcp|net.minecraft.core.dispenser.DispenseItemBehavior}}|link=#DispenseItemBehavior}}
+*{{BlockLink|Anvil|{{jcp|net.minecraft.world.inventory.AnvilMenu}}|link=#AnvilMenu}}
+*{{ItemLink|Brewing Stand|{{jcp|net.minecraft.world.inventory.BrewingStandMenu.PotionSlot}}|link=#PotionSlot}}
+*{{BlockLink|Cartography Table|{{jcp|net.minecraft.world.inventory.CartographyTableMenu}}|link=#CartographyTableMenu}}
+*{{BlockLink|Enchanting Table|{{jcp|net.minecraft.world.inventory.EnchantmentMenu}}|link=#EnchantmentMenu}}
+*{{BlockLink|Lit Furnace|{{jcp|net.minecraft.world.inventory.FurnaceFuelSlot}}|link=#FurnaceFuelSlot}}
+*{{BlockLink|Grindstone|{{jcp|net.minecraft.world.inventory.GrindstoneMenu}}|link=#GrindstoneMenu}}
+*{{BlockLink|Beehive|{{jcp|net.minecraft.world.level.block.BeehiveBlock}}|link=#BeehiveBlock}}
+*{{BlockLink|Candle Cake|{{jcp|net.minecraft.world.level.block.CandleCakeBlock}}|link=#CandleCakeBlock}}
+*{{BlockLink|Chiseled BookShelf|{{jcp|net.minecraft.world.level.block.ChiseledBookShelfBlock}}|link=#ChiseledBookShelfBlock}}
+*{{BlockLink|Composter|{{jcp|net.minecraft.world.level.block.ComposterBlock}}|link=#ComposterBlock}}
+*{{BlockLink|Composter-bottom|{{jcp|net.minecraft.world.level.block.ComposterBlock.OutputContainer}}|link=#OutputContainer}}
+*{{BlockLink|Light|{{jcp|net.minecraft.world.level.block.LightBlock}}|link=#LightBlock}}
+*{{BlockLink|Powder Snow|{{jcp|net.minecraft.world.level.block.PowderSnowBlock}}|link=#PowderSnowBlock}}
+*{{BlockLink|Pumpkin|{{jcp|net.minecraft.world.level.block.PumpkinBlock}}|link=#PumpkinBlock}}
+*{{BlockLink|Respawn Anchor|{{jcp|net.minecraft.world.level.block.RespawnAnchorBlock}}|link=#RespawnAnchorBlock}}
+*{{BlockLink|Sweet Berry Bush|{{jcp|net.minecraft.world.level.block.SweetBerryBushBlock}}|link=#SweetBerryBushBlock}}
+*{{BlockLink|Tnt|{{jcp|net.minecraft.world.level.block.TntBlock}}|link=#TntBlock}}
+*{{BlockLink|TripWire|{{jcp|net.minecraft.world.level.block.TripWireBlock}}|link=#TripWireBlock}}
+*{{BlockLink|Copper Golem Statue|{{jcp|net.minecraft.world.level.block.WeatheringCopperGolemStatueBlock}}|link=#WeatheringCopperGolemStatueBlock}}
+*{{BlockLink|wither-skeleton-skull|{{jcp|net.minecraft.world.level.block.WitherSkullBlock}}|link=#WitherSkullBlock}}
+*{{BlockLink|Furnace|{{jcp|net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity}}|link=#AbstractFurnaceBlockEntity}}
+*{{BlockLink|Brewing Stand|{{jcp|net.minecraft.world.level.block.entity.BrewingStandBlockEntity}}|link=#BrewingStandBlockEntity}}
+*{{ItemLink|Coal|{{jcp|net.minecraft.world.level.block.entity.FuelValues}}|link=#FuelValues}}
+*{{BlockLink|decorated-pot|{{jcp|net.minecraft.world.level.block.entity.PotDecorations}}|link=#PotDecorations}}
+*{{BlockLink|Vault|{{jcp|net.minecraft.world.level.block.entity.vault.VaultConfig}}|link=#VaultConfig}}
+}}
+
+'''Entity'''
+
+{{columns-list|colwidth=16em|
+*{{ItemLink|SHEARS|{{jcp|net.minecraft.world.entity.Entity}}|link=#Entity}}
+*{{ItemLink|Heads|{{jcp|net.minecraft.world.entity.LivingEntity}}|link=#LivingEntity}}
+*{{ItemLink|NAME TAG|{{jcp|net.minecraft.world.entity.Mob}}|link=#Mob}}
+*{{ItemLink|crossbow-drawn-1|{{jcp|net.minecraft.world.entity.ai.behavior.CrossbowAttack}}|link=#CrossbowAttack}}
+*{{EntityLink|Villager|{{jcp|net.minecraft.world.entity.ai.behavior.TradeWithVillager}}|link=#TradeWithVillager}}
+*{{ItemLink|Bone meal|{{jcp|net.minecraft.world.entity.ai.behavior.UseBonemeal}}|link=#UseBonemeal}}
+*{{BlockLink|Composter|{{jcp|net.minecraft.world.entity.ai.behavior.WorkAtComposter}}|link=#WorkAtComposter}}
+*{{ItemLink|Bone|{{jcp|net.minecraft.world.entity.ai.goal.BegGoal}}|link=#BegGoal}}
+*{{ItemLink|Bow-drawn-3|{{jcp|net.minecraft.world.entity.ai.goal.RangedBowAttackGoal}}|link=#BowAttackGoal}}
+*{{ItemLink|crossbow-drawn-3|{{jcp|net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal}}|link=#RangedCrossbowAttackGoal}}
+*{{EntityLink|salmon|{{jcp|net.minecraft.world.entity.animal.Bucketable}}|link=#Bucketable}}
+*{{EntityLink|Armadillo|{{jcp|net.minecraft.world.entity.animal.armadillo.Armadillo}}|link=#Armadillo}}
+*{{EntityLink|Axolotl|{{jcp|net.minecraft.world.entity.animal.axolotl.Axolotl}}|link=#Axolotl}}
+*{{EntityLink|Cow|{{jcp|net.minecraft.world.entity.animal.cow.AbstractCow}}|link=#AbstractCow}}
+*{{EntityLink|mooshroom|{{jcp|net.minecraft.world.entity.animal.cow.MushroomCow}}|link=#MushroomCow}}
+*{{EntityLink|Mule|{{jcp|net.minecraft.world.entity.animal.equine.AbstractChestedHorse}}|link=#AbstractChestedHorse}}
+*{{EntityLink|Horse|{{jcp|net.minecraft.world.entity.animal.equine.AbstractHorse}}|link=#AbstractHorse}}
+*{{EntityLink|Llama|{{jcp|net.minecraft.world.entity.animal.equine.Llama}}|link=#Llama}}
+*{{EntityLink|Goat|{{jcp|net.minecraft.world.entity.animal.goat.Goat}}|link=#Goat}}
+*{{EntityLink|Copper Golem|{{jcp|net.minecraft.world.entity.animal.golem.CopperGolem}}|link=#CopperGolem}}
+*{{EntityLink|Iron Golem|{{jcp|net.minecraft.world.entity.animal.golem.IronGolem}}|link=#IronGolem}}
+*{{EntityLink|Snow Golem|{{jcp|net.minecraft.world.entity.animal.golem.SnowGolem}}|link=#SnowGolem}}
+*{{EntityLink|Pig|{{jcp|net.minecraft.world.entity.animal.pig.Pig}}|link=#Pig}}
+*{{EntityLink|Sheep|{{jcp|net.minecraft.world.entity.animal.sheep.Sheep}}|link=#Sheep}}
+*{{EntityLink|Wolf|{{jcp|net.minecraft.world.entity.animal.wolf.Wolf}}|link=#Wolf}}
+*{{EntityLink|Armor Stand|{{jcp|net.minecraft.world.entity.decoration.ArmorStand}}|link=#ArmorStand}}
+*{{EntityLink|leash-knot|{{jcp|net.minecraft.world.entity.decoration.LeashFenceKnotEntity}}|link=#LeashFenceKnotEntity}}
+*{{EntityLink|Creeper|{{jcp|net.minecraft.world.entity.monster.Creeper}}|link=#Creeper}}
+*{{ItemLink|Crossbow|{{jcp|net.minecraft.world.entity.monster.CrossbowAttackMob}}|link=#CrossbowAttackMob}}
+*{{EntityLink|Strider|{{jcp|net.minecraft.world.entity.monster.Strider}}|link=#Strider}}
+*{{EntityLink|Pillager|{{jcp|net.minecraft.world.entity.monster.illager.Pillager}}|link=#Pillager}}
+*{{EntityLink|Piglin|{{jcp|net.minecraft.world.entity.monster.piglin.Piglin}}|link=#Piglin}}
+*{{EntityLink|Piglin|{{jcp|net.minecraft.world.entity.monster.piglin.PiglinAi}}|link=#PiglinAi}}
+*{{EntityLink|Piglin Brute|{{jcp|net.minecraft.world.entity.monster.piglin.PiglinBrute}}|link=#PiglinBrute}}
+*{{EntityLink|Skeleton|{{jcp|net.minecraft.world.entity.monster.skeleton.AbstractSkeleton}}|link=#AbstractSkeleton}}
+*{{EntityLink|Bogged|{{jcp|net.minecraft.world.entity.monster.skeleton.Bogged}}|link=#Bogged}}
+*{{EntityLink|Drowned|{{jcp|net.minecraft.world.entity.monster.zombie.Drowned}}|link=#Drowned}}
+*{{EntityLink|Trident|{{jcp|net.minecraft.world.entity.monster.zombie.Drowned.DrownedTridentAttackGoal}}|link=#DrownedTridentAttackGoal}}
+*{{EntityLink|Zombie|{{jcp|net.minecraft.world.entity.monster.zombie.Zombie}}|link=#Zombie}}
+*{{EntityLink|Zombie Villager|{{jcp|net.minecraft.world.entity.monster.zombie.ZombieVillager}}|link=#ZombieVillager}}
+*{{EntityLink|Villager|{{jcp|net.minecraft.world.entity.npc.villager.Villager}}|link=#Villager}}
+*{{EntityLink|Farmer|{{jcp|net.minecraft.world.entity.npc.villager.VillagerProfession}}|link=#VillagerProfession}}
+*{{EntityLink|Wandering Trader|{{jcp|net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader}}|link=#WanderingTrader}}
+*{{EntityLink|Player|{{jcp|net.minecraft.world.entity.player.Player}}|link=#Player}}
+*{{EntityLink|Firework Rocket|{{jcp|net.minecraft.world.entity.projectile.FireworkRocketEntity}}|link=#FireworkRocketEntity}}
+*{{EntityLink|Fishing Hook|{{jcp|net.minecraft.world.entity.projectile.FishingHook}}|link=#FishingHook}}
+*{{EntityLink|Arrow|{{jcp|net.minecraft.world.entity.projectile.ProjectileUtil}}|link=#ProjectileUtil}}
+*{{ItemLink|ominous-banner|{{jcp|net.minecraft.world.entity.raid.Raid}}|link=#Raid}}
+}}
+
+
+'''Misc'''
+
+{{columns-list|colwidth=16em|
+*{{ItemLink|ominous-banner|{{jcp|net.minecraft.advancements.criterion.EntityEquipmentPredicate}}|link=#EntityEquipmentPredicate}}
+*{{ItemLink|potion-of-healing|{{jcp|net.minecraft.world.item.alchemy.PotionBrewing}}|link=#PotionBrewing}}
+*{{ItemLink|Firework Rocket|{{jcp|net.minecraft.world.item.crafting.FireworkRocketRecipe}}|link=#FireworkRocketRecipe}}
+*{{ItemLink|Firework Star|{{jcp|net.minecraft.world.item.crafting.FireworkStarRecipe}}|link=#FireworkStarRecipe}}
+*{{ItemLink|Firework Star|{{jcp|net.minecraft.world.item.crafting.FireworkStarFadeRecipe}}|link=#FireworkStarFadeRecipe}}
+*{{ItemLink|Map|{{jcp|net.minecraft.world.item.crafting.MapCloningRecipe}}|link=#MapCloningRecipe}}
+*{{ItemLink|Map|{{jcp|net.minecraft.world.item.crafting.MapExtendingRecipe}}|link=#MapExtendingRecipe}}
+*{{ItemLink|Shield|{{jcp|net.minecraft.world.item.crafting.ShieldDecorationRecipe}}|link=#ShieldDecorationRecipe}}
+*{{ItemLink|Tipped Arrow|{{jcp|net.minecraft.world.item.crafting.TippedArrowRecipe}}|link=#TippedArrowRecipe}}
+*{{ItemLink|crossbow-firework|{{jcp|net.minecraft.world.item.CrossbowItem}}|link=#CrossbowItem}}
+*{{ItemLink|enchanted-book|{{jcp|net.minecraft.world.item.enchantment.EnchantmentHelper}}|link=#EnchantmentHelper}}
+*{{BlockLink|Monster-SPAWNER|{{jcp|net.minecraft.world.item.ItemStack}}|link=#ItemStack}}
+*{{BlockLink|Air|{{jcp|net.minecraft.world.item.ItemStackTemplate}}|link=#ItemStackTemplate}}
+*{{ItemLink|FIREWORK ROCKET|{{jcp|net.minecraft.world.item.ProjectileWeaponItem}}|link=#ProjectileWeaponItem}}
+*{{ItemLink|Book|{{jcp|net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction}}|link=#EnchantRandomlyFunction}}
+*{{ItemLink|ocean-explorer-map|{{jcp|net.minecraft.world.level.storage.loot.functions.ExplorationMapFunction}}|link=#ExplorationMapFunction}}
+*{{ItemLink|Player Head|{{jcp|net.minecraft.world.level.storage.loot.functions.FillPlayerHead}}|link=#FillPlayerHead}}
+*{{ItemLink|enchanted-book|{{jcp|net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction}}|link=#SetEnchantmentsFunction}}
+*{{ItemLink|SUSPICIOUS-STEW|{{jcp|net.minecraft.world.level.storage.loot.functions.SetStewEffectFunction}}|link=#SetStewEffectFunction}}
+}}
+
+=== CauldronInteraction ===
+{{empty section}}
+
+=== DispenseItemBehavior ===
+{{empty section}}
+
+=== AnvilMenu ===
+
+{| class="wikitable"
+|+ style="text-align: left | AnvilMenu
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|Enchanted book}}
+}}
+|-
+! Package
+|
+{{cd|net.minecraft.world.inventory}}
+|-
+|}
+
+'''createResult'''
+
+If the [[anvil]] input is an enchanted book, it will initially consider any [[enchantment]] as compatible. However, if the enchantment is the same or does it [[Enchanting_table_mechanics#Conflicting_enchantments|conflict]] with any enchantment in the current list of enchantments in the result, it will no longer be considered compatible.
+
+In other words, it's as if the enchanted book were in [[Enchantment_definition#JSON_format|'''supported_items''']] for all enchantment definition, when we consider the anvil.
+
+=== PotionSlot ===
+{| class="wikitable"
+|+ style="text-align: left | PotionSlot
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|Potion}}
+*{{ItemLink|Splash Potion}}
+*{{ItemLink|Lingering Potion}}
+*{{ItemLink|Glass Bottle}}
+}}
+|-
+! Package
+|
+{{cd|net.minecraft.world.inventory}}
+|-
+! Outer Class
+|
+{{cd|BrewingStandMenu}}
+|-
+|}
+
+'''mayPlaceItem'''
+
+Returns true only if it is one of the four items listed above. Used to determine which items can be placed in the portion slot of the [[brewing stand]].
+
+It is also used in {{cd|quickMoveStack}}, so that these items are attempted to be moved from the inventory to the potion slot with a quick click (click + Shift). However, if the item is in the [[Item_tag_(Java_Edition)#brewing_fuel|#brewing_fuel]] tag, it will attempt to enter the fuel slot and not the potion slot (even if it fails to enter the fuel slot). Technically, the same would occur with ingredients, however, ingredients are also [[#PotionBrewing|hardcoded]] and don't have intersection.
+
+=== CartographyTableMenu ===
+
+{| class="wikitable"
+|+ style="text-align: left | CartographyTableMenu
+|-
+! Items
+|
+{{flatlist| 
+*{{ItemLink|Paper}}
+*{{ItemLink|Empty Map}}
+*{{BlockLink|Glass Pane}}
+}}
+|-
+! Package
+|
+{{cd|net.minecraft.world.inventory}}
+|-
+|}
+
+'''{{jcp|CartographyTableMenu:this.addSlot.mayPlace}}'''
+
+Returns true only if it is one of the three items listed above. Used to determine which items can be placed in the slot 1 of the [[cartography table]].
+
+'''setupResultSlot'''
+
+Used to define the result item of the cartography table:
+
+* If the {{cd|''mapStack''}} (item in slot 0) does not have a {{cd|''mapData''}} (data associated with its [[Data_component_format#map_id|'''map_id''']] component), it will not yield any results.
+
+* If it's paper and the {{cd|''mapData''}} is not locked and has a scale less than 4, the resulting is one copy of the {{cd|''mapStack''}} with the [[Data_component_format#map_post_processing|'''map_post_processing''']] component set to 1 (SCALE).
+
+* If it's glass and the {{cd|''mapData''}} is not locked, the resulting is one copy of the {{cd|''mapStack''}} with the '''map_post_processing''' component set to 0 (LOCK).
+
+* If it's empty map, the resulting is ''two'' copy of the {{cd|''mapStack''}}.
+
+''Note'': It's possible to use the cartography table regardless of the {{cd|''mapStack''}} ID; it only needs to have the '''map_id''' component with data. However, when retrieving an item that the ID isn't filled_map with the '''map_post_processing''' component, the game crashes with the error {{cd|java.lang.IllegalArgumentException}} (Component of type minecraft:map_post_processing is not encodable). However, using the empty map still works for item duplication.
+
+'''quickMoveStack'''
+
+When using the quick click (click + Shift) in the inventory with the table and control menu, it attempts to move these items to slot 1. However, if the item has the '''map_id''' component, it attempts to move it to slot 0 and does not go to slot 1 (even if it fails to go to slot 0).
+
+=== Future subsections ===
+{{empty section}}
+
+== Old article stub ==
+
+{{msgbox
+|type = notice
+|title = This section represents the former body of the article. 
+|text =  Keep it until all listed information is documented elsewhere on the article.
+|icon = 2
+|section = 1
+}}
+<!--
+{{stub}}
+-->
+=== List ===
+{{info needed section|
+* Is entity_data used by spawn eggs, boats, minecarts, armor stands, paintings, item frames and end crystals by default, or are those controlled by the item ID?}}
+
+* Block items
+** ID of the block placed
+*** {{code|block_state}} can control the specific state an item places, but cannot control the exact ID.
+* Projectile items: eggs, snowballs, splash potions, lingering potions, bottles o' enchanting, eyes of ender, ender pearls, firework rockets(?), wind charges
+** The entity spawned does not appear to be customizable.
+* Fishing rods
+** What entity is spawned, and presumably many other things.
+* Bows
+** Almost all aspects of behavior. {{more info|How long does it take to charge to full? What animation is used (like with "consumable")? What items does it consume, and what items aren't affected by Infinity?}}
+* Crossbows
+** Much the same: defaults for animation, charge time, accepted items for loading, ...
+* Tridents
+** Animation, charge time
+* Swords
+** The ability to sweep attack
+* Mace
+* Items which can be fed to zombie villagers to cure them
+* Lead
+* Fire charge
+** Dispenser behavior appears to be hardcoded
+** ID of block placed
+* Flint and Steel
+** ID of block placed
+* Things in buckets
+** ID of block placed, and possibly entity spawned if this isn't handled already
+** Cauldron interaction
+* Buckets
+** What block IDs (and states) / fluid IDs can be deleted on right click
+** Milking cows
+** Interacting with empty cauldrons
+* Bowls
+** Milking mooshrooms
+* Items that interact with blocks on right click, possibly including a loot table for dropped items, and whether the item should be deleted, damaged, or converted to something else on use
+** Hoes on tillable blocks - converting things to farmland, or coarse dirt to dirt
+** Shovels on dirt-like blocks, converting them into dirt paths
+** Axes on logs/wood and stems/hyphae, stripping
+** Axes on oxidised copper, reducing
+** Axes on waxed copper, dewaxing
+** Honeycomb on unwaxed copper, waxing
+** Water bottle on dirt-like blocks, converting to mud
+** Eye of Ender on empty end portal frame, adding the eye
+** Pottable plants used on flower pots, turning the pot into a potted plant
+** Shears on an uncarved pumpkin, carving it and producing seeds
+** Shears on a full beehive or bee nest, producing honeycomb and setting honey level to 0
+** Empty bottle on a full beehive or bee nest, converting it to a honey bottle and setting honey level to 0
+* Bone meal usage
+* Items used on entities
+** Shears
+*** On sheep, to shear them
+*** On mooshrooms, to shear them
+*** On snow golems, to remove the pumpkin
+*** On bogged, to obtain mushrooms
+*** On leashed mobs, to obtain the [[lead]] 
+*** On some equipped mobs, to obtain the equipment
+**** It is possible to control which equipment will be picked up with the scissors with the component <code>equippable~{can_be_sheared:true}</code>, but not which scissors (and not another item) will be used for this.
+*** On [[copper golem]]s, to obtain the [[poppy]]
+** Iron ingots
+*** On iron golems, to heal them
+** Dyes
+*** On sheep, to dye their wool
+*** On wolves, to dye their collars
+*** On cats, to dye their collars
+** Brush
+*** On armadillos to get scutes
+** [[Axe]]
+*** On oxidized copper golem, reducing
+*** On waxed copper golem, dewaxing
+** [[Honeycomb]]
+*** On unwaxed copper golem, waxing
+* Empty bottles
+** Using on water or water cauldrons to fill the bottle
+** Using on dragon breath to fill the bottle
+* Water bottles
+** Using on empty cauldrons or non-full water cauldrons to fill the cauldron
+* Brush usage
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}

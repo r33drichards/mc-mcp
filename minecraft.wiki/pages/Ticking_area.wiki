@@ -1,0 +1,78 @@
+{{about|the {{BE}} mechanic that keeps certain chunks updated continuously|the command in {{JE}}|Commands/forceload}}
+{{Exclusive|bedrock|education}}
+
+A '''ticking area''' is a player-specified group of [[chunk]]s that continues to be updated even when there is no player nearby. Because the chunks remain active, processes such as growth, decay, [[Mob spawning|spawn]]ing, movement, and [[redstone]] operations aren't suspended in them when no players are present, provided at least one player remains somewhere in the [[dimension]].
+
+==Behavior==
+Normally, only the chunks closely surrounding a player are updated by the game. These chunks are said to be in the player's '''chunk update range'''. As the player moves through the world, new chunks that come into range are added to the list of updated chunks and older chunks that pass out of range are removed. Only the chunks in the list are updated to reflect the passage of time. This means, for instance, that if a player spends time exploring or in another dimension, [[crops]] won't grow and any [[smelting]], or automated [[farming]] underway when the player left remains unfinished when the player returns.
+
+Ticking areas solve this problem by keeping player-designated chunks from being suspended. Each chunk in a ticking area is updated exactly as if it were perpetually in a player's chunk update range.
+
+===Events processed===
+The following time-related events occur without interruption in ticking areas, provided there is at least one player in the same dimension (the [[Overworld]], [[The Nether]], or [[The End]]) as the ticking area:
+* [[Water]] flows and breaks non-solid blocks.
+* [[Lava]] flows, sets fire to nearby [[flammable|flammable blocks]], destroys [[item (entity)|item entities]], and interacts with water.
+* [[Fire]] spreads to adjacent flammable blocks.
+* Dropped items fall and despawn after 5 minutes if not picked up or collected by a [[hopper]].
+* Passive [[mob]]s grow up, and move around normally.
+* [[Sheep]] eat [[Grass Block|grass]] and grow [[wool]].
+* [[Sand]], [[gravel]], and [[concrete powder]] fall if the block beneath them is moved or broken.
+* Primed [[TNT]] falls and explodes.
+* [[Minecart]]s function normally.
+* [[Redstone]] mechanisms and devices function normally, provided they are entirely contained within ticking areas.
+* [[Crops]], [[mushroom]]s, [[sapling]]s, and [[nether wart]] grow to maturity if the circumstances are suitable.
+* [[Farmland]] changes its hydration in response to available water.
+* [[Leaves]] decay if not connected to a [[log]].
+* [[Grass Block|Grass]] and [[mycelium]] spread to adjacent blocks.
+* [[Ice]] forms and melts in response to changes in [[light]]ing.
+* [[Weather|Rain, snow, and lightning]] occur and have their usual effects.
+* Hostile mobs move around as usual.
+
+===Suspended events===
+
+Many of the above events involve entities moving or spreading, which raises the possibility of updates in a ticking area affecting blocks in outside chunks. If an outside chunk is within any player's chunk update range, of course, the chunk is active and these events proceed as usual. However, if the outside chunk is inactive the effects are suspended in most cases. Specifically,
+* Flowing water or lava can spread to the first adjacent block in an outside chunk, but the flow becomes suspended there until the outside chunk becomes active.
+* Fire can spread to the first adjacent flammable block outside the ticking area. Like water and lava, it becomes suspended there; although visible, its animation does not run and it cannot spread further until the outside chunk becomes active.
+* Grass and mycelium can spread to the first adjacent block in an outside chunk, but the affected block does not actually change its appearance until its chunk becomes active; it then changes instantly. Grass and mycelium ''cannot'' spread beyond the first such block, nor from such a block into the ticking area, until the outside chunk becomes active.
+* Pumpkin and melon stems growing on the edge of a ticking area can place their fruits on an adjacent block in an outside chunk.
+* An entity (mob, minecart, arrow, etc.) that attempts to move into an outside chunk becomes suspended as soon as it leaves the ticking area. It remains visible but motionless. When the outside chunk becomes active, the entity resumes moving.
+* Exploding TNT can damage or destroy blocks in an inactive chunk, and unlike other events its effects are not limited to adjacent blocks. However, secondary effects in the outside chunk are suspended until the chunk becomes active. For instance, if an explosion destroys a block that supported sand or gravel, the sand or gravel does not fall immediately. The same thing happens with items that were attached to destroyed blocks, such as item frames and redstone torches; they do not drop until the chunk is activated.
+* Primed TNT that has been launched into an inactive chunk is suspended in mid-air within the first outside block it enters. It disappears until the outside chunk becomes active, at which time it resumes its flight and countdown.
+
+== Spawning ==
+{{main|Mob spawning}}
+
+Mob spawning does not occur in ticking area chunks without the presence of a player, as all forms of mob spawning attempts are done in a radius centered on a player. However, when a player is present in those chunks, the ticking area does not prevent mob spawning. [[Zombified piglin]]s spawning from portals is an exception; it solely relies on randomtickspeed.
+
+== Creation and management ==  
+
+A player creates and manages ticking areas by executing a {{cmd|tickingarea}} [[command]]. Up to ten ticking areas, each containing up to 100 chunks, can exist at one time in a world. Note that commands can be used in a world only if cheats are enabled. This makes the world ineligible for earning [[achievements]], so ticking areas and earning achievements are mutually exclusive.
+
+To create a ticking area, specify its location and size in a {{cmd|tickingarea add}} command. There are two forms:
+* In the first form, specify two pairs of coordinates in the world. The coordinates specify the opposite corners—either northeast and southwest or northwest and southeast—of the ticking area.
+* In the second form, specify a center coordinate and a radius of 1 to 4 chunks. Although these arguments suggest a circular area, in actuality the ticking area includes all chunks within 'r' chunks, ''including diagonally'', of the chunk containing the center. This defines a square whose sides are twice the given radius + 1. For example, specifying a radius of 2 results in a square ticking area 5 chunks on a side.
+Optionally, specify a name for the ticking area to identify it in subsequent commands.
+
+Note that the Y coordinate is checked for validity but otherwise ignored. This is because a chunk encompasses an entire column of blocks from the bottom of the world to its top, so it includes every possible Y value.
+
+To display a list of current ticking areas, execute a {{cmd|tickingarea list}} command. This shows each ticking area's name (if provided) and corner coordinates (for the first form) or center coordinates and radius (for the second form). The coordinates shown in the list may not match those entered because the game adjusts them to the actual corner or center coordinates of a chunk. By default, this command lists only ticking areas in the player's current dimension; the optional <code>all-dimensions</code> argument can be used to see all ticking areas in the world.
+
+To remove a ticking area from the list, execute a {{cmd|tickingarea remove}} command specifying either the ticking area's name or the coordinates of a point in the world. Specifying a name deletes only that ticking area. Specify a point deletes all ticking areas in the current dimension containing that point. An optional <code>remove_all</code> argument removes all ticking areas in all dimensions.
+
+==History==
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.2.0|dev=beta 1.2.0.2|Added ticking areas.}}
+}}
+
+==Issues==
+{{Issue list|projects=mcpe}}
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[fr:Zone persistante]]
+[[ja:ティック領域]]
+[[pt:Área de marcação]]
+[[ru:Активная область]]
+[[zh:常加载区域]]

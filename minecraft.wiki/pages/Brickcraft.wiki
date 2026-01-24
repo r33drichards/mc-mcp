@@ -1,0 +1,224 @@
+{{Italic title}}
+{{for|the ''{{w|LEGO}}'' sets|LEGO Minecraft}}
+{{Infobox program
+|title=''Brickcraft''
+|developer=
+* [[File:Mojang Studios logo.svg|x20px|link=Mojang Studios]] [[Mojang Studios]]
+* ''[[The LEGO Group]]''
+|image=Brickcraft.png
+|date=Unreleased
+|source available=N/A
+|license=N/A
+|size=≈ 85.0 MiB (development build)
+|ratings=N/A
+|version=N/A
+|publisher=N/A
+|platform=PC
+|programming language={{OS|c++}} {{w|C++}}
+|customlinks=
+* [https://vault.omniarchive.uk/archive/misc/Rex-2012-06-28.zip Archived download] by Omniarchive
+}}
+[[File:Brickcraft 1.png|thumb|A screenshot of ''Brickcraft'', in an earlier version without slopes.]]
+[[File:Brickcraft 2.png|thumb|Ditto.]]
+[[File:Brickcraft 3.png|thumb|Ditto.]]
+
+'''''Brickcraft''''' (codenamed "'''''Project Rex Kwon Do'''''"<ref>{{tweet|notch|110597995900305408|Secret project Rex Kwon Do begins today! It will involve caffeine and giggling.|September 5, 2011}}</ref>) was a game developed by [[Mojang]] and {{w|The Lego Group}} from September 5, 2011 until its cancellation on July 19, 2012.
+
+== Gameplay ==
+
+Development goal of the game was to create a Lego brick world with biomes based on different Lego sets. The gameplay would be somewhat similar to ''Minecraft'', but instead of blocks, players would build with Lego bricks in various shapes and sizes.<ref name="bitsnbricks">https://www.lego.com/cdn/cs/set/assets/bltf87fd15a8f67c6fd/bits_n_bricks_s01e01_minecraft_feature_and_transcript.pdf</ref>
+
+The game featured a procedurally-generated Lego world. Beneath the terrain is an infinite gray baseplate. Players can move around the world using a keyboard and place or break bricks. Players have an inventory that consists of these 5 types of bricks:
+
+* 3005 Brick 1 x 1 
+* 3004 Brick 1 x 2
+* 3003 Brick 2 x 2
+* 3001 Brick 2 x 4
+* 3040 Slope 45 2 x 1
+
+Players spawn with 10,000 bricks of each type. Breaking an existing brick increases the amount of that type of brick available. Placing bricks in the world consumes the brick. Bricks can be placed and rotated. The scroll wheel rotates between different colors, of which there are 39 total, each corresponding to an actual LEGO brick color.<ref>https://www.mecabricks.com/docs/colour_chart.pdf</ref>
+
+Players are able to move around the world, sprint and jump. Coordinates are displayed in the bottom left corner, and the build height limit is 80 bricks above baseplate.
+
+The game is split between the client (<code>Rex-Kwon-Do.exe</code> executable) and the server (<code>Rex-Kwon-Do Server.exe</code> executable). The client does not have an internal server, so a server is required even for singleplayer gameplay. The server also allows multiplayer gameplay.
+
+The game uses the UDP protocol (with ''RakNet'' as the upper layer) for transport. The server listens on all IPv4 addresses, port 37373. The client connects to a server with IPv4 address or name resolving to an IPv4 address listed in the <code>connection.cfg</code> file, port 37373.
+
+The world file, <code>world.db</code>, is a SQLite3 database.
+
+The game supports importing structures from LXFML files (used by Lego Digital Designer). The distribution includes two LXFML files: <code>test.lxfml</code>, a tree, and <code>test_brick_import.lxfml</code>, several small multicolored pillars of each brick type.
+
+Shaders used by the game are invalid, making it only run on Nvidia graphics cards. [https://omniarchive.uk/news/file/brickcraft-shaders-fix.zip A patch is required] to run it on AMD and Intel graphics cards.<ref name="omniarchive"/>
+
+=== Controls ===
+
+The game is played with mouse and keyboard.
+
+* {{Key|W}}: Move forward
+* {{Key|S}}: Move backward
+* {{Key|A}}: Move left
+* {{Key|D}}: Move right
+* {{Key|Shift}}: Sprint
+* {{Key|Space}}: Jump
+* {{Key|Tab}}: Toggle between placement and breaking modes
+* {{Key|E}}: Switch to previous brick color
+* {{Key|Q}}: Switch to next brick color
+* {{Key|I}}: Import structure from chosen LXFML file
+* {{Key|R}}: Import last imported structure. If there was no structure imported during the session, the server crashes.
+* {{Key|Z}}: Remove last imported structure
+* {{Key|Esc}}: Quit the game
+* Mouse: Move camera
+* Scrollwheel up: Select next brick type
+* Scrollwheel down: Select previous brick type
+* Left mouse button
+** In placement mode: Place currently selected brick in the targeted space. Hold and move the mouse to adjust placement position.
+** In breaking mode: Break targeted brick
+* Right mouse button
+** In placement mode: Select alternate brick rotation
+** In breaking mode: Switch to placement mode
+
+=== Commands ===
+A small number of default commands are defined in Main.lua. The client has no chat system, so commands must be typed into the server window instead. New commands can be defined via the Lua API.
+
+The server by default defines a few commands, which are defined in <code>assets/lua/Main.lua</code>.
+
+{| class="wikitable"
+|-
+! Command !! Help text !! Description
+|-
+| '''listcommands''' || I list commands :) || Prints a list of all defined commands with help text to server standard output
+|-
+| '''msg''' ''message'' || I relay what you said to everyone :) || Prints ''message'' to server standard output
+|-
+| '''reloadscripts''' || I reload all lua scripts :) || Reloads Lua scripts
+|-
+| '''spawnentity''' || I spawn a simple box in the game :) || Spawns a test entity
+|-
+| '''testlxfml''' || I import a test LXFML file onto the server || Imports a structure from a LXFML file called <code>test.lxfml</code>
+|-
+| '''importlxfml''' ''data'' || I import a base64-encoded LXFML file onto the server || Imports a structure from base64 encoded LXFML ''data''
+|-
+| '''undoimport''' || I undo the last import made by the player who calls the command || Does nothing
+|-
+| '''alias''' ''command'' ''alias'' || I create an alias for a command :) || Creates an alias ''alias'' for the command ''command''
+|-
+| '''unalias''' ''alias'' || I remove an alias for a command :) || Removes the alias ''alias''
+|}
+
+The <code>assets/lua/Item.lua</code> file contains two more commands, but is completely commented out in the leaked build. Uncommenting the file and restarting the server will make them available.
+
+{| class="wikitable"
+|-
+! Command !! Help text !! Description
+|-
+| '''listplayers''' || I list connected players :) || Prints a list of all connected players to server standard output
+|-
+| '''addjetpack''' || I give players jetpacks! :) || Assigns a jetpack item to all connected players. Jetpacks cause players to fly into the air uncontrollably, then fall back to the ground in a loop
+|}
+
+=== Lua API ===
+
+The server supports a limited modding API using the Lua programming language. This API can be used to define commands, which can be invoked, and player items, which affect the player entity behavior.
+
+=== Directory structure ===
+
+<div class="treeview">
+* {{File|directory|Game}}
+** {{File|directory|assets}}
+*** {{File|directory|gui}}
+**** {{File|file|test.swf}}: Unused Adobe Flash program, likely for a HUD
+*** {{File|directory|lua}}: Lua scripts for the modding API
+**** {{File|file|Item.lua}}
+**** {{File|file|Main.lua}}
+*** {{File|directory|shaders}}: GLSL shaders
+**** {{File|file|chunk.frag}}
+**** {{File|file|chunk.vert}}
+**** {{File|file|floor.frag}}
+**** {{File|file|floor.vert}}
+**** {{File|file|preview.frag}}
+**** {{File|file|preview.vert}}
+**** {{File|file|screen.frag}}
+**** {{File|file|screen.vert}}
+*** {{File|directory|textures}}: Textures
+**** {{File|file|LegoColors.bmp}}: Atlas of 1x1 textures used for the bricks. BMP3 format.
+**** {{File|file|peg.png}}: The brick peg texture. PNG format.
+*** {{File|file|unispace.ttf}}: TrueType font used for HUD
+** {{File|directory|bin}}
+*** {{File|directory|win32}}
+**** {{File|file|connection.cfg}}: ASCII text file defining the server address the client connects to
+**** {{File|file|FreeImage.dll}}
+**** {{File|file|glew32.dll}}
+**** {{File|file|libfreetype-6.dll}}
+**** {{File|file|lua.debug.pdb}}
+**** {{File|file|lua.release.pdb}}
+**** {{File|file|luabind.debug.pdb}}
+**** {{File|file|luabind.dll}}
+**** {{File|file|luabind.release.pdb}}
+**** {{File|file|msvcp100.dll}}
+**** {{File|file|msvcr100.dll}}
+**** {{File|file|RakNet.dll}}
+**** {{File|file|RakNetDebug.dll}}
+**** {{File|file|Rew-Kwon-Do.instr.pdb}}{{sic}}
+**** {{File|file|Rex-Kwon-Do.exe}}: Client executable
+**** {{File|file|Rex-Kwon-Do.exp}}
+**** {{File|file|Rex-Kwon-Do.instr.pdb}}
+**** {{File|file|Rex-Kwon-Do.lib}}
+**** {{File|file|Rex-Kwon-Do.pdb}}
+**** {{File|file|Rex-Kwon-Do Server.exe}}: Server executable
+**** {{File|file|Rex-Kwon-Do Server.exp}}
+**** {{File|file|Rex-Kwon-Do Server.lib}}
+**** {{File|file|Rex-Kwon-Do Server.pdb}}
+**** {{File|file|Rex-Kwon-Do Server.sln.docstates.suo}}
+**** {{File|file|Rex-Kwon-Do Server.suo}}
+**** {{File|file|SDL.dll}}
+**** {{File|file|sqlite3.dll}}
+**** {{File|file|test.lxfml}}: LXFML file containing a tree
+**** {{File|file|test_brick_import.lxfml}}: LXFML file containing several small multicolored pillars of each brick type
+**** {{File|file|TestClient.bat}}
+**** {{File|file|Window.swf}}
+**** {{File|file|world.db}}: World file. Generated, not part of the distribution.
+**** {{File|file|zlib1.dll}}
+**** {{File|file|zlibwapi.dll}}
+*** {{File|directory|win64}}
+**** {{File|file|glew32.dll}}
+**** {{File|file|libfreetype-6.dll}}
+**** {{File|file|SDL.dll}}
+**** {{File|file|zlib1.dll}}
+**** {{File|file|zlibwapi.dll}}
+</div>
+
+== History ==
+
+[[Markus "Notch" Persson]] and [[Daniel "Kappische" Kaplan]] had envisioned a hybrid of ''Minecraft'' and ''LEGO'' bricks, and reached out to The Lego Group to develop a game in collaboration with them, which was codenamed "''Project Rex Kwon Do''", in reference to the film ''{{Wikipedia|Napoleon Dynamite}}''.<ref>{{ytl|Hzh9koy7b1E|Napoleon Dynamite - Rex Kwon Do [HQ&#93;|FlatheadedGorilla|August 1, 2011}}</ref> Mojang hired two new programmers to work on the game, and a prototype was created by Notch.
+
+Before the title had reached a significant stage of development, Mojang cancelled the collaboration to focus on developing their own titles; ''[[Minecraft]]'', ''[[Scrolls]]'', and {{0x10c}}.<ref>{{tweet|notch|226020149742927873|Remember Project Rex Kwon Do? We cancelled it to focus on Minecraft, Scrolls and eventually 0x10c that we own 100% ourselves instead.|July 19, 2012}}</ref> Notch claimed at the time that the game had been a first-person shooter.<ref>{{cite|url=https://web.archive.org/web/20120728085043/http://www.joystiq.com/2012/07/26/canceled-mojang-project-was-a-first-person-shooter/|title=Canceled Mojang project was a first-person shooter|website=joystiq|author=Jessica Conditt|date=July 26, 2012}}</ref>
+
+The game's true nature remained unknown to the public until ''Brickcraft'''s existence was revealed in December 2020 in an episode of the ''Bits N' Bricks'' podcast, created by The Lego Group to celebrate the 25th anniversary of the first LEGO video game. Daniel Mathiasen, a Lego Group employee at the time, blamed the cancellation on a series of legal hurdles that The Lego Group had put in place to protect the product's family-friendly image, with Daniel Kaplan claiming that the staff at Mojang had felt more like consultants on the project, rather than its designers.
+
+Despite the cancellation, The Lego Group remained partnered with Mojang to produce [[LEGO Minecraft]] sets, and briefly considered acquiring Mojang, but according to Ronny Scherer, the senior director for the LEGO Games Asia/Pacific division, they decided against it as ''Minecraft'' "was still emerging" and they had "no guarantee that it would end up becoming the cultural phenomenon that it became".<ref>{{Citation|url=https://www.pcgamer.com/the-lego-minecraft-videogame-brickcraft-that-was-greenlit-and-why-it-never-happened/|title=A Lego Minecraft game called 'Brickcraft' was prototyped and greenlit – here's why it never happened|author=Rich Stanton|website=PCGamer|date=December 9, 2020}}</ref><ref>https://www.lego.com/en-us/legogames-25</ref><ref name="bitsnbricks"/>
+
+On June 24, 2025, a development build of Brickcraft, dated June 28, 2012, was rediscovered and uploaded onto the Omniarchive site.<ref name="omniarchive">{{citation|url=https://omniarchive.uk/news/#brickcraft|title=Brickcraft|author=DEJVOSS|website=Omniarchive|date=June 26, 2025}}</ref> [[Daniel Kaplan]] said that he had the development build on his laptop for over 13 years.<ref>{{tweet|kappische|1938873623978148080|I’ve had it on my laptop for over 13 years 😂|June 28, 2025}}</ref>
+
+== Gallery ==
+<gallery>
+Project Rex Kwon Do.jpg|Cropped image released by Notch of "''Project Rex Kwon Do''", later revealed to be ''Brickcraft''.
+Brickcraft Player.png|The player model.
+Brickcraft Tree.png|The tree structure (<code>test.lxfml</code>).
+Brickcraft Thing.png|The other structure (<code>test_brick_import.lxfml</code>).
+Brickcraft Baseplate.png|A world with all bricks removed.
+Brickcraft Acacia.png|A player-built tree.
+</gallery>
+
+== References ==
+{{Reflist}}
+== Navigation ==
+{{Navbox Minecraft (franchise)|games}}
+[[Category:LEGO]]
+[[Category:Games]]
+[[Category:Discontinued]]
+[[Category:History]]
+[[Category:Collaborations]]
+
+[[fr:Brickcraft]]
+[[pt:Brickcraft]]
+[[zh:Brickcraft]]

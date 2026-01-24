@@ -1,0 +1,207 @@
+{{Infobox version
+|title=Minecraft Snapshot 25w34a
+|sort=25w34a
+|image=25w34a.jpg
+|image2=Java Edition 25w34a.png
+|edition=Java
+|type=Snapshot
+|date=August 19, 2025
+|jsondl=[https://piston-meta.mojang.com/v1/packages/e1d5fc928281adf15ab66ce9c77db262b5c5e11d/25w34a.json .json]
+|clienthash=19ced525ac65ecca8b501681095637d0043d6776
+|clientmap=c643ec86a0fed47822c9fec3103d46ab12197943
+|serverhash=34b22c38c3e77b96b0b8cda26687f4b2c2a5fb72
+|servermap=d71f77fcaf3000594e16df779536acbe32b9ba97
+|protocol_manual=0x40000107
+|data_manual=4539
+|respack_manual=66.0
+|parent=1.21.9
+|datpack_manual=84.0
+|prevparent=1.21.8
+|prev=25w33a
+|next=25w34b
+|nextparent=1.21.10
+}}
+<onlyinclude>
+'''25w34a''' (incorrectly titled '''Snapshot 25w34a''' in-game) is the fourth [[snapshot]] for [[Java Edition 1.21.9]], released on August 19, 2025.<ref>{{snap|25w34a|id=a|August 19, 2025}}</ref>
+
+== Additions ==
+=== Command format ===
+'''{{cmd|fetchprofile}}'''
+* New command that fetches the contents of a player profile from ''Minecraft'' servers.
+* Since the operation might take some time, it works asynchronously.
+** Results will be printed only when operation finishes, but the game will keep running unpaused.
+* After successful completion, a message will be printed that lets users copy the contents of a fully resolved {{cd|minecraft:profile}} component or {{cmd|give @s minecraft:player_head}} with said component.
+* Since the result is not known at the time of execution, this command always returns {{cd|1}}.
+* Syntax:
+** {{cmd|fetchprofile name <player name>}}: resolves profile by username (case-insensitive).
+** {{cmd|fetchprofile id <uuid>}}: resolves profile by UUID.
+
+=== General ===
+[[File:MC25w34a-CodeOfConductScreen.png|thumb|alt=Screenshot of Minecraft: Java Edition 25w34a. There is a dialog with the caption "Server Code of Conduct". The conduct here is an example, in this case saying "Hello, Minecraft Wiki!". The user is given a choice to either acknowledge and join the server, or disconnect. There is also a check box for the user to not be notified about the code of conduct on subsequent server connections.|The Code of Conduct screen shown when connecting to a server with it enabled.]]
+'''Server Code of Conduct'''
+* When connecting to a server, a Code of Conduct screen can now be shown.
+** Accepting the Code of Conduct is required to play on the server.
+** A checkbox is available for not showing the same Code of Conduct in the future.
+*** If the Code of Conduct changes, it will be shown again.
+
+== Changes ==
+=== Mobs ===
+'''[[Copper golem]]'''
+* The eyes of the copper golem are now invisible as well when splashed with [[potion of Invisibility]].
+* The hitbox has been tweaked.
+** The hitbox is now 0.6 blocks in width to be able to pathfind through open doors.
+** The hitbox is now 1.01 blocks in height to not get stuck in certain blocks.
+
+=== Gameplay ===
+'''[[Sounds]]'''
+* The sound effect produced by an End flash now has a higher delay.
+* [[Copper golem]]s & [[copper chest]]s are now audible from up to 12 blocks away.
+* The copper sorting sounds have been tweaked to be quieter.
+
+=== General ===
+'''[[Block entity data]]'''
+* {{cd|minecraft:skull}}
+** The {{cd|profile}} field has been changed to match {{cd|minecraft:profile}} component.
+*** That means that it also becomes immutable and is resolved only when necessary.
+
+'''[[Block states]]'''
+* Removed <code>align_items_to_bottom</code> block state property from [[shelf]] block.
+** It has been replaced with an equally named boolean field on the [[shelf]] block entity.
+** Shelves created with this property set in the last snapshot will reset back to the default value (<code>false</code>)
+
+'''[[Data component format]]'''
+* <code>minecraft:profile</code>
+** Player profiles in data components and block entities no longer resolve automatically.
+** Previously contents of this component would permanently change when profile was resolved, i.e. downloaded from Minecraft service.
+** To avoid issues with this unexpected change, the resolved value is no longer stored and contents of the profile will always remain unchanged.
+** This component has now two behaviors:
+*** Static: when it has <code>properties</code> field or when both <code>name</code> and <code>id</code> are present or when both are missing.
+**** In this state, profile will always render as-is.
+**** If <code>properties</code> field is missing, a default skin will be used (selected based on <code>id</code>, same as in offline mode).
+**** That means skin will be frozen at the moment of component creation.
+**** This option is preferred for decorational uses.
+*** Dynamic: when it has either <code>name</code> or <code>id</code> (but not both).
+**** When an item containing this profile is rendered on the client side, the profile will be resolved to most recent value.
+**** This means that this item will always render with current skin of targeted player.
+***** If a player changes skin while game is running, change will not be visible unless clients restart.
+**** Resolution might happen with a delay, during which item will render with a default skin.
+**** Profile name will replace item name only when it's present.
+***** Items with just <code>id</code> will show default name.
+**** Items will dynamic profiles be distinguished from static ones with label in tooltip.
+** Items stack based on exact contents, so even if a dynamic component is eventually resolved to the same profile as a static one, they won't stack together.
+** Player heads in older maps that have not been loaded in never versions yet will usually be converted to dynamic contents.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|84.0}}.
+
+'''[[Options]]'''
+* The "Hide Lightning Flashes" accessibility setting has been renamed to "Hide Sky Flashes" and now also disables the [[End Flash]]es.
+** When the flash is disabled by the setting the world will not be lit by the flash, but the flash source will still be visible in the sky and the sound effect will still play.
+
+'''[[Panorama]]'''
+* Updated the panorama to show a scene with copper golems in a village.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|66.0}}.
+
+'''[[Server.properties]]'''
+* A new boolean field has been added to {{samp|server.properties}} called <code>enable-code-of-conduct</code>.
+** Setting it to <code>true</code> will make the server look for code of conduct files in the {{samp|codeofconduct}} subfolder in the same folder as {{samp|server.properties}}
+** Each file in the folder should have the form {{samp|<language_code>.txt}}
+*** The language shown will attempt to match the player's language.
+*** If it doesn't exist, the {{samp|en_us}} code of conduct will be used.
+*** If that also doesn't exist, an arbitrary available entry is used.
+
+'''[[Statistics]]'''
+* The Statistics screen now uses the same type of tabs as the [[Create New World]] screen instead of buttons.
+
+'''[[Tag]]s'''
+* Added {{cd|barrier}} to {{cd|#impermeable}} block tag.
+* Removed {{cd|guardian}} from {{cd|#cannot_be_pushed_onto_boats}} entity type tag.
+
+'''[[Text component format]]'''
+* Bold and italics styles are ignored when drawing sprites.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w34a
+|;From released versions before 1.21
+|383|In the world selection screen, world names/versions/timestamps can overflow the list to the right.
+|36783|Item frames/Glow item frames don't change their hitbox if they contain a map.
+|59413|Water and lava can drip from barriers.
+|147784|Fletching table flashes crafting table's GUI for about a second upon right-clicking it in spectator mode.
+|259673|Tab selection works differently in world creation and statistics screens.
+|260591|{{cmd|execute on origin}} and {{cmd|execute on owner}} fail to find the targeted entity when it is in a separate dimension.
+|260920|Statistics screen columns are not accessible through keyboard navigation.
+|265290|Elements within the command block interface are not selected in order when using the {{key|TAB}} key.
+|270190|Hovering over banner patterns in the loom UI does not display tooltips.
+|270669|Incorrect argument order in translation key {{cd|argument.block.property.novalue}}.
+|272584|Fireballs redirected by explosions caused by player owned entities no longer carry player ownership.
+|;From 1.21.1
+|276931|Enchanted books have the wrong rarity.
+|;From 1.21.5
+|296789|The color of text within the test instance block interface is inconsistent with other similar interfaces.
+|;From 1.21.6
+|297496|Text inside the middle of the java realms information box completely disappears when selected.
+|299067|Arrows can lose ownership on disconnection in multiplayer.
+|299115|Arrows lose their owner tag when deflected while the owner is offline.
+|;From 1.21.8
+|300856|I-beam cursor in book signing screen has wrong color.
+|;dev
+|300045|The hand animation plays when right-clicking copper golems.
+|300046|The copper golem statue models in the inventory are partly cut off at the top.
+|300048|Copper golem statue item entities are rendered too large.
+|300066|The Ender Dragon Spawn Egg has the "Disabled in Peaceful" note despite being able to spawn in Peaceful mode.
+|300082|Copper golems with the {{cd|NoAI}} tag can adjust their rotation and spin.
+|300083|Copper golems with the {{cd|Silent}} tag can still produce some sounds.
+|300085|Copper golem statues' poses are off-centered.
+|300130|The "{{cd|commands.summon.failed.peaceful}}" string doesn’t pluralize the word "Monster".
+|300134|Copper Golem Spawn Egg isn't alphabetized in the creative inventory.
+|300213|Copper golems' hitbox is too large to fit through open single doors.
+|300222|Upon exiting the gamemode switcher {{key|F3+F4}} or debug options menu {{key|F3+F5}} while viewing the credits, the player does not resume viewing the credits and instead remains in the end in a phantom state until they relog.
+|300245|Any double chests variant doesnt play any sound when a copper golem interacts with the right part of the chest specifically.
+|300249|Copper golem statue block outline is above the top of the block below.
+|300365|Copper golems inconsistently activate trapped chests.
+|300406|Updating open copper chests causes the chests to remain open.
+|300441|Nether ambient sounds continue playing after leaving the Nether.
+|300475|The Glowing outline now appears black on the fur model parts of invisible sheep.
+|300480|Worn copper golem statues are incorrectly rotated.
+|300695|The sprint toggle state is now reset when viewing any screen.
+|300718|Player doesn't re-sneak automatically if they were sneaking before opening a GUI with Sneak Toggle set.
+|300796|Harvesting from sweet berry bushes can drop more sweet berries than before.
+|300804|The Glowing outline is now always white on invisible entities that aren't the player, unless the player is in the same team.
+|300825|Entities with NaN motion cause clients to be kicked and softlocked.
+|300839|Disc sounds can be heard in another dimension.
+|300846|The {{cmd|rotate}} command doubles the target entity's motion each time it is run.
+|300888|{{cd|pack.mcmeta}} no longer supports versions below 16 in the {{cd|supported_formats}} field.
+|;prev
+|300968|Flying state is not saved when reloading world.
+|300970|Missing sound for event: {{cd|minecraft:entity.copper_golem.shear}}.
+|300972|End light flashes sound can be heard while looking at the credits.
+|300975|Copper golems wear banners backwards.
+|300983|The speed field in {{cd|ExplosionParticleInfo}} codec is misspelled as "{{cd|speec}}".
+|300995|Game crashes when changing the F3 menu during world disconnection.
+|301004|Normal guardians are no longer able to enter boats.
+|301030|Frosted ice now melts in the End.
+|301032|Bees in the End now hide in their hive when it's raining in the Overworld.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|fCga6TTeAA4|RX5VC-WTo7A}}
+
+== Trivia ==
+* This is the third snapshot to have mislabelling, following [[Java Edition 11w50a|11w50a]] (as "11w49a", 2011) and [[Java Edition 20w06a|20w06a]] (as "Snapshot 20w06a", 2020). 
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w34a]]
+[[es:Java Edition 25w34a]]
+[[fr:Édition Java 25w34a]]
+[[ja:Java Edition 25w34a]]
+[[pt:Edição Java 25w34a]]
+[[ru:25w34a (Java Edition)]]
+[[uk:25w34a (Java Edition)]]
+[[zh:Java版25w34a]]

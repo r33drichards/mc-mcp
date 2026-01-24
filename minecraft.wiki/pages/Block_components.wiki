@@ -1,0 +1,958 @@
+{{For|item components|Item components}}
+{{exclusive|bedrock}}
+Block components are [[JSON]] objects that are added to a custom [[block definition]] in a [[behavior pack]] to customize the [[block]]'s behavior and visuals.
+{{TOC|right}}
+
+== Applying ==
+
+Block components can be applied by adding them to {{cd|components}} within {{cd|minecraft:block}} in the block's definition file.
+
+Components can also be found in a {{cd|components}} object located in objects within the {{cd|permutations}} array. This can be used to make a component only active when the permutation's {{cd|condition}} evaluates to {{cd|true}}.
+
+=== Tags ===
+
+Tags are used to categorize blocks and allow them to work better with vanilla blocks and items. Both vanilla and custom [[Block tag (Bedrock Edition)|block tags]] can be added. Tags are added with other components, as an empty object with the format: <code>"tag:''<tag_name>''": {}</code>
+
+Example:
+<syntaxhighlight lang=json copy>
+"tag:minecraft:is_pickaxe_item_destructible": {}
+</syntaxhighlight>
+
+=== Permutations ===
+
+Permutations are used to make some block components active only under certain conditions.
+Permutations are defined in the {{cd|permutations}} array within {{cd|minecraft:block}}, and consist of two properties:
+* {{nbt|string|condition}}: A molang expression resolving to a boolean, representing when the permutation's components should be active. This is most often a [[block state]] query. For example: 
+<syntaxhighlight lang=json copy>
+"condition": "query.block_state('minecraft:cardinal_direction') == 'north'"</syntaxhighlight>
+* {{nbt|compound|components}}: The [[#Components list|components]] for this permutation.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"permutations": [
+  {
+    "condition": "query.block_state('minecraft:vertical_half') == 'top'",
+    "components": {
+      "minecraft:collision_box": {
+        "origin": [-8,8,-8],
+        "size": [16,8,16]
+      }
+    }
+  },
+  {
+    "condition": "query.block_state('minecraft:vertical_half') == 'bottom'",
+    "components": {
+      "minecraft:collision_box": {
+        "origin": [-8,0,-8],
+        "size": [16,8,16]
+      }
+    }
+  }
+]
+</syntaxhighlight>
+
+== Components list ==
+
+=== <code>minecraft:collision_box</code> ===
+Defines the block's [[hitbox#Collision box|collision box]]. This component can be specified in 2/3{{onlyExperimental|Upcoming Creator Features}} ways.
+
+* '''As a single {{cd|true}} or {{cd|false}} value:'''
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:collision_box": true
+</syntaxhighlight>
+
+* '''As a JSON object:'''
+
+Fields:
+
+* '''{{cd|origin}}''':
+** The origin of the collision box. (0,0,0) represents the bottom center of the block.
+* '''{{cd|size}}''':
+** The size of the collision box. The total size of the collision box may not be larger than 16&times;16&times;16/16&times;24&times;16{{onlyExperimental|Upcoming Creator Features}}.
+
+Example (Bottom [[slab|half slab]] collision):
+
+<syntaxhighlight lang=json copy>
+"minecraft:collision_box": {
+  "origin": [-8,0,-8],
+  "size": [16,8,16]
+}
+</syntaxhighlight>
+
+* '''As a JSON array:'''{{onlyExperimental|Upcoming Creator Features}}
+
+The array consists of the above object, allowing for the definition of multiple collision boxes.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:collision_box": [
+  {
+    "origin": [-8,0,-8],
+    "size": [16,8,16]
+  },
+  {
+    "origin": [-8,8,-8],
+    "size": [16,8,8]
+  }
+]
+</syntaxhighlight>
+
+=== <code>minecraft:connection_rule</code> ===
+{{Experimental|be|be=Upcoming Creator Features|untilbe=26.0|section=1}}
+
+Defines which blocks this block can connect to with the {{cd|minecraft:connection}} [[block trait]].
+
+Fields:
+
+* '''{{cd|accepts_connections_from}}''':
+** ''Optional.'' Which blocks this block can connect to. If omitted, the block accepts connections from all blocks. Allowed values are {{cd|d=and|all|only_fences|none}}.
+* '''{{cd|enabled_directions}}''':
+** ''Optional.'' Enables connection in only certain directions, disabling others; available values are {{cd|north}}, {{cd|south}}, {{cd|west}}, and {{cd|east}}.
+
+Example:
+<syntaxhighlight lang=json copy>
+"minecraft:connection_rule": {
+  "accepts_connections_from": "only_fences",
+  "enabled_directions": ["north", "south", "east"]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:crafting_table</code> ===
+Gives a custom block the functionality of a [[crafting table]].
+
+Fields:
+
+* '''{{cd|crafting_tags}}''':
+** An array of [[recipe]] tags that this block should be able to craft. There can be at most 64 tags, and each tag can be at most 64 characters.
+** The default tag for vanilla crafting recipes is {{cd|crafting_table}}, and custom tags can be specified to allow crafting of recipes with that tag in their [[Recipe#Bedrock Edition JSON format|definition]].
+* '''{{cd|table_name}}''':
+** The name to display in the crafting table UI. Specified as a localization string, or will resort to a regular string if it can't be resolved.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:crafting_table": {
+  "crafting_tags": [
+    "crafting_table",
+    "custom_crafting_table"
+  ],
+  "table_name": "Custom Crafting Table"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:destructible_by_explosion</code> ===
+Defines whether the block can be destroyed by [[explosions]], and sets its [[blast resistance]].
+This component can be defined in two ways.
+
+* '''As a boolean ({{cd|true}} or {{cd|false}}) value:'''
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:destructible_by_explosion": false
+</syntaxhighlight>
+
+* '''As a JSON object:'''
+
+Fields:
+
+* '''{{cd|explosion_resistance}}''':
+** Sets the block's resistance to explosions.
+** ''Note that the actual blast resistance value of the block is 1/5 of the value set here.''
+
+Example (Blast resistance 6, similar to [[cobblestone]]):
+
+<syntaxhighlight lang=json copy>
+"minecraft:destructible_by_explosion": {
+  "explosion_resistance": 30
+}
+</syntaxhighlight>
+
+=== <code>minecraft:destructible_by_mining</code> ===
+Defines whether the block can be [[mined]] and sets its [[hardness]].
+This component can be defined in two ways.
+
+'''As a boolean ({{cd|true}} or {{cd|false}}) value:'''
+
+A value of {{cd|true}} makes the block destructible in 0 seconds, making it able to be [[instant mine|instant mined]].
+A value of {{cd|false}} makes the block indestructible by mining.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:destructible_by_mining": true
+</syntaxhighlight>
+
+'''As a JSON object:'''
+
+Structure:
+<div class="treeview">
+* {{nbt|compound|minecraft:destructible_by_mining}}: (root of component)
+** {{nbt|list|item_specific_speeds}}
+*** {{nbt|compound|An item}}:
+**** {{nbt|int|destroy_speed}}: The hardness of the block when mined with the target item(s).
+**** {{nbt|string}}{{nbt|compound|item}}: A description of the item(s). Either a string item identifier or an object.
+***** {{nbt|string|tags}}: A [[Molang]] expression defining the [[Item tag (Bedrock Edition)|tags]] of the target item(s).
+** {{nbt|int|seconds_to_destroy}}
+</div>
+
+Fields:
+* '''{{cd|seconds_to_destroy}}''': The amount of time it takes to destroy the block. ''Note that this sets the block's hardness value, not the actual seconds to destroy!''
+* '''{{cd|item_specific_speeds}}''': ''Optional.'' Specific breaking speed values for each item, it is recommended to use tags because manually defining items can make the list unnecessarily long and remove compatibility with the enchantment [[Efficiency]].
+Example:
+<syntaxhighlight lang=json copy>
+"minecraft:destructible_by_mining": {
+  "item_specific_speeds": [
+    {
+      "item": {
+        "tags": "q.all_tags('minecraft:is_pickaxe') && q.any_tag('minecraft:diamond_tier','minecraft:netherite_tier')"
+      },
+      "destroy_speed": 30
+    },
+    {
+      "item": "minecraft:iron_axe",
+      "destroy_speed": 13
+    }
+  ],
+  "seconds_to_destroy": 100
+}
+</syntaxhighlight>
+
+=== <code>minecraft:destruction_particles</code> ===
+Configures the destruction particles created when the block is destroyed.
+
+Fields:
+
+* '''{{cd|particle_count}}''':
+** ''Optional.'' Sets the number of particles created when the block destroyed. Default is {{cd|100}}, maximum is {{cd|255}}.
+* '''{{cd|texture}}''':
+** ''Optional.'' The [[texture]] to use for the particles. This is a texture name defined in {{cd|terrain_texture.json}}. Defaults to the texture of the {{cd|down}} material instance.
+* '''{{cd|tint_method}}''':
+** ''Optional.'' The method with which the particles are tinted. Default is {{cd|none}}.
+** Can be {{cd|none|default_foliage|birch_foliage|evergreen_foliage|dry_foliage|grass|water|d=or}}.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:destruction_particles": {
+  "particle_count": 255,
+  "texture": "cobblestone",
+  "tint_method": "none"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:display_name</code> ===
+Sets the display name of the block. If omitted, the default display name is "tile.''&lt;block identifier&gt;''.name".
+The name given will try be resolved as a localization string. If it cannot be resolved, it will show as given.
+
+This component is specified as a string.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:display_name": "tile.wiki:custom_block.name"
+</syntaxhighlight>
+
+=== <code>minecraft:embedded_visual</code> ===
+Sets the visuals of the block when it is embedded, such as in a [[flowerpot]].
+This component can not be specified in entries in the {{cd|permutations}} array.
+
+Fields:
+
+* '''{{cd|geometry}}''':
+** A [[#minecraft:geometry|{{cd|minecraft:geometry}}]] component defining the embedded geometry.
+* '''{{cd|material_instances}}''':
+** A [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] component defining the embedded material. <!--This section will be added later.-->
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:embedded_visual": {
+  "geometry": "minecraft:geometry.full_block",
+  "material_instances": {
+    "*": {
+      "texture": "cobblestone"
+    }
+  }
+}
+</syntaxhighlight>
+
+=== <code>minecraft:entity_fall_on</code> ===
+Configures the fall distance required to trigger the {{cd|onEntityFallOn}} custom component [[Add-on#Scripting|script]] event. The distance defaults to 1 block if omitted.
+
+Fields:
+
+* '''{{cd|min_fall_distance}}''':
+** The distance an entity must fall to trigger the event.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:entity_fall_on": {
+  "min_fall_distance": 2
+}
+</syntaxhighlight>
+
+=== <code>minecraft:flammable</code> ===
+Defines how [[flammable]] the block is, in this case, all blocks with this component will burn from fire and lava, unlike vanilla where some blocks do not burn from lava.
+This component can be defined in two ways.
+
+* '''As a boolean ({{cd|true}} or {{cd|false}}) property:'''
+
+If {{cd|true}}, the block can catch fire from nearby blocks. The chance modifier for catching fire is automatically set to 5, and the chance modifier for the block being destroyed by fire is set to 20.
+
+If {{cd|false}} (or omitted) the block will only catch fire if directly ignited.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:flammable": true
+</syntaxhighlight>
+
+* '''As a JSON object:'''
+
+Fields:
+
+* '''{{cd|catch_chance_modifier}}''':
+** ''Optional.'' The chance that the block catches fire from a nearby block. Default is 5.
+** If greater than 0, fire on the block will burn until it is destroyed or the fire is put out. If {{cd|destroy_chance_modifier}} is 0, the block will burn forever.
+** If 0 the block will eventually burn out (if it isn't destroyed).
+* '''{{cd|destroy_change_modifier}}''':
+** ''Optional.'' The chance the block is destroyed while on fire. Default is 20.
+** If 0, the block will not be destroyed by fire.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:flammable": {
+  "catch_chance_modifier": 5,
+  "destroy_chance_modifier": 20
+}
+</syntaxhighlight>
+
+=== <code>minecraft:flower_pottable</code> ===
+Indicates that this block can be placed inside a [[flower pot]]. The geometry of the block while inside a flower pot is specified by [[#minecraft:geometry|{{cd|minecraft:geometry}}]] by default, but it can be changed with [[#minecraft:embedded_visual|{{cd|minecraft:embedded_visual}}]].
+This component is specified as an empty object, and can not be specified in an entry to the {{cd|permutations}} array.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:flower_pottable": {}
+</syntaxhighlight>
+
+=== <code>minecraft:friction</code> ===
+Describes the block's friction.
+This component is specified as a decimal number between {{cd|0.0}} and {{cd|9.0}}.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:friction": 0.4
+</syntaxhighlight>
+
+=== <code>minecraft:geometry</code> ===
+Defines the geometry of the block. There are two vanilla models that can be used: {{cd|minecraft:geometry.full_block|minecraft:geometry.cross|d=and}}, {{cd|minecraft:geometry.full_block_v1}}{{upcoming|be 26.0}}. You can also use your own model from a [[resource pack]].
+This component must be included with [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]]. This component can be specified in two ways.
+
+* '''As a string:'''
+
+The identifier of the model for the block.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:geometry": "minecraft:geometry.full_block"
+</syntaxhighlight>
+
+* '''As a JSON object:'''
+
+Fields:
+
+* '''{{cd|bone_visibility}}''':
+** ''Optional.'' Defines the visibility of each bone. All bones are visible by default.
+** A key-value map of bone names from the model to [[molang]] expressions that result in boolean values.
+* '''{{cd|culling}}''':
+** ''Optional.'' An identifier of a culling definition.
+* '''{{cd|culling_layer}}''':
+** ''Optional.'' A string to group multiple blocks when comparing them in a culling rule. Default is {{cd|minecraft:culling_layer.undefined}} but there is also {{cd|minecraft:culling_layer.leaves}} as vanilla.
+* '''{{cd|identifier}}''':
+** The identifier of the block model to use.
+* '''{{cd|uv_lock}}''':
+** ''Optional.'' Sets whether UVs should be locked to their original rotations, regardless of the [[#minecraft:transformation|{{cd|minecraft:transformation}}]] component.
+** Can be an array of bone names to lock, {{cd|false}} (default) which locks none, or {{cd|true}} which locks all bones.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:geometry": {
+  "identifier": "geometry.some_model",
+  "culling": "wiki:culling.example_block",
+  "culling_layer": "minecraft:culling_layer.leaves",
+  "bone_visibility": {
+    "north_top": false,
+    "right_corner": "q.block_state('wiki:corner') == 'right'"
+  },
+  "uv_lock": ["bottom"]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:item_visual</code> ===
+Defines the visuals of the block's item form.
+
+Fields:
+
+* '''{{cd|geometry}}''':
+** A [[#minecraft:geometry|{{cd|minecraft:geometry}}]] component defining the geometry of the block item.
+* '''{{cd|material_instances}}''':
+** A [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] component defining the material of the block item.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:item_visual": {
+  "geometry": "minecraft:geometry.full_block",
+  "material_instances": {
+    "*": {
+      "texture": "cobblestone"
+    }
+  }
+}
+</syntaxhighlight>
+
+=== <code>minecraft:leashable</code> ===
+{{Experimental|be|be=Upcoming Creator Features|untilbe=26.0|section=1}}
+
+Allows a [[lead]] to be attached to the block like a [[fence]] and specifies an offset for the leash knot's location. 
+
+Fields:
+* <code>offset</code>:
+** A Vector3 property (array of three numbers <code>[x, y, z]</code>) that sets the position of the leash knot. <code>[0, 0, 0]</code> represents the bottom center of the block.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:leashable": {
+  "offset": [0, 8, 0]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:light_dampening</code> ===
+Sets the number of [[light levels]] that will be dampened by the block. This component is specified as an integer between 0 and 15, where 15 blocks all light.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:light_dampening": 15
+</syntaxhighlight>
+
+=== <code>minecraft:light_emission</code> ===
+Sets the light level emitted by the block.
+This component is specified as an integer between 0 and 15.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:light_emission": 14
+</syntaxhighlight>
+
+=== <code>minecraft:liquid_detection</code> ===
+Defines how the block responds to [[liquids]].
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:liquid_detection}}: The component root.
+** {{nbt|list|detection_rules}}: An array of liquid rules.
+*** {{nbt|compound}}: ''A rule''
+**** {{nbt|bool|can_contain_liquid}}: {{cd|true}} or {{cd|false}} whether the liquid can occupy the same space as the block. In other words, can it be [[waterlogged]]?
+**** {{nbt|string|liquid_type}}: The type of liquid this rule applies to. Currently, the only available value is {{cd|water}}.
+**** {{nbt|string|on_liquid_touches}}: ''Optional.'' Sets what happens when liquid touches the block. Available values are:
+***** {{cd|blocking}}: ''Default.'' The block stops liquid from flowing through it.
+***** {{cd|broken}}: The block is destroyed on contact with flowing liquid.
+***** {{cd|popped}}: The block breaks and drops its loot on contact with flowing liquid.
+***** {{cd|no_reaction}}: Liquids flow through the block as if it is not there.
+**** {{nbt|list|stops_liquid_flowing_from_direction}}: ''Optional.'' An array of directions from which liquid can not flow out of (or in to, if {{cd|on_liquid_touches}} is set to {{cd|no_reaction}}) the block.
+**** {{nbt|bool|use_liquid_clipping}}:{{upcoming|BE 26.0}} {{cd|true}} means the block will use the [[#minecraft:collision_box|{{cd|minecraft:collision_box}}]] to visually clip the water like the [[stairs]], {{cd|false}} ignores liquid clipping, which will render water across the whole block how current behavior.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:liquid_detection": {
+  "detection_rules": [
+    {
+      "liquid_type": "water",
+      "can_contain_liquid": false,
+      "on_liquid_touches": "popped",
+      "use_liquid_clipping": true
+    }
+  ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:loot</code> ===
+Defines the block's loot table. <!--We don't have a page for Bedrock loot tables.-->
+This component is defined as a string path to the loot table. This component is completely ignored if the block is broken with an item enchanted by [[Silk Touch]], resulting in the block dropping itself.
+
+Example:
+<syntaxhighlight lang=json copy>
+"minecraft:loot": "loot_tables/blocks/some_block.json"
+</syntaxhighlight>
+
+=== <code>minecraft:map_color</code> ===
+Sets the block's color when seen on a [[map]].
+This component can be defined in three ways.
+
+* '''As a string:'''
+
+The hex color value to use for the block's color on a map.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:map_color": "#7A4F0C"
+</syntaxhighlight>
+
+* '''As an array:'''
+
+An array of three values between 0 and 255, representing the red, green, and blue color values respectively.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:map_color": [50,205,25]
+</syntaxhighlight>
+
+* '''As a JSON object:'''
+
+Fields:
+
+* '''{{cd|color}}''':
+** The color to use on the map.
+** This is specified as an RGB array, or an hex string, as described above.
+* '''{{cd|tint_method}}''':
+** ''Optional.'' The method to use to [[Biome#Tint|tint]] the color based on the [[biome]]. Available values are {{cd|none|default_foliage|birch_foliage|evergreen_foliage|dry_foliage|grass|water|d=and}}.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:map_color": {
+  "color": "#FEFEFE",
+  "tint_method": "grass"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:material_instances</code> ===
+Defines the materials and textures of the block. This component must be included with [[#minecraft:geometry|{{cd|minecraft:geometry}}]].
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:material_instances}}: The component root.
+** {{nbt|string}}{{nbt|compound|'''*'{{!}}<block face>{{!}}<material name>''}}: A material instance definition, or the name of a material instance. The name of the property can be the name of a block face, a "*" to map to all block faces, or a custom name to define a material instance.
+*** {{nbt|boolean}}{{nbt|float|ambient_occlusion}}: ''Optional.'' Whether the block should have ambient occlusion, and its intensity.
+*** {{nbt|boolean|face_dimming}}: ''Optional.'' Sets if these faces are dimmed by their direction.
+*** {{nbt|boolean|isotropic}}: ''Optional.'' Should the UVs for these faces be randomly rotated based on position?
+*** {{nbt|string|render_method}}: ''Optional.'' The block's render method.
+**** {{cd|opaque}}: ''Default.'' Non-transparent texture, viewable from the full render distance.
+**** {{cd|alpha_test}}: Allows for transparent textures, but disables backface culling, and can only be viewed from half the render distance.
+**** {{cd|alpha_test_single_sided}}: Like {{cd|alpha_test}}, but reenables backface culling. Also can only be viewed from half the render distance.
+**** {{cd|blend}}: Allows for texture translucency, but disables backface culling.
+**** {{cd|double_sided}}: Like {{cd|opaque}}, but disables backface culling.
+**** {{cd|alpha_test_to_opaque}}: {{cd|alpha_test}}, but past half the render distance it shifts to {{cd|opaque}}, like [[leaves]].
+**** {{cd|alpha_test_single_sided_to_opaque}}: {{cd|alpha_test_single_sided}}, but past half the render distance it shifts to {{cd|opaque}}.
+**** {{cd|blend_to_opaque}}: {{cd|blend}}, but past half the render distance it shifts to {{cd|opaque}}.
+*** {{nbt|string|texture}}: Defines the texture for the material instance. This is the name of a texture defined within {{cd|terrain_texture.json}}.
+*** {{nbt|string|tint_method}}: ''Optional.'' Sets the method with which to [[Biome#Tint|tint]] the texture based on the biome. Available values are {{cd|none|default_foliage|birch_foliage|evergreen_foliage|dry_foliage|grass|water|d=and}}.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:material_instances": {
+  "*": {
+    "isotropic": true,
+    "render_method": "opaque",
+    "texture": "cobblestone"
+  }
+}
+</syntaxhighlight>
+
+=== <code>minecraft:movable</code> ===
+Determines the block's behavior when being pushed or pulled by a [[piston]].
+
+Fields:
+
+* '''{{cd|movement_type}}''':
+** How the block will react to a piston.
+** Can be {{cd|push_pull|push|popped|immovable|d=or}}.
+* '''{{cd|sticky}}''':
+** ''Optional.'' Whether or not the block affects nearby blocks when pushed or pulled, allowing behavior similar to [[Slime Block|slime]] or [[Honey Block|honey]] blocks.
+** Can be {{cd|same|none|d=or}}. Default is {{cd|none}}.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:movable": {
+  "movement_type": "popped"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:placement_filter</code> ===
+Defines the conditions in which the block can survive. If the conditions are not met, the block can not be placed, and if it already exists, it will break and drop itself.
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:placement_filter}}: The component root.
+** {{nbt|list|conditions}}: A list of conditions.
+*** {{nbt|compound}} ''A condition''
+**** {{nbt|list|allowed_faces}}: ''Optional.'' A list of allowed faces the block can be placed on, or {{cd|all}} for all faces.
+**** {{nbt|list|block_filter}}: ''Optional.'' A list of blocks that this block can be placed on.
+***** {{nbt|compound}} ''A filter''
+****** {{nbt|string|name}}: ''Optional.'' The block identifier.
+****** {{nbt|compound|states}}: ''Optional.'' A key-value map of block states to required values.
+****** {{nbt|string|tags}}: ''Optional.'' A molang expression defining the [[Block tag (Bedrock Edition)|tags]] for the block.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:placement_filter": {
+  "conditions": [
+    {
+	  "allowed_faces": ["up","down"],
+	  "block_filter": [
+		{
+		  "tags": "q.any_tag('stone')"
+		}
+	  ]
+	}
+  ]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:precipitation_interactions</code> ===
+Defines how the block is affected by [[precipitation]].
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:precipitation_interactions}}: The component root.
+** {{nbt|string|precipitation_behavior}}: The block behavior with precipitation.
+*** {{cd|obstruct_rain_accumulate_snow}}: ''Default.'' Rain particles will land on the block, and [[snow layers]] will accumulate if it is snowing.
+*** {{cd|obstruct_rain}}: Rain particles will land on the block, but snow will not accumulate.
+*** {{cd|none}}: Rain and snow will pass through the block.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:precipitation_interactions": {
+  "precipitation_behavior": "obstruct_rain"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:random_offset</code> ===
+Allows the block's model to be randomly offset, similar to [[short grass]]. The chosen offset is still subject to the block model limits.
+Due to current limitations, this component causes the block to be shadowed if it intersects another block.
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:random_offset}}: The component root.
+** {{nbt|compound|''<axis>''}}: The settings for the axis ({{cd|x|y|z|d=or}}).
+*** {{nbt|int|steps}}: The number of possible values within the range to be chosen from. 0 means any value within the range can be chosen.
+*** {{nbt|compound|range}}: The range of values to choose from.
+**** {{nbt|float|max}}: The maximum possible value.
+**** {{nbt|float|min}}: The minimun possible value.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:random_offset": {
+  "x": {
+    "steps": 0,
+    "range": {
+      "max": 5,
+      "min": -5
+    }
+  },
+  "y": {
+    "steps": 4,
+    "range": {
+      "max": 2,
+      "min": -1
+    }
+  },
+  "z": {
+    "steps": 0,
+    "range": {
+      "max": 5,
+      "min": -5
+    }
+  }
+}
+</syntaxhighlight>
+
+=== <code>minecraft:redstone_conductivity</code> ===
+Defines how the block conducts [[redstone power]].
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:redstone_conductivity}}: The component root.
+** {{nbt|boolean|allows_wire_to_step_down}}: ''Optional.'' Sets whether [[redstone wire]] can step down the side of this block.
+** {{nbt|boolean|redstone_conductor}}: ''Optional.'' Sets whether the block [[Conductivity|conducts]] redstone.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:redstone_conductivity": {
+  "allows_wire_to_step_down": false,
+  "redstone_conductor": false
+}
+</syntaxhighlight>
+
+=== <code>minecraft:redstone_consumer</code> ===
+{{Experimental|be|be=Upcoming Creator Features|untilbe=26.0|section=1}}
+
+Allows the block to consume a redstone signal, sending the {{cd|onRedstoneUpdate}} custom component event to scripts when the power changes.
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:redstone_consumer}}: The component root.
+** {{nbt|int|min_power}}: ''Optional.'' Sets the minimum power required to trigger the script event. Must be between 0 and 15.
+** {{nbt|boolean|propogates_power}}{{until|BE 26.0}}/{{nbt|boolean|propagates_power}}{{upcoming|BE 26.0}}: ''Optional.'' Sets whether a redstone signal will pass through this block.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:redstone_consumer": {
+  "min_power": 0,
+  "propagates_power": true
+}
+</syntaxhighlight>
+
+=== <code>minecraft:redstone_producer</code> ===
+Allows the block to produce a redstone signal.
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:redstone_consumer}}: The component root.
+** {{nbt|int|power}}: Sets the power level that this block produces. Must be between 0 and 15.
+** {{nbt|string|strongly_powered_face}}: ''Optional.'' Determines the face of the block that [[Strongly powered|strongly powers]] the block it is connected to.
+** {{nbt|list|connected_faces}}: ''Optional.'' A list of the faces of the block that emit redstone power.
+** {{nbt|boolean|transform_relative}}: ''Optional.'' Whether the faces selected should be relative to the [[#minecraft:transformation|{{cd|minecraft:transformation}}]] component.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:redstone_producer": {
+  "power": 15,
+  "strongly_powered_face": "up",
+  "connected_faces": ["north","south"],
+  "transform_relative": true
+}
+</syntaxhighlight>
+
+=== <code>minecraft:replaceable</code> ===
+Allows the block to be replaced when another block is placed in its position, like [[short grass]].
+This component is specified as an empty object.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:replaceable": {}
+</syntaxhighlight>
+
+=== <code>minecraft:selection_box</code> ===
+Defines the block's selection box.
+This component can be defined in two ways.
+
+* '''As a boolean ({{cd|true}} or {{cd|false}}) value:'''
+
+A value of {{cd|true}} creates the default full block selection box.
+A value of {{cd|false}} makes the block not selectable by players.
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:selection_box": true
+</syntaxhighlight>
+
+* '''As a JSON object:'''
+
+Fields:
+
+* '''{{cd|origin}}''':
+** The origin of the selection box. (0,0,0) represents the bottom center of the block.
+* '''{{cd|size}}''':
+** The size of the selection box. The total size of the selection box may not be larger than 16&times;16&times;16.
+
+Example (Bottom [[slab|half slab]]):
+
+<syntaxhighlight lang=json copy>
+"minecraft:selection_box": {
+  "origin": [-8,0,-8],
+  "size": [16,8,16]
+}
+</syntaxhighlight>
+
+=== <code>minecraft:support</code> ===
+{{Experimental|be|be=Upcoming Creator Features|untilbe=26.0|section=1}}
+
+Defines the shape of the block with regards to how it can support other blocks like [[torches]]. This component cannot be used in permutations.
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:support}}: The component root.
+** {{nbt|string|shape}}: The support shape of the block. If the component is omitted, the default is unit cube (all sides give support).
+*** <code>stair</code>: Uses the shape of a [[stair]] (bottom and back give support). This requires the <code>minecraft:vertical_half</code> [[block state]], and either state from the <code>minecraft:placement_direction</code> [[block trait]].
+*** <code>fence</code>: Uses the shape of a [[fence]] (bottom and top give support).
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:support": {
+  "shape": "fence"
+}
+</syntaxhighlight>
+
+=== <code>minecraft:tick</code> ===
+Sets the block to [[Tick#Scheduled tick|tick]] after a certain number of ticks, which will trigger the <code>onTick</code> custom component event.
+This component is required in order to use the <code>onTick</code> event.
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:tick}}: The component root.
+** {{nbt|list|interval_range}}: The minimum and maximum possible time between block ticks. The time values are specified in ticks.
+** {{nbt|boolean|looping}}: ''Optional.'' Whether the block should continue to tick after the first tick.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:tick": {
+  "interval_range": [20,100],
+  "looping": true
+}
+</syntaxhighlight>
+
+=== <code>minecraft:transformation</code> ===
+Transforms the block's [[#minecraft:geometry|geometry]], [[#minecraft:collision_box|collision box]], and [[#minecraft:selection_box|selection box]].
+The transformations specified here are still subject to the block model limits.
+
+Structure:
+
+<div class="treeview">
+* {{nbt|compound|minecraft:transformation}}: The component root.
+** {{nbt|list|rotation}}: ''Optional.'' The rotation values around each axis.
+** {{nbt|list|rotation_pivot}}: ''Optional.'' The point to apply rotation around. Defaults to the center of the block.
+** {{nbt|list|scale}}: ''Optional.'' The scale amount for each axis.
+** {{nbt|list|scale_pivot}}: ''Optional.'' The point to apply scaling around. Defaults to the center of the block.
+** {{nbt|list|translation}}: ''Optional.'' The distance on each axis to translate the block's geometry.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"minecraft:transformation": {
+  "rotation": [0,90,0]
+}
+</syntaxhighlight>
+
+== Custom components ==
+
+Custom block components allow for custom blocks to take advantage of [[script API]] capabilities. Custom components are registered in scripts using the method {{cd|StartupEvent.blockComponentRegistry.registerCustomComponent()}}.
+
+Custom components can be added to blocks the same way as any other component, using the namespaced [[identifier]] the component was registered with. Custom components can have arguments of any type, which will be passed to scripts as the second argument.
+
+Examples:
+<syntaxhighlight lang=json copy>
+"example_namespace:example_component": "foo",
+"example_namespace:example_component2": 4,
+"example_namespace:example_component3": [ "hello", "world" ],
+"example_namespace:example_component4": true,
+"example_namespace:example_component5": {
+  "stuff": 4
+}
+</syntaxhighlight>
+
+In scripts, the custom component object can have methods added to listen to any amount of the following events<ref>{{cite|url=https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/blockcustomcomponent?view=minecraft-bedrock-stable|title=minecraft/server.BlockCustomComponent Interface|website=Microsoft Learn|date=December 3, 2025}}</ref>:
+
+* {{cd|beforeOnPlayerPlace}}: Called before the player places the block.
+* {{cd|onBreak}}: Called when the block is [[destroyed]].
+* {{cd|onEntity}}: Called when an entity sends an event to the block.{{OnlyExperimental|Beta APIs}}
+* {{cd|onEntityFallOn}}: Called when an entity falls onto the block. This requires the [[#minecraft:entity_fall_on|{{cd|minecraft:entity_fall_on}}]] component.
+* {{cd|onPlace}}: Called when the block is placed.
+* {{cd|onPlayerBreak}}: Called when the block is destroyed by a player.
+* {{cd|onPlayerInteract}}: Called when a player interacts with the block.
+* {{cd|onRandomTick}}: Called when the block is [[Random tick|randomly ticked]].
+* {{cd|onRedstoneUpdate}}: Called when the block receives a redstone update. This requires the [[#minecraft:redstone_consumer|{{cd|minecraft:redstone_consumer}}]] component, and will only be called if the signal power is greater than or equal to the {{cd|min_power}} set in the component.
+* {{cd|onStepOff}}: Called when an entity steps off the block.
+* {{cd|onStepOn}}: Called when an entity steps on to the block.
+* {{cd|onTick}}: Called when the block ticks (As specified by the [[#minecraft:tick|{{cd|minecraft:tick}}]] component).
+
+== History ==
+{{Missing information|section|Information about many components.}}
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||?|Block components were added.}}
+|{{HistoryLine||1.21.80|dev=Preview 1.21.80.21|exp=Upcoming Creator Features|The texture field in [[#minecraft:destruction_particles|{{cd|minecraft:destruction_particles}}]] is now optional; if not provided or empty, it will be populated from the Material Instances component.}}
+|{{HistoryLine||1.21.80|dev=Preview 1.21.80.22|Removed Upcoming Creator Features experiment requirement for field {{cd|isotropic}} in [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] component.|From 1.21.80 onward, when using a [[#minecraft:geometry|{{cd|minecraft:geometry}}]] component or [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] component, you must include both.}}
+|{{HistoryLine|||dev=Preview 1.21.80.25|Added {{cd|blend_to_opaque|alpha_test_to_opaque|alpha_test_single_sided_to_opaque|d=and}} {{cd|render_method}} types to [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]].|The field {{cd|tint_method}} in the {{cd|minecraft:map_color|minecraft:destruction_particles|minecraft:material_instances|d=and}} components no longer require the "upcoming creator feeatures" toggle.}}
+|{{HistoryLine||1.21.90|dev=Preview 1.21.90.20|Removed component {{cd|minecraft:custom_components}} now replaced by custom component V2 in JSON versions 1.21.90 and higher.|Updated [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]]
+Updated the {{cd|*}} instance to be optional.}}
+|{{HistoryLine||1.21.90|dev=Preview 1.21.90.21|exp=Upcoming Creator Features|Added field {{cd|uv_lock}} to [[#minecraft:geometry|{{cd|minecraft:geometry}}]] block component behind Upcoming Creator Features experiment.|Updated [[#minecraft:destruction_particles|{{cd|minecraft:destruction_particles}}]] added {{cd|particle_count}} parameter which determines how many particles are created when the block is destroyed (0-255).}}
+|{{HistoryLine|||dev=Preview 1.21.90.23|Added [[#minecraft:random_offset|{{cd|minecraft:random_offset}}]] component under the Upcoming Creator Features toggle. This allows for blocks to randomly offset like foliage does in the Vanilla game.}}
+|{{HistoryLine||1.21.90|dev=Preview 1.21.90.25|Updated [[#minecraft:geometry|{{cd|minecraft:geometry}}]], released {{cd|culling_layer}} parameter from experimental.|UV locking will not be supported if Block Json {{cd|format_version}} is less than {{cd|1.19.80}}.}}
+|{{HistoryLine||1.21.90|dev=Preview 1.21.90.26|exp=Upcoming Creator Features|Added [[#minecraft:movable|{{cd|minecraft:movable}}]] component under the "Upcoming Creator Features" toggle. This allows for blocks to configure how they should react when moved by a [[piston]].}}
+|{{HistoryLine||1.21.90|dev=Preview 1.21.90.27|The render methods {{cd|alpha_test_to_opaque|alpha_test_single_sided_to_opaque|blend_to_opaque|d=and}} will not shift to opaque in the distance.}}
+|{{HistoryLine||1.21.100|dev= Preview 1.21.100.20|The field {{cd|uv_lock}} in the component [[#minecraft:geometry|{{cd|minecraft:geometry}}]] no longer requires experiment in format version of 1.19.80 or higher.}}
+|{{HistoryLine|||dev=Preview 1.21.100.21|Field {{cd|uv_lock}} in the component [[#minecraft:geometry|{{cd|minecraft:geometry}}]] now requires format version of 1.21.90 or higher.|{{cd|alpha_test_to_opaque|alpha_test_single_sided_to_opaque|blend_to_opaque|d=and}} will now shift to {{cd|opaque}} in the distance again when used as render method in [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]].|The component [[#minecraft:movable|{{cd|minecraft:movable}}]] no longer requires experiment.}}
+|{{HistoryLine|||dev=Preview 1.21.100.22|Released the component [[#minecraft:random_offset|{{cd|minecraft:random_offset}}]] from experimental for block format versions 1.21.100 or higher.}}
+|{{HistoryLine|||dev=Preview 1.21.100.23|Released {{cd|particle_count}} parameter in component [[#minecraft:destruction_particles|{{cd|minecraft:destruction_particles}}]] from experimental.}}
+|{{HistoryLine||1.21.111|dev= Preview 1.21.110.25|exp=Upcoming Creator Features|Added components {{cd|minecraft:redstone_producer|minecraft:flower_pottable|minecraft:embedded_visual|d=and}}.|Modified [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] to support weighted texture variations.}} 
+|{{HistoryLine||1.21.120|dev=Preview 1.21.120.20|exp=Upcoming Creator Features|Allow items referencing a pottable block in their [[item components#minecraft:block_placer|{{cd|minecraft:block_placer}}]] component to be pottable when {{cd|replace_block_item}} is true.}}
+|{{HistoryLine|||dev=Preview 1.21.120.22|Added [[#minecraft:precipitation_interactions|{{cd|minecraft:precipitation_interactions}}]] component. This component allows creators to determine whether a block should obstruct precipitation or not.}}
+|{{HistoryLine|||dev=Preview 1.21.120.23|Added {{cd|emissive}} field to [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] component.}}
+|{{HistoryLine|||dev=Preview 1.21.120.24|Added boolean field {{cd|alpha_masked_tint}} to materials in [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] component.}}
+|{{HistoryLine||1.21.120|dev=Preview 1.21.120.24|Removed Upcoming Creator Features toggle requirement from the {{cd|minecraft:redstone_producer|minecraft:embedded_visual|minecraft:flower_pottable|d=and}}.}}
+|{{HistoryLine||1.21.130|dev=Preview 1.21.130.20|exp=Upcoming Creator Features|Added component [[#minecraft:support|{{cd|minecraft:support}}]] which allows you to specify which faces of the block can support blocks such as the [[torch]].}}
+|{{HistoryLine|||dev=Preview 1.21.130.22|The option {{cd|alpha_masked_tint}} in [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] now requires the Upcoming Creator Features toggle again.|Added component [[#minecraft:connection_rule|{{cd|minecraft:connection_rule}}]] behind the Upcoming Creator Features toggle, which allows custom blocks to define whether other blocks with connection behavior like a [[fence]].|Modified [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] component field {{cd|emissive}} renamed to {{cd|shaded}} to better describe what the field does and released field {{cd|shaded}}, from experimental.}}
+|{{HistoryLine||1.21.130|dev=Preview 1.21.130.26|Moved the [[#minecraft:precipitation_interactions|{{cd|minecraft:precipitation_interactions}}]] component from experimental to stable.}}
+|{{HistoryLine||1.21.130|dev=Preview 1.21.130.26|exp=Upcoming Creator Features|Extended [[#minecraft:collision_box|{{cd|minecraft:collision_box}}]] height to 24 and added support for arrays of boxes when using a format version of 1.21.130 or higher and the Upcoming Creator Features toggle is enabled.}}
+|{{HistoryLine|||dev=Preview 1.21.130.27|In [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] removed redundant experimental field {{cd|shaded}}.|Added [[#minecraft:redstone_consumer|{{cd|minecraft:redstone_consumer}}]] and [[#minecraft:leashable|{{cd|minecraft:leashable}}]] components behind the Upcoming Creator Features experiment.}}
+|{{HistoryLine|upcoming bedrock}}
+|{{HistoryLine||26.0|dev=Preview 26.0.23|Added {{cd|use_liquid_clipping}} field to the {{cd|detection_rules}} in [[#minecraft:liquid_detection|{{cd|minecraft:liquid_detection}}]] a boolean field that indicates whether water will pass through the block or not, like a [[stair]].|Updated [[#minecraft:redstone_consumer|{{cd|minecraft:redstone_consumer}}]] renamed field {{cd|propogates_power}} to {{cd|propagates_power}} and release for format version 1.26.0 and higher.|The option {{cd|alpha_masked_tint}} in [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]] no longer requires "Upcoming Creator Features".}}
+|{{HistoryLine|||dev=Preview 26.0.25|The components {{cd|minecraft:connection_rule|minecraft:support|minecraft:leashable|d=and}} can be used with format version 1.26.0 and higher without the "Upcoming Creator Features" toggle.}}
+|{{HistoryLine|||dev=Preview 26.0.27|Added block permutation component validation for [[#minecraft:geometry|{{cd|minecraft:geometry}}]] and [[#minecraft:material_instances|{{cd|minecraft:material_instances}}]]. If you add one, you need to add the other.|Rotated the down face of the {{cd|minecraft:geometry.full_block}} model by 180 degrees. The old behavior is still accessible with older {{cd|format_version}}s or the {{cd|minecraft:geometry.full_block_v1}} model.|The [[#minecraft:collision_box|{{cd|minecraft:collision_box}}]] improvements no longer require the "Upcoming Creator Features" experiment.}}
+}}
+
+== References ==
+{{Reflist}}
+
+== External links ==
+=== More information about components ===
+* [https://learn.microsoft.com/en-us/minecraft/creator/reference/content/blockreference/examples/blockcomponents/blockcomponentslist?view=minecraft-bedrock-stable Block Components Documentation - Microsoft Learn]
+* [https://wiki.bedrock.dev/blocks/block-components Bedrock Wiki]
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Development]]

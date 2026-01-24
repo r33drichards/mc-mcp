@@ -1,0 +1,63 @@
+{{merge|Point of interest|discussAnchor=Merge with Point of Interest}}
+{{exclusive|java}}
+
+Point of Interests are stored in the poi folder of respective dimension folders. It is stored like ''Minecraft'' [[Anvil format]] files, which are named in the form <code>r.x.z.mca</code>.
+
+== Folder structure ==
+{| data-description="List"
+|-
+|<div class="toccolours treeview">
+*''(world save directory)''
+**poi
+***r.x.z.mca
+**DIM-1
+***poi
+****r.x.z.mca
+**DIM1
+***poi
+****r.x.z.mca
+</div>
+|}
+
+== NBT structure ==
+Every [[point of interest]] is an unnamed {{nbt|compound}} compound contained in the Records list of a chunk file.
+
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|int|DataVersion}}: Version of the chunk data.
+** {{nbt|compound|Sections}}: All chunk sections. One chunk section is an area of 16×16×16 blocks.
+*** {{nbt|compound|<''section''>}}<ref name="section naming">"<''section''>" is a variable which is equal to the chunk sections Y value. i.e: "0"</ref>: A section of a chunk holding point of interest data related to that section.
+**** {{nbt|byte|Valid}}: 1 or 0 (true/false) - Most often true. If the value is false, the entries in <code>Records</code> are removed and the value is set back to true when the chunk is loaded the next time.
+**** {{nbt|list|Records}}: A list of all point of interest blocks in the section.
+***** {{nbt|compound}}: A point of interest block.
+****** {{nbt|string|type}}: Defines what type of point of interest this is. It is always one of the following: {{cd|d=or|minecraft:armorer|minecraft:bee_nest|minecraft:beehive|minecraft:butcher|minecraft:cartographer|minecraft:cleric|minecraft:farmer|minecraft:fisherman|minecraft:fletcher|minecraft:home|minecraft:leatherworker|minecraft:librarian|minecraft:lightning_rod|minecraft:lodestone|minecraft:mason|minecraft:meeting|minecraft:nether_portal|minecraft:shepherd|minecraft:toolsmith|minecraft:weaponsmith|minecraft:test_instance}}.
+****** {{nbt|int|free_tickets}}: The number of entities that can claim this point of interest block. Value decreases / increases by 1 for each entity that claims / loses the point of interest block.
+****** {{nbt|int array|pos}}: The point of interest blocks position in the world.
+******* {{nbt|int}}: X coordinate.
+******* {{nbt|int}}: Y coordinate.
+******* {{nbt|int}}: Z coordinate.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.14|dev=19w11a|Added point of interest system. Valid point of interest types for this version are:<br>
+<code>minecraft:armorer</code>, <code>minecraft:butcher</code>, <code>minecraft:cartographer</code>, <code>minecraft:cleric</code>, <code>minecraft:farmer</code>, <code>minecraft:fisherman</code>, <code>minecraft:fletcher</code>, <code>minecraft:home</code>, <code>minecraft:leatherworker</code>, <code>minecraft:librarian</code>, <code>minecraft:mason</code>, <code>minecraft:meeting</code>, <code>minecraft:shepherd</code>, <code>minecraft:toolsmith</code>, <code>minecraft:weaponsmith</code>.}}
+|{{HistoryLine|||dev=1.14 Pre-Release 1|Changed the point of interest format. Renamed the <code><''section''></code><ref name="section naming"/> list to <code>Records</code> and moved it into a TAG_Compound named <code><''section''></code><ref name="section naming"/> instead along with a <code>Valid</code> TAG_Byte, which is in a <code>Sections</code> TAG_Compound itself, and added <code>DataVersion</code> to the root compound.}}
+|{{HistoryLine||1.15|dev=19w34a|Added point of interest types <code>minecraft:bee_nest</code> and <code>minecraft:bee_hive</code>.}}
+|{{HistoryLine|||dev=19w36a|Added point of interest type <code>minecraft:nether_portal</code>.}}
+|{{HistoryLine|||dev=19w41a|Renamed point of interest type <code>minecraft:bee_hive</code> to <code>minecraft:beehive</code>.}}
+|{{HistoryLine||1.16|dev=20w13a|Added point of interest type <code>minecraft:lodestone</code>.}}
+|{{HistoryLine||1.17|dev=20w45a|Added point of interest type <code>minecraft:lightning_rod</code>.}}
+|{{HistoryLine||1.21.6|dev=25w16a|Added point of interest type <code>minecraft:test_instance</code>.}}
+}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[de:Zielpunktdaten]]
+[[fr:Format de point d'intérêt]]
+[[zh:兴趣点存储格式]]

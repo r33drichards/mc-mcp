@@ -1,0 +1,122 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| image = Bedrock 1.20.30.24 PatchNotes.jpg
+| image2 = Bedrock 1.20.30.24.png
+| build = 17436038
+| editorver = 0.4.4
+| internal =
+| server = 1.20.30.24
+| versioncode = '''Android''':<br>
+952003024（armeabi-v7a，33）<br>
+962003024（x86，33）<br>
+972003024（arm64-v8a，33）<br>
+982003024（x86_64，33）<br>
+| date = August 23, 2023
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.30.24.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.30.24.zip Linux]
+| parent = 1.20.30
+| prevparent = 1.20.15
+| prev = beta 1.20.30.23
+| next = Preview 1.20.30.25
+| nextparent = 1.20.31
+}}<onlyinclude>
+
+'''Beta 1.20.30.24''' (Android) or '''Preview 1.20.30.24''' (Windows, iOS, iPadOS, Xbox) is the ninth beta and eighth ''Preview'' version for [[Bedrock Edition 1.20.30]], released on August 23, 2023,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/18794896918157-Minecraft-Beta-Preview-1-20-30-24|title=Minecraft - Beta & ''Preview'' 1.20.30.24|website=Minecraft Feedback|date=August 23, 2023}}</ref> which brings more parity from {{JE}}, and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[UI]]'''
+* Added three new user-friendly disconnection error messages
+
+== Changes ==
+=== Mobs ===
+'''All Mobs'''
+* Burning mobs now catch the player on fire upon attacking.
+
+=== General ===
+'''[[UI]]'''
+* Improved two user-friendly disconnection error messages.
+* New death screen now has partial support (color, static obfuscation) for "Formatting Codes".
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" experimental toggle.
+=== Changes ===
+==== Technical ====
+'''API'''
+* Changed scoreboardIdentity to be valid even after the entity has been killed.
+* World Events
+** Renamed {{cd|BlockBreakAfterEvent}} to {{cd|PlayerBreakBlockAfterEvent}}
+*** Added readonly {{cd|itemStackAfterBreak?: ItemStack}} (undefined if empty hand)
+*** Added readonly {{cd|itemStackBeforeBreak?: ItemStack}} (undefined if empty hand)
+** Renamed {{cd|BlockBreakAfterEventSignal}} to {{cd|PlayerBreakBlockAfterEventSignal}}
+*** subscribe function now takes {{cd|options?: BlockEventOptions}}
+** Added {{cd|PlayerBreakBlockBeforeEvent}} with the following members
+*** {{cd|cancel: boolean}}, cancels event from happening
+*** {{cd|itemStack?: ItemStack}}, the item stack in use by the player (undefined if empty hand)
+*** readonly {{cd|player: Player}}, the player breaking the block
+** Added {{cd|PlayerBreakBlockBeforeEventSignal}}
+** Renamed {{cd|BlockPlaceAfterEvent}} to {{cd|PlayerPlaceBlockAfterEvent}}
+** Renamed {{cd|BlockPlaceAfterEventSignal}} to {{cd|PlayerPlaceBlockAfterEventSignal}}
+*** subscribe function now takes {{cd|options?: BlockEventOptions}}
+** Added {{cd|PlayerPlaceBlockBeforeEvent}} with the following members
+*** {{cd|cancel: boolean}}, cancels event from happening
+*** readonly {{cd|face: Direction}}, the face the block is being placed on
+*** readonly {{cd|faceLocation: Vector3}}, the location on the face the block was placed on
+*** {{cd|itemStack: ItemStack}}, the item stack being used to place the block
+*** readonly {{cd|player: Player}}, the player placing the block
+** Added {{cd|PlayerPlaceBlockBeforeEventSignal}}
+** Modified {{cd|WorldAfterEvents}}
+*** Renamed {{cd|blockBreak}} to {{cd|playerBreakBlock}}
+*** Renamed {{cd|blockPlace}} to {{cd|playerPlaceBlock}}
+** Modified {{cd|WorldBeforeEvents}}
+*** Added {{cd|playerBreakBlock}}
+*** Added {{cd|playerPlaceBlock}}
+** Added {{cd|BlockEventOptions}} with the following members
+*** {{cd|blockTypes?: string[]}}, names of blocks to be filtered against
+*** {{cd|permutations?: BlockPermutation[]}}, specific block permutations to be filtered against
+** Added class {{cd|EntityLoadAfterEvent}}
+*** New field {{cd|entity: Entity}}
+*** Added class {{cd|EntityLoadAfterEventSignal}}
+** Class {{cd|EntitySpawnAfterEvent}}
+*** Added property readonly cause: {{cd|EntityInitializationCause_}}
+** Class {{cd|WorldAfterEvents}}
+*** Added property readonly {{cd|entityLoad: EntityLoadAfterEventSignal}}
+** Added enum {{cd|EntityInitializationCause}}
+
+'''Graphical'''
+* Disabling Beautiful Skies or Smooth Lighting no longer affects visuals while using Deferred or Ray Tracing in the Deferred Technical Preview
+* Moved Smooth Lighting and Beautiful Skies buttons to only appear in the Simple and Fancy graphics menus in the Deferred Technical Preview
+* Bloom option removed from Simple, Fancy, and Ray Tracing menus in the Deferred Technical Preview
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.30.24 Preview
+|;From released versions before 1.20.0
+|77746|Burning mobs do not catch player on fire.
+|132511|Sound not playing while getting out of Water.
+|168789|Nametags are completely invisible while sneaking.
+|;From 1.20.x versions
+|173524|Multiple {{cmd|/camera}} commands in the same tick are ignored.
+|173706|Chunk-wide block rendering lag triggered by block updates along chunk borders.
+|;From 1.20.30 versions
+|174011|Tripwire hooks delay activation and deactivation for 0.5 seconds, and hooks connected to tripwire to the South (+Z) or West (-X) disconnect during the delay.
+|otherissuescount=5}}
+'''other'''
+* Fixed feedback button behavior in the new Play Screen not linking to the feedback page.
+* Fixed various pixel scaling issues on the HUD screen.
+* Fixed an issue where content errors for items at the latest format version would appear for other items.
+* The game menu gamepad shortcut on the new death screen now works correctly.
+* Concrete Powder blocks are now the correct color for worlds imported from previous versions.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.30 betas]]
+[[de:Bedrock Edition beta 1.20.30.24]]
+[[es:Bedrock Edition beta 1.20.30.24]]
+[[ko:Bedrock Edition 프리뷰 1.20.30.24]]
+[[pt:Edição Bedrock Preview 1.20.30.24]]
+[[uk:Preview 1.20.30.24 (Bedrock Edition)]]
+[[zh:基岩版1.20.30.24]]

@@ -1,0 +1,47 @@
+<div class="treeview"><onlyinclude>
+** {{nbt|string|billboard}}: Controls if this entity should pivot to face player when rendered. It can be <code>fixed</code> (both vertical and horizontal angles are fixed), <code>vertical</code> (faces player around vertical axis), <code>horizontal</code> (pivots around horizontal axis), and <code>center</code> (pivots around center point). Defaults to <code>fixed</code>.
+**{{nbt|compound|brightness}}: If present, overrides light values used for rendering. Omitted by default (which means rendering uses values from entity position).
+***{{nbt|int|block}}: (Required) The block-light level, with values from 0-15.
+***{{nbt|int|sky}}: (Required) The skylight level, with values from 0-15.
+**{{nbt|int|glow_color_override}}: Overrides the glow border color. If -1, uses the color of the team that the display entity is in. Defaults to -1. Is not preserved when removed.
+**{{nbt|float|height}}: The maximum height of the entity. Rendering culling bounding box spans vertically <code>y</code> to <code>y+height</code>, and the part beyond will be culled. If set to 0, no culling on both vertical and horizontal directions. Defaults to 0.
+**{{nbt|float|width}}: The maximum width of the entity. Rendering culling bounding box spans horizontally <code>width/2</code> from entity position, and the part beyond will be culled. If set to 0, no culling on both vertical and horizontal directions. Defaults to 0.
+** {{nbt|int|interpolation_duration}}: Interpolation duration in ticks.
+** {{nbt|int|teleport_duration}}: Interpolation duration in ticks for teleportation. Values are clamped between 0 and 59 (inclusive).
+** {{nbt|int|start_interpolation}}: Delay before starting interpolation. If 0, interpolation starts immediately. (Not saved to entity, but can be set by commands.)
+** {{nbt|float|shadow_radius}}: Shadow radius. Value is treated as 64 when higher than 64. If less than or equal to 0, the entity has no shadow. Defaults to 0. Interpolated.
+** {{nbt|float|shadow_strength}}: Controls the opacity of the shadow as a function of distance to block below. Defaults to 1. Interpolated.
+** {{nbt|float|view_range}}: Maximum view range of the entity. When the distance is more than <code><''view_range''>×<''[[Options.txt#Java Edition|entityDistanceScaling]]''>×64</code>, the entity is not rendered. Defaults to 1.0.
+** {{nbt|list}}{{nbt|compound|transformation}}: The rendering transformation applied to model after normal entity orientation, taking the position of the entity as the origin. Defaults to no transformation. Interpolated.
+***; This tag has matrix form ({{nbt|list}}) and decomposed form ({{nbt|compound}}). Only decomposed form is used when [[NBT_format#Generating_NBT_object|saving entities]].
+***; If the matrix form is used, this tag is a list of float numbers with 16 elements, describing a row-major [[wikipedia:affine transformation|affine transformation]] matrix, with its last element diving the matrix<nowiki>:</nowiki>
+***{{nbt|float}}: A value in the matrix.
+***; If the decomposed form is used, this tag is a compound tag with all of the following sub-tags, and each of them is applied sequentially in the order listed below<nowiki>:</nowiki>
+*** {{nbt|list}}{{nbt|compound|right_rotation}}: (Required) Initial [[wikipedia:rotation matrix#Conversions|rotation]]. This tag corresponds to the right-singular vector matrix after the matrix [[wikipedia:singular value decomposition|singular value decomposition]].
+****; This tag has quaternion form ({{nbt|list}}) and angle-axis form ({{nbt|compound}}). Only quaternion form are used when [[NBT_format#Generating_NBT_object|saving entities]].
+****; If [[wikipedia:quaternions and spatial rotation|quaternion form]] is used to represent rotation (note that non-unit quaternion also scales the model), this tag is a list of float numbers with 4 elements, real component last<nowiki>:</nowiki>
+**** {{nbt|float}}: An element in the quaternion.
+****; If [[wikipedia:angle-axis representation|axis-angle form]] is used to represent rotation, this tag is a compound tag with all of the following tags<nowiki>:</nowiki>
+**** {{nbt|float|angle}}: (Required) The angle of rotation, in radians.
+**** {{nbt|list|axis}}: (Required) Axis vector with 3 elements.
+***** {{nbt|float}}: An element of the vector.
+*** {{nbt|list|scale}}: (Required) Scale the model centered on the origin. This tag corresponds to the singular values of the matrix after singular value decomposition. This tag is a list of float numbers with 3 elements:
+**** {{nbt|float}}: An element of the vector.
+*** {{nbt|list}}{{nbt|compound|left_rotation}}: (Required) Rotates the model again. This tag corresponds to the left-singular vector matrix after the matrix singular value decomposition.
+****; This tag has quaternion form ({{nbt|list}}) and angle-axis form ({{nbt|compound}}). Only quaternion form are used when [[NBT_format#Generating_NBT_object|saving entities]].
+****; If [[wikipedia:quaternions and spatial rotation|quaternion form]] is used to represent rotation (note that non-unit quaternion also scales the model), this tag is a list of float numbers with 4 elements, real component last<nowiki>:</nowiki>
+**** {{nbt|float}}: An element in the quaternion.
+****; If [[wikipedia:angle-axis representation|axis-angle form]] is used to represent rotation, this tag is a compound tag with all of the following tags<nowiki>:</nowiki>
+**** {{nbt|float|angle}}: (Required) The angle of rotation, in radians.
+**** {{nbt|list|axis}}: (Required) Axis vector with 3 elements.
+***** {{nbt|float}}: An element of the vector.
+*** {{nbt|list|translation}}: (Required) Translation transformation. This tag corresponds to the last column in the matrix form. This tag is a list of float numbers with 3 elements:
+**** {{nbt|float}}: An element of the vector.
+</onlyinclude></div>
+<noinclude>
+[[Category:Java Edition]]
+[[Category:Development]]
+[[fr:Format de chunk/Entité d'affichage]]
+[[ja:Chunkフォーマット/Display entity]]
+[[pt:Formato de chunk/Entidade-exibição]]
+</noinclude>

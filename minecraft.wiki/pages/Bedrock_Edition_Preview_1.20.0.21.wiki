@@ -1,0 +1,152 @@
+{{Infobox version
+| image =  Bedrock 1.20.0.21 PatchNotes.jpg
+| image2 = Bedrock 1.20.0.21.png
+| edition = bedrock
+| type = Preview
+| server = 1.20.0.21
+| build = 15106329
+| editorver = 0.3.4
+| versioncode = '''Android''':<br>
+952000021 (armeabi-v7a, 33)<br>
+962000021 (x86, 33)<br>
+972000021 (arm64-v8a, 33)<br>
+982000021 (x86_64, 33)<br>
+| date = '''Windows, Android, iOS, iPadOS, Xbox''' - April 19, 2023
+| internal = '''Windows, Xbox''': 1.20.21.0<br>'''Android, iOS, iPadOS''': 1.20.0.21
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.0.21.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.0.21.zip Linux]
+| parent = 1.20.0
+| prevparent = 1.19.83
+| prev = Preview 1.20.0.20
+| next = Preview 1.20.0.22
+| nextparent = 1.20.1
+}}<onlyinclude>
+'''Beta 1.20.0.21''' (Android) or '''Preview 1.20.0.21''' (Windows, iOS, iPadOS, Xbox) is the second beta/''Preview'' version for [[Bedrock Edition 1.20.0]], released on April 19, 2023<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/14998295276941|title=Minecraft Beta & Preview - 1.20.0.21|website=Minecraft Feedback|date=April 19, 2023}}</ref> which bring more parity with {{JE}} and fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[File:Sculk Sensor BE2.gif|width=32x32]] [[Sculk Sensor]]'''
+* Vibration frequencies of many actions in the game have been tweaked and greatly simplified to prevent unwanted interference, as following:
+: {| class="wikitable"
+! Action
+! Frequency Value
+|-
+| Movement in any medium (land, water and air)
+| 1
+|-
+| Landing on any surface (land or water)
+| 2
+|-
+| Item interactions
+| 3
+|-
+| Gliding with an elytra or unique mob actions (Ravager roar, Wolf shaking, etc)
+| 4
+|-
+| Dismounting a mob or equipping gear
+| 5
+|-
+| Mounting a mob or interacting with a mob
+| 6
+|-
+| Mobs and players getting damaged
+| 7
+|-
+| Consuming items (drinking and eating)
+| 8
+|-
+| Blocks 'deactivating' (door close, chest close, button unpress, etc)
+| 9
+|-
+| Blocks 'activating' (door open, chest open, button press, etc)
+| 10
+|-
+| Blocks changing (cauldron water level rising, adding food to campfire, etc)
+| 11
+|-
+| Blocks being destroyed
+| 12
+|-
+| Blocks being placed
+| 13
+|-
+| Mobs and players teleporting or spawning
+| 14
+|-
+| Mobs and players dying or an explosion
+| 15
+|}
+
+=== General ===
+'''[[Experiments]]'''
+* All Trails & Tales content has now been “de-experimentified” and is available during normal gameplay.
+* Removed the Next Major Update toggle, since it has no active experimental content.
+'''[[Settings#Accessibility|Accessibility]]'''
+* The four Creative Inventory tabs now have their names read out by text-to-speech.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" experimental toggle.
+===Changes===
+'''[[Add-on]]s'''
+*Added {{cd|minecraft:facing_direction}} state to the {{cd|minecraft:placement_direction}} block trait.
+**{{cd|minecraft:facing_direction}} is a six value integer state (down, up, south, west, north, east).
+**Can enable and access this state on blocks through the {{cd|minecraft:placement_direction}} trait.
+**Can access the {{cd|minecraft:cardinal_direction}} state on blocks that apply the {{cd|minecraft:placement_direction}} trait in {{cd|block_property}} Molang queries and {{cd|set_block_property}} {{cd|EventResponses}}.
+*Pumpkin blocks use state {{cd|minecraft:cardinal_direction}} instead of {{cd|direction}}.
+
+'''[[API]]'''
+*{{cd|@minecraft/server}}
+**Renamed {{cd|BlockProperties}} to {{cd|BlockStates}}.
+**Renamed {{cd|getAllProperties}} to {{cd|BlockPermutation.getAllStates}}.
+**Renamed {{cd|getProperty}} to {{cd|BlockPermutation.getState}}.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.0.22 Preview
+|;old
+|133778|Dyes and glow ink sacs are consumed when used on a sign with no text
+|147711|Arrows don't appear in the Character Creator while the Hide Controller Hints setting is on
+|152926|Door top and bottom textures flip incorrectly & illogically when opened and closed
+|153909|Filter {{cd|has_equipment}} cannot test for an empty string ("") or air
+|164424|{{cd|minecraft:boostable}} component has no effect on speed
+|167191|Decorated Pot's brightness is affected by daytime and not by surrounding lighting
+|168717|Stone Block Slab Recipe Duplication Content Log Errors and they are NOT Dupes
+|168805|Some brushing sounds missing
+|168807|Interacting with a waxed sign / hanging sign doesn't play a sound
+|168818|Sign editing screen ignores added effects
+|168834|Decorated pot is missing top row of pixels
+|168838|Interacting with editable signs when holding certain items can break the sign or trigger item-specific interactions
+|168894|Game crashes when enabling RTX while in a world
+|169423|Z-fighting occurs on the sniffers' heads and ears
+|169563|Sculk shriekers aren't muted/silenced when waterlogged
+|;previous
+|169490|Pitcher Plant has unused bottom texture
+|169531|Calibrated sculk sensor's active cooldown is the same as the normal sculk sensor
+|169532|Calibrated sculk sensor doesn't detect vibration up to 16 blocks
+|169534|The Pitcher Crop hitbox is incorrect and doesn't match Java
+|otherissuescount=12}}
+'''Other'''
+*Calibrated Sculk Sensors now power the block below them when active.
+*Fixed fall damage accumulating when player jumps on roofed Soul Sand Bubble Column.
+*Conduit block now respects the lighting conditions when held in hand or dropped.
+*Interacting with an unwaxed Sign while holding an item that cannot be used on the sign now opens the sign for editing.
+*When using gamepad or touch input, correct tooltips are now shown if interacting with the Sign is possible.
+*It is now possible to attach a hanging sign to another without sneaking.
+*Sculk Sensors now power the block below them when active.
+*Fixed the multiplayer toggle in the Create New World screen sometimes wasn't greyed out even though the setting would have no effect.
+*Coordinates are now shown on the new death screen if the "Show Coordinates" setting is enabled.
+*Fix {{cd|get_equipped_item_name}} Molang query not being able to return the old name of some flattened items, eg. {{cd|red_wool}} to {{cd|wool}}.
+*Custom items with {{cd|minecraft:durability}} and {{cd|minecraft:repairable}} can be combined to repair them without requiring a custom item entry.
+*Fixed a bug where modified equipment and container slots were not being synced to clients.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.0 betas]]
+[[de:Bedrock Edition beta 1.20.0.21]]
+[[es:Bedrock Edition beta 1.20.0.21]]
+[[ko:Bedrock Edition 프리뷰 1.20.0.21]]
+[[pt:Edição Bedrock Preview 1.20.0.21]]
+[[uk:Preview 1.20.0.21 (Bedrock Edition)]]
+[[zh:基岩版1.20.0.21]]

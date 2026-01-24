@@ -1,0 +1,163 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows''': 1.20.6020.0<br>'''Xbox One''': 1.20.6020.70<br>'''Android, iOS, iPadOS''': 1.20.60.20
+| image = Bedrock 1.20.60.20 PatchNotes.jpg
+| image2 = Bedrock 1.20.60.20.png
+| build = 19693564
+| editorver = 0.4.9
+| versioncode = '''Android''':<br>
+952006020（armeabi-v7a，33）<br>
+962006020（x86，33）<br>
+972006020（arm64-v8a，33）<br>
+982006020（x86_64，33）<br>
+| date = November 15, 2023
+| server = 1.20.60.20
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.60.20.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.60.20.zip Linux]
+| parent = 1.20.60
+| prevparent = 1.20.51
+| prev = 
+| next = Preview 1.20.60.21
+| nextparent = 1.20.62
+}}<onlyinclude>
+
+'''Beta 1.20.60.20''' (Android) or '''Preview 1.20.60.20''' (Windows, iOS, iPadOS, Xbox) is the first beta/''Preview'' version for [[Bedrock Edition 1.20.60]], released on November 15, 2023,<ref>{{cite|url=https://www.minecraft.net/en-us/article/minecraft-preview-1-20-60-20|title=Minecraft Preview 1.20.60.20|website=Minecraft Feedback|date=November 15, 2023}}</ref> which adds the [[breeze]] mob and trial chambers behind an experimental toggle and fixes bugs.
+
+==Changes==
+===General===
+'''Profile Screen'''
+*In horizontal split screen, second player can now navigate to the profile screen, and both players can now see each others' character changes
+'''[[Realms]]'''
+*Increased the maximum render distance in Preview on Realms to 20 chunks.
+*Add an unread post count indicator to the Feed button on the play screen and slots screen
+=== Technical ===
+'''[[API]]'''
+*Changed <code>itemStack</code> in <code>ItemReleaseUseAfterEvent</code> to be optional
+*Released DataDrivenEntityTriggerAfterEvent from <code>beta</code> to 1.8.0
+*Released DataDrivenEntityTriggerAfterEventSignal from <code>beta</code> to 1.8.0
+*Released DataDrivenEntityTriggerAfterEventSignalOptions from <code>beta</code> to 1.8.0
+*Released DefinitionModifier from <code>beta</code> to 1.8.0
+*Released WorldAfterEvents.dataDrivenEntityTriggerEvent from <code>beta</code> to 1.8.0
+*Improved error messages for "Unsupported or out of bounds value." errors to include the bounds
+'''Entity'''
+*Entity event response <code>run_command</code> has been renamed to <code>queue_command</code> and has been released out of experimental. 
+** Commands run via <code>queue_command</code> may be deferred until the next tick. 
+** If the entity is removed before the command is run, the command will not execute. 
+**Content using <code>run_command</code> under experimental will still work for now but the experimental feature is now considered deprecated
+'''Items'''
+*Unrecognized fields in component item jsons will now give a warning to the content log in format versions 1.20.60 and higher
+'''Loot Tables'''
+*Decorated Pots now support the use of loot tables
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Update 1.21" and "Beta APIs" experimental toggles.
+===Additions===
+====Mobs====
+'''[[Breeze]]'''
+*The Breeze is a cunning, hostile mob that can spawn via Trial Spawner in some rooms within the Trial Chambers
+*The Breeze moves primarily by leaping around the target, sometimes jumping quite long distances
+*An aggressive adversary, the Breeze shoots volatile wind energy in the form of wind charge projectiles at its target
+*Wind charges deal a small amount of damage when colliding directly with an entity
+*After colliding with an entity or a block, wind charge projectiles produce a wind burst, which knocks back entities in the area by several blocks
+*Wind bursts also have the effect of 'activating' certain blocks:
+**Non-Iron [[Doors]] and [[Trapdoors]] are flipped
+**[[Fence Gates]] are flipped
+**[[Buttons]] are pressed
+**[[Levers]] are flipped
+**[[Bells]] are rung and swung
+**Lit [[Candles]] (both standalone and on cake) are extinguished
+*Wind bursts do not have any effect on Iron Doors, Iron Trapdoors, or any block being held in its position by a Redstone signal
+====Blocks====
+'''[[Trial Spawner]]'''
+*Trial Spawner is a new variant of [[Monster Spawner]]s that ejects rewards upon completion and can have variable levels of challenge in multiplayer
+*The challenge level will increase for each new player a Trial Spawner notices nearby
+**Challenge level will not decrease until it is reset during a Trial Spawner's cooldown
+*Unlike normal spawners, a Trial Spawner will spawn a limited number of mobs proportional to its current challenge level
+**It can only spawn a mob at positions that are within line of sight
+**It can spawn a mob regardless of any light level requirement the mob has
+**Spawned [[mobs]] are persistent
+*Once all mobs are defeated, the Trial Spawner will eject a set of rewards proportional to the current challenge level
+**After the rewards have been ejected, the Trial Spawner goes into cooldown for 30 minutes during which it will no longer spawn mobs
+*Trial Spawners cannot be crafted nor obtained by players in [[Survival]] - instead, they can be found naturally placed throughout Trial Chambers
+*Trial Spawners are extremely slow to mine and resistant to explosions, and will not drop even with [[Silk Touch]]
+*When placed in Creative, Trial Spawners have no mob type set by default
+*The mob type can be set by interacting with it while holding a Spawn Egg
+*Creative and Spectator players cannot be detected or noticed by Trial Spawners
+====Structures====
+'''[[Trial Chambers]]'''
+*Trial Chambers are a new structure in the [[Overworld]] where players can explore and take on combat challenges during the mid-game
+**Trial Chambers are made out of a variety of Copper and Tuff blocks and can be found in different sizes from large to small
+**Trial Chambers are a relatively common find throughout the Deepslate layer of the underground
+*The layout of each Trial Chamber is procedurally generated, and can include traps, reward chests and a variety of combat spaces
+**Supply chests can be found between the different rooms, and give the player blocks and items which help them navigate their trials
+**Reward [[chests]] are guarded by challenges in each room, and can be a source of enchanted books and equipment
+*Each Trial Chamber will include Trial Spawners with a melee, small melee, or ranged category:
+**Melee
+***[[Zombie]]
+***[[Husk]]
+***[[Slime]]
+**Small Melee
+***[[Spider]]
+***[[Cave Spider]]
+***[[Baby Zombie]]
+***[[Silverfish]]
+**Ranged
+***[[Skeleton]]
+***[[Stray]]
+*Each Trial Spawner category will only use one mob for the entire structure when generated, and these mobs are randomized for each Trial Chamber
+**For example, one Trial Chamber might only spawn Zombies, Cave Spiders and Strays, while another might only spawn Slimes, Silverfish and Skeletons
+**The exceptions to this are some Trial Spawners in unique rooms which always spawn Breezes
+====Items====
+'''[[Trial Key]]'''
+*An item that can only be obtained from Trial Spawners
+*Trial Keys do not currently have any functionality
+===Changes===
+====Blocks====
+'''[[Crafter]]'''
+*Updated Crafter textures
+'''[[Tuff Bricks]]'''
+*Updated Tuff Bricks texture
+====Technical====
+'''Graphical'''
+*Improved performance by fixing a GPU resource allocation bug that resulted in constant reallocations every frame in the Deferred Technical Preview
+'''[[API]]'''
+*PlayerPlaceBlockBeforeEvent
+**Removed <code>itemStack: ItemStack</code> from event
+**Added <code>readonly permutationBeingPlaced: BlockPermutation</code> to event
+**Updating <code>createExplosion(location: Vector3, radius: number, explosionOptions?: ExplosionOptions)</code> to return a boolean. True if the explosion is successful and false if the explosion is unsuccessful or is cancelled.
+*Class Player
+*Added method <code>spawnParticle(effectName: string, location: Vector3, molangVariables?: MolangVariableMap): void;</code>.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.60.20 Preview
+|;From released versions before 1.20.0
+|41898|Exporting MCWORLD or MCSTRUCTURE file to a OneDrive folder fails silently
+|65038|Oudated information about conduits in the How To Play section
+|120140|Taking "fall damage" when not falling
+|;From the 1.20.50 versions
+|170522|When entering spectator mode while standing on the ground, the player moves down a bit, which makes you fall down
+|175791|Instant death when pillaring during auto-save
+|175929|Encyclopedia on beacon doesn't include netherite blocks
+|176556|If the player is eating an apple, they will still walk at normal speed
+|otherissuescount=4}}
+'''Others'''
+* Fixed an issue that made Boats clip through blocks when placed.
+* Container blocks triggered with Redstone (e.g. hopper, dispenser) can now be interacted with consistently when powered by a fast Redstone clock
+* Improved delay between 100% Loaded and when main menu appears on console platforms
+* Fixed a bug where certain chat messages would briefly be incorrectly shown on the new death screen
+</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.60 betas]]
+[[de:Bedrock Edition beta 1.20.60.20]]
+[[es:Bedrock Edition beta 1.20.60.20]]
+[[fr:Édition Bedrock bêta 1.20.60.20]]
+[[ko:Bedrock Edition 프리뷰 1.20.60.20]]
+[[pt:Edição Bedrock Preview 1.20.60.20]]
+[[uk:Preview 1.20.60.20 (Bedrock Edition)]]
+[[zh:基岩版1.20.60.20]]

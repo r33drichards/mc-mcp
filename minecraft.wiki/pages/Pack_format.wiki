@@ -1,0 +1,75 @@
+{{exclusive|java}}
+{{Missing information|Data pack format tables are several weeks out of date}}
+
+'''Pack format''', sometimes referred to as '''pack version''', is a number used in {{mono|[[pack.mcmeta]]}} to describe what {{edition|java}} versions a [[resource pack]] or [[data pack]] is compatible with. Each version specifies the pack formats it supports in its {{mono|[[version.json]]}}. The pack format can be obtained by running {{cmd|version}}, or using the <kbd>F3</kbd> + <kbd>V</kbd> [[debug hotkey]].
+
+Pack formats help Minecraft identify whether a resource or data pack was built for the correct version of the game. If the format number in a pack's {{mono|pack.mcmeta}} file is higher than the one the game supports, the pack appears as "incompatible". This system ensures that new pack features introduced in later versions do not cause crashes or missing content in older ones.
+
+== Technical details ==
+Each pack format corresponds to specific internal changes in how Minecraft reads data or assets. These include updates to registries, loot tables, tags, advancements, and model syntax. Both [[Resource pack|resource packs]] and [[Data pack|data packs]] use the same numbering system but apply it differently:
+
+* '''Data packs''' focus on gameplay logic – structures, recipes, tags, loot tables, and functions.
+* '''Resource packs''' deal with textures, models, block states, sounds, and text assets.
+
+For example, when upgrading from format 12 to 15, several JSON structures (such as predicates and item components) changed to match new engine rules.
+
+A minimal {{mono|pack.mcmeta}} example looks like this:
+<pre>
+{
+  "pack": {
+    "description": "Example datapack for Minecraft 1.21",
+    "pack_format": 48
+  }
+}
+</pre>
+
+If this number does not match the game's supported format, ''Minecraft'' displays a warning in the pack list.
+
+Since 25w31a, the pack format has been changed to work with "{{Mono|min_format}}" and "{{Mono|max_format}}" fields instead of the previous "{{Mono|pack_format}}" field.
+Both data packs and resource packs have this change.
+
+Here is an example of a {{Mono|pack.mcmeta}} file for version 1.21.9:
+<pre>
+{
+  "pack": {
+    "description": "Example datapack for Minecraft 1.21.9",
+    "min_format": 88,
+    "max_format": 88
+  }
+}
+</pre>
+
+== Data pack format history ==
+
+Below is a list of all valid data pack formats with corresponding {{edition|java}} versions.<ref group="note">[[Tag (Java Edition)|Tag]] changes, additions and removals are not listed here.</ref>
+{{Data pack format|releaseonly}}
+{{Collapse|title='''Full table including development versions:'''|content={{Data pack format}}}}
+
+== Resource pack format history ==
+
+Below is a list of all valid resource pack formats with corresponding {{edition|java}} versions.{{Resource pack format|releaseonly}}
+<!-- Please add only the development versions to the table and arrange the major versions as in the datapack. Thanks. -->{{Collapse|title='''Full table including development versions:'''|content={{Resource pack format}}}}
+
+== List of pack formats ==
+{{collapse|expanded=1|content=<nowiki/>
+{{Protocol version/Table|Java Edition|hideprotocol=yes|hidedata=yes=yes}}
+}}
+
+== Notes ==
+{{notelist}}
+
+== See also ==
+
+* [[Data pack version]] – specific mapping between Minecraft versions and data pack formats
+* [[Resource pack]] – how pack files and folders are structured
+* [[pack.mcmeta]] – metadata file used by both resource and data packs
+* [[version.json]] – internal version file that defines supported pack formats
+
+== Navigation ==
+{{Navbox Java Edition technical|pack}}
+
+[[es:Formato de paquete]]
+[[fr:Format de pack]]
+[[ja:パックフォーマット]]
+[[pt:Formato de pacote]]
+[[ru:Формат пакета]]

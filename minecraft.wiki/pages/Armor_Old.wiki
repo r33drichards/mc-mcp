@@ -1,0 +1,113 @@
+{{outdated}}
+
+Before [[Bedrock Edition beta 1.18.30.20]] and before [[Java Edition 1.9]], armor used a different formula to calculate protection values. Below are the formulas used.
+
+== Protection ==
+Each defense point ({{armor|1}}) represents 4% damage reduction. A full 20 defense points indicates 80% damage reduction.
+
+== Enchantments ==
+{{See also|Enchanting}}
+
+Armor can be [[enchanted]] to provide various enchantments. Enchantments can provide more protection or allow armor to protect certain types of damage that armor doesn't normally protect against, such as fall damage or fire. Damage reduction from enchantments do not decrease the armor's durability. Armor enchantments do not appear on the armor bar.
+
+An armor's material determines how enchantable it is. The higher a material's enchantability, the greater the chances of getting multiple and high-level enchantments (see [[enchantment mechanics]] for details).
+
+{| class="wikitable"
+|-
+! [[Leather]]
+! [[Gold]]en
+! Chain
+! [[Iron]]
+! [[Turtle shell]]
+! [[Diamond]]
+! [[Netherite]]
+|-
+| 15
+| 25
+| 12
+| 9
+| 9
+| 10
+| 15
+|}
+
+As with several enchantments, several different levels of protection are possible. The maximum level of a protection enchantment is currently IV (4). Protection enchantments from multiple pieces of armor stack together, up to a calculated maximum.
+
+Each protection enchantment protects against specific types of damage. The amount of damage reduction depends on the '''Enchantment Protection Factor''' (EPF) provided by that enchantment.<ref>[http://www.reddit.com/r/Minecraft/comments/157mxr/fyi_specifics_on_armor_enchantment_damage/ Post by Reddit user FifthWhammy]</ref>
+
+{| class="wikitable" style="text-align:center"
+|-
+! Enchantment
+! Damage reduced for
+! Type Modifier
+! EPF<br>Level I
+! EPF<br>Level II
+! EPF<br>Level III
+! EPF<br>Level IV
+|-
+| Protection
+| All except [[starvation]], [[void]] and {{cmd|kill}}
+| 0.75
+| 1
+| 2
+| 3
+| 5
+|-
+| Fire Protection
+| [[Fire]], [[lava]], and [[blaze]] fireballs
+| 1.25
+| 2
+| 4
+| 6
+| 9
+|-
+| Blast Protection
+| [[Explosion]]s
+| 1.5
+| 3
+| 5
+| 7
+| 11
+|-
+| Projectile Protection
+| [[Arrow]]s, [[ghast]] and [[blaze]] fireballs
+| 1.5
+| 3
+| 5
+| 7
+| 11
+|-
+| Feather Falling
+| Fall damage (including [[ender pearl]]s)
+| 2.5
+| 5
+| 8
+| 12
+| 18
+|}
+
+The EPFs for each enchantment and level are the result of the following formula:
+:<math>\text{EPF} = \left\lfloor \frac{ \left( 6 + \text{level}^2 \right) \times \text{TypeModifier}}{3} \right\rfloor</math>
+where <math>\lfloor\,\rfloor</math> is the <code>floor()</code> (rounding down) operation.
+
+When a player or mob wearing armor is subjected to damage, the EPFs of all applicable enchantments are added together, capped at 25, multiplied by a random value between 50% and 100%, rounded up, and capped again at 20. The damage is then reduced by 4% per point of total effective EPF (for example, a total effective EPF of 20 reduces damage by 80%).
+
+Because of the caps in the calculation, it's possible to max out protection against specific types of damage with only three pieces of armor. For example, two pieces of armor with Blast Protection IV (EPF 11 each) and a single piece with Protection III (EPF 3) would give a total EPF of 25 versus explosions (before the remainder of the calculation). Any additional EPF would be wasted against explosions (but might be useful against other types of damage, if applicable).
+
+If the damage is of a type that armor protects against normally, this reduction applies only to the damage that got through the armor. For example, a full suit of diamond armor reduces damage from attacks by 80%—if each piece of armor also had a Protection IV enchantment (EPF 5 each), the enchantments would further reduce damage by 40% to 80% each time, for a total damage reduction of 88% to 96% (i.e., 80%, plus 40%-80% of the remaining 20%).
+
+It is possible, using the /give command, to obtain armor with an enchantment level higher than what is normally obtainable via normal survival. Using this method, a player could give themselves, for example, a full set of diamond armor with a Protection V enchantment on every piece. Following the algorithm above, we find that, since Protection V has an EPF of 7, only 3 pieces of the armor need to have Protection V in order to reach the maximum 25 EPF for all types of damage (with 3 pieces of armor with Protection V and one piece with Protection IV, one's EPF is still 26, but the step between Protection IV and Protection V is 2 EPF, so the cap would not be reached without the third piece of Protection V armor). Any higher Protection enchantments could be used to allow the cap to be reached with only one enchantment, rather than having a full set of enchanted armor, but would be wasted if all pieces shared the same level enchantment.
+
+To calculate the average amount of extra protection given by a set of armor, use the following formula:
+
+:<math>\left[ 100 - (\text{total defense points of armor set} \times 4)\right] \times \text{total EPF of armor set} \times 4\% \times 0.0075</math>
+
+Note: This formula is simplified and thus not fully correct due to the rounding and capping performed after the random percentage multiplication.
+
+To find the total protection of the armor set, simply add the extra protection to the standard percentage.
+
+== References ==
+{{reflist}}
+
+[[fr:Armure/Pré-1.9]]
+[[zh:盔甲机制/Java版1.9前]]

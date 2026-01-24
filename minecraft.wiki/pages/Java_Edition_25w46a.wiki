@@ -1,0 +1,215 @@
+{{Infobox version
+|title=Minecraft 25w46a
+|group1=Obfuscated 
+|1-1=25w46a.jpg
+|1-2=Java Edition 25w46a.png
+|group2=Unobfuscated
+|2-1=25w46a.jpg
+|2-2=Java Edition 25w46a Unobfuscated.png
+|imagesize=250px
+|edition=Java
+|type=Snapshot
+|date=November 11, 2025
+| clientdl=
+'''Client'''<br>
+{{dl|b26ec81736baeeb35b4585110ef3b5bf1178c3cf |client|title=Obfuscated}} ({{dl|2ed99b1ea22be740fe423edee2b50d85fddbeb98 |json|name=25w46a}})<br>{{dl|2a1e9a8e09a6312adb91bf2a1b1188c57861ab65 |client|title=Unobfuscated}} ({{dl| f9c5e4f9c1469296299635b498438e94d312f0c6 |custom|name=25w46a_unobfuscated.zip|title=.zip}})<ref group="note" name="zipfile">The contents of the [[w:ZIP file|ZIP file]] should be extracted to the {{File|directory|[[.minecraft]]/versions|inline=1}} directory in order to install this version.</ref>
+|serverdl=
+'''Server'''<br>{{dl|e61a72ec98fae895ef3e80b05269ae343c42fc0b |server|title=Obfuscated}}<br>{{dl|c434d6c7c15a93a20698c5eb3624c51241bde69c |server|title=Unobfuscated}}
+|clientmap=34d6977a2646e07ecf37493cc2e21fe587d5e3be
+|servermap=795fa6a41d2584490cac8311f4419529cee7a134
+|parent=1.21.11
+|prevparent=1.21.10
+|prev=25w45a
+|next=1.21.11 Pre-Release 1
+|nextparent=26.1
+}}
+<onlyinclude>
+
+'''25w46a''' is the sixth and final [[snapshot]] for [[Java Edition 1.21.11]], released on November 11, 2025.<ref>{{snap|25w46a|id=a|November 11, 2025}}</ref>
+
+A separate [[unobfuscated version]] of 25w46a was released, titled '''25w46a Unobfuscated''' (or '''25w46a_unobfuscated''' when in the launcher). This is an experimental version released in preparation for obfuscation being removed from {{JE}} clients and servers.<ref>{{Mcnet|removing-obfuscation-in-java-edition|Removing obfuscation in Java Edition|October 29, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Splash]]'''
+* Added "One does not simply walk to the [[Far Lands]]".
+** References [[kurtjmac]], who completed his 14-year Far Lands walk a month prior.
+
+== Changes ==
+=== Blocks ===
+'''[[Decorated Pot]]s'''
+* Now have the [[Particles (Java Edition)|particle]] texture of [[terracotta]] upon [[breaking]].{{source code ref|Before: <code>"particle": "entity/decorated_pot/decorated_pot_side"</code><br><br>After: <code>"particle": "minecraft:block/terracotta"</code>}}
+
+=== Items ===
+'''[[Netherite Horse Armor]]'''
+* No longer burns in [[fire]] or [[lava]].
+* Worn texture is now the same as {{in|be}}.
+
+'''[[Spawn Egg]]s'''
+* Are now sorted thematically in the [[Creative inventory]], according to the following categories:
+** [[Overworld]]
+*** Farm [[Animal]]s
+*** [[Mounts]]
+*** [[Pets]]
+*** Wild Animals
+*** [[Aquatic]]
+*** Miscellaneous
+*** [[Golems]]
+*** [[Villagers]]
+*** [[Undead]]
+*** [[Spiders]]
+*** [[Monsters]]
+*** [[Illagers]]
+** [[Nether]]
+** [[The End]]
+
+'''[[Spear]]s'''
+* No longer cause item interact vibrations.
+
+=== Mobs ===
+'''[[Horse]]''', '''[[Mule]]''', '''[[Donkey]]''', '''[[Camel]]''', '''[[Zombie Horse]]''' and '''[[Camel Husk]]'''
+* Will not panic if controlled by mobs.
+
+'''[[Nautilus]]''' and '''[[Zombie Nautilus]]''' 
+* Now play a dash sound when they perform their dash attack.
+* Added an inventory UI for both.
+
+'''[[Parched]]'''
+* Is now immune to the [[Weakness]] effect.
+
+'''[[Zombified Piglin]]'''
+* Zombified piglins spawned from lightning striking a [[pig]] now have a chance to hold a [[golden spear]].
+
+=== General ===
+'''[[Block model]]s'''
+* Block model elements can now be rotated around multiple axes.
+** Model is first rotated around X, then Y, then Z
+** New fields:
+*** {{cd|x}} &ndash; rotation around axis X in degrees, float, defaults to {{cd|0.0}}
+*** {{cd|y}} &ndash; rotation around axis Y in degrees, float, defaults to {{cd|0.0}}
+*** {{cd|z}} &ndash; rotation around axis Z in degrees, float, defaults to {{cd|0.0}}
+** Existing fields {{cd|axis}} and {{cd|angle}} can still be used.
+*** If both field sets are present, older notation takes presence.
+* Existing restriction for angle value limiting them to {{cd|[-45, 45]}} has been removed.
+** Note: Names of faces are not influenced by rotation. Features that depend on them, like culling, will always use original directions.
+
+'''[[Blockstates definition]]'''
+* Variants in blockstates definition files (defined in <samp>assets/minecraft/blockstates/</samp>) can now be also rotated around Z axis.
+** New optional field {{cd|z}} has the same format as existing {{cd|x}} and {{cd|y}} fields: an integer with allowed values of {{cd|0}} (default), {{cd|90}}, {{cd|180}} and {{cd|270}}.
+** Rotation around Z axis is applied after X and Y.
+
+'''[[Data component format]]'''
+* Added food properties to the following fish bucket items:
+** {{cd|minecraft:cod_bucket}}
+** {{cd|minecraft:salmon_bucket}}
+** {{cd|minecraft:pufferfish_bucket}}
+** {{cd|minecraft:tropical_fish_bucket}}
+
+* {{cd|minecraft:use_effects}}
+** Added field {{cd|interact_vibrations}}: boolean
+*** Whether using this item emits {{cd|minecraft:item_interact_start}} and {{cd|minecraft:item_interact_finish}} game events.
+*** Default value: {{cd|true}}
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|93.1}}.
+
+'''[[Loot table]]s'''
+* Reverted removal of {{cd|contents}} as a supported value for the {{cd|minecraft:dynamic}} loot pool entry.
+
+'''[[Options]]'''
+* Renamed the "Show Music Toast" option to "Music Toast".
+** Added a third state to the "Music Toast" option, allowing it to only be shown in the pause menu.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|74.0}}.
+* Block model and state format has been expanded to allow more rotations.
+
+'''Sound Events'''
+* Added {{cd|entity.zombie_horse.eat}}.
+
+'''[[Texture atlas]]'''
+* To prepare for future work, the game will now print a warning if any defined sprites in any atlases share a name.
+
+'''[[Textures]]'''
+* Textures used for still water and lava are now hardcoded to {{cd|minecraft:block/water_still}} and {{cd|minecraft:block/lava_still}}.
+* Beacons no longer support translucent textures.
+* Added <samp>gui/container/nautilus</samp> used for the Nautilus inventory UI.
+
+'''UI Sprites'''
+* Added <samp>container/slot/nautilus_armor_inventory</samp>
+** Nautilus icon used in Nautilus inventory UI.
+
+== Fixes ==
+{{fixes|fixedin=25w46a
+|;From released versions before 1.21
+|266425|Recipes for new waxed copper blocks are not grouped.
+|;From 1.21.10
+|303395|You cannot double-click on server regions within the realms select region menu to select them.
+|303396|The search fields in the resource and data pack menus aren’t automatically selected when opening the menus via keyboard navigation.
+|303755|The mouse cursor doesn’t change to the resize shape when hovering over the scroll bar in the villager and wandering trader trade UI.
+|303757|The mouse cursor doesn’t change to the proper shape when hovering over enchantments in the enchanting table UI.
+|303758|The mouse cursor doesn’t change to the hand shape when hovering over various elements in the recipe book.
+|303761|The mouse cursor doesn’t change to the proper shape when hovering over the output buttons or the scroll bar in the stonecutter UI.
+|303762|The mouse cursor doesn’t change to the proper shape when hovering over the output buttons or the scroll bar in the loom UI.
+|303763|The mouse cursor doesn’t change to the hand shape when hovering over the crafting slots in the crafter UI.
+|303764|The mouse cursor doesn’t change to the proper shape when hovering over the tabs or the scroll bar in the Creative mode inventory.
+|303765|The mouse cursor doesn’t change to the hand shape when hovering over the tabs in the advancements menu.
+|;dev
+|302815|Zombified piglins spawned from lightning striking a pig do not have a chance to hold a golden spear.
+|302825|The charging animations of some items are incorrect.
+|302851|Buckets of fish heal nautiluses much less than fish items.
+|302890|You can perform spear jabbing and charging attacks simultaneously.
+|302892|Players' arms visually intersect with their bodies and heads when holding spears while riding boats.
+|302893|Hitboxes of submerged entities don't render when the player is looking at them from the surface.
+|302935|Skeletons incorrectly position their arms before shooting.
+|302958|Nautiluses' mouth texture is misaligned.
+|302998|Mobs' arms can visually intersect their bodies and heads when they rotate while holding spears.
+|303149|Commands with specific arguments can crash the game in a deep function recursion.
+|303331|There is no sound for feeding zombie horses red mushrooms.
+|303404|You can damage entities while charging with spears in spectator mode.
+|303431|Setting the debug modifier key to a mouse button doesn't allow for switching to the selected gamemode in the gamemode switcher.
+|303443|Transparent and translucent blocks render in front of the fishing line.
+|303625|Entities, particles, clouds, water, semi-transparent blocks and special rendering blocks render in front of block hitboxes with improved transparency enabled.
+|303653|Camel husks show breeding hearts when fed.
+|303695|Reloading textures while the game is tick frozen causes animated textures to render incorrectly.
+|303751|The model of parched has UV issues.
+|303790|The block breaking particles and block outlines render behind glass blocks and beacons.
+|303882|Charging with a spear with a loaded crossbow in the off hand looks visually off in third person.
+|;prev
+|303940|Netherite horse armor burns in lava/fire.
+|303943|Drowned are no longer slowed down by water.
+|303944|Knockback attacks produce double sounds while the player is in the false sprinting state.
+|303945|The closed caption for the parrot imitating parched does not match the original caption for parched.
+|303947|Clicking on any item with the "{{cd|unbreakable}}", "{{cd|glider}}", or "{{cd|intangible_projectile}}" data component causes the game to crash.
+|303948|The texture of netherite horse armor is different than in Bedrock Edition.
+|303956|Charge attacks now have reduced damage when used after a jab attack.
+|303961|Sprint-crit state now plays both the sprint-knockback sound and the critical hit sound, despite only critical hits being performed.
+|303974|The day counter in the debug overlay is no longer displayed.
+|304061|The warning time for world borders in new worlds is less than expected.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|_TZQp5fy4fw}}
+
+== Trivia ==
+* 25w46a is the final snapshot to use the ''YYwWWn'' format, as the [[version format]] for snapshots has changed beginning with [[Java Edition 26.1 Snapshot 1|26.1 Snapshot 1]].
+
+== Notes ==
+{{Notelist}}
+
+== References ==
+{{reflist}}
+{{source code ref list}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w46a]]
+[[es:Java Edition 25w46a]]
+[[fr:Édition Java 25w46a]]
+[[ja:Java Edition 25w46a]]
+[[lzh:二五週四六甲]]
+[[nl:25w46a]]
+[[pt:Edição Java 25w46a]]
+[[ru:25w46a (Java Edition)]]
+[[zh:Java版25w46a]]

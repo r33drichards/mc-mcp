@@ -1,0 +1,126 @@
+{{No navbox}}
+{{Stub}}
+''Minecraft'' uses several different types of '''noise generators''', specifically those making use of [[wikipedia:Gradient noise|gradient noise]], for the generation of [[terrain]] alongside other features.
+
+There are/were noise generators that use Perlin Noise and Simplex Noise.
+
+[[File:Perlin6.png|right|150px|thumb|Example of Perlin noise, the generator frequently used ingame]]
+== Specifications ==
+Noise generators can be defined by the following parameters:
+
+* Octaves: The amount of different copies of this noise generator, each scaled down from the last by a factor of 2.  Fewer octaves result in an unnatural appearance. More octaves added with lacunarity result in a rougher fractal appearance reminiscent of proper terrain.
+* Frequency: {{info needed}}
+* Factor: A value the noise is multiplied with after processing (lacunarity). To make the set of values more or less extreme.
+* Offset: A value added to the noise after processing. To shift the resulting set of values by this value.
+
+These values are displayed and calculated differently in the code. Vanilla simply applies a "scale" value (frequency*(2^octaves)), defined as how much the noise generator increments per sampling (every four blocks).
+
+=== Customization ===
+{{exclusive|java|section=1}}
+==== Old Customized worlds (1.8-1.12) ====
+{{empty section}}
+
+==== Custom worlds (1.16-1.19) ====
+{{empty section}}
+
+== Types of noise generators ==
+Stratum colors are determined using only the first 48 bits of the 64-bit [[world seed]] {{in|java}}. The strata repeat every 64 blocks on the Y-axis, and the elevation of a particular stratum can vary through a biome by as much as 4 blocks. Stratum elevations vary with respect to the X-axis only, neglecting the Z-axis.
+=== Terrain noise generators ===
+These are used for defining the shape of generated terrain itself.
+
+A table of default/hardcoded settings, as well as values resulting from these, is as follows. Note that not all of these are used in vanilla, but are instead used by mods such as CubicWorldGen.
+{{/Tables/Terrain}}
+
+==== Low noise ====
+Low noise is one of the two main noise generators used for defining terrain shape. This noise generator, which uses Perlin noise, is one which is actually used as a heightmap.
+
+==== High noise ====
+This is effectively identical to low noise, but is only used when selector noise is above a given threshold value.
+
+==== Selector noise ====
+Selector noise is a third important noise generator used for terrain generation. Selector noise, using Perlin noise, dictates which of either low noise or high noise is used for generating terrain at a given position - above 1 high noise is used, below 0 low noise is used, and values between 0-1 are linearly interpolated between the low and high noise values.
+
+==== Depth noise ====
+A rather insignificant noise generator, this uses Perlin noise to make terrain slightly more nuanced in general. The possible values it can have are tightly clamped to a thin set of values. It is also only defined for the X and Z axes.
+
+=== Other noise generators ===
+{{info needed section|Nether soul sand, gravel and equivalent of biome fill noise}}
+These noise generators are oriented to the generation of other world features.
+
+{{/Tables/Population}}
+
+==== Biome fill noise ====
+Upon generation, a top layer block (e.g. dirt, sand) will be placed to a certain thickness to replace the bare stone heightmap. The thickness of this dirt relies on a noise generator in vanilla.
+
+==== Biome distribution ====
+Ocean biome variants are distributed using a Perlin noise function.
+
+The Multi Noise Biome Source (used for the Nether and the Overworld since [[Java Edition 1.18|1.18]]) also uses perlin noise.
+
+==== Badlands clay band offset noise ====
+{{empty section}}
+
+==== Badlands pillar noise ====
+{{empty section}}
+
+==== Swamp noise ====
+Swamps use a noise generator for two purposes: for the generation of marshy areas composing a mixture of water and grass blocks, and for the variation of the two different grass colors used.
+
+==== Flower noise ====
+The placement of flowers, most prominently in [[flower forest]] and [[meadow]] biomes but possibly also elsewhere, is controlled via a noise function. Flowers generated naturally will be in different positions from those grown via bone meal, and those grown via bone meal is ''not'' dependent on [[world seed]].
+
+=== Removed noise generators ===
+These are no longer used in the current version of the game.
+
+{{/Tables/Removed}}
+
+==== Major noise generation prior to Infdev 20100327 ====
+Before inf-20100327, terrain was generated using 2D Perlin noise, as opposed to the 3D noise currently used by the game today.
+
+==== Floating island carver noise ====
+During Indev, floating islands were produced by using an extra noise generator to carve out air into existing terrain.
+
+==== Scale noise ====
+A noise generator that appears to only have effects in hilly areas, with little to no impact on flat low-lying regions. Its effects are now handled by biomes rather than noise generation.
+
+==== Tree density noise ====
+A noise generator existed in Infdev which dictated the density of trees in the world. This was likely removed in Alpha v1.2.0 with the introduction of biomes although is yet to be confirmed, as a similar noise generator also seems to exist in 1.12.2.
+
+==== Sand noise ====
+A noise generator was used for generating the surface block used for low-altitude areas commonly characteristic of beaches. This noise generator would determine if a given area would use sand as the surface block or not. This was probably removed in Beta 1.8.
+
+==== Gravel noise ====
+Effectively identical to sand noise and used in very similar cases, this determined where gravel would generate in beach-like areas.
+
+==== Biomes prior to Beta 1.8 ====
+Biomes before Beta 1.8 used two noise generators: one of them for temperature and the other for rainfall values. The placement of biomes depended of the values of these noise generators.
+
+== Overflowing ==
+{{main|Far Lands}}
+{{more images|Add images for overflowing of swamp noise, flower generation noise, and pre-Beta 1.8 temperature/rainfall noise|section=1}}
+Noise generators are capable of overflowing once hitting the integer limit for their given data type, producing spectacular results. The most notable of these are the Far Lands, resulting in noise generator overflows being referred to as types of Far Lands as a result.
+
+In current versions of ''Java Edition'', overflowing is not usually visible without either direct modification to terrain generation code or possibly via [[custom world generation]].
+
+<gallery>
+Overflowing low noise.png|Low noise overflowing
+Overflowing high noise.png|High noise overflowing
+Overflowing selector noise.png|Selector noise overflowing; note how the noise pattern continues beyond the overflow for areas where the same noise is selected
+Overflowing depth noise.png|Depth noise overflowing; note the incline (where it overflows) and the perpendicular rifts caused by it
+</gallery>
+<gallery>
+Overflowing biome fill noise.png|Biome fill noise overflowing
+</gallery>
+<gallery>
+Overflowing old noise.png|Pre-inf-20100327 terrain generation noise overflowing
+Overflowing island noise.png|Floating island carver noise overflowing
+Overflowing scale noise.png|Scale noise overflowing
+Overflowing sand noise.png|Sand noise overflowing
+Overflowing gravel noise.png|Gravel noise overflowing
+</gallery>
+
+== References ==
+{{reflist}}
+
+[[th:ตัวสร้างสัญญาณรบกวน]]
+[[zh:噪声生成器]]

@@ -1,0 +1,225 @@
+{{Infobox version
+| image =  Bedrock 1.20.0.22 PatchNotes.jpg
+| image2 = Bedrock 1.20.0.22.png
+| edition = bedrock
+| type = Preview
+| server = 1.20.0.22
+| build = 15214963
+| editorver = 0.3.5
+| versioncode = '''Android''':<br>
+952000022 (armeabi-v7a, 33)<br>
+962000022 (x86, 33)<br>
+972000022 (arm64-v8a, 33)<br>
+982000022 (x86_64, 33)<br>
+| date = '''Windows, Android, iOS, iPadOS, Xbox''' - April 26, 2023
+| internal = '''Windows, Xbox''': 1.20.22.0<br>'''Android, iOS, iPadOS''': 1.20.0.22
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.0.22.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.0.22.zip Linux]
+| parent = 1.20.0
+| prevparent = 1.19.83
+| prev = Preview 1.20.0.21
+| next = Preview 1.20.0.23
+| nextparent = 1.20.1
+}}<onlyinclude>
+'''Beta 1.20.0.22''' (Android) or '''Preview 1.20.0.22''' (Windows, iOS, iPadOS, Xbox) is the third beta/''Preview'' version for [[Bedrock Edition 1.20.0]], released on April 26, 2023<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/15239921044109|title=Minecraft Beta & Preview - 1.20.0.22|website=Minecraft Feedback|date=April 26, 2023}}</ref> which adds a new [[music disc]], new {{cmd|camera}} [[command]], new [[music]], and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Experiments]]'''
+* Added the "Experimental Cameras" experimental toggle.
+** Enable the {{cmd|camera}} [[command]].
+
+'''[[Loading tips]]'''
+* Added the following loading screen tips:
+** Explore structures throughout the Minecraft world to find smithing templates to trim your armor pieces.
+** Need more smithing templates? Try to copy them.
+** The sniffer egg seems to like moss blocks.
+** Mob heads make sounds, try them out on note blocks!
+** Some sand might be suspicious. Use your brush on it to find some good stuff!
+** Two players can ride together on a camel.
+** The camels jump... horizontally!
+
+'''[[Music]]'''
+* Added new ambient soundtracks, all by [[Aaron Cherof]].
+** "A Familiar Room" plays in survival mode (all biomes).
+** "Bromeliad" plays in [[bamboo jungle]], [[cherry grove]], [[flower forest]], [[forest]], [[jungle]], [[sparse jungle]].
+** "Crescent Dunes" plays in [[desert]], all types of [[badlands]].
+** "Echo in the Wind" plays in cherry grove, flower forest, [[lush caves]], all types of badlands.
+
+'''[[Splash]]es'''
+* Added the following splashes: 
+** This sand is sus
+** Remember to brush your... ...teeth
+** Has working bookshelves!
+** Sniff sniff...
+** Place hanging sign here
+
+=== Items ===
+'''[[Music Disc]]'''
+* Added a new music disc by [[Aaron Cherof]] titled "[[Relic]]".
+** Can only be obtained when brushing [[suspicious gravel]]s within [[trail ruins]], with {{frac|1|12}} chance appeared as a rare loot.
+** Emits a [[redstone]] signal of 14.
+
+== Changes ==
+=== Blocks ===
+'''[[Sculk Sensor]] and [[Calibrated Sculk Sensor]]'''
+*Sculk Sensors and Calibrated Sculk Sensors now have three phases: Inactive, Active, and Cooldown
+*The default phase is Inactive
+**This phase lasts indefinitely until the block receives a vibration
+**During this phase, the block is able to listen to nearby vibrations until one has been scheduled
+*When a scheduled vibration is received, the block switches to the Active phase
+**This phase lasts 30 game ticks for Sculk Sensors, and 10 game ticks for Calibrated Sculk Sensors
+**During this phase, the block stops listening to nearby vibrations, wiggles its tendrils, and emits a Redstone signal and light
+*After the Active phase has finished, the block switches to a Cooldown phase
+**This phase lasts for 10 game ticks
+**During this phase, the block keeps wiggling its tendrils, but no longer emits a Redstone signal nor light
+**Finally, once this phase is finished, the block will switch back to the Inactive phase
+*Previously, these phases had different timings:
+**The Active phase lasted 40 game ticks for Sculk Sensors and 20 game ticks for Calibrated Sculk Sensors
+**There was no Cooldown phase
+*These phase timings were tweaked so that it is less common for activated contraptions to recursively activate the Sculk Sensor that powered them.
+
+'''[[Sniffer Egg]]'''
+* Can now be found in the [[suspicious sand]] [[loot table]] found at warm [[ocean ruins]].
+* Now emits particles only when placed on [[moss block]]s.
+
+=== General ===
+'''[[Death screen]]'''
+* Reverted changes when the "Show Coordinates" setting is enabled.
+
+=== Items ===
+'''[[Pottery Sherd]]'''
+* Renamed from Pottery Shard to [[Pottery Sherd]].
+
+=== Mobs ===
+'''[[Sniffer]]'''
+* Can now be tempted using [[torchflower seeds]].
+* Sniffer now rather breeds than search and dig for items or be tempted.
+
+'''[[Camel]]s'''
+*The tooltip for dismounting Camels has been updated to match the one for other rideable mobs.
+
+=== World generation ===
+'''[[Trail Ruins]]'''
+* Reworked and added more variants.
+* No longer generates with [[sand]].
+* Tweaked the amount of [[gravel]] and [[dirt]].
+* Tweaked the amount of [[suspicious gravel]].
+* Split the archaeological loot tables for the suspicious gravel within the structure.
+** Rare loot items and common loot items now each have their own dedicated archaeological loot table.
+
+=== Technical ===
+'''Add-Ons and Script Engine'''
+*Pumpkin blocks use the string type state {{cd|minecraft:cardinal_direction}} instead of the int type {{cd|direction}} state.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Experimental Cameras" experimental toggles.
+=== Additions ===
+==== Command format ====
+'''{{cmd|camera}}'''
+* A new [[command]] that can switch to custom camera perspectives and fade the screen.
+** Syntax: (Simplified)
+*** {{cd|'''camera''' <players: target> . . .}}
+**** {{cd|... '''''clear'''''}}
+**** {{cd|... '''''fade''''' . . .}}
+***** {{cd|... color <red: float> <green: float> <blue: float>}}
+***** {{cd|... time <fadeInSeconds: float> <holdSeconds: float> <fadeOutSeconds: float> . . .}}
+****** {{cd|... color <red: float> <green: float> <blue: float>}}
+**** {{cd|... '''''set''''' <preset: string> . . .}}
+***** {{cd|... [default: default]}}
+***** {{cd|... ease <easeTime: float> <easeType: Easing> . . .}}
+****** {{cd|... [default: default]}}
+****** {{cd|... pos <position: x y z> . . .}}
+******* {{cd|... rot <xRot: value> <yRot: value>}}
+****** {{cd|... rot <xRot: value> <yRot: value>}}
+***** {{cd|... pos <position: x y z> . . .}}
+****** {{cd|... rot <xRot: value> <yRot: value>}}
+***** {{cd|... rot <xRot: value> <yRot: value>}}
+
+=== Changes ===
+==== Technical ====
+'''[[Add-on]]s'''
+* Changed {{cd|minecraft:cardinal_direction}} and {{cd|minecraft:facing_direction}} states from int to string type.
+** {{cd|minecraft:cardinal_direction}} has four values {{cd|["north", "south", "east", "west"]}}.
+** {{cd|minecraft:facing_direction}} has six values {{cd|["down", "up", "north", "south", "east", "west"]}}.
+* Removed {{cd|knockback_resistance}} item component.
+
+'''API'''
+* New APIs moved from beta to stable {{cd|@minecraft/server 1.2.0}}:
+** Moving {{cd|applyDamage(amount: number, options?: EntityApplyDamageByProjectileOptions | EntityApplyDamageOptions): boolean}} to {{cd|2.0}}.
+** Moving {{cd|kill(): boolean}} to {{cd|2.0}}.
+** Moving {{cd|EntityApplyDamageOptions}} to {{cd|2.0}}.
+** Moving {{cd|EntityApplyDamageByProjectileOptions}} to {{cd|2.0}}.
+** Moving {{cd|EntityDamageCause}} to {{cd|2.0}}.
+** Moving {{cd|addTag(tag: string)}} to {{cd|2.0}}.
+** Moving {{cd|removeTag(tag: string)}} to {{cd|2.0}}.
+** Moving {{cd|hasTag(tag: string)}} to {{cd|2.0}}.
+** Moving {{cd|getTags()}} to {{cd|2.0}}.
+** Moved "Containerand" {{cd|BlockInventoryComponent}} and {{cd|EntityInventoryComponent}} to {{cd|2.0}}.
+** Moved ''Music APIs'' from beta to stable.
+** Moved ''Sound APIs'' from beta to stable.
+** Moved {{cd|ModalFormData}}, {{cd|MessageFormData}}, and {{cd|ActionFormData}} to {{cd|0.0}}.
+** Moved {{cd|ItemStackconstructor}} and ''getter APIs'' to {{cd|2.0}}.
+** Moved {{cd|EntityItemComponent}}, {{cd|ItemComponent}}, {{cd|ItemTypeand}}, and {{cd|ItemLockMode}} to {{cd|2.0}}.
+** Moving {{cd|applyImpulse(vector: Vector3): void}} to {{cd|2.0}}.
+** Moving {{cd|applyKnockback(directionX: number, directionZ: number, horizontalStrength: number, verticalStrength: number): void}} to {{cd|2.0}}.
+** Moving {{cd|clearVelocity(): void}} to {{cd|2.0}}.
+** Moved {{cd|runCommand}} from beta to {{cd|2.0}}.
+* Enchantments
+** Removed {{cd|MinecraftEnchantmentTypes}} class. Use {{cd|MinecraftEnchantmentTypes}} from {{cd|@minecraft/vanilla-data}} module for minecraft version specific information.
+** Added support for {{cd|strings}} in all enchantment methods for specifying the enchantment type.
+* source on {{cd|ExplosionBeforeEvent}} is now an optional property because explosions may not have a source.
+* Tameable component
+** Removed {{cd|unimplemented}} and {{cd|tameEvent}} from {{cd|TameableComponent}}.
+* Updated API to better handle operations outside of loaded and ticking areas.
+* {{cd|PositionInUnloadedChunkError: Exception}} thrown when trying to interact with a block object that isn't in a loaded and ticking chunk anymore.
+* {{cd|PositionOutOfWorldBoundariesError: Exception}} thrown when trying to interact with a position outside of dimension height range.
+* Dimension
+** {{cd|getBlock}} now returns an optional Block to reflect it might return 'undefined' if asking for a block at an unloaded chunk.
+* Signs
+** Added optional {{cd|SignSide}} parameter to functions {{cd|setText}}, {{cd|getText}}, {{cd|getRawText}}, {{cd|setTextDyeColor}}, and {{cd|getTextDyeColor}} on {{cd|BlockSignComponent}} to support getting and setting text and colors on both sides of signs.
+** Added {{cd|isWaxed}} property to {{cd|BlockSignComponent}} indicating whether players can edit the sign or not.
+** Added {{cd|setWaxed}} method to {{cd|BlockSignComponent}} to block players from editing the sign.
+* {{cd|runCommand}} and {{cd|runCommandAsync}} on {{cd|Dimension}} and {{cd|Entity}} can now fail with a {{cd|CommandError}}.
+** {{cd|runCommand}} can throw a {{cd|CommandError}} exception.
+** {{cd|runCommandAsync}} will pass a {{cd|CommandError}} into the reject handler.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.0.22 Preview
+|;old
+|163399|Greek Mythology Mashup / Items in Frames
+|165962|Some splashes are written without "!" in Bedrock
+|167193|Sniffer digging doesn't have digging particles playing
+|168856|The loot table for suspicious blocks generated in trail ruins has two identical entries for bricks
+|168869|Trail Ruins structure aren't completely buried underground
+|168934|Raiser and Wayfinder smithing template texture are offset by 1 Pixel
+|168999|Flight mode is disabled when flying under stairs and hoppers
+|169141|You can't plant bamboo on suspicious gravel
+|169142|Can't plant bamboo, cactus, sugar cane and dead bush on suspicious sand
+|169567|Bees still make player eat sound
+|169607|Torchflowers cannot be used to feed brown mooshrooms
+|;previous
+|169498|The pitcher plant recipe does not craft two dyes, which is inconsistent with other two block tall flowers
+|otherissuescount=8}}
+'''Other'''
+*Custom items with {{cd|minecraft:record}} show the correct sound description in hover text and on playing in a jukebox.
+*Has item command selector now correctly detects whether or not an actor has a filled map or firework star in their inventory.
+*The {{cmd|/inputpermission}} command now has a description displayed in the command dialogue preview.
+*Fixed an issue where the plant textures appeared darker.
+*Sugar Cane and Bamboo can now be placed on Moss Block.
+*Sniffer can no longer search and dig in water.
+*Made Sniffer walk cycle smoother.
+*Fixed bug in response of {{cd|MessageFormResponse}} where selection was inverted from which button was selected. {{cd|button1}} now refers {{cd|**}} to the left button and results in a selection of 0 and {{cd|button2}} now refers to the right button and results in a selection of 1.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.0 betas]]
+[[de:Bedrock Edition beta 1.20.0.22]]
+[[es:Bedrock Edition beta 1.20.0.22]]
+[[ko:Bedrock Edition 프리뷰 1.20.0.22]]
+[[pt:Edição Bedrock Preview 1.20.0.22]]
+[[uk:Preview 1.20.0.22 (Bedrock Edition)]]
+[[zh:基岩版1.20.0.22]]

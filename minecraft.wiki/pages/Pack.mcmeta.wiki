@@ -1,0 +1,95 @@
+{{lowercase}}
+{{exclusive|java}}
+The '''{{cd|pack.mcmeta}}''' file is used to define metadata of a [[resource pack]] or [[data pack]]. The presence of this file identifies a directory or ZIP archive file as a resource pack or data pack.
+
+== Format ==
+The {{cd|pack.mcmeta}} file is defined using the following [[JSON]] format:
+
+* <span style="color:red;">*</span>: Because the file has to be [[w:Backward compatibility|backwards compatible]] with older versions of the game, these deprecated fields have to be added when the pack also supports old versions (data pack format < 82; resource pack format < 65).
+* <span style="color:orange;">*</span>: These fields '''must be absent''' if the pack does ''not'' support old versions, but '''must be present''' if the pack does support old versions.
+
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|compound|pack}}: Holds the pack information.
+*** {{nbt|string}}{{nbt|list}}{{nbt|compound|description}}: A [[text component]] that appears when hovering over the pack's name in the list given by the {{cmd|datapack list}} command, or when viewing the pack in the Create World screen.
+*** {{nbt|int|pack_format}}<span style="color:red;">*</span>: (optional) The main [[Pack format|format]] of this pack.
+*** {{Nbt|integer|}}{{Nbt|int-array|min_format}}: Specifies the minimum version supported. Can be a single integer or a list of two integers, where the first one is pack (major) version, second one a minor version. Specifying a single integer is interpreted as that major version, for example value {{Cd|82}} or {{Cd|[82]}} is equivalent to {{Cd|[82, 0]}}.
+*** {{Nbt|integer}}{{Nbt|int-array|max_format}}: Specifies the maximum version supported, analogous as {{Cd|min_format}}. Specifying a single integer is interpreted as any minor version.
+*** {{Nbt|integer|}}{{Nbt|int-array}}{{Nbt|compound|supported_formats}}<span style="color:red;">*</span><span style="color:orange;">*</span>: The major versions this pack supports. Has to match the major versions specified in {{Nbt|integer|}}{{Nbt|int-array|min_format}} and {{Nbt|integer|}}{{Nbt|int-array|max_format}}. Examples: {{cd|42}}, {{cd|[42, 45]}}, {{cd|<nowiki>{&nbsp;"min_inclusive": 42, "max_inclusive": 45&nbsp;}</nowiki>}}.
+** {{nbt|compound|features}}: (optional) Section for selecting [[Experiments|experimental]] features.
+*** {{nbt|list|enabled}}: List of enabled [[Experiments#Java Edition|feature flags]].
+**** {{nbt|string}}: [[Resource location]] of a feature flag.
+** {{nbt|compound|filter}}: (optional) Section for filtering out files from packs applied below this one. Any file that matches one of the patterns inside {{nbt|list|block}} is treated as if it was not present in the pack at all.
+*** {{nbt|list|block}}: List of patterns.
+**** {{nbt|compound}}: A pattern.
+***** {{nbt|string|namespace}}: A {{w|regular expression}} for the namespace of files to be filtered out. If unspecified, it applies to every namespace.
+***** {{nbt|string|path}}: A {{w|regular expression}} for the paths of files to be filtered out. If unspecified, it applies to every file.
+** {{nbt|compound|overlays}}: (optional) Section for specifying the overlays, which are sub-packs applied over the "normal" contents of a pack. Their directories have their own assets and data directories, and are placed in the pack's root directory.
+*** {{nbt|list|entries}}: List of overlays. The order is important, as the first in the list is applied first.
+**** {{nbt|compound}}: An overlay.
+***** {{nbt|string|directory}}: The directory to overlay for the respective versions (allowed characters: {{cd|a-z}}, {{cd|0-9}}, {{cd|_}} and {{cd|-}}). In this directory, {{cd|pack.mcmeta}} and {{cd|pack.png}} are ignored.
+***** {{Nbt|integer|}}{{Nbt|int-array|min_format}}: Specifies the minimum version to this overlay on. See {{Cd|min_format}} in the {{Cd|pack}} section above.
+***** {{Nbt|integer}}{{Nbt|int-array|max_format}}: Specifies the maximum version to this overlay on. See {{Cd|max_format}} in the {{Cd|pack}} section above.
+***** {{nbt|integer|}}{{nbt|int-array}}{{nbt|compound|formats}}<span style="color:red;">*</span><span style="color:orange;">*</span>: The major formats to apply this overlay on. Has to match the major versions specified in {{Nbt|integer|}}{{Nbt|int-array|min_format}} and {{Nbt|integer|}}{{Nbt|int-array|max_format}}. Examples: {{cd|42}}, {{cd|[42, 45]}}, {{cd|<nowiki>{&nbsp;"min_inclusive": 42, "max_inclusive": 45&nbsp;}</nowiki>}}.
+** {{nbt|compound|language}}: (optional) Only present in [[resource packs]] &mdash; Contains additional languages to add to the language menu.
+*** {{nbt|compound}} Language code for a language, corresponding to a {{cd|.json}} file with the same name in the directory {{cd|assets/''<[[namespace]]>''/lang}}.
+**** {{nbt|string|name}}: The full name of the language
+**** {{nbt|string|region}}: The country or region name
+**** {{nbt|bool|bidirectional}}: If true, the language reads right to left.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.7.4|dev=13w47a|The {{code|description}} value of {{code|pack.mcmeta}} can now be [[raw JSON text format]].}}
+|{{HistoryLine||1.19|dev=22w11a
+|Added optional field {{cd|filter}} - specifies file filters.
+* This section has a mandatory field {{cd|block}}, which is a list of patterns (regular expressions) for namespaces and paths.
+* If any of the files in packs added before one with {{cd|filter}} section matches any pattern inside {{cd|block}}, it is filtered out (i.e. treated as if not present in the first place).
+* {{cd|filter}} section does not apply to a pack containing it, only to packs loaded before it.
+* Both {{cd|namespace}} and {{cd|path}} can be omitted: if they are, the game works as if they had been specified as a ".*". The missing field matches every value. When they are included, these fields contain a regular expression pattern.}}
+|{{HistoryLine||1.19.3|dev=22w46a|Added support to include non-ASCII characters (encoded as UTF-8) directly instead of using escape sequences.}}
+|{{HistoryLine||1.20.2|dev=23w31a
+|Added optional field {{cd|supported_formats}} - specifies a range for pack formats that the pack supports.
+
+* {{cd|pack_format}} field is still required and its format remains unchanged, to allow older game versions to read pack data.
+* If {{cd|supported_formats}} is present, it must contain the value declared in {{cd|pack_format}}.
+|Added optional field {{cd|overlays}} - specifies sub-packs that are applied over the "normal" contents of a pack.
+* It contains an {{cd|entries}} field, containing a list of overlays.
+* Every overlay entry has two fields:
+** {{cd|formats}} - range of supported formats.
+** {{cd|directory}} - overlay directory (allowed characters: {{cd|d=and|a-z|0-9|_|-}}).}}
+|{{HistoryLine||1.21.9|dev=25w31a
+|The {{cd|supported_formats}} field has been removed.
+
+* If the pack declares support for a pack version with the previous format (data pack < {{cd|82}}, resource pack < {{cd|65}}), it is still required.
+* Otherwise, it is not allowed and must be removed.
+|The {{cd|pack_format}} field is now optional.
+* If the pack declares support for a pack version with the previous format (data pack < {{cd|82}}, resource pack < {{cd|65}}), it is still required.
+|Added required field {{cd|min_format}} - specifies the minimum version supported.
+* A full version is specified as a list of two integers, e.g {{cd|[74, 1]}}
+* Specifying a single integer is interpreted as that major version, e.g. {{cd|74}} is the same thing as {{cd|[74, 0]}}.
+* Specifying a list of a single integer is interpreted the same as specifying that integer alone.
+|Added required field {{cd|max_format}} - specifies the maximum version supported.
+* A full version is specified as a list of two integers, e.g {{cd|[74, 1]}}
+* Specifying a single integer is interpreted as any minor version, i.e. the minor version is {{cd|0x7fffffff}}.
+* Specifying a list of a single integer is interpreted the same as specifying that integer alone.
+|For {{cd|overlays}} entries:
+* The {{cd|formats}} field has been removed.
+** If the pack includes any overlay range that includes a pack version with the previous format (data pack < 82, resource pack < 65), it is still required for all overlay definitions.
+** Otherwise, it is not allowed and must be removed.
+* Added required field {{cd|min_format}} and {{cd|max_format}} with the same formats the fields above with the same name for the {{cd|pack}} section.}}
+
+}}
+
+== External links ==
+* [https://misode.github.io/pack-mcmeta/ Pack.mcmeta Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|pack}}
+
+[[fr:Pack.mcmeta]]
+[[ja:Pack.mcmeta]]
+[[pt:Pack.mcmeta]]
+[[ru:Pack.mcmeta]]
+[[zh:Pack.mcmeta]]

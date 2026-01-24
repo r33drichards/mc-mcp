@@ -1,0 +1,101 @@
+{{exclusive|java}}
+{{Infobox command
+| name = waypoint
+| oplevel = 2
+| others = [[Commands#Cheats|Cheats]] enabled
+}}
+
+Manages waypoints displayed on the [[locator bar]]. Allows querying existing waypoints of entities and modifying their appearance properties like color and fade effect.
+
+== Usage ==
+
+Lists tracked waypoints or modifies properties of the waypoint being transmitted by specific [[entities]]. A tracked waypoint is associated with an entity that meets either of the following conditions:
+* The entity has the {{attr|waypoint_transmit_range}} attribute set to a value greater than 0.
+* The entity's waypoint color has been explicitly set using {{cmd|waypoint modify <waypoint> color}} (either with a name or hex code) during the current game session. This is temporary and it is no longer tracked after reloading the world.
+
+Only entities with tracked waypoints can be listed by {{cmd|waypoint list}}.
+
+Any entities that can transmit a waypoint is called ''waypoint transmitter''. They only include [[living entities]], which are [[armor stand]]s, [[mob]]s, and [[player]]s.
+
+== Syntax ==
+
+: <code>waypoint list</code>
+:: Lists all tracked waypoint from entities (as defined above). The output includes the player's name or the entity's type with color specified by their waypoint color. If none specified, it results to white, regardless of the randomly chosen color by the game or their [[team]] color.
+: <code>waypoint modify <waypoint> color <color></code>
+:: Changes the waypoint's color to one of the 16 [[color code]]s. This overrides the default color.
+: <code>waypoint modify <waypoint> color hex <hex_color></code>
+:: Changes the waypoint's color using a 6-digit {{w|hexadecimal color}} code (RRGGBB format, e.g., <code>FF0000</code> for red). This overrides the default color.
+: <code>waypoint modify <waypoint> color reset</code>
+:: Resets the waypoint's color to the default color (chosen randomly by the game, or the entity's [[team]] color).
+: <code>waypoint modify <waypoint> style set <style></code>
+:: Sets the [[waypoint style]] from {{cd|waypoint_style}} directory in a [[resource pack]]. By default, it is set to {{cd|minecraft:default}}.
+:: The game does not check if a definition exists under the directory, setting it to a non-existent definition results in a [[missing texture]] for the waypoint icon.
+: <code>waypoint modify <waypoint> style reset</code>
+:: Resets the waypoint's style.
+
+== Arguments ==
+
+{{argument|waypoint|entity}}
+: Specifies the target entity whose transmitted waypoint should be modified.
+: {{arg desc|je=entity|amount=single|type=entities}} Must be a waypoint transmitter.
+
+{{argument|color|color}}
+: Specifies a color name to apply to the waypoint's indicator on the [[locator bar]]. This overrides the default color (which may be influenced by the entity's [[team]] color).
+: Must be a valid color name (e.g., <code>red</code>, <code>blue</code>, <code>light_purple</code>).
+
+{{argument|hex_color|hex_color}}
+: Specifies a {{w|hexadecimal color}} code (RRGGBB format) to apply to the waypoint's indicator on the [[locator bar]]. This overrides the default color.
+: Must be a 6-digit hexadecimal number (000000-FFFFFF). For example, <code>FF0000</code> for red, <code>6495ED</code> for cornflower blue.
+
+{{argument|style|resource_location}}
+: Specifies the [[waypoint style]] from {{cd|waypoint_style}} directory in a resource pack.
+: {{arg desc|je=resource_location}}
+
+== Result ==
+
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/waypoint modify <waypoint>|{{cd|waypoint}} is a target selector that's not a waypoint transmitter.|fail}}
+{{Result table|cmd=/waypoint modify ... color <color>|{{cd|color}} is an unknown color.|fail}}
+{{Result table|cmd=/waypoint modify ... color hex <hex_color>|{{cd|hex_color}} is an invalid hex color code.|fail}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On success|1|1|0}}
+{{Output table|cmd=/waypoint list|On success|1|1|the total number of tracked waypoints}}
+{{Output table}}
+
+== Examples ==
+
+* To list all currently tracked waypoints being transmitted:
+*: <code>waypoint list</code>
+* To change the waypoint color for the player named "Steve" to gold on the [[locator bar]]:
+*: <code>waypoint modify Steve color gold</code>
+* To change the waypoint color for a [[creeper]] to lime using a hex code:{{note|name=single_entity|1=The {{cd|<waypoint>}} selector must resolve to exactly one entity. Using a selector like <code>@e[type=...]</code> without <code>limit=1</code> will fail if more than one entity of that type exists.}}
+*: <code>waypoint modify @e[type=creeper,limit=1] color hex 00FF00</code>
+* To reset the waypoint color for a [[zombie]] to its default color:{{note|name=single_entity}}
+*: <code>waypoint modify @e[type=zombie,limit=1] color reset</code>
+
+{{notelist}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.6|exp=Locator Bar|dev=25w15a|Added {{cmd|waypoint|link=none}}.}}
+|{{HistoryLine||1.21.6|dev=25w17a
+ |{{cmd|waypoint|link=none}} is now available in normal gameplay.
+ |Added {{cmd|waypoint modify ... style|link=none}} arguments.
+ |Removed {{cmd|waypoint modify ... fade|link=none}} arguments, effectively removing waypoint's fade effects.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/waypoint]]
+[[ja:コマンド/waypoint]]
+[[lzh:令/waypoint]]
+[[pt:Comandos/waypoint]]
+[[zh:命令/waypoint]]

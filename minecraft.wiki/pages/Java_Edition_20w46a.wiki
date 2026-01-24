@@ -1,0 +1,269 @@
+{{Infobox version
+|title=Minecraft 20w46a
+|image=20w46a.jpg
+|image2=Java Edition 20w46a.png
+|edition=Java
+|type=Snapshot
+|date=November 11, 2020
+|clienthash=f4c56c2b7218599b78074a500ab2a89a04db5b36
+|jsonhash=00287a31ef6a14866a0b328637e60df6419d69bd
+|serverhash=373675677cc57b9294a187a4d0ecab6f340d4189
+|clientmap=d3687dd62798b403141db1fe7272607c53b6e9f0
+|servermap=5de650acd5894cf687a911fb9affb3b294de4dd2
+|parent=1.17
+|prevparent=1.16.5
+|prev=20w45a
+|next=20w48a
+|nextparent=1.17.1
+}}<onlyinclude>
+
+'''20w46a''' is the second [[snapshot]] for [[Java Edition 1.17]], released on November 11, 2020,<ref>{{snap|20w46a|November 11, 2020}}</ref> which adds [[powder snow]] among other changes.
+
+== Additions ==
+=== Blocks ===
+'''[[File:Powder Snow JE1 BE1.png|32px]] [[Powder snow]]'''
+* [[Entities]] that walk over it sink into it.
+* Can be picked up and placed with a [[bucket]].
+* [[Leather boots]] can be worn to prevent entities from sinking into powder snow blocks.<!--Tested, works with anything that can have armor items, including mobs that normally don't wear armor, like cows.-->
+** [[Player]]s can still [[crouch]] to descend with leather boots. Wearing leather boots also allows powder snow to be "climbed", like [[water]] or [[scaffolding]].
+* Entities in powder snow slowly freeze.
+** Once frozen, [[damage]] is slowly dealt to the entity.
+** Wearing leather [[armor]] is intended to slow the freeze effect, and a full set of leather armor is intended to stop the freeze effect. However, this feature was not implemented properly.<ref>{{bug|MC-205041}}</ref>
+
+=== Items ===
+'''[[File:Powder Snow Bucket JE1 BE1.png|32px]] [[Powder snow bucket]]'''
+* Using a [[bucket]] on [[powder snow]] creates a powder snow bucket.
+* Powder snow buckets can be used to place powder snow.
+* Powder snow buckets can also be filled from [[cauldron]]s filled with powder snow.
+
+=== Command format ===
+'''{{cmd|item}}'''
+* Modifies the [[inventory]] of a [[block]] or [[entity]].
+** This command has three forms:
+*** <code>/item <target> replace <item stack> [<count>]</code> – same as old <code>/replaceitem</code>.
+*** <code>/item <target> modify <modifier></code> – modifies item (without copying). 
+*** <code>/item <target> copy <nowiki><source></nowiki> [<modifier>]</code> – copies item for source to target(s), optionally applying modifier.
+** Possible sources and targets: <code>entity <selector> <slot></code> or <code>block <x> <y> <z> <slot></code>.
+** For example, <code>/item block ~ ~ ~ container.0 copy entity @s enderchest.0</code> copies first item from player's ender chest to first slot of container player is currently standing on.
+
+'''[[Item modifier]]s'''
+* Reuse functions syntax of a [[loot table]] to describe item modification in {{cmd|item}} command.
+* The function part of loot tables can now be defined as separate [[data pack]] resource in <code>item_modifiers</code> directory.
+** Such files can contain a single function (i.e single [[JSON]] object) or an array of functions.
+
+=== Gameplay ===
+'''[[Loot table]]s'''
+* Rolls, set_damage, and possibly other parameters now require "type:uniform" (or other valid values for "type") when using min-max for numbers. set_count has had the same requirement for a few versions.
+* New condition: <code>value_check</code>
+** Checks range of value.
+** Parameters: 
+*** {{nbt|int}}{{nbt|compound|value}} – see "New value providers" section (currently combination of random generators and score).
+*** {{nbt|int|range}} – min/max range.
+* New function: <code>set_enchantments</code>
+** Modifies enchantments on item.
+** Parameters:
+*** {{nbt|compound|enchantments}} – map of enchantment id to level value (can be score or random number)
+*** {{nbt|boolean|add}} – if <code>true</code>, change is relative to current level. If <code>false</code>, level is replaced with current value (default behavior).
+* New value providers: <code>score</code>
+** Returns scaled scoreboard value.
+** Parameters:
+*** <code>score</code> – scoreboard name.
+*** <code>target</code> – same as <code>target</code> in <code>score</code> predicate.
+*** <code>scale</code> – scaling factor (float).
+
+=== General ===
+'''[[Particles (Java Edition)|Particles]]'''
+* Added a new particle type: <code>snowflake</code>.
+
+'''[[Tag]]s'''
+* Added new <code>snow_step_sound_blocks</code> block tag.
+** Contains [[snow]] and [[powder snow]].
+** Blocks in this tag create snow stepping noises while the [[player]] walks '''in''' them.
+* Added new <code>powder_snow_walkable_mobs</code> entity tag.
+** Contains [[rabbit]]s, [[endermite]]s, and [[silverfish]].
+** [[Entities]] in this tag can walk on top of powder snow.
+
+== Changes ==
+=== Blocks ===
+'''[[Amethyst bud]]'''
+* Can now be obtained using a Silk Touch pickaxe.
+
+'''[[Banner]]s'''
+* The unused "base" pattern has been renamed to the "field" pattern and given proper translation strings (its ID is still "base").
+
+'''[[Cauldron]]s'''
+* Can now be filled with [[powder snow]] during [[snowfall]].
+* Using a [[bucket]] on a cauldron filled with powder snow empties the cauldron and creates a [[powder snow bucket]].
+* Can also be filled with powder snow by {{ctrl|using}} a powder snow bucket on it.
+
+'''[[Copper block]]'''
+* Crafting recipe has been changed to require only 4 [[copper ingot]]s.
+* Putting a copper block in a [[crafting table]] also results in 4 copper ingots.
+
+'''[[Dispenser]]'''
+* Can now place [[powder snow]] using a [[powder snow bucket]].
+** Also can remove it using a [[bucket]].
+
+'''[[Lapis lazuli block]]'''
+* Renamed to "Block of Lapis Lazuli".
+
+'''[[Lightning rod]]'''
+* The range of attracting [[lightning]] has been doubled.
+
+'''[[Structure block]]'''
+* Default mode of structure blocks is now "Load". "Data" is now hidden by default.
+* "Data" can be accessed by clicking the mode button while holding the {{key|Alt}} key.
+
+=== Items ===
+'''[[Bundle]]'''
+* Now has a GUI when hovering over it.
+** Shows contained items in its GUI's [[inventory]] slots when hovering over it.
+
+'''[[Pufferfish (item)|Pufferfish]]'''
+* The strength of the [[Poison]] effect has been decreased from IV to II.<ref>{{Bug|MC-197276}}</ref>
+
+'''[[Spyglass]]'''
+* The scope [[texture]] is now a glass square with a copper border.
+
+=== Mobs ===
+'''[[Endermite]]s'''
+* Endermen are now again aggressive toward non-pearl-spawned endermites.
+
+=== World generation ===
+'''[[Biome]]s'''
+* Biome-specific [[sky]] colors now blend more smoothly.
+
+=== Weather ===
+'''[[Snowfall]]'''
+* During snowfall, [[cauldron]]s under the sky now slowly fills with [[powder snow]].
+
+=== Command format ===
+'''{{cmd|replaceitem}}'''
+* Removed {{cmd|replaceitem}} command.
+* Replaced with {{cmd|item ... replace}}.
+
+=== Gameplay ===
+'''[[Death messages]]'''
+* Added death messages for freezing:
+** "<player> froze to death".
+** "<player> was frozen to death by <entity>".
+
+'''[[Loot table]]s'''
+* Can now access [[scoreboard]] values by [[UUID]].
+* Loot table values inside random number generators can now be nested.
+* Changed condition: <code>score</code>
+** <code>entity</code> parameter has now been replaced with <code>target</code>. It can either contain value from old <code>entity</code> field (like <code>this</code>) or be an score holder name in form <code>{"name": "..."</code>}.
+* Changed function: <code>set_damage</code>
+** This function now has <code>add</code> parameter. If <code>true</code>, change is relative to current damage. If <code>false</code>, damage is replaced with current value (default behavior)
+* Changed function: <code>set_count</code>
+** This function now has <code>add</code> parameter. If <code>true</code>, change is relative to current item count. If <code>false</code>, item count is replaced with current value (default behavior)
+* Changed function: <code>copy_nbt</code>
+** <code>source</code> parameter can now be set to <code>{"storage": <namespaced id></code>}, to access command storage.
+
+=== General ===
+'''[[Data pack]]s'''
+* Data pack version has now been changed to 7 for consistency with the [[resource pack]] version<ref>{{bug|MC-204861}}</ref> and due to the addition of {{cmd|item}} to replace {{cmd|replaceitem}}.
+
+'''[[Options]] screen'''
+* Buttons tied to a set of values can now be scrolled through.
+* Clicking {{key|Shift}} on a menu button changes it to the previous value.
+* The [[debug mode]] can now only be accessed by holding {{key|Alt}} instead of {{key|Shift}} while clicking on the world type button.
+
+'''[[Tag]]s'''
+* Changed the <code>cauldrons</code> block tag to include [[powder snow cauldron]]s.
+
+'''[[Textures]]'''
+* [[Amethyst shard]]
+** The darker pixels are now a bit darker.
+* [[Block of amethyst]]
+** Has more bright areas.
+* [[Budding amethyst]]
+** Has more bright areas.
+* [[Bundle]]
+** Is now a more vibrant, orangey-brown.
+* [[Calcite]]
+** Texture reworked with the same general layout and color scheme.
+* [[Candle]]
+** Items now depict two candles of different sizes standing upright side-by-side.
+* [[Copper ingot]]
+** Textured reworked to be more intensely bright and dark.
+* [[Cut copper]]
+** Some colors were made slightly darker.
+* [[Lightning rod]]
+** The whole texture was made slightly darker.
+* [[Spyglass]]
+** Updated zoom-in overlay.
+* [[Tinted glass]]
+** Removed the largest "glare" line.
+
+'''Translation strings'''
+* The "World Type" string no longer contains a colon (":"). The colon is still visible in-game, however.
+* Changed "Use VSync" to "VSync".
+* Removed the unused string for enabling VBOs, "Use VBOs".
+* Added strings, "Mode", "Type", "Triggering", and "Track output". These are read out by the narrator for buttons in the [[command block]] UI.
+
+== Fixes ==
+{{Fixes|fixedin=20w46a
+|;old
+|2490|TNT animation ends at 80 ticks, ignores fuse length changes.
+|53518|Endermen don't attack endermites spawned using spawn eggs or {{cmd|summon}}.
+|80468|Inconsistency between block names.
+|99189|Client overrides map data of map with id 0 when a new map is created.
+|99259|The wither health bar doesn't go up during spawn.
+|106690|Servers sends <code>SPacketMaps</code> packets even if the map data did not change.
+|110903|Cannot remove horse saddle using {{cmd|replaceitem}}.
+|143821|Using an empty map in creative mode can create an additional map with ID 0.
+|147729|Crafting via the recipe book can delete items if picking up items while crafting.
+|158466|Server Crash (<code>Exception ticking world: ConcurrentModificationException</code>).
+|162910|Additional map is created when using an empty map in Creative in a newly created world.
+|170659|Loss of precision in <code>entity_scores</code> conditions.
+|182954|"block.minecraft.banner.base.<color>" displays raw translation string (is untranslated).
+|183771|Gamemode switcher icons in the F3+F4 menu are not centered.
+|183917|Min and max are both required in entity_scores condition.
+|185605|Kelp generates on top of magma blocks.
+|188448|Food pops off of campfire when extinguished.
+|189482|LAN World screen buttons are selected in the wrong order when using {{key|Tab}}.
+|195461|The upper part of potted cactus/bamboo texture is not visible if there is a half block above it.
+|195827|<code>datapackFailure.title</code> line in <samp>en_us.json</samp> file has double spaces between the translation string and the equivalent text.
+|196425|"Off" is not completely capitalized for the Distortion Effects and FOV Effects sliders, which is inconsistent with other sliders.
+|197276|Pufferfish gives Poison IV instead of II.
+|198514|Creating a superflat world with nothing but air crashes the game.
+|198535|<code>time_check</code> predicate condition requires both <code>min</code> and <code>max</code> value.
+|198725|Crash when clicking "Presets" after setting the superflat preset with a non-existent biome.
+|199988|When accessing a UI of a structure block from {{cmd|setblock}} the texture changes from data to save.
+|;previous
+|203551|Putting lava in a cauldron makes the water bucket sound.
+|203562|Shulker boxes animate when shulkers do.
+|203574|Decorations don't generate in the Nether.
+|203621|Unable to pick up experience orbs.
+|203622|Arm when using spyglass aligned wrong on Multiplayer.
+|203631|Amethyst buds do not drop themselves with silk touch.
+|203643|Command modified bundle has a bigger progress bar than a slot.
+|203644|Cats & ocelots are missing one of their legs.
+|203646|Some mobs won't despawn when switched to peaceful.
+|203648|The armor stand model floats above its base.
+|203746|Levitation particles go on forever when killed by a levitating creeper.
+|203880|Floating creepers/creeper with no AI.
+|204054|When using the spyglass with a shield on your secondary hand, the shield appears on the zoom.
+|204221|Calcite has transparent texture but is opaque in-game.
+|204861|Datapack format potential conflicts.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|jMBqqdjkNAw}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:20w46a]]
+[[es:Java Edition 20w46a]]
+[[fr:Édition Java 20w46a]]
+[[it:Java Edition 20w46a]]
+[[ja:Java Edition 20w46a]]
+[[pt:Edição Java 20w46a]]
+[[ru:20w46a (Java Edition)]]
+[[th:รุ่น Java 20w46a]]
+[[zh:Java版20w46a]]

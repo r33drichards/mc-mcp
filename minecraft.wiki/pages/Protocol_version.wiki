@@ -1,0 +1,84 @@
+A '''protocol version''' number ('''PVN''') or '''network version''' is an integer used to check for incompatibilities between the player's client and the server they are trying to connect to.<ref><samp>[https://minecraft.net/download/server server.jar]</samp>, located in class <samp>com.mojang.bridge.game.GameVersion</samp></ref><ref>[[Minecraft Wiki:Projects/wiki.vg merge/Protocol version numbers]]</ref>
+
+== Usage ==
+[[File:Outdated client.png|thumb|An outdated client attempting to connect to a server on a newer version.]]
+Client and server versions with the same protocol version are compatible with each other. For example, a client running [[Java Edition 1.8.9]] can connect to a server running [[Java Edition 1.8]], as both have a protocol version of 47.
+
+Upon attempting to join a [[multiplayer]] server, the game checks if the client has a protocol version newer or older than the selected server; if it does, the game then alerts the player that their client (or the server) is outdated.
+
+Versions with the same protocol version may not always be cross compatible – [[25w41a]] and [[1.21.9-rc1]] erroneously have the same PVN, but connecting to a 25w41a server from 1.21.9-rc1 refuses the connection and displays "Network Protocol Error" and 25w41a crashes when attempting to join a 1.21.9-rc1 world.
+
+== Versioning ==
+All versions, including minor releases and development versions on both {{els|je|be}}, have their own protocol version. The version takes the form of an ever-increasing positive integer unlike client versions. Protocol versions may occasionally be skipped between major releases.
+
+Since [[1.16.4-pre1]], protocol versions of {{JE}} development releases take the form of very large numbers best represented using hexadecimal (represented by the prefix "0x" in the protocol version tables). These development release protocol versions have the 30th bit set to 1 and otherwise increment normally, starting from <samp>0x</samp>40000001 (1073741825 in decimal). This was made to allow release versions to be cross-compatible while both being incompatible with their development versions. For example, both [[1.20.5]] and [[1.20.6]] have a protocol version of 766, and are therefore multiplayer cross-compatible, while both of these are incompatible with [[1.20.6-rc1]], which has a protocol version of 0x400000C0.
+
+== Storage location ==
+=== ''Java Edition'' ===
+==== <samp>version.json</samp> ====
+Each ''Minecraft'' build since [[18w47b]] specifies its current protocol version in the <samp>[[version.json]]</samp> file, found in the root directory of the [[client.jar]] and [[server.jar]] files.
+<div class="treeview">
+* {{nbt|compound}} version.json
+** {{nbt|int|protocol_version}}: The protocol version of this build.
+</div>
+
+==== Version command ====
+Running {{cmd|version}} (only present in [[25w15a]] and later) prints the protocol version to chat.
+
+=== ''Bedrock Edition'' ===
+Since [[Bedrock Edition beta 1.2.0.22|beta 1.2.0.22]], the protocol version can be viewed by going into "Profile Settings" and scrolling down to the bottom. The protocol version appears in front of the text saying "Protocol Version:". It can also appear on the preview/beta debug text in front of the text saying "cli-p''n''".
+
+== List of protocol versions ==
+{{Protocol version/Latest}}
+
+The tables below are sorted by [[data version]].
+
+{{collapse|content=<nowiki/>
+{{Protocol version/Table|hidedata=1|hiderespack=1|hidedatpack=1}}
+}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java classic}}
+|{{HistoryLine||unknown|Added protocol versions.}}
+|{{HistoryLine|java indev}}
+|{{HistoryLine||0.31|dev=20091223-0040|Removed protocol versions.}}
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||v1.0.5|Re-added protocol versions.}}
+|{{HistoryLine||v1.0.17|Reset the protocol version number to 1.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.7.2|dev=13w41a|Rewrote the protocol to use Netty, resetting protocol versions back to 0. Protocol versions before this update are not compatible with server versions with the same protocol number after this update.}}
+|{{HistoryLine||1.16.4|dev=pre1|New network protocol scheme, with a high bit (bit 30) set for snapshots. The protocol version increases by 1 for each snapshot, but full releases may keep the same protocol version as the previous full release in cases where the network protocols are compatible.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.1.0|Added protocol versions.}}
+|{{HistoryLine||v0.12.1|dev=build 10|The protocol version is now displayed at the top of the screen in development versions while the player is in a world.}}
+|{{HistoryLine||v0.14.0|dev=build 1|The protocol version a world used on creation is now saved to level.dat under {{nbt|int|NetworkVersion}}. The game uses this to check if a world is being played in an outdated version.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.6.0|dev=beta 1.6.0.1|The protocol version written to level.dat is no longer used to detect if a world is being played in an outdated version.}}
+}}
+
+== See also ==
+* [[Data version]]
+* [[al_version]]
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{Navbox Bedrock Edition}}
+
+[[es:Versión de protocolo]]
+[[fr:Version de protocole]]
+[[it:Versione protocollo]]
+[[ja:プロトコルバージョン]]
+[[ko:프로토콜 버전]]
+[[pt:Versão do protocolo]]
+[[ru:Версия протокола]]
+[[uk:Версія протоколу]]
+[[zh:协议版本]]

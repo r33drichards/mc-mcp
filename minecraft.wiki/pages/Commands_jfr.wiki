@@ -1,0 +1,65 @@
+{{Exclusive|java}}
+
+{{Infobox command
+|name=jfr
+|oplevel=4
+}}
+
+Starts and stops profiling with {{w|Java Flight Recorder}} ([https://openjdk.java.net/jeps/328 JEP]) as well as a few custom events.
+
+==Usage==
+When profiling, it records several information about CPU, memory, and threads usage of the client while it was running, and saves them on a <code>.jfr</code> file under the {{cd|[[.minecraft]]/debug}} folder.
+
+The file can be opened using an external tool or software, such as [https://visualvm.github.io/ VisualVM] or [https://github.com/openjdk/jmc JMC]. It contains JVM and operating system events, with several ''Minecraft''-related custom events below:
+<!-- Documentation with names taken from VisualVM program -->
+* '''Network''' group, which contains:
+**'''Network Packet Received''' and '''Network Packet Sent''': network packet events, containing information about their protocol ID, packet ID, packet direction (server or client bound), remote address, and bytes size. See [[Java Edition protocol]] for list of protocol and packet IDs.
+**'''Network Summary''': summary information of received and sent packets count and their bytes size.
+
+* '''Storage''' group, which contains:
+** '''Region File Read''' and '''Region File Write''': [[region file]] events, containing information about region and chunk positions, dimension, and type of compression algorithm.
+
+* '''Ticking''' group, which only contains a single custom event:
+**'''Server Tick Time''': sampling event of the average server tick duration at one second intervals.
+
+*'''World Generation''' group, which contains:
+**'''Chunk Generation''': time taken to generate individual [[chunk]] stages.
+**'''Create/Load World''': initial [[world]] loading duration when loading a world.
+
+The <code>.jfr</code> file is accompanied by a summary [[JSON]] report is written both to the log file and in the debug folder.
+
+== Syntax ==
+:<code>jfr start</code>
+:: Start JFR profiling.
+:<code>jfr stop</code>
+:: Stop JFR profiling.
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/jfr start|A jfr profiler has already been started.|fail}}
+{{Result table|cmd=/jfr stop|There's no jfr profiler running.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|N/A|0|0}}
+{{Output table|On success|N/A|1|1}}
+{{Output table}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.18|dev=21w37a|Added {{cmd|jfr|link=none}}.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/jfr]]
+[[es:Comandos/jfr]]
+[[ja:コマンド/jfr]]
+[[lzh:令/jfr]]
+[[pt:Comandos/jfr]]
+[[zh:命令/jfr]]

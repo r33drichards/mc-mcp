@@ -1,0 +1,233 @@
+{{Infobox version
+|title=Minecraft 15w44b
+|edition=Java
+|image=15w44a.png
+|image2=Java Edition 15w44b.png
+|type=Snapshot
+|date=October 30, 2015
+|parent=1.9
+|clienthash=cfc7eba7e23bf76c81facf1ebf9dce7215c3141d
+|jsonhash=a2d3fd6e371e1a789f432227328f6967c5b6bc7e
+|serverhash=7bda3375d5509536766d65cf47b2a17ef42b964a
+|exehash=78669b2fcf9d362d9e9f6299b6fdb88cb42a0bf3
+|prevparent=1.8.9
+|prev=15w44a
+|next=15w45a
+|nextparent=1.9.1
+}}<onlyinclude>
+
+'''15w44b''' is the thirty-eighth [[snapshot]] for [[Java Edition 1.9]], released on October 30, 2015<ref>https://web.archive.org/web/20151030024129/https://www.mojang.com/2015/10/minecraft-snapshot-15w44b/</ref>, which adds the [[Luck]] and [[Bad Luck]] [[status effect]]s, makes various items available in Survival, and fixes bugs and crashes.
+
+== Additions ==
+=== Items ===
+'''[[Potion of Luck]]'''
+* Gives the [[Luck]] effect for 5 minutes.
+* Also comes in splash and lingering potion forms as well as for tipped arrows ("Arrow of Luck").
+
+'''Uncraftable potion'''
+* Has no effect, unknown use.
+* Cannot be obtained in Survival.
+* Has tag <code>Potion:"minecraft:empty"</code>.
+* Also comes in splash and lingering potion forms as well as for tipped arrows (just called "Tipped Arrow").
+
+'''[[Tipped arrow]]s'''
+* Now exist for mundane potions, thick potions, and awkward potions.
+** Have no effects and are unobtainable since lingering potions of these kinds do not leave a cloud behind.
+
+=== Gameplay ===
+'''[[Status effect]]s'''
+* New status effects: [[Luck]] and [[Bad Luck]].
+** Increase/decrease the luck attribute by ±1 per level.
+** Luck has a clover icon.
+** Bad Luck has a withered clover.
+
+=== General ===
+'''[[Attribute]]s'''
+* <code>generic.luck</code>, ranging from -1024 to 1024.
+** Used when processing [[loot table]]s along with the <code>quality</code> or <code>bonus_rolls</code> tag. Currently used for opening chests and chest minecarts, fishing, and player-killed mob drops.
+
+'''[[Loot table]]s'''
+* Added <code>bonus_rolls</code> tag, to give additional rolls on a pool with good Luck (or to remove rolls with bad Luck).
+
+== Changes ==
+=== Blocks ===
+'''[[End rod]]'''
+* Can now be crafted using a [[popped chorus fruit]] in the bottom and a [[blaze rod]] on top.
+** Yields 4 per craft.
+
+'''[[Hay bale]]'''
+* Falling onto a hay bale does only 20% of normal fall damage.
+** The highest the player can fall, and live, without armor, is 100.27 blocks.
+** The highest the player can fall with Feather Falling is 169.19 blocks.
+
+=== Items ===
+'''[[End crystal]]s'''
+* Can now be crafted using an [[eye of ender]] in the middle, a [[ghast tear]] on the bottom and 7 [[glass]] blocks on the remaining squares.
+* Are no longer dropped by undead [[horse]]s.
+
+'''[[Fire charge]]s'''
+* Once again shoot as [[blaze]] fireballs when ejected from a [[dispenser]] (since 15w33c they had shot as ender dragon fireballs).
+
+'''[[Potion]]s'''
+* Removed many unused base potions from the game.
+** For a full list, see [[Java Edition removed features#Potions|removed features]].
+
+'''[[Tipped arrow]]'''
+* Can now be obtained in Survival.
+** Splashing down a lingering potion first, then shooting regular arrows through that cloud produces a tipped arrow.
+* For effects with duration, the duration is {{frac|1|8}} that of the corresponding potion.
+
+=== Mobs ===
+'''[[Guardian]]s'''
+* Rare drops from player kills on normal guardians are returned to what they were in [[Java Edition 1.8]], namely, they only include fish, and not fishing junk or fishing treasure.
+** [[Elder guardian]]s still drop junk and treasure.
+
+'''[[Horse]]s'''
+* Horses, donkeys, and mules drop 0–2 leather, affected by Looting, which is a return to pre-[[15w43a]] behavior.
+* Skeleton and zombie horses no longer drop end crystals; they again drop 1 bone or 1 rotten flesh, respectively.
+
+=== Command format ===
+'''[[NBT format]]'''
+* Entity: <code>Arrow</code>
+** <code>Potion</code> (string): Potion effect of the arrow.
+*** e.g. {{command|summon Arrow ~ ~5 ~ <nowiki>{Potion:"minecraft:long_invisibility"}</nowiki>}}.
+** <code>CustomPotionEffects</code> (list): List of custom potion effects.
+*** e.g. {{command|summon Arrow ~ ~5 ~ <nowiki>{CustomPotionEffects:[{Id:1,Duration:100}]}</nowiki>}}.
+* Entity: <code>AreaEffectCloud</code>
+** <code>Potion</code> (string): Potion effect of the cloud.
+*** e.g. {{command|summon AreaEffectCloud ~ ~5 ~ <nowiki>{Potion:"minecraft:long_invisibility"}</nowiki>}}.
+
+=== Gameplay ===
+'''[[Entities]]'''
+* <code>TippedArrow</code> has been removed. <code>Arrow</code> is used instead.
+
+'''[[Fishing]]'''
+* [[Luck of the Sea]] and the new [[Luck]] effect affect fishing again, and effects stack. Each point increases the weight of treasure by 2, decreases the weight of fish by 1, and decreases the weight of junk by 2.
+
+=== General ===
+'''[[Loot table]]s'''
+* Replaced <code>luck_multiplier</code> with <code>quality</code>.
+** Formula is now <code>weight += quality * luck</code>, formerly <code>weight += weight * luck_multiplier * luck</code>.
+
+== Fixes ==
+{{fixes|fixedin=15w44b|prefix=Minecraft
+|;old
+|119|Mobs visually sinking through solid blocks.
+|881|Boat inflicts fall damage if it runs aground in some fashion (slabs, mobs, soul sand).
+|1003|Stairs in desert temple are not facing the right way.
+|1349|While riding a pig, horse or minecart and using F5, the hand of player's character is misplaced.
+|3004|Can walk through piston arm if piston placed facing east (f {{=}} 3),
+|8522|Pushing a button makes the button side textures look wrong.
+|12823|Powered redstone lamp transparent.
+|13844|When player is "holding" the Leash it doesn't Connect with him.
+|25876|Logs with damage values have wrong name.
+|34074|Use ender pearl to get past 29999999.7 blocks.
+|58405|Cauldron bottom model rendering glitch.
+|61474|Hoppers/droppers put multiple empty buckets into furnace, they then get replaced by one water bucket when smelting wet sponge.
+|64804|Minecraft crashing when walking into the Farlands void.
+|64900|Players cannot push stacked mobs.
+|64964|Boats break on soul sand.
+|79820|Player can obtain item with count 0.
+|84774|Cobblestone wall fence gate facing south has different texture mapping (uvlock tag issue).
+|85027|Villager selling null crashes clients.
+|85317|Silverfish with weakness and attack damage set to 0 still deal damage.
+|85988|Cannot {{cmd|clear}} written book.
+|87454|Mobs summoned with <code>ActiveEffects</code> do not get the potion effects unless they are splashed with a thrown potion of that effect.
+|87533|"<code>stat.useItem.minecraft.shears</code>" stat doesn't work.
+|88665|Can't ride a "<code>MinecartRideable</code> riding a <code>MinecartChest</code>".
+|91897|<code>HurtTime</code> not ran on wolves.
+|;From the 1.8 development versions
+|46401|Spectator mode frozen entities and vision overlay.
+|64117|Extreme overloaded worlds cause problems/opening a world two times or more.
+|70190|{{key|F3}} and {{key|T}} leaves player in chat mode.
+|;dev
+|82864|Items floating in both hands.
+|82969|Corrupt <code>pack.mcmeta</code> causes a crash.
+|82983|Ender Dragon Staying Still when out of render distance.
+|83001|Two ender dragons bug.
+|83030|When a shulker dies, no death particles are given off upon death.
+|83045|EnderDragon Breath does no damage.
+|83252|No sound while having item in dominant hand and hitting grass with a sword.
+|83333|Shulker projectiles have some issues with water.
+|83413|Water causes graphics bug on shulkers.
+|83566|levitating and hitting a ceiling glitchy.
+|83639|Dragon doesn't fly at you when at height.
+|83703|Ender pearl isn't infinity in Creative mode.
+|83726|Duel wielding sword glitch.
+|83732|Using pick-block on any potion tipped arrow, a water bottle arrow is given.
+|83756|Reeling fishing rod doesn't count as right click action.
+|84224|Shift does not work with the off-hand slot.
+|84245|The ender dragon fight has a "safe spot" exploit when it shoots its acid.
+|84311|Ender dragon death light is too much.
+|84336|Enderpearls disappear in creative mode.
+|84347|Placing a block from player's off-hand retracts the fishing line.
+|84582|Chorus plants do not make sounds when water breaks them.
+|84593|Fire charges shot out of dispensers are dragon fireballs.
+|84905|Shulker projectile and vision bug.
+|84969|The player can fill a water bottle and an empty bucket simultaneously.
+|85066|Burning mobs glitch.
+|85154|Endermen go back to neutral after being hit by the player.
+|85189|Shulker radius doesn't apply when on top of them.
+|85569|End city despawned after relog.
+|85723|Unbreakable with data values.
+|85951|Ender dragon respawning works even if there is an existing dragon.
+|86091|Lingering potion disappears in Spectator mode.
+|86128|Getting hit with an arrow while blocking a shield still adds an arrow to the target.
+|86371|Eating item in the main hand while holding edible food in off hand.
+|86416|Zombies don't try to follow and attack players when players are in water.
+|86719|Ender dragon is not interested in the player.
+|86721|Spectating someone while they eat/block with a shield crashes the game.
+|86745|When a player uses a repeating command block and closes world and re-opens world, game crashes.
+|86817|<code>Tellraw</code> doesn't respect command-block chain order.
+|86954|Nameplate displacement on armor stands.
+|87007|Client disconnects from the server as a result of <code>IndexOutOfBoundsException</code>.
+|87021|Spawnpoint does not function with specific coordinates.
+|87118|Chunks disappear after reload after using clone in a repeat command block.
+|87147|Hoppers can't remove empty bottles left in brewing stands by Dragon's Breath.
+|87215|Pumpkin and melon vines disappear on logout/relog.
+|87459|Spread players not working sometimes.
+|87538|Cannot use right-hand item with a shield on.
+|87598|Sleeping in a bed and teleporting to unloaded chunks.
+|87613|Logmessage: "<code>Unable to resolve BlockEntity for ItemInstance: minecraft:shield</code>".
+|87840|Breeding 2 pigs consumes 3 food items.
+|87956|If a spawner's delay is 0, right-clicking with a spawn egg on it doesn't change the id.
+|87974|Quirky tool and weapon animations (attack strength feature).
+|88376|Staying underwater doesn't drown the player.
+|88431|Mobs stand still, won't burn or move.
+|88433|Pressure plates didn't work until world reload.
+|88958|Iron golems can't fight back against the new skeletons.
+|89123|Regular stairs reconfigure when next to inverted stairs.
+|89353|End crystals don't respawn instantly after the explosions when respawning Ender Dragon.
+|89924|Rideable animals (horses, pigs) are broken.
+|89946|Cannot control minecarts.
+|90115|Boat texture bug.
+|91075|Loot table entries with min count 0 create items with count 0 in a container.
+|91281|<code>MinecartChest</code> using <code>abandoned_mineshaft.json</code> loot table does not wait for chest to be opened.
+|;previous
+|91521|Combining items in an anvil causes the item to disappear.
+|91551|Unable to respawn dragon in old worlds because of strict exit portal location check.
+|91581|One ender crystal is not destroyed by the dragon spawning sequence.
+|91624|End crystal drops from a normal horse.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|VgACSoFZIL4}}
+
+== Trivia ==
+* 15w44b was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+* 15w44b was released exactly 5 years after the [[Halloween Update]].
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:15w44b]]
+[[es:Java Edition 15w44b]]
+[[fr:Édition Java 15w44b]]
+[[it:Java Edition 15w44b]]
+[[ja:Java Edition 15w44b]]
+[[pt:Edição Java 15w44b]]
+[[ru:15w44b (Java Edition)]]
+[[zh:Java版15w44b]]

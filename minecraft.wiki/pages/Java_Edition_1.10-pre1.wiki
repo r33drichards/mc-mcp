@@ -1,0 +1,174 @@
+{{Infobox version 
+|title=Minecraft 1.10-pre1
+|edition=Java
+|image=1.10-pre1.png
+|image2=Java Edition 1.10-pre1.png
+|type=Pre-release
+|date=June 2, 2016
+|parent=1.10
+|jsonhash=08a9c29b2cd4df7c9ad51ab0be5f9683c20d4c3f
+|clienthash=33c87d0abcd90cfc694ef651e96e81689e14cffb
+|serverhash=c9c34ba406f694e56c1729b465c25e0f63ce9743
+|prev=16w21b
+|prevparent=1.9.4
+|next=1.10-pre2
+|nextparent=1.10.1
+}}<onlyinclude>
+
+'''1.10-pre1''' is the first pre-release for [[Java Edition 1.10]], released on June 2, 2016,<ref name="1.10-pre1-blog">http://www.mojang.com/2016/06/minecraft-110-pre-release-1/</ref> which split {{cmd|tp}} into a separate {{cmd|teleport}} command, adds sounds for mobs added in previous snapshots, modifies villagers, and fixes bugs in the 1.10 snapshots.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|teleport}}'''
+* Usage: <code>/teleport <entity> [<x> <y> <z>] [<y-rot> <x-rot>]</code>.
+** Teleports a selected entity to the executor's relative position.
+** Example: <code>/teleport @e[type=Cow] ~ ~10 ~ 60 10</code> reorients all cows and teleport them up 10 blocks.
+
+'''[[NBT tag]]s'''
+* New <code>ParticleParam1</code> and <code>ParticleParam2</code> integer tags for [[area effect cloud]] entities.
+** These work just like the two <code><params></code> arguments work, in {{cmd|particle}}.
+** Example: {{cmd|summon AreaEffectCloud ~ ~1 ~ {Duration:600,Radius:2.0f,Particle:"iconcrack",ParticleParam1:351,ParticleParam2:3} }}.
+*** Summons a cloud of iconcrack particles with the texture of item 351 (dye), and data value 3 (cocoa beans).
+** Example: {{cmd|summon AreaEffectCloud ~ ~1 ~ {Duration:600,Radius:2.0f,Particle:"blockcrack",ParticleParam1:12289} }}.
+*** Summons a cloud of blockcrack particles with the texture of block 1 (stone), and data value 3 (diorite), using the formula 1+(3×4096).
+
+'''[[Sound event]]s'''
+* Added <code>entity.husk.ambient</code>
+* Added <code>entity.husk.death</code>
+* Added <code>entity.husk.hurt</code>
+* Added <code>entity.husk.step</code>
+* Added <code>entity.stray.ambient</code>
+* Added <code>entity.stray.death</code>
+* Added <code>entity.stray.hurt</code>
+* Added <code>entity.stray.step</code>
+* Added <code>entity.wither_skeleton.ambient</code>
+* Added <code>entity.wither_skeleton.death</code>
+* Added <code>entity.wither_skeleton.hurt</code>
+* Added <code>entity.wither_skeleton.step</code>
+
+== Changes ==
+=== Blocks ===
+'''[[Nether wart block]]s'''
+* No longer destroyed by water or lava.
+
+'''[[Structure void]]s'''
+* Indestructibility removed.
+* Blast resistance reduced to 0 (was 3600000.6).
+
+=== Items ===
+'''[[Spawn egg]]s'''
+* Now uses the actual names of entities, rather than entity codes (i.e. <code>entity.mule.name</code>).
+
+=== Mobs ===
+'''General'''
+* Mobs now avoid [[magma block]]s that are in the way.
+
+'''[[Polar bear]]s'''
+* Adult polar bears now jump in water if on fire.
+
+'''[[Skeleton]]s'''
+* Skeletons holding a [[tipped arrow]] in their off hand now shoot that type of arrow.
+** This overrides strays' normal shooting of Slowness arrows.
+** The arrows in the off hand are not consumed.
+* Burning skeletons have a 50% chance of shooting flaming arrows if raw [[regional difficulty]] is 3 or greater.
+
+'''[[Villager]]s'''
+* Now run away from nearby [[husk]]s.
+
+'''[[Witch]]es'''
+* Drink a potion of Fire Resistance if they don't already have the effect and the most recent damage taken (within the past 2 seconds) was fire damage.
+
+'''[[Zombie]]s'''
+* Chance of setting the target on fire when burning, and the duration of the effect, now depends on raw [[regional difficulty]].
+** Chance is now equal to <code>(30 × RegionalDifficulty)%</code>; formerly 30% on Easy, 60% on Normal, 90% on Hard.
+** Duration is now equal to <code>2 × floor(RegionalDifficulty)</code> seconds; formerly 2 seconds on Easy, 4 on Normal, 6 on Hard.
+* Husk hunger effect duration now depends on raw [[regional difficulty]].
+** Duration is now equal to <code>7 × floor(RegionalDifficulty)</code> seconds; formerly 7 seconds on Easy, 14 on Normal, 21 on Hard.
+
+=== World generation ===
+'''[[Village]]s'''
+* Now generate grass under stairs instead of a dirt path.
+* Villages in savanna and taiga biomes now use the appropriate type of wooden fences.
+* Cobblestone now generates around [[Village well|well]]s instead of gravel.
+* Paths now only replace grass blocks with air above water, lava, sand, sandstone, and red sandstone. All other blocks are ignored, with blocks below (down to sea level) considered for replacement instead.
+** This allows paths to generate properly under trees.
+** This removes the ability for paths to bridge ravines.
+* Zombie villagers generated in zombie villages no longer despawn (i.e. they have the <code>PersistenceRequired</code> flag set).
+
+=== Command format ===
+'''{{cmd|tp}} '''
+* Behavior is reverted back to [[16w20a]] and previous versions.
+** The new behavior has been given to {{cmd|teleport}} instead.
+
+=== General ===
+'''[[Options]]'''
+* <samp>[[options.txt]]</samp> now displays the [[data version]] the file was last saved in.
+* [[Options#Video Settings|VBOs]] are now enabled by default, overriding old options when upgrading.
+
+'''[[Particle]]s'''
+* <code>fallingdust</code> particle now collides with blocks.
+
+== Fixes ==
+{{fixes|fixedin=1.10 Pre-Release 1|prefix=Minecraft
+|;old
+|3437|Flowers/tall grass are placed on top of village paths by the world generator.
+|86295|The Ender Crystal beam is going the other way.
+|98430|Endermen can drop a cacti that has a missing texture.
+|98654|Legacy ender dragon not moving.
+|101118|Mobs' pathfinding is confused by grass paths.
+|101325|Loading <code>Village.dat</code> containing player reputation causes <code>NullPointerException</code>.
+|;dev
+|102048|Particle <code>fallingdust</code> does not collide with blocks below it.
+|102049|witches don't drink Fire Resistance potion while on magma block.
+|102050|Spawn Eggs names of some mob variant are called Spawn <code>entity.X.name</code>
+|102051|Unable to place anything on nether wart blocks.
+|102070|Nether wart block unable to be set on fire.
+|102081|The oxygen value of mobs is too low.
+|102096|Some stairs in villages generate with path blocks below, instead of dirt.
+|102119|Polar Bear gets stuck in blocks when trying to chase the player.
+|102135|Structure block: empty names allowed.
+|102159|Gravel generates around village wells, instead of grass paths.
+|102146|Cannot type/or : into structure blocks.
+|102178|Structure block border lines are invisible in spectator mode ({{cmd|gamemode 3}}).
+|102203|Structure blocks don't rotate skulls.
+|102207|Crash when using fishing rod in same tick as <code>@e</code> command with <code>type{{=}}</code> or <code>name{{=}}</code>.
+|102270|Village paths generate incorrectly under trees.
+|102278|Mob pathfinding does not avoid the magma block.
+|102372|Fences in savanna and taiga villages use oak fence instead of acacia/spruce fence.
+|102378|Signs, banners, end rods and anvils mirrored incorrectly.
+|102401|Relative teleportation interrupts elytra flight.
+|102455|Mob pathfinding does not regard nether wart block as obstruction/unable to pathfind on top.
+|102460|Zombie villages generate without zombies/zombies despawning.
+|102530|<code>AreaEffectCloud</code>: wrong <code>fallingsand</code> particle command does not show <code>mobSpell</code> default particle.
+|102557|Wrong item frame placement after loading by structure block.
+|102575|In crash reports, the <code>CPU</code> is <code>bcw$7@<memory address></code>.
+|102598|{{cmd|/tp}}ing entities results in teleportation relative to the player.
+|;previous
+|102607|Villagers don't run away from zombies during the day.
+|102614|Able to paste invalid characters into structure blocks.
+|102679|Villagers are attacked by husks, but they don't run away from them.
+|102740|Teleporting players with relative coordinates behaves like before 16w21b when used in a command block <nowiki>[minecart]</nowiki>.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|UgXjuvRAwM8}}
+
+== Trivia ==
+* The time span between [[16w20a|the first snapshot]] and 1.10-pre1 was only 15 days, which is abnormal when compared to previous releases.
+** The most recent update to be equal or faster than this was [[Beta 1.0]] to [[Beta 1.1]], with only 2 days passing.
+* 1.10-pre1 was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:1.10-pre1]]
+[[es:Java Edition 1.10-pre1]]
+[[fr:Édition Java 1.10-pre1]]
+[[ja:Java Edition 1.10-pre1]]
+[[nl:1.10-pre1]]
+[[pt:Edição Java 1.10-pre1]]
+[[ru:1.10-pre1 (Java Edition)]]
+[[zh:Java版1.10-pre1]]

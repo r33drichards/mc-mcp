@@ -1,0 +1,177 @@
+{{Infobox version
+|title=Minecraft 25w33a
+|image=25w33a.jpg
+|image2=Java Edition 25w33a.png
+|edition=Java
+|type=Snapshot
+|date=August 12, 2025
+|jsonhash=668fe51f971b2e5d55c17b8a39d59a924728d383
+|clienthash=7ea8455dd98248a23868bde948d9aeddd0d6f7fa
+|clientmap=bf18cc9f67108efb2369f15f42358165b7c9f3ee
+|serverhash=83027f72aa7957837aeeaef499c67105583d0928
+|servermap=503dad3066e73e0761a2ce27bc9e2a954b0df496
+|parent=1.21.9
+|prevparent=1.21.8
+|prev=25w32a
+|next=25w34a
+|nextparent=1.21.10
+}}<onlyinclude>
+
+'''25w33a''' is the third [[snapshot]] for [[Java Edition 1.21.9]], released on August 12, 2025.<ref>{{snap|25w33a|id=a|August 12, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Chat draft]]s'''
+* Unsent chat messages now get saved as chat drafts if the chat was forcibly closed.
+** This includes it being closed by external sources such as dying or a dialog opening, but not the player intentionally closing their chat.
+* Any existing chat draft will get pre-filled into the message box the next time the chat is opened.
+* Draft text has a grayed-out appearance until fully restored.
+** Draft text can be restored as regular text by interacting with it:
+*** Typing additional text.
+*** Moving the text cursor using the arrow keys.
+*** Clicking it.
+*** Highlighting it.
+** Pressing {{key|enter}} on a chat draft prior to it being restored sends it like a normal chat message.
+** Pressing {{key|backspace}} on a chat draft prior to it being restored deletes it.
+
+'''[[End flash]]'''
+* [[The End]] dimension now has skylight.
+* Normally the skylight does not affect how the dimension looks.
+* Every 30 seconds, flashes in the sky happen.
+* When they happen, skylight intensity increases flooding the dimension with purple light.
+* Last between 5 and 19 seconds.
+
+'''[[Options]]'''
+* Added an option to the Chat Settings menu that enables saving unsent chat messages by default.
+** With this option enabled, unsent messages will always get saved as chat drafts, even if the player intentionally closed their chat.
+
+'''[[Sounds]]'''
+* Added {{cd|weather.end_flash}} sound events.
+
+'''[[Tag]]s'''
+* Added {{cd|#shearable_from_copper_golem}} item tag.
+** Contains all items that can be removed from the [[copper golem]]'s head slot via [[shears]].
+* Added {{cd|#accepts_iron_golem_gift}} entity type tag.
+** Contains all mob types an iron golem can place a poppy on the head of.
+* Added {{cd|#candidate_for_iron_golem_gift}} entity type tag.
+** Contains all entity types an iron golem may offer a poppy.
+* Added {{cd|#cannot_be_pushed_onto_boats}} entity type tag.
+** Contains entity types that do not automatically enter boats.
+
+'''[[Textures]]'''
+* Added <samp>environment/end_flash.png</samp>
+
+== Changes ==
+=== Blocks ===
+'''[[Shelf]]'''
+* Items in the shelf will render in the middle of the shelf.
+* Updated the sizes of many items in the shelf to better fit the shelf.
+
+=== Mobs ===
+'''[[Copper golem]]'''
+* Decorative flowers can now be planted on them by [[iron golem]]s.
+** These flowers can be removed with [[shears]].
+** Drop upon turning into a [[copper golem statue|statue]].
+
+'''[[Iron golem]]'''
+* Now sometimes plant a decorative flower onto a nearby copper golem.
+
+=== General ===
+'''[[Attribute]]'''
+* <code>run_command</code> click event
+** Previously, if the command field contained a command that required a signed message ({{cmd|say}}, {{cmd|me}}, {{cmd|msg}}, {{cmd|tell}}, {{cmd|w}}, {{cmd|teammsg}}, {{cmd|tm}}), it would be silently discarded.
+*** Instead, a screen will be shown that lets the user insert the command into the chat window or copy the command to their clipboard if the chat window can't be opened.
+
+'''[[Block states]]'''
+* Added {{cd|align_items_to_bottom}} block state property to the [[shelf]] block.
+** If {{cd|false}} the items on the shelf will ignore the vertical translation of the {{cd|on_shelf}} item display transform and will be rendered vertically aligned to the middle of the shelf.
+** If {{cd|true}} the items on the shelf will be rendered upward from the bottom of the shelf and will respect the vertical translation of the {{cd|on_shelf}} item display transform.
+*** Default is {{cd|false}} (items are aligned to the middle of the shelf).
+
+'''[[Chat]]'''
+* It is now possible to start chatting while standing inside a [[Nether portal]].
+* The chat will now remain open and unchanged if the player was chatting before being transferred to another dimension.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|83.1}}.
+
+'''[[Enchantment definition]]'''
+* {{cd|explode}} entity effects
+** New field: {{cd|block_particles}}{{note|Incorrectly called {{cd|block_effects}} in the official changelog.}} 
+*** Specifies per-block particles. Each block particle is randomly chosen according to weights. A set limit of block particles is spawned each tick from all explosions that tick.
+*** Format: List of entries.
+**** {{cd|weight}}: Non-negative integer representing the random weight for this entry being chosen
+**** {{cd|particle}}: The particle to spawn
+**** {{cd|scaling}}: Optional scaling to apply between explosion center and block position, or {{cd|1.0}} if not specified
+**** {{cd|speec}}{{sic}}<ref>{{bug|MC-300983}}</ref>: Optional scaling to apply to the speed of the particle, or {{cd|1.0}} if not specified
+
+'''[[Resource pack]]'''
+* The version is now {{cd|65.2}}.
+* Added new display transform <code>on_shelf</code>
+** Used for displaying items on the [[Shelf]].
+
+'''[[Social Interactions]]'''
+* Players that have joined a server are now always shown in the Social Interactions screen of that server even if they are offline.{{verify|Is this what it means? The original phrasing in the changelog is confusing.}}
+
+'''[[Tag]]s'''
+* Added {{cd|copper_pickaxe}} to {{cd|#cluster_max_harvestables}} item tag.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w33a
+|;From released versions before 1.21
+|26334|Chat UI is forcibly cleared when killed.
+|46503|You can retain entities' shaders by running the {{cmd|kill}} command while in spectator mode.
+|69216|Switching to spectator mode while fishing keeps rod cast.
+|98322|Flying after shifting between Creative/Spectator.
+|99785|You can leash entities in spectator mode.
+|119417|A spectator can occupy a bed if they enter it and then are switched to spectator mode.
+|165991|TNT explosion no longer shows additional smoke particles since 1.15 Pre-release 1.
+|173730|Shift-clicking water buckets against a waterloggable block doesn't place the water beside the waterloggable block.
+|183784|Visual bug to the Game Mode Switcher debug menu after resizing the window.
+|187850|{{cd|run_command}} {{cd|click_event}} doesn't work in written books if chat is hidden.
+|191669|Sprinting is disabled when switching your gamemode to spectator while sprinting into a block or general obstruction.
+|232968|Spectators can prevent the closing animation of a chest/barrel when viewing it at the same time as a non-spectator.
+|238146|When you switch to Spectator mode while sleeping, the night never skips.
+|259571|Last player game mode not saved after player dies or the game is reloaded.
+|270172|Client and server desync for hooked players when changing gamemode to spectator.
+|;From 1.21.6
+|297898|Entering a dialog temporarily closes the chat and clears anything the player was currently typing.
+|;From 1.21.7
+|299548|{{cd|run_command}} dialog actions don't work if chat is hidden.
+|;From 1.21.8
+|299823|Minecraft shaders cause C7050 warnings.
+|299873|Selection boxes of plain messages within dialogs can get cut off.
+|300034|Dolphins can ride boats.
+|300457|Dialog is unescapable when action or {{cd|exit_action}} is set to {{cd|run_command}} with a command that would produce a signed chat message.
+|;dev
+|300057|Monsters still spawn for a tick when spawning them with a Spawn Egg in Peaceful.
+|300183|Items in shelves are smaller on Java than they are on Bedrock.
+|300417|The copper pickaxe is not part of the {{cd|#cluster_max_harvestables}} item tag.
+|300477|The translucent parts of breezes are now intermittently ordered incorrectly.
+|;prev
+|300722|Hoppers appear to randomly stop draining items through shelves.
+|300732|Loaded ender pearls are deleted when viewing the end credits for the first time when {{cd|enderPearlsVanishOnDeath}} is true.
+|300739|Server crash when generating custom structures containing shelf blocks.
+|300746|Missing translation for copper wall torch.
+|300747|Cannot see villager's profession layer behind slime.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|xxQ6NlX3cKo|riw_p0u-1g8}}
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[es:Java Edition 25w33a]]
+[[fr:Édition Java 25w33a]]
+[[ja:Java Edition 25w33a]]
+[[pt:Edição Java 25w33a]]
+[[ru:25w33a (Java Edition)]]
+[[uk:25w33a (Java Edition)]]
+[[zh:Java版25w33a]]

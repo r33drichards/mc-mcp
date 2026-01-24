@@ -1,0 +1,51 @@
+{{Exclusive|java}}
+
+'''Trim materials''' and '''trim patterns''' define the tooltip and appearance of [[trimming|trimmed]] armor items.
+
+== Definition ==
+
+Trim materials and patterns can be defined in [[data pack]]s, as part of the directory structure below, or inline in the {{cd|[[Data component format#trim|trim]]}} and {{cd|[[Data component format#provides_trim_material|provides_trim_material]]}} data components.
+
+<div class="treeview">
+*{{File|archive|''data pack name''.zip}} or {{File|directory|''data pack name''}}
+**{{File|file|[[#pack.mcmeta|pack.mcmeta]]}}
+**{{File|directory|data}}
+***{{File|directory|''namespace''}}
+****{{File|directory|'''trim_material'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****{{File|directory|'''trim_pattern'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****[[Data pack#Folder_structure|More directories&hellip;]]
+</div>
+
+== JSON format ==
+
+=== Trim material ===
+
+Trim materials have the following format:
+
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|asset_name}}: Suffix to be used in sprite names and [[translation key]]s.
+** {{nbt|compound|override_armor_assets}}: Asset name overrides for specific armor materials. Used in vanilla to select darker variants when the trim and armor have the same material.
+*** {{nbt|string|{{ph|equipment asset id}}}}: Suffix to be used in sprite names and [[translation key]]s for armor items with the corresponding <code>asset_id</code> specified in the {{cd|[[Data component format#equippable|equippable]]}} data component.
+** {{nbt|string}}{{nbt|list}}{{nbt|compound|description}}: Text component to use as the trim material's name. See [[Text component format]].
+</div>
+
+=== Trim pattern ===
+
+Trim patterns have the following format:
+
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|asset_id}}: A [[resource location]] used as a prefix in sprite names and [[translation key]]s.
+** {{nbt|boolean|decal}}: False for all vanilla trim patterns.
+** {{nbt|string}}{{nbt|list}}{{nbt|compound|description}}: Text component to use as the trim pattern's name. See [[Text component format]].
+</div>
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Verzierungsdefinition]]
+[[ja:カスタム防具装飾]]
+[[zh:盔甲纹饰定义格式]]

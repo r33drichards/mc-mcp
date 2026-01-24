@@ -1,0 +1,797 @@
+{{exclusive|java}}
+Entities are stored in the entities folder of respective dimension folders. It is stored like ''Minecraft'' [[Anvil format]] files, which are named in the form <code>r.x.z.mca</code>.
+
+== Directory structure ==
+{{See also|World#Storage location}}
+<div class="treeview">
+*{{File|directory|''world save directory''}}
+**{{File|directory|entities}}: Contains entity files for the [[Overworld]]. These used to be part of region. 
+***{{File|file|r.<x>.<z>.mca}}
+**{{File|directory|DIM-1}}: Contains region files of the [[Nether]].
+***{{File|directory|entities}}
+****{{File|file|r.<x>.<z>.mca}}
+**{{File|directory|DIM1}}: Contains region files of [[the End]].
+***{{File|directory|entities}}
+****{{File|file|r.<x>.<z>.mca}}
+</div>
+
+== Entity inheritance ==
+
+Most entities share similar functionalities with each other from abstract classes or interfaces. For instance, horses (and their undead variants), donkeys, camels, mules, and llamas all inherit from Abstract Horse, which share some of its horse-like behaviors and properties to their inheritance. This inheritance can be seen under the [[Tutorial:See Minecraft's code|game's code]] for all of its entities.
+
+An entity that inherits from an abstract class or other entity share their implementation and functionalities with each other, while an entity that inherits from an interface may not necessarily share its functionalities, rather implement the required behaviors from the interface itself. As such, an entity's implementation of the interface may be different from other entities. Any entity may implement multiple interfaces, while only inheriting a single abstract class or other entity.
+
+=== Abstract classes ===
+{{blist
+|class=treeview
+|Entity {{blist
+    |{{EntityLink|Area Effect Cloud}}
+    |{{EntityLink|End Crystal}}
+    |{{EntityLink|Evoker Fangs}}
+    |{{EntityLink|Experience Orb}}
+    |{{EntityLink|Eye of Ender}}
+    |{{EntityLink|Falling Block|Falling Block Entity}}
+    |{{BlockLink|id=air|Interaction}}
+    |{{EnvLink|id=items|Item (entity)|Item Entity}}
+    |{{BlockLink|id=air|Marker}}
+    |{{EntityLink|Primed TNT}}
+    |{{BlockLink|id=air|Display}} {{blist
+      |[[Display|Block Display]]
+      |[[Display|Item Display]]
+      |[[Display|Text Display]]
+    }}
+    |Hanging Entity {{blist
+      |{{EntityLink|Item Frame}} {{blist
+        |{{EntityLink|Glow Item Frame}}
+      }}
+      |{{EntityLink|Leash Knot|Leash Fence Knot Entity}}
+      |{{EntityLink|Painting}}
+    }}
+    |{{Collapse|title=Living Entity
+      |content={{blist
+        |{{EntityLink|Armor Stand}}
+        |{{EntityLink|Mannequin}}
+        |[[Mob]] {{blist
+          |{{EntityLink|Ender Dragon}}
+          |Ambient Creature {{blist
+            |{{EntityLink|Bat}}
+          }}
+          |Flying Mob {{blist
+            |{{EntityLink|Ghast}}
+            |{{EntityLink|Phantom}}
+          }}
+          |Pathfinder Mob {{blist
+            |{{EntityLink|Allay}}
+            |Abstract Golem {{blist
+              |{{EntityLink|Copper Golem}}
+              |{{EntityLink|Iron Golem}}
+              |{{EntityLink|Shulker}}
+              |{{EntityLink|Snow Golem}}
+            }}
+            |Ageable Mob {{blist
+              |Abstract Villager {{blist
+                |{{EntityLink|Villager}}
+                |{{EntityLink|Wandering Trader}}
+              }}
+              |{{Collapse|title=[[Animal]]
+                |content={{blist
+                  |{{EntityLink|Armadillo}}
+                  |{{EntityLink|Axolotl}}
+                  |{{EntityLink|Bee}}
+                  |{{EntityLink|Chicken}}
+                  |{{EntityLink|Fox}}
+                  |{{EntityLink|Frog}}
+                  |{{EntityLink|Goat}}
+                  |{{EntityLink|Happy Ghast}}
+                  |{{EntityLink|Hoglin}}
+                  |{{EntityLink|Ocelot}}
+                  |{{EntityLink|Panda}}
+                  |{{EntityLink|Pig}}
+                  |{{EntityLink|Polar Bear}}
+                  |{{EntityLink|Rabbit}}
+                  |{{EntityLink|Sheep}}
+                  |{{EntityLink|Sniffer}}
+                  |{{EntityLink|Strider}}
+                  |{{EntityLink|Turtle}}
+                  |Abstract Horse {{blist
+                    |{{EntityLink|Camel}} {{blist
+                      |{{EntityLink|Camel Husk}}
+                    }}
+                    |{{EntityLink|Horse}}
+                    |{{EntityLink|Skeleton Horse}}
+                    |{{EntityLink|Zombie Horse}}
+                    |Abstract Chested Horse {{blist
+                      |{{EntityLink|Donkey}}
+                      |{{EntityLink|Mule}}
+                      |{{EntityLink|Llama}} {{blist
+                        |{{EntityLink|Trader Llama}}
+                      }}
+                    }}
+                  }}
+                  |{{EntityLink|Cow}} {{blist
+                    |{{EntityLink|Mooshroom|Mushroom Cow}}
+                  }}
+                  |Tamable Animal {{blist
+                    |{{EntityLink|Cat}}
+                    |{{EntityLink|Wolf}}
+                    |Abstract Nautilus {{blist
+                      |{{EntityLink|Nautilus}}
+                      |{{EntityLink|Zombie Nautilus}}
+                    }}
+                    |Shoulder Riding Entity {{blist
+                      |{{EntityLink|Parrot}}
+                    }}
+                  }}
+                }}
+              }}
+            }}
+            |{{Collapse|title=[[Monster]]
+              |content={{blist
+                |{{EntityLink|Blaze}}
+                |{{EntityLink|Breeze}}
+                |{{EntityLink|Creaking}}
+                |{{EntityLink|Creeper}}
+                |{{EntityLink|Enderman}}
+                |{{EntityLink|Endermite}}
+                |{{EntityLink|Giant}}
+                |{{EntityLink|Silverfish}}
+                |{{EntityLink|Vex}}
+                |{{EntityLink|Warden}}
+                |{{EntityLink|Wither|Wither Boss}}
+                |{{EntityLink|Zoglin}}
+                |Abstract Piglin {{blist
+                  |{{EntityLink|Piglin}}
+                  |{{EntityLink|Piglin Brute}}
+                }}
+                |Abstract Skeleton {{blist
+                  |{{EntityLink|Bogged}}
+                  |{{EntityLink|Parched}}
+                  |{{EntityLink|Skeleton}}
+                  |{{EntityLink|Stray}}
+                  |{{EntityLink|Wither Skeleton}}
+                }}
+                |{{EntityLink|Guardian}} {{blist
+                  |{{EntityLink|Elder Guardian}}
+                }}
+                |Patrolling Monster {{blist
+                  |Raider {{blist
+                    |{{EntityLink|Ravager}}
+                    |{{EntityLink|Witch}}
+                    |Abstract Illager {{blist
+                      |{{EntityLink|Pillager}}
+                      |{{EntityLink|Vindicator}}
+                      |Spellcaster Illager {{blist
+                        |{{EntityLink|Evoker}}
+                        |{{EntityLink|Illusioner}}
+                      }}
+                    }}
+                  }}
+                }}
+                |{{EntityLink|Spider}} {{blist
+                  |{{EntityLink|Cave Spider}}
+                }}
+                |{{EntityLink|Zombie}} {{blist
+                  |{{EntityLink|Drowned}}
+                  |{{EntityLink|Husk}}
+                  |{{EntityLink|Zombie Villager}}
+                  |{{EntityLink|Zombified Piglin}}
+                }}
+              }}
+            }}
+            |Water Animal {{blist
+              |{{EntityLink|Dolphin}}
+              |Abstract Fish {{blist
+                |{{EntityLink|Pufferfish}}
+                |{{EntityLink|Tadpole}}
+                |Abstract Schooling Fish {{blist
+                  |{{EntityLink|Cod}}
+                  |{{EntityLink|Salmon}}
+                  |{{EntityLink|Tropical Fish}}
+                }}
+              }}
+              |{{EntityLink|Squid}} {{blist
+                |{{EntityLink|Glow Squid}}
+              }}
+            }}
+          }}
+          |{{EntityLink|Slime}} {{blist
+            |{{EntityLink|Magma Cube}}
+          }}
+        }}
+        |{{EntityLink|Player}} {{blist
+          |Server Player
+          |Abstract Client Player {{blist
+            |Local Player
+            |Remote Player
+          }}
+        }}
+      }}
+    }}
+    |{{Collapse|title=[[Projectile]]
+      |content={{#lst:Entity format|inheritance-projectile}}
+    }}
+    |{{Collapse|title=Vehicle Entity
+      |content={{blist
+        |Abstract Minecart {{blist
+          |{{EntityLink|Minecart}}
+          |{{EntityLink|Minecart with Command Block|Minecart Command Block}}
+          |{{EntityLink|Minecart with Furnace|Minecart Furnace}}
+          |{{EntityLink|Minecart with Spawner|Minecart Spawner}}
+          |{{EntityLink|Minecart with TNT|Minecart TNT}}
+          |Abstract Minecart Container {{blist
+            |{{EntityLink|Minecart with Chest|Minecart Chest}}
+            |{{EntityLink|Minecart with Hopper|Minecart Hopper}}
+          }}
+        }}
+        |{{EntityLink|Boat}} {{blist
+          |{{EntityLink|Boat with Chest|Chest Boat}}
+        }}
+      }}
+    }}
+  }}
+}}
+<div style="display:none">
+<!-- Used for [[Projectile#Inheritance]] -->
+<section begin="inheritance-projectile"/>{{blist
+        |{{ItemLink|Firework Rocket|Firework Rocket Entity}}
+        |{{EntityLink|Fishing Bobber|Fishing Hook}}
+        |{{EntityLink|Llama Spit}}
+        |{{EntityLink|Shulker Bullet}}
+        |Abstract Arrow {{blist
+          |{{EntityLink|Arrow}}
+          |{{EntityLink|Spectral Arrow}}
+          |{{EntityLink|Trident|Thrown Trident}}
+        }}
+        |Abstract Hurting Projectile {{blist
+          |{{EntityLink|Dragon Fireball}}
+          |{{EntityLink|id=wither-skull|Wither#Wither Skull|Wither Skull Entity}}
+          |Abstract Wind Charge {{blist
+            |{{EntityLink|id=Wind-Charge|Breeze Wind Charge}}
+            |{{EntityLink|Wind Charge}}
+          }}
+          |[[Fireball]] {{blist
+            |{{EntityLink|Fireball|Large Fireball}}
+            |{{EntityLink|Small Fireball}}
+          }}
+        }}
+        |Throwable Projectile {{blist
+          |Throwable Item Projectile {{blist
+            |{{ItemLink|Snowball|Thrown Snowball}}
+            |{{ItemLink|Egg|Thrown Egg}}
+            |{{ItemLink|Ender Pearl|Thrown Ender Pearl}}
+            |{{ItemLink|Eye of Ender|Thrown Eye of Ender}}
+            |{{ItemLink|Bottle o' Enchanting|Thrown Experience Bottle}}
+            |{{ItemLink|Splash Potion|Thrown Potion}}
+          }}
+        }}
+      }}<section end="inheritance-projectile"/>
+</div>
+
+=== Interfaces ===
+
+{{blist
+|class=treeview
+|{{Collapse|title=Bucketable
+ |content={{blist
+  |{{EntityLink|Axolotl}}
+  |Abstract Fish {{blist
+    |{{EntityLink|Pufferfish}}
+    |{{EntityLink|Tadpole}}
+    |Abstract Schooling Fish {{blist
+      |{{EntityLink|Cod}}
+      |{{EntityLink|Salmon}}
+      |{{EntityLink|Tropical Fish}}
+      }}
+    }}
+  }}
+}}
+|{{Collapse|title=Container User
+ |content={{blist
+  |{{EntityLink|Copper Golem}}
+  }}
+}}
+|{{Collapse|title=Enemy
+ |content={{blist
+  |{{EntityLink|Ender Dragon}}
+  |{{EntityLink|Ghast}}
+  |{{EntityLink|Phantom}}
+  |{{EntityLink|Shulker}}
+  |{{EntityLink|Hoglin}}
+  |{{Collapse|title=[[Monster]]
+   |content={{blist
+    |{{EntityLink|Blaze}}
+    |{{EntityLink|Breeze}}
+    |{{EntityLink|Creaking}}
+    |{{EntityLink|Creeper}}
+    |{{EntityLink|Enderman}}
+    |{{EntityLink|Endermite}}
+    |{{EntityLink|Giant}}
+    |{{EntityLink|Silverfish}}
+    |{{EntityLink|Vex}}
+    |{{EntityLink|Warden}}
+    |{{EntityLink|Wither}}
+    |{{EntityLink|Zoglin}}
+    |Abstract Piglin {{blist
+      |{{EntityLink|Piglin}}
+      |{{EntityLink|Piglin Brute}}
+      }}
+    |Abstract Skeleton {{blist
+      |{{EntityLink|Bogged}}
+      |{{EntityLink|Parched}}
+      |{{EntityLink|Skeleton}}
+      |{{EntityLink|Stray}}
+      |{{EntityLink|Wither Skeleton}}
+      }}
+    |{{EntityLink|Guardian}} {{blist
+      |{{EntityLink|Elder Guardian}}
+      }}
+    |Patrolling Monster {{blist
+      |Raider {{blist
+        |{{EntityLink|Ravager}}
+        |{{EntityLink|Witch}}
+        |Abstract [[Illager]] {{blist
+          |{{EntityLink|Pillager}}
+          |{{EntityLink|Vindicator}}
+          |Spellcaster Illager {{blist
+            |{{EntityLink|Evoker}}
+            |{{EntityLink|Illusioner}}
+            }}
+          }}
+        }}
+      }}
+    |{{EntityLink|Spider}} {{blist
+      |{{EntityLink|Cave Spider}}
+      }}
+    |{{EntityLink|Zombie}} {{blist
+      |{{EntityLink|Drowned}}
+      |{{EntityLink|Husk}}
+      |{{EntityLink|Zombie Villager}}
+      |{{EntityLink|Zombified Piglin}}
+      }}
+    }}
+   }}
+  |{{EntityLink|Slime}} {{blist
+    |{{EntityLink|Magma Cube}}
+    }}
+  }}
+}}
+|{{Collapse|title=Flying Animal
+ |content={{blist
+  |{{EntityLink|Bee}}
+  |{{EntityLink|Parrot}}
+  }}
+}}
+|{{Collapse|title=Has Custom Inventory Screen
+ |content={{blist
+  |{{EntityLink|Boat with Chest|Chest Boat}}
+  |{{Collapse|title=Abstract Horse
+   |content={{blist
+    |{{EntityLink|Camel}} {{blist
+      |{{EntityLink|Camel Husk}}
+      }}
+    |{{EntityLink|Horse}}
+    |{{EntityLink|Skeleton Horse}}
+    |{{EntityLink|Zombie Horse}}
+    |Abstract Chested Horse {{blist
+      |{{EntityLink|Donkey}}
+      |{{EntityLink|Mule}}
+      |{{EntityLink|Llama}} {{blist
+        |{{EntityLink|Trader Llama}}
+        }}
+      }}
+    }}
+   }}
+  }}
+}}
+|{{Collapse|title=Inventory Carrier
+ |content={{blist
+  |{{EntityLink|Allay}}
+  |{{EntityLink|Piglin}}
+  |{{EntityLink|Pillager}}
+  |Abstract Villager {{blist
+    |{{EntityLink|Villager}}
+    |{{EntityLink|Wandering Trader}}
+    }}
+  }}
+}}
+|{{Collapse|title=Item Steerable
+ |content={{blist
+  |{{EntityLink|Pig}}
+  |{{EntityLink|Strider}}
+  }}
+}}
+|{{Collapse|title=Item Supplier
+ |content={{blist
+  |{{EntityLink|Eye of Ender}}
+  |{{ItemLink|Firework Rocket|Firework Rocket Entity}}
+  |Abstract Wind Charge {{blist
+    |{{EntityLink|id=Wind-Charge|Breeze Wind Charge}}
+    |{{EntityLink|Wind Charge}}
+    }}
+  |[[Fireball]] {{blist
+    |{{EntityLink|Fireball|Large Fireball}}
+    |{{EntityLink|Small Fireball}}
+    }}
+  |{{Collapse|title=Throwable Item Projectile
+   |content={{blist
+    |{{ItemLink|Snowball}}
+    |{{ItemLink|Egg|Thrown Egg}}
+    |{{ItemLink|Ender Pearl|Thrown Ender Pearl}}
+    |{{ItemLink|Eye of Ender|Thrown Eye of Ender}}
+    |{{ItemLink|Bottle o' Enchanting|Thrown Experience Bottle}}
+    |{{ItemLink|Splash Potion|Thrown Potion}}
+    }}
+   }}
+  }}
+}}
+|{{Collapse|title=Neutral Mob
+ |content={{blist
+  |{{EntityLink|Bee}}
+  |{{EntityLink|Enderman}}
+  |{{EntityLink|Iron Golem}}
+  |{{EntityLink|Polar Bear}}
+  |{{EntityLink|Wolf}}
+  |{{EntityLink|Zombified Piglin}}
+  }}
+}}
+|{{Collapse|title=Ownable Entity
+ |content={{blist
+  |Tamable Animal {{blist
+    |{{EntityLink|Cat}}
+    |{{EntityLink|Wolf}}
+    |Shoulder Riding Entity {{blist
+      |{{EntityLink|Parrot}}
+      }}
+    }}
+  }}
+}}
+|{{Collapse|title=Player Rideable
+ |content={{blist
+  |Player Rideable Jumping {{blist
+    |Abstract Horse {{blist
+      |{{EntityLink|Camel}} {{blist
+        |{{EntityLink|Camel Husk}}
+        }}
+      |{{EntityLink|Horse}}
+      |{{EntityLink|Skeleton Horse}}
+      |{{EntityLink|Zombie Horse}}
+      |Abstract Chested Horse {{blist
+        |{{EntityLink|Donkey}}
+        |{{EntityLink|Mule}}
+        |{{EntityLink|Llama}} {{blist
+          |{{EntityLink|Trader Llama}}
+          }}
+        }}
+      }}
+    |Abstract Nautilus {{blist
+      |{{EntityLink|Nautilus}}
+      |{{EntityLink|Zombie Nautilus}}
+      }}
+    }}
+  }}
+}}
+|{{Collapse|title=Powerable Mob
+ |content={{blist
+  |{{EntityLink|Creeper}}
+  |{{EntityLink|Wither}}
+  }}
+}}
+|{{Collapse|title=Ranged Attack Mob
+ |content={{blist
+  |{{EntityLink|Drowned}}
+  |{{EntityLink|Illusioner}}
+  |{{EntityLink|Snow Golem}}
+  |{{EntityLink|Witch}}
+  |{{EntityLink|Wither}}
+  |Abstract Skeleton {{blist
+    |{{EntityLink|Bogged}}
+    |{{EntityLink|Parched}}
+    |{{EntityLink|Skeleton}}
+    |{{EntityLink|Stray}}
+    |{{EntityLink|Wither Skeleton}}
+    }}
+  |Crossbow Attack Mob {{blist
+    |{{EntityLink|Piglin}}
+    |{{EntityLink|Pillager}}
+    }}
+  |{{EntityLink|Llama}} {{blist
+    |{{EntityLink|Trader Llama}}
+    }}
+  }}
+}}
+|{{Collapse|title=Saddleable
+ |content={{blist
+  |{{EntityLink|Pig}}
+  |{{EntityLink|Strider}}
+  |{{Collapse|title=Abstract Horse
+   |content={{blist
+    |{{EntityLink|Camel}} {{blist
+      |{{EntityLink|Camel Husk}}
+      }}
+    |{{EntityLink|Horse}}
+    |{{EntityLink|Skeleton Horse}}
+    |{{EntityLink|Zombie Horse}}
+    |Abstract Chested Horse {{blist
+      |{{EntityLink|Donkey}}
+      |{{EntityLink|Mule}}
+      |{{EntityLink|Llama}} {{blist
+        |{{EntityLink|Trader Llama}}
+        }}
+      }}
+    }}
+   }}
+  }}
+}}
+|{{Collapse|title=Shearable
+ |content={{blist
+  |{{EntityLink|Copper Golem}}
+  |{{EntityLink|Mooshroom}}
+  |{{EntityLink|Sheep}}
+  |{{EntityLink|Snow Golem}}
+  }}
+}}
+|{{Collapse|title=Variant Holder
+ |content={{blist
+  |{{EntityLink|Axolotl}}
+  |{{EntityLink|Cat}}
+  |{{EntityLink|Fox}}
+  |{{EntityLink|Frog}}
+  |{{EntityLink|Horse}}
+  |{{EntityLink|Mooshroom}}
+  |{{EntityLink|Rabbit}}
+  |{{EntityLink|Shulker}}
+  |{{EntityLink|Tropical Fish}}
+  |{{EntityLink|Llama}} {{blist
+    |{{EntityLink|Trader Llama}}
+    }}
+  |Villager Data Holder {{blist
+    |{{EntityLink|Villager}}
+    |{{EntityLink|Zombie Villager}}
+    }}
+  |{{EntityLink|Zombie Nautilus}}
+  }}
+}}
+}}
+
+== NBT structure ==
+Every [[entity]] is an unnamed {{nbt|compound}} compound contained in the Entities list of a chunk file. The sole exception is the Player entity, stored in [[Java Edition level format#level.dat format|level.dat]], or in [[Player.dat format|<player>.dat]] files on servers.
+
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|int|DataVersion}}: Version of the chunk data.
+** {{nbt|int array|Position}}: Position of this chunk.
+*** {{nbt|int}}: X coordinate.
+*** {{nbt|int}}: Z coordinate.
+** {{nbt|list|Entities}}: All the entities. Each compound in this list defines an entity in this chunk.
+*** {{nbt|compound}}: An entity. See [[#Entity format]] below.
+</div>
+
+== Entity format ==
+All entities are with the following structure:
+<div class="treeview">
+* {{nbt|compound}} Entity data
+{{:Chunk format/Entity}}
+</div>
+
+=== Mobs ===
+Mobs are a subclass of Living Entity with additional tags to store their health, attacking/damaged state, potion effects, and more depending on the mob. [[Player.dat format#NBT structure|Players]] and [[armor stand]]s are a subclass of living entities.
+
+<div class="treeview">
+* {{nbt|compound}} Mob data
+** {{nbt inherit/entity}}
+{{:Chunk format/Mob}}
+</div>
+
+==== Mob-specific data ====
+Many mobs additionally have individual data.
+
+{{collapse|title={{EntitySprite|allay|link=Allay|text='''allay'''}}|content={{#lst:Allay|entity data}}}}
+{{collapse|title={{EntitySprite|armadillo|link=Armadillo|text='''armadillo'''}}|content={{#lst:Armadillo|entity data}}}}
+{{collapse|title={{EntitySprite|armor-stand|link=Armor Stand|text='''armor_stand'''}}|content={{#lst:Armor Stand|entity data}}}}
+{{collapse|title={{EntitySprite|axolotl|link=Axolotl|text='''axolotl'''}}|content={{#lst:Axolotl|entity data}}}}
+{{collapse|title={{EntitySprite|bat|link=Bat|text='''bat'''}}|content={{#lst:Bat|entity data}}}}
+{{collapse|title={{EntitySprite|bee|link=Bee|text='''bee'''}}|content={{#lst:Bee|entity data}}}}
+{{collapse|title={{EntitySprite|blaze|link=Blaze|text='''blaze'''}}|content={{#lst:Blaze|entity data}}}}
+{{collapse|title={{EntitySprite|bogged|link=Bogged|text='''bogged'''}}|content={{#lst:Bogged|entity data}}}}
+{{collapse|title={{EntitySprite|breeze|link=Breeze|text='''breeze'''}}|content={{#lst:Breeze|entity data}}}}
+{{collapse|title={{EntitySprite|camel|link=Camel|text='''camel'''}}|content={{#lst:Camel|entity data}}}}
+{{collapse|title={{EntitySprite|cat|link=Cat|text='''cat'''}}|content={{#lst:Cat|entity data}}}}
+{{collapse|title={{EntitySprite|chicken|link=Chicken|text='''chicken'''}}|content={{#lst:Chicken|entity data}}}}
+{{collapse|title={{EntitySprite|cod|link=Cod|text='''cod'''}}|content={{#lst:Cod|entity data}}}}
+{{collapse|title={{EntitySprite|copper-golem|link=Copper Golem|text='''copper_golem'''}}|content={{#lst:Copper Golem|entity data}}}}
+{{collapse|title={{EntitySprite|cow|link=Cow|text='''cow'''}}|content={{#lst:Cow|entity data}}}}
+{{collapse|title={{EntitySprite|creaking|link=Creaking|text='''creaking'''}}|content={{#lst:Creaking|entity data}}}}
+{{collapse|title={{EntitySprite|creeper|link=Creeper|text='''creeper'''}}|content={{#lst:Creeper|entity data}}}}
+{{collapse|title={{EntitySprite|dolphin|link=Dolphin|text='''dolphin'''}}|content={{#lst:Dolphin|entity data}}}}
+{{collapse|title={{EntitySprite|donkey|link=Donkey|text='''donkey'''}}|content={{#lst:Donkey|entity data}}}}
+{{collapse|title={{EntitySprite|drowned|link=Drowned|text='''drowned'''}}|content={{#lst:Drowned|entity data}}}}
+{{collapse|title={{EntitySprite|elder-guardian|link=Elder Guardian|text='''elder_guardian'''}}|content={{#lst:Elder Guardian|entity data}}}}
+{{collapse|title={{EntitySprite|ender-dragon|link=Ender Dragon|text='''ender_dragon'''}}|content={{#lst:Ender Dragon|entity data}}}}
+{{collapse|title={{EntitySprite|enderman|link=Enderman|text='''enderman'''}}|content={{#lst:Enderman|entity data}}}}
+{{collapse|title={{EntitySprite|endermite|link=Endermite|text='''endermite'''}}|content={{#lst:Endermite|entity data}}}}
+{{collapse|title={{EntitySprite|evoker|link=Evoker|text='''evoker'''}}|content={{#lst:Evoker|entity data}}}}
+{{collapse|title={{EntitySprite|fox|link=Fox|text='''fox'''}}|content={{#lst:Fox|entity data}}}}
+{{collapse|title={{EntitySprite|frog|link=Frog|text='''frog'''}}|content={{#lst:Frog|entity data}}}}
+{{collapse|title={{EntitySprite|ghast|link=Ghast|text='''ghast'''}}|content={{#lst:Ghast|entity data}}}}
+{{collapse|title={{EntitySprite|giant|link=Giant|text='''giant'''}}|content={{#lst:Giant|entity data}}}}
+{{collapse|title={{EntitySprite|glow-squid|link=Glow Squid|text='''glow_squid'''}}|content={{#lst:Glow Squid|entity data}}}}
+{{collapse|title={{EntitySprite|goat|link=Goat|text='''goat'''}}|content={{#lst:Goat|entity data}}}}
+{{collapse|title={{EntitySprite|guardian|link=Guardian|text='''guardian'''}}|content={{#lst:Guardian|entity data}}}}
+{{collapse|title={{EntitySprite|happy-ghast|link=Happy Ghast|text='''happy_ghast'''}}|content={{#lst:Happy Ghast|entity data}}}}
+{{collapse|title={{EntitySprite|hoglin|link=Hoglin|text='''hoglin'''}}|content={{#lst:Hoglin|entity data}}}}
+{{collapse|title={{EntitySprite|horse|link=Horse|text='''horse'''}}|content={{#lst:Horse|entity data}}}}
+{{collapse|title={{EntitySprite|husk|link=Husk|text='''husk'''}}|content={{#lst:Husk|entity data}}}}
+{{collapse|title={{EntitySprite|illusioner|link=Illusioner|text='''illusioner'''}}|content={{#lst:Illusioner|entity data}}}}
+{{collapse|title={{EntitySprite|iron-golem|link=Iron Golem|text='''iron_golem'''}}|content={{#lst:Iron Golem|entity data}}}}
+{{collapse|title={{EntitySprite|llama|link=Llama|text='''llama'''}}|content={{#lst:Llama|entity data}}}}
+{{collapse|title={{EntitySprite|magma-cube|link=Magma Cube|text='''magma_cube'''}}|content={{#lst:Magma Cube|entity data}}}}{{Collapse|title={{EntitySprite|mannequin|link=Mannequin|text='''mannequin'''}}|content={{#lst:Mannequin|entity data}}}}{{collapse|title={{EntitySprite|mooshroom|link=Mooshroom|text='''mooshroom'''}}|content={{#lst:Mooshroom|entity data}}}}
+{{collapse|title={{EntitySprite|mule|link=Mule|text='''mule'''}}|content={{#lst:Mule|entity data}}}}
+{{collapse|title={{EntitySprite|ocelot|link=Ocelot|text='''ocelot'''}}|content={{#lst:Ocelot|entity data}}}}
+{{collapse|title={{EntitySprite|panda|link=Panda|text='''panda'''}}|content={{#lst:Panda|entity data}}}}
+{{collapse|title={{EntitySprite|parrot|link=Parrot|text='''parrot'''}}|content={{#lst:Parrot|entity data}}}}
+{{collapse|title={{EntitySprite|phantom|link=Phantom|text='''phantom'''}}|content={{#lst:Phantom|entity data}}}}
+{{collapse|title={{EntitySprite|pig|link=Pig|text='''pig'''}}|content={{#lst:Pig|entity data}}}}
+{{collapse|title={{EntitySprite|piglin|link=Piglin|text='''piglin'''}}|content={{#lst:Piglin|entity data}}}}
+{{collapse|title={{EntitySprite|piglin-brute|link=Piglin Brute|text='''piglin_brute'''}}|content={{#lst:Piglin Brute|entity data}}}}
+{{collapse|title={{EntitySprite|pillager|link=Pillager|text='''pillager'''}}|content={{#lst:Pillager|entity data}}}}
+{{collapse|title={{EntitySprite|player|link=Player|text='''player'''}}|content={{#lst:Player|entity data}}}}
+{{collapse|title={{EntitySprite|polar-bear|link=Polar Bear|text='''polar_bear'''}}|content={{#lst:Polar Bear|entity data}}}}
+{{collapse|title={{EntitySprite|pufferfish|link=Pufferfish|text='''pufferfish'''}}|content={{#lst:Pufferfish|entity data}}}}
+{{collapse|title={{EntitySprite|rabbit|link=Rabbit|text='''rabbit'''}}|content={{#lst:Rabbit|entity data}}}}
+{{collapse|title={{EntitySprite|ravager|link=Ravager|text='''ravager'''}}|content={{#lst:Ravager|entity data}}}}
+{{collapse|title={{EntitySprite|salmon|link=Salmon|text='''salmon'''}}|content={{#lst:Salmon|entity data}}}}
+{{collapse|title={{EntitySprite|sheep|link=Sheep|text='''sheep'''}}|content={{#lst:Sheep|entity data}}}}
+{{collapse|title={{EntitySprite|shulker|link=Shulker|text='''shulker'''}}|content={{#lst:Shulker|entity data}}}}
+{{collapse|title={{EntitySprite|silverfish|link=Silverfish|text='''silverfish'''}}|content={{#lst:Silverfish|entity data}}}}
+{{collapse|title={{EntitySprite|skeleton|link=Skeleton|text='''skeleton'''}}|content={{#lst:Skeleton|entity data}}}}
+{{collapse|title={{EntitySprite|skeleton-horse|link=Skeleton Horse|text='''skeleton_horse'''}}|content={{#lst:Skeleton Horse|entity data}}}}
+{{collapse|title={{EntitySprite|slime|link=Slime|text='''slime'''}}|content={{#lst:Slime|entity data}}}}
+{{collapse|title={{EntitySprite|sniffer|link=Sniffer|text='''sniffer'''}}|content={{#lst:Sniffer|entity data}}}}
+{{collapse|title={{EntitySprite|snow-golem|link=Snow Golem|text='''snow_golem'''}}|content={{#lst:Snow Golem|entity data}}}}
+{{collapse|title={{EntitySprite|spider|link=Spider|text='''spider'''}}|content={{#lst:Spider|entity data}}}}
+{{collapse|title={{EntitySprite|strider|link=Strider|text='''strider'''}}|content={{#lst:Strider|entity data}}}}
+{{collapse|title={{EntitySprite|squid|link=Squid|text='''squid'''}}|content={{#lst:Squid|entity data}}}}
+{{collapse|title={{EntitySprite|stray|link=Stray|text='''stray'''}}|content={{#lst:Stray|entity data}}}}
+{{collapse|title={{EntitySprite|tadpole|link=Tadpole|text='''tadpole'''}}|content={{#lst:Tadpole|entity data}}}}
+{{collapse|title={{EntitySprite|trader-llama|link=Trader Llama|text='''trader_llama'''}}|content={{#lst:Llama|entity data}}}}
+{{collapse|title={{EntitySprite|tropical-fish|link=Tropical Fish|text='''tropical_fish'''}}|content={{#lst:Tropical Fish|entity data}}}}
+{{collapse|title={{EntitySprite|turtle|link=Turtle|text='''turtle'''}}|content={{#lst:Turtle|entity data}}}}
+{{collapse|title={{EntitySprite|vex|link=Vex|text='''vex'''}}|content={{#lst:Vex|entity data}}}}
+{{collapse|title={{EntitySprite|villager|link=Villager|text='''villager'''}}|content={{#lst:Villager|entity data}}}}
+{{collapse|title={{EntitySprite|vindicator|link=Vindicator|text='''vindicator'''}}|content={{#lst:Vindicator|entity data}}}}
+{{collapse|title={{EntitySprite|wandering-trader|link=Wandering Trader|text='''wandering_trader'''}}|content={{#lst:Wandering Trader|entity data}}}}
+{{collapse|title={{EntitySprite|warden|link=Warden|text='''warden'''}}|content={{#lst:Warden|entity data}}}}
+{{collapse|title={{EntitySprite|witch|link=Witch|text='''witch'''}}|content={{#lst:Witch|entity data}}}}
+{{collapse|title={{EntitySprite|wither|link=Wither|text='''wither'''}}|content={{#lst:Wither|entity data}}}}
+{{collapse|title={{EntitySprite|wither-skeleton|link=Wither Skeleton|text='''wither_skeleton'''}}|content={{#lst:Wither Skeleton|entity data}}}}
+{{collapse|title={{EntitySprite|wolf|link=Wolf|text='''wolf'''}}|content={{#lst:Wolf|entity data}}}}
+{{collapse|title={{EntitySprite|zoglin|link=Zoglin|text='''zoglin'''}}|content={{#lst:Zoglin|entity data}}}}
+{{collapse|title={{EntitySprite|zombie|link=Zombie|text='''zombie'''}}|content={{#lst:Zombie|entity data}}}}
+{{collapse|title={{EntitySprite|zombie-horse|link=Zombie Horse|text='''zombie_horse'''}}|content={{#lst:Zombie Horse|entity data}}}}
+{{collapse|title={{EntitySprite|zombie-villager|link=Zombie Villager|text='''zombie_villager'''}}|content={{#lst:Zombie Villager|entity data}}}}
+{{collapse|title={{EntitySprite|zombified-piglin|link=Zombified Piglin|text='''zombified_piglin'''}}|content={{#lst:Zombified Piglin|entity data}}}}
+
+=== Projectiles ===
+Projectiles are a subclass of Entity.
+
+{{collapse|title={{EntitySprite|arrow|link=Arrow|text='''arrow'''}}|content={{#lst:Arrow|entity data}}}}
+{{collapse|title={{EntitySprite|wind-charge|link=Wind Charge|text='''breeze_wind_charge'''}}|content={{#lst:Wind Charge|entity data}}}}
+{{collapse|title={{EntitySprite|dragon-fireball|link=Ender Dragon|text='''dragon_fireball'''}}|content={{#lst:Ender Dragon|fireball entity data}}}}
+{{collapse|title={{EntitySprite|egg|link=Egg|text='''egg'''}}|content={{#lst:Egg|entity data}}}}
+{{collapse|title={{EntitySprite|ender-pearl|link=Ender Pearl|text='''ender_pearl'''}}|content={{#lst:Ender Pearl|entity data}}}}
+{{collapse|title={{EntitySprite|experience-bottle|link=Bottle o' Enchanting|text='''experience_bottle'''}}|content={{#lst:Bottle o' Enchanting|entity data}}}}
+{{collapse|title={{EntitySprite|fireball|link=Fireball|text='''fireball'''}}|content={{#lst:Fireball|entity data}}}}
+{{collapse|title={{EntitySprite|firework-rocket|link=Firework Rocket|text='''firework_rocket'''}}|content={{#lst:Firework Rocket|entity data}}}}
+{{collapse|title={{EntitySprite|lingering-potion|link=Lingering Potion|text='''lingering_potion'''}}|content={{#lst:Splash Potion|entity data}}}}
+{{collapse|title={{EntitySprite|llama-spit|link=Llama Spit|text='''llama_spit'''}}|content={{#lst:Llama Spit|entity data}}}}
+{{collapse|title={{EntitySprite|shulker-bullet|link=Shulker|text='''shulker_bullet'''}}|content={{#lst:Shulker|bullet entity data}}}}
+{{collapse|title={{EntitySprite|small-fireball|link=Small Fireball|text='''small_fireball'''}}|content={{#lst:Small Fireball|entity data}}}}
+{{collapse|title={{EntitySprite|snowball|link=Snowball|text='''snowball'''}}|content={{#lst:Snowball|entity data}}}}
+{{collapse|title={{EntitySprite|spectral-arrow|link=Spectral Arrow|text='''spectral_arrow'''}}|content={{#lst:Spectral Arrow|entity data}}}}
+{{collapse|title={{EntitySprite|splash-potion|link=Splash Potion|text='''splash_potion'''}}|content={{#lst:Splash Potion|entity data}}}}
+{{collapse|title={{EntitySprite|trident|link=Trident|text='''trident'''}}|content={{#lst:Trident|entity data}}}}
+{{collapse|title={{EntitySprite|wind-charge|link=Wind Charge|text='''wind_charge'''}}|content={{#lst:Wind Charge|entity data}}}}
+{{collapse|title={{EntitySprite|wither-skull|link=Wither|text='''wither_skull'''}}|content={{#lst:Wither|skull entity data}}}}
+
+=== Items and XP Orbs ===
+Items and XPOrbs are a subclass of Entity.
+
+{{collapse|title={{EntitySprite|experience-orb|link=Experience|text='''experience_orb'''}}|content={{#lst:Experience|entity data}}}}
+{{collapse|title={{EntitySprite|item|link=Item (entity)|text='''item'''}}|content={{#lst:Item (entity)|entity data}}}}
+
+=== Vehicles ===
+Vehicles are subclasses of Entity.
+
+{{collapse|title={{EntitySprite|boats|link=Boat|text='''boat'''}}|content={{#lst:Boat|entity data}}}}
+{{collapse|title={{EntitySprite|boat-with-chest|link=Boat with Chest|text='''chest_boat'''}}|content={{#lst:Boat with Chest|entity data}}}}
+{{collapse|title={{EntitySprite|minecart|link=Minecart|text='''minecart'''}}|content={{#lst:Minecart|entity data}}}}
+{{collapse|title={{EntitySprite|minecart-with-chest|link=Minecart with Chest|text='''chest_minecart'''}}|content={{#lst:Minecart with Chest|entity data}}}}
+{{collapse|title={{EntitySprite|minecart-with-command-block|link=Minecart with Command Block|text='''command_block_minecart'''}}|content={{#lst:Minecart with Command Block|entity data}}}}
+{{collapse|title={{EntitySprite|minecart-with-furnace|link=Minecart with Furnace|text='''furnace_minecart'''}}|content={{#lst:Minecart with Furnace|entity data}}}}
+{{collapse|title={{EntitySprite|minecart-with-hopper|link=Minecart with Hopper|text='''hopper_minecart'''}}|content={{#lst:Minecart with Hopper|entity data}}}}
+{{collapse|title={{EntitySprite|minecart-with-monster-spawner|link=Minecart with Monster Spawner|text='''spawner_minecart'''}}|content={{#lst:Minecart with Monster Spawner|entity data}}}}
+{{collapse|title={{EntitySprite|minecart-with-tnt|link=Minecart with TNT|text='''tnt_minecart'''}}|content={{#lst:Minecart with TNT|entity data}}}}
+
+=== Dynamic tiles ===
+Dynamic tiles are a subclass of Entity and are used to simulate realistically moving blocks.
+
+{{collapse|title={{EntitySprite|all-falling-blocks|link=Falling Block|text='''falling_block'''}}|content={{#lst:Falling Block|entity data}}}}
+{{collapse|title={{EntitySprite|tnt|link=TNT|text='''tnt'''}}|content={{#lst:TNT|entity data}}}}
+
+=== Display ===
+Display entities are subclasses of Entity.
+
+{{collapse|title={{BlockSprite|air|link=Display|text='''block_display'''}}|content={{#lst:Display|block entity data}}}}
+{{collapse|title={{BlockSprite|air|link=Display|text='''item_display'''}}|content={{#lst:Display|item entity data}}}}
+{{collapse|title={{BlockSprite|air|link=Display|text='''text_display'''}}|content={{#lst:Display|text entity data}}}}
+
+=== Other ===
+Other entity types that are a subclass of Entity but do not fit into any of the above categories.
+
+{{collapse|title={{EntitySprite|area-effect-cloud|link=Lingering Potion|text='''area_effect_cloud'''}}|content={{#lst:Lingering Potion|entity data}}}}
+{{collapse|title={{EntitySprite|end-crystal|link=End Crystal|text='''end_crystal'''}}|content={{#lst:End Crystal|entity data}}}}
+{{collapse|title={{EntitySprite|evoker-fangs|link=Evoker|text='''evoker_fangs'''}}|content={{#lst:Evoker|fang entity data}}}}
+{{collapse|title={{EntitySprite|eye-of-ender|link=Eye of Ender|text='''eye_of_ender'''}}|content={{#lst:Eye of Ender|entity data}}}}
+{{collapse|title={{EntitySprite|fishing-bobber|link=Fishing Rod|text='''fishing_bobber'''}}|content={{#lst:Fishing Rod|entity data}}}}
+{{collapse|title={{EntitySprite|glow-item-frame|link=Glow Item Frame|text='''glow_item_frame'''}}|content={{#lst:Item Frame|entity data}}}}
+{{collapse|title={{BlockSprite|air|link=Interaction|text='''interaction'''}}|content={{#lst:Interaction|entity data}}}}
+{{collapse|title={{EntitySprite|item-frame|link=Item Frame|text='''item_frame'''}}|content={{#lst:Item Frame|entity data}}}}
+{{collapse|title={{EntitySprite|leash-knot|link=Lead|text='''leash_knot'''}}|content={{#lst:Lead|entity data}}}}
+{{collapse|title={{EntitySprite|lightning-bolt|link=Thunderstorm|text='''lightning_bolt'''}}|content={{#lst:Thunderstorm|entity data}}}}
+{{collapse|title={{BlockSprite|air|link=Marker|text='''marker'''}}|content={{#lst:Marker|entity data}}}}
+{{collapse|title={{EntitySprite|ominous-item-spawner|link=Ominous Item Spawner|text='''ominous_item_spawner'''}}|content={{#lst:Ominous Item Spawner|entity data}}}}
+{{collapse|title={{EntitySprite|painting|link=Painting|text='''painting'''}}|content={{#lst:Painting|entity data}}}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.4.2|dev=1.4.1|Added <code>PersistenceRequired</code>.}}
+|{{HistoryLine||1.9|dev=15w31a|Added tags <code>HandItems</code>, <code>ArmorItems</code>, <code>HandDropChances</code>, and <code>ArmorDropChances</code> to <code>Living</code>.|The Tag <code>Equipment</code> (under <code>Living</code>) has become deprecated.|The Tag <code>DropChances</code> (under <code>Living</code>) has become deprecated.}}
+|{{HistoryLine||1.17|dev=20w45a|Entities have been extracted from main (terrain) chunks and are now stored in separate entities directory (similar to [[Point_of_Interest_format|POI storage]]). Those new files are still region files with NBT.}}
+|{{HistoryLine||1.19|dev=22w11a|The <code>Id</code> tag for each effect in a mob's <code>ActiveEffects</code> tag is now a {{nbt|int|TAG_Integer}} instead of a {{nbt|byte|TAG_Byte}}.}}
+|{{HistoryLine||1.20.2|dev=23w32a|In NBT format for entity type <code>mooshroom</code>, removed <code>EffectId</code> and <code>EffectDuration</code>, and added <code>stew_effects</code>, with the same format as <code>effects</code> field in <code>suspicious_stew</code> item format.
+|In NBT format for entity type <code>area_effect_cloud</code>, renamed <code>Effects</code> to <code>effects</code>.
+|In NBT format for entity type <code>arrow</code>, renamed <code>CustomPotionEffects</code> to <code>custom_potion_effects</code>.
+|In NBT format for living entities (players, armor stands, and all mobs), renamed <code>ActiveEffects</code> to <code>active_effects</code>, and inside that renamed <code>Ambient</code> to <code>ambient</code>, <code>Amplifier</code> to <code>amplifier</code>, <code>Duration</code> to <code>duration</code>, <code>HiddenEffect</code> to <code>hidden_effect</code>, <code>Id</code> to <code>id</code>, <code>ShowIcon</code> to <code>show_icon</code>, <code>ShowParticles</code> to <code>show_particles</code>, and changed <code>id</code> from a {{nbt|int|TAG_Integer}} to a {{nbt|string|TAG_String}}.}}
+|{{HistoryLine||1.20.3|dev=23w42a|In NBT format for entity type <code>tnt</code>, added <code>block_state</code>, and renamed <code>Fuse</code> to <code>fuse</code>.}}
+|{{HistoryLine|||dev=23w43a|In NBT format for entity type <code>arrow</code> and <code>spectral_arrow</code>, added <code>item</code>.
+|In NBT format for entity type <code>trident</code>, renamed <code>Trident</code> to <code>item</code>.}}
+|{{HistoryLine||1.20.5|dev=23w51a|Added {{nbt|byte|armor}} tag in [[wolf]] to denote whether a wolf is wearing [[wolf armor]].}}
+|{{HistoryLine|||dev=24w05a|Replaced {{nbt|compound|ArmorItem}} tag in [[horse]] with {{nbt|compound|body_armor_item}}.
+|Replaced {{nbt|compound|DecorItem}} tag in [[llama]] with {{nbt|compound|body_armor_item}}.
+|Replaced {{nbt|byte|armor}} tag in [[wolf]] with {{nbt|compound|body_armor_item}}.}}
+|{{HistoryLine|||dev=24w06a|All block positions are now stored as an array of 3 integers instead of a map of X, Y, and Z.
+|<code>Leash</code> in all leashable entities has been renamed to <code>leash</code>.
+|<code>PatrolTarget</code> in patrolling mobs has been renamed to <code>patrol_target</code>.}}
+|{{HistoryLine||1.21.4|dev=24w44a|In NBT format for entity type <code>tnt_minecart</code>, added optional field <code>explosion_speed_factor</code>.|The <code>TNTFuse</code> field of TNT Minecarts has been renamed to <code>fuse</code>.}}
+|{{HistoryLine||1.21.5|dev=25w02a|The {{nbt|compound|ArmorDropChances}}, {{nbt|compound|HandDropChances}}, and {{nbt|compound|body_armor_drop_chance}} fields have been merged into a {{nbt|compound|drop_chances}} field.|Drop chances with a default value will no longer be stored, and the {{nbt|compound|drop_chances}} field is removed entirely if all defaults.|Area effect clouds have a new field: {{nbt|float|potion_duration_scale}}.}}
+|{{HistoryLine|||dev=25w03a|The {{nbt|compound|ArmorItems}}, {{nbt|compound|HandItems}}, and {{nbt|compound|body_armor_item}} fields have been merged into an {{nbt|compound|equipment}} field.}}
+|{{HistoryLine|||dev=25w07a|{{cd|Pos}}, {{cd|Motion}}, and {{cd|Rotation}} values without the correct number of components (3, 3, and 2 respectively) will now be fully discarded, instead of only selecting the specified components.|The {{nbt|int|SleepingX}}, {{nbt|int|SleepingY}}, and {{nbt|int|SleepingZ}} fields have been collected into a single {{nbt|int-array|sleeping_pos}} field}}
+|{{HistoryLine|||dev=25w09a|The {{cd|FallFlying}} field will no longer be preserved if removed.|The {{cd|Health}} and {{cd|Air}} fields now default to their respective maximum value if not specified.}}
+|{{HistoryLine|||dev=25w10a|Custom data (previously present only on [[marker]]s) is now available on all entities.}}
+|{{HistoryLine||1.21.6|dev=25w15a|{{cd|area_effect_cloud}}: the {{cd|Particle}} field has been renamed to {{cd|custom_particle}}, and now always functions as an exact override for the default colored {{cd|entity_effect}} particle.}}
+|{{HistoryLine|||dev=25w18a|Added <code>home_pos</code> and <code>home_radius</code> fields to all mobs.}}
+|{{HistoryLine|||dev=25w19a|{{cd|tnt}}: The entity that primed the TNT is now stored in an optional {{cd|owner}} field (UUID of Living entity).|{{cd|vex}}: The owner of a vex is now stored in an optional {{cd|owner}} field (UUID of Mob).
+}}
+|{{HistoryLine||1.21.9|dev=25w32a|{{cd|copper_golem}}: The {{cd|weather_state}} field now expects a string id instead of integer id..}}
+|{{HistoryLine|||dev=pre1|{{cd|minecraft:player}} has received several changes to the {{cd|respawn}} object.}}
+|{{HistoryLine||1.21.11|dev=25w41a|The {{cd|AngryAt}} field has been renamed to {{cd|angry_at}}.|The {{cd|AngerTime}} field has been removed.|An {{cd|anger_end_time}} (long) field has been added, containing the time anger ends in game ticks.}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap2|The {{cd|current_explosion_impact_pos}} and {{cd|current_impulse_context_reset_grace_time}} fields from players have been added to all mobs and the [[armor stand]].|The {{cd|ignore_fall_damage_from_current_explosion}} field on players has been removed.
+}}
+}}
+
+== References ==
+{{reflist}}{{notelist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:Objektdaten]]
+[[fr:Format d'entité]]
+[[ja:エンティティフォーマット]]
+[[ko:개체 형식]]
+[[pt:Formato de entidade]]
+[[zh:实体数据格式]]

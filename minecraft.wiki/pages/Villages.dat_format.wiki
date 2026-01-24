@@ -1,0 +1,64 @@
+{{About|the format of villages.dat, which stores information on village doors, player reputation, etc|the format of Village.dat, which stores information on village generation|Generated structures data file format}}
+{{outdated|edition=java|As of [[Java Edition 19w11a|19w11a]], this file is no longer generated or used.}}
+<!-- No longer accurate with 1.13 -->The '''villages.dat''' file located in the data folder of every Minecraft level is used to store information about the [[villages]] in the level. It is stored as a GZip'd NBT file.
+
+Additional files '''villages_nether.dat''' and '''villages_end.dat''' are stored, allowing for villages in other [[dimension]]s should the [[player]] build them.
+
+Villages are "forgotten" and not saved in this file when their [[chunk]]s are unloaded.
+
+== NBT Structure ==
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|compound|data}}
+*** {{nbt|int|Tick}}: Internal clock.
+*** {{nbt|list|Villages}}: List of Byte tags when empty, list of Compound tags otherwise.
+**** {{nbt|compound}}: A village.
+***** {{nbt|int|ACX}}: Aggregate of the x-coordinates of all houses.
+***** {{nbt|int|ACY}}: Aggregate of the y-coordinates of all houses.
+***** {{nbt|int|ACZ}}: Aggregate of the z-coordinates of all houses.
+***** {{nbt|int|CX}}: X coordinate of the village center.
+***** {{nbt|int|CY}}: Y coordinate of the village center.
+***** {{nbt|int|CZ}}: Z coordinate of the village center.
+***** {{nbt|int|Golems}}: The number of [[Iron Golem]]s.
+***** {{nbt|int|MTick}}: Last time a villager was killed by a mob, or by a damage source that's not related to an entity while a player was nearby.
+***** {{nbt|int|PopSize}}: The number of [[Villager]]s.
+***** {{nbt|int|Radius}}: Radius of the village.
+***** {{nbt|int|Stable}}: Last time a house was added to the village.
+***** {{nbt|int|Tick}}: Internal clock.
+***** {{nbt|list|Doors}}: The doors in the village.
+****** {{nbt|compound}}: A door.
+******* {{nbt|int|IDX}}: Specifies the inside direction along x.
+******* {{nbt|int|IDZ}}: Specifies the inside direction along z.
+******* {{nbt|int|TS}}: Last time a [[villager]] was nearby.
+******* {{nbt|int|X}}: X coordinate.
+******* {{nbt|int|Y}}: Y coordinate.
+******* {{nbt|int|Z}}: Z coordinate.
+***** {{nbt|list|Players}}: List of Byte tags when empty, list of Compound tags otherwise.
+****** {{nbt|compound}}: A player who has traded or harmed villagers.
+******* {{nbt|string|UUID}}: The UUID of the player.
+******* {{nbt|int|S}}: The social rank of the player. Can be negative. Goes up with trading and down with harming villagers.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.4.2|dev=12w32a|Overworld village data is saved.}}
+|{{HistoryLine||1.8|dev=14w02a|Village data is saved for the Nether and the End.}}
+|{{HistoryLine||1.14|dev=19w11a|Village data has been removed and replaced by points of interest system.}}
+}}
+
+== See also ==
+* [[Village mechanics]]
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{DISPLAYTITLE:villages.dat format}}
+[[Category:Development]]
+
+[[de:Dorfdaten]]
+[[fr:Format villages.dat]]
+[[ja:Villages.datフォーマット]]
+[[nl:Villages.dat formaat]]
+[[pt:Formato villages.dat]]
+[[ru:Формат Villages.dat]]
+[[zh:Villages.dat格式]]

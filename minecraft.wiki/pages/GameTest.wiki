@@ -1,0 +1,131 @@
+{{redirect|Test}}
+{{redirect|Gametest|the command|Commands/gametest}}
+'''GameTest''' is an automated {{wikipedia|end-to-end testing|end-to-end (E2E) testing}} framework for {{wikipedia|Software testing|testing}} aspects of ''[[Minecraft]]''. Each test contains a structure, parameters for how the test gets executed, and optional code to further specify the test behavior.
+
+== ''Java Edition'' ==
+=== Test instance ===
+[[File:Test instance block UI.png|thumb|400px|UI of test instance block]]
+
+Test instance can be defined in a datapack by creating a [[JSON]] file in the {{cd|test_instance}} registry. Players can inspect information about them using a {{BlockLink|test instance block}}. A test instance has the following properties:
+
+* It belongs to a [[#Test environment|test environment]], which groups the test and further specifies the environment in which the test is run in. ({{nbt|compound}}{{nbt|string|environment}})
+* It is associated with a {{nbt|string|structure}}, which should contain all the blocks and entities it needs to be run. The structure can be easily altered with the test instance block.
+* It can either be a block-based test or a function test. More information is available below.
+
+There are more configuration available for test instances. For more information on the format, see [[test instance definition]].
+
+==== Block-based ====
+In block-based tests, [[Test block]]s are used inside the test structure to control the test logic using [[redstone signal]].
+
+* {{BlockSprite|test-block-start}} '''Start''': A [[redstone pulse]] is triggered when the test starts.
+* {{BlockSprite|test-block-log}} '''Log''': Logs a message to the log file when powered by redstone.
+* {{BlockSprite|test-block-fail}} '''Fail''': Fails the test when powered by redstone.
+* {{BlockSprite|test-block-accept}} '''Accept''': Completes the test when powered by redstone.
+
+If a race condition occurs, the first test block activated always wins.
+
+==== Function ====
+Function tests rely on built-in test functions to determine a test's success or failure. They are meant to be used by Mojang internally and by [[mod]] developers.
+
+The game provides the GameTest framework interfaces through the <code>net.minecraft.gametest.framework</code> package ([[Obfuscation map|Mojang mapping]]). Mod loaders can use these to provide their own API for developers to use the GameTest framework – please refer to the respective documentation for [https://docs.fabricmc.net/develop/automatic-testing#game-tests Fabric] and [https://docs.neoforged.net/docs/misc/gametest NeoForge] for more information.
+
+A test function must be registered in the <code>test_function</code> registry to be referenced in the test instance. The {{nbt|string|function}} field in the test instance definition should contain the [[resource location]] of the test function.
+
+=== Test environment ===
+{{main|Test environment definition}}
+
+Test environment is a way to group up test instances and give them the right preconditions to run. It can be defined in a datapack by either creating a [[JSON]] file in the {{cd|test_instance}} registry or directly specified the environment inline with the {{nbt|compound|batch}} field.
+
+=== Test command ===
+{{main|Commands/test}}
+The {{cmd|test}} command exists to execute and manage block-based tests. Some notable sub-commands include:
+
+* <code>/test (run|runmultiple) <tests> ...</code> sub-commands can run specific test(s) for a number of times by their identifier.
+* <code>/test (runclosest|runthat|runthese) ...</code> sub-commands can run test(s) based on the player's location.
+* <code>/test (resetclosest|resetthat|resetthese)</code> sub-commands reset the test structures for any tests.
+* <code>/test locate <tests></code> locates test in loaded chunks.
+
+=== Server.jar entry point ===
+The <code>net.minecraft.gametest.Main</code> entry point is included in [[server.jar]] which starts a server, runs all available game tests and then exits. It can be invoked in the command line, such as:
+
+<syntaxhighlight lang="bash">
+java -DbundlerMainClass="net.minecraft.gametest.Main" -jar server.jar [<options>]
+</syntaxhighlight>
+
+==== Command-line options ====
+* {{cd|--help}} - Shows usage information
+* {{cd|--packs <path>}} - Set a folder of datapacks to include in the world
+** Any zip file or folder with a {{cd|pack.mcmeta}} file is included
+* {{cd|--report <path>}} - Exports results in a [https://junit.org/ junit]-like XML report at the given path
+* {{cd|--tests <selection>}} - Specify which tests to run with a selection - a wildcard expression matching namespace test instance IDs
+** If omitted, or used with an empty ID, runs all tests
+* {{cd|--universe <path>}} - The path to where the test server world will be created
+** Any existing folder will be replaced
+** Default: {{cd|gametestserver}}
+* {{cd|--verify <boolean>}} - Enables test verification
+** Runs the tests specified with {{cd|test}} or {{cd|testNamespace}} 100 times for each 90 degree rotation step
+** Default: {{cd|false}}
+
+==== Exit code ====
+The game will yield the following {{wikipedia|exit code|exit codes}} depending on the scenario:
+
+{| class="wikitable"
+! Scenario !! Exit code
+|-
+| All tests pass || 0
+|-
+| Any test fails || (number of failures)
+|-
+| Server shut down without starting tests || -1
+|-
+| Game crashed || 1
+|}
+
+== ''Bedrock Edition'' ==
+The GameTest framework can be accessed through the <code>@minecraft/server-gametest</code> module from the [[Script API]]. The module must be added as a dependency in the [[manifest.json]]. It contains many {{w|programming interface}}s used for {{w|automated testing}} of any game objects' behaviors and interactions in a controlled testing environment.<ref>{{cite |url=https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-gametest/test?view=minecraft-bedrock-experimental |title=Test Class |website=Microsoft Learn |date=February 10, 2025}}</ref> Developers can use these interfaces for:
+* Asserting certain conditions for [[block]]s, [[entities]], and other game objects;
+* Getting in-game information such as [[dimension]], [[position]], entities and blocks information;
+* Modifying the testing environment by setting block permutation (block type and states data), sending [[redstone]] interactions, etc;
+* Spawning entities controlled by the script with predictable mob behaviors;
+* Creating simulated [[player]]s for testing behaviors and interactions with other game objects;<ref>{{cite |url=https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-gametest/simulatedplayer?view=minecraft-bedrock-experimental |title=SimulatedPlayer Class |website=Microsoft Learn |date=February 10, 2025}}</ref>
+* And other testing functionalities, [https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-gametest/test?view=minecraft-bedrock-experimental further reading].
+
+A testing environment can be created from a unit test (also called a ''GameTest''), which contains a test function registered from the script, and a reference to a [[.mcstructure]] file exists in the behavior pack.<ref>{{cite |url=https://learn.microsoft.com/en-us/minecraft/creator/documents/gametestbuildyourfirstgametest?view=minecraft-bedrock-stable |title=Building your first GameTest |website=Microsoft Learn |date=June 20, 2024}}</ref><ref name="registration-builder"/> Users can register a new unit test using <code>GameTest#register(''testClassName'', ''testName'', ''testFunction'')</code> method with additional [[w:Builder pattern|builder]] parameters, such as <code>.maxTicks(''ticks'')</code> that indicates the test may take amount of ''ticks'' to run, <code>.maxAttempts(''attempts'')</code> which specifies how many attempt the test can run, and more.<ref name="registration-builder">{{cite |url=https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server-gametest/registrationbuilder?view=minecraft-bedrock-experimental |title=RegistrationBuilder Class |website=Microsoft Learn |date=February 22, 2025}}</ref>
+
+After the unit test is registered, it is loaded in the world, and can be run using the {{cmd|gametest}} command, referenced by <code>''<testClassName>'':''<testName>''</code>. When ran, the game spawns the test structure and calls the test function previously defined in the script. The unit test may succeed or fail depending on the test function, which usually contain instructions for testing behaviors and interactions in the testing environment.
+
+== History ==
+=== Demonstration ===
+{{HistoryTable
+|{{HistoryLine||November 9, 2020|link=https://www.youtube.com/watch?v=vXaWOJTCYNg|[[Henrik Kniberg]] demonstrated GameTest, a test framework used internally by Mojang, on the ''Agile with Jimmy'' YouTube channel.}}
+}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.15|dev=19w34a|References to GameTest added in the game's code. Most of the framework is stripped, since the rest of the game does not depend on it.}}
+|{{HistoryLine||1.17|dev=21w13a|GameTest related code is now exposed for mod developers' use because unused parts of code are no longer removed.}}
+|{{HistoryLine||1.21.5|dev=25w03a|Overhauled the GameTest framework.|Introduced for use with data packs.}}
+|{{HistoryLine||1.21.11|dev=25w44a|In the {{cd|game_rules}} test environment the keys {{cd|bool_rule}} and {{cd|int_rule}} have been replaced with a single key rules.}}
+|{{HistoryLine|java upcoming}}
+|{{HistoryLine||26.1|dev=snap3|Replaced {{cd|time_of_day}} with {{cd|clock_time}}.|Added a new required field {{cd|clock}}: world clock ID, the clock within which to set time (from the existing time field).}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.210|dev=beta 1.16.210.60|Added GameTest framework.}}
+}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{Navbox Bedrock Edition}}
+
+[[de:Spieltest]]
+[[ja:ゲームテスト]]
+[[pt:GameTest]]
+[[ru:Игровой тест]]
+[[zh:游戏测试]]

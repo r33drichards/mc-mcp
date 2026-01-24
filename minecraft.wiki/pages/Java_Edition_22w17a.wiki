@@ -1,0 +1,229 @@
+{{Infobox version
+|title=Minecraft 22w17a
+|image=22w17a.jpg
+|image2=Java Edition 22w17a.png
+|edition=Java
+|type=Snapshot
+|date=April 27, 2022
+|jsonhash=ad43b6117dd2713a4f525496b869b0de5b355b8c
+|clienthash=ec14ab7dbf0869bde3147b0700cb82b1a0b9b6d0
+|clientmap=1c96e8f819952dc4b2667c293cb44fd3e4ce0efd
+|serverhash=9b4d5a87b48d7c3784fdfc9d6982543e8d9296df
+|servermap=40b2889924cf4b85394d97b2005c05ed79686827
+|parent=1.19
+|prevparent=1.18.2
+|prev=22w16b
+|next=22w18a
+|nextparent=1.19.1
+}}<onlyinclude>
+
+'''22w17a''' is the eighth [[snapshot]] for [[Java Edition 1.19]], released on April 27, 2022,<ref>{{snap|22w17a|April 27, 2022}}</ref> which adds [[goat horn]]s from {{BE}}, makes changes to [[allay]]s and [[warden]]s, and fixes bugs.
+
+== Additions ==
+=== Items ===
+'''[[File:Goat Horn JE1 BE1.png|32px]] [[Goat horn]]'''
+* Added from {{BE}}.
+* Drops when a [[goat]] rams [[coal ore]], [[emerald ore]], [[iron ore]], [[log]], [[packed ice]], or [[stone]].
+* Can play a loud sound that can be heard from afar, with a cooldown around 7 seconds between each use.
+* Has 8 variants, each variant has its own unique sound.
+** "Ponder", "Sing", "Seek", "Feel" can be obtained from the regular goats' ramming, or the [[chest]] in [[pillager outpost]]s with a 50% chance.
+** "Admire", "Call", "Yearn", "Dream" can only be obtained from the screaming goats' ramming.
+** The variant of horn that a goat may drop is completely random.
+
+=== Gameplay ===
+'''[[Death messages]]'''
+* Added new death messages to [[warden]]s' ranged attack:
+** "<''player''> was obliterated by a sonically-charged shriek"
+** If a player or mob attacks the dead player before they die, the death message is "<''player''> was obliterated by a sonically-charged shriek whilst trying to escape <''player''/''mob''>".
+
+=== General ===
+'''[[Chat]]'''
+* Chat messages between players are now cryptographically signed.
+* Players are given a Mojang provided key-pair on startup.
+* Chat styling is now handled via server resource packs with the translation key <code>chat.type.text</code>.
+
+'''[[Entity format]]'''
+* Added {{nbt|byte|HasLeftHorn}} and {{nbt|byte|HasRightHorn}} boolean fields to goats' entity format.
+** Decides the visibility and dropability of their horns.
+
+'''[[Item modifier]]'''
+* Added the item function <code>set_goat_horn_sound</code>.
+
+'''{{samp|[[server.properties]]}}'''
+* Added server property <code>enforce-secure-profile</code> to allow servers to requiring a player to having a Mojang-signed public key.
+** Defaults to <code>false</code>.
+** Enforcing secure profiles prevents players without a Mojang-signed public key from connecting.
+
+'''[[Tag]]s'''
+* Added the following block tags:
+** <code>#overworld_natural_logs</code>: {{cd|d=and|acacia_log|birch_log|oak_log|jungle_log|spruce_log|dark_oak_log|mangrove_log}}.
+** <code>#snaps_goat_horn</code>: {{cd|d=and|#overworld_natural_logs|stone|packed_ice|iron_ore|coal_ore|emerald_ore}}.
+* Added the following item tag:
+** <code>#overworld_natural_logs</code>: {{cd|d=and|acacia_log|birch_log|oak_log|jungle_log|spruce_log|dark_oak_log|mangrove_log}}.
+* Added the following game event tag:
+** <code>#allay_can_listen</code>: <code>note_block_play</code>
+
+== Changes ==
+=== Blocks ===
+'''[[Brewing stand]]'''
+* Updated base UVs and texture to match a graphical fix in {{BE}}, which has no effect on visuals.
+
+'''[[Mangrove roots]]'''
+* Changed its block model, to make the inner faces have the same size with the outer faces.
+
+'''[[Piston]] and [[sticky piston]]'''
+* Changed their textures, to match the color of the [[oak planks]] on the piston head.
+
+'''[[Sculk]]'''
+* Its blast resistance has been lowered.
+
+'''[[Sculk catalyst]]'''
+* Sculk spreading can now replace [[soul sand]] and [[mud]].
+
+'''[[TNT]]'''
+* [[Ore]]s, [[Sculk family|sculk]] blocks, and [[monster spawner|spawner]]s blown up by TNT ignited by a player now drop experience.
+
+=== Items ===
+'''[[Fence]]'''
+* Changed the model when in an [[item frame]], to make their two horizontal bars thicker, matching the thickness in their block form.
+
+'''[[Leather cap]]'''
+* Changed its texture, to extend the center bar on the back face to the bottom.
+
+=== Mobs ===
+'''[[Allay]]'''
+* Connecting with [[note block]]s is now better visualized by the vibration particle.
+* Connecting with note blocks can now be blocked by [[wool]] again, by placing wool between the allay and the note block.
+* Several sounds have been updated.
+
+'''[[Evoker]], [[illusioner]] and [[witch]]'''
+* Changed their models, now their last two rows of pixels on their robes can render.
+
+'''[[Goat]]'''
+* Now can drop 2 horns each.
+** The number of horns left to drop is represented on the model.
+
+'''[[Llama]]'''
+* Changed all variants' chest texture, to use the chest texture since the [[texture update]].
+
+'''[[Pillager]]'''
+* Changed its model, slightly shortened its coat to match its actual texture.
+
+'''[[Villager]]'''
+* Changed their models, now their last two rows of pixels on their robes can render.
+* Changed their textures in all biomes.
+** The color of the top and bottom of their legs now matches the sides correctly.
+** Removed the identical part in [[savanna]] villagers' texture with the villager base texture.
+** Slightly changed [[jungle]] villagers' shoes texture.
+
+'''[[Vindicator]]'''
+* Changed its model, slightly shortened its coat to match its actual texture.
+* Changes its crossed arm's texture.
+** The "gap" between their two arms connects correctly now.
+** Changed the color of the seam face between their upper and lower arms, which is not visible in default.
+
+'''[[Warden]]'''
+* Ranged attack now:
+** Bypasses shields and armor.
+** Deals damage of {{hp|10}} instead of {{hp|16}} (Easy) / {{hp|30}} (Normal) / {{hp|45}} (Hard).
+** Has a reduced cooldown of 2 seconds instead of 5 seconds.
+* Now drops a [[sculk catalyst]] upon death.
+
+'''[[Wolf]]'''
+* Reverted the mirroring change for ears and legs in [[22w11a]]. <ref>{{bug|MC-230603||Works As Intended}}</ref>
+
+[[File:22w17a Zombie Villager Model Change.png|thumb|The comparison of zombie villagers' model change.]]
+'''[[Zombie villager]]'''
+* Changed their models, now their last two rows of pixels on their robes can render.
+* Changed their clothes texture in all biomes (except desert and swamp).
+** The color of the top and bottom of their legs now matches the sides correctly.
+** Added "shirt" part in savanna zombie villagers' clothes, to match other zombie villagers.
+** Slightly changed jungle zombie villagers' shoes texture.
+** Removed extra textures on weaponsmith zombie villagers' arm's top.
+
+=== General ===
+'''[[HUD]]'''
+* Changed the texture of the "half" armor bar, moved the highlighted pixel from the right to the left.
+
+'''[[Realms]]'''
+* Replaced realms subtle selected world highlight with a clear green checkmark.
+
+'''[[Splash]]es'''
+* Removed "Привет Россия!"
+
+'''[[Tags]]'''
+* Polished deepslate are now part of the <code>#sculk_replaceable_world_gen</code> block tag.
+* Removed <code>#dampenable_vibrations</code> game event tag.
+
+== Fixes ==
+{{fixes|fixedin=22w17a
+|;old
+|13103|Texture Z-Fighting at Wolf[/]Cat snout.
+|53312|Illager/(zombie) villager/witch robes don't render the last two rows of pixels.
+|106627|Leather cap texture overlay doesn't align correctly.
+|141064|Cleric collar z-fighting.
+|166686|Villagers with taiga outfits show Z-fighting around their neck.
+|176840|Ores no longer drop experience when blown up.
+|208597|Boats ridden over wool are detected by sculk sensor.
+|208771|Projectiles landing on wool trigger sculk sensors.
+|210712|Sculk sensors are not activated upon backwards movement in a boat.
+|210901|Sculk sensors are not activated upon entities sliding on ice.
+|224709|Full armour icon doesn't match empty armour icon.
+|226761|Parity issue: Goats don't drop horns.
+|248161|Weaponsmith zombie villager texture has leftover pixels from the regular weaponsmith texture.
+|248292|Llama uses pre-1.14 chest texture.
+|248555|Mismatches within (zombie) villager textures.
+|248556|Savanna Zombie Villager missing a body texture.
+|248557|Savanna villager body defines pixels identical to base villager texture.
+|248561|Vindicator's crossed arms element has miscolored pixels on the faces touching the other arm elements.
+|248562|Iron golem has unused pixels in the texture.
+|249032|Fence item model's bars inconsistent with placed block.
+|249039|"Half" armor bar icon texture is incorrect.
+|249962|Exploding an End Crystal doesn't produce explosion vibration.
+|250921|Spawners do not drop experience when blown up.
+|;dev
+|249190|Sculk blocks don't drop experience orbs when blown up.
+|249192|Mangrove propagules break lily pads and frogspawn directly above them when attempting to grow.
+|249262|Sculk cannot replace soul sand or mud when mobs die on top of them.
+|249601|Z-fighting occurs on a Warden's tendrils when clicking.
+|249669|<samp>tadpole.png</samp> has unused frog egg texture.
+|249745|If allay is holding an item, it can be equipped with armor using a dispenser.
+|249780|Blocks that require support can generate floating in ancient cities.
+|249919|Pillar in Ancient City can generate with waterlogged stairs.
+|250000|Allays and villagers create ghost items when they take items from a stack and cannot fit the whole stack in their inventory.
+|250027|Allays ignore the dimension when checking for liked note blocks.
+|250075|The inner two planes in mangrove roots are smaller than they should be.
+|250076|Shading is disabled for the two inner planes in mangrove roots, even though it isn't for all the other planes.
+|250165|Doing {{cmd|locate stronghold}} in some single biomes causes an unexpected error.
+|250171|Warden Sonic Boom attack can be completely mitigated by shields.
+|250240|Z-fighting can be seen around the backs of frogs when they open their mouths.
+|250243|Warden sonic boom attacks can hit endermen, shulkers or players who have finished eating chorus fruit and players who have used ender pearls within range, even if they have teleported.
+|250288|Some blocks in Ancient City structures can only be covered by sculk veins and can't be converted into a sculk block.
+|250321|Flying and aquatic mobs pathfinding in certain blocks cause crash <nowiki>||</nowiki> The game crashed whilst ticking entity Error: {{cd|java.lang.NullPointerException: Cannot invoke "dnm.a()" because "$$1" is null}}.
+|250331|Chunk rendering is glitchy / incorrect when redrawing.
+|;previous
+|250339|Paintings are off-centered in multiplayer servers.
+|250379|Teleporting armor stands results in visual desync and abnormal behavior.
+|250396|{{cmd|locatebiome}} command displays Y-axis of -64 in certain cave biomes, causing the player to die when teleported.
+|250400|Blocks and items can cause the world to render invisibly.
+|250411|Sculk can spread in ancient city structures and replace soul sand with fire on top, extinguishing fires.
+|250429|Narrator improperly narrates chat.
+|250460|The rendering of players is delayed for others.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|Wh3us2gaPvo|vu7YBpLGd9w}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:22w17a]]
+[[es:Java Edition 22w17a]]
+[[fr:Édition Java 22w17a]]
+[[ja:Java Edition 22w17a]]
+[[pt:Edição Java 22w17a]]
+[[ru:22w17a (Java Edition)]]
+[[zh:Java版22w17a]]

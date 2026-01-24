@@ -1,0 +1,167 @@
+{{Lost version|pre-reupload}}
+{{Infobox version
+|title=Minecraft 17w18a
+|edition=Java
+|image=17w18a.png
+|image2=Java Edition 17w18a.png
+|type=Snapshot
+|date=May 3, 2017
+|parent=1.12
+|downloads= '''Original:'''<br>Original client unavailable<br>
+[https://piston-data.mojang.com/mc/game/17w18a/server/59fccdc6b26b9298231a1231db66136ae451817e/server.jar Server]<br>
+'''Reupload:'''<br>
+{{dl|9eda8162e92b2db820a140f4b4d8fc7b70d32b3a|client}} ({{dl|03ca07f26b8336732e720ecd13e912e19f0d3a77|json|name=17w18a}})<br>
+{{dl|b1f45946bd74f4e2cf1833324770809ebcd0b7b1|server}}
+|prevparent=1.11.2
+|prev=17w17b
+|next=17w18b
+|nextparent=1.12.1
+}}<onlyinclude>
+
+'''17w18a''' is the tenth [[snapshot]] for [[Java Edition 1.12]], released on May 3, 2017.<ref>{{snap|17w18a|May 3, 2017}}</ref> It was later reuploaded to fix an aspect ratio issue.<ref>{{tweet|Dinnerbone|859772714571247616|The aspect ratio is really wrong - I'm gonna fix it as soon as I get some time. Sorry! :(}}</ref>
+
+== Additions ==
+=== Gameplay ===
+'''Gamerules'''
+* {{cmd|gamerule announceAdvancements}}
+** Defaults to true.
+** Toggles announcing of advancements in chat, replacing the old <code>server.properties</code> entry.
+
+=== Command format ===
+{{cmd|reload}}
+* Command to reload advancements and loot tables from disk.
+* This command is available to all [[op]]ped players in single player and to all level 4 operators on a multiplayer server.
+* Cannot be run from a [[command block]].
+
+=== General ===
+'''[[Advancement]]s'''
+* Re-introduced announcements to chat when someone earns an advancement.
+** Shows the description on hover, like before with [[achievement]]s.
+* Added three advancements to the "Adventure" tab:
+
+{{AdvancementTable|Adventure}}
+{{AdvancementRow
+|title=Best Friends Forever
+|bg=plain
+|Lead
+|Tame an animal
+|Sweet dreams
+|Tame one of these 7 tameable mobs: [[ocelot]], [[donkey]], [[horse]], [[mule]], [[wolf]], [[parrot]], [[llama]].
+|adventure/tame_an_animal
+}}
+{{AdvancementRow
+|title=The Parrots and the Bats
+|bg=plain
+|Wheat
+|Breed two animals together
+|Sweet dreams
+|Breed a pair of any of these 10 mobs: [[sheep]], [[cow]]s, [[pig]]s, [[rabbit]]s, [[chicken]]s, [[horse]]s, [[wolves]], [[ocelot]]s, [[mooshroom]]s, and [[llama]]s.
+|adventure/breed_an_animal
+}}
+{{AdvancementRow
+|title=Two by Two
+|bg=fancy
+|Golden Carrot
+|Breed all the animals!
+|The Parrots and the Bats
+|Breed a pair of each of the mobs mentioned above.
+|adventure/bred_all_animals
+}}
+{{AdvancementTable|foot}}
+
+* Added new <code>minecraft:tick</code> trigger.
+** Activates for each player on every tick, provided that the advancement was revoked before the next tick starts.
+* Added new <code>minecraft:tame_animal</code> trigger.
+** Activates whenever the player tames an animal. The <code>entity</code> condition can be specified to check that the animal that was tamed.
+* Added new <code>show_toast</code> display option.
+** Optional boolean defaulting to true. When false, the specified advancement does not display the toast popup when the advancement is fulfilled.
+* Added new <code>announce_to_chat</code> display option.
+** Optional boolean defaulting to true. When false, this specific advancement does not announce the player fulfilling it to the chat for all players to see.
+
+== Changes ==
+=== Blocks ===
+'''[[Command block]]s'''
+* Optimized error conditions.
+
+=== Items ===
+'''[[Map]]s'''
+* Changed some map colors around, again.
+** Reverted the wool colors on maps.
+** Moved dyed blocks such as banners to the new terracotta map color palette.
+
+=== Command format ===
+{{cmd|give}} and {{cmd|replaceitem}}
+* Now reinforce item-specific stacking restrictions.<ref name=":0">{{bug|MC-117005}} resolved as "Works as Intended"</ref>
+** This is a reverse of 16w32a. ({{bug|MC-105965}} resolved as "Works as Intended")
+
+=== General ===
+'''[[Advancement]]s'''
+* "entity" objects and the <code>minecraft:levitation</code> trigger now use a shared "distance" object.
+** Check if the player is within or outside of the specified range on the <code>x</code>, <code>y</code>, or <code>z</code> axis (in either the positive or negative direction).
+** <code>absolute</code> and <code>horizontal</code> ranges check if the player is within range on all axes, though <code>horizontal</code> excludes the Y axis.
+* Changed the "Great View From Up Here" advancement to 50 vertical blocks.
+* Changed the "Sniper Duel" advancement to horizontal distance.
+* Advancement loading is now strict [[JSON]].
+
+'''[[Narrator]]'''
+* Optimized, it should work for more people now.
+
+'''[[Recipe book]]s'''
+* Some optimizations.
+* If the [[player]] searches "'''excitedze'''" in the recipe book, their language switches to Pirate Speak.
+** Searching "'''excited'''" no longer does this.
+
+== Fixes ==
+{{fixes|fixedin=17w18a|prefix=Minecraft
+|;dev
+|113374|Map color palette changed
+|114966|Advancements overlap other advancements
+|115323|Parrots spawn rarely in Jungle
+|115577|Parrot play the flapping wings(fly) sound, when player push it
+|115774|Parrots still make sounds when they are on player shoulder and Silent:1b
+|115810|Custom resource pack added sounds not playing
+|115902|Flying parrots will not avoid lava
+|116482|The server.properties file still has announce-player-achievements
+|116498|You can't place ladders on the back of stairs
+|116515|Placing a torch on a wall with a fence gate underneath causes crash
+|116534|Pressing "Showing craftable" sometimes doesn't show any recipes
+|116537|Stopping jukebox music while a sitting parrot is dancing occasionally causes the parrot's entire upper body to be misplaced.
+|116574|"showing craftable" option has several issues
+|116586|Items in crafting grid disappear if the inventory is not properly closed
+|116638|Oak Wood in Recipe Book
+|116670|No toast is shown for first advancement made
+|116675|Debug messages are printed in log when levitating
+|116704|The sound block.note.chime is sharp
+|116713|Creating new world with same name crashes with NullPointerException
+|;previous
+|116931|Crash when placing a snow layer on top of a fence gate
+|otherissuescount=1}}
+'''From the current version, hotfixed'''
+* Fixed an aspect ratio issue.</onlyinclude>
+
+== Videos ==
+{{slicedlime|aczLMFJZCuE}}
+
+== Trivia ==
+* 17w18a (the reuploaded version) was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== Gallery ==
+<gallery>
+Adventure_advancement_tree_17w18a.png|"Adventure" advancement tree in 17w18a.
+</gallery>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:17w18a]]
+[[es:Java Edition 17w18a]]
+[[fr:Édition Java 17w18a]]
+[[it:Java Edition 17w18a]]
+[[ja:Java Edition 17w18a]]
+[[nl:17w18a]]
+[[pt:Edição Java 17w18a]]
+[[ru:17w18a (Java Edition)]]
+[[zh:Java版17w18a]]

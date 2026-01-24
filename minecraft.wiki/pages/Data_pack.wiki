@@ -1,0 +1,221 @@
+{{about|the data pack system|the command|Commands/datapack|the resource pack system|Resource pack|the similar system in ''Bedrock Edition''|Behavior pack}}
+{{exclusive|java}}
+{{relevant tutorial|Creating a data pack|Importing a data pack}}
+[[File:Datapacks.png|thumb|Some experimental vanilla datapacks.]]
+A '''data pack''' or '''datapack''' is a collection of data used to configure a number of features of ''Minecraft''. A data pack is either a folder or a [[wikipedia:Zip (file format)|{{code|.zip}} file]] containing a {{cd|pack.mcmeta}} file. Data packs are used to define among others [[Custom advancement|advancements]], [[Custom dimension|dimensions]], [[Enchanting|enchantments]], [[loot table]]s, [[recipe]]s, [[Custom structure|structures]], and [[biomes]] (see {{slink||Contents}} for a full list). The definitions of the vanilla features is done using a built-in data pack. [[Experiments]] are enabled by adding separate bundled data packs to a world. Similarly, custom data packs can be added to a world to add or modify features and define [[Function (Java Edition)|functions]].
+
+== Usage ==
+
+Data packs can be added to a world during world creation in the [[Create New World]] screen in the '''More''' tab by clicking the '''Data Packs''' button. This menu allows drag-and-drop of data packs from a file explorer. Alternatively, data packs can be added to an existing world by manually placing them in the {{code|[[.minecraft]]/saves/{{ph|world}}/datapacks}} folder of a world. 
+
+When adding or modifying a data pack while the world is loaded, changes done to [[Tag|registry tags]], [[loot table]]s, [[recipe]]s, [[advancement]]s, [[item modifier]]s, [[predicate]]s, [[Function (Java Edition)|functions]], and [[Structure_file|structure templates]] can be loaded using the {{cmd|reload}} command. Other features require the world or server to be rebooted for changes to take effect (see {{Slink||Experimental Settings}}).
+
+Data packs load their data based on the load order. This order can be seen and altered in the '''Data Packs''' screen during world creation, and by using the {{cmd|datapack}} command. The loading order of data packs is stored in the [[Java Edition level format#level.dat_format|{{cd|level.dat}} file]]. If a file exists in multiple data packs only the file in the last data pack is used. This is often referred to this file '''overriding''' the files in the earlier packs. However, [[tag]] files without {{cd|"replace": true}} merge their content with the files loaded from earlier packs.
+
+=== Experimental Settings ===
+{{Not to be confused with|Experiments}}
+[[File:Experimental settings warning screen.png|thumb|The warning screen that appears when trying to open a world using experimental settings in singleplayer.]]
+Some data pack features are considered '''experimental settings''' by the game. If a world has enabled a data pack that uses these features, opening the world in [[singleplayer]] will display a warning screen to the player. Additionally, worlds using experimental settings '''cannot''' be played on [[Realms]]: Attempting to upload such a world to Realms results in a server error.
+
+Internally, most experimental settings use ''dynamic registries'' (as opposed to ''static registries''). This means any changes regarding these features cannot be loaded using the {{Cmd|reload}} command: the world must be exited and reopened (singleplayer), or the server rebooted (multiplayer) for the changes to take effect.
+
+For a data pack to be marked as "using experimental settings", it must contain at least one valid file inside one of several specific folders. For instance, defining a [[Instrument definition|custom instrument]] inside the <code>data/instrument/</code> folder '''counts''' as using experimental settings, whereas defining an instrument through [[Data component format|item components]] '''does not''' count as such.
+
+See {{Slink|2=Folder structure}} for which folders are considered experimental settings.
+
+
+== Contents ==
+
+Data packs use a folder structure to contain the data. On the top level, a data pack has to contain a {{cd|pack.mcmeta}} file containing meta-data about the data pack. The data is organized into [[namespace]]s to avoid files from different packs unintentionally interfering with each other. Files are loaded as follows:
+* The file {{cd|data/{{ph|namespace}}/{{ph|registry name}}/{{ph|path}}.json}} is loaded into the {{cd|{{ph|registry name}}}} registry with ID {{cd|{{ph|namespace}}:{{ph|path}}}}. Both {{cd|{{ph|registry name}}}} and {{cd|{{ph|path}}}} can contain slashes ({{cd|/}}), which results in extra sub-folders.
+** [[Function (Java Edition)|Functions]] use the {{cd|.mcfunction}} extension
+** [[Structure files]] use the {{cd|.nbt}} extension
+* [[Tag]]s are loaded from files {{cd|data/{{ph|namespace}}/tags/{{ph|registry name}}/{{ph|path}}.json}} which results in a {{cd|{{ph|registry name}}}} tag named {{cd|#{{ph|namespace}}:{{ph|path}}}}.
+
+=== Folder structure ===
+
+<div class="treeview">
+If a folder is marked with an asterisk ('''<span style="color:#d33">*</span>'''), it means that the game considers the feature to be experimental, and having a valid file inside any of these folders will mark the data pack as using [[Data pack#Experimental Settings|experimental settings]].
+*{{File|archive}}/{{File|directory|{{ph|data pack name}}}}
+**{{File|file|[[#pack.mcmeta|pack.mcmeta]]}}: Metadata of the data pack. This is the only mandatory file.
+**{{File|file|pack.png}}: The picture to display next to the data pack in the "Data Pack Selection" screen.
+**{{File|directory|data}}
+***{{File|directory|{{ph|namespace}}}}: Folder of the namespace to use, see {{slink|Resource location|Namespaces}}. More than one directory for different namespaces may exist under the {{cd|data}} directory. The {{cd|minecraft}} namespace is used for vanilla files and can be used to override them.
+****{{File|directory|[[Function (Java Edition)|function]]}}: {{cd|.mcfunction}} files with lists of commands.
+****{{File|directory|[[Structure file|structure]]}}: {{cd|.nbt}} files defining a saved structure of blocks.
+****{{File|directory|[[Tag (Java Edition)|tags]]}}: Collections of things. Each sub-folder defines tags of a specific type using {{cd|.json}} files.
+*****{{File|directory|[[Function_tag_(Java Edition)|function]]}}: Tags of [[Function (Java Edition)|functions]].
+*****{{File|directory|{{ph|registry name}}}}: Tags can be defined for any registry, see {{slink|Tag (Java Edition)|List of tag types}} for tag types used.
+****; All following folders contain {{cd|.json}} files defining the content<nowiki>:</nowiki>
+****{{File|directory|[[advancement definition|advancement]]}}: Definitions of [[advancements]].
+****{{File|directory|[[banner_pattern_definition|banner_pattern]]}}'''<span style="color:#d33">*</span>''': Textures and names to use for banner patterns.
+****{{File|directory|[[Mob_variant_definitions#Cat|cat_variant]]}}'''<span style="color:#d33">*</span>''': Textures and spawn conditions of cat variants.
+****{{File|directory|[[chat_type]]}}'''<span style="color:#d33">*</span>''': Formatting of [[chat]] messages.
+****{{File|directory|[[Mob_variant_definitions#Chicken|chicken_variant]]}}'''<span style="color:#d33">*</span>''': Textures and spawn conditions of chicken variants.
+****{{File|directory|[[Mob_variant_definitions#Cow|cow_variant]]}}'''<span style="color:#d33">*</span>''': Textures and spawn conditions of cow variants.
+****{{File|directory|[[damage_type]]}}'''<span style="color:#d33">*</span>''': Attributes of damage and death messages.
+****{{File|directory|[[dialog]]}}'''<span style="color:#d33">*</span>''': Definitions of dialogs.
+****{{File|directory|[[dimension_definition|dimension]]}}'''<span style="color:#d33">*</span>''': Biome layout and terrain of dimensions.
+****{{File|directory|[[dimension_type]]}}'''<span style="color:#d33">*</span>''': Properties of dimensions.
+****{{File|directory|[[enchantment definition|enchantment]]}}'''<span style="color:#d33">*</span>''': Enchantment effects, supported items, level cost, etc.
+****{{File|directory|[[enchantment_provider]]}}'''<span style="color:#d33">*</span>''': Selection of enchantments for specific uses.
+****{{File|directory|[[Mob_variant_definitions#Frog|frog_variant]]}}'''<span style="color:#d33">*</span>''': Textures and spawn conditions of frog variants.
+****{{File|directory|[[instrument_definition|instrument]]}}'''<span style="color:#d33">*</span>''': Instruments for goat horns.
+****{{File|directory|[[item_modifier]]}}: Loot functions used to modify items.
+****{{File|directory|[[Jukebox song definition|jukebox_song]]}}'''<span style="color:#d33">*</span>''': Jukebox song definitions.
+****{{File|directory|[[loot_table]]}}: Loot from mobs, blocks, chests, etc.
+****{{File|directory|[[painting variant definition|painting_variant]]}}'''<span style="color:#d33">*</span>''': Size and texture of paintings.
+****{{File|directory|[[Mob_variant_definitions#Pig|pig_variant]]}}'''<span style="color:#d33">*</span>''': Textures and spawn conditions of pig variants.
+****{{File|directory|[[predicate]]}}: Tests for specific conditions based on position, mobs, etc.
+****{{File|directory|[[recipe]]}}: Recipes for [[crafting]], [[smelting]], etc.
+****{{File|directory|[[Test_environment_definition|test_environment]]}}'''<span style="color:#d33">*</span>''': A way to group up [[GameTest]]s and give them the right preconditions to run.
+****{{File|directory|[[Test_instance_definition|test_instance]]}}'''<span style="color:#d33">*</span>''': A test that can be run by the [[GameTest]] framework.
+****{{File|directory|[[timeline]]}}'''<span style="color:#d33">*</span>''': A timeline which specifies events and attributes according to the time of day.
+****{{File|directory|trade_set}}'''<span style="color:#d33">*</span>'''{{upcoming|je 26.1}}: A set of trades selected by [[villager]]s and [[wandering trader]]s.
+****{{File|directory|[[Trial_spawner_configuration|trial_spawner]]}}'''<span style="color:#d33">*</span>''': Configuration of [[trial spawner]]s.
+****{{File|directory|[[armor trim definition#Trim material|trim_material]]}}'''<span style="color:#d33">*</span>''': Colors, ingredients, and name of materials for [[trimming]]
+****{{File|directory|[[armor trim definition#Trim pattern|trim_pattern]]}}'''<span style="color:#d33">*</span>''': Textures and name of patterns for [[trimming]]
+****{{File|directory|[[villager trade definition|villager_trade]]}}'''<span style="color:#d33">*</span>'''{{upcoming|je 26.1}}: Trades of [[villager]]s and [[wandering trader]]s
+****{{File|directory|[[Mob_variant_definitions#Wolf_sounds|wolf_sound_variant]]}}'''<span style="color:#d33">*</span>''': Sound variants of wolfs.
+****{{File|directory|[[Mob_variant_definitions#Wolf|wolf_variant]]}}'''<span style="color:#d33">*</span>''': Textures and spawn conditions of wolf variants.
+****{{File|directory|worldgen}}'''<span style="color:#d33">*</span>'''
+*****{{File|directory|[[biome definition|biome]]}}: Biome generation options, effects, etc.
+*****{{File|directory|[[carver definition|configured_carver]]}}: Carver cave definitions
+*****{{File|directory|[[configured_feature]]}}: Configuration of [[feature]]s.
+*****{{File|directory|[[density_function]]}}: Mathematical operations to calculate values for each position in the world.
+*****{{File|directory|[[noise]]}}: Size and amplitudes of a [[Wikipedia:Perlin noise|noise]].
+*****{{File|directory|[[noise_settings]]}}: Terrain shape including noise caves, and main terrain block types.
+*****{{File|directory|[[placed_feature]]}}: Placement of features within a chunk.
+*****{{File|directory|[[processor_list]]}}: Post-processing of blocks in structures.
+*****{{File|directory|[[structure definition|structure]]}}: Definition of structure generation and allowed biomes.
+*****{{File|directory|[[structure_set]]}}: Distribution of a set of structures within the world.
+*****{{File|directory|[[template_pool]]}}: A set of templates (structure files) for use in [[jigsaw structure]]s.
+*****{{File|directory|[[world preset definition|world_preset]]}}: Sets of dimensions selectable in the '''Create World''' screen.
+*****{{File|directory|[[world_preset_definition#Superflat_Level_Generation_Preset|flat_level_generator_preset]]}}: Presets selectable for the "Superflat" world type.
+*****{{File|directory|[[dimension_definition#Multi_noise_parameter_list|multi_noise_biome_source_parameter_list]]}}: Name of a preset to use for the multi noise biome layout.
+</div>
+
+=== {{mono|pack.mcmeta}} ===
+{{main|pack.mcmeta}}
+A data pack is identified by ''Minecraft'' based on the presence of the {{code|pack.mcmeta}} file in the root directory of the data pack, which contains data in [[wikipedia:JSON|JSON]] format.
+
+A {{code|pack.mcmeta}} file to produce a data pack that looks like the "vanilla" data pack in [[Java Edition 1.21.9|1.21.9]] would look like this:
+{{filename|pack.mcmeta}}
+{{pack.mcmeta|{
+            "translate": "dataPack.vanilla.description"
+        }|88.0|type=new}}
+
+==== Pack format ====
+{{For|the full list of pack formats in all versions|Pack format#List of data pack formats}}
+{{Data pack format|releaseonly}}
+
+== History ==
+{{for|pack format history|#Pack format}}
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=17w43a|Added data packs.}}
+|{{HistoryLine|||dev=17w46a|Added {{cmd|datapack}}, a command to control loaded data packs.}}
+|{{HistoryLine|||dev=17w48a|Data packs can now load custom recipes.
+|Added the initial pack format version of <code>4</code>.}}
+|{{HistoryLine|||dev=17w49a|[[Tag]]s can now be created with data packs.}}
+|{{HistoryLine|||dev=17w49b|Tags can now be created for functions.
+|Functions tagged in <code>minecraft:tick</code> now run at the beginning of every tick.}}
+|{{HistoryLine|||dev=18w01a|Functions tagged in <code>minecraft:load</code> now run once after a (re)load.
+|Crash reports now list what data packs are enabled.}}
+|{{HistoryLine||1.14|dev=18w43a|Tags can now be created for entity types.}}
+|{{HistoryLine||1.15|dev=19w38a|Added [[predicates]].}}
+|{{HistoryLine||1.16|dev=20w22a|Slightly changed data pack loading to prevent custom data packs from crashing.
+|If data pack reload fails, changes are not applied and the game continues using previous data.
+|Changes to data pack list are stored only after successful reload.
+|If existing data packs prevent the world from loading, the game gives an option to load the world in safe mode, which loads only vanilla data pack.
+|Added <code>--safeMode</code> option for servers to load only with vanilla data pack.
+|Game now detects any critical data pack issues, such as required tags being missing, and prevent the world from being loaded.}}
+|{{HistoryLine|||dev=Pre-release 1|Data packs can now be loaded before the world is created.
+|Data packs can now add and change [[dimension]]s and dimension types.}}
+|{{HistoryLine||1.16.2|dev=20w27a|Data packs can now have a [[pack.png]] in the root folder, and display it in the data pack menu.}}
+|{{HistoryLine|||dev=20w28a|Custom worlds now support custom [[biomes]] and can now be used in custom [[dimension]] generators.
+|Data packs can now customize world generation in the <code>worldgen</code> folder.}}
+|{{HistoryLine||1.17|dev=20w45a|Pack format in <code>version.json</code> has been split into data and resource versions.}}
+|{{HistoryLine|||dev=20w46a|Added [[item modifier]]s.}}
+|{{HistoryLine||1.18.2|dev=Pre-release 1|It is now possible to add custom structures in experimental data packs: the game now generates and stores data-driven configured structures.
+|A lot of the cave generation is now configurable through data packs.}}
+|{{HistoryLine||1.19|dev=22w11a|Data packs can now apply [[pack.mcmeta|filters]] which block files from packs applied before the current pack.}}
+|{{HistoryLine||1.19.3|dev=22w42a|Added [[chat type]]s.
+|Added a subsection called <code>datapacks</code>.
+|The Vanilla world generation data pack is now visible within the game's jar.}}
+|{{HistoryLine||1.19.4|exp=Update 1.20|dev=23w04a|Added <code>trim_pattern</code> and <code>trim_material</code> registries which is used to define [[Tutorial:Adding custom trims|armor trims]].}}
+|{{HistoryLine||1.19.4|dev=23w06a|Added [[damage type]]s.}}
+|{{HistoryLine||1.20|dev=23w06a|Trim patterns and trim materials definitions are no longer experimental.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Data packs can now support multiple [[pack format]]s.|Data packs can now contain [[pack.mcmeta|overlay]]s which are applied over the "normal" contents of a pack.}}
+|{{HistoryLine||1.20.5|dev=24w10a|Added [[wolf#Wolf_variants|wolf variants]] which can be defined through data packs.
+| Data packs can now define custom [[Banner_Pattern#JSON_Format|banner patterns]].}}
+|{{HistoryLine||1.21|dev=24w18a|Data packs can now define custom [[painting variant definition|painting variants]].
+|[[Enchantments]] are now data-driven and can be defined through data packs.
+| Data packs can additionally define [[enchantment provider|enchantment providers]].}}
+|{{HistoryLine|||dev=24w19a|Renamed several directories:
+*<samp>tags/items</samp> -> <samp>tags/item</samp>
+*<samp>tags/blocks</samp> -> <samp>tags/block</samp>
+*<samp>tags/entity_types</samp> -> <samp>tags/entity_type</samp>
+*<samp>tags/fluids</samp> -> <samp>tags/fluid</samp>
+*<samp>tags/game_events</samp> -> <samp>tags/game_event</samp>
+}}
+|{{HistoryLine|||dev=24w21a|Renamed several directories:
+*<samp>structures</samp> -> <samp>structure</samp>
+*<samp>advancements</samp> -> <samp>advancement</samp>
+*<samp>recipes</samp> -> <samp>recipe</samp>
+*<samp>loot_tables</samp> -> <samp>loot_table</samp>
+*<samp>predicates</samp> -> <samp>predicate</samp>
+*<samp>item_modifiers</samp> -><samp>item_modifier</samp>
+*<samp>functions</samp> -> <samp>function</samp>
+*<samp>tags/functions</samp> -> <samp>tags/function</samp>
+| Data packs can now define custom [[Jukebox song definition|jukebox songs]].}}
+|{{HistoryLine||1.21.2|dev=24w33a|Data packs can now define custom [[Goat_horn_instrument_definition|goat horn instruments]].}}
+|{{HistoryLine|||dev=24w35a|[[Trial spawner configuration]]s can now also be defined in datapacks, instead of only in the [[Trial Spawner#Block_data|Trial spawner block entity]].}}
+|{{HistoryLine||1.21.5|dev=25w03a
+|Added end-to-end [[GameTest]] system. Added [[Test environment definition|test environment]] and [[Test instance definition|test instance]] definitions to data packs.
+|Added pig variants; including definitions in data packs.}}
+|{{HistoryLine|||dev=25w04a|Cat and Frog variants can now be defined in data packs.}}
+|{{HistoryLine|||dev=25w05a|Added cow variants; including definitions in data packs.}}
+|{{HistoryLine|||dev=25w06a|Added chicken variants; including definitions in data packs.}}
+|{{HistoryLine|||dev=25w08a|Added wolf sound variants definition to data packs.}}
+|{{HistoryLine||1.21.6|dev=25w15a|Added {{cmd|datapack create}}, that can create new empty directory data packs for current world.}}
+|{{HistoryLine|||dev=25w20a|Data packs can now define custom [[dialog]]s.}}
+|{{HistoryLine||1.21.11|dev=25w45a|Added [[timeline|timelines]].}}
+
+}}
+
+== Issues ==
+{{issue list|projects=mc}}
+
+== Gallery ==
+<gallery>
+World-type-custom.png|Example of a custom world created with a data pack.
+</gallery>
+
+== See also ==
+*[[Add-on]]
+*[[Tutorial: Importing a data pack]]
+*[[Tutorial: Creating a data pack]]
+*[[Resource Pack]]
+*[[Tutorial: Creating a resource pack]]
+
+== External links ==
+* [https://misode.github.io/ misode.github.io] provides data pack generators
+
+== Navigation ==
+{{Navbox Java Edition}}
+{{Navbox Java Edition technical|datapack}}
+
+[[Category:Data packs| ]]
+[[Category:Game customization]]
+
+[[de:Datenpaket]]
+[[es:Paquete de datos]]
+[[fr:Pack de données]]
+[[ja:データパック]]
+[[ko:데이터 팩]]
+[[pl:Paczki danych]]
+[[pt:Pacote de dados]]
+[[ru:Набор данных]]
+[[th:ดาต้าแพ็ก]]
+[[zh:数据包]]

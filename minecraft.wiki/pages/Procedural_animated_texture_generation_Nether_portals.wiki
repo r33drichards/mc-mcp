@@ -1,0 +1,62 @@
+{{exclusive|java|console|section=1}}
+
+Due to the large number of Atan2 and Sine operations, the nether portal frames are not generated in real time; instead, 32 frames of animation (at a resolution of 16×16) are generated once at startup and stored into an internal animation strip. The random shimmer is the same every time, as the game always uses a random number generator with a seed of 100.
+
+To generate one frame of the nether portal animation:
+<syntaxhighlight lang="python3" line="1">
+# assume time is a value from 0 to 1; a value of 1 results in the same
+# image as a time value of 0 (excluding the random shimmering effect)
+def setup_portal_sprite (time: float, output: Image):
+	random = Random(100)
+	wide, tall = output.size
+	for x in range(wide):
+		for y in range(tall):
+			n = 0.0
+			for dir in range(2):
+				# All in this loop is done twice to create two spirals,
+				# one of which offset to the topright
+				spiral_x = (x - dir * (wide // 2)) / wide * 2.0
+				spiral_y = (y - dir * (tall // 2)) / tall * 2.0
+				
+				spiral_x += 2 if spiral_x < -1 else -2 if spiral_x >= 1 else 0
+				spiral_y += 2 if spiral_y < -1 else -2 if spiral_y >= 1 else 0
+
+				mag = spiral_x ** 2.0 + spiral_y ** 2.0
+				out_spiral = atan2(spiral_y, spiral_x)
+
+				# Mag is used here to make the arms of the spiral constrict
+				# the further from the centre of the spiral they are
+				out_spiral += ((time * pi * 2) - (mag * 10) + (dir * 2)) * (dir * 2 - 1)
+				
+				# `(i * 2 - 1)` reverses the direction of the spiral if is 0
+				# `* 0.5 + 0.5` brings the spiral into the range of 0 to 1 rather than -1 to 1
+				out_spiral = sin(out_spiral) * 0.5 + 0.5
+				
+				# make the intensity of the spiral's arms diminish with distance from the centre
+				out_spiral /= mag + 1
+				
+				# divide by two so that the final range is 0 to 1 instead of 0 to 2,
+				# as we're generating two spirals
+				n += out_spiral / 2
+
+			n += random.range(0.0, 0.1) # make the spirals shimmer slightly at random
+			
+			r = int(n ** 2 * 200 + 55)
+			g = int(n ** 4 * 255)
+			b = int(n * 100 + 155)
+			output.set_pixel(x, y, r, g, b, b) # blue is used for transparency
+</syntaxhighlight>
+
+Due to internally using a looping animation already, the nether portal is the only one of the procedural textures that is ported 1:1 in the 1.5 resource pack changes. Unlike the water animations, the alpha channel was not made uniform in the 1.15 texture update.
+
+<gallery style="text-align:center">
+Spiral dir visual.gif|The {{code|dir}} value shifting between 1.0 and 0.0 to show its effect on a single spiral
+Space_loop_zoomin.gif|The crude way the spirals are tiled (seen on lines 15 and 16 of the above script)
+Space loop zoomout.gif|Ditto, but zoomed out to show the full extent
+Both spirals at once.gif|The two spirals joined, shown with and without the tiling effect
+Both spirals at once (rendered).gif|Ditto, but with the final shimmer and colors applied
+</gallery>
+<noinclude>[[Category: Textures]]
+[[pt:Geração de textura animada processual/Portais do Nether]]
+[[uk:Процедурна генерація анімованих текстур/Портали Незеру]]
+</noinclude>

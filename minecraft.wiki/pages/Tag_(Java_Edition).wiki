@@ -1,0 +1,167 @@
+{{About|the registry tags in ''Java Edition''|other uses|Tag}}
+
+'''Tags''' (also called '''registry tags''') in [[data pack]]s allow players to group different game elements together.
+
+Tags act as references to groups of registry entries, letting Minecraft treat multiple items, blocks, or entities as a single category. For example, the tag {{cd|#minecraft:logs}} represents all log blocks, so commands or recipes using that tag automatically apply to oak logs, birch logs, and any other block included in it. Tags are one of the most powerful data pack features for organizing and modifying game behavior without editing core files.
+
+== Usage ==
+Tags are part of the data pack directory structure, highlighted below:
+
+<div class="treeview">
+*{{File|archive}}/{{File|directory|{{ph|data pack name}}}}
+**{{File|file|[[Data_pack#pack.mcmeta|pack.mcmeta]]}}
+**{{File|directory|data}}
+***{{File|directory|{{ph|namespace}}}}
+****{{File|directory|'''tags'''}}
+*****{{File|directory|'''function'''}}
+******{{File|file|'''{{ph|name}}.json'''}}: A function tag.
+*****{{File|directory|'''<[[Resource location#Registries and registry objects|registry name]]>'''}}
+******{{File|file|'''{{ph|name}}.json'''}}: A tag for the corresponding registry.
+****[[Data pack#Folder_structure|More directories…]]
+</div>
+
+Minecraft defines many tags in the vanilla data pack in the {{cd|minecraft}} namespace. These tags are often referenced by the code or other vanilla data pack files. Modifying those tags through a data pack therefore has a direct effect. For example, vanilla block tags are used for various block behaviors, vanilla item tags are used for various item behaviors, vanilla [[advancement]] files and vanilla [[recipe]] files, and vanilla entity type tags are used for various mob behaviors. See {{slink||List of tag types}} section for their usages.
+
+=== Resource location ===
+The resource location of a tag is also in the format of {{cd|{{ph|namespace}}:{{ph|path}}}}, where namespace is the name of the folder that the {{mono|tags}} folder is in, and path is the JSON file's path under the respective tag folder.
+
+For example, JSON file '{{mono|data/wiki/tags/block/foo/example.json}}' defines a block tag with the resource location of {{cd|wiki:foo/example}}.
+
+To distinguish normal contents from tags, a {{cd|#}} is usually required before tag's resource location.
+
+=== JSON format ===
+<div class="treeview">
+*{{nbt|compound}} The root object.
+**{{nbt|boolean|replace}}: Optional. Whether or not the contents of this tag should completely replace tag contents from different lower priority data packs with the same resource location. When {{cd|false}} the tag's content is appended to the contents of the higher priority data packs, instead. Defaults to {{cd|false}}.
+**{{nbt|list|values}}: A list of mix and match of object names and tag names. For tags, recursive reference is possible, but a circular reference causes a loading failure.
+***{{nbt|string}}: An object's [[resource location]].
+***{{nbt|string}}: ID of another tag of the same type, prefixed with a {{cd|#}}.
+***{{nbt|compound}}: An entry with additional options.
+****{{nbt|string|id}}: A string in one of the string formats above.
+****{{nbt|boolean|required}}: Whether or not loading this tag should fail if this entry is not found, true by default (also for the string entries). A tag that fails to load can still be referenced in any data pack and be (re)defined in other data packs. In other words, only the entries in this JSON file are ignored if this entry cannot be found.
+</div>
+
+== Examples ==
+
+=== Basic block tag ===
+<pre>{
+  "replace": false,
+  "values": [
+    "minecraft:oak_log",
+    "minecraft:birch_log",
+    "minecraft:spruce_log"
+  ]
+}</pre>This tag could be saved at <code>data/example/tags/block/my_logs.json</code> and used in commands or loot tables as <code>#example:my_logs</code>.
+
+=== Referencing another tag ===
+<pre>{
+  "replace": false,
+  "values": [
+    "#minecraft:logs",
+    "minecraft:cherry_log"
+  ]
+}</pre>This adds {{cd|cherry_log}} to the vanilla logs tag without overwriting its contents.
+
+=== Using the replace field ===
+<pre>{
+  "replace": true,
+  "values": [
+    "minecraft:diamond_block"
+  ]
+}</pre>Setting {{cd|replace}} to {{cd|true}} completely overrides any lower-priority tags with the same name, replacing their contents entirely.
+
+=== Optional entries ===
+<pre>{
+  "values": [
+    { "id": "example:custom_item", "required": false }
+  ]
+}</pre>Optional entries prevent load errors when a referenced object is missing (for example, in a different modded setup).
+
+== List of tag types ==
+This section lists the tag types that are used by the game to affect its behavior in various ways, as well as those that are populated by default, even if the game does not use them to control some behavior.
+
+It is possible to define tags for any [[registry]] and also [[Function tag (Java Edition)|functions]]. The list below show only the ones used by the game.
+
+* [[Block tag (Java Edition)|Block]]
+* [[Item tag (Java Edition)|Item]]
+* [[Function tag (Java Edition)|Function]]
+* [[Fluid tag (Java Edition)|Fluid]]
+* [[Entity type tag (Java Edition)|Entity type]]
+* [[Game event tag (Java Edition)|Game event]]
+* [[Biome tag (Java Edition)|Biome]]
+* [[Flat level generator preset tag (Java Edition)|Flat level generator preset]]
+* [[World_preset tag (Java Edition)|World preset]]
+* [[Structure tag (Java Edition)|Structure]]
+* [[Cat_variant tag (Java Edition)|Cat variant]]
+* [[Point of interest type tag (Java Edition)|Point of interest type]]
+* [[Painting variant tag (Java Edition)|Painting variant]]
+* [[Banner pattern tag (Java Edition)|Banner pattern]]
+* [[Instrument tag (Java Edition)|Instrument]]
+* [[Damage type tag (Java Edition)|Damage type]]
+* [[Enchantment tag (Java Edition)|Enchantment]]
+* [[Dialog tag (Java Edition)|Dialog]]
+* [[Timeline tag (Java Edition)|Timeline]]
+* [[Potion tag (Java Edition)|Potion]]
+* [[Villager trade tag (Java Edition)|Villager trade]]
+
+== Behavior and priority ==
+When multiple data packs define the same tag:
+
+* The highest-priority pack (top of the list in the data packs screen) takes precedence.
+* If its {{cd|replace}} value is {{cd|false}}, the tag’s contents are appended to lower-priority versions.
+* If {{cd|replace}} is {{cd|true}}, the tag fully replaces all lower versions.
+
+Because tags merge across data packs, they are commonly used by mods and servers to extend vanilla behavior without overwriting files. Many vanilla tags, such as {{cd|#minecraft:planks}} or {{cd|#minecraft:mineable/pickaxe}}, are referenced by block properties and determine what tools or interactions are valid.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=17w49a|Added tags type for blocks and items.}}
+|{{HistoryLine|||dev=17w49b|Functions can now be tagged.}}
+|{{HistoryLine|||dev=17w50a|Can now include other tags (of the same type), for example <code>#foo:bar</code>.
+|When overriding a tag, the player can now choose to replace instead of append by <code>"replace": true</code>.}}
+|{{HistoryLine|||dev=18w19a|Added fluids tag type.}}
+|{{HistoryLine||1.14|dev=18w43a|Added entitys tag type.}}
+|{{HistoryLine||1.16.2|dev=20w30a|Entries in a tag can now be optional with the {{cd|required}} property.}}
+|{{HistoryLine||1.16.5|dev=20w49a|Added game events tag type.}}
+|{{HistoryLine||1.18.2|dev=22w06a|Tags can now be defined for any type in the registry, rather than only blocks, items, fluids, entity types, game events and functions previously.}}
+|{{HistoryLine||1.18.2|dev=22w07a|Added biome tags.}}
+|{{HistoryLine|||dev=pre1|Added configured structure feature tags.}}
+|{{HistoryLine||1.19|dev=22w11a|Added world preset and flat level generator preset tags.
+|Configured structure feature tags are now called structure tags.}}
+|{{HistoryLine|||dev=22w14a|Added cat variant and point of interest tags.}}
+|{{HistoryLine|||dev=22w16a|Added painting variant tags.}}
+|{{HistoryLine|||dev=22w18a|Added banner pattern and instrument tags.}}
+|{{HistoryLine||1.19.4|dev=23w06a|Added damage type tags.}}
+|{{HistoryLine||1.20.5|dev=pre1|Added enchantment tags.}}
+|{{HistoryLine||1.21|dev=24w19a|Renamed several directories:
+*<samp>items</samp> -> <samp>item</samp>
+*<samp>blocks</samp> -> <samp>block</samp>
+*<samp>entity_types</samp> -> <samp>entity_type</samp>
+*<samp>fluids</samp> -> <samp>fluid</samp>
+*<samp>game_events</samp> -> <samp>game_event</samp>}}
+|{{HistoryLine|||dev=24w21a|Renamed directory <samp>functions</samp> to <samp>function</samp>.}}
+|{{HistoryLine||1.21.6|dev=25w20a|Added dialog tags.}}
+|{{HistoryLine||1.21.11|dev=25w45a|Added timeline tags.}}
+|{{HistoryLine|java upcoming}}
+|{{HistoryLine||26.1|dev=snap1|Added potion tags.
+|Added villager trade tags.}}
+}}
+
+== Issues ==
+{{Issue list|Tag}}
+
+== Related pages ==
+
+* [[Predicate]] – often references tags to match grouped items or blocks
+* [[Loot table]] – uses tag conditions for item drops
+* [[Data pack]] – framework where tags are defined
+
+== See also ==
+* [[Tag (Bedrock Edition)]]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[pt:Marcação (Edição Java)]]
+[[zh:Java版标签]]

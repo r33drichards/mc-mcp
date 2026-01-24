@@ -1,0 +1,52 @@
+{{experimental|JE|je=Redstone Experiments}}
+'''Redstone Experiments''' is an [[experiment]] in ''[[Java Edition]]'' that makes various changes to redstone.<ref>{{snap|24w33a|August 15, 2024}}</ref>
+
+== Changes ==
+* The performance impact of redstone wire (connected blocks of [[redstone dust]]) has been improved.
+* Redstone wire now only triggers block updates on blocks that may receive power from the wire.
+* Before a line of wire causes block updates, the new signal strength of all connected wires is set.
+* The update order around redstone wire has been changed.
+** The aim is to make wire work the same, independent of position and orientation.
+** When possible the order is deterministic based on the context the updates are caused in.
+** When there is not enough context to fully determine the order, the rest is picked at random.
+
+===Line wire order changes===
+* When a line of wire turns on, the wires closer to the power source will cause block updates first.
+* When a line of wire turns off, the wires closer to where the power source was, will cause block updates first.
+* When two wires have the same distance to the power source, the wires to the left will cause block updates first.
+* If there is not enough context to determine the direction of the power flow, for example when the wire is powered from above or below, the order is randomized once for the entire wire.
+
+===Block updates around a wire===
+* The order in which blocks around the wire update is based on the direction the wire received an update from.
+* Currently, the order is: back, front, left, right, down, up.
+* When the updates are further distributed through solid blocks, the same order is applied there.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.2|dev=24w33a|Added the "Redstone Experiments" experimental data pack.
+|The performance impact of redstone wire (connected blocks of redstone dust) has been improved.
+|Redstone wire now only triggers block updates on blocks that may receive power from the wire.
+|Before a line of wire causes block updates, the new signal strength of all connected wires is set.
+|The update order around redstone wire has been changed.}}
+|{{HistoryLine|||dev=24w34a|Redstone wire updates now have a left-first preference, and are no longer random.}}
+}}
+
+== Gallery ==
+<Gallery>
+File:Redstone_experiments_left_piston.png|The left piston always activates first
+File:Redstone_experiments_right_piston.png|The right piston always activates first
+File:Redstone_experiments_random_piston.png|The left piston always activates first
+File:Redstone_experiments_update_priority.png|The left piston always activates first, regardless of the position of the lever, due to the [[redstone repeater]] having a higher update priority than the [[redstone comparator]]
+</Gallery>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Template:Navbox Experiments}}
+
+[[fr:Expérimentations sur la redstone]]
+[[ja:実験的なレッドストーン]]
+[[pt:Experimentos de redstone]]
+[[ru:Изменения редстоуна]]

@@ -1,0 +1,129 @@
+{{Infobox version
+| title = Minecraft 24w04a
+| image = 24w04a.jpg
+| image2 = Java Edition 24w04a.png
+| edition = Java
+| type = Snapshot
+| date = January 24, 2024
+| jsonhash = eaa0bebb03533c32f636ee25f136f7f60002a156
+| clienthash = e4dfef131b1d43bde9386105503bdbd3d000341f
+| clientmap = 67f7efb761682806f27d5504ab4185ecbda705ff
+| serverhash = d9f13751240a2fe4e85be1c839d9a4de1413c251
+| servermap = e22f91519fefe4e4d9692bca4467d8c5d4e89eba
+| parent = 1.20.5
+| prevparent = 1.20.4
+| prev = 24w03b
+| next = 24w05a
+| nextparent = 1.20.6
+}}<onlyinclude>
+
+'''24w04a''' is the fifth [[snapshot]] for [[Java Edition 1.20.5]], released on January 24, 2024<ref>{{snap|24w04a|id=a|January 24, 2024}}</ref> which adds the {{cmd|transfer}} command, changes the behavior of [[armadillo]]s and [[breeze]]s, and fixes bugs.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|transfer}}'''
+* New command that triggers a transfer of a player to another server.
+* Only exists on dedicated servers.
+* Syntax: {{cmd|transfer <hostname> [<port>] [<players>]|link=none}}
+** <code>hostname</code>: String describing the hostname of the server to connect to.
+** <code>port</code>: Integer denoting the port number of the server to connect to.
+*** If omitted, <code>25565</code> is used.
+** <code>players</code>: The players to transfer.
+*** If omitted, <code>@s</code> is used.
+
+== Changes ==
+=== Mobs ===
+'''[[Armadillo]]'''
+* Now also rolls up when detecting a mob, or a player that has attacked it recently.
+* When it is in rolled up state, its shell now protects it, and reduces the damage dealt to it, even allowing it to fully resist weak attacks.
+
+=== General ===
+'''"[[Create New World]]" screen'''
+* Renamed "Allow cheats" to "Allow commands".
+
+'''[[Data pack]]s'''
+* The [[pack format]] version is now <code>29</code>.
+
+'''Other'''
+* Added an option to use a faster region file compression algorithm on dedicated servers.
+** Added a dedicated server configuration property <code>region-file-compression</code> with 2 possible values:
+*** <code>deflate</code>, the default option. Uses {{wikipedia|Deflate|the old algorithm}}.
+*** <code>lz4</code> uses {{wikipedia|LZ4 (compression algorithm)|LZ4 algorithm}}, which requires less CPU time to compress and decompress but uses more disk space.
+** Changing the compression algorithm doesn't automatically recompress the world.
+*** New or updated chunks use the newly configured algorithm, but the old ones stay in the previous format.
+* Introduced changes to optimizing worlds.
+** Optimizing singleplayer worlds and running dedicated server with <code>forceUpgrade</code> now also upgrades contents of <code>entities</code> and <code>poi</code> directories of the world.
+** New <code>recreateRegionFiles</code> dedicated server startup parameter.
+*** It triggers world optimization similar to <code>forceUpgrade</code>, but also rewrites all the chunks independently of whether they have been upgraded.
+*** This creates fresh and defragmented region files.
+*** Using this parameter after changing the <code>region-file-compression</code> server property recompresses all region files in the new format.
+* Improved server TPS debug chart.
+** As before, it is accessible by pressing <code>F3 + 2</code> in a singleplayer world.
+** The bottom dark red section of the chart displays the time spent during the main logic of the server tick. It is equivalent to the value displayed in the old chart.
+** The light brown section displays time spent on running scheduled tasks.
+** The purple section displays time spent executing all other code during the tick.
+** The top light green (or yellow or red depending on lag) section displays time spent idling, waiting for next tick.
+** The <code>min</code>, <code>avg</code>, <code>max</code> aggregate values are based on the sum of the first 3 sections.
+* Reduced time needed to generate [[explorer map]]s to [[buried treasure]]s.
+
+== Experimental ==
+These additions and changes only take effect when the [[Update 1.21]] experimental data pack is enabled.
+
+=== Additions ===
+==== General ====
+'''[[Tag]]s'''
+* Added the following entity type tag:
+** <code>#no_anger_from_wind_charge</code>: contains {{cd|d=and|breeze|skeleton|stray|zombie|husk|spider|cave_spider|slime}}.
+
+=== Changes ===
+==== Blocks ====
+'''[[Copper grate]]'''
+* Stonecutting [[copper block]]s into copper grates now again outputs 4 copper grates instead of 1.
+
+'''[[Trial spawner]]'''
+* No longer ignores the <code>custom_spawn_rules</code> field.
+
+==== Mobs ====
+'''[[Breeze]]'''
+* Is now aggressive toward [[iron golem]]s in addition to players.
+* No longer retaliates against attacks from [[skeleton]]s, [[stray]]s, [[zombie]]s, [[husk]]s, [[spider]]s, [[cave spider]]s, and [[slime]]s. These mobs don't retaliate when hurt by the breeze's [[wind charge]] projectile.
+
+==== Non-mob entities ====
+'''[[Wind charge]]'''
+* Is now its own damage type.
+
+== Fixes ==
+{{fixes|fixedin=24w04a
+|;From released versions before 1.20
+|232489|Retrieving a plant from a flower pot ignores inventory contents.
+|249136|Freeze/server-side lag spike sometimes occurs when attempting to locate a buried treasure or opening/breaking a chest containing a map.
+|;From 1.20.3
+|266449|Breeze doesn't attack or retaliate against mob on sight.
+|266707|Trial spawners ignore {{cd|custom_spawn_rules}}.
+|;dev
+|267925|Retrieving an item from a flower pot while holding something causes the item to end up in your off hand.
+|267937|Shooting a breeze with a piercing crossbow makes the game crash.
+|267938|The world loading percentage value can get covered by the spawn chunk loading animation when the {{cd|spawnChunkRadius}} gamerule is set to large values.
+|267941|The end portal kills mobs at {{cd|spawnChunkRadius}} 0.
+|;prev
+|267953|No element is focused when opening the Realms world backups menu using keyboard navigation.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|l-W4onTPQb4}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w04a]]
+[[es:Java Edition 24w03a]]
+[[fr:Version Java 24w04a]]
+[[ja:Java Edition 24w04a]]
+[[lzh:二四週〇四甲]]
+[[pt:Edição Java 24w04a]]
+[[ru:24w04a (Java Edition)]]
+[[uk:24w04a (Java Edition)]]
+[[zh:24w04a]]

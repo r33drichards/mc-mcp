@@ -1,0 +1,56 @@
+{{distinguish|Commands/debugmobspawning|Commands/debugpath}}
+{{exclusive|java}}
+{{debug warning}}
+{{Infobox command
+| name = debugconfig
+| oplevel = 3
+| others = Dedicated server and <br /><code>-DMC_DEBUG_DEV_COMMANDS</code> [[debug property]]
+}}
+
+'''/debugconfig''' is a command that can be enabled with the [[debug property]] <code>-DMC_DEBUG_DEV_COMMANDS</code>. It allows sending a player back to [[Java_Edition_protocol/Packets#Configuration|configuration phase]].
+
+== Syntax ==
+<code>debugconfig config <target></code>
+: Removes the target player's avatar from the world and switches their connection back to the configuration phase. While in this state, the player's client sees a "Reconfiguring..." screen with a "Disconnect" button that is initially grayed out, and is enabled after 20 seconds.
+<code>debugconfig unconfig <target></code>
+: Fully connects the player with the target UUID back into the server, if a player with the target UUID is connected and in the configuration phase.
+<code>debugconfig dialog <target> <dialog></code>
+: Shows the player with the target UUID the specified dialog, if a player with the target UUID is connected and in the configuration phase.
+
+== Arguments ==
+{{argument|target|entity}}
+: Only for {{cd|debugconfig config}}. Specifies the target player to switch to the configuration phase.
+: {{arg desc|je=entity|amount=single|type=player}}
+{{argument|target|uuid}}
+: Only for {{cd|debugconfig unconfig}} and {{cd|debugconfig dialog}}. Specifies the UUID of a connected player in the configuration phase to fully connect to the server or to show a dialog to.
+: {{arg desc|je=uuid}}
+{{argument|dialog|dialog}}
+: Specifies the dialog to show to a player in the configuration phase.
+: Must be either:
+:* A namespaced ID of a dialog defined in a data pack (e.g., {{code|custom:my_dialog}} or {{code|minecraft:server_links}}). These are stored in the {{cd|minecraft:dialog}} registry.
+:* An inline [[SNBT]] defining the dialog structure directly in the command. See {{slink|Dialog|Dialog format}} for the structures.
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|succeed}}<!-- even though there are failure messages in the code, the command actually succeeds when sending them -->
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|cmd=/debugconfig config &lt;target&gt;|On success|1|1|1}}
+{{Output table|cmd=/debugconfig unconfig &lt;target&gt;|On success|1|1|1 if a player in the configuration phase was found and fully connected, 0 otherwise}}
+{{Output table|cmd=/debugconfig dialog &lt;target&gt; &lt;dialog&gt;|On success|1|1|1 if a player in the configuration phase was found and shown a dialog, 0 otherwise}}
+{{Output table}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.9|dev=Pre-Release 1|Added [[debug property]] <code>-DMC_DEBUG_DEV_COMMANDS</code>, making the command accessible in the vanilla game.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/debugconfig]]
+[[zh:命令/debugconfig]]

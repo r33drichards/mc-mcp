@@ -1,0 +1,211 @@
+{{Infobox version
+|title=Minecraft 25w35a
+|sort=25w35a
+|image=25w35a.jpg
+|image2=Java Edition 25w35a.png
+|edition=Java
+|type=Snapshot
+|date=August 26, 2025
+|jsonhash=2a482c3518bd90286c269b818e3d9e902544d1d8
+|clienthash=7a568fdd55454ef89f621562caf6c35e242c58c6
+|clientmap=c92882471da3d825df718fbdb4c8cad04f3ed5ec
+|serverhash=7fb6965adce075e4e6b467ca620f59c76c0f1e52
+|servermap=6899b52a04c68eabf3ed5a737459967afeb650e2
+|parent=1.21.9
+|prevparent=1.21.8
+|prev=25w34b
+|next=25w36a
+|nextparent=1.21.10
+}}<onlyinclude>
+'''25w35a''' is the sixth [[snapshot]] for [[Java Edition 1.21.9]], released on August 26, 2025, which adds the [[Minecraft Server Management Protocol]], moves some server properties to [[game rules]], improves [[copper golem]] behavior, and fixes bugs.<ref>{{snap|25w35a|August 26, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Game rule]]s'''
+* Added <code>pvp</code> game rule controlling whether players can deal damage to other players.
+** Defaults to <code>true</code>.
+* Added <code>allowEnteringNetherUsingPortals</code> game rule controlling if [[the Nether]] can be entered through portals.
+** Defaults to <code>true</code>.
+* Added <code>spawnMonsters</code> game rule controlling if [[monster]]s should spawn naturally.
+** Defaults to <code>true</code>.
+* Added <code>enableCommandBlocks</code> game rule controlling if [[command block]]s should be enabled or not.
+** Defaults to <code>true</code>.
+
+'''[[Language]]s'''
+* Added {{w|Galicia (Eastern Europe)|Halychian}} language support.
+
+'''[[Minecraft Server Management Protocol]]'''
+* Added a server management API (JSON-RPC over WebSocket) for dedicated servers.
+** The API is disabled by default and can be enabled in the server properties file.
+*** <code>management-server-enabled=true</code>
+*** <code>management-server-host=localhost</code>
+*** <code>management-server-port=25585</code>
+** The API is accessible at <code>ws://<management-server-host>:<management-server-port></code> when enabled.
+** Supports querying and updating of server state (players, allowlist, operators, settings, game rules).
+** Sends notifications on state changes (e.g. player joins, game rule updates).
+** Calling <code>{"id":1,"method":"rpc.discover"}</code> returns an API schema containing supported methods and notifications of the currently running server.
+** The Data Generator produces an API schema (<code>json-rpc-api-schema.json</code>) in the reports output folder mirroring the contents returned by the <code>rpc.discover</code> method.
+** The API adheres to the JSON-RPC 2.0 specification.
+** Uses namespaced methods and the reserved namespaces are <code>minecraft</code> (e.g. <code>minecraft:players</code>, <code>minecraft:allowlist/add</code>) and notification (e.g. <code>notification:players/joined</code>).
+*** Extensible via custom namespaces for additional methods and events.
+** Core method groups: players, allowlist, operators, server (save, stop), server settings, game rules.
+** Example method call:
+*** Request: <code>{"method":"minecraft:allowlist/add","id":1,"params":[[{"name":"jeb_"}]]}</code>
+*** Response: <code>{"jsonrpc":"2.0","id":1,"result":[{"id":"853c80ef-3c37-49fd-aa49-938b674adae6","name":"jeb_"}]}</code>
+** Example notification:
+*** <code>{"jsonrpc":"2.0","method":"notification:players/joined","params":[{"id":"853c80ef-3c37-49fd-aa49-938b674adae6","name":"jeb_"}]}</code>
+** Example error:
+*** Request: <code>{"method": "minecraft:foo/bar","id": 1}</code>
+*** Response: <code>{"jsonrpc":"2.0","id":1,"result":{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found","data":"Method not found: minecraft:foo/bar"}}}</code>
+*** Errors and error codes follow JSON-RPC 2.0 error object format.
+
+'''[[Options]]'''
+* Added "Allow Cursor Changes" option in "Mouse Settings" menu.
+
+== Changes ==
+=== Blocks ===
+'''[[Copper Chest]]'''
+* Copper chests created from spawning a copper golem now correctly connect to nearby copper chests.
+
+'''[[Hanging Sign]]'''
+* Hanging signs can now only be crafted using [[iron chain]]s.
+
+=== Mobs ===
+'''[[Copper Golem]]'''
+* Hitbox has been tweaked.
+** The hitbox is now 0.98 blocks in height to be able to pathfind in one block high spaces.
+* The copper golem now uses the saddle equipment slot for blocks placed atop of its lightning rod.
+** Its head equipment slot will now function like a regular head slot, akin to its functionality for humanoid mobs.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>85.0</code>.
+* Renamed <code>chain</code> to <code>iron_chain</code>.
+
+'''Mouse cursor'''
+* Some UI components will now change shape of mouse cursor.
+** Examples: text inputs, numeric sliders, buttons, scroll bars.
+* Additionally, clickable parts of text labels (like links) will now change cursor to the "hand" shape.
+* This feature can be disabled with "Allow Cursor Changes" option in "Mouse Settings..." menu.
+
+'''[[Resource pack]]'''
+* The version is now <code>67.0</code>.
+* Renamed the following block sprites: <code>chain</code> to <code>iron_chain</code>.
+* Renamed the following item sprites: <code>chain</code> to <code>iron_chain</code>.
+
+'''[[Server.properties]]'''
+* Several server properties were removed in favour of making them into game rules, allowing these settings to be changed while the server is running.
+* Removed server property <code>allow-nether</code> in favor of new game rule.
+* Removed server property <code>spawn-monsters</code> in favor of new game rule.
+* Removed server property <code>enable-command-block</code> in favor of new game rule.
+* Removed server property <code>pvp</code> in favor of new game rule.
+* Added server property <code>management-server-enabled</code> controlling whether the new Minecraft Server Management Protocol is enabled or not.
+** Defaults to <code>false</code>.
+* Added server property <code>management-server-port</code> controlling on what port the Minecraft Server Management Protocol is started.
+** Defaults to <code>25585</code>.
+* Added server property <code>management-server-host</code> controlling with what host the new Minecraft Server Management Protocol is started.
+** Defaults to <code>localhost</code>.
+* Added server property <code>status-heartbeat-interval</code> controlling the interval the management server sends heartbeat notifications to connected clients.
+** Defaults to <code>0</code>, meaning it’s disabled.
+
+'''[[Tag]]s'''
+* Renamed {{cd|chain}} to {{cd|iron_chain}} from {{cd|#chains}} block and item tag.
+
+'''[[Text component format]]'''
+* object Text Component
+** This component has been updated to support displaying other non-character objects as a part of text.
+** New format:
+*** <code>object</code>: type of object, string, see below for values.
+*** <code><type-specific></code>: additional fields depending on object type.
+** Similarly to <code>nbt</code> text component <code>object</code> field can be omitted.
+*** However, it's recommended to provide it for error checking.
+
+* atlas Object Type
+** Behaves the same way as the <code>object</code> component did previously, but is now a separate object type.
+** Uses the same format as before.
+
+* player Object Type
+** Renders player head.
+** If partial profile is given, skin is resolved in the same way as <code>minecraft:profile</code> component on player head.
+** Format:
+*** <code>player</code>: player profile
+**** <code>name</code>: player name, optional string
+**** <code>id</code>: player uuid, optional UUID
+**** <code>properties</code>: profile properties, optional map
+*** <code>hat</code>: controls rendering of a hat layer, boolean, default <code>true</code>
+
+'''UI'''
+* When adding a new server to the server list, the name is no longer prefilled. When left empty the default name is used.
+* More text inputs now support selecting text by mouse dragging.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w35a
+|;From 1.21.3
+|278550|While flying in creative or spectator mode, the surface of water can prevent you from sprinting.
+|;From 1.21.6
+|297126|"Failed to read field..." error spam when upgrading a 25w15a or 25w16a world.
+|;dev
+|300044|Z-fighting occurs when the heads of copper golems intersect their bodies.
+|300049|The debug text is rendered on top of the debug options.
+|300054|Double oxidized copper chest texture UV is missing pixels.
+|300067|Copper golems continue their chest searching animations while dying.
+|300074|No particles are produced when scraping oxidation off copper golems.
+|300089|Chests sometimes get stuck in inverted states after being interacted with by copper golems.
+|300102|Shelves float when held in the player's hand in third person.
+|300103|Removing items from a shelf uses the "Item placed" caption.
+|300119|Copper golems don’t always avoid dangerous blocks when pathfinding to chests.
+|300124|All the oxidation states of the lightning rod are listed in the redstone tab of the creative inventory.
+|300129|Copper golems can't put items into chests above them.
+|300173|The Copper Chest textures' diagonal glint direction doesn't match the large chest variants' on some sides.
+|300229|Z-fighting on antenna when putting certain blocks above a copper golem statue.
+|300267|The miniature mobs inside spawners and trial spawners are sometimes lit incorrectly.
+|300301|Shelves produce unusually high-resolution particles due to having a 32x32 texture.
+|300304|Comparators can stay active when measuring the pose of a copper golem statue block which is revived.
+|300462|Copper golems attached to leads still attempt to pathfind toward chests.
+|300501|Variants of copper chests are not included in the "Redstone Blocks" tab in the creative inventory whereas normal chests are.
+|300568|Copper golems don't open chests if given room to walk about.
+|300688|The iron chain's block/item ID is still "{{cd|chain}}".
+|300703|The underside of double copper chests does not use a merged texture.
+|300744|The copper and iron nuggets are inverted and arranged incorrectly in the Creative mode inventory.
+|300762|Copper golems require at least 3 blocks of space above a chest to place anything.
+|300797|The glowing effect causes entities to render incorrectly inside of inventories.
+|300827|Pressing {{key|F3+Q}} in certain screens does not show help, despite {{key|F3}} suggesting it.
+|300977|Clocks function in the recipe book/villager/crafter UI.
+|301023|When a warden applies the darkness effect to you, the chat interface, item bar, and items become dark.
+|301025|End flash purplish light saturation is affected by brightness values.
+|301026|End flash purplish light becomes extremely saturated when the player is affected by darkness.
+|301048|In the "sitting" pose, the copper statue’s rod becomes shorter.
+|301101|Certain similar blocks are positioned differently on copper golems' heads.
+|301224|The first few stages of block cracks are not rendered on chests.
+|301225|Game crashes when quitting creating new world menu without other worlds created before.
+|301226|Block cracks no longer render on banners.
+|301228|Block cracks no longer render on heads and skulls.
+|301230|The word "resolve" is misspelled as "resolved" within the "{{cd|commands.profile_fetch.id.failure}}" string.
+|301231|Enchanting table book animations are not independent.
+|301236|Enchantment glint is no longer visible on held tridents.
+|301242|Enchantment glint is no longer visible on shields.
+|;prev
+|301273|Clicking on the join server hover button now selects the server, unless any server is already selected.
+|301290|Game crashes when trying to render a glowing enchanted item.
+|301295|TTF font provider oversample increases width of characters.
+|301328|Glowing item entities briefly turn white upon pickup.
+|301339|Miniature mobs inside spawners always render fully lit.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|tCVV004OceM|SiQESnoyoCQ}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w35a]]
+[[es:Java Edition 25w35a]]
+[[fr:Édition Java 25w35a]]
+[[ja:Java Edition 25w35a]]
+[[pt:Edição Java 25w35a]]
+[[ru:25w35a (Java Edition)]]
+[[uk:25w35a (Java Edition)]]
+[[zh:Java版25w35a]]

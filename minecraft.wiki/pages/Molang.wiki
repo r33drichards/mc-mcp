@@ -1,0 +1,75 @@
+{{distinguish|Mojang Studios}}
+{{Work in progress}}
+{{exclusive|bedrock}}
+'''Molang''' is an expression-based language designed for fast, data-driven calculation of values at run-time, and with a direct connection to in-game values and systems. It is used {{in|BE}} in their [[Add-on|Add-on system]] with its purpose being to enable low-level systems like animation to support flexible data-driven behavior for both internal and external creators, while staying highly performant. Molang's syntax is based off the {{w|C (programming language)|C}} language.<ref>[https://docs.microsoft.com/en-us/minecraft/creator/reference/content/molangreference/examples/molangconcepts/molangintroduction "Molang Documentation - Introduction to Molang"]</ref>
+
+[[Mojang Studios]] provides [https://docs.microsoft.com/en-us/minecraft/creator/reference/content/molangreference/ official documentation] which goes into details of how the language works and where it is used. The [https://wiki.bedrock.dev/ Bedrock Wiki] provides more areas of Molang where the official documentation may not cover.
+
+== Usage ==
+Molang expressions are used to output values, usually numbers, that can dynamically change. This allows for more complex behavior to be coded for within the restrictions of JSON. Molang can be used in various places within the [[JSON]] files of both [[resource pack]]s (the client) and [[behavior pack]]s (the server):
+*Values in [[Particles (Bedrock Edition)|particle]] components
+*Values in the <code>scripts</code> and <code>part_visibility</code> fields of entity definitions
+*Values in the <code>scripts</code> field of attachables
+*Values in animations
+*Conditions in the <code>transitions</code> fields of animation controllers
+*Conditions in the <code>permutations</code> field of block behaviors
+*Arrays and resource allocations in render controllers
+*Values within certain entity components
+*Data fields in [[recipe]] objects
+
+== Guide ==
+Molang expressions are stored as plain text strings in [[JSON]] files, enclosed with <code>"</code>. As such, <code>'</code> must be used instead for any string definitions within the expression. Unlike [[commands]], expressions are case-insensitive, meaning capitalization will not affect how they are interpreted. 
+
+For expressions with only a single statement, the terminating symbol <code>;</code> can be removed. Expressions with multiple statements need <code>;</code> in order to separate individual statements.
+<!-- save info for another article: While developing with Molang, it is recommended to enable content logs (in {{UI|Settings|Creator|link=Settings#Creator}}) to show errors and warnings. However, if you enable file content logs, be careful as if there is a Molang error in an expression that is calculated per frame, while the content log GUI only shows the error once, the content log file will include every instance of that error from every frame, meaning you will likely accumulate potentially Gigabytes of error logs within a relatively short period. -->
+
+=== Operators ===
+{{Empty section}}
+
+=== Variables ===
+Variables, prefixed with <code>variable.</code> or <code>v.</code>, are values that can be stored for later use within an expression. Most variables can be declared and reassigned using the <code>=</code> operator, for example in <code>v.<name> = <value>;</code>. Variables declared this way can be read and written for the lifetime of their entity or particle and are not maintained when a world is saved and reloaded. 
+
+Temporary variables, prefixed with either <code>temp.</code> or <code>t.</code>, only exist while the expression they are declared under is executed.
+
+Context variables, prefixed with <code>context.</code> or <code>c.</code>, are read-only variables that are only available under the context of where the expression reading the variable is defined. For example, <code>context.owning_entity</code> can only be read from molang expressions added to an attachable file, since the variable returns the entity which has the attachable equipped. 
+
+=== Functions ===
+
+==== Queries ====
+Queries, prefixed with <code>q.</code> or <code>query.</code>, return information about the world, entity, etc. as either a boolean or numeric value. They are read-only and cannot be modified.
+For example, <code>query.health</code> returns the current entity's health, or 0 is not used within an entity.
+
+Certain queries can also take arguments, which are placed within enclosed brackets after the query name and separated by commas if there are multiple inputs. Arguments can be read as numbers or as strings, where they can be further used as identifiers for objects such as [[Tag (Bedrock Edition)|tag]]s, [[slot]]s, and [[entity|entities]].
+For example, <code>q.is_item_name_any('slot.weapon.mainhand', 0, 'minecraft:iron_ingot')</code> evaluates to either <code>1</code> (true) or <code>0</code> (false) based off whether or not the item name (or rather type ID) of the current entity's first slot of their mainhand (the mainhand only has one slot, unlike the inventory or hotbar. Slot indexes start at 0) matches any of the arguments put after the 2nd one.
+
+While some queries are consistent over both behavior and resource packs, some are exclusive to only, an example being <code>query.remaining_durability</code>, which can only be used server-side for the [[item components|item component]] <code>minecraft:repairable</code>.
+
+==== Math functions ====
+Math functions, prefixed with <code>math.</code> without a single-letter alias, perform specific mathematic operations, taking data in the same way as certain queries.
+
+For example, <code>math.floor(3.8)</code> evaluates the input value rounded down as <code>3.0</code>.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|Bedrock}}
+|{{HistoryLine||?|Added molang, originally capitalized as "MoLang".}}
+|{{HistoryLine||1.17.20|dev=beta 1.17.20.23|Molang now uses the <code>min_engine_version</code> of its resource or behavior pack to allow for versioned changes.}}
+}}
+
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox add-ons}}
+{{Navbox Bedrock Edition}}
+
+
+[[es:Molang]]
+[[fr:Molang]]
+[[ja:Molang]]
+[[lzh:魔琅]]
+[[pt:Molang]]
+[[ru:Molang]]
+[[uk:Molang]]
+[[zh:Molang]]

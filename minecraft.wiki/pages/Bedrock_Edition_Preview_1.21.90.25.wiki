@@ -1,0 +1,214 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.9025.0<br>'''Android''': 1.21.90.25
+| image = Bedrock 1.21.90.25 PatchNotes.png
+| image2 = Bedrock 1.21.90.25.png
+| image3 = Bedrock_1.21.90.25_(updated_panorama).png
+| build = 33347553
+| editorver = 0.9.9
+| versioncode = '''Android''':<br />
+952109025 (armeabi-v7a, 34)<br />
+962109025 (x86, 34)<br />
+972109025 (arm64-v8a, 34)<br />
+982109025 (x86_64, 34)
+| date = May 13, 2025
+| server = 1.21.90.25
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.90.25.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.90.25.zip Linux]
+| parent = 1.21.90
+| prevparent = 1.21.84
+| prev = Preview 1.21.90.23
+| next = Preview 1.21.90.26
+| nextparent = 1.21.91
+}}
+<onlyinclude>
+
+'''Beta 1.21.90.25''' (ChromeOS, Android), or '''Preview 1.21.90.25''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fourth beta/''Preview'' version for [[Bedrock Edition 1.21.90]], released on May 13, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/36568454460173-Minecraft-Beta-Preview-1-21-90-25|title=Minecraft Beta & Preview - 1.21.90.25|website=Minecraft Feedback|date=May 13, 2025}}</ref> which makes saddles craftable, adds new music, and fixes bugs.
+
+== Additions ==
+=== Items ===
+'''[[Music Disc]]'''
+* [[File:Music Disc Tears JE1 BE1.png|width=32x32]] Added the [[Music Disc Tears|"Tears" music disc]] by [[Amos Roddy]].
+** Obtained by killing a ghast with a [[fireball]] deflected by a player.
+** Has a [[comparator]] output of 10 when played in a [[jukebox]].
+
+=== Gameplay === 
+'''[[Music]]'''
+* Added 5 new [[background music]] tracks by [[Amos Roddy]] to [[Cherry Grove]]s, [[Forest]], [[Desert]], [[Grove]], and [[Lush Caves]] Biomes:
+** "[[Below and Above]]"
+** "[[Broken Clocks]]"
+** "[[Fireflies (song)|Fireflies]]"
+** "[[Lilypad (song)|Lilypad]]"
+** "[[O's Piano]]"
+
+== Changes ==
+=== Blocks ===
+'''[[Dried Ghast]]'''
+* It will now block flowing water instead of popping.
+* Updated dried ghast block sounds for step, place and fall from wood-sounds to custom sounds. Changed the ambient and break sound to sound less alive. Removed the hit-sound and sound event for that since it breaks immediately.
+
+'''[[Grass Block]]'''
+*Sound files for breaking and placing Grass blocks are now slightly louder.
+
+=== Items ===
+'''[[Lead]]'''
+* Attaching a leashed entity to another entity and using Shears to cut leashes now take precedence over other interactions
+** Example: Attempting to shear a leashed Sheep will now un-leash it instead of shearing it
+* Leash break distance is now calculated between the centers of the two entities' collision boxes, aligning with the rest of the leash physics calculations
+
+'''[[Leather]]'''
+* Can now be found in [[monster room]], [[ancient city]], [[desert temple]], [[jungle temple]] and [[stronghold]] altar chests in quantities 1-5.
+
+'''[[Saddle]]'''
+* Can be removed from mobs wearing them by {{ctrl|using}} [[shears]] on the mob.
+** Cannot be removed this way from [[ravager]]s or mobs with riders.
+** Shears in a dispenser don't work.
+* Saddles can now be crafted with 3 [[leather]] and 1 [[iron ingot]].
+** The recipe unlocks when a player picks up their first leather.
+{{Crafting
+|B1 = Leather
+|A2 = Leather
+|B2 = Iron Ingot
+|C2 = Leather
+|Output = Saddle
+|ignoreusage = 1
+}}
+* No longer found in chests in [[monster room]]s, [[ancient cities]], [[desert temple]]s, [[jungle temple]]s and in [[stronghold]] altar chests.
+
+'''[[Shears]]'''
+* Can now remove [[saddle]]s, [[horse armor]], [[harness]]es and [[carpet]]s from mobs.
+** They cannot be removed if the mob has a rider.
+** They cannot be removed if the player is crouching.
+* Saddles cannot be removed from ravagers.
+* Dispensers with shears cannot remove saddles, horse armor, harnesses and carpets equipped on mobs.
+
+'''[[Spawn Egg]]'''
+* Now the mooshroom spawn egg uses its own colors and no longer has two pixels that are the same as the cow spawn egg texture.
+
+=== Mobs ===
+'''[[Happy Ghast]]'''
+* Its detection of players now extend 1 block outwards from themselves in x,z direction and 2 blocks above them.
+
+=== General ===
+'''[[UI]]'''
+* The Text Background Opacity accessibility setting now defaults to 60% opacity.
+* The vertical angle upon which the locator bar arrow icons become visible now corresponds to the player's FOV setting.
+
+'''[[Title screen]]'''
+* The [[panorama]] has changed to reflect the [[Chase the Skies]] drop.
+** The above change has not been mentioned in the change log.
+
+=== Technical ===
+'''[[API]]'''
+* Added a new condition {{cd|damaged_by_entity}} that allows checking which entity type applied damage to an entity that is dropping loot.
+** Similar to the {{cd|killed_by_entity}} and {{cd|entity_killed}} conditions, allows specifying an {{cd|entity_type}} field to check against when deciding which entry in a loot table to select.
+
+'''Block Components'''
+* UV locking will not be supported for geometry using Box UVs if the box sides are not equal, in other words the box has non square UVs. Geometry with per-face UVs and non square faces will be supported.
+* UV locking will not be supported if Block Json {{cd|format_version}} is less than {{cd|1.19.80}}.
+
+'''[[Block]]s'''
+* {{cd|culling_layer}} field in the block's geometry component has been moved out of experimental.
+* {{cd|condition}} field in {{cd|rules}} for culling has been moved out of experimental.
+
+'''Camera'''
+* Unlocked over the shoulder is now unlocked by using the {{cd|camera_relative}} control scheme with the {{cd|follow_orbit}} preset.
+
+'''Components'''
+* Content warnings will log missing block and biome references in Biome JSON.
+*The {{cd|minecraft:interact}} component's {{cd|spawn_items}} field now has a {{cd|y_offset}} subfield, which allows to adjust the vertical spawn position of items.
+* The {{cd|minecraft:remove_in_peaceful}} component was removed.
+** This change was not mentioned in the changelog. 
+
+'''Entity Filters'''
+* Added the new {{cd|is_riding_self}} entity filter
+** Returns {{cd|true}} if the subject entity is riding the calling entity on which the filter is used.
+
+'''Graphical'''
+* Changed shadows in Vibrant Visuals so that they cast further at sunrise and sunset. Prior to this change, shadows were clamped at a 30 degree angle relative to the horizon. This clamp has now been reduced to 10 degrees. This also improves an issue where specular highlights, light rays and volumetric fog were not properly occluded when the sun or moon was behind a mountain at a low angle.
+* Added temperature grading settings to the color grading json files for Vibrant Visuals. Schemas must specify a format version of {{cd|1.21.90}} to access this new setting.
+** New {{cd|temperature}} object added to {{cd|color_grading}}
+** {{cd|enabled}} set to {{cd|true}} or {{cd|false}} controls if temperature grading is enabled
+** {{cd|type}} set to either {{cd|white_balance}} or {{cd|color_temperature}} controls the type of grading applied
+*** {{cd|white_balance}} uses the temperature value to adjust the camera's white point. Lower temperature values will cause the scene to appear more blue.
+*** {{cd|color_temperature}} is the inverse of the white balance operation. Lower temperature values will cause the scene to appear more red.
+** {{cd|temperature}} sets the temperature in kelvin
+** Example:
+<syntaxhighlight lang="c++">
+"color_grading": {
+    "temperature": {
+        "enabled": true,
+        "type": "color_temperature",
+        "temperature": 6500.0
+    }
+}
+</syntaxhighlight>
+* Particles rendered without the {{cd|minecraft:particle_appareance_lighting}} component are now renderered as expected in Vibrant Visuals.
+*Removed {{cd|;}} debug feature for toggling graphics modes.
+
+'''[[Item]]s'''
+* Extended {{cd|minecraft:wearable}} item component to allow hiding players' locations, similar to mob heads and the carved pumpkin.
+** The new {{cd|hides_player_location}} boolean field defines whether players are hidden on the locator bar and locator maps when eqipped in the appropriate wearable slot, defined by the {{cd|slot}} field.
+** The default value of {{cd|hides_player_location}} is {{cd|false}}.
+** All {{cd|minecraft:wearable}} item components defined previously will have the value of {{cd|hides_player_location}} default to {{cd|false}}.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" experimental toggle.
+
+=== Changes ===
+==== Technical ====
+'''API'''
+: {{cd|@minecraft/diagnostics}}
+* Updated {{cd|SentryOptions}} properties:
+** {{cd|dsn}}: Updated to allow the usage of {{cd|SecretString}}, allowing for secrets from {{cd|@minecraft/server-admin}} to be used to initialize Sentry.
+** (new) {{cd|maxBreadcrumbs}}: The maximum number of breadcrumbs to store and report per error event to Sentry. Default is 20, supported values range from 0 (no breadcrumbs) to 100.
+** (new) {{cd|sampleRate}}: A number between 0 and 1 that indicates the percentage of events that should be sent to Sentry. For example, a value of 0.5 means that 50% of events will be sent. Default is 1 (100% of events). 0 means no events will be sent.
+** (new) {{cd|debug}}: When set to {{cd|true}}, additional content logging from the Sentry system will be enabled. Defaults to {{cd|false}}.
+
+'''[[Experiment]]al'''
+* Deprecated {{cd|align_target_and_camera_forward}}. Use {{cd|control_scheme}} to switch between control schemes instead.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.90.25 Preview
+|;old
+|74632|Nether fossils spawn infrequently
+|127677|Placing Water Onto A Spore Blossom Deletes The Spore
+|174465|Player is teleported to the void when using an end gateway
+|177722|Long {{cmd|tellraw}} Commands cause the Game to Freeze when run in Chat
+|194284|{{cmd|testforblock}} ignoring block states after 1.21.70 update
+|199256|Vibrant Visuals: The adjust brightness slider doesn't work properly
+|203239|Vibrant Visuals: Water disappears above Y coordinate 190
+|216786|Happy Ghast will spin when tied to fence
+|217394|"Game is paused" text can overflow
+|;previous
+|217604|Leash is not connected properly to happy ghasts
+|217870|Hotbar tooltip text does not have shadows, making the text difficult to see when setting Text Background Opacity to 0
+|otherissuescount=13}}
+'''Other'''
+*Fixed sculk vein block looking small and elongated when held or in an item frame.
+*Now the cold cow variant has the correct mirroring of its horn texture.
+*Flying mobs no longer make footstep sounds when moving close to the ground.
+*Happy Ghasts will now correctly detect players on a different mount on top of them.
+*Fix a crash in split-screen mode when a player would destroy a chest or book an other player had open.
+*Fixed an issue where a resource pack error could be encountered when transfering between servers that use different versions of the same resource pack.
+*Fixed an issue where downloading server resources would infinitely hang if another device requested to download the same resources at the same time.
+*Fixed blocks in minecarts not being lit properly.
+*Fixed a crash that could occur when a block's textures are configured to point to an empty atlas entry.
+*Fixed incorrect content warnings for missing block textures in {{cd|minecraft:material_instances}} component.
+*Fixed an issue with the {{cd|player_relative}} control scheme that made it really hard to travel directly forward or directly backwards.
+*Fixed an issue where the player's head would sometimes jitter when using certain control schemes.
+*Fixed the {{cd|camera_relative_strafe}} control scheme.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.90 betas]]
+
+[[de:Bedrock Edition beta 1.21.90.25]]
+[[pt:Edição Bedrock Preview 1.21.90.25]]
+[[ru:Preview 1.21.90.25 (Bedrock Edition)]]
+[[uk:Preview 1.21.90.25 (Bedrock Edition)]]
+[[zh:基岩版1.21.90.25]]

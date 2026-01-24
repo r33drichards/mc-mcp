@@ -1,0 +1,39 @@
+A '''test instance''' represents a test that can be run by the [[GameTest]] framework.
+
+== Definition ==
+
+Test instances can be defined in [[data pack]]s, as part of the directory structure below.
+
+{{Data pack directory|test_instance|<nowiki><name>.json</nowiki>}}
+
+== JSON Format ==
+Test instances are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|compound}}{{nbt|string|environment}} {{json ref|test environment|test environment definition|inline=1}} &mdash; The environment of this test.
+** {{nbt|string|structure}} Resource location of the structure to use for the test.
+** {{nbt|integer|max_ticks}} A positive integer representing the maximum number of ticks allowed to pass before the test is considered timed out.
+** {{nbt|integer|setup_ticks}}: Represents a number of ticks to wait after placing the structure before starting the test. Must be a non-negative integer. Default to {{cd|0}}.
+** {{nbt|boolean|required}}: Whether the test is considered required to pass for the full test suite to pass. Defaults to {{cd|true}}.
+** {{nbt|string|rotation}} Optional rotation to apply to the test structure. Must be one of {{cd|none}} (default), {{cd|clockwise_90}}, {{cd|180}} and {{cd|counterclockwise_90}}.
+** {{nbt|boolean|manual_only}} Set to {{cd|true}} for tests that are not included as part of automated test runs. Defaults to {{cd|false}}.
+** {{nbt|boolean|sky_access}} Whether the test needs clear access to the sky. Tests are enclosed in barrier blocks. If set to {{cd|true}}, the top is left open. Defaults to {{cd|false}}.
+** {{nbt|integer|max_attempts}}: Number of attempts to run the test. Default to {{cd|1}}.
+** {{nbt|integer|required_successes}} Number of attempts that must succeed for the test to be considered successful. Defaults to {{cd|1}}.
+** {{nbt|string|type}}: The type of test. Must be one of {{cd|block_based}} and {{cd|function}}. See [[GameTest#Test instance]] for more information.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|Java Edition}}
+|{{HistoryLine||1.21.5|dev=25w03a|Added test instance definition to [[data pack]]s.}}
+|{{HistoryLine|||dev=25w04a|Renamed field {{cd|batch}} to {{cd|environment}}, and {{cd|sky_accesss}} to {{cd|sky_access}}}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Testinstanzdefinition]]
+[[fr:Définition d'instance de test]]
+[[pt:Definição de instância de teste]]
+[[zh:测试实例定义格式]]

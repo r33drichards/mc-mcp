@@ -1,0 +1,62 @@
+{{about|the unofficial format used by many community programs|the similar format used by structure blocks|Structure file}}
+{{redirect|selfref=true|Schematic|schematics on the Minecraft Wiki|Help:Schematic}}
+{{disclaimer}}
+{{exclusive|java}}
+The .'''schematic file format''' was created by the community to store sections of a ''Minecraft'' [[world]] for use with [[Programs and editors|third-party programs]] (including [[Programs and editors#MCEdit|MCEdit]], [[Programs and editors/Minecraft Note Block Studio|Minecraft Note Block Studio]], [[Programs and editors#Redstone Simulator|Redstone Simulator]], [http://www.sk89q.com/projects/worldedit/ WorldEdit], and [http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1285818-schematica Schematica]). Schematics are in [[NBT Format|NBT]] format and are loosely based on the [[Java Edition Indev level format|Indev level format]]. Indices for the Blocks and Data arrays are ordered YZX - that is, the X coordinate varies the fastest. This is similar to block ordering for [[Java Edition Classic|Classic]], [[Java Edition Indev|Indev]], and [[Anvil file format|Anvil]] levels. This format cannot store or distinguish air blocks that should overwrite existing blocks from those that shouldn't.
+
+== NBT Structure ==
+Coordinates in schematics range from (0,0,0) to (Width-1, Height-1, Length-1).
+<div class="treeview">
+* {{nbt|compound|Schematic}}: Schematic data.
+** {{nbt|short|Width}}: Size along the X axis.
+** {{nbt|short|Height}}: Size along the Y axis.
+** {{nbt|short|Length}}: Size along the Z axis.
+** {{nbt|string|Materials}}: This is '''"Classic"''' for schematics exported from [[Java Edition Classic|Classic]] levels, '''"Pocket"''' for those from [[Pocket Edition]] levels, and '''"Alpha"''' for those from [[Java Edition Alpha|Alpha]] and newer levels.
+** {{nbt|byte-array|Blocks}}: [[Java Edition data values#Block IDs|Block IDs]] defining the terrain. 8 bits per block. Sorted by height (bottom to top) then length then width—the index of the block at X,Y,Z is (Y×length + Z)×width + X.
+** {{nbt|byte-array|AddBlocks}}: Extra bits that can be used to further define terrain; optional.  Two nibbles are put into each index in this array.  Unlike normal chunks, even indexes go on the high nibble and odd indexes go on the low nibble.
+** {{nbt|byte-array|<s>Add</s>}} ''<small>deprecated</small>'': Old versions of Schematica used this instead of AddBlocks.  Byte array where each byte contains additional data to define terrain, in order.  This tag should not be written.
+** {{nbt|byte-array|Data}}: [[Java Edition data values#Data|Block data]] additionally defining parts of the terrain. Only the lower 4 bits of each byte are used. (Unlike in the [[chunk format]], the block data in the schematic format occupies a full byte per block.)
+** {{nbt|list|Entities}}: List of Compound tags.
+*** {{nbt|compound}} A single entity in the schematic.
+**** See the [[Entity_format]].
+** {{nbt|list|TileEntities}}: List of Compound tags.
+*** {{nbt|compound}} A single tile entity in the schematic.
+**** See [[Block entity format]].
+** {{nbt|compound|Icon}} Used by Schematica as an item to use as an icon for the schematic. Does not include a Slot tag.
+*** {{nbt inherit/itemnoslot|indent=***}}
+** {{nbt|compound|SchematicaMapping}}: ID mapping for the version this schematic was saved in, used by Schematica. Provided only for materials used in the schematic.
+*** {{nbt|short|{{ph|name}}}}: Indicates that name has the given ID (e.g., '''{{ph|name}}''' being <code>minecraft:stone</code> and the value being 1).
+** {{nbt|compound|ExtendedMetadata}}: Arbitrary additional data, provided by Schematica for extensions.  Optional, and is provided only if not empty.
+** {{nbt|int|WEOriginX}}: WorldEdit-only origin X coordinate; optional but if one is provided all parts should be.
+** {{nbt|int|WEOriginY}}: WorldEdit-only origin Y coordinate; optional but if one is provided all parts should be.
+** {{nbt|int|WEOriginZ}}: WorldEdit-only origin Z coordinate; optional but if one is provided all parts should be.
+** {{nbt|int|WEOffsetX}}: WorldEdit-only offset X coordinate; optional but if one is provided all parts should be.
+** {{nbt|int|WEOffsetY}}: WorldEdit-only offset Y coordinate; optional but if one is provided all parts should be.
+** {{nbt|int|WEOffsetZ}}: WorldEdit-only offset Z coordinate; optional but if one is provided all parts should be.
+** {{nbt|byte|itemStackVersion}}: MCEdit2-only; 17 if items use numeric IDs ([[Java Edition 1.7|1.7.x]]) and 18 if items use text IDs ([[Java Edition 1.8|1.8.x]]).
+** {{nbt|compound|BlockIDs}}: MCEdit2-only; maps numeric block IDs to textual IDs.
+*** {{nbt|string|{{ph|number}}}}: The textual ID for the given number (e.g., '''{{ph|number}}''' is 1 and the value is <code>minecraft:stone</code>)
+** {{nbt|compound|ItemIDs}}: MCEdit2-only; maps numeric item IDs to textual IDs. Provided only if itemStackVersion is 17.
+*** {{nbt|string|{{ph|number}}}}: The textual ID for the given number (e.g., '''{{ph|number}}''' is 1 and the value is <code>minecraft:stone</code>)
+** {{nbt|list|TileTicks}}: MCEdit-Unified only; list of queued block updates (as in the [[Chunk format#Tile tick format|chunk format]])
+*** {{nbt|compound}}: A single queued block update.
+**** {{list indent|**|{{#lst:Chunk format|tile tick format}}}}
+** {{nbt|byte-array|Biomes}}: MCEdit-Unified only; a byte array containing all biomes in the schematic.
+</div>
+
+== Implementations ==
+
+* [https://github.com/EngineHub/WorldEdit/blob/master/worldedit-core/src/main/java/com/sk89q/worldedit/extent/clipboard/io/MCEditSchematicReader.java WorldEdit]
+* [https://github.com/mcedit/mcedit2/blob/master/src/mceditlib/schematic.py MCEdit2]
+** [https://github.com/mcedit/pymclevel/blob/master/schematic.py legacy MCEdit]
+** [https://github.com/Khroki/MCEdit-Unified/blob/master/pymclevel/schematic.py MCEdit-Unified]
+* [https://github.com/Lunatrius/Schematica/blob/master/src/main/java/com/github/lunatrius/schematica/world/schematic/SchematicAlpha.java Schematica]
+* [https://github.com/CzechPMDevs/BuilderTools BuilderTools - PocketMine]
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+[[Category:Development]]
+
+[[fr:Format de fichier .schematic]]
+[[nl:Schematisch bestandsformaat]]
+[[zh:Schematic文件格式]]

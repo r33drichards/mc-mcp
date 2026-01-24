@@ -1,0 +1,233 @@
+{{Dangerous version|type=crash|This version crashes after the loading screen when run on certain devices using AMD graphics.<ref>{{bug|MC-296750||The game crashes during startup on Linux systems with AMD graphics||resolution=Fixed}}</ref>|edition=java|version=development}}
+{{Infobox version
+|title=Minecraft 25w16a
+|image=25w16a.jpg
+|image2=Java Edition 25w16a.png
+|edition=Java
+|type=Snapshot
+|date=April 15, 2025
+|jsonhash=b76c3306819ec687217b8ca5c7d8375d6c8abe18
+|clienthash=46b06a1758054ab1a50f7f3047772db7c2e5a9d7
+|clientmap=d1e6254e990c3c09a5c705e46dc5ae7c779874ac
+|serverhash=3d8223843a659d8ebc33459864ba02b34485ea11
+|servermap=7e58cbd89d19e5aef3264d64bace4cf0e355b1e1
+|parent=1.21.6
+|prevparent=1.21.5
+|prev=25w15a
+|next=25w17a
+|nextparent = 1.21.7
+}}<onlyinclude>
+'''25w16a''' is the second [[snapshot]] for [[Java Edition 1.21.6]], released on April 15, 2025,<ref>{{snap|25w16a|id=a|April 15, 2025}}</ref> which adds more functionality and improvements to [[lead]]s, technical changes to [[shader]]s, and fixes bugs.
+
+== Additions ==
+=== Gameplay ===
+'''[[POI]]'''
+* Added the <code>test_instance</code> POI.
+
+== Changes ==
+=== Items ===
+'''[[Firework rocket]]'''
+* While gliding, using a firework rocket will only be used as a boost even if placed on a block.
+
+'''[[Lead]]'''
+* Leashed leads are now rendered twice as thick, to match ''Bedrock Edition''.
+* Leads can now be used to leash two mobs together.
+** Sneak-interact on any mob while holding a bunch of leashed mobs will leash these mobs to the interacted entity.
+** It's not possible to leash anything to itself.
+* If the re-leashing an entity would result in immediate leash snapping due to distance, the re-leashing would not happen.
+* Leads can be snipped from an entity when interacting them with [[shears]], which consumes their [[durability]].
+** This applies to its own leash connection as well as all entities attached to it.
+** [[Dispensers]] can now snip leashes from entities in front of them when they are equipped with [[shears]]; this also consumes their [[durability]].
+* The leash mechanics were improved, with reworked leash physics, allowing for more stable leash connection, especially when leashed entities are not on ground.
+** When dragged on the leash, leashed objects will now orient themselves towards the leasher.
+** Using a firework rocket when flying with leashed entities will now break the leash connections.
+* When leashing an already leashed mob, the current leash will now snap and a player will re-leash the object to the player.
+** It's not possible to steal leashed entities from other players.
+* The interactions with a [[leash knot]] and [[fence]] blocks have changed:
+** When interacting with a leash knot or a [[fence]], if there are any player-leashed entities in range of the leash knot, they will be re-leashed to the leash knot or a [[fence]].
+** In case of attaching of mobs fails due to distance or there is nothing to attach, the player will now transfer all fence leashed entities to itself.
+** If there is nothing left attached to the leash knot, it disappears.
+** Sneak-interact can only result in attaching of the player mobs to the [[fence]].
+** Interacting with [[shears]] or punching the leash knot will result in all current connections broken.
+* Boats, as well as large mobs that can be leashed but cannot fit in a boat ([[horses]], [[donkey]]s, [[mule]]s, [[camel]]s and [[sniffer]]s), can now be leashed in a special 4-leash configuration to the [[happy ghast]].
+** Happy ghast will also present a custom layer when it's leashing something using a quad connection.
+** Leashes in quad connection are now rendered without slack.
+* Leash snapping distance has been changed from 10 to 12 blocks.
+** The distance between centers of entities bounding boxes, rather than their feet is used to determine the distance between two leashed entities.
+** Happy ghast leash is now longer - with free roaming distance of 10 blocks and leash snapping at 16 blocks.
+
+=== General ===
+'''[[Block models]]'''
+* Block model rotations are no longer limited to multiplies of {{cd|22.5}}.
+** {{cd|elements[].rotation.angle}} value in block models is no longer limited to multiplies of {{cd|22.5}} degrees and can now be any angle from {{cd|-45}} to {{cd|+45}}.
+
+'''[[Clouds]]'''
+* Clouds now exist all the way to the horizon.
+
+'''[[Data component format]]'''
+* {{cd|painting/variant}}
+** No longer accepts inline variants.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|73}}.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now {{cd|57}}.
+* All core shader uniforms are now uniform blocks.
+* The cloud texture ({{cd|clouds.png}}) can no longer be colored.
+
+'''[[Shader]]s'''
+* All built-in uniforms are now uniform blocks instead of opaque loose uniforms.
+* Custom uniforms provided to post-process shaders are now uniform blocks.
+* Uniform definitions inside JSON files are now per-block.
+* Post-process effect definitions
+** Entries in the targets map have been expanded to support new properties.
+*** New optional boolean field: {{cd|persistent}}
+**** Default: {{cd|false}}
+**** If true, this render target will be persistent across frames.
+**** The contents of the target will be cleared when the screen is resized.
+*** New optional field: {{cd|clear_color}} 
+**** Default: {{cd|[0, 0, 0, 0]}}
+**** Format: integer ARGB value, or float array in order {{cd|[R, G, B, A]}}
+**** When this target is created or cleared, it will be filled with this color.
+** The uniforms values is now a list-per-block, instead of a global list.
+*** e.g. <code>uniforms: { "UniformBlockName": [ { "type": "vec2", "value": [...] } ] }</code>
+**** The order of uniforms in a block must match the order in the shader.
+** {{cd|name}} as part of a uniform definition is no longer used.
+** {{cd|value}} as part of a uniform definition replaces the old {{cd|values}}, and the type depends on the {{cd|type}} field.
+*** This field is required.
+*** {{cd|"type": "int"}} needs {{cd|"value": 123}} (a single int).
+*** {{cd|"type": "float"}} needs {{cd|"value": 123.4}} (a single float).
+*** {{cd|"type": "vec2"}} needs {{cd|"value": [1.2, 3.4]}} (two floats).
+*** {{cd|"type": "vec3"}} needs {{cd|"value": [1.2, 3.4, 5.6]}} (three floats).
+*** {{cd|"type": "ivec3"}} needs {{cd|"value": [1, 2, 3]}} (three ints).
+*** {{cd|"type": "vec4"}} needs {{cd|"value": [1.2, 3.4, 5.6, 7.8]}} (four floats).
+*** {{cd|"type": "matrix4x4"}} needs {{cd|"value": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0]}} (four rows of four columns of floats).
+* Post-process effect shaders
+** Instead of every uniform being an individual opaque type, they are now grouped in uniform blocks.
+*** They will be set according to the pass definition in the JSON file, and may be shared across both vertex and fragment shaders.
+** The list of sizes (all {{cd|vec2 *Size}} uniforms) are now replaced with a single {{cd|SamplerInfo}} uniform block.
+*** This contains, in order, the size of the output texture followed by the size every input texture.
+*** The order of textures in the definition file will dictate the order of samplers in this uniform.
+*** For most post chains this is just {{cd|OutSize}} and {{cd|InSize}} as before.
+*** All sizes are {{cd|vec2}}
+* {{cd|post/bits.fsh}}
+** Expects a {{cd|BitsConfig}} of {{cd|float Resolution}} and {{cd|float MosaicSize}}.
+* {{cd|post/blit.fsh}}
+** Expects a {{cd|BlitConfig}} of {{cd|vec4 ColorModulate}}.
+* {{cd|post/blur.vsh}} and {{cd|post/box_blur.fsh}}
+** Expects a {{cd|BlurConfig}} of {{cd|vec2 BlurDir}} and {{cd|float Radius}}.
+* {{cd|post/color_convolve.fsh}}
+** Expects a {{cd|ColorConfig}} of {{cd|vec3 RedMatrix}}, {{cd|vec3 GreenMatrix}} and {{cd|vec3 BlueMatrix}}.
+* {{cd|post/invert.fsh}}
+** Expects a {{cd|InvertConfig}} of {{cd|float InverseAmount}}.
+* {{cd|post/rotscale.vsh}}
+** Expects a {{cd|RotScaleConfig}} of {{cd|vec2 InScale}}, {{cd|vec2 InOffset}} and {{cd|float InRotation}}.
+* {{cd|post/spiderclip.fsh}}
+** Expects a {{cd|SpiderConfig}} of {{cd|vec4 Scissor}} and {{cd|vec4 Vignette}}.
+* {{cd|Globals}} uniform block
+** Available through <samp>#moj_import <minecraft:globals.glsl></samp>
+** Most shaders are able to receive this uniform block, even if they don't normally use it.
+** Contains {{cd|ScreenSize}}, {{cd|GlintAlpha}}, {{cd|GameTime}} and {{cd|MenuBlurRadius}}.
+*** {{cd|MenuBlurRadius}} is the blur radius of the background when a menu is open.
+* {{cd|Fog}} uniform block
+** Available through <samp>#moj_import <minecraft:fog.glsl></samp>
+** Most shaders are able to receive this uniform block, even if they don't normally use it.
+** Contains {{cd|FogColor}}, {{cd|FogShape}}, {{cd|FogStart}}, {{cd|FogEnd}}, {{cd|FogSkyEnd}} and {{cd|FogCloudsEnd}}.
+*** {{cd|FogSkyEnd}} is new and represents where the fog should end when drawing for the sky.
+*** {{cd|FogCloudsEnd}} is new and represents where the fog should end when drawing the clouds.
+*** {{cd|FogEnd}} is the "normal" fog cutoff as before.
+** {{cd|FOG_IS_SKY}} is now available to the <samp>position.vsh/position.fsh</samp> shaders when they are rendering for the sky.
+* {{cd|Projection}} uniform block
+** Available through <samp>#moj_import <minecraft:projection.glsl></samp>
+** Most shaders are able to receive this uniform block, even if they don't normally use it.
+** Contains {{cd|ProjMat}} with no changes.
+* {{cd|DynamicTransforms}} uniform block
+** Available through <samp>#moj_import <minecraft:dynamictransforms.glsl></samp>
+** Is no longer available to shaders that do not normally use it.
+** Contains {{cd|ModelViewMat}}, {{cd|ColorModulator}}, {{cd|ModelOffset}}, {{cd|TextureMat}}, {{cd|LineWidth}}.
+* {{cd|Lighting}} uniform block
+** Available through <samp>#moj_import <minecraft:light.glsl></samp>
+** Most shaders are able to receive this uniform block, even if they don't normally use it.
+*** The values may not make sense if the shader wouldn't normally expect it, however.
+** Contains {{cd|Light0_Direction}} and {{cd|Light1_Direction}}.
+* {{cd|CloudInfo}} uniform block
+** Only available to the clouds shaders (<samp>rendertype_clouds.vsh/rendertype_clouds.fsh</samp>).
+*** Contains {{cd|CloudColor}}, {{cd|CloudOffset}} and {{cd|CellSize}} (new).
+**** {{cd|CellSize}} contains the size of an individual cloud cell.
+* {{cd|LightmapInfo}} uniform block
+** Only available to the lightmap shader (<samp>lightmap.fsh</samp>).
+** Contains {{cd|AmbientLightFactor}}, {{cd|SkyFactor}}, {{cd|BlockFactor}}, {{cd|UseBrightLightmap}}, {{cd|NightVisionFactor}}, {{cd|DarknessScale}}, {{cd|DarkenWorldFactor}}, {{cd|BrightnessFactor}}, {{cd|SkyLightColor}} with no change in behavior.
+
+== Fixes ==
+* Reverted the fix for [[bugtracker:MC-101556|MC-101556]]: Nether Portal teleport range is too large (equivalent to a full block)
+{{fixes|project=MC|fixedin=25w16a
+|;From released versions before 1.21
+|104231|Loading a custom structure doesn't load rails correctly.
+|230902|Black shapes sometimes appear in the end sky at low render distance
+|238931|Clouds stop rendering before they are hidden by fog
+|256411|Clouds not fully rendered depending on angle
+|257532|Clouds don't fill the sky after 1.18 height change
+|;From 1.21.1
+|277369|The draft report icon isn't initially visible when saving a report as a draft.
+|277370|The draft report icon doesn't initially disappear when a report is discarded.
+|;From 1.21.5
+|279515|The game stalls when running the {{cmd|test clearall}} command with large radiuses.
+|280297|The volume level between grass and dirt is inconsistent.
+|293754|Minecraft causes OpenGL errors occasionally.
+|295395|Entities interact differently with nether portals.
+|295677|Title screen fades in from black after closing the "Welcome to Minecraft" screen.
+|295895|1.21.5 breaks minecart behavior when travelling through nether portals.
+|295944|Reloading a professionless zombie villager causes it to gain random profession clothing.
+|296099|Nether portal collision is or isn't working depending on the cardinal direction.
+|296121|{{cd|ClientboundLevelChunkPacketData}} buffer size is too big.
+|296348|{{cd|NoAI:1b}} mobs cannot be ridden in 1.21.5+.
+|;Prev
+|296353|Potions, tipped arrows, and dyed leather armor render with missing or incorrect colors in the inventory.
+|296355|Characters in front of the cursor render one pixel too far to the left.
+|296356|Hitbox rendering in GUIs is broken.
+|296357|Happy ghasts produce footstep sounds when flying close above blocks.
+|296358|A player in Spectator mode on top of a happy ghast makes it stop moving.
+|296363|Scrolling in the experiments screen does not move the positions where the buttons can be selected.
+|296365|Block placing sounds are played when the block states of completely unhydrated dried ghasts are changed.
+|296366|Kicked for flying while flying happy ghast.
+|296367|The enchantment glint in the inventory appears on all items of the same type.
+|296373|The side faces of dried ghast tentacles aren’t culled when covered by blocks.
+|296376|Sounds produced by ghastlings can be heard from too far away.
+|296381|Dried Ghasts always face north in world generation.
+|296382|Filled maps are blurry.
+|296401|Harnesses are not sorted correctly in the Creative Inventory.
+|296419|Spectators' names in multiplayer tab list render improperly compared to 1.21.5.
+|296426|Text background lacks opacity over hotbar icons.
+|296427|Happy ghasts move/spin erratically when leashed to a fence.
+|296434|Unable to see items when hovering over them inside of a bundle.
+|296437|Items render behind effect icons and recipe book inside of the inventory.
+|296444|Blur is applied to resource pack icons.
+|296465|Highlighting text on a sign causes it to override the sign background.
+|296467|Item tooltips cause items behind it to not render.
+|296470|Items render behind text in anvils.
+|296471|Hud is now hidden while in bed resulting in delayed hud rendering.
+|296517|The menu panorama turns gray when the switching realm worlds interface is open.
+|296518|Text inside the middle of the java realms information box completely disappears when selected.
+|296524|Server and singleplayer world icons are blurry.
+|296638|Clocks, compasses, and lodestone compasses do not render enchantment glint in certain display contexts when using ''Fabulous!'' graphics.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|g_mss9qDYrY|cs6Ir60suMs}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w16a]]
+[[es:Java Edition 25w16a]]
+[[fr:Édition Java 25w16a]]
+[[ja:Java Edition 25w16a]]
+[[lzh:二五週一六甲]]
+[[pt:Edição Java 25w16a]]
+[[ru:25w16a (Java Edition)]]
+[[uk:25w16a (Java Edition)]]
+[[zh:Java版25w16a]]

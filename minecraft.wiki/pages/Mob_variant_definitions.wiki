@@ -1,0 +1,182 @@
+{{Exclusive|java}}
+
+'''Mob variants''' are variants of [[mob]]s. They define the assets and models used and define the conditions in which this variant spawns.
+
+== Definition ==
+
+Mob variants can be defined in [[data pack]]s, as part of the directory structure below.
+
+<div class="treeview">
+*{{File|archive|''data pack name''.zip}} or {{File|directory|''data pack name''}}
+**{{File|file|[[#pack.mcmeta|pack.mcmeta]]}}
+**{{File|directory|data}}
+***{{File|directory|''namespace''}}
+****{{File|directory|'''cat_variant'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****{{File|directory|'''chicken_variant'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****{{File|directory|'''cow_variant'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****{{File|directory|'''frog_variant'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****{{File|directory|'''pig_variant'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****{{File|directory|'''wolf_variant'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****{{File|directory|'''zombie_nautilus_variant'''}}
+*****{{File|file|'''{{ph|name}}.json'''}}
+****[[Data pack#Folder_structure|More directories&hellip;]]
+</div>
+
+== JSON Format ==
+=== Cat ===
+'''[[Cat]] variants''' are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|asset_id}}: The [[resource location]] of the texture to use.
+** {{nbt|string|baby_asset_id}}: The [[resource location]] of the baby texture to use.{{upcoming|First Drop 2026}}
+** {{nbt|list|spawn_conditions}}: The spawn conditions of this variant, see {{slink||Spawn condition}}
+</div>
+=== Chicken ===
+'''[[Chicken]] variants''' are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|asset_id}}: The [[resource location]] of the texture to use.
+** {{nbt|string|baby_asset_id}}: The [[resource location]] of the baby texture to use.{{upcoming|First Drop 2026}}
+** {{nbt|string|model}}: The chicken model to use. Has to be {{cd|normal}} or {{cd|cold}}.
+** {{nbt|list|spawn_conditions}}: The spawn conditions of this variant, see {{slink||Spawn condition}}
+</div>
+=== Cow ===
+'''[[Cow]] variants''' are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|asset_id}}: The [[resource location]] of the texture to use.
+** {{nbt|string|baby_asset_id}}: The [[resource location]] of the baby texture to use.{{upcoming|First Drop 2026}}
+** {{nbt|string|model}}: The cow model to use. Has to be {{cd|normal}}, {{cd|cold}} or {{cd|warm}}
+** {{nbt|list|spawn_conditions}}: The spawn conditions of this variant, see {{slink||Spawn condition}}
+</div>
+=== Frog ===
+'''[[Frog]] variants''' are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|asset_id}}: The [[resource location]] of the texture to use.
+** {{nbt|list|spawn_conditions}}: The spawn conditions of this variant, see {{slink||Spawn condition}}
+</div>
+=== Pig ===
+'''[[Pig]] variants''' are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|asset_id}}: The [[resource location]] of the texture to use.
+** {{nbt|string|baby_asset_id}}: The [[resource location]] of the baby texture to use.{{upcoming|First Drop 2026}}
+** {{nbt|string|model}}: The pig model to use, has to be {{cd|normal}} or {{cd|cold}}. Defaults to {{cd|normal}}
+** {{nbt|list|spawn_conditions}}: The spawn conditions of this variant, see {{slink||Spawn condition}}
+</div>
+=== Wolf ===
+'''[[Wolf]] variants''' are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|compound|assets}}: The assets to use for this variant:
+***{{nbt|string|angry}}: The [[resource location]] of the texture to use when the wolf is angry.
+***{{nbt|string|wild}}: The [[resource location]] of the texture to use when the wolf is wild.
+***{{nbt|string|tame}}: The [[resource location]] of the texture to use when the wolf is tamed.
+** {{nbt|compound|baby_assets}}: The assets to use for the baby of this variant:{{Upcoming|First Drop 2026}}
+***{{nbt|string|angry}}: The [[resource location]] of the texture to use when the wolf is angry.
+***{{nbt|string|wild}}: The [[resource location]] of the texture to use when the wolf is wild.
+***{{nbt|string|tame}}: The [[resource location]] of the texture to use when the wolf is tamed.
+** {{nbt|list|spawn_conditions}}: The spawn conditions of this variant, see {{slink||Spawn condition}}
+</div>
+=== Wolf sounds ===
+'''[[Wolf]] sound variants''' are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string}}{{nbt|compound|ambient_sound}}: {{json_ref|sound event|inline=1}}
+*** {{nbt inherit/sound event}}
+** {{nbt|string}}{{nbt|compound|death_sound}}: {{json_ref|sound event|inline=1}}
+*** {{nbt inherit/sound event}}
+** {{nbt|string}}{{nbt|compound|growl_sound}}: {{json_ref|sound event|inline=1}}
+*** {{nbt inherit/sound event}}
+** {{nbt|string}}{{nbt|compound|hurt_sound}}: {{json_ref|sound event|inline=1}}
+*** {{nbt inherit/sound event}}
+** {{nbt|string}}{{nbt|compound|pant_sound}}: {{json_ref|sound event|inline=1}}
+*** {{nbt inherit/sound event}}
+** {{nbt|string}}{{nbt|compound|whine_sound}}: {{json_ref|sound event|inline=1}}
+*** {{nbt inherit/sound event}}
+</div>
+=== Zombie Nautilus ===
+'''[[Zombie nautilus]] variants''' are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|string|asset_id}}: The [[resource location]] of the texture to use.
+** {{nbt|string|model}}: The nautilus model to use, has to be {{cd|normal}} or {{cd|warm}}. Defaults to {{cd|normal}}
+** {{nbt|list|spawn_conditions}}: The spawn conditions of this variant, see {{slink||Spawn condition}}
+</div>
+
+== Spawn condition ==
+Spawn conditions are used to determine which variant to spawn. Each variant contains a list of conditions with attached priorities. The selection of a variant happens in 3 steps:
+# Each condition is evaluated. The matching condition with the highest priority determines the priority of the variant. If no condition matches the variant is discarded.
+# Of all remaining variants, all except those with the highest priority are discarded.
+# Of the remaining variants, a random variant is chosen.
+
+Spawn conditions are specified using the following format:
+
+<div class="treeview">
+* {{nbt|list|spawn_conditions}}: List of spawn conditions with priority
+** {{nbt|compound}}: A single spawn condition
+*** {{nbt|int|priority}}: The priority of the variant if this spawn condition matches
+*** {{nbt|compound|condition}}: Condition to match. Always matches if omitted
+**** {{nbt|string|type}}: The type of the condition, see below for valid options
+**** Additional fields based on {{nbt|string|type}}, see below
+</div>
+
+=== biome ===
+Tests if the spawn position is inside one of the specified [[biome]]s.
+<div class="treeview">
+* {{nbt|compound|condition}}
+** {{nbt|string|type}}: {{cd|biome}}
+** {{nbt|string}}{{nbt|list|biomes}}: {{json_ref/biome|tag=1}} &mdash; The biomes to match
+</div>
+
+=== structure ===
+Tests if the spawn position is inside at least one of the specified [[structure]]s.
+<div class="treeview">
+* {{nbt|compound|condition}}
+** {{nbt|string|type}}: {{cd|structure}}
+** {{nbt|string}}{{nbt|list|structures}}: {{json_ref/structure|tag=1}} &mdash; The structures to match
+</div>
+
+=== moon_brightness ===
+Matches the [[moon]] brightness at the time of the spawn.
+<div class="treeview">
+* {{nbt|compound|condition}}
+** {{nbt|string|type}}: {{cd|moon_brightness}}
+** {{nbt|double}}{{nbt|compound|range}}: The moon brightness values to match &mdash; If specified as {{nbt|double}}: matches a single moon brightness value
+*** {{nbt|double|min}}: The minimum moon brightness to match
+*** {{nbt|double|max}}: The maximum moon brightness to match
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20.5|dev=24w10a|Added wolf variants; including definitions in data packs.}}
+|{{HistoryLine||1.21.5|dev=25w03a|Added pig variants; including definitions in data packs.}}
+|{{HistoryLine|||dev=25w04a
+|Cat and Frog variants can now be defined in data packs.
+|Added unified {{nbt|compound|spawn_conditions}} field, replacing {{nbt|string}}{{nbt|list|biomes}} field in wolf and pig variants.
+|Moved wolf variant {{nbt|string|angry_texture‌}}, {{nbt|string|wild_texture‌}}, and {{nbt|string|tame_texture‌}} field into {{nbt|compound|assets}} and removed {{cd|_texture}} suffix.
+|Renamed pig variant {{nbt|string|texture}} field to {{nbt|string|asset_id}}.
+}}
+|{{HistoryLine|||dev=25w05a|Added cow variants; including definitions in data packs.}}
+|{{HistoryLine|||dev=25w06a|Added chicken variants; including definitions in data packs.}}
+|{{HistoryLine||1.21.11|dev=25w45a|Added zombie nautilus variants; including definitions in data packs.}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap2|Wolf sound variants sound events in {{cd|wolf_sound_variant}} has been moved into a new field {{cd|adult_sounds}} and the field {{cd|baby_sounds}} was added.
+|The textures for baby mobs can now be defined for cow, pig, chicken, wolf, and cat variants.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Kreaturvariantendefinition]]
+[[fr:Définition de variante de créature]]
+[[ja:エンティティの亜種のカスタマイズ]]
+[[pt:Definição de variantes de criatura]]

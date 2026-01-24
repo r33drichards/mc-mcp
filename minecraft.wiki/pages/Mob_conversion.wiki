@@ -1,0 +1,223 @@
+[[File:Villager becoming Witch.gif|thumb|Villagers converting to witches is an example of mob conversion.]]
+'''Mob conversion''' is a game mechanic whereby certain [[mob]]s can convert to mobs of a different [[mob type|type]], or to a different [[mob variant|variant]] of the same type of mob, under specific circumstances.
+
+== List of mob conversions ==
+=== Mob type conversions ===
+In these instances, a mob converts to another [[mob type|type]] of mob. {{IN|JE}}, data is transferred according to [[#Data transfer]].
+{| class="wikitable"
+|+
+!From
+!To
+!Method
+|-
+|{{EntityLink|Hoglin}}
+|{{EntityLink|Zoglin}}
+|Being outside the [[Nether]] for too long
+|-
+|{{EntityLink|Husk}}
+|{{EntityLink|Zombie}}
+|Drowning in [[water]]
+|-
+|{{EntityLink|Mooshroom}}
+|{{EntityLink|Cow}}
+|[[Shearing]]
+|-
+|{{EntityLink|Pig}}
+| rowspan="3" |{{EntityLink|Zombified Piglin}}
+|[[Lightning]] strike
+|-
+|{{EntityLink|Piglin}}
+| rowspan="2" |Being outside the [[Nether]] for too long
+|-
+|{{EntityLink|Piglin Brute}}
+|-
+|{{EntityLink|Skeleton}}
+|{{EntityLink|Stray}}
+|Freezing in [[powder snow]]
+|-
+|{{EntityLink|Tadpole}}
+|{{EntityLink|Frog}}
+|Aging naturally
+|-
+|rowspan=2| {{EntityLink|Villager}}
+|{{EntityLink|Witch}}
+|[[Lightning]] strike
+|-
+|{{EntityLink|Zombie Villager}}
+|Killed by either [[zombie]]s, [[zombie villager]]s, [[husk]]s, [[drowned]], or [[zombified piglin]]s<ref group=note>The chance of conversion is dependent on the [[difficulty]] setting.</ref>
+|-
+|{{EntityLink|Zombie}}
+|{{EntityLink|Drowned}}
+|Drowning in [[water]]
+|-
+|{{EntityLink|Zombie Villager}}
+|{{EntityLink|Villager}}
+|Fed [[golden apple]] while afflicted by [[Weakness]]
+|}
+
+=== Mob variant conversions ===
+In these instances, a mob converts to a different [[Mob variant|variant]] of the same type of mob. Only one top-level data field is modified.
+
+{| class="wikitable"
+|+
+!Mob type
+!Converts to
+!Method
+!Notes
+|-
+| {{EntityLink|Bogged}}
+| A sheared bogged
+| [[Shearing]]
+|
+|-
+| rowspan=2 | {{EntityLink|Copper golem}}
+| A more [[oxidized]] variant
+| [[Oxidation]]
+|
+|-
+| A less [[oxidized]] variant
+| Scraping with an [[axe]]
+|
+|-
+| {{EntityLink|Creeper}}
+| A charged creeper
+| [[Lightning]] strike
+|
+|-
+| {{EntityLink|Goat}}
+| A goat with one fewer horn
+| Ramming certain blocks; see [[Goat#Goat horns]]
+|
+|-
+| rowspan=2 | {{EntityLink|Iron golem}}
+| A more cracked variant
+| Taking damage
+|
+|-
+| A less cracked variant
+| Being healed, including being repaired by a player using [[iron ingot]]s
+|
+|-
+| {{EntityLink|Mooshroom}}
+| The other variant (red or brown)
+| [[Lightning]] strike
+|
+|-
+| {{EntityLink|Snow golem}}
+| The sheared variant
+| [[Shearing]]
+| Although canonically a simple change of equipment, this "conversion" is included here because sheared and unsheared snow golems are considered different variants by the game.<ref group="note">See also {{bug|MC-301192||Snow Golem pumpkin is stored as a boolean, rather than a head equipment slot|Invalid}}</ref>
+|-
+| rowspan=4 | {{EntityLink|Sheep}}
+| A different color of sheep
+|[[Sheep#Dyeing|Dyeing]] or an [[Evoker#Sheep_color_conversion_spell|evoker's conversion spell]]
+|
+|-
+| A rainbow sheep, or a fixed-color sheep
+| [[Name tag|Naming]] the sheep "jeb_", or renaming "jeb_" to something else, respectively
+|
+|-
+| A sheared sheep
+| [[Shearing]]
+| 
+|-
+| A woolly sheep
+| Eating grass
+|
+|-
+| {{EntityLink|Shulker}}
+| A different-colored shulker
+| [[Dyeing]]{{only|bedrock}}
+| They can be dyed only in [[Creative]] mode.
+|-
+| {{EntityLink|Villager}}
+| A different profession of villager
+| See [[Villager#Professions]]
+| Not relevant to {{EntityLink|zombie villager}}s, as they cannot change professions without first converting to a villager.
+|}
+{{Notelist}}
+
+== Data transfer ==
+{{exclusive|Java|section=1}}
+<!--The list below should be accurate of [[25w41a]] and later-->
+A mob which converts to another mob retains the following entity data, provided that the new mob is able to make use of said data:<ref group=note>The initial version of this list was provided by Mojang in the [[24w37a]] changelog</ref>
+
+* <code>AbsorptionAmount</code>
+* <code>active_effects</code>
+* <code>Age</code>
+* <code>angry_at</code>
+* <code>anger_end_time</code>
+* <code>Brain.memories.minecraft:angry_at.ttl</code>{{Needs testing|Still the case post-25w41a?}}
+* <code>Brain.memories.minecraft:angry_at.value</code>{{Needs testing|Still the case post-25w41a?}}
+* <code>CanBreakDoors</code>
+* <code>CanPickUpLoot</code>
+* <code>CustomName</code>
+* <code>CustomNameVisible</code>
+* <code>drop_chances</code>
+* <code>fall_distance</code>
+* <code>FallFlying</code>
+* <code>Fire</code>
+* <code>ForcedAge</code>
+* <code>HurtByTimestamp</code>
+* <code>HurtTime</code>
+* <code>Invulnerable</code>
+* <code>IsBaby</code>
+* <code>Leash</code>
+* <code>LeftHanded</code>
+* <code>Motion</code>
+* <code>NoAI</code>
+* <code>NoGravity</code>
+* <code>OnGround</code>
+* <code>Passengers</code>
+* <code>PersistenceRequired</code>
+* <code>PortalCooldown</code>
+* <code>Position</code>
+* <code>RootVehicle</code>
+* <code>Rotation</code>
+* <code>Silent</code>
+* <code>sleeping_pos</code>
+* <code>Tags</code>
+* <code>Team</code>
+
+Notably, the following fields are ''not'' retained:
+* <code>attributes</code>
+* <code>Brain</code>, except for the sub-fields mentioned above{{Needs testing|Still the case post-25w41a?}}
+* <code>Gossips</code>
+* <code>Health</code><ref group=note>The health of the converted mob is set to the same percentage of max health as the original mob had before conversion.</ref>
+* Loot tables
+* <code>UUID</code>
+* <code>VillagerData</code>
+* <code>Xp</code>
+
+Additionally, <code>equipment.saddle</code> is not retained when a saddled pig converts to a zombified piglin.<ref>{{bug|MC-304420}}</ref>
+
+===Mobs which split into several upon death===
+A related case to mob conversion is where a mob (specifically a [[slime]] or [[magma cube]]) splits into several mobs upon death. In terms of entity data, this is treated as a conversion except that the following fields are additionally ''not'' transferred:
+* <code>drop_chances</code>
+* <code>equipment</code>
+* <code>fall_distance</code>
+* <code>FallFlying</code>
+* <code>HurtByTimestamp</code>
+* <code>HurtTime</code>
+* <code>Leash</code>
+* <code>Motion</code>
+* <code>OnGround</code>
+* <code>Passengers</code>
+* <code>Position</code>
+* <code>Rotation</code>
+* <code>sleeping_pos</code>
+
+{{Notelist}}
+
+== See also ==
+* [[Mob type]]
+* [[Mob variant]]
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox entities|mobs}}
+
+[[pt:Conversão de criatura]]
+[[zh:生物转化]]

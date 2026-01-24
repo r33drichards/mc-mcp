@@ -1,0 +1,122 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.8021.0<br>'''Android''': 1.21.80.21
+| image = Bedrock 1.21.80.21.png
+| build = 31828387
+| editorver = 0.9.2
+| versioncode = '''Android''':<br />
+952108021 (armeabi-v7a, 34)<br />
+962108021 (x86, 34)<br />
+972108021 (arm64-v8a, 34)<br />
+982108021 (x86_64, 34)
+| date = March 18, 2025
+| server = 1.21.80.21
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.80.21.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.80.21.zip Linux]
+| parent = 1.21.80
+| prevparent = 1.21.73
+| prev = Preview 1.21.80.20
+| next = Preview 1.21.80.22
+| nextparent = 1.21.81
+}}<onlyinclude>
+'''Beta 1.21.80.21''' (ChromeOS, Android) or '''Preview 1.21.80.21''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the second beta/''Preview'' version for [[Bedrock Edition 1.21.80]], released on March 18, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/35112373785869-Minecraft-Beta-Preview-1-21-80-21|title=Minecraft Beta & Preview - 1.21.80.21|website=Minecraft Feedback|date=March 18, 2025}}</ref> which fixes bugs.
+
+== Changes ==
+=== General ===
+'''UI'''
+*Adding "Manage Storage" button if download fails due to lack of space with instructions on what needs to be cleared out.
+*Adding "Clear Download Cache" button to storage for clearing files that got stuck due to a downloading error.
+*Auto clearing the download cache on startup if it detects that it is running out of space.
+
+'''[[VR]]'''
+*Removed access to virtual and mixed reality gameplay.
+
+=== Mobs ===
+'''General'''
+*A recent change that caused "invincible pet" mobs to despawn have reverted.
+**Mobs in worlds opened during Preview may have despawned, but players updating to the upcoming 1.21.70 release should be unaffected.
+
+=== Technical ===
+'''API'''
+*Moved the following {{cd|player}} methods from {{cd|beta}} to {{cd|v1.18.0}}:
+**{{cd|setPropertyOverrideForEntity}}
+**{{cd|removePropertyOverrideForEntity}}
+**{{cd|clearPropertyOverridesForEntity}}
+
+'''[[Biome]]s'''
+*Added {{cd|music_definition}} field to {{cd|minecraft:biome_music}} component in {{cd|client_biome}} json files to control the music played in the biome. The default music will be determined by the dimension if the {{cd|biome_music}} component or {{cd|music_definition}} property is left off. An empty string can be used if the biome is intended to be silent.
+
+'''[[Block]]s'''
+*Blocks using the {{cd|minecraft:block_placer}} component now can get added as loose items in the creative inventory and recipe book again.
+
+'''Components'''
+*Content errors will log missing texture references in the {{cd|minecraft:icon}} item component.
+*The {{cd|minecraft:rideable}} component's {{cd|Seat}} definition now has two additional fields:
+**{{cd|third_person_camera_radius}} can be used to set a different camera radius when in third person or third person front camera. The value needs to be in the range {{cd|[1.0, 64.0]}}. Value {{cd|0.0}} is ignored.
+**{{cd|camera_relax_distance_smoothing}} adds springiness to the camera movement when the camera moves back to its radius after being pushed closer to the player by and obstacle. A higher value means a stiffer spring. The value needs to be in the range {{cd|[1.0, 32.0]}}. Value {{cd|0.0}} is ignored.
+*The {{cd|minecraft:leashable}} component now support multiple presets:
+**A list of presets can be defined in the new {{cd|presets}} field.
+**Each preset determines how the entity behaves when leashed to another entity.
+**A preset is selected when the entity is leashed and remains active until it is leashed to something else.
+**The first preset whose {{cd|filter}} conditions are met will be applied.
+**If no presets match, a default configuration is used instead.
+**The following fields are now part of each preset:
+***{{cd|filter}}: Defines the condition that selects this preset out of all the presets upon leashing.
+***{{cd|soft_distance}}: Distance at which the spring effect begins.
+***{{cd|hard_distance}}: Distance at which the leash stiffens.
+***{{cd|max_distance}}: Distance at which the leash breaks.
+***{{cd|can_be_stolen}}: Determines if a player can steal the leashed entity using a lead.
+
+'''[[Molang]]'''
+*Added the {{cd|query.leashed_entity_count}} Molang query, which allows querying how many entities have the given entity as their leash holder.
+
+'''Stability and performance'''
+*Make friends drawer and play screen more performant using a cached view.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Locator Bar" experimental toggles.
+
+=== Changes ===
+==== Gameplay ====
+'''[[Player Locator Bar]]'''
+*Player dots on the locator bar now show correctly regardless of [[simulation distance]].
+
+==== Technical ====
+'''API'''
+*{{cd|EntityMarkVariantComponent}} has been changed to read-only in version {{cd|2.0 beta}}.
+
+'''Blocks'''
+*Always add a missing {{cd|Destruction Particles}} component to {{cd|blocks}} that have a {{cd|Material Instances}} component, using the {{cd|down}} material as reference:
+**The {{cd|texture}} field in {{cd|minecraft:destruction_particles}} is now optional; if not provided or empty, it will be populated from the {{cd|Material Instances}} component.
+
+'''Graphical'''
+*Enforced minimum Android, iOS, and iPadOS requirements for devices running the Deferred Technical Preview for maintained performance, stability, and visuals moving forward. For Android, a Adreno 640, Mali-G68, Mali-G77, or Xclipse 530 GPU or higher is required. On iOS devices, an A12 Bionic chip or later is required. On iPadOS devices, an A12 Bionic or M1 chip or later is required.
+*Disabled local exposure on all platforms because of a bug that can cause massive visual corruption in the Deferred Technical Preview. Developers will re-enable the technology in a future update once the issue has been resolved.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.80.21 Preview
+|;old
+|188731|Spawn Under Nether Portal after traveling to the overworld
+|190620|Custom spawn eggs no longer appear under spawn eggs
+|190750|Cold variants of cows, chickens, and pigs spawn in Mangrove Swamp instead of warm variants
+|otherissuescount=5}}
+'''Other'''
+*Fixed ambient occlusion issue for non 1x1x1 blocks. When a block around any of these smaller non 1x1x1 blocks is broken, the AO computation is correctly applied to the face in the direction of that broken block. Previously the wrong face could be seen getting lightened/darkened. A list of blocks affected: stairs, walls, gates, buttons, cakes, plates, fences, anvil, grindstone, hopper, bell, lectern, eggs, brewing stand.
+*Worlds are no longer missing from the storage menu.
+*Bundle tooltip no longer sometimes renders as if having a different amount of items.
+*Block using the {{cd|minecraft:destruction_particles}} component will now correctly be sent to player connecting to a host.
+*Fixed a bug that caused the Editor to crash when the Deferred Technical Preview was enabled.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.80 betas]]
+
+[[de:Bedrock Edition beta 1.21.80.21]]
+[[pt:Edição Bedrock Preview 1.21.80.21]]
+[[ru:Preview 1.21.80.21 (Bedrock Edition)]]
+[[uk:Preview 1.21.80.21 (Bedrock Edition)]]
+[[zh:基岩版1.21.80.21]]

@@ -1,0 +1,171 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.5028.0<br>'''Android, iOS, iPadOS''': 1.21.50.28<br>
+| image = Bedrock 1.21.50.28 PatchNotes.jpeg
+| image2 = Bedrock 1.21.50.28.png
+| build = 29090481
+| editorver = 0.8.0
+| versioncode = '''Android''':<br />
+952105068 (armeabi-v7a, 34)<br />
+962105068 (x86, 34)<br />
+972105068 (arm64-v8a, 34)<br />
+982105068 (x86_64, 34)<br />
+| date = November 7, 2024
+| server = 1.21.50.28
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.50.28.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.50.28.zip Linux]
+| parent = 1.21.50
+| prevparent = 1.21.44
+| prev = Preview 1.21.50.26
+| next = Preview 1.21.50.29
+| nextparent = 1.21.51
+}}
+<onlyinclude>
+
+'''Beta 1.21.50.28''' (ChromeOS, Android) or '''Preview 1.21.50.28''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the sixth beta and fifth ''Preview'' version for [[Bedrock Edition 1.21.50]], released on November 7, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/31693342053517-Minecraft-Beta-Preview-1-21-50-28|title=Minecraft Beta & Preview - 1.21.50.28|website=Minecraft Feedback|date=November 7, 2024}}</ref> which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Creaking Heart]]'''
+*Adjusted the frequency of ambient sounds emitted by creaking hearts to better align with {{JE}}.
+*Creaking Heart breaking and placing sounds are now quieter.
+
+'''[[Eyeblossom]]'''
+*Closed eyeblossoms no longer poison bees.
+*The poison effect from open eyeblossoms now also damages bees while they are within the block, rather than only upon exiting.
+*Reduced the duration of the poison effect applied by open eyeblossoms.
+*Adjusted the frequency of ambient sounds emitted by eyeblossoms to better align with {{JE}}.
+
+'''[[Pale Hanging Moss]]'''
+*Adjusted the frequency of ambient sounds emitted by pale hanging moss to better align with {{JE}}.
+
+'''[[Resin]]'''
+*Added more breaking sounds for resin.
+
+'''[[Slate]]'''
+*Removed from the [[creative inventory]].
+
+=== Mobs ===
+'''[[Bee]]s'''
+*Bees can no longer be tempted or pollinate within closed eyeblossoms.
+*Feeding bees open eyeblossoms now applies the poison effect.
+
+'''[[Creaking]]'''
+*Creaking now plays 4 different sway sounds.
+*Creaking now plays new attack sounds.
+
+=== Items ===
+'''[[Resin Brick]]'''
+*Resin Bricks are now used to apply the resin armor trim instead of resin clumps.
+
+'''[[Suspicious Stew]]'''
+*The effect durations of Suspicious Stew have been adjusted to be the same across versions.
+
+=== General ===
+'''UI'''
+*Items in a [[bundle]] tooltip now have a gray background.
+*[[Screenshot]]s: Added the ability to Feature and Showcase screenshots for others to see when they visit player's Profile. Added ability to set custom world thumbnail from screenshots.
+
+=== World generation ===
+'''[[Feature]]s'''
+*The following feature types are now unable to place internal-only features:
+**{{cd|minecraft:aggregate_feature}}
+**{{cd|minecraft:snap_to_surface_feature}}
+**{{cd|minecraft:surface_relative_threshold_feature}}
+**{{cd|minecraft:weighted_random_feature}}
+
+=== Technical ===
+'''Entity Components'''
+*Added the {{cd|minecraft:ignore_cannot_be_attacked}} component and moved the filter from {{cd|minecraft:cannot_be_attacked}} to it. This allows content to have custom mobs which bypass the {{cd|cannot_be_attacked}} component (for example the one on the [[ghast]]) without requiring a modification of the attacked mob's settings.
+*The {{Cd|code=minecraft:angry}} component now has a new field: 
+**{{Cd|code=broadcast_anger_when_dying}} defines whether an entity should broadcast anger to entities of the same type if killed in one hit. This is set to {{Cd|code=true}} by default.
+**This change was not mentioned in the changelog.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Upcoming Creator Features", and "Focus Target" experimental toggles.
+=== Additions ===
+==== Technical ====
+'''[[API]]'''
+*{{cd|CameraFixedBoomOptions}}
+**Added property {{cd|entityOffset?: Vector3}}.
+*Added new {{cd|CameraTargetOptions}} parameter inside {{cd|setCamera}} for {{cd|beta}}. This can be used to modify the {{cd|minecraft:free}} preset if the Focus Target experimental camera toggle is enabled.
+
+'''Cameras'''
+*Added content error when trying to target an entity when not on a free camera.
+
+'''UI'''
+*Added support for input glyph replacement for signed books. For example, using input string {{cd|:_input_key.jump:}} will be replaced with "JUMP" when using keyboard, or an emoji in case of using a gamepad.
+
+=== Changes ===
+==== Technical ====
+'''API'''
+*Moved {{cd|BlockFillOptions}} from {{cd|beta}} to {{cd|v1.16.0}}.
+*Moved {{cd|UnloadedChunksError}} from {{cd|beta}} to {{cd|v1.16.0}}.
+*Dimension
+**Moved {{cd|containsBlock(volume: BlockVolumeBase, filter: BlockFilter, allowUnloadedChunks?: boolean): boolean}} from {{cd|beta}} to {{cd|v1.16.0}}.
+**Moved {{cd|getBlocks(volume: BlockVolumeBase, filter: BlockFilter, allowUnloadedChunks?: boolean): ListBlockVolume}} from {{cd|beta}} to {{cd|v1.16.0}}.
+**Moved {{cd|fillBlocks(volume: BlockVolumeBase, block: BlockPermutation | BlockType | string, options?: BlockFillOptions): ListBlockVolume;}} from {{cd|beta}} to {{cd|v1.16.0}}.
+*{{cd|ItemUseOnBeforeEvent}}
+**Move property {{cd|readonly isFirstEvent: boolean}} from {{cd|beta}} to {{cd|v1.16.0}}.
+*{{cd|ItemUseOnAfterEvent}}
+**Move property {{cd|readonly isFirstEvent: boolean}} from {{cd|beta}} to {{cd|v1.16.0}}.
+
+'''Block Components'''
+*Modified {{cd|ambient_occlusion}} field for {{cd|minecraft:material_instances}} component to be a float value, requires Upcoming Creator Features experiment.
+
+'''Cameras'''
+*Tracking a target using the free camera preset: optional {{cd|tracking_radius}} float value for setting a listening radius for a target entity
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.50.28 Preview
+|;old
+|68327|Other zombified piglins aggro when you one-hit kill one of them
+|131325|Rain/snow sometimes does not visually match the actual weather
+|156469|Opaque mangrove leaves have an inconsistent texture
+|169375|Ravager doesn't destroy plants added since 1.19
+|170516|Mangrove leaves don't use separate opaque textures
+|176933|Some of the newer blocks' sounds are much louder than other blocks
+|178719|Copper grates have glitched rendering with fluids underneath them.
+|184406|Player's camera can get stuck when leaving a boat after interacting with an interface
+|185960|Trial spawners that have had spawn eggs used on them revert to their initial state after their cooldown expires
+|;previous
+|187373|The Pale Moss Carpet Decoration Vines don't have proper ambient occlusion and face dimming
+|187539|Pale Garden weather fog color is incorrect
+|187566|Pale moss carpet with vines Z-fights upon being mined
+|187696|Slate appears in Creative Inventory with Education toggle off
+|187697|Resin drops from creaking hearts are not seemingly affected by Fortune
+|187713|Jumping on resin blocks sounds like stone
+|187759|Eyeblossoms do not change their state when snowlogged
+|187802|Suspicious stew gives different durations of Blindness for Eyeblossom and Azure Bluet
+|187806|The textures for Resin, Nether, Red, and Clay Bricks are misaligned.
+|188088|Creaking Heart uses stone jump and land sounds
+|otherissuescount=16}}
+'''Other'''
+*The orientation of the pale oak leaves texture is no longer randomized for each block.
+*Decorated pots no longer activate observers on world load.
+*Sculk sensors now detect Eyeblossoms opening and closing.
+*Fixed all skull block variants being turned into {{cd|skeleton_skull}} when opening a world-template version locked below 1.21.40 or structures. Note, this fix will not apply to already overwritten chunks.
+*The creaking will no longer sometimes phase through blocks if you are looking at it far away.
+*Magma cube model part UVs no longer overlap each other.
+*Fixed a crash on several platforms when navigating back to Realms Stories after inviting a player on the manage members screen.
+*Fall & step sound events for sponge, wet sponge, creaking heart, resin brick and resin blocks changed to "player".
+*Bundle tooltip correctly appears after being placed from the cursor.
+*Gamepad tooltips are now correct when hovering the crafting output in inventory screen and crafting table Screen with a bundle on the cursor.
+*Managing to kill a wolf, bee, or silverfish in one hit no longer angers nearby mobs of the same type.
+*Head blocks can now be placed on the side of blocks even if they lack a supporting block below them.
+*The game no longer crashes if a mob attacks with an item that breaks during the attack.
+*Fixed a bug where vanilla items with the {{cd|minecraft:block_placer}} component had the wrong icon on split-screen clients.
+*Fixed an API script processing error that could result in an infinite loop.
+*Fixed a bug where {{cd|Dimension.fillBlocks}} would set blocks outside of the ticking area when {{cd|ignoreChunkBoundErrors}} was set to {{cd|true}}.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.50 betas]]
+[[de:Bedrock Edition beta 1.21.50.28]]
+[[pt:Edição Bedrock Preview 1.21.50.28]]
+[[uk:Preview 1.21.50.28 (Bedrock Edition)]]
+[[zh:基岩版1.21.50.28]]

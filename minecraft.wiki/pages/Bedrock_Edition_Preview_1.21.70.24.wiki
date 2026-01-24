@@ -1,0 +1,170 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.7024.0<br>'''Android''': 1.21.70.24
+| image = Bedrock 1.21.70.24 PatchNotes.jpeg
+| image2 = Bedrock 1.21.70.24.png
+| build = 30719683
+| editorver = 0.8.9
+| versioncode = '''Android''':<br />
+952107024 (armeabi-v7a, 34)<br />
+962107024 (x86, 34)<br />
+972107024 (arm64-v8a, 34)<br />
+982107024 (x86_64, 34)
+| date = February 19, 2025
+| server = 1.21.70.24
+| serverdl = '''Server''' <br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.70.24.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.70.24.zip Linux]<br>
+| parent = 1.21.70
+| prevparent = 1.21.62
+| prev = Preview 1.21.70.23
+| next = Preview 1.21.70.25
+| nextparent = 1.21.71
+}}<onlyinclude>
+'''Beta 1.21.70.24''' (ChromeOS, Android) or '''Preview 1.21.70.24''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fourth beta/''Preview'' version for [[Bedrock Edition 1.21.70]], released on February 19, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/34396781018893-Minecraft-Beta-Preview-1-21-70-24|title=Minecraft Beta & Preview - 1.21.70.24|website=Minecraft Feedback|date=February 19, 2025}}</ref> which adds new sounds for wolves, changes spawn egg textures, and fixes bugs.
+
+==Additions==
+===Mobs===
+'''[[Wolf]]'''
+* Added 6 new wolf audio variants with unique ambient, hurt, death, growl, whine, and pant sounds.
+** Every wolf will have a random audio variant assigned to it from the 6 new variants and the original one.
+** The audio variant is not related to the texture variant.
+
+== Changes ==
+===General===
+'''[[Experiments]]'''
+* Removed the Experimental "Third Person Cameras" toggle and added an Experimental "Creator Camera Features" toggle for all future experimental cameras.
+
+'''UI'''
+* Taking screenshots no longer takes the player out of the pause screen.
+* Changes have been made to the Multiplayer tab. Player permission icons have been updated, and on PlayStation and Nintendo consoles now show a message informing the player that they need to sign in to access multiplayer features. Below the message there's a button that will take the player to respective console sign in flow.
+
+===Items===
+'''[[Spawn eggs]]'''
+*Overhauled the visuals of each [[Spawn Egg|spawn egg]] to improve readability and accessibility.
+**Each spawn egg now has their own unique visual which captures the personality and character of the mob it spawns.
+**Each egg visual varies in shape to reflect the in-world size of the mob it spawns.
+***For example, smaller [[mob]]s tend to have a smaller spawn egg.
+[[File:Spawn egg wall.jpg|thumb|A collection of the new spawn egg textures.]]
+
+===Gameplay===
+'''Sounds'''
+* Lowered volume in sound files for leaf litter (break, step, place).
+* Lowered volume in sound files for grass (dig).
+
+===Technical===
+'''API'''
+:{{cd|@minecraft/server}} 1.18.0
+* Moved {{cd|CameraFixedBoomOptions}} from {{cd|beta}} to {{cd|stable}}.
+* Moved {{cd|LiquidType}} enum from {{cd|beta}} to {{cd|stable}}.
+* Moved liquid detection methods in {{cd|Block}} from {{cd|beta}} to {{cd|stable}}.
+* Moved liquid detection methods in {{cd|BlockPermutation}} from {{cd|beta}} to {{cd|stable}}.
+* Moved method {{cd|Player.spawnParticle}} from {{cd|beta}} to {{cd|stable}}.
+
+'''Blocks'''
+* The {{cd|minecraft:material_instances}} component supports an optional {{cd|tint_method}} field in its instance definitions.
+** {{cd|tint_method}} is a string field that multiplies a face color with a tint computed with the biome the block is in. Supported values are {{cd|none}}, {{cd|default_foliage}}, {{cd|birch_foliage}}, {{cd|evergreen_foliage}}, {{cd|dry_foliage}}, {{cd|grass}}, and {{cd|water}}.
+** Held block-items are tinted as if they were in the {{cd|plains}} biome. Example:
+<syntaxhighlight lang="c++">
+"minecraft:material_instances": {
+"*": {
+"texture": "minimal",
+"render_method": "opaque",
+"tint_method": "water"
+}
+</syntaxhighlight>
+
+'''Creator'''
+* {{cd|ItemTag}} support in the {{cd|match_tool}} loot table condition no longer requires enabling the "Upcoming Creator Features" experiment toggle.
+
+'''Goals'''
+* Added {{cd|use_home_position_restriction}} field to {{cd|minecraft:behavior.float_wander}} AI goal to control whether mobs respect home position restrictions when selecting target positions.
+** Defaults to {{cd|false}} for entities with format version below {{cd|1.21.70}}, and {{cd|true}} for {{cd|1.21.70}} and later.
+** When {{cd|true}}, the mob will respect home position restrictions when selecting target positions.
+
+'''Network Protocol'''
+* Added {{cd|ActorFlags::WASD_AIR_CONTROLLED}}.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" experimental toggle.
+
+=== Changes ===
+==== Technical ====
+'''API'''
+;{{cd|@minecraft/server}} 2.0.0-beta
+* Raised the limit for Lore Entry length from 50 to 1000 and the number of lines from 20 to 100 when using {{cd|ItemStack.setLore}}.
+* Added three new methods to {{cd|Player}}. These Entity Overrides are only applied to the target {{cd|Player}}. Changes are not applied until the next tick and will not apply to other players.
+** {{cd|setPropertyOverrideForEntity}}: Overrides an Entity Property on the target Entity to the provided value. This property must be client synced.
+** {{cd|removePropertyOverrideForEntity}}: Removes the override of the specified Entity Property on the target Entity.
+** {{cd|clearPropertyOverridesForEntity}}: Removes all overrides of any Entity Properties on the target Entity.
+
+'''Components'''
+* Added the {{cd|minecraft:input_air_controlled}} component, that enables controlling flying rideables.
+** Functions similarly to {{cd|minecraft:input_ground_controlled}}, but instead of limiting acceleration to the XZ-plane, this component applies acceleration in the direction the player is looking in three dimensions.
+** Supports adjustments to strafing and backward movement speeds, allowing entities to fly at equal speeds in all directions or move slower when strafing or reversing.
+** This component is experimental and as such requires {{cd|use_beta_features}} to be enabled.
+** It may undergo significant changes or even be replaced as development progresses.
+
+'''Graphical'''
+* Added 4 optional components to the Client Biome JSON 1.21.70 Schema. However, these components are intended for future use with the Deferred Technical Preview and have no effect in current builds, Preview or otherwise. With this change, Deferred resource pack rules have changed slightly:
+** The game will now load all valid JSON files in the {{cd|atmospherics}}, {{cd|color_grading}}, {{cd|lighting}} and {{cd|water}} directories of a Deferred resource pack. Every valid JSON file in each category must have a unique {{cd|identifier}} field in its schema.
+** Reserved filenames for each schema category (e.g., {{cd|atmospherics/atmospherics.json}} or {{cd|lighting/global.json}}) will still be treated as the global/default settings for a pack.
+** If a Biome JSON in a Deferred resource pack contains any of these new identifier components, then the identifiers will be validated against the identifiers found in the respective set of Deferred configurations. For instance, if a Biome JSON contains a {{cd|minecraft:water_identifier}} entry, then the supplied identifier must correspond to a valid {{cd|identifier}} in one of the pack's Water JSONs.
+** If a Biome JSON doesn't contain one of the new identifiers, then the global/default identifier from the reserved filenames will automatically be added to said biome.
+<syntaxhighlight lang="c++">
+"format_version": "1.21.70",
+"minecraft:client_biome": {
+  ...
+  "components": {
+    ...,
+    "minecraft:atmosphere_identifier": {
+      "atmosphere_identifier": "mypack:default_atmospherics"
+    },
+    "minecraft:color_grading_identifier": {
+      "color_grading_identifier": "mypack:default_color_grading"
+    },
+    "minecraft:lighting_identifier": {
+      "lighting_identifier": "mypack:default_lighting"
+    },
+    "minecraft:water_identifier": {
+      "water_identifier": "mypack:default_water"
+    }
+  }
+}
+</syntaxhighlight>
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.70.24 Preview
+|;old
+|181679|Decorated pots have a glitched texture in the Deferred Technical Preview
+|188459|Animated blocks still play their animation when the game is paused
+|188464|Fire overlay animation still plays when the game is paused
+|189689|Summoning a pig with commands or a spawn egg in snowy plains creates temperate pig
+|189693|Leaves in cold biomes no longer turn white while it's snowing
+|189712|Leash on pigs float above them when the "Drop 1 2025" experiment is enabled
+|189749|Pig saddle texture is no longer symmetrical
+|189751|Saddle model change breaks Marketplace resource packs because it was not given a v2 texture
+|189800|Pig saddle attachable change causes resource packs with old pigs to show 2 saddles
+|190225|Pink petals/wildflowers/leaf litter do not display "Place" controller tooltip when 1/4 of the block is placed in the block
+|;prev
+|190218|Bow, crossbow, trident, shield, and spyglass are positioned incorrectly when the game is paused
+|190290|Breath bobbing animations resume at different position when the game is unpaused
+|190366|Jungle bush feature reverts back to using jungle leaves when the Drop 1 2025 experiment is enabled
+|otherissuescount=3}}
+'''Other'''
+* Fixed an issue where destroying and picking up a Shulker box would make it appear invisible in the inventory until world reload.
+* Fixed an issue where chunks weren't saving properly on older worlds.
+* Fixed a bug where the {{cd|typeid}} property of the {{cd|Effect}} class was being translated based on your language option.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.70 betas]]
+
+[[de:Bedrock Edition beta 1.21.70.24]]
+[[pt:Edição Bedrock Preview 1.21.70.24]]
+[[ru:Preview 1.21.70.24 (Bedrock Edition)]]
+[[uk:Preview 1.21.70.24 (Bedrock Edition)]]
+[[zh:基岩版1.21.70.24]]

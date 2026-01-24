@@ -1,0 +1,734 @@
+{{Exclusive|bedrock}}
+'''RakNet'''<ref>http://www.jenkinssoftware.com/</ref> is a networking library used by ''[[Bedrock Edition]]''. This documentation is based on the old [[Pocket Edition protocol|''Pocket Edition'' protocol]] and may be incomplete or outdated.
+The source code for the RakNet Library can be found [https://github.com/OculusVR/RakNet/ here].
+RakNet uses {{W|User Datagram Protocol|UDP}} as its networking protocol. The key differences from TCP are that not all packets are guaranteed to reach the destination at all or in order (it isn't reliable) and it uses messages with a specified length instead of streams of data. RakNet compensates for the out-of-order delivery and makes it reliable.
+
+== Libraries ==
+'''NOTE:'''
+You may want to use an existing library if one exists for your language of choice.
+Here is an incomplete list. Not all of these are maintained or complete. If these are outdated you may need to change the protocol version to 11 before it can work. The protocol doesn't seem to have had any significant changes since the official implementation was discontinued in 2014, so as long as you bump the protocol version older libraries are likely to still work.
+
+{| class="wikitable sortable" style="width: auto; text-align: center;"
+ |-style="background:#eee"
+ ! Name
+ !class="unsortable"| Description
+ ! Language
+ ! License
+ ! Active development
+ |-
+ ! [https://github.com/sandertv/go-raknet go-raknet]
+ | Network System used for [https://github.com/df-mc/dragonfly Dragonfly] written in Go
+ | Golang
+ | GPL-3
+ | Yes
+ |-
+ ! [https://github.com/netrexmc/raknet RakNet]
+ | RakNet implementation written in Rust
+ | Rust
+ | GPL-3
+ | Yes
+ |-
+ ! [https://github.com/PieMC-Dev/PieRakNet PieRakNet]
+ | Network System used for [https://github.com/PieMC-Dev/PieMC PieMC] written in Python
+ | Python
+ | GPL-3
+ | Yes
+ |-
+ ! [https://github.com/NukkitX/Network NukkitX Network]
+ | Network components used within NukkitX, but with great support for general use as well
+ | Java
+ | Apache License
+ | Yes
+ |-
+ ! [https://github.com/Podrum/rak_net rak-net]
+ | rak-net is the first updated and fully working RakNet implementation written in Python to run a Minecraft Bedrock Edition server. This library was mainly created for Podrum, although it can be used in other projects too and can be installed via pip.
+ | Python
+ | MIT
+ | Yes
+ |-
+ ! [https://github.com/JRakNet/JRakNet JRakNet]
+ | JRakNet is a networking library for Java which implements the UDP based protocol RakNet
+ | Java
+ | MIT
+ | Yes
+ |-
+ ! [https://github.com/yesdog/netty-raknet netty-raknet]
+ | High performance implementation of RakNet for netty, following strict netty patterns.
+ | Java
+ | MIT
+ | Yes
+ |-
+ ! [https://github.com/HerryYT/JSRakNet JSRakNet]
+ | JSRakNet is the first up to date and fully working raknet implementation written in Javascript to run a Minecraft PE server, designed mainly for JSPrismarine, but the implementation offers a general use
+ | Javascript
+ | MIT
+ | Yes
+ |-
+ ! [https://github.com/jython234/JRakLibPlus JRakLibPlus]
+ | A library for easy creation of RakNet servers, based on RakLib and JRakLib.
+ | Java
+ | LGPL
+ | No
+ |-
+ ! [https://github.com/pmmp/RakLib RakLib]
+ | RakNet server implementation written in PHP. This library is very lightweight on actual implementation - it provides the bare minimum to get a Minecraft Pocket Edition server functional. It only currently provides server functionality, and does not support most RakNet features.
+ | PHP
+ | GPL
+ | Yes
+ |-
+ ! [https://github.com/Palethia/RakNet RakNet]
+ | Palethia RakNet is a PHP implementation of the RakNet networking library, providing both server and client functionality for fast, reliable communication. it enables easy setup of server-client interactions using RakNet’s efficient networking protocols.
+ | PHP
+ | GPL-3.0
+ | Yes
+ |-
+ ! [https://www.npmjs.com/package/raknet/ raknet]
+ | UDP network library that follows the RakNet protocol for Node.js
+ | Javascript
+ | MIT
+ | No
+ |-
+ ! [https://pypi.org/project/PyRakLib/ PyRakLib]
+ | PyRakLib is a networking library that follows the RakNet protocol for MCPE. It is ported from the PHP library RakLib. 
+ | Python
+ | GPL
+ | No
+ |-
+ ! [https://github.com/b23r0/rust-raknet rust-raknet]
+ | RakNet Protocol implementation by Rust. 
+ | Rust
+ | MIT
+ | Yes
+ |-
+ |-
+ ! [https://github.com/JoseLuisHD/RakNet RakNet]
+ | Simplified RakNet Implementation in C# for game networking 
+ | C#
+ | MIT
+ | Yes
+ |-
+ ! [https://github.com/mfdgaming/raknet.py RakNet.Py]
+ | Mojang RakNet Protocol version 5 implementation in Python intended for use with MCPE Alpha versions
+ | Python
+ | GPL
+ | No
+ |-
+ ! [https://github.com/facebookarchive/RakNet Raknet] (official)
+ | The official implementation. Outdated and mostly for reference purposes. May not work with the latest Bedrock.
+ | C++
+ | BSD
+ | No
+ |}
+
+== Data types ==
+
+{| class="wikitable"
+ |-
+ !
+ ! Size (Bytes)
+ ! Range
+ ! Notes
+ |-
+ ! byte
+ | 1
+ | 0 to 255
+ |
+ |-
+ ! Long
+ | 8
+ | -2^63 to 2^63-1
+ | Signed 64-bit Integer
+ |-
+ ! Magic
+ | 16
+ | <code>00ffff00fefefefefdfdfdfd12345678</code>
+ | Always those hex bytes, corresponding to RakNet's default OFFLINE_MESSAGE_DATA_ID
+ |-
+ ! short
+ | 2
+ | -32768 to 32767
+ | 
+ |-
+ ! unsigned short
+ | 2
+ | 0 to 65535
+ | 
+ |-
+ ! string
+ | unsigned short + string
+ | N/A
+ | class="col3" | Prefixed by a short containing the length of the string in characters. It appears that only the following ASCII characters can be displayed: !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+ |-
+ ! boolean 
+ | 1
+ | 0 to 1
+ | True is encoded as <code>0x01</code>, false as <code>0x00</code>. 
+ |-
+ ! address
+ | 7 or 29
+ | 
+ | 1 byte for the IP version (4 or 6), followed by (for IPv4) 4 bytes for the IP and an unsigned short for the port number or (for IPv6) an unsigned short for the address family, an unsigned short for the port, 4 bytes for the flow info, 16 bytes for address and 4 bytes for scope id
+ |-
+ ! uint24le
+ | 3
+ | 
+ | 3-byte little-endian unsigned integer
+ |-
+ ! Int
+ | 4
+ | -2147483648 to 2147483647
+ | Signed little-endian 32-bit Integer
+ |}
+
+== Handshake sequence ==
+
+# C→S: [[#Open Connection Request 1|Open Connection Request 1]]
+# S→C: [[#Open Connection Reply 1|Open Connection Reply 1]]
+# C→S: [[#Open Connection Request 2|Open Connection Request 2]]
+# S→C: [[#Open Connection Reply 2|Open Connection Reply 2]]
+
+From here on, the RakNet connection is established and all RakNet messages are contained in a [[#Frame Set Packet|Frame Set Packet]].
+
+# C→S: [[#Connection Request|Connection Request]]
+# S→C: [[#Connection Request Accepted|Connection Request Accepted]]
+# C→S: [[#New Incoming Connection|New Incoming Connection]]
+
+Next packets should be [[#Game Packet|Game Packet]]
+
+== Packets ==
+
+=== Unconnected Ping ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x01, 0x02
+ | Time
+ | Long
+ | 
+ |-
+ | MAGIC
+ | magic
+ | 
+ |-
+ | Client GUID
+ | Long
+ | 
+ |}
+
+This is the first RakNet message sent by the client to a RakNet server. <code>0x01</code> is sent almost every second if the client is on the server list menu and every 4-5 seconds if the client is in-game.
+<code>0x02</code> is only replied to if there are open connections to the server. '''Note:''' as of 0.15.6 it seems that the game refreshes it's LAN world list every 4-5 seconds, however it seems the game will still ping in 1 second intervals.<br>
+This packet should be responded to with unconnected Pong.
+
+=== Unconnected Pong ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x1c
+ | Time
+ | Long
+ | 
+ |-
+ | Server GUID
+ | Long
+ | 
+ |-
+ | MAGIC
+ | magic
+ | 
+ |-
+ | Server ID string
+ | string
+ | Used for the MOTD. See below for details.
+ |}
+
+Unconnected Pong message is sent by the server to the client in response to the Unconnected Ping message. It contains various data that is sent to the client such as MOTD, number of players, max player count, etc. The format is given below:
+
+'''Server ID string format'''
+
+For Minecraft Bedrock this is separated by semicolons and uses the following format:<br>
+<code>Edition (MCPE or MCEE for Education Edition);MOTD line 1;Protocol Version;Version Name;Player Count;Max Player Count;Server Unique ID;MOTD line 2;Game mode;Game mode (numeric);Port (IPv4);Port (IPv6);</code><br>
+Example:<br>
+<code>MCPE;Dedicated Server;390;1.14.60;0;10;13253860892328930865;Bedrock level;Survival;1;19132;19133;</code><br>
+Result:<br>
+[[File:Server ID_String Example.png]]
+
+The Game mode and Game mode (numeric) values seem to not be used by the client.
+
+=== Connected Ping ===
+
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | 0x00
+ | Time
+ | Long
+ | 
+ |}
+
+This is the first packet sent in the Encapsulated Frame Set Packet by the client to the server. It is sent with the reliability type Unreliable so it can be handled immediately by the server.
+It is used for calculating the average ping between the client and the server.
+
+=== Connected Pong ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x03
+ | Ping Time
+ | Long
+ | 
+ |-
+ | Pong Time
+ | Long
+ | 
+ |}
+
+Connected Pong message is sent in response to the Connected Ping message with reliability type set to Unreliable so it can be handled immediately by the client.
+
+=== Open Connection Request 1 ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x05
+ | Magic
+ | MAGIC
+ | 
+ |-
+ | Protocol version
+ | byte
+ | Currently 11
+ |-
+ | MTU
+ | Zero padding
+ | The MTU sent in the response appears to be somewhere around the size of this padding + 46 (28 udp overhead, 1 packet id, 16 magic, 1 protocol version). This padding seems to be used to discover the maximum packet size the network can handle.
+ |}
+
+The client sends these to the target server with ever decreasing MTU until the server responds. This is used to discover the MTU size for the connection. According to the official docs, "The MTU size is the maximum size of a packet RakNet will generate", and "if you set the MTU size larger than your or any router along the network path takes, then the network will split the packet at best, or drop it at worst", so this process of sending decreasingly padded packets (compensating for the size of the packet itself and UDP overhead, which together make 46 bytes) seem to be used to discover the maximum packet size the network can handle. See the [http://www.jenkinssoftware.com/raknet/manual/programmingtips.html official documentation page] for more info about the MTU size. If the RakNet protocol does not match your own, respond with the Incompatible protocol packet.<br><br>
+You should always respond to the first of these packets that you receive with Open Connection Reply 1, containing an MTU size of the amount of padding you received in bytes plus 46.
+
+=== Open Connection Reply 1 ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x06
+ | Magic
+ | MAGIC
+ | 
+ |-
+ | Server GUID
+ | Long
+ | 
+ |-
+ | Use security
+ | boolean
+ | If true, a cookie can be specified after to prevent source IP spoofing
+ |-
+ | Cookie
+ | Int
+ | Only if use security; a cookie to be sent back by the client in Open Connection Request 2
+ |-
+ | MTU
+ | Unsigned short
+ | see Open Connection Request 1
+ |}
+
+=== Open Connection Request 2 ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x07
+ | Magic
+ | MAGIC
+ | 
+ 
+|-
+ | Cookie
+ | Int
+ | Only present if a cookie was provided by the server in Open Connection Reply 1
+ |-
+ | Has security challenge
+ | boolean
+ | Only present if a cookie was provided by the server in Open Connection Reply 1
+ |-
+ | Server Address
+ | address
+ | 
+ 
+|-
+ | MTU
+ | short
+ | 
+ 
+|-
+ | Client GUID
+ | Long
+ | 
+ |}
+
+=== Open Connection Reply 2 ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x08
+ | Magic
+ | MAGIC
+ | 
+ |-
+ | Server GUID
+ | Long
+ | 
+ |-
+ | Client Address
+ | address
+ | 
+ |-
+ | MTU
+ | short
+ | 
+ |-
+ | Encryption enabled
+ | boolean
+ | 
+ |}
+
+=== Connection Request ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x09
+ | GUID
+ | Long
+ | 
+ |-
+ | Time
+ | Long
+ | 
+ |-
+ | Use security
+ | boolean
+ | 
+ |}
+
+=== Connection Request Accepted ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x10
+ | Client address
+ | address
+ | 
+ |-
+ | System index
+ | short
+ | Unknown what this does. 0 works as a value.
+ |-
+ | Internal IDs
+ | 10x address
+ | Unknown what these do. 255.255.255.255:19132 for all of them seems to work, any other address will probably work as well.
+ |-
+ | Request time
+ | Long
+ | 
+ |-
+ | Time
+ | Long
+ | 
+ |}
+
+=== New Incoming Connection ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x13
+ | Server address
+ | address
+ | 
+ |-
+ | Internal address
+ | 20x address
+ | Unknown what this is used for.
+ |-
+ |-
+ | Incoming Timestamp
+ | Long
+ | 
+ |-
+ |-
+ | Server Timestamp
+ | Long
+ | 
+ |-
+ |}
+
+=== Disconnect ===
+{| class="wikitable"
+ ! Packet ID
+ |-
+ |0x15
+ |-
+ |}
+
+=== Incompatible Protocol ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x19
+ | Protocol
+ | byte
+ | 
+ |-
+ | Magic
+ | MAGIC
+ | 
+ |-
+ | Server GUID
+ | Long
+ | 
+ |-
+ |}
+
+=== Unconnected Ping ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x01, 0x02
+ | Time
+ | Long
+ | 
+ |-
+ | GUID
+ | Long
+ | 
+ |}
+
+=== Frame Set Packet ===
+{| class="wikitable"
+ ! Packet ID
+ !colspan="3"| Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="11"| 0x80..0x8d
+ |colspan="3"| Sequence number
+ | uint24le
+ | 
+ |-
+ |rowspan="10"| Frames
+ |colspan="2"| Flags
+ | byte
+ | Top 3 bits are reliability type, fourth bit is 1 when the frame is fragmented and part of a compound.
+ |-
+ |colspan="2"| Length IN BITS
+ | unsigned short
+ | Length of the body in bits.
+ |-
+ |colspan="2"| Reliable frame index
+ | uint24le
+ | only if reliable
+ |-
+ |colspan="2"| Sequenced frame index
+ | uint24le
+ | only if sequenced
+ |-
+ |rowspan="2"| Order
+ | Ordered frame index
+ | uint24le
+ |rowspan="2"| only if ordered
+ |-
+ | Order channel
+ | byte
+ |-
+ |rowspan="3"| Fragment
+ | Compound size
+ | int
+ |rowspan="3"| only if fragmented
+ |-
+ | Compound ID
+ | short
+ |-
+ | Index
+ | int
+ |-
+ | Body
+ | ceil(length/8) bytes
+ |}
+
+The reliability types are as follows:
+
+{| class="wikitable"
+! style="text-align: center; font-weight: bold;" | ID
+! style="font-weight: bold;" | Name
+! style="text-align: center; font-weight: bold;" | Reliable
+! style="text-align: center; font-weight: bold;" | Ordered
+! style="text-align: center; font-weight: bold;" | Sequenced
+|-
+| style="text-align: center;" | 0
+| unreliable
+| style="text-align: center;" | 
+| style="text-align: center;" | 
+| style="text-align: center;" | 
+|-
+| style="text-align: center;" | 1
+| unreliable sequenced
+| style="text-align: center;" | 
+| style="text-align: center;" | x
+| style="text-align: center;" | x
+|-
+| style="text-align: center;" | 2
+| reliable
+| style="text-align: center;" | x
+| style="text-align: center;" | 
+| style="text-align: center;" | 
+|-
+| style="text-align: center;" | 3
+| reliable ordered
+| style="text-align: center;" | x
+| style="text-align: center;" | x
+| style="text-align: center;" | 
+|-
+| style="text-align: center;" | 4
+| reliable sequenced
+| style="text-align: center;" | x
+| style="text-align: center;" | x
+| style="text-align: center;" | x
+|-
+| style="text-align: center;" | 5
+| unreliable (+ ACK receipt)
+| style="text-align: center;" | 
+| style="text-align: center;" | 
+| style="text-align: center;" | 
+|-
+| style="text-align: center;" | 6
+| reliable (+ ACK receipt)
+| style="text-align: center;" | x
+| style="text-align: center;" | 
+| style="text-align: center;" | 
+|-
+| style="text-align: center;" | 7
+| reliable ordered (+ ACK receipt)
+| style="text-align: center;" | x
+| style="text-align: center;" | x
+| style="text-align: center;" | 
+|}
+
+Sequenced implies ordered.
+
+=== Game Packet ===
+{| class="wikitable"
+ ! Packet ID
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | 0xfe
+ | Body
+ | bytes
+ | Single packet of the GAME protocol. The packet is usually compressed.
+ |}
+
+=== NACK ===
+{| class="wikitable"
+! style="font-weight: bold;" | Packet ID
+! colspan="3" style="font-weight: bold;" | Field Name
+! style="font-weight: bold;" | Field Type
+! style="font-weight: bold;" | Notes
+|-
+| rowspan="5" | 0xa0
+| colspan="3" | Record count
+| short
+| 
+|-
+| rowspan="4" | Record
+| colspan="2" | Single Sequence number?
+| boolean
+| False for range, True for no range
+|-
+| No Range
+| Sequence number
+| uint24le
+| rowspan="3" | Number of sequence to not acknowledge
+|-
+| rowspan="2" | Range
+| Start Sequence number
+| uint24le
+|-
+| End Sequence number
+| uint24le
+|}
+
+=== ACK ===
+{| class="wikitable"
+! style="font-weight: bold;" | Packet ID
+! colspan="3" style="font-weight: bold;" | Field Name
+! style="font-weight: bold;" | Field Type
+! style="font-weight: bold;" | Notes
+|-
+| rowspan="5" | 0xc0
+| colspan="3" | Record count
+| short
+| 
+|-
+| rowspan="4" | Record
+| colspan="2" | Single Sequence number?
+| boolean
+| False for range, True for no range
+|-
+| No Range
+| Sequence number
+| uint24le
+| rowspan="3" | Number of sequence to acknowledge
+|-
+| rowspan="2" | Range
+| Start Sequence number
+| uint24le
+|-
+| End Sequence number
+| uint24le
+|}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Bedrock Edition]]
+{{license wiki.vg}}

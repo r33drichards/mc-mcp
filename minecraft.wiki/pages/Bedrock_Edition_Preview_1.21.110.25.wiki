@@ -1,0 +1,185 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.11025.0<br>'''Android''': 1.21.110.25
+| image = Bedrock 1.21.110.25 PatchNotes.jpg
+| image2 = Bedrock 1.21.110.25.png
+| build = 36173493
+| editorver = 1.1.0
+| versioncode = '''Android''':<br />
+952111025 (armeabi-v7a, 34)<br />
+962111025 (x86, 34)<br />
+972111025 (arm64-v8a, 34)<br />
+982111025 (x86_64, 34)
+| date = August 19, 2025
+| server = 1.21.110.25
+| serverdl = '''Server'''
+*[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.110.25.zip Windows]
+*[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.110.25.zip Linux]
+| parent = 1.21.111
+| prevparent = 1.21.101
+| prev = Preview 1.21.110.24
+| next = Preview 1.21.110.26
+| nextparent = 1.21.112
+}}
+<onlyinclude>
+
+'''Beta 1.21.110.25''' (ChromeOS, Android) or '''Preview 1.21.110.25''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fifth beta/''Preview'' version for [[Bedrock Edition 1.21.111]]{{note|1.21.110 is not a version of the game and its betas are instead part of 1.21.111.|name=1.21.111}}, released on August 19, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/38927463808269-Minecraft-Beta-Preview-1-21-110-25|title=Minecraft Beta & Preview - 1.21.110.25|website=Minecraft Feedback|date=August 19, 2025}}</ref> which fixes some bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Copper Door]]'''
+* Copper doors can now be opened by [[villager]]s and [[copper golem]]s.
+
+'''[[Chest]]'''
+* Double chests now visually open when a copper golem opens the second half.
+
+'''[[Lightning Rod]]'''
+* Removed a white line of pixels on the edge of exposed and weathered copper lightning rods.
+
+'''[[Shelf]]'''
+* Shelves now produce the same particles as their [[stripped log]] counterparts when they break.
+* Items in the shelf will render in the middle of the shelf.
+* Updated the sizes of many items in the shelf to better fit the shelf.
+
+=== General ===
+[[File:New UI - Pause Menu "Social" Tab - People Screen Menu (Bedrock Preview 1.21.110.25).png|thumb|right|The redesigned social drawer.]]
+'''[[Panorama]]'''
+* Updated the panorama to show a scene with copper golems in a village.{{note|These changes has not been mentioned in the changelog.|name=outsidechangelog}}
+
+'''[[Pause menu]]'''
+* Removed the player list, permissions, and "Invite to Game" button and renamed the "Friends" button to "Social", which opens an updated player list with new buttons to open the player permissions screen, view each player's permissions, invite players, and manage some options for a player.{{note|name=outsidechangelog}}
+
+=== Mobs ===
+'''[[Copper Golem]]'''
+* Copper golems can now pathfind through 1 block high passages.
+* The copper golem will no longer interact with chests and copper chests that it cannot see.
+* Chests now close immediately when a copper golem starts panicking while looking inside.
+
+=== Technical ===
+'''AI Goals'''
+* The {{cd|minecraft:behavior.transport_items}} AI goal now checks that the entity can see the container it tries to interact with:
+** It checks once before starting to queue at the container and once before starting to interact.
+** If it does not see the container, it fails to open it.
+
+'''[[API]]'''
+* Moved {{cd|LootTableManager}} API from beta into 2.2.0.
+* Changed the following methods on {{cd|Dimension}} to have the read-only privilege so they can be called in "before" events:
+** {{cd|getWeather}}, {{cd|findClosestBiome}}, {{cd|getBlockAbove}}, {{cd|getBlockBelow}}, {{cd|getTopmostBlock}},
+** {{cd|getLightLevel}}, {{cd|getSkyLightLevel}}.
+* Moved {{cd|ItemBookComponent}} from {{cd|beta}} to {{cd|V2.2.0}}.
+* Moved {{cd|BookError}} from {{cd|beta}} to {{cd|V2.2.0}}.
+* Moved {{cd|BookPageContentError}} from {{cd|beta}} to {{cd|V2.2.0}}.
+* Moved {{cd|BookErrorReason}} from {{cd|beta}} to {{cd|V2.2.0}}.
+* Moved {{cd|InvalidItemStackError}} from {{cd|beta}} to {{cd|V2.2.0}}.
+* Camera
+** Moved {{cd|setFov(fovCameraOptions?: CameraFovOptions): void}} from {{cd|beta}} to {{cd|V2.2.0}}.
+*** Moved {{cd|setLore(loreList?: (RawMessage | string)[]): void}} from {{cd|beta}} to {{cd|V2.2.0}}.
+*** Moved {{cd|getRawLore(): RawMessage[]}} from {{cd|beta}} to {{cd|V2.2.0}}.
+** {{cd|ContainerSlot}}
+*** Moved {{cd|setLore(loreList?: (RawMessage | string)[]): void}} from {{cd|beta}} to {{cd|V2.2.0}}.
+*** Moved {{cd|getRawLore(): RawMessage[]}} from {{cd|beta}} to {{cd|V2.2.0}}.
+
+'''[[Biome]]s'''
+* Custom biomes are now out of experimental.
+* Added {{cd|underwater_music}} parameter to {{cd|minecraft:biome_music}} client biome component that enables the underwater music for the biome.
+
+'''Experimental'''
+* Camera custom FOV command no longer requires the "Experimental Creator Cameras" experimental toggle.
+* The experimental "Custom Biomes" option has been removed.
+** This change has not been mentioned in the changelog.
+
+== Experimental ==
+These additions and changes are accessible by enabling the Beta APIs, and Upcoming Creator Features [[experimental]] toggles.
+
+=== Additions ===
+==== Technical ====
+'''[[API]]'''
+* Added new method {{cd|isChunkLoaded}} to {{cd|Dimension}} which returns true if a chunk at an area is loaded and ticking.
+* Added enum {{cd|HeldItemOption}} to {{cd|beta}} for {{cd|PlayerSwingEventOptions}}. This specifies options related to the item currently being held at the time of a player swing:
+<syntaxhighlight lang="c++">
+export enum HeldItemOption {  
+    AnyItem = 'AnyItem',       
+    NoItem = 'NoItem'  
+}
+</syntaxhighlight>
+* Added interface {{cd|PlayerSwingEventOptions}} to {{cd|beta}}. Event options/filters for {{cd|PlayerSwingStartAfterEvent}}. - Field {{cd|heldItemOption?: HeldItemOption}}
+** Added class {{cd|PlayerSwingStartAfterEvent}} to {{cd|beta}}. This contains information regarding a player starting to swing their arm:
+*** Field {{cd|heldItemStack?: ItemStack}}.
+*** Field {{cd|player: Player}}.
+** Added class {{cd|PlayerSwingStartAfter.EventSignal}} to {{cd|beta}}. This event is fired at the start of a player's swing (e.g. attacking, using an item, interacting). It can be subscribed/unsubscribed via {{cd|world.afterEvents.playerSwingStart}} and optionally filtered by passing in {{cd|PlayerSwingEventOptions}}.
+
+'''[[Block]]s'''
+*Added component {{cd|minecraft:redstone_producer}} behind the Upcoming Creator Features toggle.
+
+'''Components'''
+* Added new block component {{cd|minecraft:flower_pottable}}:
+** It is an empty component defined as such: {{cd|minecraft:flower_pottable: <nowiki>{}</nowiki>}}.
+** When the component is present on the block, > a player can interact with an empty flowerpot when holding the block in order to embed it.
+** Similar to other Vanilla pottable blocks, a player can remove the potted block by interacting with the pot with an empty hand.
+** The component requires the Upcoming Creator Features toggle.
+** Pottable not potable.
+* Added new block component {{cd|minecraft:embedded_visual}}:
+** The component has two required fields, {{cd|geometry}} and {{cd|material_instances}}, similarly to {{cd|minecraft:item_visual}}.
+** When the component is present on the block, it defines which {{cd|geometry}} and {{cd|material_instances}} to use when the block is embedded into another block, eg. into a flowerpot.
+*** If the component is not present, embedded blocks fallback to their innate {{cd|geometry}} and {{cd|material_instances}}.
+*** The component cannot be defined in the {{cd|permutations}} section; only one embedded visual can be achieved per block type.
+** The component requires the Upcoming Creator Features toggle.
+* Added new field {{cd|embedded}} to the {{cd|item_display_transforms}} object:
+** The field defines the overall transformation this geometry should be subject to when embedded into a block, eg. a flowerpot.
+** If the field is not defined, the default transformation is a 0.75x scale, similar to the one applied to most Vanilla flowers.
+
+=== Changes ===
+==== Technical ====
+'''[[API]]'''
+* Expanded {{cd|LootTableManager}} {{cd|beta}} functionality, which now allows for loot table discovery via the new {{cd|getLootTable}} method.
+
+'''Components'''
+* Modified {{cd|minecraft:material_instances}} to support weighted variations textures with these requirements:
+** {{cd|format_version}} must be greater than or equal to {{cd|1.21.110}}.
+** World must have "Upcoming Creator Features" experiment enabled.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.110.25 Preview
+|;old
+|136930|{{cmd|getlocalplayername}} and {{cmd|geteduclientinfo}} commands are available outside of Education Edition
+|181306|Paintings randomly breaking after reloading chunks
+|221572|Husk appears with a white box around its head in the official Classic Texture Pack
+|222113|Ambient Music only playing from one spot in the world
+|223559|3D export from structure blocks shows missing texture
+|224403|After killing the ender dragon in the End, it freezes, preventing me from getting the egg and leaving the End
+|226102|{{cd|c{{=}}-1}} target selector is broken
+|;dev
+|225203|Z-fighting when lightning rod is placed on top of the copper golem statues in their default pose
+|225325|Copper golem can become stuck under shelf blocks
+|225443|Entering a certain chunk crashes the whole game
+|225497|Copper chest item models don't show the handle
+|226140|Zombies and skeletons spawned in any way outside of ominous trials will never spawn with diamond armour
+|226223|Placing torches on the back of shelves inconsistent
+|226262|Copper golems don't drop poppy when killed or when sheared
+|226269|Copper bars texture is incorrect
+|226623|Shelves make stone stepping sounds
+|otherissuescount=4}}
+'''Other'''
+*Fixed an issue where a default surface builder was not chosen leading to bare surfaces in some biomes.
+*Fixed a bug where setting the precipitation of a biome to 0 in {{cd|biome.json}} files would not stop rain from occurring in the biome.
+*Fixed a bug where putting items in a bundle as it is being transferred from one Hopper to another would delete the item.
+*Fixed a crash that occurred when treatment packs were removed while loading game or loading into a world.</onlyinclude>
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.111 betas]]
+
+[[de:Bedrock Edition beta 1.21.110.25]]
+[[es:Bedrock Edition Preview 1.21.110.25]]
+[[pt:Edição Bedrock Preview 1.21.110.25]]
+[[ru:Preview 1.21.110.25 (Bedrock Edition)]]
+[[uk:Preview 1.21.110.25 (Bedrock Edition)]]
+[[zh:基岩版1.21.110.25]]

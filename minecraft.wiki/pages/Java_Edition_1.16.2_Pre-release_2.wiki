@@ -1,0 +1,108 @@
+{{Infobox version
+|title=Minecraft 1.16.2 Pre-release 2
+|image=1.16.2-pre2.jpg
+|image2=Java Edition 1.16.2 Pre-release 2.png
+|edition=Java
+|type=Pre-release
+|date=August 5, 2020
+|jsonhash=7940f399b0a06f848ce065703796e1c343ca78e3
+|jsonfile=1.16.2-pre2
+|clienthash=ce5762620a698b464d07a6c733cd66c7fa8072a1
+|serverhash=d2cae287324631b2b4bfa609dd01c63cd6d4b78d
+|clientmap=bb48f3ad38b3a3f174ff9fbf70dda00a66dd71da
+|servermap=544cc22c04e4d104535a596289c4bf08c7c0efa5
+|parent=1.16.2
+|prevparent=1.16.1
+|prev=1.16.2 Pre-release 1
+|next=1.16.2 Pre-release 3
+|nextparent=1.16.3
+}}<onlyinclude>
+'''1.16.2 Pre-release 2''' (known as '''1.16.2-pre2''' in the [[launcher]]) is the second pre-release for [[Java Edition 1.16.2]], released on August 5, 2020,<ref>{{Mcnet|minecraft-1-16-2-pre-release-2|Minecraft 1.16.2 Pre-Release 2|August 5, 2020}}</ref> which changes the result of inter-dimensional teleporting, allows nether roots to be broken by hand, and fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Crimson Roots|Crimson]] and [[warped roots]]'''
+* Now drop when broken without [[shears]] again.
+
+'''Nether vegetation'''
+* No longer catches [[fire]].
+
+=== Items ===
+'''[[Pufferfish (item)|Pufferfish]]'''
+* Now gives [[Nausea]] I instead of Nausea II when eaten.
+** This has no practical effect in-game as the level of the Nausea effect does not change anything.
+
+=== World generation ===
+'''[[Badlands]]'''
+* Plateaus generate more frequently at the edges of badlands.
+
+=== Command format ===
+'''{{cmd|execute}}'''
+* {{cmd|execute in}} now respects dimension scaling for relative and local coordinates: the execution position (only the X/Z part) of a command is divided by 8 when traveling from the Overworld to the Nether, and is multiplied by 8 when vice versa.
+** If a value is added after the tilde, that value is added only after the new scaled position is calculated. For instance, <code>~5</code> will first scale the player's current position (multiplying by eight when traveling to the Overworld or dividing by eight when going to the Nether) before adding five to that outputted value.
+** For example, if a player at position {{cd|(16,64,16)}} in Overworld runs command {{cmd|execute in minecraft:the_nether run tp ~ ~ ~}}, the player would now be teleported to {{cd|(2,64,2)}} in the Nether.
+*** Relatively, if a player at position {{cd|(2,64,2)}} in the Nether runs command {{cmd|execute in minecraft:overworld run tp ~ ~ ~}}, the player would now be teleported to {{cd|(16,64,16)}} in Overworld.
+*** If a player at position {{cd|(80,64,80)}} in Overworld runs command {{cmd|execute in minecraft:the_nether run tp ~ ~ ~5}}, the player would now be teleported to {{cd|(10,64,15)}} in the Nether.
+*** If a player at position {{cd|(16,64,16)}} in Overworld runs command {{cmd|execute in minecraft:the_nether run tp 16 64 16}}, the player would still be teleported to {{cd|(16,64,16)}} in the Nether.
+** The behavior before this version can be done by running command {{cmd|execute in <target dimension> positioned as @s run tp @s ~ ~ ~}}.
+** Applies to [[custom dimension]]s as well.
+
+=== General === 
+'''[[Custom dimension]] type'''
+* Replaced {{nbt|bool|shrunk}} with {{nbt|float|coordinate_scale}}.
+** For example, {{nbt|float|coordinate_scale}} for {{cd|minecraft:overworld}} is 1.0, for {{cd|minecraft:the_nether}} is 8.0, thus the {{cmd|execute in}} command to go to the Overworld actually multiplies the execution position (only the X/Z part) with {{cd|8.0/1.0}} ({{cd|1.0/8.0}} when vice versa), which is 8 (0.125 when vice versa).
+** If there are two custom dimension type {{cd|custom:a}} with {{cd|coordinate_scale}} set to 2.33, type {{cd|custom:b}} set to 3.14, then the {{cmd|execute in}} command to go to {{cd|custom:a}} would multiply the execution position (only the X/Z part) with {{cd|3.14/2.33}} ({{cd|2.33/3.14}} when vice versa).
+
+== Fixes ==
+{{Fixes|fixedin=1.16.2 Pre-release 2
+|;From released versions before 1.16
+|69876|Pistons at Y{{=}}1 do not push downwards, and at Y{{=}}254 do not push upwards.
+|124320|Endermen can pick up and place snowless snowy grass blocks.
+|130558|Item frames cannot be emptied if gamerule {{cd|doEntityDrops}} is set to false.
+|134084|If gamerule {{cd|sendCommandFeedback}} is disabled, {{cmd|msg}} or {{cmd|tell}} do not display the message to the sender.
+|136553|Dyes in Creative inventory are in reverse order.
+|152037|Powered, activator, and detector rails are deleted when pushed or pulled onto a block they cannot be placed on.
+|169203|Sloped redstone type rail not dropping item when pushed by piston to a spot without adjacent block.
+|177684|Cocoa beans, bone meal, and lapis lazuli are placed among the dyes in the Creative inventory.
+|177733|Powered and activator rail duplication.
+|196473|Pufferfish gives Nausea II instead of the maximum of Nausea I.
+|;From 1.16
+|176491|Nylium randomly catches fire from lava, and burns infinitely.
+|187357|Strongholds will not generate in {{cd|floating_islands}} or {{cd|caves}} preset.
+|189736|{{cd|distance}} within a predicate no longer works.
+|190552|Demo mode resets position and inventory upon launch.
+|190859|{{cd|floating_islands}} or {{cd|caves}} buffet worlds no longer generate strongholds, and ender eyes do not locate previously-generated strongholds after upgrading to 1.16.
+|;From 1.16.1
+|192136|Lava damage works differently than in previous versions.
+|192236|Endermen can place blocks on top of item frames on the floor.
+|192371|Paintings in the same block space pop off when chunk loads.
+|192845|Block event lag in 1.16 is excessive.
+|195851|Hat layer on helmets detaches from piglins' heads while bartering.
+|196245|Charged creepers do not always drop their skull if zombie variants are nearby.
+|;dev
+|194867|Minecarts come out the wrong side of a Nether portal and lose momentum when coming back to the Overworld.
+|194953|Custom Biomes are not useable in predicates.
+|195803|Mob kill statistics are formatted in reverse: "N killed you <mob> times."
+|;prev
+|196441|Stonecutter and smithing table recipes are not given after crafting a stack of more than one.
+|196469|{{key|F1}} hides the Nausea green tint.
+|196653|Creating multiple datapack dimensions that reference the same {{cd|dimension_type}} string causes "unregistered dimension" crash.
+|196743|Custom and modified biomes do not work in the Overworld.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|Nszq32PuHbc}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:1.16.2-pre2]]
+[[es:Java Edition 1.16.2 Pre-release 2]]
+[[fr:Édition Java 1.16.2 Pre-release 2]]
+[[ja:Java Edition 1.16.2 Pre-release 2]]
+[[pt:Edição Java 1.16.2 Pre-release 2]]
+[[ru:1.16.2 Pre-release 2 (Java Edition)]]
+[[zh:Java版1.16.2-pre2]]

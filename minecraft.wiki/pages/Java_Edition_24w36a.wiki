@@ -1,0 +1,245 @@
+{{Infobox version
+| title = Minecraft 24w36a
+| image = 24w36a.jpg
+| image2 = Java Edition 24w36a.png
+| edition = Java
+| type = Snapshot
+| date = September 4, 2024
+| jsonhash = d92c822631962d180baa23285397fb46a8fc2b4e
+| clienthash = 28ff7dc5f3a5e1759bfc4e05eab3590b23c30c6f
+| clientmap = b9b745676050e51b9996223ba8383e3f5bb9e851
+| serverhash = 30663a50aaf407751ae9e704758364ed9433206d
+| servermap = 7124c6d09c711626b75d2e45c2f8d82e7fe70bbf
+| parent = 1.21.2
+| prevparent = 1.21.1
+| prev = 24w35a
+| next = 24w37a
+| nextparent = 1.21.3
+}}<onlyinclude>
+
+'''24w36a''' is the fourth [[snapshot]] for [[Java Edition 1.21.2]], released on September 4, 2024.<ref>{{snap|24w36a|September 4, 2024}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Data component format]]'''
+* Added <code>minecraft:item_model</code> item stack component.
+<div class="treeview">
+:* {{nbt|string|minecraft:item_model}}: The item model in the <code>namespace:id</code> format, which references model <samp>/assets/<namespace>/models/item/<id></samp>
+</div>
+:* e.g. <code>item_model="minecraft:diamond_sword"</code>
+
+
+* Added <code>minecraft:equippable</code> item stack component.
+<div class="treeview">
+:* {{nbt|compound|minecraft:equippable}}: If present, this item can be equipped in the specified slot.
+:** {{nbt|string|slot}}: The slot to put the item on. Can be one of <code>head</code>, on<code>chest</code>, <code>legs</code>, <code>feet</code>, <code>body</code>, <code>mainhand</code>, or <code>offhand</code>. 
+:** {{nbt|string}}{{nbt|compound|equip_sound}}: Sound event to play when the item is equipped. Defaults to <code>item.armor.equip_generic</code>
+:*** {{nbt inherit/sound event|sounds}}
+:** {{nbt|string|model}}: The equipment model to use when equipped in <code>namespace:id</code> format. If not specified, falls back to rendering as the item itself when in the head, offhand or mainhand slot (or no rendering if not applicable).{{info needed|Which directory does it refer to?}}
+:** {{nbt|string}}{{nbt|list|allowed_entities}}: Entity ID, entity tag, or list of entity IDs to limit which entities can equip this item. Defaults to all entities.
+:** {{nbt|boolean|dispensable}}: Whether the item can be dispensed by using a [[dispenser]].<ref group="note">If the item type has special dispenser behavior, this has no effect.</ref> Defaults to <code>true</code>.
+</div>
+:* e.g. <code>equippable={slot:'chest',equip_sound:'item.armor.equip_chain'}</code>.
+
+
+* Added <code>minecraft:glider</code> item stack component.
+<div class="treeview">
+:* {{nbt|compound|minecraft:glider}}: If present, this item allows players to glide (as with [[elytra]]) when equipped.
+</div>
+:*e.g. <code>glider={}</code>.
+
+
+* Added <code>minecraft:tooltip_style</code> item stack component.
+<div class="treeview">
+:* {{nbt|string|minecraft:tooltip_style}}: The custom sprites for the [[tooltip]] background and frame in <code>namespace:id</code> format.{{info needed|Which directory does it refer to?}}
+
+</div>
+:*e.g. <code>tooltip_style='minecraft:special_sword'</code>.
+
+
+'''[[Predicates]]'''
+* Added a new field in the player sub-predicate, <code>input</code>, that can be used to detect which movement keys the player is pressing.
+** If specified the predicate matches with the corresponding keybind that the player is pressing; it supports detecting the following input:
+*** <code>forward</code>: boolean (optional).
+*** <code>backward</code>: boolean (optional).
+*** <code>left</code>: boolean (optional).
+*** <code>right</code>: boolean (optional).
+*** <code>jump</code>: boolean (optional).
+*** <code>sneak</code>: boolean (optional).
+*** <code>sprint</code>: boolean (optional).
+
+'''[[Tag]]s'''
+* Added the <code>bats_spawnable_on</code> block tag.
+** Controls the blocks that bats can spawn on.
+* Added the following item tags:
+** <code>repairs_leather_armor</code>
+** <code>repairs_iron_armor</code>
+** <code>repairs_chain_armor</code>
+** <code>repairs_gold_armor</code>
+** <code>repairs_diamond_armor</code>
+** <code>repairs_netherite_armor</code>
+** <code>repairs_turtle_helmet</code>
+** <code>repairs_wolf_armor</code>
+** Control which items can be used to repair various armor sets.
+* Added the <code>piglin_safe_armor</code> item tag.
+** Controls what items, when worn by a player, prevents [[piglin]]s from getting angry.
+
+== Changes ==
+{{info needed section|
+* Does the tooltip background look any different in this snapshot compared to the last one? If so, can a visual comparison be added?
+* Someone mentioned the tooltip texture not being changeable to a developer on Twitter not long before this snapshot released. Can this post be found and linked here?}}
+=== Mobs ===
+'''[[Dolphin]]'''
+* Baby dolphin now spawns naturally at 5% chance.
+
+'''[[Squid]]'''
+* Squid [[spawn egg]]s now only spawn adult squid.
+** There is a 5% chance of squid spawned in groups in the wild to be a baby.
+
+'''General '''
+* When a [[mob]] converts from one type to another (e.g. [[piglin]] to [[zombified piglin]]), the health of the converted mob is set to the same percentage of max health as the original mob had before conversion.
+* The calculation for the duration of the effect from [[splash potion]]s has been changed. Splash potions thrown at the player's feet now apply the effect for almost the same duration as when thrown at the head.<ref>{{bug|MC-276970}}</ref>
+
+=== General ===
+'''[[Data component format]]'''
+* <code>minecraft:item_name</code>
+** This component is now always present on every item.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>52</code>.
+
+'''[[Model]]s'''
+* All [[Item (entity)|item]] models can now use the <code>broken</code> property in model overrides that was previously limited to just the [[elytra]].
+** This has a value of 1 if the item has 1 durability left, or 0 otherwise.
+* The appearance of equipment when equipped by players or certain mobs can now be customized by defining 'equipment models' in the [[resource pack]].
+** [[Equipment]] model definitions are loaded from <code>assets/<namespace>/models/equipment/<path>.json</code>.
+*** These can then be referenced by the <code>equippable</code> component with a model id of <code>namespace:path</code>.
+** The model definition is an object with fields: <code>wolf_body</code>, <code>horse_body</code>, <code>llama_body</code>, <code>humanoid</code>, <code>humanoid_leggings</code>, <code>wings</code>
+*** All fields are optional, and can be used to specify a list of layers for the given model layer type.
+*** Each field contains list of layer objects:
+**** <code>texture</code>: namespaced texture location for this layer.
+***** <code>namespace:path</code> resolves to <code>assets/<namespace>/textures/entity/equipment/<layer_type>/<path>.png</code>
+**** <code>dyeable</code>: object with fields (optional), specifying how this layer behaves when dyed (in the <code>dyeable</code> item tag, and has <code>dyed_color</code> component)
+***** <code>color_when_undyed</code>: RGB color int (optional)
+***** If specified, this layer is tinted by the color contained in the <code>dyed_color</code> component.
+****** If the item is not dyeable or not dyed, it is tinted based on the color specified by <code>color_when_undyed</code>.
+****** If <code>color_when_undyed</code> is not specified and the item is not dyed, the layer is hidden.
+**** <code>use_player_texture</code>: boolean (default: <code>false</code>), true if this layer texture should be overridden by a texture given by the player.
+***** Only used for <code>wings</code> layers, which overrides with the player's custom elytra texture.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>37</code>.
+* The tooltip background and frame may now be customized by replacing sprites:
+** <code>tooltip/background</code>: The background of the tooltip.
+** <code>tooltip/frame</code>: The frame appearing around the tooltip.
+** Items with a custom <code>tooltip_style</code> component uses sprites with IDs:
+*** <code><namespace>:tooltip/<path>_background</code> and <code><namespace>:tooltip/<path>_frame</code>
+* The <code>nine_slice</code> GUI sprite scaling mode has a new optional boolean (true or false, yes or no) property: <code>stretch_inner</code>.
+** If <code>true</code>, the inner parts of the texture (i.e. not the corners) are stretched instead of tiled.
+** If not specified, defaults to <code>false</code> as before.
+
+'''[[Textures]]'''
+* All equipment-related textures were moved to subfolders of the <samp>textures/entity/equipment</samp> directory.
+** Player armor textures were moved to <samp>textures/entity/equipment/humanoid</samp> and <samp>textures/entity/equipment/humanoid_leggings</samp>
+*** <samp><material>_layer_1</samp> textures were renamed to <samp><material></samp>, and moved into the <samp>humanoid</samp> subdirectory.
+*** <samp><material>_layer_2</samp> textures were renamed to <samp><material></samp>, and moved into the <samp>humanoid_leggings</samp> subdirectory.
+*** <samp>leather_layer_1_overlay</samp> and <samp>leather_layer_2_overlay</samp> textures were renamed to <samp>leather_overlay</samp> in their respective subdirectories.
+** <samp>wolf_armor</samp> and <samp>wolf_armor_overlay</samp> textures have moved to <samp>textures/entity/equipment/wolf_body/</samp> and were renamed to <samp>armadillo_scute</samp> and <samp>armadillo_scute_overlay</samp> respectively.
+** <samp>turtle_layer_1</samp> has been renamed to <samp>turtle_scute</samp>.
+** Llama decor textures were moved to <samp>textures/entity/equipment/llama_body</samp>
+** Horse armor textures were moved to <samp>textures/entity/equipment/horse_body</samp>
+** The elytra texture has been moved to <samp>textures/entity/equipment/wings/elytra</samp>
+* Armor trim textures have also been moved to match the folder structure of the regular <code>equipment</code> textures.
+** Textures in <samp>textures/trims/models/armor</samp> were divided between <samp>textures/trims/entity/humanoid</samp> and <samp>textures/trims/entity/humanoid_leggings</samp>
+** For leggings textures, the <samp>_leggings</samp> suffix is dropped.
+
+'''[[Trim]]s'''
+* All equippable items with an equipment model defined support rendering trims, based on the <code>trim</code> component.
+* Trim textures are loaded from the appropriate folder in the <samp>textures/trims/entity</samp> directory.
+** For example, armor with wolf_body layers fetch trims from <samp>textures/trims/entity/wolf_body</samp>
+
+== Experimental ==
+'''[[Bundle]]s'''
+* When a bundle is used in the hotbar, one group of items is emptied at a time instead of everything being emptied at once.
+
+== Fixes ==
+{{Fixes|fixedin=24w36a
+|;From released versions before 1.21
+|16829|The horse armor model does not show the enchantment glint effect.
+|38022|Order of rendering translucent block faces fails to update with camera position.
+|88967|Most NBT tags are not kept when a mob converts to another mob.
+|92875|Collisionless blocks ignore entities with high velocity.
+|135898|Teams are not retained when a mob converts to another mob.
+|154053|Trader llama spitting far distance when attacked.
+|167242|Bed stays occupied after a lightning turns the villager sleeping in it into a witch.
+|186362|Casting issue: Translucent block rendering breaks down at high distances.
+|196556|When projectiles (such as arrows and tridents) move too fast, they can't be teleported by portals and end gateways.
+|196736|Hoglins break their leash when zombifying, despite zoglins being leashable.
+|196964|Fall damage is reset when an entity converts to another entity.
+|207101|When a lingering potion lands on top of a player/mob, the area effect cloud spawns above the player/mob instead of inside it, rendering the lingering potion useless.
+|230317|Lead disappears when mooshroom cow is sheared.
+|250924|Goat horns are missing sounds.
+|259376|{{cd|ServerboundMovePlayerPacket}}'s xRot can have invalid value.
+|259936|Equipping armor in hand via right-click equips entire stack.
+|261666|Armor given to villagers is lost when they convert to zombie villagers.
+|262598|Tripwire textures in the tripwire hook "{{cd|attached: true}}" state have a wrong black rendering when the tripwire hook is attached to a non-transparent block.
+|269447|Hover text background box cannot be retextured.
+|270183|Lingering potions do not give effects when hit on the target's head.
+|271826|Armor default attribute modifier component can't be removed.
+|;From 1.21
+|273300|Horse armor and wolf armor swap from off-hand to main hand upon pressing the Use Item/Place Block key.
+|;From 1.21.1
+|275919|issues with hit detection/registration in PvP since server switch to 1.21.
+|;dev
+|275228|The player can duplicate items in the Creative hotbar.
+|275239|Item duplication while a screen is opened (Creative mode).
+|275298|Blocks with special collision behavior have a larger detection range than previously.
+|275299|Crafting using {{key|Ctrl}} + Drop key crafts the incorrect amount of items.
+|275344|Sweet berry bushes deal damage inconsistently.
+|275345|Inventory bug that causes items to be constantly shuffled.
+|275418|Feeding baby dolphins won't speed up their growth.
+|275437|Fast moving entities freeze the server which causes watchdog crash.
+|275445|Specifying the size of a target in post effect shaders fails.
+|275450|Player motion data no longer updates while riding another entity.
+|275455|Player motion is no longer retained on relative teleportation.
+|275462|Bats can spawn in unusual places, such as in woodland mansions and beneath trees.
+|275497|The repairable data component does not exist in armor items by default.
+|275537|Sliding down honey blocks is slower than in previous versions.
+|275622|Minecarts with TNT are more volatile than in previous releases.
+|275624|Redstone wire with custom model unexpectedly appears green.
+|275638|It is still possible to go through portals without being teleported when going quickly enough by throwing Riptide tridents.
+|275642|Baby dolphins do not spawn naturally.
+|275655|Entity rotation does not visually update when using the {{cmd|teleport}} command until the world is reloaded.
+|275745|A scoreboard objective with display mode {{cd|below_name}} renders right behind the player's name.
+|275767|Camera is shaky when riding an entity that is being constantly teleported.
+|275770|Guardian beam attacks stay yellow and do not shift colors anymore.
+|276027|Chestplates and boots on armor stands render the helmet overlay texture.
+|276030|The blue highlighted text background for signs is gone.
+|276064|Tall grass generated from bone mealing a grass block will delete the second block above it.
+|;previous
+|276122|Soul sand and magma block bubble columns don't move the player vertically in Creative mode when not flying.
+|276132|Translucency sorting seems to be slightly broken.
+|276179|Zombie villagers don't raise their arms to attack again.
+|276204|Dolphins and axolotls keep trying to swim into the seabed.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|riIq7IPSBRU|Bui5yWP7G8s}}
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w36a]]
+[[es:Java Edition 24w36a]]
+[[fr:Édition Java 24w36a]]
+[[ja:Java Edition 24w36a]]
+[[pt:Edição Java 24w36a]]
+[[ru:24w36a (Java Edition)]]
+[[uk:24w36a (Java Edition)]]
+[[zh:Java版24w36a]]

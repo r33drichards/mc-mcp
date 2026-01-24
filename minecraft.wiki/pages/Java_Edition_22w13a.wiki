@@ -1,0 +1,210 @@
+{{for|the April Fools' joke snapshot released that week|Java Edition 22w13oneBlockAtATime}}
+{{Dangerous version|edition=java|type=hard-lock|version=development|Attempting to generate a structure with an allay causes the server to hang.<ref>{{bug|MC-249712||Server hangs and game stops responding when loading a chunk containing a structure with an allay|resolution=Fixed}}</ref>}}
+{{Infobox version
+|title=Minecraft 22w13a
+|image=22w13a.jpg
+|image2=Java Edition 22w13a.png
+|edition=Java
+|type=Snapshot
+|date=March 31, 2022
+|jsonhash=5f73acb0bfadc51f9535464c6f03b84c358d2b9b
+|clienthash=1156e606bb7272bb1972e3f2ee7c3a498e1bfb6c
+|clientmap=6c24f90a6b2653803072e82d26814aec59b79eb1
+|serverhash=7c8afca77bb9a73d31cdc70f2f68b4119d581455
+|servermap=5712fbabd1d65667551df47b3f22e72e58158136
+|parent=1.19
+|prevparent=1.18.2
+|prev=22w12a
+|next=22w14a
+|nextparent=1.19.1
+}}<onlyinclude>
+
+'''22w13a''' is the third [[snapshot]] for [[Java Edition 1.19]], released on March 31, 2022,<ref>{{snap|22w13a|March 31, 2022}}</ref> which adds the [[allay]], [[ancient cities]], [[reinforced deepslate]], and fixes bugs.
+
+== Additions ==
+=== Blocks ===
+'''[[File:Reinforced Deepslate JE1.png|32px]] [[Reinforced deepslate]]'''
+* A new block only found in [[ancient cities]] shaped as a large frame.
+* Is not craftable.
+* Is completely blast-resistant, and takes an incredibly long amount of time to mine (82.5 seconds).
+* Can be broken, but won't drop anything, even with [[Silk Touch]].
+* Cannot be moved with pistons.
+
+=== Items ===
+'''[[Spawn egg]]s'''
+* [[File:Allay Spawn Egg JE1 BE1.png|32px]] [[Allay spawn egg]]
+
+=== Mobs ===
+'''[[File:Allay JE2.gif|32px]] [[Allay]] '''
+* Can collect the same items from the world as it holds in its hand.
+* If holds an item it got from a player, it follows that player.
+** It can be made to hold an item by interacting with the allay (pressing {{control|use}}).
+** The item can also be removed by interacting with the allay (pressing {{control|use}}) while with an empty hand.
+* Able to drop items at nearby [[note block]]s, and stay close to a note block that has been played near them.
+* If they have items in their inventory, they attempt to give them to their owner.
+** When playing a note block near them, that note block becomes their favorite one for 30 seconds, and they attempt to drop off items at the note block rather than at the player.
+* Sometimes spawn in cages next to [[pillager outpost]]s (similar to [[iron golem]]), and inside [[woodland mansion]]s.
+* Has a delay for picking new items after delivering items.
+* Immune to damage from its owner while holding an item.
+* Have {{hp|10}} health points.
+
+=== World generation ===
+'''[[File:Ancient City SE.png|32px]] [[Ancient city]]'''
+* Generates within the [[deep dark]] biome and includes all of the deep dark features within it.
+* Always generates at Y=-51.
+* Made of [[deepslate]] and its variants, [[basalt]] and its variants, and [[gray wool]].
+* Contains [[soul sand]], [[soul fire]] and [[soul lantern]]s, as well as [[candle]]s and [[skeleton skull]]s.
+* Contains chests with unique loot, like the [[Swift Sneak]] enchantment.
+** Other valuable loot includes the "[[otherside]]" music disc, potions of [[Regeneration]] II, [[enchanted book]]s, enchanted iron and diamond [[leggings]], enchanted diamond [[hoe]]s, and [[enchanted golden apple]]s.
+** If the frame of [[reinforced deepslate]] generates with a chest in front, it always contains one [[golden carrot]] (a hint about how to open the secret door below).
+** Has different levels and open spaces, with several types of ruins and wall structures.
+** Some of these structures contain [[dark oak log]]s, [[planks]], and [[fence]]s; cyan, light blue, and blue wool and [[carpet]]s; [[ladder]]s; [[ice]] and its variants; [[note block]]s; [[stone pressure plate]]s; and [[iron trapdoor]]s opened with [[lever]]s.
+* Hidden underneath the frame of reinforced deepslate are several rooms containing redstone mechanisms that serve to introduce new players to their function.
+** There is a silenced sculk sensor that needs a signal strength of 8 to open a redstone door. Taking the golden carrot from the chest placed near the structure and eating it reveals the entrance.
+** Each variant of the city center has a different redstone puzzle concealing the entrance, requiring slightly different strategies to solve.
+** The mechanisms are made with [[redstone dust]], [[redstone torches]], [[redstone repeater]]s, [[redstone comparator]]s, [[redstone lamp]]s, [[blocks of redstone]], [[sticky piston]]s, a [[sculk sensor]], a [[target]], and a [[lectern]].
+** One variant includes a lever, and another includes a [[furnace]] containing 24 [[deepslate]] and a [[wooden shovel]].
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Added three new advancements:
+** Bukkit bukkit
+*** Catch a [[tadpole]] in a [[bucket]]
+** It spreads
+*** Kill a mob near a [[sculk catalyst]]
+** With our powers combined!
+*** Have all [[froglight]]s in your inventory
+* Added <code>kill_mob_near_sculk_catalyst</code> advancement trigger.
+** Triggered when a player kills an entity next to sculk catalyst, with following conditions:
+*** {{nbt|list|player}}: a player for which this trigger runs.
+*** {{nbt|list|entity}}: a predicate for the entity that was killed.
+*** {{nbt|compound|killing_blow}}: a predicate for how the entity was killed.
+
+=== General ===
+'''[[Particles (Java Edition)|Particles]]'''
+* Added a new particle: <code>allay_dust</code>.
+
+'''[[Tag]]s'''
+* Added following block tags:
+** <code>#ancient_city_center_replaceable</code>: {{cd|d=and|deepslate|deepslate_bricks|deepslate_tiles|deepslate_brick_slab|deepslate_tile_slab|deepslate_brick_stairs|deepslate_tile_wall|deepslate_brick_wall|cobbled_deepslate|cracked_deepslate_bricks|cracked_deepslate_tiles}}.
+** <code>#ancient_city_replaceable</code>: <code>#ancient_city_center_replaceable</code> and <code>gray_wool</code>.
+* Added following game event tag:
+** <code>#ignore_vibrations_on_occluding_block</code>: <code>hit_ground</code> and <code>step</code>.
+* Added following biome tag:
+** <code>#has_structure/ancient_city</code>: <code>deep_dark</code>
+
+== Changes ==
+=== Blocks ===
+'''[[Mangrove leaves]]'''
+* Are now able to drop [[stick]]s when broken.
+
+'''[[Note block]]'''
+* Only [[wool]] and [[carpet]]s now block the sounds coming from note blocks.
+
+'''[[Sculk shrieker]]'''
+* Can generate from [[sculk catalyst]] spread again.
+* Now drops if mined using [[Silk Touch]].
+* Added <code>can_summon</code> blockstate, which determines it summon a [[warden]] or not.
+** Set to <code>true</code> by default for sculk shriekers placed via world generation.
+** Set to <code>false</code> by default for sculk shriekers placed by a player or generated via sculk spread.
+
+=== Mobs ===
+'''[[Warden]]'''
+* Can now walk over [[rail]]s.
+
+=== Non-mob entities ===
+'''[[Minecart with chest]], [[minecart with furnace]], [[minecart with TNT]] and [[minecart with hopper]]'''
+* Crafting [[recipe]]s are now shapeless.
+* Now drop themselves when broken.
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Breeding [[frog]]s are now required for "Two by Two" advancement.
+
+=== General ===
+'''Game events'''
+* Renamed some game events, to make them more grammatically consistent:
+** <code>drinking_finish</code> -> <code>drink</code>
+** <code>entity_killed</code> -> <code>entity_die</code>
+** <code>entity_damaged</code> -> <code>entity_damage</code>
+** <code>elytra_free_fall</code> -> <code>elytra_glide</code>
+** <code>mob_interact</code> -> <code>entity_interact</code>
+** <code>ravager_roar</code> -> <code>entity_roar</code>
+** <code>wolf_shaking</code> -> <code>entity_shake</code>
+* The following events have been collapsed into <code>block_activate</code> and <code>block_deactivate</code>:
+** <code>block_press</code>
+** <code>block_unpress</code>
+** <code>block_switch</code>
+** <code>block_unswitch</code>
+* <code>ring_bell</code> has been removed and replaced with <code>block_change</code>.
+* Both <code>shulker_open</code> and <code>shulker_close</code> have been removed in favour of using <code>container_open</code> and <code>container_close</code>.
+* <code>fishing_rod_cast</code> and <code>fishing_rod_reel_in</code> have been renamed to <code>item_interact_start</code> and <code>item_interact_finish</code>.
+* <code>entity_interact</code> should be dispatched more often when interacting with various mobs.
+
+'''[[Tag]]s'''
+* Renamed <code>#carpets</code> block and item tag to <code>#wool_carpets</code>.
+* Reinforced deepslate is now part of the {{cd|d=and|#dragon_immune|#features_cannot_replace|#wither_immune}} block tags.
+* The <code>#spawns_cold_variant_frogs</code> biome tag no longer contains the <code>#is_mountain</code> biome tag.
+* Frozen peaks, jagged peaks, snowy slopes, frozen ocean, deep frozen ocean, grove, deep dark, frozen river, snowy taiga, snowy beach are now part of the <code>#spawns_cold_variant_frogs</code> biome tag.
+* Warm ocean is now part of the <code>#spawns_warm_variant_frogs</code> biome tag.
+* Changed game events in the <code>#vibrations</code> game event tag:
+** Include all game events changes mentioned above.
+** Added <code>note_block_play</code>.
+** Removed <code>minecart_moving</code>.
+* Changed game events in the <code>#warden_events_can_listen</code> game event tag:
+** Include all game events changes mentioned above.
+** Added <code>flap</code> and <code>note_block_play</code>.
+** Removed <code>minecart_moving</code>.
+
+== Fixes ==
+{{fixes|fixedin=22w13a
+|;old
+|195468|World Generation Settings not working on dedicated server.
+|210331|Sculk sensors are not activated upon wandering traders drinking milk or witches drinking potions.
+|210485|Sculk sensors are not activated upon evokers summoning vexes.
+|212503|Sculk sensors are not activated upon collecting fish, axolotls, or tadpoles using water buckets.
+|214652|Naming inconsistency for game events for eating/drinking.
+|249493|Breaking a minecart with chest/furnace/TNT/hopper separates the minecart and the block it contains.
+|;dev
+|249103|Z-fighting can be seen on the underside of frogs' feet.
+|249110|Z-fighting textures inside the frog's mouth.
+|249115|Frogs spawn with wrong color in some biomes.
+|249132|Frogs are not required to be bred for the Two by Two advancement.
+|249168|Dispensing a Bucket of Tadpole above or below a dimension dispenses the item, instead of a tadpole.
+|249349|Dispensing a Bucket of Tadpole dispenses the item, instead of water with a tadpole.
+|;previous
+|249380|The locks of chests within chest boats are positioned slightly too high.
+|249382|Boats with chest do not drop items contained in chest when destroyed in Creative.
+|249385|Boat with chest cannot be placed by dispenser.
+|249389|GUI Scale is a slider instead of a button.
+|249392|Options have missing or untranslated names.
+|249397|Bottom face of Warden's right arm missing in {{samp|warden_bioluminescent_layer}} texture.
+|249398|Game crash regarding warden.
+|249404|Boats with Chest aren't grouped in the recipe book.
+|249405|{{cd|chatScale}} option defaults to 0.0 instead of 1.0, causing chat to disappear.
+|249409|Furnaces, blast furnaces and smokers don't cook without fuel in the bottom slot, even if they are already fired up.
+|249431|The server occasionally fails to save chunks.
+|249437|Sculk shriekers no longer appear to be capable of spawning from charges.
+|249474|Four-legged mobs do not sit correctly in a boat with a chest.
+|249501|Boats with chest have items inside deleted when they break into planks and sticks.
+|249529|Mangrove boat cannot be placed by dispenser.
+|249642|Wardens can't pass over rails.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|4iZ8CegPX5Y|SPI_UU17bIg}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:22w13a]]
+[[es:Java Edition 22w13a]]
+[[fr:Édition Java 22w13a]]
+[[ja:Java Edition 22w13a]]
+[[pt:Edição Java 22w13a]]
+[[ru:22w13a (Java Edition)]]
+[[th:รุ่น Java 22w13a]]
+[[zh:Java版22w13a]]

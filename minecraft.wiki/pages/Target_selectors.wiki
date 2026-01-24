@@ -1,0 +1,620 @@
+{{distinguish|Target}}
+'''Target selectors''' are used in [[commands]] to select players and entities arbitrarily, without needing to specify an exact player name or a [[Universally_unique_identifier|UUID]]. One or more entities can be selected with a target selector variable, and targets can be filtered from the selection based on certain criteria using the target selector arguments.
+
+{{TOC limit}}
+
+== Target selector variables ==
+
+{| class="wikitable"
+|+ Summary of target selector variables
+! Variable !! Selects
+|-
+| <code>@p</code> || the nearest player
+|-
+| <code>@r</code> || a random player
+|-
+| <code>@a</code> || all players
+|-
+| <code>@e</code> || all entities
+|-
+| <code>@s</code> || the entity executing the command
+|-
+| <code>@n</code> || the nearest entity
+|-
+| <code>@c</code> || the player's agent{{only|education|short=1}}
+|-
+| <code>@v</code> || all agents{{only|education|short=1}}
+|-
+| <code>@initiator</code> || the player who clicks an [[NPC]] [[dialogue]] button{{only|bedrock|education|short=1}}
+|}
+
+A target selector variable identifies the broad category of targets to select. There are six in [[Java Edition|''Java Edition'']], seven in [[Bedrock Edition|''Bedrock Edition'']] and nine {{in|edu}}:
+
+; <code>@p</code>
+
+: Selects the nearest player from the command's execution. If there are multiple nearest players, caused by them being precisely the same distance away, the player who most recently joined the server is selected.
+
+: {{IN|Bedrock}}, <code>@p</code> selects only players who are alive.
+
+; <code>@n</code>
+
+: Selects the nearest alive entity from the command's execution.
+
+; <code>@r</code>
+
+: Selects a random online player.
+
+: In {{el|Bedrock}}, you can use <code>@r</code> to select non-player entities via the <code>type</code> selector argument; {{in|java}}, to select a random entity, use <code>@e[sort=random,limit=1]</code> or <code>@n[sort=random]</code> instead.
+: {{IN|Bedrock}}, <code>@r</code> can select only entities who are alive.
+
+; <code>@a</code>
+
+: Selects every online player (alive or dead).
+
+; <code>@e</code>
+
+: Selects all alive entities in loaded chunks, and all alive online players.
+
+; <code>@s</code>
+
+: Selects the entity (alive or not) that the command was executed as. It does not select anything if the command was not ran as an entity (e.g. from a command block or server console).
+
+; <code>@c</code>{{only|education}}
+
+: Selects the player's agent only.
+
+; <code>@v</code>{{only|education}}
+
+: Selects all agents. Works only if more than one agent exists.
+
+; <code>@initiator</code>{{only|bedrock|education|short=1}}
+
+: Selects the player who interacts with a button in a JSON [[NPC]] [[dialogue]].
+
+== Target selector arguments ==
+
+{| class="wikitable"
+|+ Summary of target selector arguments
+! colspan="2" | Selection by Spatial Properties
+|-
+! Argument(s) !! Selection criteria
+|-
+| <code>x</code>, <code>y</code>, <code>z</code>
+| [[#Selecting targets by coordinate|coordinate]]
+|-
+| <code>distance</code>{{only|java|short=1}}<br><code>r</code>, <code>rm</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by distance|distance]]
+|-
+| <code>dx</code>, <code>dy</code>, <code>dz</code>
+| [[#Selecting targets by volume|volume dimensions]]
+|-
+| <code>x_rotation</code>{{only|java|short=1}}<br><code>rx</code>,<code>rxm</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by vertical rotation|vertical rotation]] (pitch)
+|-
+| <code>y_rotation</code>{{only|java|short=1}}<br><code>ry</code>,<code>rym</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by horizontal rotation|horizontal rotation]] (yaw)
+|-
+! colspan="2" | Selection by Scoreboard Values
+|-
+! Argument(s) !! Selection criteria
+|-
+| <code>scores</code>
+| [[#Selecting targets by scores|scores]]
+|-
+| <code>tag</code>
+| [[#Selecting targets by tag|tag]]
+|-
+| <code>team</code> {{only|java|short=1}}
+| [[#Selecting targets by team|team name]]
+|-
+! colspan="2" | Selection by Entity Species
+|-
+! Argument(s) !! Selection criteria
+|-
+| <code>name</code>
+| [[#Selecting targets by name|entity name]]
+|-
+| <code>type</code>
+| [[#Selecting targets by type|entity type]]
+|-
+| <code>family</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by family|entity family]]
+|-
+| <code>predicate</code>{{only|java|short=1}}
+| [[#Selecting targets by predicate|predicate]]
+|-
+! colspan="3" | Selection by Entity Data
+|-
+! Argument(s) !! Selection criteria
+|-
+| <code>nbt</code>{{only|java|short=1}}
+| [[#Selecting targets by nbt|nbt]]
+|-
+| <code>hasitem</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by item|item]]
+|-
+| <code>has_property</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by property|property]]
+|-
+! colspan="2" | Selection by Player Data
+|-
+! Argument(s) !! Selection criteria
+|-
+| <code>level</code>{{only|java|short=1}}<br><code>l</code>,<code>lm</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by experience level|experience level]]
+|-
+| <code>gamemode</code>{{only|java|short=1}}<br><code>m</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by game mode|game mode]]
+|-
+| <code>advancements</code>{{only|java|short=1}}
+| [[#Selecting targets by advancements|advancements]]
+|-
+| <code>haspermission</code>{{only|bedrock|short=1}}
+| [[#Selecting targets by permission|permission]]
+|-
+! colspan="2" | Selection by Traits
+|-
+! Argument(s) !! Selection criteria
+|-
+| <code>limit</code>,<code>sort</code>{{only|java|short=1}}<br><code>c</code>{{only|bedrock|short=1}}
+| [[#Selecting targets with a limit|limit]]
+|}
+
+After a target selector, optional arguments can be used to narrow down the set of targets to a group that also matches certain criteria. When used with <code>@a</code> or <code>@e</code>, arguments narrow down the targets from the full list to a specific group. When used with <code>@p</code> or <code>@r</code>, the nearest or random player is selected from the group. When used with <code>@s</code>, the player using the command is targeted only if they would be in the narrowed group.
+
+Argument-value pairs appear within square brackets after the target selector variable, separated by commas:
+
+: <code>@<variable>[<argument>=<value>,<argument>=<value>,...]</code>.
+
+{{IN|java}}, arguments and values are case-sensitive. Spaces are allowed around the brackets, equal signs, and commas, except {{in|java}} between the target variable and the first bracket. Commas must be used to separate argument-value pairs.
+
+If there are multiple argument-value pairs, they all must be satisfied to add a potential target to the group. (In other words, they are AND-ed together).
+
+{{anchor|Selecting targets by coordinate}}
+===Position arguments===
+
+: <code>[x=<value>,y=<value>,z=<value>]</code> — Define a position in the world that the selector starts at, for use with the [[#Selecting targets by distance|distance]] argument, the [[#Selecting targets by volume|volume]] arguments, or the [[#Selecting targets with a limit|sort and limit]] arguments. Using these arguments alone does not restrict the entities found (except {{in|java}}), and affect only the sorting of targets. Cannot duplicate any one of these three arguments.
+: The positional components are doubles, allowing for values like <code>12.34</code>. {{IN|java}} they are not center-corrected, meaning <code>x=0</code> is not corrected to <code>x=0.5</code>. {{IN|bedrock}}, if distance or volume arguments are not used, positions that are written as integers ''are'' center-corrected,  <code>x=0</code> becomes <code>x=0.5</code>. To avoid this, use <code>x=0.0</code> instead.
+
+: {{IN|bedrock}}, [[Coordinates#Relative world coordinates|tilde notation]] is available for selector argument coordinates. Note: [[Coordinates#Local coordinates|Caret notation]] is not.
+
+: {{IN|java}}, these arguments limit the search of entities to the current dimension. For example <code>/execute in overworld as @e[x=0]</code> will select only entities that are in the ''overworld''.
+
+===Selecting targets by distance===
+
+: Filter target selection based on their Euclidean distances from some point, searching for the target's feet (a point at the bottom of the center of their hitbox). If the positional arguments are left undefined, radius is calculated relative to the position of the command's execution. This argument limits the search of entities to the current dimension. Cannot duplicate these arguments.
+
+: {{IN|java}}: <code>[distance=<value>]</code> — Specifies the range of distance. [[Argument_types#minecraft:float_range|Float ranges]] are supported to select a specific region. Only unsigned values are allowed.
+
+: {{IN|bedrock}}: <code>[r=<value>]</code> and <code>[rm=<value>]</code> — Specifies the maximum and minimum range to find entities, respectively. Only unsigned values are allowed.
+
+: Examples {{in|Java}}:
+:* <code>@e[distance=10..]</code> — Target all entities more than ten blocks away.
+:* <code>@e[distance=..10]</code> — Target all entities less than ten blocks away.
+:* <code>@e[distance=10]</code> — Target all entities exactly ten blocks away.
+:* <code>@e[distance=8..16]</code> — Target all entities more than eight blocks, but less than 16 blocks away (inclusive).
+
+: Examples {{in|Bedrock}}:
+:* <code>@e[r=10]</code> — Target all entities that are ten or fewer blocks away.
+:* <code>@e[rm=10]</code> — Target all entities that are ten or more blocks away.
+:*<code>@e[rm=10,r=10]</code> — Target all entities exactly ten blocks away.
+:* <code>@e[rm=8,r=16]</code> — Target all entities from 8 to 16 blocks away.
+
+===Selecting targets by volume===
+
+: <code>[dx=<value>,dy=<value>,dz=<value>]</code> — Filter target selection based on their x-difference, y-difference, and z-difference from some point, as measured by entities' hitboxes. Cannot duplicate any one of these three arguments.
+
+: Numerically, this can be interpreted as creating a cuboid volume from the initial position {{code|(x,y,z)}} to {{code|(x+dx,y+dy,z+dz)}} but with the vector {{code|(1,1,1)}} added to the x-most, y-most, z-most corner (the upper south-east corner). Because of this, the volume to check can never be smaller than a cube with a side length of 1, and no single dimension of the volume can be less than 1. Then, all entities whose hitboxes at least partially intersect with that volume are selected. If the positional arguments are left out, the selection is interpreted as originating from the position of the command's execution. Any values are allowed, including signed and fractional numbers.
+
+: If all of the values are whole numbers, this can be interpreted as creating a volume of blocks from the initial position ({{code|x y z}}) to the delta position ({{code|x+dx y+dy z+dz)}}) and selecting any entity whose hitbox intersects with those blocks. So, if you have built a cuboid of blocks in the world, you can subtract the coordinates of one corner block from the coordinates of the opposite corner block to get the {{code|dx}}, {{code|dy}}, and {{code|dz}} values for selecting those entities.
+
+: Note that {{code|dx}}, {{code|dy}}, and {{code|dz}} specify ''signed differences'' from the given coordinate. They do not specify a separate coordinate, nor do they extend in both the positive and negative directions as you might expect from a position predicate.
+
+: Additionally, when only one or two volume arguments are present, any that are not specified are assumed to be set to zero. For example, <code>@a[dx=15]</code> is equivalent to <code>@a[dx=15,dy=0,dz=0]</code>.
+
+: Examples:
+:* <code>@e[x=1,y=2,z=3,dx=0,dy=0,dz=0]</code> — Select all entities whose hitbox intersects with the block at {{code|1 2 3}}.
+:* <code>@e[x=1,y=2,z=3,dx=4,dy=5,dz=-6]</code> — Select all entities whose hitbox intersects with the block region {{code|1~5, 2~7, -3~3}}.
+:** (or, the numerically speaking, a cuboid from {{code|1.0 2.0 -3.0}} to {{code|6.0 8.0 4.0}}).
+:** (or, mathematically speaking, the region that is <code>{ (x,y,z)∈R³ | x∈[1.0,6.0], y∈[2.0,8.0], z∈[-3.0,4.0] }</code>), or <math>[1, 6] \times [2, 8] \times [-3, 4] \subset \mathbb R^3</math>
+
+: It is possible to combine selection by distance and selection by volume, in which case the command select targets only within the overlap of both regions (within a certain radius of the volume's initial point and not outside the defined volume) — but note that distance selection checks that the ''point'' at an entity's feet intersects with some sphere, wheras volume selection checks that the entity's ''hitbox'' overlaps with some region.
+
+===Selecting targets by scores===
+
+: <code>[scores={<objective>=<value>,...}]</code> — Filter target selection based on their scores in the specified objectives. All tested objectives are in a single object, separated by commas. Each objective and score value pair is separated by an equals sign. The score values support [[Argument_types#minecraft:int_range|integer ranges]]. Cannot duplicate this argument.
+:* <code>@e[scores={myscore=10}]</code> — Select all entities with a score in objective ''myscore'' of exactly ten.
+:* <code>@e[scores={myscore=10..12}]</code> — Select all entities with a score in objective ''myscore'' of between ten and 12 (inclusive).
+:* <code>@e[scores={myscore=5..}]</code> — Select all entities with a score in objective ''myscore'' of five or greater.
+:* <code>@e[scores={myscore=..15}]</code> — Select all entities with a score in objective ''myscore'' of 15 or less.
+:* <code>@e[scores={foo=10,bar=1..5}]</code> — Select all entities with a score in objective ''foo'' of exactly ten, and a score in objective ''bar'' of between one and five (inclusive).
+
+: {{IN|bedrock}}, <code>!</code> can be used to invert selection.
+:*<code>@e[scores={myscore=!10}]</code> — Exclude any entities with a score in objective ''myscore'' of exactly ten.
+:* <code>@e[scores={myscore=!10..15}]</code> — Exclude any entities with a score in objective ''myscore'' of between ten and 15 (inclusive).
+{{see also|Scoreboard#Objectives}}
+
+===Selecting targets by tag===
+
+: Filter target selection based on the entity's [[Scoreboard#Tags|scoreboard tags]]. Multiple tag arguments are allowed, and all arguments must be fulfilled for an entity to be selected.
+
+: <code>[tag=<string>]</code> — Include only targets with the specified tag.
+: <code>[tag=!<string>]</code> — Exclude any targets with the specified tag.
+: <code>[tag=]</code> — Include only targets with exactly zero tags.
+: <code>[tag=!]</code> — Include only targets that have at least one tag.
+
+{{see also|Commands/tag}}
+
+{{anchor|Selecting targets by team}}
+===Selecting targets by team===
+{{exclusive|java|section=yes}}
+
+: Filter target selection based on [[Scoreboard#Teams|teams]]. Arguments testing for equality cannot be duplicated, while arguments testing for inequality can.
+: <code>[team=<teamName>]</code> — Include only targets in the given team.
+: <code>[team=!<teamName>]</code> — Exclude any targets in the given team.
+: <code>[team=]</code> — Include only targets not in a team.
+: <code>[team=!]</code> — Exclude any targets not in a team.
+
+{{see also|Commands/team}}
+
+{{anchor|Selecting targets with a limit}}
+
+===Limiting and sorting target selection===
+
+: Limit the number of selectable targets for a target selector.
+: When using the variables <code>@p</code> and <code>@r</code>, this argument defaults to one. Applying the limiting argument to them may increase the number of nearest or random targets selected. When applying this argument to <code>@a</code> or <code>@e</code>, this argument returns only a limited number of targets. Cannot duplicate these arguments.
+
+: {{IN|java}}: <code>[limit=<value>,sort=(nearest|furthest|random|arbitrary)]</code> — Limit the number of targets, and specify selection priority.
+:*<code>sort=nearest</code> — Sort by increasing distance. (Default for <code>@p</code>)
+:* <code>sort=furthest</code> — Sort by decreasing distance.
+:* <code>sort=random</code> — Sort randomly. (Default for <code>@r</code>)
+:* <code>sort=arbitrary</code> — Do not sort. This often returns the oldest entities first due to how the game stores entities internally, but no order is guaranteed. (Default for <code>@e</code>, <code>@a</code>)
+
+: {{IN|bedrock}}: <code>[c=<value>]</code> — Limit the number of targets.
+: For <code>@p</code>, <code>@a</code>, and <code>@e</code>, <code>[c=<value>]</code> selects only the specified number of targets by increasing distance from the selector's position. When <code>c</code> is negative, it reverses the order of targeting (for example, <code>@p[c=-1]</code> targets the furthest player). Inverse sorting does not work with <code>@r</code>.
+
+: Examples {{in|java}}:
+:* <code>@a[limit=3,sort=nearest]</code> or <code>@p[limit=3]</code> — Select the nearest three players.
+:* <code>@a[limit=4,sort=furthest]</code> — Select the furthest four players.
+:* <code>@a[limit=2,sort=random]</code> or <code>@r[limit=2]</code> — Select two players, chosen randomly.
+
+: Examples {{in|bedrock}}:
+:* <code>@a[c=3]</code> — Select the nearest three players.
+:* <code>@a[c=-4]</code> — Select the furthest four players.
+:* <code>@r[c=2]</code> — Select two living players, chosen randomly.
+
+===Selecting targets by experience level===
+
+: Filter target selection based on the entity's [[Experience|experience levels]]. This naturally filters out all non-player targets. Cannot duplicate these arguments.
+
+: {{IN|java}}: <code>[level=<value>]</code> — Specifies the range of levels. [[Argument_types#minecraft:int_range|Integer ranges]] are supported to select a range of values.
+
+: {{IN|bedrock}}: <code>[l=<value>]</code> and <code>[lm=<value>]</code> — the maximum and minimum level range to search for, respectively.
+
+: Examples {{in|java}}:
+:* <code>@a[level=10]</code> — Select all players who have exactly ten levels.
+:* <code>@a[level=8..16]</code> — Select all players who have between eight and 16 levels (inclusive).
+
+: Examples {{in|bedrock}}:
+:* <code>@a[lm=10,l=10]</code> — Select all players who have exactly ten levels.
+:* <code>@a[lm=8,l=16]</code> — Select all players who have between eight and 16 levels (inclusive).
+
+{{see also|Commands/experience}}
+
+===Selecting targets by game mode===
+: Filter target selection by [[Gameplay#Game_modes|game mode]]. This naturally filters out all non-player targets. Arguments testing for equality cannot be duplicated, while arguments testing for inequality can.
+
+: {{IN|java}}:
+: <code>[gamemode=<gamemodeName>]</code> — Include only players in the given game mode.
+: <code>[gamemode=!<gamemodeName>]</code> — Exclude any players in the given game mode.
+
+: {{IN|bedrock}}:
+: <code>[m=<gamemodeName>]</code> — Include only players in the given game mode.
+: <code>[m=!<gamemodeName>]</code> — Exclude any players in the given game mode.
+
+: Permitted values for <gamemodeName> are <code>spectator</code>, <code>survival</code>, <code>creative</code>, <code>adventure</code> and <code>default</code>{{only|bedrock|short=1}}. {{IN|bedrock}}, the shorthand values <code>s</code> and <code>0</code>, <code>c</code> and <code>1</code>, <code>a</code> and <code>2</code>, and <code>d</code> and <code>5</code> may be used for Survival mode, Creative mode, Adventure mode, and Default mode respectively.
+
+{{see also|Commands/gamemode}}
+
+===Selecting targets by name=== 
+
+:Filter target selection by name. Values are strings, so spaces are allowed only if quotes are applied. This cannot be a JSON text compound. Arguments testing for equality cannot be duplicated, while arguments testing for inequality can.
+:<code>[name=<givenName>]</code> — Include only targets with the given name.
+:<code>[name=!<givenName>]</code> — Exclude any targets with the given name.
+
+=== Selecting targets by vertical rotation===
+
+:Filter target selection based on the entity's rotation along the pitch axis, measured in degrees. Values range from -90 (straight up) to 0 (at the horizon) to +90 (straight down). Cannot duplicate these arguments.
+
+:{{IN|java}}: <code>[x_rotation=<value>]</code> — Specifies the range of x-rotation. [[Argument_types#minecraft:float_range|Float ranges]] are supported to select a specific range of angles.
+
+:{{IN|bedrock}} <code>[rx=<value>]</code> and <code>[rxm=<value>]</code> — Specifies the maximum and minimum x-rotation, respectively.
+
+:Examples {{in|java}}:
+:*<code>@e[x_rotation=0]</code> — Select all entities that are looking directly at the horizon.
+:*<code>@e[x_rotation=30..60]</code> — Select all entities that are looking between 30&deg; and 60&deg; (inclusive) below the horizon.
+:*<code>@e[x_rotation=..0]</code> — Select all entities that are looking at or above the horizon. 
+
+:Examples {{in|bedrock}}:
+:*<code>@e[rxm=0,rx=0]</code> — Selects all entities that are looking directly at the horizon.
+:*<code>@e[rxm=30,rx=60]</code> — Selects all entities that are looking between 30&deg; and 60&deg; (inclusive) below the horizon.
+:*<code>@e[rx=0]</code> — Select all entities that are looking at or above the horizon.
+
+===Selecting targets by horizontal rotation===
+
+:Filter target selection based on the entity's rotation along the yaw axis, measured clockwise in degrees from due south (or the positive Z direction). Values vary from -180 (facing due north) to -90 (facing due east) to 0 (facing due south) to +90 (facing due west) to +180 (facing due north again). Cannot duplicate these arguments.
+
+:{{IN|java}}: <code>[y_rotation=<value>]</code> — Specifies the range of y-rotation. [[Argument_types#minecraft:float_range|Float Ranges]] are supported to select a specific range of angles.
+
+:{{IN|bedrock}}: <code>[ry=<value>]</code> and <code>[rym=<value>]</code> — Specifies the maximum and minimum y-rotation values, respectively.
+
+:Examples {{in|java}}:
+:*<code>@e[y_rotation=0]</code> — Select all entities that are facing due south.
+:* <code>@e[y_rotation=-90..0]</code> — Select all entities that are facing in the 90&deg; between due east and due south (inclusive).
+:*<code>@e[y_rotation=0..180]</code> — Select all entities that are not facing at all east.
+
+:Examples {{in|bedrock}}:
+:*<code>@e[rym=0,ry=0]</code> — Select all entities that are facing due south.
+:*<code>@e[rym=-90,ry=0]</code> — Select all entities that are facing in the 90&deg; between due east and due south (inclusive).
+:*<code>@e[rym=0,ry=180]</code> — Select all entities that are not facing at all east.
+
+===Selecting targets by type=== 
+
+:Filter target selection based on the entity's identifier. The given entity type must be a valid [[Resource location|entity ID]] or [[Tag#Entity_type_tags|entity type tag]]{{only|java}} used to identify different types of entities internally. The namespace can be left out if the ID is within the {{cd|minecraft}} namespace. Entity IDs or tags are case-sensitive. Arguments testing for equality cannot be duplicated, while arguments testing for inequality can. {{IN|java}}, using this argument with <code>@a</code>, <code>@p</code> or <code>@r</code> is not allowed.
+
+:<code>[type=<entityType>]</code> — Include only targets of the specified entity type or tag.
+:<code>[type=!<entityType>]</code> — Exclude any targets of the specified entity type or tag.
+
+:{{IN|java}}, the option <code>type=<entityType></code> (without <code>!</code> symbol) can appear only once, and <code>type=!<entityType></code> cannot appear with it. If <code>type=<entityType></code> does not exist, then <code>type=!<entityType></code> may appear multiple times.
+:Examples:
+:* <code>@e[type=creeper]</code> - Include only creepers.
+:* <code>@e[type=creeper, type=pig]</code> - Invalid selector.
+:* <code>@e[type=creeper, type=!pig]</code> - Invalid selector.
+:* <code>@e[type=!creeper, type=!pig]</code> - Exclude all creepers and pigs.
+
+{{anchor|Selecting targets by family}}
+
+===Selecting targets by family===
+{{exclusive|bedrock|section=yes}}
+
+:Filter target selection based on the entity's [https://learn.microsoft.com/en-us/minecraft/creator/reference/content/entityreference/examples/entitycomponents/minecraftcomponent_type_family type_family] behavior component. Default values used by the vanilla behavior pack include among others more broad terms like <code>mob</code> and <code>inanimate</code>, as well as more specific families like <code>zombie</code> and <code>skeleton</code>, and single-mob families like <code>wandering_trader</code> and <code>creeper</code>. Multiple family arguments are allowed, and all arguments must be fulfilled for an entity to be selected.{{main|family}}
+
+:<code>[family=<family>]</code> — Include only targets in the specified type family.
+:<code>[family=!<family>]</code> — Exclude any targets in the specified type family.
+
+:*<code>@e[family=skeleton]</code> — Select all skeletons, wither skeletons, strays, and bogged.
+:*<code>@e[family=mob,family=!monster]</code> — Select all mobs that are not monsters (so for example cows, chickens, pigs, but not zombies or skeletons).
+:*<code>@e[family=monster,family=undead]</code> — Select all monsters that are also undead (that includes monsters like zombies and skeletons, but not creepers, spiders or endermen).
+
+{{anchor|Selecting targets by nbt}}
+
+===Selecting targets by NBT data===
+{{exclusive|java|section=yes}}
+
+:Filter target selection based on the entity's NBT data. The NBT data is written in its [[NBT_format|SNBT format]]. Duplicate nbt arguments are allowed, and all arguments must be fulfilled for an entity to be selected.
+:See [[NBT format#Testing NBT tags]] for more infomation about this.
+:Note that this selector argument should be used with care, as accessing NBT data is a heavy process for the CPU.
+:<code>[nbt=<compoundTag>]</code> — Include only targets with the specified NBT data.
+:<code>[nbt=!<compoundTag>]</code> — Exclude any targets with the specified NBT data.
+
+:*<code>@a[nbt={OnGround:true}]</code> — Select all players on the ground.
+:*<code>@e[type=sheep,nbt={Color:0b}]</code> — Select all sheep that are dyed white.
+:*<code><nowiki>@e[type=item,nbt={Item:{id:"minecraft:slime_ball"}}]</nowiki></code> — Selects all slime ball item entities.
+:*<code>@e[nbt={Tags:[a,b]}]</code> is the same as <code>@e[tag=a,tag=b]</code>. The latter is simpler and reduces CPU load.
+
+{{anchor|Selecting targets by advancements}}
+===Selecting targets by advancements===
+{{exclusive|java|section=yes}}
+
+:Filter target selection based on the entity's [[Advancement|advancements]]. This naturally filters out all non-player targets. All advancements are in a single object, with a list of individual advancement IDs between the braces afterward. The values are [[Argument_types#brigadier:bool|true or false]]. For advancements with one criterion, testing for that criterion always gives the same results as testing for the advancement. Cannot duplicate this argument.
+:<code>[advancements={<''resource location''>=<bool>}]</code> — Include only players with the specified advancements and values.
+:<code>[advancements={<''resource location''>={<criteria>=<bool>}}]</code> — Include only players with the specified advancement's criteria.
+
+:*<code>@a[advancements={story/smelt_iron=true}]</code> — Include only players who have completed the advancement <samp>minecraft:story/smelt_iron</samp>.
+:*<code>@a[advancements={story/form_obsidian=false}]</code> — Include only players who haven't completed the advancement <samp>minecraft:story/form_obsidian</samp>.
+:*<code>@a[advancements={story/follow_ender_eye=true}]</code> is the same as <code><nowiki>@a[advancements={story/follow_ender_eye={in_stronghold=true}}]</nowiki></code>.
+:*<code><nowiki>@a[advancements={adventure/kill_all_mobs={witch=true}}]</nowiki></code> — Include only players who have killed a witch, for the advancement <samp>minecraft:adventure/kill_all_mobs</samp>.
+
+{{see also|Commands/advancement}}
+
+{{anchor|Selecting targets by predicate}}
+===Selecting targets by predicate===
+{{exclusive|java|section=yes}}
+
+:Filter target selection by [[Predicate|predicates]]. The given values must be a valid predicate represented by a resource location. Duplicate predicate arguments are allowed, and all arguments must be fulfilled for an entity to be selected.
+
+:<code>[predicate=<''resource location''>]</code> — Include only targets that match the specified predicate.
+:<code>[predicate=!<''resource location''>]</code> — Exclude any targets that match the specified predicate.
+
+{{anchor|Selecting targets by item}}
+===Selecting targets by item===
+{{exclusive|bedrock|section=yes}}
+
+:Filter target selection based on whether the entity has the specified items. The given values must be enclosed by square brackets or braces. Cannot duplicate this argument, but multiple items can be specified with square brackets.
+
+:<code>[hasitem={<''argument''>=<''value''>,<''argument2''>=<''value2''>,...}]</code> — Include only targets that have the specified items.
+:<code>[hasitem=[{<''argumentA''>=<''valueA''>,...},{<''argumentB''>=<''valueB''>,...}]]</code> — Include only targets that have item A and item B, etc.
+: All acceptable arguments are as follows:
+:
+: (More information about what this section is looking for should be given as this section is too vauge.)
+:*<code>item</code> (required)
+:*:Must be an [[item]] ID. 
+:*<code>data</code>
+:*:Specifies the item data for the item(s). Must be a 32-bit integer number. Values that are invalid for the specified item id default to 0. If not specified, defaults to 0.
+:*:Note that because it defaults to 0, selectors like <code>{item=potion}</code> can target only water bottle, though <code>{item=potion,data=1}</code> can target mundane potion.
+:*:Currently doesn't work on blocks' direct item forms (e.g. dirt, stone). For these items, <code>data</code> is always considered as invalid and defaults back to 0, and aux value of these items in inventory are also always considered as 0. That means you can't target items like coarse dirt, green wool solely.
+:*:For potion and tipped arrow, aux value represents the data value of potion effect, and currently invalid values crash the game.
+:*<code>quantity</code>
+:*:Specifies the amount of the items the entity has. Must be an integer range (e.g. <code>1</code> - exact match of 1. <code>..5</code> - less than or equal to 5. <code>5..</code> - more than or equal to 5. <code>0..5</code> - between 0 and 5, inclusive.).
+:*:<code>!</code> can be used to invert selection. For example, <code>{item=apple,quantity=!5}</code> can exclusive entities who have five apples.
+:*:When not specified, defaults to <code>quantity=1..</code>. When <code>quantity=0</code>, entities must have 0 the specified item (i.e. do not have the specified item) to be targeted.
+:*<code>location</code> and <code>slot</code>
+:*:Specifies the inventory slot to test. See [[Slot]] for details.
+:*:Specifying <code>slot</code> without <code>location</code> is invalid.
+:*:<code>slot</code> must be an integer range. (e.g. <code>1</code> - exact match of 1. <code>..5</code> - less than or equal to 5. <code>5..</code> - more than or equal to 5. <code>0..5</code> - between 0 and 5, inclusive.) 
+:* Example using location: <code>@s[hasitem={item=stick,location=slot.weapon.mainhand}]</code>
+
+{{anchor|Selecting targets by permission}}
+===Selecting targets by permission===
+{{exclusive|bedrock|section=yes}}
+
+: <code>[haspermission={<permission>=<state>,...}]</code> — Filter target selection based on the player permissions status. All tested permissions are in a single object, separated by commas. Cannot duplicate this argument.
+
+:*<code>@a[haspermission={camera=enabled}]</code> — Include only players who have the camera permission enabled.
+:*<code>@a[haspermission={movement=disabled}]</code> — Include only players who have the movement permission disabled.
+:*<code>@a[haspermission={camera=disabled,movement=enabled}]</code> — Include only players who have the camera permission disabled and the movement permission enabled.
+
+{{see also|Commands/inputpermission}}
+
+{{anchor|Selecting targets by property}}
+===Selecting targets by property===
+{{exclusive|bedrock|section=yes}}
+:Filter target selection based on the entity's property. All tested properties are in a single object, separated by commas. Cannot duplicate this argument.
+
+: <code>[has_property={<property>=<value>,...}]</code> — Include only targets that have the specified property values.
+: <code>[has_property={<property>=!<value>,...}]</code> — Exclude only targets that have the specified property values.
+: <code>[has_property={property=<property>,...}]</code> — Include only targets that have the specified properties.
+: <code>[has_property={property=!<property>,...}]</code> — Exclude only targets that have the specified properties.
+
+:*<code>@e[type=chicken,has_property={minecraft:climate_variant=!"cold"}]</code> — Selects all chickens that do not have the <samp>minecraft:climate_variant</samp> property <code>''cold''</code>.
+:*<code>@e[has_property={minecraft:climate_variant="warm"}]</code> — Selects all entities that have the <samp>minecraft:climate_variant</samp> property <code>''warm''</code> (it would only apply to cows, chickens, etc.).
+:*<code>@e[has_property={minecraft:has_nectar=true}]</code> — Selects all entities that have the <samp>minecraft:has_nectar</samp> property <code>''true''</code> (it would only apply to bees).
+:*<code>@e[has_property={minecraft:creaking_swaying_ticks=!1..}]</code> — Selects all entities that do not have the <samp>minecraft:creaking_swaying_ticks</samp> property <code>''1''</code>'' or higher'' (it would apply to all entities except creakings that are swaying).
+:*<code>@e[has_property={minecraft:climate_variant=!"temperate",property=minecraft:climate_variant}]</code> — Selects all entities that have the <samp>minecraft:climate_variant</samp> property except those whose value is <code>''temperate''</code>.
+:*<code>@e[has_property={property=minecraft:armadillo_state}]</code> — Selects all entities that have the <samp>minecraft:armadillo_state</samp> property.
+
+:List of entity properties:
+{{collapse|content=
+*{{nbt|string|minecraft:armadillo_state}}: {{cd|unrolled}}, {{cd|rolled_up}}, {{cd|rolled_up_peeking}}, {{cd|rolled_up_relaxing}}, or {{cd|rolled_up_unrolling}} &mdash; Applies to {{EntityLink|Armadillo|armadillos}}.
+*{{nbt|bool|minecraft:can_move}}: {{cd|true}} or {{cd|false}} &mdash; Applies to {{EntityLink|Happy Ghast|happy ghasts}}.
+*{{nbt|string|minecraft:chest_interaction}}: {{cd|none}}, {{cd|take}}, {{cd|take_fail}}, {{cd|put}}, or {{cd|put_fail}} &mdash; Applies to {{EntityLink|Copper Golem|copper golems}}.
+*{{nbt|string|minecraft:climate_variant}}: {{cd|temperate}}, {{cd|warm}}, or {{cd|cold}} &mdash; Applies to {{EntityLink|Cow|cows}}, {{EntityLink|Chicken|chickens}}, {{EntityLink|Pig|pigs}}, and {{EntityLink|Egg|thrown eggs}}.
+*{{nbt|string|minecraft:creaking_state}}: {{cd|neutral}}, {{cd|hostile_observed}}, {{cd|hostile_unobserved}}, {{cd|twitching}}, or {{cd|crumbling}} &mdash; Applies to {{EntityLink|Creaking|creakings}}.
+*{{nbt|int|minecraft:creaking_swaying_ticks}}: {{cd|0}} to {{cd|6}} &mdash; Applies to {{EntityLink|Creaking|creakings}}.
+*{{nbt|bool|minecraft:has_increased_max_health}}: {{cd|true}} or {{cd|false}} &mdash; Applies to {{EntityLink|Wolf|wolves}}.
+*{{nbt|bool|minecraft:has_nectar}}: {{cd|true}} or {{cd|false}} &mdash; Applies to {{EntityLink|Bee|bees}}.
+*{{nbt|bool|minecraft:is_armorable}}: {{cd|true}} or {{cd|false}} &mdash; Applies to {{EntityLink|Wolf|wolves}}.
+*{{nbt|bool|minecraft:is_playing_idle_ground_sound}}: {{cd|true}} or {{cd|false}} &mdash; Applies to {{EntityLink|Breeze|breezes}}.
+*{{nbt|bool|minecraft:is_waxed}}: {{cd|true}} or {{cd|false}} &mdash; Applies to {{EntityLink|Copper Golem|copper golems}}.
+*{{nbt|string|minecraft:oxidation_level}}: {{cd|unoxidized}}, {{cd|exposed}}, {{cd|weathered}}, or {{cd|oxidized}} &mdash; Applies to {{EntityLink|Copper Golem|copper golems}}.
+*{{nbt|string|minecraft:sound_variant}}: {{cd|default}}, {{cd|big}}, {{cd|cute}}, {{cd|grumpy}}, {{cd|mad}}, {{cd|puglin}}, or {{cd|sad}} &mdash; Applies to {{EntityLink|Wolf|wolves}}.
+*{{nbt|bool|minecraft:was_upgraded_to_1_21_100}}: {{cd|true}} or {{cd|false}} &mdash; Applies to {{EntityLink|Wolf|wolves}}.
+}}
+
+==Player type and single type ==
+===Player type===
+Some command arguments require a player-type selector, while some require an entity-type selector.
+
+Entity type means that there's no additional restrictions. Any valid selector can be used in this command argument.
+
+A player-type selector is a selector that can only select players, including:
+*{{cd|@e, @n}} with <code>type=player</code>.
+*{{cd|@a, @p}} (without {{cd|type}} argument {{in|bedrock}}).
+*{{cd|@r}} with <code>type=player</code>{{only|bedrock}} or without {{cd|type}} argument.
+
+{{IN|je}}, if a command argument requires a player type selector, but the entered argument is not in player type, the command is unparseable.
+
+{{IN|be}}, if a command argument requires a player type selector, but the entered argument is not in player type, the command is parseable but fails.
+
+===Single type===
+{{exclusive|java|section=1}}
+Some command arguments require a single-type selector, while some require a multiple-type selector.
+
+Multiple type means that there's no additional restrictions. Any valid selector can be used in this command argument.
+
+A single-type selector is a selector that can only select one target, including: 
+*{{cd|@a, @e}} with <code>limit=1</code>.
+*{{cd|@s}} without {{cd|limit}} argument.
+*{{cd|@p, @r}} without {{cd|limit}} argument or with <code>limit=1</code>.
+
+If a command argument requires a single-type selector, but the entered argument is not in single-type, the command is unparseable.
+
+== Interactive editor ==
+
+{{Calculator|targetSelector}}
+
+== History==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.4.2|dev=12w32a|Added target selectors.}}
+|{{HistoryLine|||dev=12w38a|Added target selector arguments with <code>x</code>, <code>y</code>, <code>z</code>, <code>r</code>, <code>m</code> and <code>c</code>.}}
+|{{HistoryLine|||dev=12w39b|Added <code>l</code> and <code>lm</code> target selector arguments for indicating players with a maximum level, and minimum level, respectively.|Added the <code>rm</code> target selector argument for indicating players from a minimum distance.}}
+|{{HistoryLine||?|Added the <code>name</code> target selector argument.}}<!--This works in 1.5 but may have been introduced earlier -->
+|{{HistoryLine||1.5|dev=?|Added the <code>score_objective</code> and <code>score_objective_min</code> target selector arguments, where <code>objective</code> should be replaced with the objective to test.|Added the <code>team</code> target selector argument.}}
+|{{HistoryLine||1.8|dev=14w02a|Added the <code>@e</code> target selector variable.|Added the <code>type</code> target selector argument.}}
+|{{HistoryLine|||dev=14w03a|Added <code>dx</code>, <code>dy</code>, and <code>dz</code> target selector arguments.}}
+|{{HistoryLine|||dev=14w07a|Added <code>rx</code>, <code>rxm</code>, <code>ry</code> and <code>rym</code> target selector arguments.}}
+|{{HistoryLine||1.9|dev=15w32b|Added the <code>tag</code> target selector argument.}}
+|{{HistoryLine|||dev=16w02a|The <code>m</code> selector now accepts the standard literal gamemode values and abbreviations, such as <code>a</code> and <code>adventure</code>, and these may be negated as well.}}
+|{{HistoryLine||1.11|dev=16w38a|Removed implicit target selectors (for example, <code>@e[167,28,454]</code>).
+|Invalid target selectors (such as <code>@e[Type{{=}}creeper]</code>, <code>@e[asdf{{=}}nonexistent]</code>, and <code>@e[malformed]</code>) now generate an error instead of being silently ignored.}}
+|{{HistoryLine||1.12|dev=17w16b|Added the <code>@s</code> target selector variable.}}
+|{{HistoryLine||1.13|dev=17w45a|Target selector arguments can now be quoted.|The shorthand argument names have been renamed.
+*<code>m</code> -> <code>gamemode</code>
+*<code>l</code> or <code>lm</code> -> <code>level</code>
+*<code>r</code> or <code>rm</code> -> <code>distance</code>
+*<code>rx</code> or <code>rxm</code> -> <code>x_rotation</code>
+*<code>ry</code> or <code>rym</code> -> <code>y_rotation</code>
+*<code>c</code> -> <code>limit</code>
+|Arguments that formerly had a "min" and "max" now support ranges using <code>..</code> (for example <code>distance{{=}}12..34</code>).
+|<code>x</code>, <code>y</code>, <code>z</code>, <code>distance</code>, <code>x_rotation</code>, and <code>y_rotation</code> arguments are now doubles.
+|<code>x</code> and <code>z</code> are no longer center-corrected.
+|<code>gamemode</code> argument no longer allows numerical or shorthand IDs.
+|<code>limit</code> argument no longer supports negative values for sorting by furthest.
+|<code>name</code> argument now supports spaces (as long as it is quoted).
+|Multiple occurrences of the same argument is now possible.
+|Added <code>sort</code> and <code>advancements</code> arguments.
+|Specifying scores now looks like <code>scores{{=}}{foo{{=}}1,bar{{=}}1..5}</code>.
+}}
+|{{HistoryLine|||dev=17w45b|Added the <code>nbt</code> target selector argument.}}
+|{{HistoryLine||1.15|dev=19w38a|Added the <code>predicate</code> target selector argument.}}
+|{{HistoryLine||1.21|dev=24w21a|Added the <code>@n</code> selector which selects the nearest entity.}}
+|{{HistoryLine|||dev=pre1|<code>@n</code> no longer selects dying entities.<ref>{{bug|MC-272490}}</ref>}}
+|{{HistoryLine||1.21.5|dev=25w05a|The <code>team</code> argument can now select non-living entities.<ref>{{bug|MC-108495}}</ref>}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added target selectors along with [[Commands]].}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.17.10|dev=beta 1.17.10.22|Added the {{cd|@initiator}} target selector variable.}}
+|{{HistoryLine||1.18.30|dev=beta 1.18.20.21|Added the {{cd|hasitem}} target selector argument.}}
+|{{HistoryLine||1.19.80|dev=Preview 1.19.80.21|Added the {{cd|haspermission}} target selector argument.}}
+|{{HistoryLine||1.20.70|dev=Preview 1.20.70.21|Added the {{cd|has_property}} target selector argument.}}
+|{{HistoryLine||1.21.100|dev=Preview 1.21.100.21|Added the <code>@n</code> selector which selects the nearest entity.}}
+}}
+
+==Issues==
+
+{{issue list}}
+
+==See also ==
+*[[Commands]]
+*[[Entity format]]
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[Category:Server]]
+[[Category:Commands]]
+
+[[de:Befehl#Ziel-Auswahl]]
+[[es:Comandos]]
+[[fr:Commandes]]
+[[hu:Szerverparancsok]]
+[[it:Comandi]]
+[[ja:ターゲットセレクター]]
+[[ko:명령어]]
+[[nl:Opdrachten]]
+[[pl:Polecenia]]
+[[pt:Seletores de destino]]
+[[ru:Команды консоли]]
+[[th:คำสั่ง]]
+[[tr:Komutlar]]
+[[uk:Команди консолі]]
+[[zh:目标选择器]]

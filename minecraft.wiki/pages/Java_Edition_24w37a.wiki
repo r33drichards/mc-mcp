@@ -1,0 +1,296 @@
+{{Infobox version
+| title = Minecraft 24w37a
+| image = 24w37a.jpg
+| image2 = Java Edition 24w37a.png
+| edition = Java
+| type = Snapshot
+| date = September 11, 2024
+| jsonhash = 9fdf7dcfc4325b612cf472df711a9871f7b5cc7c
+| clienthash = 0b48c22e8ed722bcae66e25a03531409681e648b
+| clientmap = 38d87708ff2de34eadecda2a54592fe4846d03de
+| serverhash = 4ba5f8917ac400474751b6e0f20d311d3b726fe7
+| servermap = 67b788a9ce161c044c63cf2ae611412a64cd9111
+| parent = 1.21.2
+| prevparent = 1.21.1
+| prev = 24w36a
+| next = 24w38a
+| nextparent = 1.21.3
+}}<onlyinclude>
+
+'''24w37a''' is the fifth [[snapshot]] for [[Java Edition 1.21.2]], released on September 11, 2024.<ref>{{snap|24w37a|September 11, 2024}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Data component format]]'''
+* Added <code>minecraft:death_protection</code> item stack component.
+<div class="treeview">
+:* {{nbt|compound|minecraft:death_protection}}: If present, this item protects the holder from dying by restoring a single [[health]] point.
+:** {{nbt|list|death_effects}}: An optional list of effects that are applied when the item protects the holder.
+:*** {{nbt|compound}}: A single revive effect.
+:**** {{nbt|string|type}}: The kind of revive effect. Must be one of {{cd|apply_effects|remove_effects|clear_all_effects|teleport_randomly|play_sound|d=or}}.
+:**** ''If '''type''' is <code>apply_effects</code>'':
+:***** {{nbt|list|effects}}: A list of [[effect]] instances applied once revived.
+:****** {{nbt|compound}}: A single effect.
+:******* {{nbt|string|id}}: The ID of the effect.
+:******* {{nbt|byte|amplifier}}: The amplifier of the effect, with level I having value 0. Optional, defaults to 0.
+:******* {{nbt|int|duration}}: The duration of the effect in [[tick]]s. Value -1 is treated as infinity. Values 0 or less than -2 are treated as 1. Optional, defaults to 1 tick.
+:******* {{nbt|boolean|ambient}}: Whether or not this is an effect provided by a beacon and therefore should be less intrusive on the screen. Optional, defaults to {{cd|false}}.
+:******* {{nbt|boolean|show_particles}}: Whether or not this effect produces particles. Optional, defaults to {{cd|true}}.
+:******* {{nbt|boolean|show_icon}}: Whether or not an icon should be shown for this effect. Optional, defaults to {{cd|true}}.
+:***** {{nbt|float|probability}}: The probability the above effects is applied once revived. Defaults to 1.0.
+:**** ''If '''type''' is <code>remove_effects</code>'':
+:***** {{nbt|list}}{{nbt|string|effects}}: A set of effects removed once revived, as either a single ID or list of IDs.
+:**** ''If '''type''' is <code>clear_all_effects</code>'': Clears all effects of the holder.
+:**** ''If '''type''' is <code>teleport_randomly</code>'':
+:***** {{nbt|float|diameter}}: The diameter that the holder is teleported within. Defaults to 16.0.
+:**** ''If '''type''' is <code>play_sound</code>'':
+:***** {{nbt|string}}{{nbt|compound|sound}}: The sound event played once when revived.
+:****** {{nbt inherit/sound event|sounds}}
+</div>
+
+'''[[Loot table]]s'''
+* [[Chicken]]s laying eggs is now controlled by a loot table found at <code>gameplay/chicken_lay</code>.
+* [[Armadillo]]s randomly dropping scutes is now controlled by a loot table found at <code>gameplay/armadillo_shed</code>.
+* The loot given by [[villager]]s is now controlled by two additional loot tables:
+** <code>gameplay/hero_of_the_village/unemployed_gift</code> - used if the villager is unemployed.
+** <code>gameplay/hero_of_the_village/baby_gift</code> - used if the villager is a baby.
+
+'''[[Predicates]]'''
+* Added <code>minecraft:salmon</code> entity sub-predicate.
+** Fields:
+*** <code>variant</code>: one of small, medium, large.
+
+'''[[Tag]]s'''
+* Added the <code>duplicates_allays</code> item tag.
+** Controls what items can be used to duplicate [[allay]]s when dancing.
+* Added the <code>panda_eats_from_ground</code> item tag.
+** Controls what items a [[panda]] picks up from the ground and eats.
+* Added the <code>brewing_fuel</code> item tag.
+** Controls what items that can be used as fuel in a [[brewing stand]].
+
+== Changes ==
+{{info needed section|visual differences in the tooltip background compared to the previous snapshot}}
+=== Items ===
+'''[[Ender pearl]]'''
+
+* Ender Pearls now ensure that the chunk they are in or travel into is always loaded and ticking.
+* They also load chunks when crossing to a new dimension, so that they can always continue to travel.
+* This ensures that Ender Pearls can always land, and makes cross dimensional ender pearl traveling more predictable.
+* Ender Pearls now unload when a player logs out, and reappear whenever that player logs back in, similar to how mounts currently behave
+* Each Ender Pearl creates a ticket for chunk loading any time it moves into a new chunk, and also periodically every 10 seconds.
+
+=== Mobs ===
+'''General'''
+* Some changes introduced in [[24w36a]] related to which data gets transferred between mobs when converted have been reverted (health, attributes, loot tables):
+** <code>AbsorptionAmount</code>
+** <code>active_effects</code>
+** <code>Age</code>
+** <code>AngerTime</code>
+** <code>AngryAt</code>
+** <code>ArmorDropChances</code>
+** <code>ArmorItems</code>
+** <code>Brain.memories.minecraft: angry_at.ttl</code>
+** <code>Brain.memories.minecraft: angry_at.value</code>
+** <code>CanBreakDoors</code>
+** <code>CanPickUpLoot</code>
+** <code>CustomNameVisible</code>
+** <code>CustomName</code>
+** <code>fall_distance</code>
+** <code>FallFlying</code>
+** <code>Fire</code>
+** <code>ForcedAge</code>
+** <code>HandDropChances</code>
+** <code>HandItems</code>
+** <code>HurtByTimestamp</code>
+** <code>HurtTime</code>
+** <code>Invulnerable</code>
+** <code>IsBaby</code>
+** <code>Leash</code>
+** <code>LeftHanded</code>
+** <code>Motion</code>
+** <code>NoAI</code>
+** <code>NoGravity</code>
+** <code>OnGround</code>
+** <code>Passengers</code>
+** <code>PersistenceRequired</code>
+** <code>PortalCooldown</code>
+** <code>Position</code>
+** <code>RootVehicle</code>
+** <code>Rotation</code>
+** <code>Silent</code>
+** <code>SleepingX</code>
+** <code>SleepingY</code>
+** <code>SleepingZ</code>
+** <code>Tags</code>
+** <code>Team</code>
+* Mobs that split into several mobs rather than converting from one type into another do not transfer the following properties:
+** <code>ArmorDropChances</code>
+** <code>ArmorItems</code>
+** <code>fall_distance</code>
+** <code>FallFlying</code>
+** <code>HandDropChances</code>
+** <code>HandItems</code>
+** <code>HurtByTimestamp</code>
+** <code>HurtTime</code>
+** <code>Leash</code>
+** <code>Motion</code>
+** <code>OnGround</code>
+** <code>Passengers</code>
+** <code>Position</code>
+** <code>Rotation</code>
+** <code>SleepingX</code>
+** <code>SleepingY</code>
+** <code>SleepingZ</code>
+* Some properties mentioned in {{bug|MC-88967}} are intentionally not transferred in any conversion:
+** <code>Attributes</code>
+** <code>Gossips</code>
+** <code>Health</code>
+** Loot tables
+** <code>VillagerData</code>
+** <code>Xp</code>
+
+=== General ===
+'''[[Advancement]]s'''
+* The trigger <code>minecraft:killed_by_crossbow</code> has been renamed to <code>minecraft:killed_by_arrow</code>.
+** Now trigger whenever an arrow kills an entity, not just when fired from a crossbow.
+** Has a new optional item predicate field, <code>fired_from_weapon</code>.
+*** Can be used to match the item used to shoot the arrow.
+
+'''[[Data component format]]'''
+* <code>minecraft:fire_resistant</code> has been renamed to <code>minecraft:damage_resistant</code>
+** Has a new field: <code>types</code>, hash-prefixed damage type tag.
+*** Items with this component, when in entity form, is resistant to the damage types included in the tag.
+*** This component also affects whether the equipped item is damaged when the wearer is hurt by a given damage type.
+* <code>minecraft:item_name</code>
+** Name provided by this component always has the lowest priority.
+*** That means it gets overridden by components like <code>minecraft:potion_contents</code>.
+* <code>minecraft:potion_contents</code>
+** Added optional string field <code>custom_name</code>.
+*** When present, it is used to generate containing stack name.
+*** For example, if value is <code>foo</code> and item is <code>minecraft:lingering_potion</code>, the name of item is translation of <code>item.minecraft.lingering_potion.effect.foo</code>.
+* <code>minecraft:equippable</code>
+** Added the following fields.
+*** <code>swappable</code>: boolean (default: <code>true</code>), whether the item can be equipped into the relevant slot by right-clicking.
+*** <code>damage_on_hurt</code>: boolean (default: <code>true</code>), whether this item is damaged when the wearing entity is damaged.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>53</code>.
+
+'''[[Loot tables]]'''
+* The tool value (used for functions like <code>match_tool</code>) is now available for some additional loot table types.
+** <code>archaeology</code> - used brush.
+** <code>vault</code> - inserted key (not available when displaying items).
+** <code>shearing</code> - shears.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>38</code>.
+** The appearance of a highlighted slot can now be customized by replacing sprites (this supports the use of animated textures):
+*** <samp>container/slot_highlight_front</samp>: The sprite to render in front of highlighted slots.
+*** <samp>container/slot_highlight_back</samp>: The sprite to render behind highlighted slots.
+** Likewise, the appearance of a highlighted item within the Bundle can be customized with the following sprites:
+*** <samp>container/bundle/slot_highlight_front</samp>.
+*** <samp>container/bundle/slot_highlight_back</samp>.
+
+== Known issues ==
+=== Languages ===
+[https://bugs.mojang.com/browse/MC-276603 MC-276603] - No High Norwegian language option
+
+== Fixes ==
+{{Fixes|fixedin=24w37a
+|;From released versions before 1.21
+|119369|Boats crash/break and can kill their passengers when falling certain distances.
+|162551|When shooting an arrow on top of a player in Creative mode, a closed shulker, or an invincible mob, the arrow glitches around on top of the entity.
+|174214|Fireworks for crossbow go through an entity if it is close to a player.
+|206436|Stonecutter ignores anything over 64 when shift-clicking.
+|220360|Gifts given by baby villagers, nitwits and unemployed villagers when under the Hero of the Village effect are hardcoded.
+|260537|Tree growth can replace leaves that have the {{cd|persistent}} block state set to {{cd|true}}.
+|265399|Players' heads are incorrectly positioned while exiting the swimming/crawling state when other players are on screen.
+|269873|Egg laying drop from chickens is hardcoded.
+|270254|Item slot highlight effect cannot be retextured.
+|;From 1.21.1
+|275792|Bottom faces of torches and soul torches are not culled against solid blocks.
+|276134|Can't scroll in Creative inventory while hovered over the bundle.
+|276433|{{cd|set_enchantments}} function removes enchantments component from books.
+|;dev
+|275205|The hand animation is delayed and doesn't play all the time.
+|275300|Mace smash attack damage does not work with mobs, even though particles and sounds happen.
+|275302|The animation speed of end crystals is no longer constant.
+|275352|Spectral arrow texture is not updated properly for Programmer Art.
+|275406|Grammatical error in {{cd|options.rotateWithMinecart.tooltip}}
+|275451|Bundles do not use data for textures when the item in the bundle is rendered in the inventory.
+|275468|Gamerule {{cd|minecartMaxSpeed}} can't be set through functions.
+|275504|Custom model data is not applied to open bundle.
+|275538|Breeze still do not attack when super close to them.
+|275750|Redstone torch still doesn't have a bottom face.
+|275751|Head snaps when coming out of crawling.
+|275765|Missing full stop in string {{cd|gamerule.minecartMaxSpeed.description}}
+|275833|Hand animation plays higher than before.
+|275857|Minecarts become invisible if a lot of them are in the same area.
+|275883|Riding a minecart cluster into a wall freezes the game.
+|275909|Wrong death message is displayed when being killed by a mob's smash attack.
+|275964|Bundles can remain in the open state when held by the mouse cursor via swapping items.
+|275990|Bundles can remain in the open state through the crafting table.
+|276025|Model overrides are not applied to items shown in an open bundle.
+|276111|Salmon spawned from a bucket are the wrong size for one tick.
+|276127|Fractions in bee nest tooltip are not padded with whitespace.
+|276263|{{cd|explosion_power}} nbt does not work for minecarts with tnt.
+|276463|Armor on piglins detach from their bodies while bartering.
+|;previous
+|276293|Mobs no longer get damaged by sweet berry bushes.
+|276295|Zombies always kill villagers.
+|276296|Worn chainmail armor has a missing texture.
+|276297|Worn netherite armor appears as diamond armor.
+|276299|Horse armor doesn't render properly in horse inventory.
+|276301|Item tooltip padding is gone.
+|276304|Carved pumpkins and skulls can be equipped through right-clicking.
+|276310|Players' capes detach from their bodies when wearing non-chestplate items in the chest slot.
+|276311|Players' capes illogically point upward when flying with non-elytra items.
+|276314|Wind charges, wither skulls and fireballs cause entities to be launched extremely high when directly hit by them.
+|276315|{{cmd|teleport}} command runs at the entity's position and ignores location from execution context.
+|276316|Ender pearls no longer teleport entities to the point of impact.
+|276317|Projectiles visually update slowly when their motion is changed.
+|276320|Shields no longer block incoming projectiles.
+|276321|Elytra loses durability when taking damage.
+|276322|Boats don't drop as items when destroyed.
+|276326|Air item lost its name
+|276327|The {{cd|item_name}} component no longer overrides potion names.
+|276335|Cured villagers have the wrong movement speed.
+|276338|Converted mob keeps the same loot table of the first mob.
+|276339|Witches converted from villagers move very fast.
+|276344|Hovered items in bundles do not reflect any {{cd|tooltip_style}} component.
+|276364|Non-armor items with equippable tag cannot be given to wolves.
+|276365|Armor sleeves do not follow arms when switching to and from items and on item use animations.
+|276370|Golden armor pieces have wrong max durabilities.
+|276376|{{cmd|teleport}} command cannot teleport to the correct facing angles.
+|276378|Converted witches lose their armor yet are still protected by it.
+|276383|Middle-clicking on boats in Creative mode crashes the game.
+|276384|Players' capes detach from their bodies when moving.
+|276394|Some specially rendered elements are no longer affected by fog of any type.
+|276415|Turtle helmet does not give water breathing effect when equipped on any slot other than the head.
+|276429|Projectiles move after hitting a block.
+|276476|Crash when a boat is destroyed by a hazard.
+|276480|Projectile no longer moves correctly when it is deflected.
+|276484|Fireballs and wither skulls do too much damage.
+|276495|Creative player can go through nether portal without being teleported when throwing riptide trident.
+|276527|Duplicate UUID error causes player to teleport to origin when riding on a pig after it is converted by lightning.
+|276501|Returning tridents get stuck on blocks and spam sounds
+|276533|Game crashes when three or more skeletons are about to release their arrows.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|FTTNHAEzXTg|2=https://youtu.be/_2ot8wpvXos}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w37a]]
+[[es:Java Edition 24w37a]]
+[[fr:Édition Java 24w37a]]
+[[ja:Java Edition 24w37a]]
+[[pt:Edição Java 24w37a]]
+[[ru:24w37a (Java Edition)]]
+[[uk:24w37a (Java Edition)]]
+[[zh:Java版24w37a]]

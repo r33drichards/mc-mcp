@@ -1,0 +1,79 @@
+{{Exclusive|java}}
+'''Chat types''' are [[JSON]] files located in [[data pack]]s that allow limited control of [[chat]] message styling.
+
+== JSON format ==
+Chat types are stored as [[JSON]] files at the path <code>data/<namespace>/chat_type/<name>.json</code>.
+
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|compound|chat}}: Configuration on how the message should be displayed in chat.
+*** {{nbt|string|translation_key}}: The [[language]] translation key to use. Can also be plain text with <code>%s</code> insertions.
+*** {{nbt|list|parameters}}: The parameters to insert. The length of this list should correspond with the amount of insertions in the translation value.
+**** {{nbt|string}}: A parameter. Allowed values: {{cd|sender|target|content|d=and}}.
+*** {{nbt|compound|style}}: (Optional) [[Text component]] styles to apply to the whole chat message. Styles on individual parameters are only possible with legacy [[formatting codes]].
+** {{nbt|compound|narration}}: Configuration on how the message should be read by the [[narrator]].
+*** The same format as '''chat'''.
+</div>
+
+== List of chat types ==
+{|class="wikitable"
+! Chat type
+! Source
+! Default chat format
+! Default narration
+|-
+| {{cd|chat}}
+| A message sent by a player
+| <%sender> %content
+| %sender says %content
+|-
+| {{cd|emote_command}}
+| A message sent using the {{cmd|me}} command
+| colspan=2 | * %sender %content
+|-
+| {{cd|msg_command_incoming}}
+| A received [[Commands/msg|private message]] from a player
+| %sender whispers to you: %content
+| rowspan=5 | %sender says %content
+|-
+| {{cd|msg_command_outgoing}}
+| The [[Commands/msg|private message]] sent to another player
+| You whisper to %target: %content
+|-
+| {{cd|say_command}}
+| The message from a {{cmd|say}} command
+| [%sender] %content
+|-
+| {{cd|team_msg_command_incoming}}
+| A received [[Commands/teammsg|team message]] from a player
+| %target <%sender> %content
+|-
+| {{cd|team_msg_command_outgoing}}
+| The [[Commands/teammsg|team message]] sent to another player
+| -> %target <%sender> %content
+|}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.19|dev=22w18a|Added chat types to [[data pack]]s.}}
+|{{HistoryLine||1.19.1|dev=22w24a|The {{nbt|compound|style}} field is now optional.}}
+|{{HistoryLine|||dev=Pre-release 2|Flattened the <code>decoration</code> field, fields are placed directly into {{nbt|compound|chat}} and {{nbt|compound|narration}}.
+|Removed the <code>priority</code> field in {{nbt|compound|narration}}.
+|Removed the <code>overlay</code> field. Chat types can no longer be used to show text on the [[action bar]].
+|Removed the <code>system</code>, <code>game_info</code>, and <code>tellraw_command</code> builtin chat types.}}
+|{{HistoryLine|||dev=Pre-release 3|<code>msg_command</code> has been split into <code>msg_command_outgoing</code> and <code>msg_command_incoming</code>.
+|Renamed the <code>team_name</code> parameter to <code>target</code>. This is now also used in <code>msg_command_outgoing</code>.}}
+|{{HistoryLine|||dev=Pre-release 5|<code>team_msg_command</code> has been split into <code>team_msg_command_incoming</code> and <code>team_msg_command_outgoing</code>.}}
+}}
+
+== External links ==
+* [https://misode.github.io/chat-type/ Chat type Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Chatartendefinition]]
+[[fr:Type de tchat]]
+[[pt:Tipo de chat]]
+[[zh:聊天类型定义格式]]

@@ -1,0 +1,131 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.12022.0<br>'''Android''': 1.21.120.22
+| image = Bedrock 1.21.120.22.png
+| build = 37001572
+| editorver = 1.1.3
+| versioncode = '''Android''':<br />
+952112022 (armeabi-v7a, 35)<br />
+962112022 (x86, 35)<br />
+972112022 (arm64-v8a, 35)<br />
+982112022 (x86_64, 35)
+| date = September 16, 2025
+| server = 1.21.120.22
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.120.22.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.120.22.zip Linux]
+| parent = 1.21.120
+| prevparent = 1.21.114
+| prev = Preview 1.21.120.21
+| next = Preview 1.21.120.23
+| nextparent = 1.21.121
+}}<onlyinclude>
+
+'''Beta 1.21.120.22''' (ChromeOS, Android) or '''Preview 1.21.120.22''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the third beta/''Preview'' version for [[Bedrock Edition 1.21.120]], released on September 16, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/39606021304589-Minecraft-Beta-Preview-1-21-120-22|title=Minecraft Beta & Preview - 1.21.120.22|website=Minecraft Feedback|date=September 16, 2025}}</ref> which updates the accessibility and language settings tabs, and fixes some bugs.
+
+== Additions ==
+=== General ===
+'''[[Settings]]'''
+*Added an "Enable Dithering for Blocks" option to the accessibility settings.
+
+== Changes ==
+=== General ===
+'''Graphical'''
+* Adjusted rendering settings in [[Vibrant Visuals]].
+** Slightly reduced contrast across all [[biome]]s.
+** Reduced the intensity of temperature-based color grading in warmer biomes, especially the [[desert]] and all [[badlands]].
+** Adjusted the [[End sky|sky color]] in [[the End]].
+** Added unique biome settings for the [[dark forest]], making it slightly foggier and gray.
+
+'''[[Settings]]'''
+* Updated the accessibility and language settings tabs with [[Ore UI]].
+* Re-added the "Text to Speech with Device Settings" and "Improved Input Response" options to Windows devices.
+
+=== Mobs ===
+{{Animate|Copper Golem JE1 BE1.png;Exposed Copper Golem JE1 BE1.png;Weathered Copper Golem JE1 BE1.png;Oxidized Copper Golem JE1 BE1.png|32px}} '''[[Copper Golem]]'''
+* When interacting with a copper golem, [[Oxidation|scraping]] and waxing particles now appear at the copper golem's location instead of at the location of the block it is standing in.
+
+[[File:Wither Skeleton JE4 BE3.png|width=50x50]] '''[[Wither Skeleton]]'''
+* Wither skeletons can now pick up [[copper sword]]s.
+
+=== Technical ===
+'''[[API]]'''
+* Released {{cd|initialRotation}} member of {{cd|SpawnEntityOptions}} to {{cd|2.3.0}}.
+* Released {{cd|initialPersistence}} member of {{cd|SpawnEntityOptions}} to {{cd|2.3.0}}.
+* Releasing the light detection API from experimental to stable. 
+* Removed entity override limit on Player method {{cd|setPropertyOverrideForEntity}}.
+
+'''General'''
+*Network changes may result in better download speeds on Windows devices.
+
+'''Item Components'''
+* Added the new {{cd|minecraft:swing_duration}} item component, which defines the duration, in seconds, of the item's swing animation when mining or attacking.
+** The duration is specified in the component's {{cd|value}} field.
+** Affects visuals only and does not impact attack frequency or gameplay mechanics.
+* The {{cd|minecraft:fire_resistant}} item component no longer accepts a direct value assignment and now requires the value to be specified through the {{cd|value}} field.
+
+'''[[Molang]]'''
+* Added {{cd|query.base_swing_duration}}, which returns the duration of the mob's swing/attack animation, determined by the carried item and unmodified by effects applied on the mob.
+* Added {{cd|query.modified_swing_duration}}, which returns the duration of the mob's swing/attack animation, determined by the carried item and modified by effects applied on the mob.
+
+'''Network'''
+*The following level events now emit particles at the exact specified position instead of at the center of the matching block position:
+**{{cd|WaxOn}}, {{cd|WaxOff}}, {{cd|Scrape}}.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", and "Upcoming Creator Features" [[experimental]] toggles.
+
+=== Additions ===
+==== Technical ====
+'''API'''
+* Added {{cd|Control Scheme}} string enum. 
+** Added method {{cd|setControlScheme(controlScheme?: string): void;}} to {{cd|beta}}. 
+** Added method {{cd|getControlScheme(): ControlScheme;}} to {{cd|beta}}. 
+* Added Scripting API for {{cd|BlockPrecipitationInteractions}} component.
+** This API includes a component class for the {{cd|BlockPrecipitationInteractions}} component and the two methods ({{cd|accumulatesSnow}} and {{cd|obstructsRain}}) of said component.
+* Loot table discovery API now includes information about Loot Item Conditions:
+** Modified method from {{cd|setControlScheme(controlScheme?: string): void;}} to {{cd|setControlScheme(controlScheme?: ControlScheme): void;}} in {{cd|beta}}.
+
+'''[[Block]]s'''
+* Added {{cd|minecraft:precipitation_interactions}} component.
+** This component allows creators to determine whether a block should obstruct precipitations or not. And if it does, whether [[snowfall|falling snow]] should accumulate on the block or not like in [[Snowfall#List of blocks that let snow go through|vanilla]].
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.120.22 Preview
+|;old
+|89643|Soul lantern animation not mapped in {{cd|flipbook_textures.json}}
+|185069|Sneak button is cut off.
+|225212|The invicon for the copper golem statue making a star pose has a disjointed arm.
+|226142|Copper Lantern textures isn't animated.
+|226550|Vibrant Visuals: Copper Golem eye glow disappears when seen through water.
+|226651|{{cmd|aimassist set}} command produces "player camera not supported" error in first person on nintendo switch, regardless of target.
+|226702|{{cd|player.applyImpulse}} causes the player to phase through blocks.
+|227586|Placing sound spams when holding right click with an empty hand on an empty shelf slot.
+|;dev
+|227865|Some toggles are no longer available from Settings screen.
+|otherissuescount=1}}
+'''Other'''
+*Improved stability around hopper block destruction.
+{{fixes|project=REALMS|fixedin=1.21.120.22 Preview
+|;old
+|12993|Using End Gateways while lying down (e.g using trapdoor or swimming) results in being launched into the void
+|otherissuescount=0}}</onlyinclude>
+
+== Gallery ==
+<gallery>
+File:New UI - Accessibility Settings Screen Menu (Bedrock Preview 1.21.120.22).png|New accessibility settings screen.
+File:New UI - Language Settings Screen Menu (Bedrock Preview 1.21.120.22).png|New language settings screen.
+</gallery>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.120 betas]]
+
+[[de:Bedrock Edition beta 1.21.120.22]]
+[[es:Bedrock Edition Preview 1.21.120.22]]
+[[pt:Edição Bedrock Preview 1.21.120.22]]
+[[uk:Preview 1.21.120.22 (Bedrock Edition)]]
+[[zh:基岩版1.21.120.22]]

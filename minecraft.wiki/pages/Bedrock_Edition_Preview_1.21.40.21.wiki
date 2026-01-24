@@ -1,0 +1,193 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.4021.0<br>'''Android, iOS, iPadOS''': 1.21.40.21
+| image = Bedrock 1.21.40.21 PatchNotes.jpeg
+| image2 = Bedrock 1.21.40.21.png
+| build = 27623259
+| editorver = 0.7.2
+| versioncode = '''Android''':<br />
+952104021 (armeabi-v7a, 34)<br />
+962104021 (x86, 34)<br />
+972104021 (arm64-v8a, 34)<br />
+982104021 (x86_64, 34)<br />
+| date = September 11, 2024
+| server = 1.21.40.21
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.40.21.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.40.21.zip Linux]
+| parent = 1.21.40
+| prevparent = 1.21.31
+| prev = Preview 1.21.40.20
+| next = Preview 1.21.40.22
+| nextparent = 1.21.41
+}}<onlyinclude>
+'''Beta 1.21.40.21''' (ChromeOS, Android) or '''Preview 1.21.40.21''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the second beta/''Preview'' version for [[Bedrock Edition 1.21.40]], released on September 11, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/30155721026317|title=Minecraft Beta & Preview - 1.21.40.21|website=Minecraft Feedback|date=September 11, 2024}}</ref> which reorganizes items and blocks in the [[creative inventory]], and fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Monster Spawner]]'''
+*Its step sounds and hit sounds now play at their intended volume.
+
+'''[[Trial Spawner]]'''
+*Its hit sounds now play at their intended volume.
+
+=== Gameplay ===
+'''[[Creative inventory]]'''
+*Items and blocks in the creative inventory have been reorganized, with the goal of making overall sorting more intuitive:
+**Trial chamber items:
+***[[Trial key]]s were moved to be next to ominous trial keys.
+***[[Ominous bottle]]s were moved next to the existing potions and were made into its own "Ominous Bottle" group.
+**Stone group in the "Nature" tab:
+***[[Stone]] was moved into the "Stone" group.
+***Stone is now the front block of the "Stone" group.
+***[[Basalt]] and [[smooth basalt]] were moved into the "Stone" group.
+***[[Tuff]] and [[polished tuff]] were moved into the "Stone" group.
+**"Decorative Stone" in the "Construction" tab:
+***[[Smooth stone]] was moved into "Decorative Stone".
+***[[Tuff bricks]], [[chiseled tuff]], and [[chiseled tuff bricks]] were moved from the "Nature" category to "Decorative Stone" in the "Construction" category.
+***[[Prismarine bricks]] were moved from the "Decorative Stone" group, now they are next to prismarine and dark prismarine.
+**[[Copper]] family:
+***Reordered [[raw iron]], [[raw copper]], [[raw gold]] to raw copper, raw iron, raw gold.
+***The copper, iron, and gold blocks were moved to match the raw versions ordering.
+***The [[copper doors]] were moved to all the other doors.
+***The [[copper trapdoor]]s were moved to the group with all the other trapdoors.
+***[[Copper block]]s and [[copper grate]]s are now sorted by block type then by oxidation level, instead of oxidation level then block type.
+**Tuff family:
+***[[Tuff stairs]], [[tuff slab]]s, [[tuff wall]]s, and their polished versions were moved from the "Nature" tab to the "Construction" tab into their respective groups.
+**Other blocks
+***[[Bricks]] are now placed before the "Slabs" group.
+****This change only affects bricks made from clay and not all the brick blocks.
+***[[Chiseled nether bricks]] and [[cracked nether bricks]] were moved next to the [[nether bricks block]] and [[red nether bricks]].
+***[[Quartz bricks]] placed next to the other quartz blocks.
+***[[Rooted dirt]] is now next to the other dirt blocks.
+***Many dirt blocks and grass variants were shuffled around for a greater parity with {{JE}}.
+***[[Gravel]] is now ordered after the "Stone" group and is next to sand and red sand.
+***[[Clay]] was moved from the "Construction" category to the "Nature" category, placed next to the mud block.
+
+=== General ===
+'''[[Settings]]'''
+*Removed some Keyboard key bindings from Settings that should only exist in {{el|ee}}: Control Tips, Code Builder, and Immersive Reader.
+
+'''UI'''
+*LAN worlds are now visible in the "Worlds" tab for the OreUI Play screen (''Preview'' only).
+
+=== Items ===
+'''[[Mace]]'''
+*Mobs can now perform mace smash attacks again.
+
+=== Technical ===
+'''[[Behavior Pack]]s'''
+*Updated references to old block names in behavior pack wood recipe files.
+*Updated references to old block names in remaining behavior pack recipe files.
+
+'''[[Block]]s'''
+*Added content warning when {{cd|carried_textures}} or {{cd|blockshape}} are incorrectly written in {{cd|blocks.json}}.
+
+'''Components'''
+*Renamed the {{cd|minecraft:lookat}} component to {{cd|minecraft:looked_at}} to better reflect its functionality:
+**Its {{cd|look_event}} field was also renamed to {{cd|looked_at_event}}.
+**Its {{cd|look_cooldown}} field was also renamed to {{cd|looked_at_cooldown}}.
+*Expanded the {{cd|minecraft:looked_at}} component functionality with the addition of six new [Beta] fields: 
+**{{cd|find_players_only}} restricts the search for entities looking at the owner entity to players only, ensuring that the closest player satisfying the specified {{cd|filters}} is selected.
+**{{cd|look_at_locations}} defines the parts of the owner entity that are targeted for being looked at:
+***For these parts, a line-of-sight check is performed to ensure no blocks obstruct the view.
+***Supported values are {{cd|head}}, {{cd|body}}, and {{cd|feet}}.
+**{{cd|not_looked_at_event}} specifies the event to trigger when no suitable entity is looking at the owner entity.
+**{{cd|field_of_view}} defines the width of the field of view, in degrees, for entities looking at the owner entity:
+***If {{cd|scale_fov_by_distance}} is set to true, this value corresponds to the field of view at a distance of one block between the entities.
+**{{cd|scale_fov_by_distance}} determines if the field of view narrows as the distance between the owner entity and the entity looking at it increases.
+***This ensures that the width of the view cone at the owner entity position remains relatively constant, regardless of distance.
+**{{cd|line_of_sight_obstruction_type}} defines which block shape is considered when checking for line-of-sight obstructions.
+***Supported values are {{cd|outline}}, {{cd|collision}}, and {{cd|collision_for_camera}}.
+**Moreover, {{cd|et_target}} now supports three different values:
+***{{cd|never}}, looking entities are never set as targets, but events are emitted.
+***{{cd|once_and_stop_scanning}}, the first detected looking entity is set as target, but scanning and event emission is suspended if and until the owner entity has a target.
+***[Beta] {{cd|once_and_keep_scanning}}, the first detected looking entity is set as target, but scanning and event emission continues.
+**All these fields are planned to be taken out of [Beta] and fully released at a later date.
+
+'''Entity Event Responses'''
+*Added the {{cd|reset_target}} entity event response, which allows an entity to reset its target.
+
+'''[[Feature]]'''
+*Using unsupported feature placement in {{cd|pregeneration_pass}} will now throw a content error instead of crash.
+
+'''Graphical'''
+*Add new {{cd|the_end.client_biome.json}} as the first new type of file to contain per-biome rendering and audio settings in resource packs.
+
+'''[[Item]]s'''
+*The {{cd|minecraft:item}} object is parsed with a strict loader from {{cd|1.21.40}}:
+**Numbers and booleans are no longer interchangeable in the JSON input.
+**Floating point numbers are no longer accepted where an integer is expected.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", and "Upcoming Creator Features" experimental toggles.
+=== Additions ===
+==== Technical ====
+'''Graphical'''
+*Added a slider in the Deferred Technical Preview video settings for controlling the upscaling resolution factor.
+
+'''[[Molang]]'''
+*Adding under upcoming creator features:
+**{{cd|query.client_memory_tier}}. Returns a number representing the client RAM memory tier, 0 = "Undetermined", 1 = "SuperLow", 2 = 'Low", 3 = 'Mid", 4 = "High", or 5 = "SuperHigh". Available on the Client (Resource Packs) only.
+**{{cd|query.server_memory_tier}}. Returns a number representing the server RAM memory tier, 0 = "Undetermined", 1 = "SuperLow", 2 = 'Low", 3 = 'Mid", 4 = "High", or 5 = "SuperHigh". Available on the server side (Behavior Packs) only.
+
+'''Scripting'''
+*Added enum {{cd|MemoryTier}}:
+    export enum MemoryTier {
+        Undetermined = 0,
+        SuperLow = 1,
+        Low = 2,
+        Mid = 3,
+        High = 4,
+        SuperHigh = 5
+    }
+*Added base class {{cd|SystemInfo}}:
+**Field {{cd|MemoryTier}}.
+*Added class {{cd|ClientSystemInfo}}:
+**Field {{cd|MemoryTier}}.
+*Class {{cd|Player}}:
+**Added property {{cd|clientSystemInfo}}.
+*Class {{cd|System}}:
+**Added property {{cd|serverSystemInfo}}.
+
+=== Changes ===
+==== Technical ====
+'''Graphical'''
+*Improved lighting for maps when held in hand and when placed in frames in the Deferred Technical Preview.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.40.21 Preview
+|;old
+|116364|Stone and end stone are not in the Stone group in the Creative inventory.
+|176383|Tuff blocks variants aren't grouped together to their block variants respectively.
+|176384|Copper group in creative inventory is disorganized.
+|178959|Bogged's head does not move together with equipped Skull & Carved Pumpkin.
+|179608|No longer able to move "open inventory" touch control to the left side.
+|180278|Ominous Bottles are not grouped together as its own item group in the creative menu.
+|180280|Ominous Trial Key are not grouped with normal trial key in the creative inventory.
+|180640|Oozing, weaving and wind charged don't work on the player.
+|183431|New Bed Screen shows an incorrect message when {{cd|playerssleepingpercentage}} is set to {{cd|>100}}.
+|185502|Renamed bundle doesn't have italic formatting.
+|185913|Wither Skeleton’s new step sounds are too quiet.
+|186235|Slabs in Shipwrecks can be the wrong half.
+|;previous
+|186343|Some blocks have no ambient occlusion.
+|otherissuescount=4}}
+'''Other'''
+*Fixed an issue where packs were not downloaded or applied when joining a server that had CDN enabled.
+*Fixed an issue where user choice for downloading/applying resource packs during server join was ignored when CDN is enabled on the server.
+*Fixed an issue where trades with negative {{cd|max_use}} values could not be traded.
+*Fixed water surface shaking that would occur when upscaling was enabled in the Deferred Technical Preview.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.40 betas]]
+
+[[de:Bedrock Edition beta 1.21.40.21]]
+[[pt:Edição Bedrock Preview 1.21.40.21]]
+[[ru:Preview 1.21.40.21 (Bedrock Edition)]]
+[[uk:Preview 1.21.40.21 (Bedrock Edition)]]
+[[zh:基岩版1.21.40.21]]

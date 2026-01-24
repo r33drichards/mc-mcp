@@ -1,0 +1,481 @@
+'''Identifiers''' (also known as '''resource locations''', '''namespaced IDs''', '''namespaced identifiers''', '''resource identifiers''',<ref>{{snap|19w39a|September 27, 2019}}</ref> or '''namespaced strings'''<ref>[https://github.com/Mojang/DataFixerUpper/blob/8b5f82ab78b30ff5813b3a7f3906cd3f4f732acf/src/main/java/com/mojang/datafixers/types/constant/NamespacedStringType.java DataFixerUpper/NamespacedStringType.java at 8b5f82ab78b30ff5813b3a7f3906cd3f4f732acf · Mojang/DataFixerUpper] – GitHub</ref>) are a way to declare and specify game objects in ''Minecraft'', which can identify built-in and user-defined objects without potential ambiguity or conflicts.
+
+== Introduction ==
+
+Identifiers are used as plain strings to reference [[block]]s, [[item]]s, [[Entity#Types of entities|entity types]], and various other objects in vanilla ''Minecraft''.
+
+A valid identifier has a format of <code>namespace:path</code>, where only certain characters can be used.
+
+=== Legal characters ===
+
+==== ''Java Edition'' ====
+The namespace and the path of a identifier should only contain the following symbols:
+
+* <code>0123456789</code> Numbers
+* <code>abcdefghijklmnopqrstuvwxyz</code> Lowercase letters
+* <code>_</code> Underscore
+* <code>-</code> Hyphen/minus
+* <code>.</code> Dot
+
+The following characters are illegal in the namespace, but acceptable in the path:
+* <code>/</code> Forward slash (directory separator)
+
+The preferred naming convention for either namespace or path is <code>snake_case</code>.
+
+==== ''Bedrock Edition'' ====
+The namespace and the path of a namespaced ID can contain all symbols with the exception of slashes and colons.
+
+The following characters are illegal in the namespace, but acceptable in the path of '''loot tables and functions'''.
+* <code>/</code> Forward slash (directory separator)
+
+The preferred naming convention for either namespace or path is <code>snake_case</code>.
+
+=== Conversion to string ===
+An identifier is converted to a string by concatenating its namespace with a <code>:</code> (colon) and its path.
+
+Examples:
+{| class="wikitable"
+|-
+! Namespace !! Path !! String representation
+|-
+| <code>minecraft</code> || <code>diamond</code> || <code>minecraft:diamond</code>
+|-
+| <code>foo</code> || <code>bar.baz</code> || <code>foo:bar.baz</code>
+|-
+| <code>minecraftwiki</code> || <code>commands/minecraft_wiki</code> || <code>minecraftwiki:commands/minecraft_wiki</code>
+|}
+
+=== Conversion from string ===
+
+All identifiers can be converted to strings; however, not all strings can be converted to identifiers.
+
+For a string to be converted, it must follow these restrictions:
+* The string may have at most one <code>:</code> (colon) character
+* The rest of the string must fulfill the requirement for [[#Legal characters|legal characters]]. This includes disallowing <code>/</code> (forward slash) characters before the <code>:</code>, if a <code>:</code> is present
+
+When the <code>:</code> is present, the part of the string before the <code>:</code> becomes the namespace, and the part of the string after the <code>:</code> becomes the path.
+
+{{IN|java}}, and in some cases {{in|bedrock}}, when the <code>:</code> is absent, [[#minecraft namespace|<code>minecraft</code>]] becomes the namespace and the whole string becomes the path.
+
+It is recommended to always include a <code>:</code> in the string format of identifiers.
+
+;Examples
+{| class="wikitable"
+|-
+! String !! Resolved namespace !! Resolved path !! What the game converts it back to
+|-
+| <code>bar:code</code> || <code>bar</code> || <code>code</code> || <code>bar:code</code>
+|-
+| <code>minecraft:zombie</code> || <code>minecraft</code> || <code>zombie</code> || <code>minecraft:zombie</code>
+|-
+| <code>diamond</code>
+| 
+*<code>minecraft</code>{{only|java}}
+*None{{only|bedrock}}
+| <code>diamond</code>
+|
+*<code>minecraft:diamond</code>{{only|java}}
+*<code>diamond</code>{{only|bedrock}}
+|-
+| <code>:dirt</code> || <code>minecraft</code> || <code>dirt</code> || <code>minecraft:dirt</code>{{needs testing|bedrock=1}}
+|-
+| <code>minecraft:</code> || <code>minecraft</code> || None || <code>minecraft:</code>{{needs testing|bedrock=1}}
+|-
+| <code>:</code> || <code>minecraft</code> || None || <code>minecraft:</code>{{needs testing|bedrock=1}}
+|-
+| Empty String || <code>minecraft</code> || None || <code>minecraft:</code>{{needs testing|bedrock=1}}
+|-
+| <code>foo/bar:coal</code> || Invalid character <code>/</code> || ||
+|-
+| <code>minecraft/villager</code>
+|
+*<code>minecraft</code>{{only|java}}
+*None{{only|bedrock}}
+| <code>minecraft/villager</code>
+|
+*<code>minecraft:minecraft/villager</code>{{only|java}}
+*<code>minecraft/villager</code>{{only|bedrock}}
+|-
+| <code>mymap:schrödingers_var</code> || <code>mymap</code>
+|
+*Invalid character <code>ö</code>{{only|java}}
+*<code>schrödingers_var</code>{{only|bedrock}}
+|<code>mymap:schrödingers_var</code>{{only|bedrock}}
+|-
+| <code>custom_pack:Capital</code> || <code>custom_pack</code>
+|
+*Invalid character <code>C</code>{{only|java}}
+*<code>Capital</code>{{only|bedrock}}
+|<code>custom_pack:Capital</code>{{only|bedrock}}
+|}
+
+== ''Java Edition'' usage ==
+{{wip|section=1}}
+
+{{IN|java}}, identifiers act mainly as main keys of objects in registries or file paths of contents in [[data packs]] and [[resource packs]]. Some non-customizable contents also use identifiers to identify them.
+
+=== Registries and registry objects ===
+
+<div class="treeview">
+
+All registries and objects therein have identifiers to represent them. At the root of all registries is a registry with the identifier of {{cd|minecraft:root|inline=1}} into which all other registries are registered. Most registries are intended only for use internally by the game and by extension by [[mods]], but some ''dynamic'' registries can have content added to them through [[data packs]], marked in the list below with an asterisk (<span style="color:#d33">*</span>).
+
+* {{File|directory|minecraft:root|inline=1}}: Root registry.
+** {{File|file|minecraft:attribute|inline=1}}: Attributes.
+** {{File|file|minecraft:block|inline=1}}: Blocks.
+** {{File|file|minecraft:block_entity_type|inline=1}}: Block entity types.
+** {{File|file|minecraft:chunk_status|inline=1}}: Chunk status.
+** {{File|file|minecraft:command_argument_type|inline=1}}: Command argument types.
+** {{File|file|minecraft:dimension|inline=1}}<span style="color:#d33">*</span>: Dimensions and level stems.
+** {{File|file|minecraft:dimension_type|inline=1}}<span style="color:#d33">*</span>: Dimension types.
+** {{File|file|minecraft:enchantment|inline=1}}<span style="color:#d33">*</span>: Enchantments.
+** {{File|file|minecraft:entity_type|inline=1}}: Entity types.
+** {{File|file|minecraft:fluid|inline=1}}: Fluids.
+** {{File|file|minecraft:game_event|inline=1}}: Game events.
+** {{File|file|minecraft:position_source_type|inline=1}}: Position source types (used by game events).
+** {{File|file|minecraft:item|inline=1}}: Items.
+** {{File|file|minecraft:menu|inline=1}}<span style="color:#d33">*</span>: Menu types.
+** {{File|file|minecraft:mob_effect|inline=1}}: Mob effects.
+** {{File|file|minecraft:particle_type|inline=1}}: Particle types.
+** {{File|file|minecraft:potion|inline=1}}: Potions.
+** {{File|file|minecraft:recipe_serializer|inline=1}}: Recipe serializers.
+** {{File|file|minecraft:recipe_type|inline=1}}: Recipe types.
+** {{File|file|minecraft:sound_event|inline=1}}: Sound events.
+** {{File|file|minecraft:stat_type|inline=1}}: Statistics types.
+** {{File|file|minecraft:custom_stat|inline=1}}: Custom Statistics.
+** {{File|directory|inline=1}} Entity data registries:
+*** {{File|file|minecraft:activity|inline=1}}: Entity schedule activitys.
+*** {{File|file|minecraft:memory_module_type|inline=1}}: Entity memory module types.
+*** {{File|file|minecraft:schedule|inline=1}}: Entity schedules.
+*** {{File|file|minecraft:sensor_type|inline=1}}: Entity AI sensor types.
+*** {{File|file|minecraft:motive|inline=1}}<span style="color:#d33">*</span>: Painting motives.
+*** {{File|file|minecraft:villager_profession|inline=1}}: Villager professions.
+*** {{File|file|minecraft:villager_type|inline=1}}: Villager types.
+*** {{File|file|minecraft:point_of_interest_type|inline=1}}: Poi types.
+** {{File|directory|inline=1}} Loot table serializers:
+*** {{File|file|minecraft:loot_condition_type|inline=1}}: Loot condition types.
+*** {{File|file|minecraft:loot_function_type|inline=1}}: Loot function types.
+*** {{File|file|minecraft:loot_nbt_provider_type|inline=1}}: Loot nbt provider types.
+*** {{File|file|minecraft:loot_number_provider_type|inline=1}}: Loot number provider types.
+*** {{File|file|minecraft:loot_pool_entry_type|inline=1}}: Loot pool entry types.
+*** {{File|file|minecraft:loot_score_provider_type|inline=1}}: Loot score provider types.
+** {{File|directory|inline=1}} JSON file value providers:
+*** {{File|file|minecraft:float_provider_type|inline=1}}: Float provider types.
+*** {{File|file|minecraft:int_provider_type|inline=1}}: Int provider types.
+*** {{File|file|minecraft:height_provider_type|inline=1}}: Height provider types.
+** {{File|directory|inline=1}} World generator registries:
+*** {{File|file|minecraft:block_predicate_type|inline=1}}: Block predicate types.
+*** {{File|file|minecraft:rule_test|inline=1}}: Structure feature rule test types.
+*** {{File|file|minecraft:pos_rule_test|inline=1}}: Structure feature position rule test types.
+*** {{File|file|minecraft:world_clock|inline=1}}: [[World clock]]s.{{verify|I'm not sure how registries even work, I'm just making an educated guess based on what the world clock page says.}}
+*** {{File|file|minecraft:worldgen/carver|inline=1}}: World carvers.
+*** {{File|file|minecraft:worldgen/configured_carver|inline=1}}<span style="color:#d33">*</span>: Configured world carvers.
+*** {{File|file|minecraft:worldgen/feature|inline=1}}: Features.
+*** {{File|file|minecraft:worldgen/configured_feature|inline=1}}<span style="color:#d33">*</span>: Configured features.
+*** {{File|file|minecraft:worldgen/structure_set|inline=1}}: Structure sets.
+*** {{File|file|minecraft:worldgen/structure_processor|inline=1}}: Structure processor types.
+*** {{File|file|minecraft:worldgen/processor_list|inline=1}}<span style="color:#d33">*</span>: Structure processor lists.
+*** {{File|file|minecraft:worldgen/structure_pool_element|inline=1}}: Structure pool element types.
+*** {{File|file|minecraft:worldgen/template_pool|inline=1}}<span style="color:#d33">*</span>: Structure template pools.
+*** {{File|file|minecraft:worldgen/structure_piece|inline=1}}: Structure piece types.
+*** {{File|file|minecraft:worldgen/structure_type|inline=1}}: Structure features.
+*** {{File|file|minecraft:worldgen/structure|inline=1}}<span style="color:#d33">*</span>: Configured structure features.
+*** {{File|file|minecraft:worldgen/structure_placement|inline=1}}: Structure placement types.
+*** {{File|file|minecraft:worldgen/placement_modifier_type|inline=1}}: Placement modifier types.
+*** {{File|file|minecraft:worldgen/placed_feature|inline=1}}<span style="color:#d33">*</span>: Placed features.
+*** {{File|file|minecraft:worldgen/biome|inline=1}}<span style="color:#d33">*</span>: Biomes.
+*** {{File|file|minecraft:worldgen/biome_source|inline=1}}: Biome sources.
+*** {{File|file|minecraft:worldgen/noise|inline=1}}<span style="color:#d33">*</span>: Normal noise.
+*** {{File|file|minecraft:worldgen/noise_settings|inline=1}}<span style="color:#d33">*</span>: Noise generator settings.
+*** {{File|file|minecraft:worldgen/density_function|inline=1}}: Density functions.
+*** {{File|file|minecraft:worldgen/density_function_type|inline=1}}: Density function types.
+*** {{File|file|minecraft:worldgen/world_preset|inline=1}}: World presets.
+*** {{File|file|minecraft:worldgen/flat_level_generator_preset|inline=1}}: Flat world generator presets.
+*** {{File|file|minecraft:worldgen/chunk_generator|inline=1}}: Chunk generators.
+*** {{File|file|minecraft:worldgen/material_condition|inline=1}}: Surface condition sources.
+*** {{File|file|minecraft:worldgen/material_rule|inline=1}}: Surface rule sources.
+*** {{File|file|minecraft:worldgen/block_state_provider_type|inline=1}}: Block state provider types.
+*** {{File|file|minecraft:worldgen/foliage_placer_type|inline=1}}: Foliage placer types.
+*** {{File|file|minecraft:worldgen/trunk_placer_type|inline=1}}: Trunk placer types.
+*** {{File|file|minecraft:worldgen/tree_decorator_type|inline=1}}: Tree decorator types.
+*** {{File|file|minecraft:worldgen/feature_size_type|inline=1}}: Feature size types.
+
+</div>
+
+===Pack contents===
+Identifiers are also used to represent file paths in [[data packs]] or [[resource packs]].
+
+; Data pack
+:* Tags
+:* Advancements
+:* Recipes
+:* Predicates
+:* Loot tables
+:* Item modifier
+:* Functions
+:* Structure files
+:* Dimensions
+:* Dimension types
+:* ''World generator contents''
+:** Biomes
+:** Configured carvers
+:** Configured features
+:** Configured structure features
+:** Placed features
+:** Structures
+:** Structure sets
+:** Processor lists
+:** Template pools
+:** Noise
+:** Noise generator settings
+:** Density functions
+:** Flat level generator presets
+:** World presets
+
+; Resource pack
+:* Block state model definitions
+:* Models
+:* Textures
+:* Sounds
+:* Fonts
+:* Font resource files
+:* Particles
+:* Shaders
+
+==== Locating contents in packs ====
+Given that objects in resource packs and data packs are files, the identifiers are constructed from their path relative to the {{cd|data}} or {{cd|assets}} folder.
+
+Though the locations vary by object type and the pack type the object type belongs to, there is a pattern to follow. In general, the location is in the fashion of pack_type/namespace/object_type/name.suffix, where all the / (forward slash) symbol (may be part of object_type or name) is replaced by operating system-dependent directory separator.
+
+Given the type of content we want to locate, we can find out the corresponding {{cd|''pack_type''}}, {{cd|''object_type''}}, and {{cd|''suffix''}}. Then, we can substitute in and find out the final file location of the content.
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+Examples
+<!-- TODO: Add more?-->
+<div class="collapsible-content">
+{| class="wikitable"
+|-
+! Identifier !! Content Type !! {{cd|''pack_type''}} !! {{cd|''object_type''}} !! {{cd|''suffix''}} !! Final Location
+|-
+| {{cd|my_texture_pack:diamonds}} || [[Resource pack#Textures|Texture]] || {{cd|assets}} || {{cd|textures}} || {{cd|png}} || {{cd|assets/my_texture_pack/textures/diamonds.png}}
+|-
+| {{cd|abc:run_game}} || [[Function (Java Edition)|Function]] || {{cd|data}} || {{cd|functions}} || {{cd|mcfunction}} || {{cd|data/abc/functions/run_game.mcfunction}}
+|-
+| {{cd|block/torch}}<br>(same as {{cd|minecraft:block/torch}}) || [[Model]] || {{cd|assets}} || {{cd|models}} || {{cd|json}} || {{cd|assets/minecraft/models/block/torch.json}}
+|-
+| {{cd|load}}<br>(same as {{cd|minecraft:load}}) || [[Tag#Function Tags|Function Tag]] || {{cd|data}} || {{cd|tags/functions}} || {{cd|json}} || {{cd|data/minecraft/tags/functions/load.json}}
+|-
+| {{cd|rocket_pack:industry/start_of_story}} || [[Advancement]] || {{cd|data}} || {{cd|advancements}} || {{cd|json}} || {{cd|data/rocket_pack/advancements/industry/start_of_story.json}}
+|}
+</div></div>
+
+==== Registered pack contents ====
+A registried pack content refers to pack content that is registered into a registry when the pack is loaded. For a registried pack content, its identifier works as both main key of registry entry and path of its resource file.
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+List of registered pack contents
+<div class="collapsible-content">
+{| class="wikitable"
+|-
+! Content Type !! Registered into !! Folder !! Suffix
+|-
+| Dimensions || {{cd|minecraft:dimension}} || {{cd|data/''namespace''/dimension}} || {{cd|json}}
+|-
+| Dimension types || {{cd|minecraft:dimension_type}} || {{cd|data/''namespace''/dimension_type}} || {{cd|json}}
+|-
+| Configured carvers || {{cd|minecraft:worldgen/configured_carver}} || {{cd|data/''namespace''/worldgen/configured_carver}} || {{cd|json}}
+|-
+| Configured features || {{cd|minecraft:worldgen/configured_feature}} || {{cd|data/''namespace''/worldgen/configured_feature}} || {{cd|json}}
+|-
+| Configured structure features || {{cd|minecraft:worldgen/structure}} || {{cd|data/''namespace''/worldgen/structure}} || {{cd|json}}
+|-
+| Structure sets || {{cd|minecraft:worldgen/structure_set}} || {{cd|data/''namespace''/worldgen/structure_set}} || {{cd|json}}
+|-
+| Processor lists || {{cd|minecraft:worldgen/processor_list}} || {{cd|data/''namespace''/worldgen/processor_list}} || {{cd|json}}
+|-
+| Template pools || {{cd|minecraft:worldgen/template_pool}} || {{cd|data/''namespace''/worldgen/template_pool}} || {{cd|json}}
+|-
+| Placed features || {{cd|minecraft:worldgen/placed_feature}} || {{cd|data/''namespace''/worldgen/placed_feature}} || {{cd|json}}
+|-
+| Biomes || {{cd|minecraft:worldgen/biome}} || {{cd|data/''namespace''/worldgen/biome}} || {{cd|json}}
+|-
+| Noise || {{cd|minecraft:worldgen/noise}} || {{cd|data/''namespace''/worldgen/noise}} || {{cd|json}}
+|-
+| Noise generator settings || {{cd|minecraft:worldgen/noise_settings}} || {{cd|data/''namespace''/worldgen/noise_settings}} || {{cd|json}}
+|-
+| Density functions || {{cd|minecraft:worldgen/density_function}} || {{cd|data/''namespace''/worldgen/density_function}} || {{cd|json}}
+|-
+| Flat level generator presets || {{cd|minecraft:worldgen/flat_level_generator_preset}} || {{cd|data/''namespace''/worldgen/flat_level_generator_preset}} || {{cd|json}}
+|-
+| World presets || {{cd|minecraft:worldgen/world_preset}} || {{cd|data/''namespace''/worldgen/world_preset}} || {{cd|json}}
+|}
+</div></div>
+
+===Other contents===
+; Customizable contents
+:* Boss bars
+:* Command storages
+
+; Hardcoded contents
+:* Cat types for predicates (e.g. textures/entity/cat/tabby.png, textures/entity/cat/jellie.png)
+:* Criteria triggers
+:* Item properties (i.e. item predicates in models. e.g. angle, custom_model_data)
+:* Loot context param sets (i.e. types of loot table. e.g. barter, generic)
+:* Unaccessible contents:
+:** Suggestion providers for autocompletion of commands (e.g. summonable_entities, all_recipes)
+:** Entity models
+:** Loot context params (e.g. this_entity, origin, tool)
+
+== ''Bedrock Edition'' usage ==
+Unlike ''Java Edition'', where there is a unified standard and handling methods of them, namespaced identifiers are usually treated as normal strings in Bedrock Edition. Moreover, some objects are identified based on their path (e.g. the identifier for [[recipe]]s and [[Villager trade definition|trades]]) rather than what was defined in their file. In these cases, it is recommended that a folder named after the namespace is parented before the file at hand.<ref name="cooperative">{{Citation|url=https://learn.microsoft.com/en-us/minecraft/creator/documents/practices/guidelinesforbuildingcooperativeaddons?view=minecraft-bedrock-stable|title=Guidelines for Building Cooperative Add-Ons|website=Minecraft: Bedrock Edition Creator Documentation}}</ref>
+
+The following is a list of all places that use namespaced identifiers: <!-- Todo add more, incomplete-->
+
+=== Built-in contents ===
+:* Blocks
+:* Block traits
+:* Block entities
+:* Items
+:* Entities
+:* Status effects
+:* Dimensions 
+:* Biomes
+:* Structures
+:* Features
+:* Entity attributes
+:* Item NBT components
+:* Item components
+:* Block components
+:* Entity components
+:* JSON schemas
+:* GameTest script-enabled components
+
+===Registried add-on entries===
+A registried add-on entry refers to any add-on content that is registered with an identifier declared within the content's file definition. Custom content under these types are able to be created.
+
+Here is a list of registried add-on entries whose identifiers are namespaced.
+
+; Behavior pack contents
+:* Blocks
+:* Block states
+:* Entities
+:* Entity events
+:* Items
+:* Spawn rules
+:* Biomes
+:* Features
+:* Feature rules
+:* Recipes
+:* Structures
+:* GameTests
+:* Dialog scenes
+:* Spawn groups
+:* Structure sets
+:* Template pools
+:* Processor lists
+:* Catalog groups
+
+; Resource pack contents
+:* Attachables
+:* Cameras
+:* Entity client definitions
+:* Particle effects
+:* Biome client definitions
+:* Fog settings
+:* Lighting settings
+:* Atmosphere settings
+:* Color grading settings
+:* Water effect settings
+
+Some custom fields in add-on files can also be namespaced, such as custom block properties and entity component groups, which aren't listed here.
+
+==== Others ====
+:* Structures saved from a structure block
+
+=== Script-registered entries ===
+Some content may also be registered within the scripts of behavior packs. These are read as the world is generating.
+
+:*Block components
+:*Item components
+:*Commands
+
+== Namespaces ==
+{{quote|This isn't a new concept, but I thought I should reiterate what a "namespace" is. Most things in the game has a namespace, so that if we add {{cd|something}} and a mod (or map, or whatever) adds {{cd|something}}, they're both different {{cd|something}}s. Whenever you're asked to name something, for example a loot table, you're expected to also provide what namespace that thing comes from. If you don't specify the namespace, we default to {{cd|minecraft}}. This means that {{cd|something}} and {{cd|minecraft:something}} are the same thing.|[[Dinnerbone]]|namespaces<ref>{{snap|17w43a}}</ref>|Nathan Adams Mojang avatar.png}}
+
+A namespace is a domain for content. It is to prevent potential content conflicts or unintentional overrides of objects of the same name.
+
+For example, two data packs add two minigame mechanisms to Minecraft; both have a function named {{cd|start}}. Without namespaces, these two functions would clash and the minigames would be broken. When they have different namespaces of {{cd|minigame_one}} and {{cd|minigame_two}}, the functions would become {{cd|minigame_one:start}} and {{cd|minigame_two:start}}, which no longer conflict.
+
+=== {{cd|minecraft}} namespace ===
+Minecraft reserves the {{cd|minecraft}} namespace. When a namespace is not specified, a identifier falls back to {{cd|minecraft}}{{only|java}}. As a result, the {{cd|minecraft}} namespace should only be used by content creators when the content needs to overwrite or modify existing Minecraft data, such as adding a function to the {{cd|minecraft:load}} function tag.
+
+=== Custom namespace ===
+The namespace should be distinct for different projects or content creations (e.g. a data pack, a resource pack, a mod, backing data/resource packs for a custom map, etc.)
+
+To prevent potential clashes, it is recommended that the namespace should be as specific as possible:
+*Avoid [[Wikipedia:Alphabet soup (linguistics)|alphabet soups]]. For example, a project named "nuclear craft" should not use the namespace {{cd|nc}}, as this is too ambiguous.
+*Avoid words that are too vague. {{cd|battle_royale}} would not be informative to look up as well, but {{cd|''player_name''_battle_royale}} would be much better.
+*For [[add-on]]s, use a shortened creator name followed by the name of the project in a format like {{cd|creatorname_packname}}.<ref name="cooperative"/>
+
+In either case, these poorly chosen namespaces reduce the exposure of a project and bring difficulties for debugging when there are multiple content creations applied to the game.
+
+=== Other built-in namespaces ===
+{{IN|je}}, the vanilla Minecraft resource pack declares Realms-oriented language files in the {{cd|realms}} namespace (located at assets/realms/lang/.json) and game-related language files in the {{cd|minecraft}} namespace, even though translation keys are not identifiers. The realms jar itself also declares its en_us.json language file and its various textures in the {{cd|realms}} namespace.
+
+In the IDs of command argument types, a {{cd|brigadier}} namespace also appears for command argument types that are native to [[Brigadier]].
+
+{{IN|be}}, the internal resource and behavior packs for ''[[Bedrock Editor]]'' contain some entities and items namespaced with <code>editor</code>.
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.6.1|dev=13w21a|Added resource locations alongside the {{cd|minecraft}} prefix for identifying assets.}}
+|{{HistoryLine||1.7.2|dev=13w37a|Commands now accept name IDs aside from numerical IDs.}}
+|{{HistoryLine||1.8|dev=14w02a|Item ID format has changed from using numbers (for example, TNT's id was 46) to namespaced IDs of the form minecraft:item_name. (Example: minecraft:tnt)}}
+|{{HistoryLine||1.11|dev=16w32a|Resource locations now have a character restriction.
+|Disallowed uppercase characters in resource locations.}}
+|{{HistoryLine||1.13|dev=17w47a|After the [[flattening]], resource locations are the only accepted form of identifiers.}}
+|{{HistoryLine|||dev=pre4|Resource locations are now used to identify plugin message channels.<ref>[https://wiki.vg/Protocol_History#1.13-pre4 Protocol History] – wiki.vg</ref>}}
+|{{HistoryLine||1.14.4|dev=pre1|The <samp>realms</samp> namespace is added to the [[Client.jar|client jar]]'s builtin resource pack.}}
+|{{HistoryLine||1.16|dev=20w14a|[[Attribute]]s are now resource locations.}}
+|{{HistoryLine||1.21.11|dev=25w45a|<code>ResourceLocation</code> is renamed to <code>Identifier</code> in the game's code.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added [[commands]], which supported string IDs. However, these identifiers were not namespaced yet.}}
+|{{HistoryLine|||dev=build 4|All entity [[attribute]]s are now namespaced.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.6.0|dev=beta 1.6.0.5|In the save files for worlds, items now use namespaced IDs instead of numeric IDs.}}
+|{{HistoryLine||1.12.0|dev=beta 1.12.0.2|IDs are now namespaced using the {{cd|minecraft}} prefix, to support custom items being added through [[add-on]]s.}}
+}}
+
+== See also ==
+
+* [[Java Edition data values]]
+* [[Bedrock Edition data values]]
+* [[Resource pack]]
+* [[Data pack]]
+* [[Add-on]]
+
+== References ==
+{{reflist}}
+
+== External links ==
+* Namespaces, as explained in {{snap|17w43a}}.
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{Navbox Bedrock Edition}}
+
+[[de:Namensraum]]
+[[es:Ubicación de recurso]]
+[[fr:Identifiant]]
+[[ja:識別子]]
+[[ko:식별자]]
+[[pt:Localização de recurso]]
+[[ru:Пространство имён идентификаторов]]
+[[uk:Простір імен ідентифікаторів]]
+[[zh:命名空间ID]]

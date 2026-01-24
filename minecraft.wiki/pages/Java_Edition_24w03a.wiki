@@ -1,0 +1,276 @@
+{{Infobox version
+|title=Minecraft 24w03a
+|image=24w03a.jpg
+|image2=Java Edition 24w03a.png
+|edition=Java
+|type=Snapshot
+|date=January 17, 2024
+|jsonhash=13da9566c61398528bd10760dad1c1cee810a9af
+|clienthash=723cca5ce4684d04a259a7860a41e75856a5c08a
+|clientmap=52babc798f62bb24156e66199193f568f0e56c53
+|serverhash=730a3ef2f99f6a822aa504bfee2eb5372d826293
+|servermap=9bd7bc1702cc33db9baf44b7ff081e420d65aebf
+|parent=1.20.5
+|prevparent=1.20.4
+|prev=23w51b
+|next=24w03b
+|nextparent=1.20.6
+}}<onlyinclude>
+
+'''24w03a''' is the third [[snapshot]] for [[Java Edition 1.20.5]], released on January 17, 2024<ref>{{snap|24w03a|id=a|January 17, 2024}}</ref> which adds the <code>spawnChunkRadius</code> [[game rule]], changes the textures of armadillo-related features, and fixes bugs. This is the first snapshot released in 2024.
+
+== Additions ==
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Added triggers:
+** <code>default_block_use</code>, triggered due to the default interaction of a block by a player, such as opening a door.
+** <code>any_block_use</code>, triggered due to any type of interaction with a block by a player, such as using an item on the block or its default usage.
+
+=== General ===
+'''[[Game rule]]s'''
+* Added <code>spawnChunkRadius</code> to set the size of the spawn chunks.
+** Defaults to <code>2</code>, equivalent to 3×3 entity ticking chunks.
+** Possible values are <code>0</code> to <code>32</code>, where <code>0</code> completely disables the spawn chunks and <code>10</code> is equivalent to the functionality before this change.
+
+'''[[Server]]s'''
+* Added transfer packets.
+** Custom servers can now request that clients connect to another server with a new packet.
+** When a client is transferred, it connects to the target server with a new transfer intent (id 3).
+** By default, servers don't accept incoming transfers and disconnect the client.
+*** This can be changed by setting the <code>accepts-transfers</code> property to <code>true</code> in the <code>server.properties</code> file.
+** Resource packs are maintained across transfers.
+** In the case of a transfer, custom servers can skip authentication with a new flag.
+* Added cookie packets.
+** Cookie packets allow custom servers to request and store data on a client.
+*** Each cookie may be up to 5 KiB in size.
+*** Cookies may be requested during login, configuration and play phases — but only stored during the configuration and play phases.
+** Cookies are persisted across server transfers but are not persisted when the player disconnects.
+*** This allows servers to pass along information such as authentication or custom game data to the new server.
+
+'''[[Tag]]s'''
+* Added the following block tag:
+** <code>#armadillo_spawnable_on</code>: contains {{cd|d=and|#animals_spawnable_on|#terracotta|red_sand|coarse_dirt}}
+*** Controls which blocks the [[armadillo]] can spawn on.
+* Added the following entity type tags:
+** <code>#aquatic</code>: contains {{cd|d=and|axolotl|cod|dolphin|elder_guardian|glow_squid|guardian|pufferfish|salmon|squid|tadpole|tropical_fish|turtle}}
+** <code>#arthropod</code>: contains {{cd|d=and|bee|endermite|silverfish|spider|cave_spider}}
+** <code>#ignores_poison_and_regen</code>: contains <code>#undead</code>
+*** Controls which entities cannot be affected by [[Poison]] and [[Regeneration]] effects.
+** <code>#illager</code>: contains {{cd|d=and|evoker|illusioner|pillager|vindicator}}
+** <code>#illager_friends</code>: contains <code>#illager</code>
+*** Controls which entities [[illager]]s consider allies (unless on a different team).
+** <code>#inverted_healing_and_harm</code>: contains <code>#undead</code>
+*** Controls which entities that have inverted meanings of the Healing and Harming effects.
+** <code>#not_scary_for_pufferfish</code>: contains {{cd|d=and|cod|dolphin|elder_guardian|glow_squid|guardian|pufferfish|salmon|squid|tadpole|tropical_fish|turtle}}
+*** Controls which entities don't cause [[pufferfish]] to puff.
+** <code>#sensitive_to_bane_of_arthropods</code>: contains <code>#arthropod</code>
+*** Controls which entities are sensitive to [[Bane of Arthropods]].
+** <code>#sensitive_to_impaling</code>: contains <code>#aquatic</code>
+*** Controls which entities are sensitive to [[Impaling]].
+** <code>#wither_friends</code>: contains <code>#undead</code>
+*** Controls which entities that the [[wither]] doesn't target and which cannot harm the wither.
+* Added the following item tags:
+** <code>#chest_armor</code>: contains {{cd|d=and|leather_chestplate|chainmail_chestplate|golden_chestplate|iron_chestplate|diamond_chestplate|netherite_chestplate}}
+** <code>#foot_armor</code>: contains {{cd|d=and|leather_boots|chainmail_boots|golden_boots|iron_boots|diamond_boots|netherite_boots}}
+** <code>#head_armor</code>: contains {{cd|d=and|leather_helmet|chainmail_helmet|golden_helmet|iron_helmet|diamond_helmet|netherite_helmet|turtle_helmet}}
+** <code>#leg_armor</code>: contains {{cd|d=and|leather_leggings|chainmail_leggings|golden_leggings|iron_leggings|diamond_leggings|netherite_leggings}}
+** <code>#skulls</code>: contains {{cd|d=and|player_head|creeper_head|zombie_head|skeleton_skull|wither_skeleton_skull|dragon_head|piglin_head}}
+** <code>#enchantable/foot_armor</code>: contains <code>#foot_armor</code>
+** <code>#enchantable/leg_armor</code>: contains <code>#leg_armor</code>
+** <code>#enchantable/chest_armor</code>: contains <code>#chest_armor</code>
+** <code>#enchantable/head_armor</code>: contains <code>#head_armor</code>
+** <code>#enchantable/armor</code>: contains {{cd|d=and|#enchantable/foot_armor|#enchantable/leg_armor|#enchantable/chest_armor|#enchantable/head_armor}}
+** <code>#enchantable/weapon</code>: contains <code>#swords</code> and <code>#axes</code>
+** <code>#enchantable/sword</code>: contains <code>#swords</code>
+** <code>#enchantable/mining</code>: contains {{cd|d=and|#axes|#pickaxes|#shovels|#hoes|shears}}
+** <code>#enchantable/mining_loot</code>: contains {{cd|d=and|#axes|#pickaxes|#shovels|#hoes}}
+** <code>#enchantable/fishing</code>: contains <code>fishing_rod</code>
+** <code>#enchantable/trident</code>: contains <code>trident</code>
+** <code>#enchantable/durability</code>: contains {{cd|d=and|#foot_armor|#leg_armor|#chest_armor|#head_armor|elytra|shield|#swords|#axes|#pickaxes|#shovels|#hoes|bow|crossbow|trident|flint_and_steel|shears|brush|fishing_rod|carrot_on_a_stick|warped_fungus_on_a_stick}}
+** <code>#enchantable/bow</code>: contains <code>bow</code>
+** <code>#enchantable/equippable</code>: contains {{cd|d=and|#foot_armor|#leg_armor|#chest_armor|#head_armor|elytra|#skulls|carved_pumpkin}}
+** <code>#enchantable/crossbow</code>: contains <code>crossbow</code>
+** <code>#enchantable/vanishing</code>: contains {{cd|d=and|#enchantable/durability|compass|carved_pumpkin|#skulls}}
+
+== Changes ==
+=== Items ===
+'''[[File:Armadillo Scute JE2 BE2.png|32px]] [[Armadillo scute]]'''
+* The texture was changed.
+
+'''[[File:Wolf Armor (model) JE2 BE2.png|32px]] [[Wolf armor]]'''
+* The texture was changed.
+
+=== Mobs ===
+'''[[File:Armadillo JE2 BE2.png|32px]] [[Armadillo]]s'''
+* The texture was changed, with the eyes no longer being located on the front of its head, now being on the sides.
+* Can now spawn in [[badlands]] biomes.
+
+'''[[Cave spider]]s & [[spider]]s'''
+* Are now scared of armadillos not in a rolled up state.
+
+'''[[Slime]]s'''
+* Hitbox side length for sizes 0, 1, 3 (small, medium, big) changed from 0.5202, 1.0404, 2.0808 to 0.52, 1.04, 2.08, respectively.
+
+'''[[Magma cube]]s'''
+* Hitbox side length for sizes 0, 1, 3 (small, medium, big) changed from 0.5202, 1.0404, 2.0808 to 2.04, 4.08, 8.16, respectively.<ref>{{bug|MC-267927}}</ref>
+
+'''[[Wolves]]'''
+* The texture of the collar layer was adjusted.
+
+=== Gameplay ===
+'''[[End portal]]'''
+* When entities leave or enter [[the End]], the area they arrive in now stays loaded for 15 seconds, matching the behavior of [[nether portal]]s.
+
+'''[[Spawn chunk]]s'''
+* The size of the spawn chunks changed from radius 10 (19x19 entity ticking chunks) to radius 2 (3×3 entity ticking chunks).
+** This was done to reduce memory usage, loading times and CPU usage.
+** The developers opted to not fully remove spawn chunks to allow players who currently utilize this functionality to continue to do so.
+
+=== General ===
+'''Accessibility'''
+* The default focus is now always set when entering or exiting any menu while navigating using tab or arrow keys.
+
+'''[[Attribute]]s'''
+* Renamed <code>generic.block_interaction_range</code> to <code>player.block_interaction_range</code>.
+* Renamed <code>generic.entity_interaction_range</code> to <code>player.entity_interaction_range</code>.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>28</code>.
+* The <code>minecraft:sweeping</code> enchantment has been renamed to <code>minecraft:sweeping_edge</code>.
+
+'''NBT data'''
+* Custom villager trades can be configured to accept items that have different tags from the expected item by adding <code>ignoreTags: true</code> in the trade's NBT.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>24</code>.
+* The <code>ttf</code> font provider transforms have been adjusted to have more reasonable defaults.
+** <code>shift</code> is no longer applied double, and now directly represents a number of pixels in the game UI.
+** The font EM square is fitted to <code>size</code> pixels in the game UI, instead of between the font ascender and font descender.
+** The font baseline is positioned consistently with the default font (7 pixels below line top).
+** This means that generally, any font with a <code>size</code> of 9 and no <code>shift</code> should look correct by default.
+
+== Experimental ==
+These additions and changes only take effect when the [[Update 1.21]] experimental data pack is enabled, the exception to this is the change to villagers, which takes effect when the [[Villager Trade Rebalance]] experimental data pack is enabled.
+
+=== Additions ===
+==== General ====
+'''[[Tag]]s'''
+* Added the following entity type tag:
+** <code>#deflects_projectiles</code>: contains <code>breeze</code>.
+
+=== Changes ===
+==== Blocks ====
+'''[[Copper grate]]'''
+* Stonecutting [[copper block]]s into copper grates now outputs 1 copper grate instead of 4.
+
+'''[[Crafter]]'''
+* The top face of the crafter is no longer mirrored.
+
+==== Mobs ====
+'''[[Breeze]]'''
+* Now deflect all projectiles.
+** Deflected projectiles now deflect in the direction of the shooter.
+* The texture for the bottom faces of breeze's rods was changed.
+
+'''[[Villager]]'''
+* In the [[Villager Trade Rebalance]] experiment, villagers who buy armor now ignore durability and can buy damaged armor.
+
+==== General ====
+'''[[Tag]]s'''
+* Removed the <code>#deflects_arrows</code> and <code>#deflects_tridents</code> tags.
+
+== Fixes ==
+{{fixes|fixedin=24w03a
+|;From released versions before 1.20
+|155857|Team command doesn't affect illagers and witches AI.
+|171981|Map of fuel times is created anew every time an item is placed in a furnace, instead of being cached.
+|185955|When the player's eye level is up to 2 pixels above water, they count as being underwater as if it would be a full block.
+|187372|There is no space between FPS limit/VSync and graphics level in the debug screen.
+|219967|{{cd|IndexOutOfBoundsException}} occurs instead of a "Bad packet id" message.
+|229680|Chest, trapped chest, ender chest and barrels stop functioning when moving far away whilst in the GUI. <!-- This isssue is marked as fixed in 24w03b on the bug tracker but was actually fixed in 24w03a -->
+|260889|Players can use water buckets and lava buckets on blocks that are out of reach.
+|261596|Crafting Table search keyboard shortcut not working.
+|;From 1.20.1
+|265273|The tab list in create world screen does not indicate it's tab-focused by highlight or rendering borders.
+|267433|Shift double-clicking while holding the same item on your cursor doesn't transfer items.
+|;From 1.20.2
+|265520|Switching connection protocols sometimes produces errors.
+|265749|Tooltips flash when the values of buttons or fields are changed.
+|;From 1.20.3
+|266532|Breezes can be hit by some projectiles.
+|267044|Tick status strings contain inconsistent word usage.
+|267045|Some tick strings are missing articles and are unclear.
+|267086|Compass does not indicate spawn point correctly when game is frozen with {{cmd|tick}}.
+|267104|The bottom face textures of breezes' rods are incorrect and don't match with surrounding colors.
+|267149|Crafter top face has an inverted UV texture map.
+|267465|1.20.3 upload error: "{{cd|Cannot invoke "ctt.c()" because "this.b" is null}}".
+|;From 1.20.4
+|267273|Second beacon power for level 4 beacon flickers when player hovers the mouse pointer over it.
+|;dev
+|267366|You cannot use spider eyes on baby armadillos to age them up.
+|267367|Wolf armor flashes red when the wolf takes damage.
+|267371|Shulkers hitbox doesn't scale with {{cd|generic.scale}}.
+|267377|Applying bone meal to mangrove leaves no longer produces any particles.
+|267378|Armor stand interaction points do not change with scale.
+|267379|Applying bone meal to rooted dirt no longer produces any particles.
+|267380|Cannot open inventories beyond default block reach.
+|267384|Unused duplicate wolf armor sound events.
+|267456|Changes to {{cd|item_used_on_block}} advancement criteria breaks previous functionality.
+|267809|The word "armor" within the Wolf Armor subtitle strings is improperly capitalized.
+|;previous
+|267383|Can't place water and lava with extended attribute "{{cd|block_interaction_range}}".
+|267385|Attribute {{cd|entity_interaction_range}} is capped by {{cd|block_interaction_range}}.
+|267388|The subtitle for brushing armadillos is inconsistent with other item usage subtitles.
+|267389|Armadillos don't always stand in close proximity to one another when breeding.
+|267392|Armadillos are scared of players in Spectator mode.
+|267395|Armadillos panic when receiving fall damage.
+|267397|Armadillos and baby armadillos stand a bit too far away from players that are tempting them.
+|267398|Armadillos don't play a roll out sound after finishing hiding.
+|267402|Head of armadillo in boat is twitching when turning the boat.
+|267404|Scared armadillo pushed into boat is scared of player riding the boat.
+|267405|Scared armadillo can move when having a passenger.
+|267406|Armadillos with their "{{cd|Silent}}" NBT tag set to "{{cd|1b}}" still play their landing and rolling up sounds.
+|267413|Feeding an armadillo a spider eye doesn't cancel eating it.
+|267416|Particles created from slimes do not account for the scale attribute.
+|267417|Suffocation overlay shown when on solid almost-full blocks at scale < .06.
+|267418|Warden sonic boom attack doesn't account for the scale attribute.
+|267420|Boat placement ignores custom "{{cd|block_interaction_range}}" attribute.
+|267422|Attribute {{cd|entity_interaction_range}} is classified as '{{cd|generic}}', but has no effect on mobs.
+|267427|Rendering offset of sleeping entities does not account for scale attribute.
+|267428|Phantom wing particles do not account for scale attribute.
+|267434|Upside-down mobs with big scale attribute are displayed above hitbox.
+|267435|Baby armadillos do not follow parents consistently or closely.
+|267454|Baby striders are visually the same size as normal striders.
+|267470|The regeneration effect granted from beacons is no longer applied to players.
+|267479|Inventory view model scales with {{cd|generic.scale}}.
+|267497|Baby armadillos do not sound high pitched when curling up.
+|267536|The sides of wolf armor have inconsistent pixels.
+|267538|Putting placeable blocks inside decorated pots also places them.
+|267565|Low scale attribute lets you breathe underwater.
+|267588|The hand animation is no longer played when putting items inside decorated pots.
+|267706|Evoker and illusioner summon particles do not account for scale attribute.
+|267707|Wither particles do not account for scale attribute.
+|267708|The wither's skull projectile attacks do not account for the scale attribute.
+|267725|Players' experience levels no longer render above the health and hunger bars.
+|267726|Applying bone meal to blocks underwater no longer produces any particles.
+|267806|Single shift-clicking on items while holding the same item with the cursor stacks the items.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|zPpbOmzKyDQ|9aW2Vxb5PGk}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w03a]]
+[[es:Java Edition 24w03a]]
+[[fr:Version Java 24w03a]]
+[[ja:Java Edition 24w03a]]
+[[lzh:二四週〇三甲]]
+[[pt:Edição Java 24w03a]]
+[[ru:24w03a (Java Edition)]]
+[[uk:24w03a (Java Edition)]]
+[[zh:24w03a]]

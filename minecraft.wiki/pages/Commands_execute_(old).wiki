@@ -1,0 +1,103 @@
+{{about|the {{cmd|execute|link=none}} command before [[Java Edition 1.13]] and [[Bedrock Edition 1.19.50]]|the main command in current versions|Commands/execute}}
+{{outdated feature}}
+{{#vardefine:displaytitle_set|1}}
+{{Infobox command
+|name=execute
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Executes a command on behalf of one or more other entities, with originating permissions, optionally on condition that a single-block {{cmd|testforblock}}-style check passes.
+
+==Syntax==
+
+* {{el|java}}
+: <code>execute <''entity''> <''x''> <''y''> <''z''> <''command …''></code>
+
+: An alternate syntax allows the command to be executed only if a specific block is detected:
+
+: <code>execute <''entity''> <''x''> <''y''> <''z''> detect <''x2''> <''y2''> <''z2''> <''block''> <''dataValue''|''state''> <''command …''></code>
+
+* {{el|bedrock}}
+: <code>execute <origin: target> <position: x y z> <command: command></code>
+
+:An alternate syntax allows the command to be executed only if a specific block is detected:
+
+:<code>execute <origin: target> <position: x y z> detect <detectPos: x y z> <block: Block> <data: int> <command: command></code>
+
+== Arguments ==
+
+{{el|je|short=1}}: ''entity''<br>
+{{el|be|short=1}}: {{argument|be=1|origin: target|CommandSelector<Actor>}}
+:: Specifies the target to be the command's executor. Must be a player name or [[Target selectors|target selector]]. If more than one entity is selected, the command is run once as each of them.
+
+{{el|je|short=1}}: ''x y z''<br>
+{{el|be|short=1}}: {{argument|be=1|position: x y z|CommandPositionFloat}}
+:: Specifies the position from which to run the command. Coordinates specified with [[Commands#Tilde and caret notation|tilde and caret notation]] are relative to the target, not to the position of the command's execution.
+
+{{el|je|short=1}}: ''command''<br>
+{{el|be|short=1}}: {{argument|be=1|command: command|unique_ptr<Command>}}
+:: Specifies the command to be run. Must be a valid command.
+
+{{el|je|short=1}}: ''x2 y2 z2''<br>
+{{el|be|short=1}}: {{argument|be=1|detectPos: x y z|CommandPosition}}
+:: Specifies the position of the block to check. May use [[Commands#Tilde and caret notation|tilde and caret notation]] to specify distances relative to <code>position: x y z</code>.
+
+{{el|je|short=1}}: ''block''<br>
+{{el|be|short=1}}: {{argument|be=1|block: Block|enum}}
+:: Specifies the block ID that the block at ''x2 y2 z2'' or <code>detectPos</code> must match for the command to run. Must be a valid block ID.
+
+{{el|je|short=1}}: ''dataValue''<br>
+{{el|be|short=1}}: {{argument|be=1|data: int|int}}
+:: Must be a valid block data for that type of block or <code>-1</code> to match any block data.
+
+{{el|je|short=1}}: ''state''
+:: Must be a valid block state for that type of block or <code>*</code> to match any block state.
+
+==Result==
+
+: Fails if arguments are not specified correctly, if ''entity'' or <code>origin: target</code> fails to resolve to one or more valid entities (named players must be online), if the checked block is not of the correct block id, data or state, or if the specified command fails.
+
+: On success, executes the specified command as if executed by the specified target(s), done with [[operator]]-level permission at the specified coordinate.
+
+==Examples==
+
+*To summon lightning bolts at the positions of every zombie:
+*:<code>execute @e[type=zombie] ~ ~ ~ summon lightning_bolt</code>
+*To summon lightning bolts at the positions of every zombie standing on any type of sand:
+*:<code>execute @e[type=zombie] ~ ~ ~ detect ~ ~-1 ~ sand -1 summon lightning_bolt</code>
+*To summon 10 creepers at the nearest player's position (works as long as there are at least 10 entities in the loaded world):
+*:<code>execute @e[c=10] ~ ~ ~ execute @p ~ ~ ~ summon creeper ~ ~ ~</code>
+*To summon an ender dragon at the position of another player:
+*:<code>execute @a[name=name_of_player] ~ ~ ~ summon ender_dragon</code>
+
+==History==
+
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w07a|Added {{cmd|execute|link=none}}.}}
+|{{HistoryLine|||dev=14w08a|Commands run using {{cmd|execute|link=none}} now pass their success value back to the command block running them.}}
+|{{HistoryLine||1.11|dev=16w32a|Added [[block state]] support to {{cmd|execute|link=none}}.}}
+|{{HistoryLine||1.13|dev=17w45a|Reworked {{cmd|execute|link=none}}. See [[Commands/execute]] for new syntax.}}
+
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|execute|link=none}}.
+|Functionality almost is equivalent to [[Java Edition 1.10]] usage, except the entity target is optional in {{cmd|execute|link=none}}.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.19.10|exp=Upcoming Creator Features|dev=Preview 1.19.10.20|Added new {{cmd|execute|link=None}} syntax to closer resemble that of {{el|java}}.}}
+|{{HistoryLine||1.19.50|dev=Preview 1.19.50.23|The new {{cmd|execute|link=none}} syntax is no longer behind the "Upcoming Creator Features" experimental toggle.}}
+}}
+
+==See also==
+
+: {{cmd|testforblock}} — tests for a certain block at a specified position (including specific data tags)
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/execute/Vor 1.13]]
+[[ko:명령어/execute/이전]]
+[[pt:Comandos/execute/Antes]]
+[[zh:命令/execute/旧版]]

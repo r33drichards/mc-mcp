@@ -1,0 +1,367 @@
+{{outdated feature}}
+[[File:Anvil JE1 BE1.png|thumb|Anvil in [[Programmer Art]]]]
+
+This page explains the '''mechanics of the [[anvil]]'''. The anvil is primarily used to repair tools, armor, and weapons, which it can do without stripping their [[enchantment]]s. It can also be used to combine the enchantments of two items, to give an item an individual name, or to crush other players that walk beneath it while it is falling. All its functions, except for crushing players, cost [[experience]] levels, and some have material costs.
+
+The anvil has five basic functions:
+* Renaming any item, including normal blocks. Besides entertainment value, this can save on the costs of repeated repairs. '''Blocks lose the rename when placed.'''
+* Repairing a "tiered" item with units of its material (for example, iron ingots can be used to repair iron tools and armor). Acceptable items for repair have the material to use in their default name, except for chainmail, which is repaired with iron ingots.
+* Combining two items of the same kind that have [[durability]] (for example, bows, shears, etc). The durabilities combine similar to using a crafting table, and the enchantments are combined following rules detailed below.
+* Combining a tool with an [[enchanted book]] to add the book's enchantment to the tool. This costs much less than combining two similar items, and can give enchantments to items that they could not get at an [[enchanting table]].
+* Crushing any players who happen to walk under or be under the anvil while it is falling.
+Renaming items can be done in the same work step as repairing or combining, provided the experience cost is not too high. In Survival mode, the anvil can apply only 39 levels worth of work in a single operation. If the job would cost 40 or more levels, it is rejected as "Too Expensive!". (This does ''not'' apply in Creative mode.) Such jobs can often be done piecewise: rename first, then repair, then combine. Note that it ''is'' possible to produce items so heavily enchanted that they cannot be worked on at all.
+
+== Base value of items ==
+The most important concept for using an anvil is the ''base value'' of an item, figured in experience levels. Other than combining with enchanted books, any change made to an item costs its base value plus costs for the change. An item's base value is the sum of the costs of its enchantments, plus a charge for the number of its enchantments. Note that the item's material does not affect its base cost, nor does the order of its enchantments. An unenchanted (or unenchantable) item has base value 0.
+
+As formulas:
+* For each enchantment, ECost = cost per level &times; level
+* For the item, BaseValue = ECost1 (+ Ecost2 + ...) + NumEnchantCost
+
+{| class="wikitable" style="text-align: center; width: 400px" data-description="Sword enchantments"
+|-
+! colspan=3 align="center" | '''Sword enchantments'''
+|-
+!Enchantment title
+!Cost per level 
+!Max level
+|-
+|[[Sharpness]]*<sup>†</sup> || 1 || 5 
+|-
+|[[Smite]]<sup>†</sup> || 2 || 5 
+|-
+|[[Bane of Arthropods]]<sup>†</sup> || 2 || 5 
+|-
+|[[Knockback]] || 2 || 2 
+|-
+|[[Fire Aspect]] || 4 || 2 
+|-
+|[[Looting]] || 4 || 3 
+|}
+
+{| class="wikitable" style="text-align: center; width: 400px" data-description="Tool enchantments"
+|-
+! colspan=3 align="center" | '''Tool enchantments'''
+|-
+!Enchantment title
+!Cost per level
+!Max level
+|-
+|[[Efficiency]]* || 1 || 5 
+|-
+|[[Unbreaking]] || 2 || 3 
+|-
+|[[Fortune]]<sup>†</sup> || 4 || 3 
+|-
+|[[Silk Touch]]<sup>†</sup> || 8 || 1 
+|}
+
+{| class="wikitable" style="text-align: center; width: 400px" data-description="Armor enchantments"
+|-
+! colspan=3 align="center" | '''Armor enchantments'''
+|-
+!Enchantment title
+!Cost per level
+!Max level
+|-
+|[[Protection]]<sup>†</sup> || 1 || 4 
+|-
+|[[Fire Protection]]<sup>†</sup> || 2 || 4 
+|-
+|[[Projectile Protection]]<sup>†</sup> || 2 || 4 
+|-
+|[[Feather Falling]] || 2 || 4 
+|-
+|[[Blast Protection]]<sup>†</sup> || 4 || 4 
+|-
+|[[Respiration]] || 4 || 3 
+|-
+|[[Aqua Affinity]] || 4 || 1 
+|-
+|[[Thorns]] || 8 || 3
+|}
+
+{| class="wikitable" style="text-align: center; width: 400px" data-description="Bow enchantments"
+|-
+! colspan=3 align="center" | '''Bow enchantments'''
+|-
+!Enchantment title
+!Cost per level
+!Max level
+|-
+|[[Power]]* || 1 || 5
+|-
+|[[Punch]] || 4 || 2 
+|-
+|[[Flame]] || 4 || 1 
+|-
+|[[Infinity]] || 8 || 1 
+|}
+
+{| class="wikitable" style="text-align: center; width: 400px" data-description="Fishing rod enchantments"
+|-
+! colspan=3 align="center" | '''Fishing rod enchantments'''
+|-
+!Enchantment title
+!Cost per level
+!Max level
+|-
+|[[Luck of the Sea]] || 4 || 3
+|-
+|[[Lure]] || 4 || 3 
+|}
+
+Finally, an extra value (NumEnchantCost) needs to be added based on how many enchantments the item has, which can be found from the table below.
+
+{| class="wikitable" style="text-align: center; width: 300px" data-description="Multiple enchantments"
+|-
+! colspan=2 align="center" | '''Multiple enchantments'''
+|-
+!Number of enchantments
+!Extra cost
+|-
+|1 || 1
+|-
+|2 || 3
+|-
+|3 || 6
+|-
+|4 || 10
+|-
+|5 || 15
+|}
+
+'''Notes:'''
+* Enchantments marked with an asterisk (*) are ones that cannot be produced at level V by an enchanting table, but can be produced by combining two level IV items in an anvil.
+* Enchantments marked with a dagger (†) are incompatible with each other. For example, only one kind of "Protection" can be on a piece of armor at a time.
+
+'''Example:'''
+Say we have a sword with Sharpness 3, Knockback 2 and Looting 2. Referring to the table we see that the Enchantments costs 3×1 → 3, 2×2 → 4, and 2×4 → 8 respectively, and another 6 levels for having three of them. 3+4+8+6 → 21. In the anvil for the first time, this sword costs at least 21 levels to work on, even before considering ''what'' to do with it.
+
+== Prior work penalty ==
+Regardless of the work being done, be it rename, repair, or combine, there is an extra cost, the "prior work penalty", to work on an item that has previously been altered in an anvil.
+
+* If the item has been renamed at any point, the penalty is always 2 levels, regardless of further alterations.
+* For an un-renamed item, the prior-work penalty is 2 levels for each repair or combination an item has been through, not including this one.
+* When combining two items, you pay both their penalties.
+
+== Renaming ==
+Renaming something with durability costs (base value + prior work penalty) + 7 the first time, later renames cost (base value + prior work penalty) + 10.
+* Simultaneously renaming and repairing an object costs both charges, but you pay for base value and the (current) penalty only once. For example, consider an item with base value of 5 never renamed before, with two prior works (penalty of 4). Then this item is altered a third time, for a repair costing 3 (over base + penalty). Repairing and renaming it simultaneously would cost (5+4)+3+7=19, as opposed to 5+4+3=12 for a repair alone or 5+4+7=16 for a rename alone.
+* An item which has been renamed has its prior-work penalty set to 2, remaining so regardless of later work. Renaming the item back to its default name (''e.g.'' "Iron Sword") does ''not'' revert prior-work to full cost.<ref group="note">Prior to 1.4.4 it was possible to revert the prior-work cost to its full value if the custom name was somehow stripped from the object.</ref>
+* As a consequence of the above, and using the same example, if you then damage that item slightly so that the next (fourth) repair cost would be 3 levels (over BV+Penalty), the renamed item costs (5+2)+3=10 levels to repair, while if the item was not renamed before it would cost (5+6)+3=14 levels (4 more).
+
+Renaming an item ''without'' durability costs 5 the first time, then stays 9 for all later renames. This includes the implicit prior-work penalty, and everything without durability except enchanted books has a base value of 0.
+* Stackable items can be renamed as a stack; you do pay for each item, but the total cost is capped at 39 levels, for which you can rename a full stack.
+* Renamed items in general do not stack with normal items, and renamed blocks lose their name when placed.
+
+== Unit repair ==
+Repairing a "tiered" target item using units of its material restores up to 25% total [[durability]] per unit and costs the sum of the unit costs of each unit. (In addition to the base value and prior work penalty.)
+* The unit cost is normally 1 plus the number of enchantments on the target item. For diamond tools, the unit cost is up to 3 plus the number of enchantments on the target item, depending on how much [[durability]] the unit is repairing. All but the last unit take the full cost for a full repair of 390 durability. The last unit costs 1 less for restoring less than 300, and another less for restoring less than 200.
+* The material to use is in the original name of the item, except for [[chainmail]], which uses iron ingots.
+* Materials include [[leather]], [[wood planks]], [[cobblestone]], [[iron ingot]], [[gold ingot]], and [[diamond]].
+* Common tools you ''cannot'' repair in this way include [[bow]], [[flint and steel]], [[shears]], [[fishing rod]], and [[carrot on a stick]].
+* Repairing many units at once incurs one cost of (base value + prior work penalty) as well as adding only 2 to the future prior work penalty. (Provided the item is not renamed.)
+
+== Combining items ==
+The anvil can be used to combine two items of the same type, or an item with an enchanted book. This applies only to items with [[durability]]: swords, tools, and armor. The first/left item is the ''target'' item, the second/right item is the ''sacrifice'' item, which is destroyed. Combining two similar items does either or both of two things. Each of these costs levels, but if they're both done at once, part of the cost is shared:
+* The target is repaired, adding the durability of the sacrifice plus a bonus, up to the item's maximum durability. If the target item is undamaged, there is no cost for repair.
+* It also tries to combine the sacrifice's enchantments onto the target. If the sacrifice has no enchantments, or only weaker versions of the target's enchantments, then there is no charge. Otherwise, the player pays for enchantments added, and for some cases where the transfer fails (see below). For each enchantment on the sacrifice:
+** If the target has the enchantment as well...
+*** and the sacrifice level is '''greater''', the target is raised to the sacrifice's level.
+*** and the sacrifice level is '''equal''', the target gains one level, unless it is already at the maximum level for that enchantment.
+*** and the sacrifice level is '''less''', nothing changes on the target.
+** If the target does ''not'' have the enchantment, it gains all levels of that enchantment, ''unless'' it already has an incompatible enchantment. Enchantments are incompatible if both are in one of the following groups:
+*** '''Sword:''' Sharpness, Smite, and Bane of Arthropods
+*** '''Tool:''' Fortune and Silk Touch
+*** '''Armor:''' Protection, Fire Protection, Projectile Protection, and Blast Protection
+
+The '''total cost''' for combining two similar items is the sum of:
+* [[Anvil mechanics#Base value of items|Base Value]] of the target.
+* [[Anvil mechanics#Prior Work penalty|Prior Work Penalties]] of ''both'' target and sacrifice.
+* If [[Anvil mechanics#Renaming|renaming]], the extra cost of renaming
+* If the target item is not at full durability, the [[Anvil mechanics#Sacrifice Repair|repair cost]] depending on the sacrifice.
+* If the sacrifice has [[enchantments]], the [[Anvil mechanics#Costs For Combining Enchanted Items|enchantment cost]]
+
+If the sacrifice is a book, there is no repair, but the anvil tries to combine the book's enchantment onto the target. The item can also be renamed at the same time. The cost is much less than for combining two similar items.
+
+=== Costs for sacrifice repair ===
+The target item ends up with the sum of both items durabilities, plus a bonus (12% of the items' ''maximum'' durability, rounded down) up to the maximum.
+* To make the best use of the bonus, repair when the total item durability of the pair is no more than 88% of the maximum. For swords and tools, the 12% bonus is 3 durability for gold, 7 for wood, 15 for stone, 30 for iron, and 187 for diamond.
+* You may want to use {{key|F3}}+{{Key|H}} to show the numeric durability of your items (in the inventory tooltips).
+
+The cost for the repair depends only on the sacrifice's current durability and (slightly) the type of item:
+* '''S''' is the sacrifice durability, and '''MaxD''' is the maximum durability for it's type.
+* '''N''' is an offset for the item type, equal to '''100-floor(0.12*MaxD)'''. (This is negative for diamond tools.)
+* The cost is '''1+floor((S-N)/100)'''
+
+For each item type and sacrifice durability, the repair cost is:
+
+{| class="wikitable" style="text-align:center" data-description="Sacrifice repair cost"
+|-
+! colspan="8" | Sacrifice repair cost per item type and sacrifice durability
+|-
+! ⇓ Item / XP cost ⇒
+! 1
+! 2
+! 3
+! 4
+! 5
+! ...
+! 17
+|-
+! Diamond tools*
+| 1-12
+| 13-112
+| 113-212
+| 213-312
+| 313-412
+| ...
+| 1513-1561
+|-
+! Diamond chestplate
+| 1-136	
+| 137-236
+| 237-336
+| 337-436
+| 437-528
+|-
+! Diamond leggings
+| 1-140
+| 141-240
+| 241-340
+| 341-440
+| 441-495
+|-
+! Diamond boots
+| 1-148
+| 149-248
+| 249-348
+| 349-429
+|-
+! Bow
+| 1-153
+| 154-253
+| 254-353
+| 354-384
+|-
+! Diamond helmet
+| 1-156
+| 157-256
+| 257-356
+| 357-363
+|-
+! Iron tools*
+| 1-169
+| 170-250
+|-
+! Iron/chain chestplate
+| 1-171
+| 172-240
+|-
+! Shears
+| 1-171
+| 172-238
+|-
+! Iron/chain leggings
+| 1-173
+| 174-225
+|-
+! Iron/chain boots
+| 1-176
+| 177-195
+|-
+! Iron/chain helmet
+| rowspan="5" |for any sacrifice
+|-
+! Gold, wood, stone<br>Leather items
+|-
+! Flint and steel
+|-
+! Fishing rod
+|-
+! Carrot on a stick
+|-
+| colspan="8" | '''* Swords have the same cost as tools.''' 
+|}
+
+;Example:
+: A maxed out fishing rod (Lure 3, Luck 3, Unbreaking 3) which has been renamed is ''barely'' repairable. It has base value 36 (12 for Luck, 12 for Lure, 6 for Unbreaking, 6 for three enchantments). Assuming it's been renamed, repairing it costs that plus 2 for prior work, and 1 for the repair itself, for a total of exactly 39. If it has not been renamed, then its second combination or repair makes it too expensive to repair. (It might be rescued from this state by combining it with an incompatible ''book'', which allows simultaneously renaming it. See below for details.)
+
+=== Costs for combining enchanted items ===
+(This is just the enchanting cost. The total cost outline is in [[Anvil mechanics#Combining Items|Combining Items]].)
+* For each enchantment on the sacrifice:
+** If the enchantment is incompatible with the target, add 1 per level of enchantment.
+** If the enchantment is compatible, for each level the target gains, add ''twice'' the cost-per-level from the [[Anvil mechanics#Base value of items|Base Value]] tables.
+** If the enchantment is compatible, but both target and sacrifice are at max level, add the cost-per-level once.
+* If new enchantments are added, add (number of new enchantments)×(number of final enchantments - 1) + 1.
+
+'''Examples:'''
+* Dealing with equal enchantments:
+** In the first slot, the target is a sword named "Pointy" with Sharpness III, Knockback II, and Looting III.
+** In the second slot, the sacrifice is a sword with Sharpness III and Looting III from two prior jobs.
+** The base value of the target is 25. The total prior work penalty is 2 + 4 = 6. The cost so far is 31.
+** Sharpness III is equal to the target, so the result has Sharpness IV at a cost of twice 1.
+** Looting III is equal to the target but maxed out, so the result has Looting III, with the cost of 4.
+** The result costs 31 + 2 + 4 = 37 levels for a sword named "Pointy" with Sharpness IV, Knockback II, and Looting III. The result's base value is 26.
+** Swapping the target and sacrifice here gives a lower target base value but higher enchanting cost. The resulting sword ''would'' have the same enchantments, but with three prior jobs instead of the name "Pointy". Unfortunately, the enchantment cost goes up to 41 levels, which is above the anvil limit!
+* Dealing with conflicting enchantments:
+** The target is a sword with Sharpness III and Looting II, base value 14, two prior jobs.
+** The sacrifice is a sword with Smite II and Looting II, base value 15, two prior jobs.
+** The cost so far is 14 + 4 + 4 = 22 for base value of target and total prior work penalty.
+** Smite II is incompatible with Sharpness III, so the result does not have Smite at all, but there is still a cost of 2 levels for trying.
+** Looting II is equal to the target, so the result has Looting III at a cost of twice 4.
+** The result costs 22 + 2 + 8 = 32 levels for a sword with Sharpness III and Looting III, base value 18, three prior jobs.
+** Swapping the target and sacrifice costs 34 levels for a sword with Smite II and Looting III, base value 19, three prior jobs.
+* Dealing with new enchantments:
+** The target is a sword with Sharpness IV, BV 5, with one prior job.
+** The sacrifice is a sword with Looting II, one prior job.
+** Adding Looting costs twice 4 per level gained, which totals 16.
+** Adding an enchantment for a result with two enchantments costs 1&times;(2 - 1) + 1 = 2.
+** The result costs 9 + 16 + 2 = 27 levels for a sword with Sharpness IV, Looting II, BV 15, two prior jobs. 
+* Don't do this: Take a helmet with Protection IV, and Respiration III, and add a helmet with Blast Protection IV and Respiration III. You pay 4 levels for the incompatible Blast Protection, and another 4 for the maxed-out Respiration. With the base value of 19, you've just paid 27 levels (and a heavily-enchanted helmet) for nothing. (You could still be repairing the target, but that costs extra....)
+
+=== Costs for combining an item with an enchanted book ===
+The costs for enchanting with books expose more of the internals of the anvil system, but while this makes them more complex, they also include some major discounts compared to item combination. Naturally, repair costs do not apply.
+Normally, enchanted books have one enchantment, but books with multiple enchantments can be produced by combining two books on an anvil. Such books have their own prior-work penalty.
+
+* First, the following costs are added together:
+** Start with the target's ''modified'' base value, where cost-per-level is halved to a minimum of 1 per level.
+** Add the [[Anvil mechanics#Prior Work penalty|prior-work penalty]] for the target (and possibly the book)
+** If the target is gaining any new enchantments, add a cost of ''(number of new enchantments)×(final number of enchantments - 1) + 1''. 
+** For each enchantment level the target gains, add the cost-per-level halved to a minimum of 1 per level. (save this number)
+** For each enchantment both target and book already have at max level, add the enchantment cost-per-level once.
+** If the item was already renamed, ''and'' is being renamed again, add 3. (This is half the basic rename cost, rounded down. If somehow enchanting an item without durability, pay only 2.)
+* '''The above sum is then halved and rounded down.''' It can round down to 0.
+* For each book enchantment that's incompatible with the target, add 1 per enchantment level.
+* For each enchantment level the target gains, add (again) the cost-per-level halved to a minimum of 1 per level.
+* If the target is being renamed, add the basic rename cost, that is 7 for items with durability, 5 for other items.
+
+'''Notes:'''
+* An approximation for the cost breakdown without renaming or other complications, is: ''(BaseValue/4) + (PriorWork/2) + (NewEnchantmentCost/2) + levels gained &times; (cost-per-level &times; 3/4)''. If each part in parentheses needs no rounding, then the answer is exact.
+* When the sacrifice is a book, costs are ''significantly'' cheaper than sacrificing a matching item with same enchantment. This allows enchantment combinations that wouldn't be possible otherwise, but it also makes it easier to produce an item that can't even be repaired.
+* Sometimes it is good to rename an item while combining it with a book with an incompatible (or duplicate, maxed-out) enchantment to lower the cost, especially if you had no use for the book anyway.
+
+'''Examples:'''
+* Enchanting a newly crafted bow with an Infinity I book: the only cost is 1 &times; cost-per-level &times; 3/4 = 8×3/4 = 6. No rounding was needed in any steps, so that result is exact.
+* Adding Infinity I to a bow already enchanted with Power III and Flame I, with prior work = 6: original base value is 3×1 + 1×4 + (3×2/2) = 10, and the modified base value is 3×1 + 1&times;(4/2) + (3×2/2) = 8, 2 enchants, and halved cost-per-level is 1×8/2 = 4. So (8+6+2+4)/2 + 4 = 14 levels. If Infinity I was obtained from another bow instead of a book it would cost 35 levels, 21 more.
+* A Sharpness 4 sword (BV 5, MBV also 5) for the target, and a Looting 2 book for the sacrifice. Looting costs 4 (per level) × 2 (levels) / 2 (half cost) → 4×2/2→4, and target already has 1 enchantment, so (5+1+4)/2 + 4 → 9 (rather than 23 from item+item sacrifice)
+
+=== Special uses of enchanted books ===
+[[Enchanted book]]s can produce any [[enchantment]] available to the [[enchanting table]], and some that the enchanting table can't match:
+* Enchantments can be raised to their maximum power, which can be above the table's range.
+* Shears can receive Silk Touch, allowing them to gather cobwebs.
+* Axes can receive some of the sword enchantments: Sharpness, Smite, or Bane of Arthropods.
+* Even before version 1.7.2, a book can be used to apply Unbreaking to almost any item with durability. As of version 1.7.2, the enchanting table can apply Unbreaking to more items, but a few of the minor tools still require use of a book.
+
+Enchanted books can also be combined with each other to produce higher-level or multi-enchantment books.
+
+== Notes ==
+<references group="note"/>
+
+== Navigation ==
+{{Navbox gameplay}}
+
+[[de:Schmieden]]
+[[ja:金床の仕組み]]
+[[zh:铁砧机制]]

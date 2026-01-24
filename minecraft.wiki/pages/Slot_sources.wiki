@@ -1,0 +1,87 @@
+{{improve lead}}
+{{wip}}
+'''Slot sources''' allow the location of any [[inventory]] slot to be specified within [[data pack]]s.
+
+* Format: object with fields.
+** <code>type</code>: the slot source type.
+** <code><type-specific></code>: additional fields depending on the type.
+
+* <code>minecraft:empty</code> Type
+** Empty selection containing no slots.
+
+* <code>minecraft:group</code> Type
+** Merges several slot sources into one, with the resulting selection containing all slots from each slot source provided.
+*** If a slot is included in more than one slot source, it will be repeated in the resulting slot source.
+*** e.g. <code>[a, b] + [c, a]</code> -> <code>[a, b, c, a]</code>
+** Format:
+*** <code>terms</code>: list of slot sources to join.
+** Can alternatively be written inline as a list of slot sources.
+
+* <code>minecraft:slot_range</code> Type
+** Selects slots within a slot range from the inventory of an entity or block entity.
+** Mirrors the behavior of the <code>from</code> argument of the <code>/[[Commands/item|item]]</code> command.
+** Format:
+*** <code>source</code>: an entity or block entity from which the slots will be sourced, from loot context.
+**** Can be <code>block_entity</code>, this, <code>attacking_entity</code>, <code>last_damage_player</code>, <code>direct_attacker</code>, <code>target_entity</code>, or <code>interacting_entity</code>
+*** <code>slots</code>: a slot range in the format of <code><slot_type></code> or <code><slot_type>.<slot_number></code> (e.g. <code>armor.chest</code> or <code>container.*</code>).
+
+* <code>minecraft:contents</code> Type
+** Selects all non-empty slots from the inventory component of one or more items.
+*** If no item is stored inside that component, the resulting selection will be empty.
+** The location of the item(s) whose inventory component to use is specified by another slot source.
+*** If the slot source includes more than one item with that component, the resulting selections will be merged identically as with the <code>minecraft:group</code> type.
+*** e.g. <code>Bundle [a, b] + Shulker Box [c, d]</code> -> <code>[a, b, c, d]</code>
+** Format:
+*** <code>component</code>: the inventory component to target.
+**** Allowed values are <code>minecraft:bundle_contents</code>, <code>minecraft:charged_projectiles</code>, and <code>minecraft:container</code>
+*** <code>slot_source</code>: a slot source containing slots with item(s) to target.
+
+* <code>minecraft:filtered</code> Type
+** Applies a filter to the selected slots, excluding any non-matching slots from the resulting selection.
+** Format:
+*** <code>item_filter</code>: an item predicate to match against the items in each slot.
+*** <code>slot_source</code>: the slot source to filter.
+
+* <code>minecraft:limit_slots</code> Type
+** Limits the number of slots provided, with the resulting selection containing at most that number of slots.
+*** Any slots bringing the number of slots above that limit will be excluded, in order of inclusion.
+*** e.g. <code>[a, b, c, d]</code> -> <code>[a, b, c]</code> if the limit is set to <code>3</code>
+** Format:
+*** <code>limit</code>: integer, the maximum number of slots to include in the resulting selection.
+*** <code>slot_source</code>: the slot source to limit.
+* Example slot source selecting every slot with more than 16 items from the hotbar and armor slots of an entity:<syntaxhighlight lang="json">
+{
+  "type": "minecraft:filtered",
+  "item_filter": {
+    "count": {
+      "min": 16
+    }
+  },
+  "slot_source": [
+    {
+      "type": "minecraft:slot_range",
+      "source": "this",
+      "slots": "hotbar.*"
+    },
+    {
+      "type": "minecraft:slot_range",
+      "source": "this",
+      "slots": "armor.*"
+    }
+  ]
+}
+</syntaxhighlight>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine|||dev=25w44a|Added slot sources.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Inventarplatzquelle]]
+[[ja:スロット供与子]]
+[[pt:Fontes de espaço]]
+[[zh:槽位源]]

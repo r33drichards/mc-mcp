@@ -1,0 +1,348 @@
+{{Exclusive|java|customtext=This article describes only the loot table {{in|je}}.<br>See [https://learn.microsoft.com/en-us/minecraft/creator/documents/introductiontoloottables?view=minecraft-bedrock-stable the official docs] for the loot table {{in|be}}.}}
+'''Loot tables''' are technical [[JSON]] files that are used to dictate what items should generate in various situations, such as what [[Chest loot|items should be in naturally generated containers]], what [[Drops|items should drop when breaking a block]] or [[Drops|killing a mob]], [[Fishing|what items can be fished]], and more. It does not affect dropped [[experience]], or dropped non-item entities such as [[slime]]s from larger slimes or [[silverfish]] from infested blocks. In {{cmd|loot}} command, a loot table can be specified in [[SNBT]] format.
+
+== Definition ==
+Loot tables are part of the data pack directory structure, highlighted below:
+
+{{Data pack directory|loot_table|<nowiki><name>.json</nowiki>}}
+
+All loot tables are defined in data packs (vanilla data packs or custom data packs).
+
+In {{cmd|loot}} command, a loot table can be specified in [[SNBT]] format.
+
+== Usage ==
+Custom data packs use loot tables to change what loot can spawn in containers or drop by mobs. They can either change existing loot tables or create new ones.
+
+=== Vanilla usages ===
+
+Vanilla loot tables are grouped into categories with some tables being in subfolders of those.
+
+For example, the file for zombies would go in {{File|file|<nowiki><data pack name></nowiki>/data/minecraft/loot_table/entities/zombie.json}}. Editing this file in a datapack would make every zombie in that world use the datapack's loot table rather than the default zombie loot table.
+
+To edit the loot tables of other entities, one would edit the entity's corresponding JSON file under the {{File|directory|<nowiki><data pack name></nowiki>/data/minecraft/loot_table/entities}} directory, which is typically said entity's name in the singular form (e.g.  {{File|file|ghast.json}} rather than {{File|file|ghasts.json}}).
+
+The various subfolders and files include:
+
+* {{File|directory|archaeology}}: The items from brushing [[suspicious sand]] or [[suspicious gravel]].
+* {{File|directory|blocks}}: The items dropped when mining blocks.
+* {{File|directory|chests}}: Loot in various structures in chests or barrels.
+* {{File|directory|dispensers}}: The items inside dispensers in [[trial chambers]].
+* {{File|directory|entities}}: The loot dropped by mobs when killed.
+* {{File|directory|equipment}}: The equipment of mobs spawned by [[trial spawner]]s in trial chambers.
+* {{File|directory|gameplay}}: Gameplay mechanics such as:
+** {{File|file|fishing.json}}: Items obtained via [[fishing]].
+** {{File|file|cat_morning_gift.json}}: Items [[Cat#Gift|gifted]] by [[cat]]s after sleeping.
+** {{File|file|piglin_bartering.json}}: Items obtained via [[bartering]] with [[piglin]]s.
+** {{File|file|chicken_lay.json}}: Items dropped when a [[chicken]] periodically [[Chicken#Eggs|lays an egg]].
+** {{File|file|armadillo_shed.json}}: Items dropped when an [[armadillo]] [[Armadillo#Drops|sheds]], either periodically or when [[brushed]].
+** {{File|directory|hero_of_the_village}}: Items gifted by [[villager]]s to a player with the [[Hero of the Village]] effect.
+*** {{File|file|unemployed_gift.json}}: Gifts given by unemployed villagers.
+*** {{File|file|baby_gift.json}}: Gifts given by [[baby villager]]s.
+* {{File|directory|pots}}: The loot inside decorated pots in trial chambers.
+* {{File|directory|shearing}}: The items dropped when shearing [[sheep]], [[mooshroom]]s or [[snow golem]]s
+* {{File|directory|spawners}}: The reward after defeating trial spawners.
+
+Some blocks, such as bedrock, end portals, and other blocks unbreakable in survival, do not have loot tables, some blocks share loot tables (namely wall and floor variants of blocks) and some drops, such as the [[wither]]'s [[nether star]], are not covered by loot tables.<ref>{{Bug|MC-149589}}</ref>
+
+=== NBT data ===
+The loot tables are structured as a String tag that determines the table to use, and a Long tag determining the seed. Containers or mobs with the same seed and table drop the same items. Loot tables do not determine the container's slot to be used; that is randomly determined based on the seed. Once there is an interaction with the container (e.g. opening or destroying), the two tags are removed, and loots appear in the container.
+
+For [[barrel]], [[chest]], [[trapped chest]], [[hopper]], [[minecart with chest]], [[boat with chest]], [[minecart with hopper]], [[dispenser]], [[dropper]], [[shulker box]], [[Dyed Shulker Box|dyed shulker box]], and [[decorated pot]]:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{:Chunk format/Lootable}}
+</div>
+
+For [[mobs]]:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{:Chunk format/DeathLootable}}
+</div>
+
+[[Vault]] uses loot table in its config to determine the items to eject when unlocking the vault, and items to display in the vault. 
+
+[[Trial spawner]] uses loot table in its vault configs to determine the items to give as reward, and the items used by ominous item spawners spawned during the active phase when ominous.
+
+[[Monster spawner]] and trial spawner uses loot table to determine equipment the spawned mobs have.
+
+=== Others ===
+Loot table can be invoked directly by {{cmd|loot}} command.
+
+Loot table can also be invoked in [[Advancement definition|advancement rewards]].
+
+== Format ==
+Loot tables are defined using [[JSON]] files stored within a [[data pack]] in the path {{cd|data/<namespace>/loot_table}}.
+
+In {{cmd|loot}} command, a loot table can be specified in [[SNBT]] format.
+
+<div class="treeview">
+* {{nbt|compound}} The root.
+** {{nbt|string|type}}: (Optional. Defaults to <code>generic</code>) Specifies the [[loot context]] in which the loot table should be invoked. All item modifiers, predicates and number providers are then validated to ensure the parameters of the context type specified here cover all requirements, and prints a warning message in the output log if any modifier or predicate requires a context parameter that is not covered.
+** {{nbt|list|functions}}: (Optional) Applies item modifiers in order, onto all item stacks dropped by this table.
+*** {{nbt|compound}}{{nbt|list}} An '''[[item modifier]]'''.
+** {{nbt|list|pools}}: (Optional) A list of all pools for this loot table. Pools are applied in order.
+*** {{nbt|compound}} A '''[[#Pool|pool]]''' (see below).
+** {{nbt|string|random_sequence}}: (Optional) A [[resource location]] specifying the name of the random sequence that is used to generate loot from this loot table. If only one loot table uses a specific random sequence, the order of the randomized sets of items generated is the same for every world using the same world seed. If multiple loot tables use the same random sequence, the loot generated from any one of them changes depending on how many times and in what order any of the other loot tables were invoked.
+</div>
+
+== Pool ==
+There are several entries in a pool. The number of rolls of a pool is specified by {{nbt|compound|rolls}} and {{nbt|float}}{{nbt|compound|bonus_rolls}}). In each roll of a pool, the pool draws one entry from all its entries. Each roll of a pool is independent.
+
+<div class="treeview">
+* {{nbt|compound}} The root.
+** {{nbt|list|conditions}}: (Optional) A list of predicates, that must all pass for this pool to be used.
+*** {{nbt|compound}} A '''[[predicate]]'''.
+** {{nbt|list|functions}}: (Optional) Applies item modifiers in order, onto all item stacks dropped by this pool.
+*** {{nbt|compound}}{{nbt|list}} An '''[[item modifier]]'''.
+** {{nbt|int}}{{nbt|compound|rolls}}: A '''[[#Number provider|number provider]]'''. Specifies the number of rolls on the pool.
+** {{nbt|float}}{{nbt|compound|bonus_rolls}}: (Optional. Defaults to 0.0) A '''[[#Number provider|number provider]]'''. Specifies the number of bonus rolls on the pool per level of luck (including [[Attributes#Attributes_for_players|luck attribute]] and [[Enchantment definition|fishing_luck_bonus]] on fishing tool). Rounded down after multiplying. [[Enchantment definition|Fishing_luck_bonus]] applies only to fishing. In vanilla games, luck attribute is from the [[Luck]] status effect, and [[Enchantment definition|fishing_luck_bonus]] is from the [[Luck of the Sea]] enchantment. This does not work in some context, due to bugs<ref name="luck">{{bug|MC-184348}}<br>{{bug|MC-120523}}<br>{{bug|MC-262347}}<br>{{bug|MC-110336}}</ref>.
+** {{nbt|list|entries}}: Defines the entries in this pool. One loot entry is chosen per roll as a weighted random selection from all loot entries in the pool. Each roll is independent (Sampling with replacement), so an entry can be chosen multiple times in multiple rolls. It is not the elements in this array that are rolled. Instead, '''composite entries''' first expand their children, and then '''singleton entries''' that do not meet their conditions are removed from the pool, then entries are rolled afterward.
+*** {{nbt|compound}}: An '''[[#Entry|entry]]''' (see below).
+</div>
+
+== Entry ==
+There are two types of loot entry: '''Singleton Entry''' and '''Composite Entry'''.
+
+A singleton entry defines an item generating behavior that may generate zero, one or more item stacks. Singleton entries have their weight. Each roll selects a weighted singleton entries from the pool.
+
+Composite entries are not weighted entries to be rolled. Instead, they are expanded/flattened before rolling, i.e., some children entries in it are extracted out. If an extracted children entry is also a composite entry, it is further expanded until there are only singleton entries. Then, these singleton entries are added into the pool.
+
+Once all composite entries have been expanded, there're only singleton entries in the pool. Then, singleton entries that do not meet their conditions ({{nbt|list|conditions}} field) are removed from the pool. After that, in the pool are only singleton entries that meet their conditions. Each singleton entry has a weight (defined by the {{nbt|int|weight}} and {{nbt|int|quality}} fields). The game randomly selects one weighted singleton entry from the pool as the result of a roll.
+
+The <code>[[#Tag entry|tag]]</code> entry is a special entry. Whether it is a singleton or composite entry is determined by the {{nbt|bool|expand}} field. If {{nbt|bool|expand}} is {{cd|true}}, it is a composite entry that expands into multiple singleton entries like <code>[[#item|item]]</code> but do not apply item modifiers due to a bug<ref name="MC212671">{{bug|MC-212671}}</ref>.
+
+The format of an entry is:
+<div class="treeview">
+* {{nbt|compound}} The root.
+** {{nbt|string|type}}: Type of the entry as a [[resource location]].
+** Extra fields of the entry, described below.
+</div>
+
+The possible values for {{nbt|string|type}} and associated extra fields are listed below.
+
+=== Singleton entry ===
+Fields common to all singleton entry:
+<div class="treeview">
+** {{nbt|list|conditions}}: (Optional) A list of predicates that must all pass for this singleton entry to be included into the pool. If any predicate is not satisfied, the singleton entry is removed from the pool before rolling.
+*** {{nbt|compound}} A '''[[predicate]]'''.
+** {{nbt|list|functions}}: (Optional) Applies item modifiers in order, onto all item stacks dropped by this singleton entry.
+*** {{nbt|compound}}{{nbt|list}} An '''[[item modifier]]'''.
+** {{nbt|int|weight}}: (Optional. Defaults to 1) Determines how often this singleton entry is chosen out of all the singleton entries in the pool. Entries with higher weights are used more often. The chance of an entry being chosen is [this entry's weight ÷ total weight of all entries in the pool].
+** {{nbt|int|quality}}: (Optional. Defaults to 0) Modifies this singleton entry's {{cd|weight}} based on the level of luck (including [[Attribute|luck attribute]] and [[Enchantment definition|fishing_luck_bonus]] on fishing tool). Formula is {{cd|max(floor(weight + (quality &times; luck)),0)}}. This does not work in some context, due to bugs<ref name="luck"/>.
+** Even more extra fields of the entry, described below.
+</div>
+
+Possible singleton entries:
+
+<div class="treeview" id="item" style="margin-block-end: 1em;">
+* '''item''' &mdash; Drops a single item stack. The default, if not changed by item modifiers, is a stack of 1 of the item with its default [[data component]]s.
+** {{nbt|string|name}}: The [[resource location]] of the item, e.g. {{cd|minecraft:diamond}}. 
+</div>
+
+<div class="treeview" id="loot_table" style="margin-block-end: 1em;">
+* '''loot_table''' &mdash; Drops the loot from another loot table.
+** {{nbt|string|value}}: {{json ref|loot table|inline=1}} The loot table to be used. Cannot be the ID of the current loot table file. Recursive calling is not allowed.
+</div>
+
+<div class="treeview" id="dynamic" style="margin-block-end: 1em;">
+* '''dynamic''' &mdash; Drops block-specific loot.
+** {{nbt|string|name}}: Can be {{cd|contents}} which drops the items in a [[shulker box]], or {{cd|sherds}} which drops the sherds of a [[decorated pot]]. Does not work for other blocks.
+</div>
+
+<div class="treeview" id="empty" style="margin-block-end: 1em;">
+* '''empty''' &mdash; Drops nothing.
+</div>
+
+=== Tag entry ===
+If {{nbt|bool|expand}} is {{cd|false}}, it is a singleton entry:
+* When selected in a roll, generates item stacks for all items in the specified item [[tag]]. The default, if not changed by item modifiers, each item stack is 1 item with its default [[data component]]s.
+If {{nbt|bool|expand}} is {{cd|true}}, it is a composite entry:
+* Expands into multiple singleton entries with the specified weight and conditions, for each item in the item [[tag]]. The item count of each item stack is 1, and each item is generated with its default [[data component]]s. Item modifiers do not work<ref name="MC212671"/>.
+
+<div class="treeview" id="tag" style="margin-block-end: 1em;">
+* '''tag'''
+** {{nbt|string|name}}: The [[resource location]] of the item tag to query, e.g. {{cd|minecraft:arrows}}.
+** {{nbt|boolean|expand}}: If {{cd|true}}, provides one singleton entry per item in the tag with the same weight and conditions. If {{cd|false}}, it is a singleton entry that drops all items in the tag.
+** {{nbt|list|conditions}}: (Optional) A list of predicates that must all pass for this singleton entry to be included into the pool. If any predicate is not satisfied, the singleton entry is removed from the pool before rolling.
+*** {{nbt|compound}} A '''[[predicate]]'''.
+** {{nbt|list|functions}}: (Optional) Applies item modifiers in order, onto all item stacks dropped by this singleton entry.
+*** {{nbt|compound}}{{nbt|list}} An '''[[item modifier]]'''.
+** {{nbt|int|weight}}: (Optional. Defaults to 1) Determines how often this singleton entry is chosen out of all the singleton entries in the pool. Entries with higher weights are used more often. The chance of an entry being chosen is [this entry's weight ÷ total weight of all entries in the pool].
+** {{nbt|int|quality}}: (Optional. Defaults to 0) Modifies this singleton entry's {{cd|weight}} based on the level of luck (including [[Attribute|luck attribute]] and [[Enchantment definition|fishing_luck_bonus]] on fishing tool). Formula is {{cd|max(floor(weight + (quality &times; luck)),0)}}. This does not work in some context, due to bugs<ref name="luck"/>.
+</div>
+
+=== Composite entry ===
+Fields common to all composite entry:
+<div class="treeview">
+** {{nbt|list|conditions}}: (Optional) A list of predicates that must all pass for this composite entry to expand and its children to be added into the pool. If any predicate is not satisfied, the composite entry is ignored, so, no entry is added into the pool.
+*** {{nbt|compound}} A '''[[predicate]]'''.
+** {{nbt|list|children}}: (Optional) The list of entries. Both singleton and composite entry are allowed.
+*** {{nbt|compound}} An entry.
+</div>
+
+Possible composite entries:
+<div class="treeview" id="group" style="margin-block-end: 1em;">
+* '''group''' &mdash; All entries in the {{nbt|list|children}} are extracted. Can be used for convenience, e.g. if one condition applies for multiple entries.
+</div>
+
+<div class="treeview" id="alternatives" style="margin-block-end: 1em;">
+* '''alternatives''' &mdash; Extracts only the ''first'' successful (conditions are met) entry. Conditions are checked in order.
+</div>
+
+<div class="treeview" id="sequence" style="margin-block-end: 1em;">
+* '''sequence''' &mdash; Extracts the child entries in sequential order, continuing until an entry's conditions fail, then no more children are extracted.
+</div>
+
+== Number provider ==
+Loot tables use '''number providers''' in some places that accept an {{nbt|int}} or {{nbt|float}}. They can either be defined as a constant value or as an object.
+
+<div class="treeview">
+* {{nbt|int}}{{nbt|float}}: Constant number provider.
+</div>
+
+Or:
+<div class="treeview">
+* {{nbt|compound}}: The root tag. Shorthand for a uniform distribution.
+** {{nbt|int}}{{nbt|float}}{{nbt|compound|min}}: Number provider. The minimum value.
+** {{nbt|int}}{{nbt|float}}{{nbt|compound|max}}: Number provider. The maximum value.
+</div>
+
+Or:
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|string|type}}: The number provider type as a [[resource location]].
+** Extra fields of the number provider, described below.
+</div>
+
+The possible values for {{nbt|string|type}} and associated extra contents:
+
+<div class="treeview" id="constant" style="margin-block-end: 1em;">
+* '''constant''' &mdash; A constant value.
+** {{nbt|int}}{{nbt|float|value}}: The exact value.
+</div>
+
+<div class="treeview" id="uniform" style="margin-block-end: 1em;">
+* '''uniform''' &mdash; A random number following a uniform distribution between two values (inclusive).
+** {{nbt|int}}{{nbt|float}}{{nbt|compound|min}}: Number provider. The minimum value.
+** {{nbt|int}}{{nbt|float}}{{nbt|compound|max}}: Number provider. The maximum value.
+</div>
+
+<div class="treeview" id="binomial" style="margin-block-end: 1em;">
+* '''binomial''' &mdash; A random number following a [[wikipedia:Binomial distribution|binomial distribution]].
+** {{nbt|int}}{{nbt|compound|n}}: Number provider. The amount of trials.
+** {{nbt|float}}{{nbt|compound|p}}: Number provider. The probability of success on an individual trial.
+</div>
+
+<div class="treeview" id="score" style="margin-block-end: 1em;">
+* '''score''' &mdash; To query and use a scoreboard value.
+** {{nbt|compound|target}}: To choose which player name or entity UUID to query.
+*** {{nbt|string|type}}: Set to {{cd|fixed}} to manually specify a player name or UUID. Set to {{cd|context}} to use an entity from loot context.
+*** {{nbt|string|name}}: Included only if {{nbt|string|type}} is set to {{cd|fixed}}. Specifies the name of the player, or the entity's [[Universally unique identifier|UUID]] <small>(in hypenated hexadecimal format)</small> whose score to query.
+*** {{nbt|string|target}}: Included only if {{nbt|string|type}} is set to {{cd|context}}. Specifies an entity from [[#Loot context types|loot context]] to query the score of. Can be {{Loot entity target}}.
+** {{nbt|string|score}}: The scoreboard objective to query on the selected player name or UUID.
+** {{nbt|float|scale}}: Optional. Scale to multiply the score before returning it.
+</div>
+
+<div class="treeview" id="storage" style="margin-block-end: 1em;">
+* '''storage''' &mdash; A value in command storage.
+** {{nbt|string|storage}}: The [[resource location]] of the storage.
+** {{nbt|string|path}}: The [[nbt path]] to the field in storage.
+</div>
+
+<div class="treeview" id="storage" style="margin-block-end: 1em;">
+* '''enchantment_level''' &mdash; A value dependent on the level of the [[#Loot context types|loot context]] enchantment
+** {{nbt|string|amount}}: [[level-based value]] calculating the value based on the enchantment.
+</div>
+
+<div class="treeview" id="storage" style="margin-block-end: 1em;">
+* '''sum'''{{upcoming|je 26.1}} &mdash; The sum of multiple value providers
+** {{nbt|list|summands}}: List of number providers to sum.
+</div>
+
+== Loot context types ==
+{{Main|Loot context}}
+The {{nbt|string|type}} field is used when loading the data pack to check whether the context parameters used by this loot table match the specified context type. The field makes it possible to check for errors in the loot table files without applying them in-game. If the loot table is used for a specific context, specifying the type field allows the game to check whether the loot table file uses parameters that are not provided in that context.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.9|dev=October 19, 2015|slink={{tweet|Dinnerbone|656102828595920896}}|[[Dinnerbone]] announces loot tables.}}
+|{{HistoryLine|||dev=15w43a|Added loot tables.}}
+|{{HistoryLine|||dev=15w43b|Added condition '''entity_scores'''.}}
+|{{HistoryLine|||dev=15w43c|Renamed "villager_golem.json" to "iron_golem.json"
+|Added [[fishing]] loot tables, [[sheep]] without [[wool]], and [[zombie horse|zombie]] and [[skeleton horse]]s.
+|Renamed the tag {{nbt|string|item}}: to {{nbt|string|name}}:, and the tag {{nbt|compound|items}}: to {{nbt|compound|entries}}:
+|Added the tag {{nbt|string|type}}: and support to load a loot table instead of an [[item]].
+|Added the tag {{nbt|int|luck}}: to default files, though it currently does nothing in the code.
+|Added the function '''set_damage'''.}}
+|{{HistoryLine|||dev=15w44a|Added the function '''enchant_randomly''' and '''set_attributes'''.}}
+|{{HistoryLine|||dev=15w44b|Added the {{nbt|int|quality}} tag.
+|Removed {{nbt|int|luck}} and {{nbt|float|luck_multiplier}} tags.
+|Added the {{nbt|compound|bonus_rolls}} tag.}}
+|{{HistoryLine|||dev=15w51a|A [[player]] in [[spectator]] mode no longer triggers a container to use its loot table to generate loot.}}
+|{{HistoryLine||1.9.1|dev=pre1|Loot tables now work with [[dispenser]]s and [[dropper]]s.
+|Added default table <code>chests/jungle_temple_dispenser</code>.}}
+|{{HistoryLine||1.11|dev=16w32a|[[Donkey]]s, [[mule]]s, [[husk]]s and [[zombie villager]]s now each draw from their own loot tables, rather than drawing from the [[horse]] and [[zombie]] loot tables, respectively}}
+|{{HistoryLine|||dev=16w43a|[[Villager]]s, [[vex]]es and [[ender dragon]]s are now able to draw from their own loot tables.}}
+|{{HistoryLine||1.13|dev=17w43a|Custom loot tables have been moved into [[data pack]]s.}}
+|{{HistoryLine||1.13|dev=18w01a|Added the function '''set_name'''.}}
+|{{HistoryLine||1.14|dev=18w43a|Block [[drops]] have been changed to use loot tables too.
+|Loot tables received a bunch of new options.
+|Setting [[entity]] to "this" now refers to the [[player]] in [[chest]] and [[block]] loot tables.}}
+|{{HistoryLine|||dev=18w44a|Added loot tables for [[cat]]s, cat_morning_gift, players and [[wither]]s.
+|Added loot tables for new [[block]]s.|Added the function '''set_lore'''.}}
+|{{HistoryLine|||dev=18w46a|Added loot table for [[illusioner]]s.}}
+|{{HistoryLine|||dev=18w48a|Added {{tooltip|more loot tables|village_cartographer, village_desert_house, village_plains_house, village_savanna_house, village_snowy_house, village_taiga_house, village_tannery, village_weaponsmith}} for [[village]]s, some of which are currently unused.
+|Removed loot table: village_blacksmith.}}
+|{{HistoryLine|||dev=18w49a|village_savanna_house and village_snowy_house loot tables are now used.
+|Added {{tooltip|more loot tables|village_armorer, village_butcher, village_mason, village_shepherd}} for [[village]]s.}}
+|{{HistoryLine|||dev=18w50a|village_desert_house and village_taiga_house loot tables are now used, making all previously unused loot tables no longer unused.}}
+|{{HistoryLine|||dev=?|Empty loot table is now hardcoded.}}
+|{{HistoryLine||1.15|dev=19w34a|Added the function '''copy_state'''.}}
+|{{HistoryLine||1.16|dev=20w12a|Added fishing_hook sub-predicate to check properties of the fishing hook.}}
+|{{HistoryLine||1.20|dev=23w12a|Added the <code>shards</code> dynamic drop.}}
+|{{HistoryLine|||dev=23w14a|Added the function <code>reference</code>.}}
+|{{HistoryLine|||dev=23w17a|Renamed the <code>shards</code> dynamic drop to <code>sherds</code>.}}
+|{{HistoryLine|||dev=23w17a|Added the loot table {{cd|sniffer_digging}}.}}
+|{{HistoryLine|||dev=pre1|Made random sequences for loot tables deterministic.
+|Added <code>random_sequence</code> field.}}
+|{{HistoryLine|||dev=pre6|The ID of the random sequence is now an optional field.}}
+|{{HistoryLine||1.20.2|dev=23w32a|Added <code>sequence</code> loot function.|<code>all_of</code> predicates in loot tables can now be declared implicitly as an inline array without a type.}}
+|{{HistoryLine||1.20.5|dev=24w07a|Added <code>gameplay/panda_sneeze</code> loot table for drops when [[panda]]s sneeze.}}
+|{{HistoryLine|||dev=24w09a|The <code>name</code> field for entry type <code>loot_table</code> has been renamed to <code>value</code> and now also accepts inline loot tables.}}
+|{{HistoryLine|||dev=24w12a|Added <code>storage</code> loot number provider to access values from command storage.}}
+|{{HistoryLine||1.21|dev=24w18a
+|Score context target entities <code>killer</code>, <code>direct_killer</code>, <code>killer_player</code> were renamed to <code>attacker</code>, <code>direct_attacker</code>, <code>attacking_player</code>
+|Added {{cd|enchantment_level}} number provider}}
+|{{HistoryLine|||dev=24w21a|Moved loot tables from {{file|directory|loot_tables}} to {{file|directory|loot_table}}}}
+|{{HistoryLine||1.21.2|dev=24w33a|Sheep shearing is now controlled by loot tables found as <code>shearing/sheep/{{ph|color}}</code>.|Mooshroom shearing is now controlled by loot tables found as <code>shearing/mooshroom/{{ph|variant}}</code>.|Snow golem shearing is now controlled by a loot table found as <code>shearing/snow_golem</code>.}}
+|{{HistoryLine|||dev=24w35a|Special loot table empty has been removed and is no longer defined in vanilla data pack.|Sheep now always uses a single loot table <code>entities/sheep</code>.|Wool drops are still defined in sub-tables in <code>entities/sheep/{{ph|color}}</code>, but they are now just dispatched from the main table.|Sheep shearing is now controlled by loot table found as <code>shearing/sheep</code>.|Mooshroom shearing is now controlled by loot table found as <code>shearing/mooshroom</code>.}}
+|{{HistoryLine|||dev=24w37a|Chickens laying eggs is now controlled by a loot table found at <code>gameplay/chicken_lay</code>.|Armadillos randomly dropping scutes is now controlled by a loot table found at <code>gameplay/armadillo_shed</code>.|The loot given by Villagers is now controlled by two additional loot tables: <code>gameplay/hero_of_the_village/unemployed_gift</code> and <code>gameplay/hero_of_the_village/baby_gift</code>.|The tool value (used for functions like <code>match_tool</code>) is now available for some additional loot table types.}}
+|{{HistoryLine||1.21.9|dev=25w31a|Added {{cd|minecraft:entity_interact}} and {{cd|minecraft:block_interact}} loot table types.|Fields that specify a target entity in a loot table, such as {{cd|entity_properties.entity}}, can additionally target the {{cd|target_entity}} and {{cd|interacting_entity}} parameter types.|Added {{cd|charged_creeper/root}}, {{cd|brush/armadillo}}, {{cd|gameplay/turtle_grow}}, {{cd|harvest/beehive}}, {{cd|harvest/cave_vine}}, and {{cd|carve/pumpkin}} loot tables.}}
+|{{HistoryLine|||dev=25w32a|Added {{cd|harvest/sweet_berry_bush}} loot table.}}
+|{{HistoryLine||1.21.11|dev=25w44a|Added new {{cd|minecraft:slots}} loot pool entry.|Removed {{cd|contents}} as a supported value for the {{cd|dynamic}} loot entry type.}}
+|{{HistoryLine|||dev=25w46a|Reverted removal of {{cd|contents}} as a supported value for the {{cd|minecraft:dynamic}} loot pool entry.}}
+}}
+
+==Issues==
+{{issue list|loot|projects=MC}}
+
+== External links ==
+* [https://misode.github.io/loot-table/ Loot Table Generator on misode.github.io]
+
+==References==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Beutetabellen]]
+[[es:Tabla de botín]]
+[[fr:Table de butin]]
+[[ja:ルートテーブル]]
+[[ko:노획물 목록]]
+[[nl:Buittabel]]
+[[pl:Tabela łupów]]
+[[pt:Tabela de itens]]
+[[ru:Таблицы добычи]]
+[[zh:战利品表]]

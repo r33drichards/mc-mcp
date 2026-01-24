@@ -1,0 +1,154 @@
+{{Infobox version
+|edition=Bedrock
+|image=Bedrock 1.16.100.57.png
+|type=Beta
+|internal=
+'''Windows''': 1.16.10057.0<br>
+'''Xbox One''': 1.16.10057.70<br>
+'''Android''': 1.16.100.57<br>
+|build=4736510
+|parent=1.16.100
+|date='''Xbox One, Windows 10, Android:''' September 24, 2020
+|prevparent=1.16.61
+|prev=beta 1.16.100.56
+|next=beta 1.16.100.58
+|nextparent=1.16.101
+}}<onlyinclude>
+
+'''Beta 1.16.100.57''' is the eighth beta version for [[Bedrock Edition 1.16.100]], released on September 24, 2020<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/360049664632|title=Minecraft Beta - 1.16.100.57 (Xbox One/Windows 10/Android)|website=Minecraft Feedback|date=September 24, 2020}}</ref>, which adds new commands and fixes bugs.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|camerashake}}'''
+* Used to enable a camera shaking effect.
+'''{{cmd|clearspawnpoint}}'''
+* Used to clear spawnpoints in the world.
+'''{{cmd|event}}'''
+* Used to trigger an event on an entity.
+
+=== General ===
+'''[[Settings]]'''
+* Added "Camera Shake" toggle in the Video and Accessibility settings.
+** Used to adjust camera shakes.
+
+== Changes ==
+=== General ===
+'''[[Experimental Gameplay]]'''
+* Added "Additional Modding Capabilities" toggle.{{Info needed|That does what?}}
+
+'''[[Inventory]]'''
+* Items in the inventory will no longer move into the crafting grid when hovering over recipes.
+* The selected recipe will no longer be cleared when changing tabs, even if the player doesn't have all the necessary ingredients for that recipe.
+* Picking up items while the cursor is hovering over a recipe now updates to the recipe's new index.
+
+'''Technical '''
+* Added Item Lock components to allow for items to be locked in the inventory, locked in a slot, or kept upon death.
+* Added a new {{cd|loop_delayfield}} to skeletal animation files that controls how to wait between each iteration of a looping animation.
+* Added camerashake command to enable a camera shaking effect.
+* Villagers/zombie villagers will once again correctly spawn as a baby when using the summon command to summon them with the event {{code|minecraft:entity_born}}.
+* Older command versions using {{cmd|execute}} will now use the proper position for command selectors when calculating the radius.
+
+* Items
+** Banners using the {{cd|set_banner_details}} function no longer throw a content error when a "base_color" isn't specificed, but rather only when the "base_color" is invalid.
+** Added {{cd|decrement_count}} event response for items.
+
+* {{cd|MoveTowardsRestrictionGoal}}
+** This goal has been removed in favor of the two new child goals that make the behavior more clear.
+
+* {{cd|MoveTowardsDwellingRestrictionGoal}}
+** This goal is for Actors that are part of the Village construct.
+** The {{cd|DwellerComponent}} is necessary for this goal.
+
+* {{cd|MoveTowardsHomeRestrictionGoal}}
+** The {{cd|HomeComponent}} is necessary for this goal.
+** Exposed a new data parameter for the range at which the Actor will stay within in relation to their home: {{code|restriction_radius}}.
+
+* Send Event Goal
+** {{cd|minecraft:behavior.send_event}} no longer uses -1 in max_activation_range as a value to indicate unlimited range, the default has been changed to 32.
+** Added content log warnings for when {{cd|min_activation_range}} and {{cd|max_activation_range}} is less than 0.
+** Added content log warnings for when {{cd|min_activation_range}} is greater than {{cd|max_activation_range}}.
+** Added a new json field {{cd|look_at_target}} which allows and disallows entities to turn and face their target.
+
+== Fixes ==
+'''Performance and stability'''
+* Fixed several crashes that could occur during gameplay.
+* Fixed an issue where the game could crash if suspended in one of the new achievement screens.
+* Made code optimizations to improve chunk loading performance ({{bug|MCPE-85614}}).
+
+'''Beta changes'''
+* Nether portals no longer break in a ripple pattern ({{bug|MCPE-99650}}).
+* Spawn eggs can now be used on an underwater mob spawner.
+
+'''General'''
+* Fixed an issue with worlds disappearing from the worlds list during crash on world start ({{bug|MCPE-84649}}).
+* "The Beaconator" achievement can now be reliably unlocked.
+* Fixed a bug where the Archer trophy would not unlock after meeting the criteria ({{bug|MCPE-86371}}).
+* End city loot chests now generate correctly ({{bug|MCPE-72920}}).
+* Basalt pillars now generate in soul sand valley again ({{bug|MCPE-98961}}).
+* Fixed player collision box not properly sizing when swimming, gliding, etc. ({{bug|MCPE-98271}}).
+
+'''Mobs'''
+* Mob spawn range now scales with simulation distance ({{bug|MCPE-95568}}).
+* Villagers from older versions now level up correctly when trading ({{bug|MCPE-85013}}).
+* Improved performance of farmer villagers when harvesting or sowing crops.
+* Fixed a bug which could prevent farmer villagers from harvesting crops.
+* Player-ridden striders now jump onto magma blocks as well as non-full blocks in front of them when guided by warped fungus on a stick ({{bug|MCPE-77096}}).
+* Overworld animals leashed to the player no longer become unleashed when the player returns from the Nether.
+* Striders now correctly executes the {{cd|move_to_liquid}} goal.
+* Baby animals can be tamed once again, before growing up.
+* Bees can now only exit beehives and bee nests through air blocks ({{bug|MCPE-97185}}).
+
+'''Blocks'''
+* Beehives and bee nests now show the correct front facing texture ({{bug|MCPE-92468}}).
+* Crimson and warped stems/hyphae are now in their correct creative inventory groups ({{bug|MCPE-74611}}).
+
+'''Items'''
+* Item names now appear correctly ({{bug|MCPE-100252}}).
+* Piglin snout banner pattern can be found in the inventory again ({{bug|MCPE-100269}}).
+* Banner patterns can now be crafted in the 2x2 crafting grid ({{bug|MCPE-91247}}).
+* Craftable items now appear correctly ({{bug|MCPE-100257}}).
+* Written books no longer exist in the creative inventory ({{bug|MCPE-100275}}).
+* Fixed an issue that meant item damage was not assigned until a world was reloaded ({{bug|MCPE-62324}}).
+* Player can now see an item's durability immediately after crafting it ({{bug|MCPE-62324}}).
+* Fixed an issue that prevented an empty item from being given back after using a food like soup or stew.
+* Fixed a bug where dropped item stacks could become invisible after merging with another item stack ({{bug|MCPE-71139}}).
+* Fixed a bug where iron, gold, and diamond horse armor would all show white ({{bug|MCPE-94432}}).
+* Mob heads and bee spawn eggs now appear correctly in the inventory ({{bug|MCPE-100251}}).
+* Netherite armor items no longer take durability loss from a player standing on magma blocks ({{bug|MCPE-76532}}).
+
+'''Audio'''
+* Pitch written in sound_definitions.json is now correctly played ({{bug|MCPE-49430}}).
+* Phantoms wings now make a flapping sound.
+
+'''User interface'''
+* Beacon container interface no longer shuffles items around the inventory slots when trying to quick-move items from the inventory while the hotbar is full.
+* "Ride Exit" hint now clears Actionbar messages ({{bug|MCPE-75097}}).
+* Updated the profanity filter list ({{bug|MCPE-64359}}).
+
+'''Character creator'''
+* Fixed character creator navigation problems between featured items, achievement rewards, emotes, and the dressing room ({{bug|MCPE-89179}}).
+
+'''Touch controls'''
+* Pressing the 'Leave Boat' button on touch devices will no longer make the player hit a passenger or destroy the boat ({{bug|MCPE-78113}}).
+* A button icon has been added to the NPC dialog screen to show which gamepad button to press to close the window.
+* The hovered slot data is now cleared properly whenever the cursor is moved off of an item slot. This way the gamepad helpers are correct when you are not hovering on an item slot anymore on any container screen.
+* The item name text that appears when the player changes the hotbar selection now anchors from the bottom. This way when it grows, it will not overlap with the hotbar ({{bug|MCPE-79566}}).
+* Change Gamertag and Manage Account buttons on Settings screen (in the Profile section) now opens URLs correctly on iOS and Android.
+
+'''Technical'''
+* Fixed a bug where {{cd|start_delayfields}} in skeletal animations were being used for both the initial delay before playing an animation and for inter-loop delays
+* Fixed a crash on Android and included a more descriptive content error to print shader linker problem on screen.</onlyinclude>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[de:Bedrock Edition beta 1.16.100.57]]
+[[es:Bedrock Edition beta 1.16.100.57]]
+[[fr:Édition Bedrock bêta 1.16.100.57]]
+[[ja:Bedrock Edition beta 1.16.100.57]]
+[[pt:Edição Bedrock beta 1.16.100.57]]
+[[ru:Beta 1.16.100.57 (Bedrock Edition)]]
+[[zh:基岩版1.16.100.57]]

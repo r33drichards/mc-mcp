@@ -1,0 +1,96 @@
+{{About|the command|the HUD element|Bossbar}}
+{{exclusive|java}}
+{{Infobox command
+|name=bossbar
+|oplevel=2
+}}
+Creates, modifies and lists bossbars.
+
+== Syntax ==
+:<code>bossbar add <id> <name></code>
+::Create a new bossbar (stored in [[Java_Edition_level_format#level.dat_format|level.dat]] <code>CustomBossEvents</code>).
+:<code>bossbar get <id> (max|players|value|visible)</code>
+::Return the requested setting as a <code>result</code> of the command.
+:<code>bossbar list</code>
+::Display a list of existing bossbars.
+:<code>bossbar remove <id></code>
+::Remove an existing bossbar.
+:<code>bossbar set <id> (color|max|name|players|style|value|visible)</code>
+::<code>... color (blue|green|pink|purple|red|white|yellow)</code>
+:::Set the text color (if no color was specified as part of a text component) and bar color. Defaults to <code>white</code> upon creation.
+::<code>... max <max></code>
+:::Set the bossbar's maximum value. Defaults to <code>100</code> upon creation.
+::<code>... name <name></code>
+:::Set the bossbar's name.
+::<code>... players [<targets>]</code>
+:::Change the set of players to whom the bar is visible. Defaults to none upon creation.
+::<code>... style (notched_6|notched_10|notched_12|notched_20|progress)</code>
+:::Set the bossbar's visual amount of segments: continuous, 6 segments, 10 segments, 12 segments, or 20 segments. Defaults to <code>progress</code> upon creation.
+::<code>... value <value></code>
+:::Set the bossbar's current value. Defaults to <code>0</code> upon creation.
+::<code>... visible <visible></code>
+:::Set the bossbar's visibility. Defaults to <code>true</code> upon creation.
+
+== Arguments ==
+{{argument|id|resource_location}}
+: Specifies a unique bossbar.
+: {{arg desc|je=resource_location}}
+
+{{argument|name|component}}
+: Specifies the display name of the bossbar.
+: {{arg desc|je=component}}
+
+{{argument|max|integer}}
+: Specifies the bossbar's maximum value.
+: {{arg desc|je=integer|min=1}}
+
+{{argument|targets|entity}}
+: Specifies the set of players to whom the bar is visible.
+: If not specified, the boss bar is invisible to any player.
+: {{arg desc|je=entity|amount=multiple|type=players}}
+
+{{argument|value|integer}}
+: Specifies the bossbar's current value.
+: {{arg desc|je=integer|min=0}}
+
+{{argument|visible|bool}}
+: Specifies the bossbar's visibility.
+: {{arg desc|je=bool}}
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/bossbar set ...<br>/bossbar remove ...<br>/bossbar get ...|The specified boss bar doesn't exist.|fail}}
+{{Result table|cmd=/bossbar add ...|A boss bar with specified id have already existed.}}
+{{Result table|cmd=/bossbar set ...|The boss bar's property has already been the same as the specified value.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/bossbar add ...<br>/bossbar list<br>/bossbar remove ...|On success|1|1|The number of custom bossbars that exist after the command is executed.<br>Bossbars created by the game itself (such as the boss bar of the ender dragon) aren't included.}}
+{{Output table|cmd=/bossbar get <<nowiki/>id> max<br>/bossbar set <<nowiki/>id> max|On success|1|1|The boss bar's maximum value after the command's execution.}}
+{{Output table|cmd=/bossbar get <<nowiki/>id> value<br>/bossbar set <<nowiki/>id> value|On success|1|1|The boss bar's value after execution.}}
+{{Output table|cmd=/bossbar get <<nowiki/>id> players<br>/bossbar set <<nowiki/>id> players|On success|1|1|The number of players to whom the bar is visible after execution.}}
+{{Output table|cmd=/bossbar get <<nowiki/>id> visible|On success|1|1|1 if the boss bar is visible; otherwise 0.}}
+{{Output table|cmd=/bossbar set <<nowiki/>id> color<br>/bossbar set <<nowiki/>id> name<br>/bossbar set <<nowiki/>id> style<br>/bossbar set <<nowiki/>id> visible|On success|1|1|0}}
+{{Output table}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=18w05a|Added {{cd|/bossbar}}.}}
+|{{HistoryLine||1.21.5|dev=25w05a|Text component arguments are now resolved before use in context of entity held in {{cd|@s}}.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/bossbar]]
+[[es:Comandos/bossbar]]
+[[ja:コマンド/bossbar]]
+[[pt:Comandos/bossbar]]
+[[ru:Команды консоли/bossbar]]
+[[uk:Команди консолі/bossbar]]
+[[zh:命令/bossbar]]

@@ -1,0 +1,127 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| image = Bedrock 1.20.50.21 PatchNotes.jpg
+| image2 = Bedrock 1.20.50.21.png
+| build = 18975808
+| editorver = 0.4.7
+| internal = '''Windows''': 1.20.5021.0<br>'''Xbox One''': 1.20.5021.70<br>'''Android, iOS, iPadOS''': 1.20.50.21
+| server = 1.20.50.21
+| versioncode = '''Android''':<br>
+952005021（armeabi-v7a，33）<br>
+962005021（x86，33）<br>
+972005021（arm64-v8a，33）<br>
+982005021（x86_64，33）<br>
+| date = October 18, 2023
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.50.21.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.50.21.zip Linux]
+| parent = 1.20.50
+| prevparent = 1.20.41
+| prev = Preview 1.20.50.20
+| next = Preview 1.20.50.22
+| nextparent = 1.20.51
+}}<onlyinclude>
+
+'''Beta 1.20.50.21''' (Android) or '''Preview 1.20.50.21''' (Windows, iOS, iPadOS, Xbox) is the second beta/''Preview'' version for [[Bedrock Edition 1.20.50]], released on October 18, 2023,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/20490119155981/|title=Minecraft - Beta & ''Preview'' 1.20.50.21|website=Minecraft Feedback|date=October 18, 2023}}</ref> which adds the [[crafter]] behind an experimental toggle and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Experiments]]'''
+* Added the "Update 1.21" experimental toggle.
+** Contains new features for [[Bedrock Edition 1.21.0|Minecraft 1.21]].
+
+'''[[Particles]]'''
+* Added new <code>white_smoke_particle</code> particle type.
+
+== Changes ==
+=== Blocks ===
+'''[[Decorated Pot]]'''
+* Inverted the direction in which decorated pots wobble when unsuccessfully interacted with.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Update 1.21" and "Beta APIs" experimental toggles.
+=== Additions ===
+==== Blocks ====
+'''[[Crafter]]'''
+* A variant of [[crafting table]], can be crafted with five [[iron ingot]]s, a crafting table, two [[redstone dust]]s, and a [[dropper]] in the crafting table.
+* Crafters can be oriented in any direction when placed.
+* A [[pickaxe]] can increase the speed of mining them.
+* Have a user interface similar to crafting table.
+** Have 3×3 interactable crafting grid.
+** Their crafting grid slots are toggleable, meaning that the player can change the behavior of a slot by clicking or pressing on a slot with an empty hand.
+*** A toggled slot cannot hold any items and therefore cannot have items placed into it by other blocks such as [[hopper]]s and droppers.
+*** A toggled slot can be toggled off by player, whether clicked directly or holding item(s), pressing slot keys associated with an empty or a not empty hotbar slot.
+** Unlike the crafting table, the slots display a preview of the crafted item which will be crafted and ejected on the next redstone pulse, but cannot be manually taken out by the player.
+** The user interface is shared between all players interacting with them, meaning that multiple players can interact with them at the same time, similar to [[chest]]s and hoppers.
+** The user interface does not have a [[recipe book]] to provide help, so the player must know the recipes.
+* The crafter ejects one crafted item at a time when powered by a new redstone pulse, a redstone signal that is not a continuous signal.
+** Upon receiving this new signal, crafters eject the recipe result from the front face.
+** All the result items will be ejected together when the output result has multiple type of items.
+* They can interact with hoppers and droppers, to input/output automatically.
+** Hoppers can be used to both insert and pull items out of them.
+** Droppers can be used to insert items into them.
+** Moving items in from another block with a hopper or a dropper prioritizes filling items into slots, by following these rules:
+*** If there is a toggled slot, skipped.
+*** If there is not a toggled slot, crafters prioritize the first empty slot from left-to-right and top-to-bottom.
+*** If there is not a toggled slot, and there are no empty slots, crafters prioritize the smallest stack of the same item. If there are multiple possible stacks, pick the first from left-to-right and top-to-bottom.
+** If failed to select a slot, hoppers and droppers will not take any action.
+* When read by a [[redstone comparator]], the redstone signal strength is 0 to 9, where each non-empty or toggled slot adds 1 strength.
+
+=== Changes ===
+==== Technical ====
+'''[[API]]'''
+* Events
+** Moved <code>PlayerInteractWithBlockAfterEvent</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>PlayerInteractWithBlockBeforeEvent</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>PlayerInteractWithEntityAfterEvent</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>PlayerInteractWithEntityBeforeEvent</code> from <code>beta</code> to <code>1.7.0</code>.
+* Moved <code>PlayerLeaveBeforeEvent</code> from <code>beta</code> to <code>1.7.0</code>.
+* Moved <code>NumberRange</code> interface to <code>minecraft/common</code>.
+** Moved <code>heightRange: NumberRange</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>matches</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>clearDynamicProperties</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>getDynamicProperties</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>getDynamicPropertyIds</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>getDynamicPropertyTotalByteCount</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>setDynamicProperty</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>clearDynamicProperties</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>getDynamicProperties</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>getDynamicPropertyIds</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved function <code>getDynamicPropertyTotalByteCount</code> from beta to <code>1.7.0</code>.
+** Moved function <code>setDynamicProperty</code> from <code>beta</code> to <code>1.7.0</code>.
+* <code>TicksPerSecond</code>
+** Moved from beta to 1.7.0.
+** Moved <code>offset</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>above</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>below</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>north</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>east</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>south</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>west</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>center</code> from <code>beta</code> to <code>1.7.0</code>.
+** Moved <code>bottomCenter</code> from <code>beta</code> to <code>1.7.0</code>.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.50.21 Preview
+|;From 1.20.0
+|171597|If the end rod is placed horizontally, it has a hitbox as if placed vertically.
+|171870|Sniffers, camels, horses, donkeys and mules can get into boats when they are babies and get stuck when they grow up.
+|otherissuescount=4}}
+'''Others'''
+* Fixed an issue with upgrading loaded values that have multiple string names.
+* Enhanced the bloom pipeline to utilize HDR scene information to more naturally emphasize bright pixels in the "Deferred Technical Preview".
+* Fixed an issue where shadows from non-existent mobs would be rendered in the "Deferred Technical Preview".
+* Fixed a crash that could occur when switching Dimensions in the "Deferred Technical Preview".</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.50 betas]]
+[[de:Bedrock Edition beta 1.20.50.21]]
+[[es:Bedrock Edition beta 1.20.50.21]]
+[[ko:Bedrock Edition 프리뷰 1.20.50.21]]
+[[pt:Edição Bedrock Preview 1.20.50.21]]
+[[uk:Preview 1.20.50.21 (Bedrock Edition)]]
+[[zh:基岩版1.20.50.21]]

@@ -9,6 +9,8 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import express from "express";
 import { z } from "zod";
 import mineflayer, { Bot } from "mineflayer";
 import mineflayerPathfinder from "mineflayer-pathfinder";
@@ -44,6 +46,15 @@ const VIEWER_PORT = parseInt(process.env.VIEWER_PORT || "3000");
 let bot: Bot | null = null;
 let botReady = false;
 let mcData: ReturnType<typeof minecraftData> | null = null;
+
+// Prevent crashes from unhandled errors (e.g., prismarine-chat 1.21.4 issues)
+process.on("uncaughtException", (err) => {
+  console.error("[mineflayer-mcp] Uncaught exception (recovered):", err.message);
+  // Don't exit - try to keep running
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("[mineflayer-mcp] Unhandled rejection (recovered):", reason);
+});
 
 // Task tracking for background eval
 interface Task {
@@ -153,11 +164,19 @@ server.tool(
       });
 
       bot.on("kicked", (reason) => {
+        console.error("[mineflayer-mcp] Bot kicked:", reason);
         botReady = false;
+        bot = null;
         resolve({
           content: [{ type: "text", text: `Kicked from server: ${reason}` }],
           isError: true,
         });
+      });
+
+      bot.on("end", (reason) => {
+        console.error("[mineflayer-mcp] Bot disconnected:", reason);
+        botReady = false;
+        bot = null;
       });
 
       // Timeout after 30 seconds
@@ -612,10 +631,64 @@ server.tool(
   }
 );
 
+// Configuration
+const MCP_PORT = parseInt(process.env.MCP_PORT || "3001");
+const USE_HTTP = process.env.MCP_TRANSPORT === "http";
+
 // Start the server
 async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
+  if (USE_HTTP) {
+    // HTTP transport for persistent server - stateless style
+    // Each request creates a new transport but shares global bot state
+    const app = express();
+    app.use(express.json());
+
+    app.post("/mcp", async (req, res) => {
+      console.error(`[mineflayer-mcp] POST /mcp`);
+      try {
+        // Create new transport for each request (stateless mode)
+        const transport = new StreamableHTTPServerTransport({
+          sessionIdGenerator: undefined, // Stateless - no sessions
+        });
+
+        // Clean up on close
+        res.on("close", () => {
+          console.error("[mineflayer-mcp] Request closed");
+          transport.close();
+        });
+
+        // Connect and handle
+        await server.connect(transport);
+        await transport.handleRequest(req, res, req.body);
+      } catch (err: any) {
+        console.error("[mineflayer-mcp] Error handling request:", err);
+        if (!res.headersSent) {
+          res.status(500).json({
+            jsonrpc: "2.0",
+            error: { code: -32603, message: err.message },
+            id: null,
+          });
+        }
+      }
+    });
+
+    // GET and DELETE not supported in stateless mode
+    app.get("/mcp", (_req, res) => {
+      res.status(405).json({ error: "Method not allowed in stateless mode" });
+    });
+
+    app.delete("/mcp", (_req, res) => {
+      res.status(405).json({ error: "Method not allowed in stateless mode" });
+    });
+
+    app.listen(MCP_PORT, () => {
+      console.error(`[mineflayer-mcp] HTTP MCP server listening on port ${MCP_PORT}`);
+    });
+  } else {
+    // Stdio transport for direct process communication
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+  }
 }
 
 main().catch(console.error);

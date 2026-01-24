@@ -1,0 +1,153 @@
+{{Infobox command
+|name=effect
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Adds or removes the [[status effect]]s of [[players]] and other [[entities]].
+
+== Usage ==
+: {{IN|java}}, if a target already has a status effect with the same id, a new effect only with a longer duration or a higher amplifier can be added.
+:* If the new effect has a higher amplifier and a shorter duration, the original effect is hidden.
+:* If the new effect has a lower amplifier and a longer duration, the new effect is hidden.
+:** If their "hideParticles" values are different, the active effect's value is set to the specified value.
+:* Otherwise, the original active effect is replaced by the new effect, without changing hidden effects.
+: Only if the active effect is changed does the command succeed, no matter whether the hidden effects are changed or not.
+
+: {{IN|bedrock}}, if a target already has the status effect, a new status effect with the same amplifier overrides the old duration if it is longer, but a new status effect with a higher amplifier overrides any previous effect.
+: {{IN|bedrock}}, no matter whether the new effect can override the original effect, "hideParticles" value is always applied.
+: {{IN|bedrock}}, if the player uses an NBT editor to get negative levels of effects, the level of the effect jumps to 255 instead.
+
+== Syntax ==
+* '''Java Edition'''
+: <code>effect clear [<targets>] [<effect>]</code>
+:: Removes all effects or an effect.
+: <code>effect give <targets> <effect> [<seconds>] [<amplifier>] [<hideParticles>]</code>
+:: Gives an effect.
+: <code>effect give <targets> <effect> infinite [<amplifier>] [<hideParticles>]</code>
+:: Gives an effect with infinite duration, which displays as <code>∞</code> in the GUI.
+
+* '''Bedrock Edition'''
+: <code>effect <player: target> <effect: Effect> [seconds: int] [amplifier: int] [hideParticles: Boolean]</code>
+:: Gives or removes an effect.
+: <code>effect <player: target> <effect: Effect> infinite [amplifier: int] [hideParticles: Boolean]</code>
+:: Gives an effect with infinite duration, which displays as <code>∞</code> in the GUI.
+: <code>effect <player: target> clear [effect: Effect]</code>
+:: Removes all effects or an effect.
+
+== Arguments ==
+{{argument|targets|entity|player: target|CommandSelector<Actor>}}
+: Specifies the target(s). {{IN|java}}, if not specified, defaults to the player who executes the command.
+: {{arg desc|je=entity|amount=multiple|type=entities|be=actor}}
+
+{{argument|effect|resource|effect: Effect|enum}}
+: Specifies the [[effect]] to be added or removed.
+: {{arg desc|je=resource|registry=minecraft:mob_effect|be=enum}}
+
+{{argument|seconds|integer|seconds: int|int}}
+: Specifies the effect's duration in seconds (or in gameticks for <code>instant_damage</code>, <code>instant_health</code>, and <code>saturation</code>). If not specified, defaults to 30 seconds (or 1 gameticks for <code>instant_damage</code>, <code>instant_health</code>, and <code>saturation</code>).
+: {{arg desc|be=int|je=integer|min=0|max=1000000}} {{IN|bedrock}}, it must be between 0 and 2147483647 (inclusive), and values higher than 1000000 are treated as 1000000.
+
+{{argument|amplifier|integer|amplifier: int|int}}
+: Specifies the number of additional levels to add to the effect. If not specified, defaults to 0. Note that the first tier of a status effect (e.g. Regeneration I) is 0, so the second tier, for example Regeneration II, would be specified by an amplifier level of 1.
+: {{arg desc|be=int|je=integer}} And it must be between 0 and 255 (inclusive).
+
+{{argument|hideParticles|bool|hideParticles: Boolean|enum}}
+: Specifies whether the [[particle]]s and the HUD indicator{{only|java}} of the status effect should be hidden. If not specified, defaults to <code>false</code>.
+: {{arg desc|je=bool|be=bool}}
+
+== Result ==
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.	|unparseable|fail}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more entities (named player must be online).|fail}}
+{{Result table|cmd=/effect give ...|All the selected entities meets one or more of the following conditions:<br>
+* The entity is immune to the specified effect.
+* The entity already has a status effect with the same id and the same "hideParticles" value, but the new effect doesn't have a higher amplifier or a longer duration.
+* The entity already has a status effect with the same id and the same "hideParticles" value, and the new effect has a lower amplifier and a longer duration.||success}}
+{{Result table|cmd=/effect clear|<code><targets></code> is not specified when the command's executor is not a player.||N/A}}
+{{Result table|cmd=/effect clear ...|There's no effect removed from any entity.}}
+{{Result table|cmd=/effect ... clear|There's no effect removed from any entity.|N/A|fail}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of entities that are given or revoked effect(s).}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|the number of entities that are given or revoked effect(s).}}
+{{Output table}}
+
+== Examples ==
+{| class="wikitable"
+!
+![[Java Edition]]
+![[Bedrock Edition]]
+|-
+|To grant a [[Resistance]] V effect to the current entity for 1 million seconds, hiding particles:
+|<code>effect give @s minecraft:resistance 1000000 4 true</code>
+|<code>effect @s resistance 1000000 4 true</code>
+|-
+|To grant a [[Speed]] II effect to the nearest player for 60 seconds:
+|<code>effect give @p minecraft:speed 60 1</code>
+|<code>effect @p speed 60 1</code>
+|-
+|To grant a Speed III effect to the nearest player for 60 seconds:
+|<code>effect give @p minecraft:speed 60 2</code>
+|<code>effect @p speed 60 2</code>
+|-
+|To clear any [[Haste]] effects from all players:
+|<code>effect clear @a minecraft:haste</code>
+|<code>effect @a haste 0</code>
+|-
+|To clear all effects from all [[zombie]]s:
+|<code>effect clear @e[type=zombie]</code>
+|<code>effect @e[type=zombie] clear</code>
+|}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.5|dev=13w09b|Added {{cmd|effect|link=none}}.}}
+|{{HistoryLine||1.6.1|dev=pre|Added {{cd|clear}} argument to {{cmd|effect|link=none}}.}}
+|{{HistoryLine||1.8|dev=14w06a|Added {{cd|hideParticles}} argument to {{cmd|effect|link=none}}}}
+|{{HistoryLine||1.13|dev=17w45a|Syntax of the /effect command has been split into {{cmd|effect give <entity> <effect>}} and {{cmd|effect clear <entity> <effect>}}.}}
+|{{HistoryLine||1.15|dev=19w41a|The {{cmd|effect clear}} command now defaults to the executor if no target argument is given.}}
+|{{HistoryLine||1.15.2|dev=Pre-Release 1|When a stronger effect overwrites a weaker effect, the weaker effect is now  hidden.<ref>{{bug|MC-1541||Beacon effect removes potion effect of the same type|Fixed}}</ref>}}
+|{{HistoryLine||1.19.3|dev=22w42a|{{cd|<effect>}} now accepts a [[argument types|<code>resource</code> argument]], instead of <code>mob_effect</code>.}}
+|{{HistoryLine||1.19.4|dev=23w05a|Added {{cd|infinite}} mode to give an effect with infinite duration.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|Pocket}}
+|{{HistoryLine||1.0.5|dev=alpha 1.0.5.0|Added {{cmd|effect|link=none}}.}}
+|{{HistoryLine|||dev=alpha 1.0.5.3|The <code>amplifier</code> on {{cmd|effect|link=none}} can no longer have negative values.}}
+|{{HistoryLine|Bedrock}}
+|{{HistoryLine||?|Max value for <code><seconds></code> argument was changed to 32 bit integer limit, although gives effect only at <code>2040109465</code> or below.}}
+|{{HistoryLine||1.16.200|dev=beta 1.16.200.52|Duration is now capped at 1,000,000 seconds .}}
+|{{HistoryLine||1.21.40|dev=Preview 1.21.40.20|Added infinite duration option to the command: {{cmd|effect <player: target> <effect: Effect> infinite [amplifier: int] [hideParticles: Boolean]|link=none}}.
+|Added specific effect removal option to the command: {{cmd|effect <player: target> clear [effect: Effect]|link=none}}.}}
+}}
+
+== References ==
+{{reflist}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/effect?view=minecraft-bedrock-stable|title=<code>/effect</code> Command|website=Microsoft Learn|date=September 11, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/effect]]
+[[es:Comandos/effect]]
+[[ja:コマンド/effect]]
+[[ko:명령어/effect]]
+[[pt:Comandos/effect]]
+[[ru:Команды консоли/effect]]
+[[uk:Команди консолі/effect]]
+[[zh:命令/effect]]

@@ -1,0 +1,138 @@
+People very, very often have questions regarding the [[Java Edition protocol|''Java Edition'' protocol]], so we'll try to address some of the most common ones on this document. If you're still having trouble, join us on the [[MCW:Discord|Minecraft Wiki's Discord server]], the [https://discord.gg/Tf4xwK3Ke7 Minecraft Protocol Discord server], or our IRC channel [ircs://irc.libera.chat:6697/mcdevs #mcdevs on irc.libera.chat].
+
+== Is the protocol documentation complete? ==
+Depending on your definition, ''yes''! All packet types are known and their layout documented. Some finer details are missing, but everything you need to make functional programs is present. We also collect information on the [[Java Edition protocol/Development version|pre-release protocol]] changes, allowing us to quickly document new releases.
+
+== What's the normal login sequence for a client? ==
+
+(This is about joining a Minecraft server. See [[Microsoft authentication]] for how to log in to a Minecraft account, and [[protocol encryption]] for details on player authentication during server login.)
+
+The recommended login sequence as of 1.21 looks like this, where '''C''' is the client and '''S''' is the server:
+# Client connects to the server
+# '''C'''→'''S''': [[Java Edition protocol/Packets#Handshake|Handshake]] State=2
+# '''C'''→'''S''': [[Java Edition protocol/Packets#Login Start|Login Start]]
+# '''S'''→'''C''': [[Java Edition protocol/Packets#Encryption Request|Encryption Request]] (optional)
+# Client auth (Only if server sent Encryption Request)
+# '''C'''→'''S''': [[Java Edition protocol/Packets#Encryption Response|Encryption Response]] (Only if server sent Encryption Request)
+# Server auth, both enable encryption (Only if server sent Encryption Request)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Set Compression|Set Compression]] (Optional, enables compression)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Login Success|Login Success]]
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Login Acknowledged|Login Acknowledged]]
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Serverbound Plugin Message (configuration)|Serverbound Plugin Message]] (Optional, <code>[[Java Edition protocol/Plugin channels#Brand|minecraft:brand]]</code> with the client's brand)
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Client Information (configuration)|Client Information]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Clientbound Plugin Message (configuration)|Clientbound Plugin Message]] (Optional, <code>[[Java Edition protocol/Plugin channels#Brand|minecraft:brand]]</code> with the server's brand)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Feature Flags|Feature Flags]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Clientbound Known Packs|Clientbound Known Packs]] (Optional)
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Serverbound Known Packs|Serverbound Known Packs]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Registry Data 2|Registry Data]] (Multiple)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Update Tags (configuration)|Update Tags]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Finish Configuration|Finish Configuration]]
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Acknowledge Finish Configuration|Acknowledge Finish Configuration]]
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Login (play)|Login (play)]]
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Change Difficulty|Change Difficulty]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Player Abilities (clientbound)|Player Abilities]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Set Held Item (clientbound)|Set Held Item]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Update Recipes|Update Recipes]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Entity Event|Entity Event]] (Optional, for the [[Server.properties#op-permission-level|OP permission level]]; see [[Minecraft Wiki:Projects/wiki.vg merge/Entity statuses#Player|Entity statuses#Player]])
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Commands|Commands]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Update Recipe Book|Update Recipe Book]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Synchronize Player Position|Synchronize Player Position]]
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Confirm Teleportation|Confirm Teleportation]]
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Set Player Position and Rotation|Set Player Position and Rotation]] (Optional, to confirm the spawn position)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Server Data|Server Data]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Player Info Update|Player Info Update]] (Add Player action, all players except the one joining (the vanilla server separates these, you don't need to))
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Player Info Update|Player Info Update]] (Add Player action, joining player)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Initialize World Border|Initialize World Border]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Update Time|Update Time]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Set Default Spawn Position|Set Default Spawn Position]] (Optional, “home” spawn, not where the client will spawn on login)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Game Event|Game Event]] (Start waiting for level chunks event, required for the client to spawn. Despite the name, a custom server may choose to send some chunks before sending this packet)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Set Ticking State|Set Ticking State]] (Optional)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Step Tick|Step Tick]] (Optional, the vanilla server sends this regardless of ticking state)
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Set Center Chunk|Set Center Chunk]]
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Chunk Data and Update Light|Chunk Data and Update Light]] (One sent for each chunk in a circular area centered on the player's position)
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Player Loaded|Player Loaded]] (After the "Loading terrain..." screen has closed (see [[#…my_player_isn't_spawning!|below]]), or skipped if 60 ticks pass before then)
+# '''S''' → '''C''': inventory, entities, etc.
+
+=== Offline mode ===
+If the vanilla server is in offline mode, it will not send the [[Java Edition protocol/Packets#Encryption Request|Encryption Request]] packet, and likewise, the client should not send [[Java Edition protocol/Packets#Encryption Response|Encryption Response]]. In this case, encryption is never enabled, and no authentication is performed.
+
+Clients can tell that a server is in offline mode if the server sends a [[Java Edition protocol/Packets#Login Success|Login Success]] without sending [[Java Edition protocol/Packets#Encryption Request|Encryption Request]].
+
+Versions 1.20.5 and newer support protocol encryption in offline mode, in which case the [[Java Edition protocol/Packets#Encryption Request|Encryption Request]] packet can be sent with Should Authenticate set to false, and both the client and server should not authenticate with Mojang. However, it's currently not possible to configure the vanilla server to do this.
+
+== What does the normal status ping sequence look like? ==
+When a vanilla client and server exchange information in a status ping, the exchange of packets will be as follows:
+
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Handshake|Handshake]] with Next State set to 1 ([[Java Edition protocol/Packets#Status|Status]])
+# Client and Server set protocol state to [[Java Edition protocol/Packets#Status|Status]].
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Status Request|Status Request]]
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Status Response|Status Response]]
+# '''C''' → '''S''': [[Java Edition protocol/Packets#Ping Request (status)|Ping Request]]
+# '''S''' → '''C''': [[Java Edition protocol/Packets#Pong Response (status)|Pong Response]]
+# Both sides close the connection
+
+(Note that '''C''' is the vanilla client and '''S''' is the vanilla server).
+
+The [[Java Edition protocol/Packets#Ping Request (status)|Ping Request]] packet may be left out, however the client will not receive a [[Java Edition protocol/Packets#Pong Response (status)|Pong Response]] packet and the server won't close the connection.
+
+== I think I've done everything right, but… ==
+=== …my player isn't spawning! ===
+
+The Minecraft client will wait at the "Loading Terrain..." screen until late in the login sequence. As of 1.21.4 (and starting with 1.20.3), in order for the client to spawn, it must have received a [[Java Edition protocol/Packets#Game Event|Game Event]] packet with event 13 ("Start waiting for level chunks"), and at least one of the following conditions must be met:
+
+* The player is in a loaded chunk (sent via [[Java Edition protocol/Packets#Chunk Data and Update Light|Chunk Data and Update Light]]).
+* The player is below the minimum world height or above the maximum world height (teleported via [[Java Edition protocol/Packets#Synchronize Player Position|Synchronize Player Position]], or moved by gravity after the [[Java Edition protocol/Packets#Player Loaded|Player Loaded]] timeout has expired).
+* The player is in spectator mode (set via [[Java Edition protocol/Packets#Player Info Update|Player Info Update]], ''not'' the Game Mode field in Login (play)!)
+* The player is dead (set via [[Java Edition protocol/Packets#Set Health|Set Health]] or [[Java Edition protocol/Packets#Combat Death|Combat Death]]).
+
+The client will also spawn after spending 30 seconds in the loading screen, even if it never received Game Event 13.
+
+In past versions, you could either (1.19.3 through 1.20.2) send the default spawn position packet or (pre-1.19.3) send the player position packet. In general, try sending packets that inform the client about the player's position in the world in order to get past the loading terrain screen.
+
+As of 1.21.4, the minimum packets that need to be received and sent by the server in order to get the client past the loading terrain screen and into the world appear to be:
+
+# Receive [[Java Edition protocol/Packets#Handshake|Handshake]]
+# Receive [[Java Edition protocol/Packets#Login Start|Login Start]]
+# Send [[Java Edition protocol/Packets#Login Success|Login Success]]
+# Receive [[Java Edition protocol/Packets#Login Acknowledged|Login Acknowledged]]
+# Send multiple [[Java Edition protocol/Packets#Registry Data 2|Registry Data]] (one for each registry, must contain NBT unless the server also negotiates [[Java Edition protocol/Registries#Known packs negotiation|known packs]] and the client indicates support in the reply)
+# Send [[Java Edition protocol/Packets#Finish Configuration|Finish Configuration]]
+# Receive [[Java Edition protocol/Packets#Acknowledge Finish Configuration|Acknowledge Finish Configuration]]
+# Send [[Java Edition protocol/Packets#Login .28play.29|Login (Play)]]
+# Send [[Java Edition protocol/Packets#Game Event|Game Event]], Start waiting for level chunks
+# Send [[Java Edition protocol/Packets#Chunk Data and Update Light|Chunk Data and Update Light]] and/or [[Java Edition protocol/Packets#Synchronize Player Position|Synchronize Player Position]] (see above)
+
+The most difficult part of this may be sending the Registry Data packets required to define the contents of server-side data packs (including the vanilla data pack) which the client needs to know about. The amount of data that is strictly required is rather small compared to the amount sent by a vanilla server, but depending on your expectations and chosen approach, it may be easier to send all vanilla entries anyway. A complete list of requirements can be found at [[Java Edition protocol/Registries#List of synchronized registries]].
+
+Possible approaches include:
+
+* Parse the JSON files in the vanilla data pack (and possibly custom data packs), convert them to NBT, and send them as entries in Registry Data packets. The vanilla client is rather lenient in its interpretation of NBT, so no knowledge of the schema is required to perform this conversion (though the vanilla server does use a schema, and it may be wise to do so later in development). It is also necessary to send [[Java Edition protocol/Packets#Update Tags (configuration)|Update Tags]] to define the tags referenced in the vanilla registry JSON. They can also be obtained from JSON files in the data pack. This was the vanilla server behavior prior to 1.21, and is still used as a fallback when known packs negotiation fails, e.g. due to mismatched game versions with the same PVN.
+* Gather a list of JSON files provided for each registry in the vanilla data pack. Negotiate [[Java Edition protocol/Registries#Known packs negotiation|known packs]], and send listings of the vanilla entries for each registry (removing the <code>.json</code> from the names), ''without'' NBT. The client will load the JSON files from its copy of the data pack, and behave as if they were sent by the server as NBT. It is still necessary to send Update Tags as before. This is done by the vanilla server since 1.21 when known packs negotiation succeeds, in order to save bandwidth. A server may take advantage of this to avoid needing to encode NBT early in development, but serious implementations should also support the fallback case. One may also want to support a mix of fully vanilla entries that can be sourced from known packs, and custom entries/overrides, as is done by the vanilla server when custom data packs are in use.
+* Negotiate known packs, and send the minimum required entries without NBT. As of 1.21.10 this includes the [[Java Edition protocol/Registries#Damage type requirements|required damage types]], the biome <code>minecraft:plains</code>, and one arbitrary entry for each of the registries that are required to be non-empty (variants and dimension types). As of 1.21.10 no tags are required for these vanilla entries. This is the absolute minimum amount of data required to be sent by the server, but also the least flexible approach.
+* Do not negotiate known packs, and send entirely custom data. There is no strict requirement to use any definitions from the vanilla data pack. The only required entries with specific names are the ones listed above, and even these do not need to have the same data as in vanilla. This approach may be preferred by servers that demand extreme customization of client behavior, and may or may not also be considered more fun/interesting by the developer.
+
+Regardless of the approach, the order in which the entries are listed in the Registry Data packets is critically important, as it determines the IDs used to refer to the entries elsewhere in the protocol. The server may choose this order arbitrarily, but it must keep track of the IDs assigned as a result.
+
+=== …chunks are randomly showing and disappearing! ===
+The vanilla client only reliably renders chunks surrounded by other loaded chunks on all sides. See [[Minecraft Wiki:Projects/wiki.vg merge/Chunk Format#Tips and notes|Chunk Format#Tips and notes]].
+
+=== …the client is trying to send an invalid packet that begins with 0xFE01 ===
+The client is attempting a [[Minecraft Wiki:Projects/wiki.vg merge/Server_List_Ping#1.6|legacy ping]], this happens if your server did not respond to the [[Minecraft Wiki:Projects/wiki.vg merge/Server List Ping|Server List Ping]] properly, including if it sent malformed JSON.
+
+=== …the client disconnects after some time with a "Timed out" error ===
+The server is expected to send a [[Java Edition protocol/Packets#Keep Alive (clientbound)|Keep Alive]] packet every 1-15 seconds (if the server does not send a keep alive within 20 seconds of state change to Play, the client will disconnect from the server for '''Timed Out'''), and the client should respond with the serverbound version of that packet. If either party does not receive keep alives for some period of time, they will disconnect.
+
+=== ...some of the packets I expect to receive seem to be missing or too short ===
+
+You may be misusing the socket API. In particular, it is invalid to assume that the amount of data returned by calls to <code>recv</code> (or equivalent, depending on the API you're using) relates to packet boundaries in any way. There are no "borders" in a [[wikipedia:Transmission Control Protocol|TCP]] data stream, only bytes. Regardless of how any two consecutive packets are sent, the receiver may get one packet, then the other, both at once, half of one, then the rest of both, or any other permutation of buffer sizes adding up to the total size of the packets. The only correct way to know where one packet ends and another begins is the packet length field, and you need to be prepared to handle multiple packets in one buffer, packets split across multiple buffers, etc. (as well as length fields split across multiple buffers!)
+
+Similarly, depending on the API being used, a <code>send</code> call may also not guarantee that its whole input buffer is sent (consult the relevant documentation for details). This may also cause the connection to appear to hang during the login process, since the server will be left waiting indefinitely for the rest of the packet to arrive.
+
+One reason why packets sent separately may arrive at once is [[wikipedia:Nagle's algorithm|Nagle's algorithm]], a feature of many TCP implementations intended to improve efficiency particularly for applications making lots of small <code>send</code> calls. It is not the ''only'' reason, though, and disabling it should not be seen as a solution to the problem discussed here. Nonetheless, the delays it introduces are detrimental to real-time applications like Minecraft, so the vanilla client and server disable it, and you should too. This is typically done by enabling a socket option called <code>TCP_NODELAY</code>. Especially when disabling Nagle's algorithm, you should group multiple packets sent during the same tick in one send buffer for the best performance.
+
+== Navigation ==
+{{Navbox Java Edition technical|General}}
+
+[[Category:Protocol Details]]
+[[Category:Java Edition protocol]]
+{{license wiki.vg}}

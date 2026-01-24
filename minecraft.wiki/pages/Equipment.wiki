@@ -1,0 +1,107 @@
+{{for|the item category|Creative inventory#Bedrock Edition}}
+
+'''Equipment''' refers to [[items]] that can be inserted into a specialized [[slot]] in a [[mob]]'s [[inventory]] in order to change certain aspects of its behavior and appearance. Equipment objects typically do not flash red when the mob takes [[damage]] and remain visible if the mob has the [[Invisibility]] effect.
+
+== Specification ==
+Custom equipment can be defined and referenced by the [[Data component format#equippable|equippable item component]].
+
+Equipment definitions are stored in the <code>assets/<namespace>/equipment</code> directory of a resource pack.
+
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|compound|layers}}: Layer types for this equipment model. If a layer is omitted, the armor piece does not render when in the respective slot (with the exception of the head slot, where the regular item model is rendered instead).
+*** {{nbt|list|Layer definitions}}: The layers for this layer type.
+**** {{nbt|string|texture}}: A namespaced id pointing to a texture for this layer. <code>namespace:path</code> resolves to <code>assets/<namespace>/textures/entity/equipment/<layer_type>/<path>.png</code>.
+**** {{nbt|compound|dyeable}}: (optional) Specifies how this layer behaves when the item is dyed. An item is considered as "dyed" when it has the [[Data_component_format#dyed_color|dyed_color data component]].
+***** {{nbt|int|color_when_undyed}}: (optional) An rgb int in decimal representation. The color to tint this layer if the item is undyeable or not dyed. ''If this is not present and the item is not dyed, the layer is hidden.''
+**** {{nbt|bool|use_player_texture}}: (optional, default: false) If set to true, the layer texture is overridden by a texture given by the player. ''This is currently used only for the <code>wings</code> layer type, where the player's cape texture is used instead if this is set to true.''
+</div>
+
+{{Calculator|decimalColor}}
+
+== Equipment Layer Types ==
+Equipment layer types are used for the following inventory slots:
+
+{| class="wikitable"
+! Equipment model layer type
+! Inventory slots
+|-
+| {{code|wolf_body}}
+| A [[wolf]]'s armor slot.
+|-
+| {{code|horse_body}}
+| A [[horse]]'s armor slot.
+|-
+| {{code|llama_body}}
+| A [[llama]]'s carpet slot.
+|-
+| {{code|humanoid}}
+| A humanoid's{{info needed|full list of entities this applies to?}} {{code|head}} or {{code|chest}} or {{code|feet}} slot.
+|-
+| {{code|humanoid_leggings}}
+| A humanoid's{{info needed|full list of entities this applies to?}} {{code|legs}} slot.
+|-
+| {{code|wings}}
+| A humanoid's{{info needed|full list of entities this applies to?}} {{code|chest}} slot if the equipment has the [[Data_component_format#glider|glider data component]].
+|-
+| {{code|pig_saddle}}
+| A [[Pig]]'s saddle slot.
+|-
+| {{code|strider_saddle}}
+| A [[Strider]]'s saddle slot.
+|-
+| {{code|camel_saddle}}
+| A [[Camel]]'s saddle slot.
+|-
+| {{code|horse_saddle}}
+| A [[Horse]]'s saddle slot.
+|-
+| {{code|donkey_saddle}}
+| A [[Donkey]]'s saddle slot.
+|-
+| {{code|mule_saddle}}
+| A [[Mule]]'s saddle slot.
+|-
+| {{code|skeleton_horse_saddle}}
+| A [[Skeleton Horse]]'s saddle slot.
+|-
+| {{code|zombie_horse_saddle}}
+| A [[Zombie Horse]]'s saddle slot.
+|-
+| {{code|happy_ghast_body}}
+| A [[Happy Ghast]]'s body slot.
+|-
+|{{code|nautilus_body}}
+|A [[Nautilus]] or [[Zombie Nautilus]]'s body slot.
+|-
+|{{code|nautilus_saddle}}
+|A [[Nautilus]] or [[Zombie Nautilus]]'s saddle slot.
+|-
+|{{code|camel_husk_saddle}}
+|A [[Camel Husk]]'s saddle slot.
+|}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.2|dev=24w36a|Equipment is now defined in resource pack using the files in {{code|assets/[namespace]/models/equipment}}.
+|The appearance of equipment when equipped by players or certain mobs can now be customized by defining 'equipment models' in the Resource Pack.}}
+|{{HistoryLine||1.21.4|dev=24w45a|Equipment is now defined at {{code|assets/[namespace]/equipment}}.
+|{{cd|equipment}} directory has been moved one level up, i.e. {{cd|models/equipment/}} becomes {{cd|equipment/}}.}}
+|{{HistoryLine||1.21.5|dev=25w03a|Saddles are now counted as equipment.
+|Added 8 new equipment model layers for saddles: <code>pig_saddle</code>, <code>strider_saddle</code>, <code>camel_saddle</code>, <code>horse_saddle</code>, <code>donkey_saddle</code>, <code>mule_saddle</code>, <code>skeleton_horse_saddle</code> and <code>zombie_horse_saddle</code>. These layers are only used for the respective entities' saddle slots.}}
+|{{HistoryLine|||dev=25w06a|The offhand inventory slot NBT <code>Slot:-106</code> was moved to be under the <code>equipment</code> tag as <code>offhand</code>.}}
+|{{HistoryLine|||dev=25w08a|Equipment layers configured to be dyeable will now show if the [[Data_component_format#dyed_color|dyed_color component]] is present on the item, even if the item is not in the <code>dyeable</code> item tag.
+}}
+|{{HistoryLine||1.21.6|dev=25w15a|Added a new equipment model layer <code>happy_ghast_body</code> for happy ghasts.
+}}
+}}
+
+== Navigation ==
+{{Navbox resource packs}}
+{{Navbox Java Edition technical|resourcepack}}
+
+[[Category:Gameplay]]
+
+[[pt:Equipamento]]
+[[zh:装备模型]]

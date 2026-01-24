@@ -1,0 +1,140 @@
+<div class="treeview">
+<onlyinclude>
+** {{nbt|list}}{{nbt|string|type}}: {{json ref|entity type|Java_Edition_data_values#Entities|tag=1}} &mdash; Test this entity's type.
+** {{nbt|compound|components}}: (Optional) Matches exact item component values. Each key in this object corresponds to a component to test, with its value as the desired data to compare.
+*** See [[data component format]].
+** {{nbt|compound|distance}}: To test the distance to the entity this predicate is invoked upon. Passes if the calculated distance is between the entered {{nbt|float|min}} and {{nbt|float|max}} values.
+*** {{nbt|float}}{{nbt|compound|absolute}}: Test the distance between the two points in 3D space.
+*** {{nbt|float}}{{nbt|compound|horizontal}}: Test the distance between the two points, ignoring the Y value.
+*** {{nbt|float}}{{nbt|compound|x}}: Test the absolute difference between the X-coordinates of the two points.
+*** {{nbt|float}}{{nbt|compound|y}}: Test the absolute difference between the Y-coordinates of the two points.
+*** {{nbt|float}}{{nbt|compound|z}}: Test the absolute difference between the Z-coordinates of the two points.
+** {{nbt|compound|effects}}: For testing the active [[Effect|status effects]] on the entity.
+*** {{nbt|compound|<minecraft:effect_name>}}: A status effect that must be present.
+**** {{nbt|int}}{{nbt|compound|amplifier}}: Test the effect's amplifier. Level I is represented by 0. Use an object with {{nbt|int|min}} and {{nbt|int|max}} to test for a range of values (inclusive).
+**** {{nbt|int}}{{nbt|compound|duration}}: Test if the effect's remaining time (in ticks). Test if the effect's remaining time (in ticks) is between two numbers, inclusive. Use an object with {{nbt|int|min}} and {{nbt|int|max}} to test for a range of values (inclusive).
+**** {{nbt|bool|ambient}}: Test whether the effect is from a beacon.
+**** {{nbt|bool|visible}}: Test if the effect has visible particles.
+** {{nbt|compound|equipment}}: For testing the items that this entity holds in its equipment slots.
+*** {{nbt|compound|<equipment slot>}}: Test the item in the entity's equipment slot. Valid keys are {{cd|mainhand|offhand|head|chest|legs|feet|body|d=or}}.
+**** {{nbt inherit/conditions/item}}
+** {{nbt|compound|flags}}: To test flags of the entity.
+*** {{nbt|bool|is_baby}}: Test whether the entity is or is not a baby variant.
+*** {{nbt|bool|is_on_fire}}: Test whether the entity is or is not on fire.
+*** {{nbt|bool|is_sneaking}}: Test whether the entity is or is not sneaking.
+*** {{nbt|bool|is_sprinting}}: Test whether the entity is or is not sprinting.
+*** {{nbt|bool|is_swimming}}: Test whether the entity is or is not swimming.
+*** {{nbt|bool|is_on_ground}}: Test whether the entity is or is not on the ground.
+*** {{nbt|bool|is_flying}}: Test whether the entity is or is not flying (with elytra or in creative mode).
+** {{nbt|compound|location}}: Test properties of this entity's location.
+*** {{nbt inherit/conditions/location}}
+** {{nbt|string|nbt}}: Test NBT data of this entity. The outer braces <code>{ }</code> of the NBT must be included within this string. Additional care is required if the NBT contains quotation marks <code>" "</code>, as they must be escaped with a backslash before each: <code>\"</code>
+** {{nbt|compound|passenger}}: Test the entity directly riding this entity.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|compound|slots}}: Test for items in specific inventory [[slot]]s.
+*** {{nbt|compound|<slot range>}}: [[Slot]] to test.
+**** {{nbt inherit/conditions/item}}
+** {{nbt|compound|stepping_on}}: Test properties of the block the entity is standing on, using a location predicate.
+*** {{nbt inherit/conditions/location}}
+** {{nbt|compound|movement_affected_by}}: Test properties of the block {{cd|0.5}} blocks below the block the entity is standing on, using a location predicate.
+*** {{nbt inherit/conditions/location}}
+** {{nbt|string|team}}: Passes if the [[Scoreboard#Teams|team]] of this entity matches this string.
+** {{nbt|compound|targeted_entity}}: Test properties of the entity which this entity is targeting for attacks.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|compound|vehicle}}: Test properties of the vehicle entity that this entity is riding upon.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|compound|movement}}: Test the movement of the entity. For all fields, use an object with {{nbt|double|min}} and {{nbt|double|max}} to test for a range of values (inclusive).
+*** {{nbt|double}}{{nbt|compound|x}}: Test the velocity along the x-axis in blocks/s.
+*** {{nbt|double}}{{nbt|compound|y}}: Test the velocity along the y-axis in blocks/s.
+*** {{nbt|double}}{{nbt|compound|z}}: Test the velocity along the z-axis in blocks/s.
+*** {{nbt|double}}{{nbt|compound|speed}}: Test the overall movement speed in blocks/s.
+*** {{nbt|double}}{{nbt|compound|horizontal_speed}}: Test the horizontal movement speed in blocks/s. This tests the combined magnitude of the x and z velocities.
+*** {{nbt|double}}{{nbt|compound|vertical_speed}}: Test the vertical movement speed in blocks/s. This tests the absolute value of the {{code|y}} velocity.
+*** {{nbt|double}}{{nbt|compound|fall_distance}}: Test the fall distance of the entity in blocks.
+** {{nbt|int|periodic_tick}}: If present, only succeeds if the age of the entity is divisible by the given number.
+** {{nbt|compound|predicates}}: (Optional) Matches [[data component predicate]]s.
+*** See [[data component predicate]].
+** {{nbt|compound|type_specific}}: To test entity properties that can only be applied to certain entity types.
+*** {{nbt|string|type}}: Dictates which type-specific properties to test for.<p style="padding-block-end: 1em; margin: 0 0 0 0;">The possible values for {{nbt|string|type}} and associated extra contents:</p>
+*** '''axolotl'''
+**** {{nbt|string|variant}}: {{json ref|axolotl variant|Axolotl#Entity_data}} &mdash; Valid values are {{cd|lucy|wild|gold|cyan|blue|d=or}}.
+*** '''cat'''
+**** {{nbt|string|variant}}: {{json ref|cat variant|Cat#Entity_data|tag=1}} &mdash; Valid values are {{cd|white|black|red|siamese|british_shorthair|calico|persian|ragdoll|tabby|all_black|jellie|d=or}}.
+*** '''fishing_hook''': Test properties of the fishing hook that just got reeled in by this entity.
+**** {{nbt|boolean|in_open_water}}: Whether the fishing hook was in [[Fishing#Junk_and_treasure|open water]].
+*** '''fox'''
+**** {{nbt|string|variant}}: {{json ref|fox variant|Fox#Entity_data}} &mdash; Valid values are {{cd|red|snow|d=or}}.
+*** '''frog'''
+**** {{nbt|string|variant}}: {{json ref|frog variant|Frog#Entity_data|tag=1}} &mdash; Valid values are {{cd|cold|temperate|warm|d=or}}.
+*** '''horse'''
+**** {{nbt|string|variant}}: {{json ref|horse base color|Horse#Appearance}} &mdash; Valid values are {{cd|white|creamy|chestnut|brown|black|gray|dark_brown|d=or}}.<p style="padding-block-end: 1em; margin: 0 0 0 0;">Testing for a horse's markings is not possible with this sub-predicate.</p>
+*** '''lightning''': To check information about this lightning bolt; fails when entity is not a lightning bolt.
+**** {{nbt|int|}}{{nbt|compound|blocks_set_on_fire}}: Tests the number of blocks set on fire by this lightning bolt. Use an object with {{nbt|int|min}} and {{nbt|int|max}} to test for a range of values (inclusive).
+**** {{nbt|compound|entity_struck}}: Test the properties of entities struck by this lightning bolt. Passes if at least one of the struck entities matches the entered conditions.
+***** {{nbt inherit/conditions/entity}}
+*** '''llama'''
+**** {{nbt|string|variant}}: {{json ref|llama variant|Llama#Entity_data}} &mdash; Valid values are {{cd|creamy|white|brown|gray|d=or}}.
+*** '''mooshroom'''
+**** {{nbt|string|variant}}: {{json ref|mooshroom variant|Mooshroom#Entity_data}} &mdash; Valid values are {{cd|red|brown|d=or}}.
+*** '''painting'''
+**** {{nbt|string|variant}}: {{json ref|painting variant|Painting#Canvases|tag=1}}.
+*** '''parrot'''
+**** {{nbt|string|variant}}: {{json ref|parrot variant|Parrot#Entity_data}} &mdash; Valid values are {{cd|red_blue|blue|green|yellow_blue|gray|d=or}}.
+*** '''player''': Tests properties unique to players; fails when this entity is not a player.
+**** {{nbt|compound|looking_at}}: Test properties of the entity that this player is looking at, as long as it is visible and within a radius of 100 blocks. Visibility is defined through the line from the player's eyes to the entity's eyes, rather than the direction that the player is looking in.
+***** {{nbt inherit/conditions/entity}}
+**** {{nbt|compound|advancements}}: To test the player's [[advancements]].
+***** {{nbt|boolean|<advancement id>}}: Test whether an advancement is granted or not granted. Key is an advancement ID, value is <code>true</code> or <code>false</code> to test for granted/not granted respectively.
+***** {{nbt|compound|<advancement id>}}: Test whether specific ''criteria'' of an advancement are marked as complete.
+****** {{nbt|boolean|<criterion id>}}: Key is one of the criteria of the advancement, value is <code>true</code> or <code>false</code> to test for completed/not completed respectively.
+**** {{nbt|list|gamemode}}: Test the [[game modes]] of this player. Any values in this list will match. Valid values are <code>survival</code>, <code>creative</code>, <code>adventure</code> and <code>spectator</code>.
+**** {{nbt|int}}{{nbt|compound|level}}: Tests if experience level of this player. Use an object with {{nbt|int|min}} and {{nbt|int|max}} to test for a range of values (inclusive).
+**** {{nbt|compound|recipes}}: To test if [[recipe]]s are known or unknown to this player.
+***** {{nbt|boolean|<recipe id>}}: Key is the recipe ID; value is <code>true</code> or <code>false</code> to test for known/unknown respectively.
+**** {{nbt|list|stats}}: To test this player's [[statistics]].
+***** {{nbt|compound}} A statistic to test.
+****** {{nbt|string|type}}: The statistic type. Valid values are <code>minecraft:custom</code>, <code>minecraft:crafted</code>, <code>minecraft:used</code>, <code>minecraft:broken</code>, <code>minecraft:mined</code>, <code>minecraft:killed</code>, <code>minecraft:picked_up</code>, <code>minecraft:dropped</code> and <code>minecraft:killed_by</code>.
+****** {{nbt|string|stat}}: The statistic ID to test.
+****** {{nbt|int}}{{nbt|compound|value}}: Tests the value of the statistic. Use an object with {{nbt|int|min}} and {{nbt|int|max}} to test for a range of values (inclusive).
+**** {{nbt|compound|input}}: Test the inputs of this player.
+***** {{nbt|boolean|forward}}: Tests whether the player is inputting Walk Forward.
+***** {{nbt|boolean|backward}}: Tests whether the player is inputting Walk Backward.
+***** {{nbt|boolean|left}}: Tests whether the player is inputting Strafe Left.
+***** {{nbt|boolean|right}}: Tests whether the player is inputting Strafe Right.
+***** {{nbt|boolean|jump}}: Tests whether the player is inputting Jump.
+***** {{nbt|boolean|sneak}}: Tests whether the player is inputting Sneak.
+***** {{nbt|boolean|sprint}}: Tests whether the player is inputting Sprint.
+**** {{nbt|compound|food}}{{upcoming|je 26.1}}: Tests the food level and saturation of the player.
+***** {{nbt|int}}{{nbt|compound|level}}: Tests the food level of the player. Use an object with {{nbt|int|min}} and {{nbt|int|max}} to test for a range of values (inclusive).
+***** {{nbt|float}}{{nbt|compound|saturation}}: Tests the saturation of the player. Use an object with {{nbt|float|min}} and {{nbt|float|max}} to test for a range of values (inclusive).
+*** '''rabbit'''
+**** {{nbt|string|variant}}: {{json ref|rabbit variant|Rabbit#Entity_data}} &mdash; Valid values are {{cd|brown|white|black|white_splotched|gold|salt|evil|d=or}}.
+*** '''raider'''
+**** {{nbt|boolean|is_captain}}: Tests whether the raider is a captain.
+**** {{nbt|boolean|has_raid}}: Tests whether the raider is part of a raid.
+*** '''salmon'''
+**** {{nbt|string|variant}}: {{json ref|salmon size|Salmon#Entity_data}} &mdash; Valid values are {{cd|small|medium|large|d=or}}.
+*** '''sheep'''
+**** {{nbt|boolean|sheared}}: Whether the sheep has been sheared (<code>true</code>) or still has wool (<code>false</code>).
+**** {{nbt|string|color}}: {{json ref|sheep color|Sheep#Dyeing}} &mdash; Valid values are {{cd|white|orange|magenta|light_blue|yellow|lime|pink|gray|light_gray|cyan|purple|blue|brown|green|red|black|d=or}}.
+*** '''slime'''
+**** {{nbt|int}}{{nbt|compound|size}}: Tests the size of this slime or magma cube. Use an object with {{nbt|int|min}} and {{nbt|int|max}} to test for a range of values (inclusive).
+*** '''tropical_fish'''
+**** {{nbt|string|variant}}: {{json ref|tropical fish variant|Tropical Fish#Varieties}} &mdash; Valid values are {{cd|kob|sunstreak|snooper|dasher|brinely|spotty|flopper|stripey|glitter|blockfish|betty|clayfish|d=or}}.<p style="padding-block-end: 1em; margin: 0 0 0 0;">Testing for a tropical fish's base color or pattern color is not possible with this sub-predicate.</p>
+*** '''villager'''
+**** {{nbt|string|variant}}: {{json ref|villager variant (biome)|Villager#Appearance}} &mdash; Valid values are {{cd|desert|jungle|plains|savannah|snow|swamp|taiga|d=or}}.<p style="padding-block-end: 1em; margin: 0 0 0 0;">Testing for a villager's profession or level is not possible with this sub-predicate.</p>
+*** '''wolf'''
+**** {{nbt|list}}{{nbt|string|variant}}: {{json ref|wolf variant|Wolf#Wolf_variants|tag=1}}.
+</onlyinclude></div><noinclude>
+[[Category:Top-level data pages]]
+
+[[fr:Progrès/Conditions/Entité]]
+[[ja:進捗/条件/entity]]
+[[ko:발전 과제/조건/개체]]
+[[nl:Vooruitgangen/criteria/entiteit]]
+[[pt:Progressos/Condições/entidade]]
+[[ru:Достижение (Java Edition)/условия/сущность]]
+[[th:ความก้าวหน้า/Conditions/entity]]
+[[uk:Досягнення (Java Edition)/умова/сутність]]
+[[zh:编码格式/CritereonPredicate#实体谓词]]
+</noinclude>

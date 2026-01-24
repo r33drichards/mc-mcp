@@ -1,0 +1,83 @@
+{{For|biome customization in resource packs {{in|be}}|Resource pack#Biomes}}{{exclusive|java}}
+[[Biome]]s stored as [[JSON]] files within a [[data pack]] in the path {{cd|data/<namespace>/worldgen/biome}}.
+
+== JSON format ==
+
+<div class="treeview">
+* {{nbt|compound}}: The root object.
+**{{nbt|boolean|has_precipitation}}: Determines whether or not the biome has precipitation.
+**{{nbt|float|temperature}}: Controls gameplay features like grass and foliage color, and a height adjusted temperature (which controls whether raining or snowing occurs if {{nbt|boolean|has_precipitation}} is {{cd|true}}, and generation details of some features).
+** {{nbt|string|temperature_modifier}}: (optional, defaults to none) Either {{cd|none}} or {{cd|frozen}}. Modifies temperature before calculating the height adjusted temperature. If {{cd|frozen}}, makes some places' temperature high enough to rain (0.2).
+** {{nbt|float|downfall}}: Controls grass and foliage color.
+** {{nbt|compound|effects}}: Ambient effects in this biome.
+*** {{nbt|int|water_color}}: (Required, but the normal value is 4159204) Decimal value converted from Hex color to use for water blocks and cauldrons.
+*** {{nbt|int|foliage_color}}: (optional) Decimal value converted from Hex color to use for tree leaves and vines. If not present, the value depends on downfall and the temperature.
+*** {{nbt|int|dry_foliage_color}}: (optional) Decimal value converted from Hex color to use for leaf litter.
+*** {{nbt|int|grass_color}}: (optional) Decimal value converted from Hex color to use for grass blocks, short grass, tall grass, ferns, tall ferns, and sugar cane. If not present, the value depends on downfall and temperature.
+*** {{nbt|string|grass_color_modifier}}: (optional, defaults to none) Can be {{cd|none}}, {{cd|dark_forest}} or {{cd|swamp}}.
+** {{Nbt|compound|attributes}}: (optional) Map of [[environment attribute]]s that apply when in this biome.
+** {{Nbt|string}}{{nbt|compound}}{{nbt|list|carvers}}: {{json_ref|carver|carver definition|tag=1|no_single=1}} (Required, but can be empty)
+** {{nbt|list|features}}: List of generation steps (Can be empty). Usually there are 11 steps, but any amount is possible.
+*** {{Nbt|string}}{{nbt|compound}}{{nbt|list}} each entry of the list: {{json ref|placed feature|tag=1|inline=1|no_single=1}} &mdash; Features to place during that generation step. The same placed features in the same step in two biomes cannot be in different orders. In each step, all feature IDs need to be ordered consistently across biomes. For example, in the UNDERGROUND_ORES step of minecraft:plains, ore_dirt is before ore_gravel. In other biomes' UNDERGROUND_ORES step, if both ore_dirt and ore_gravel as present, ore_gravel cannot be before ore_dirt.
+**; These generation steps are also referred to by name for [[Structure/JSON format|structure]] generation. They are, in order<nowiki>:</nowiki>
+*** {{cd|RAW_GENERATION}}: Used by small end island features in vanilla.
+*** {{cd|LAKES}}: Used by lava lakes in vanilla.
+*** {{cd|LOCAL_MODIFICATIONS}}: Used for amethyst geodes and icebergs in vanilla.
+*** {{cd|UNDERGROUND_STRUCTURES}}: Used for dungeons and overworld fossils in vanilla.
+*** {{cd|SURFACE_STRUCTURES}}: Used for desert wells and blue ice patches in vanilla.
+*** {{cd|STRONGHOLDS}}: Not used for features in vanilla.
+*** {{cd|UNDERGROUND_ORES}}: Used for overworld ore blobs, overworld dirt/gravel/stone variant blobs, and sand/gravel/clay disks in vanilla.
+*** {{cd|UNDERGROUND_DECORATION}}: Used for infested block blobs, nether gravel and blackstone blobs, and all nether ore blobs in vanilla.
+*** {{cd|FLUID_SPRINGS}}: Used for water and lava springs in vanilla.
+*** {{cd|VEGETAL_DECORATION}}: Used for trees, bamboo, cacti, kelp, and other ground and ocean vegetation in vanilla.
+*** {{cd|TOP_LAYER_MODIFICATION}}: Used for surface freezing in vanilla.
+** {{nbt|float|creature_spawn_probability}}: (optional) Higher value results in more creatures spawned in world generation. Must be between 0.0 and 0.9999999 (both inclusive).
+** {{nbt|compound|spawners}}: (Required, but can be empty. If this object doesn't contain a certain category, mobs in this category do not spawn.) Entity spawning settings.
+*** {{nbt|list|<mob category>}}: (Can be empty. If empty, mobs in this category do not spawn.) The key must be one of {{cd|monster}}, {{cd|creature}}, {{cd|ambient}}, {{cd|water_creature}}, {{cd|underground_water_creature}}, {{cd|water_ambient}}, {{cd|misc}}, or {{cd|axolotls}}. A list of spawner data objects, one for each mob which should spawn in this biome.
+**** {{nbt|compound}}: The spawner data for a single mob.
+***** {{nbt|string|type}}: The namespaced entity id of the mob.
+***** {{nbt|int|weight}}: How often this mob should spawn, higher values produce more spawns.
+***** {{nbt|int|minCount}}: The minimum count of mobs to spawn in a pack. Must be greater than 0.
+***** {{nbt|int|maxCount}}: The maximum count of mobs to spawn in a pack. Must be greater than 0. And must be not less than {{nbt|int|minCount}}.
+** {{nbt|compound|spawn_costs}}: (Required, but can be empty. Only mobs listed here use the spawn cost mechanism) See {{slink|Mob spawning|Spawn costs}} for details.
+*** {{nbt|compound|<entity id>}}: The namespaced entity id of the mob.
+**** {{nbt|double|energy_budget}}: New mob's maximum potential.
+**** {{nbt|double|charge}}: New mob's charge.
+</div>
+
+{{Calculator|decimalColor}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.16.2|dev=20w28a|Added experimental support for biomes in data packs.}}
+|{{HistoryLine|||dev=20w30a|Added the {{cd|grass_color}}, {{cd|foliage_color}}, {{cd|water_color}}, and {{cd|water_fog_color}} effects properties.}}
+|{{HistoryLine|||dev=pre2|Added the {{cd|player_spawn_friendly}} property.}}
+|{{HistoryLine||1.19|dev=22w11a|Removed the {{cd|category}} field. Functionality has been moved to biome tags.}}
+|{{HistoryLine||1.19.3|dev=Pre-release 3|Now when specifying a sound event, a fixed audible range can be also specified within an object.}}
+|{{HistoryLine||1.19.4|dev=23w03a|Renamed the {{cd|precipitation}} field to {{cd|has_precipitation}}. And now it is a boolean, and when it is true, whether it rains or snows are determined only by temperature. Before, it can be one of "none", "rain" and "snow".<ref>To fix {{bug|MC-230678}}, {{bug|MC-233893}}, {{bug|MC-238904}}, {{bug|MC-247836}}, {{bug|MC-254132}}, and {{bug|MC-255811}}.</ref>}}
+|{{HistoryLine|||dev=Pre-release 1|Now {{nbt|int|minCount}} and {{nbt|int|maxCount}} in {{nbt|compound|spawners}} must be a positive integer. And {{nbt|int|maxCount}} must be not less than {{nbt|int|minCount}}.}}
+|{{HistoryLine||1.21.2|dev=24w33a|Carver types have been removed. The carvers field now lists carvers directly instead of having to specify the type.}}
+|{{HistoryLine||1.21.4|dev=24w44a|Added {{nbt|float|music_volume}} field to {{nbt|compound|effects}}.
+|Changed the {{nbt|list|music}} field to be a weighted list of music objects.}}
+|{{HistoryLine||1.21.5|dev=25w08a|Added {{nbt|int|dry_foliage_color}} field to {{nbt|compound|effects}}.}}
+|{{HistoryLine||1.21.11|dev=25w42a|Added {{nbt|compound|attributes}} field.
+|Removed {{nbt|int|fog_color‌}}, {{nbt|int|sky_color‌}}, {{nbt|int|water_fog_color}}, {{nbt|compound|particle}}, {{nbt|string}}{{nbt|compound|ambient_sound}}, {{nbt|compound|mood_sound}}, {{nbt|compound|additions_sounds}}, {{nbt|list|music}}, and {{nbt|float|music_volume}} fields in {{nbt|compound|effects}}.}}
+|{{HistoryLine|||dev=25w44a|The {{nbt|string}}{{nbt|list}}{{nbt|int|water_color}}, {{nbt|string}}{{nbt|list}}{{nbt|int|foliage_color}}, {{nbt|string}}{{nbt|list}}{{nbt|int|dry_foliage_color}}, and {{nbt|string}}{{nbt|list}}{{nbt|int|grass_color}} fields now accept a hex-string or array of red, green, blue floats in addition to the packed integer value.}}
+}}
+
+== External links ==
+* [https://misode.github.io/worldgen/biome/ Biome Generator on misode.github.io]
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Biomdefinition]]
+[[fr:Définition de biome]]
+[[ja:バイオームのカスタマイズ]]
+[[pt:Definição de biomas]]
+[[uk:Визначення біому]]
+[[zh:生物群系定义格式]]

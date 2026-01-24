@@ -1,0 +1,146 @@
+{{Exclusive|bedrock}}
+
+A block definition is a [[JSON]] file used to define a custom [[block]] and its behavior. Block definition files are located in the {{file|directory|blocks|inline=1}} folder of a [[behavior pack]].
+
+== Structure ==
+Block definitions are structured as follows:
+
+<div class="treeview">
+* {{nbt|compound}}
+** {{nbt|string|format_version}}: The format version of the file. This is a string representing a {{BE}} version. It is recommended to use the latest version. For 26.0 and later, add a leading 1. For example: {{cd|"1.26.0"}} for [[26.0]]. Preview versions should use the version that it is a preview for (Example: [[Preview 26.0.27]] would be {{cd|"1.26.0"}}).
+** {{nbt|boolean|use_beta_features}}: Whether or not this block is using beta features.
+** {{nbt|compound|minecraft:block}}: The block definition.
+*** {{nbt|compound|description}}: The technical definition of the block.
+**** {{nbt|string|identifier}}: A namespaced [[identifier]] for the block. This defines the technical name of the block for [[commands]], [[Scripting|scripts]], and other [[add-on]] files.
+**** {{nbt|compound|menu_category}}: Defines where the block is located in the [[creative inventory]] and [[recipe book]].
+***** {{nbt|string|category}}: The inventory tab to put the block under. Can be {{cd|construction|equipment|items|nature|none|d=or}}. If omitted or {{cd|none}}, the block will not appear in the creative inventory or recipe book.
+***** {{nbt|string|group}}: The creative inventory group to add the block to. Custom groups can be added via the {{File|file|crafting_item_catalog.json|inline=1}}. Vanilla groups are: <div class="collapsible collapsed collapsetoggle-inline">
+****** {{cd|d=list|list-level=******|minecraft:itemGroup.name.anvil|minecraft:itemGroup.name.arrow|minecraft:itemGroup.name.axe|minecraft:itemGroup.name.banner|minecraft:itemGroup.name.banner_pattern|minecraft:itemGroup.name.bars|minecraft:itemGroup.name.bed|minecraft:itemGroup.name.boat|minecraft:itemGroup.name.boots|minecraft:itemGroup.name.bundles|minecraft:itemGroup.name.buttons|minecraft:itemGroup.name.candles|minecraft:itemGroup.name.chains|minecraft:itemGroup.name.chalkboard|minecraft:itemGroup.name.chest|minecraft:itemGroup.name.chestboat|minecraft:itemGroup.name.chestplate|minecraft:itemGroup.name.compounds|minecraft:itemGroup.name.concrete|minecraft:itemGroup.name.concretePowder|minecraft:itemGroup.name.cookedFood|minecraft:itemGroup.name.copper|minecraft:itemGroup.name.copper_golem_statue|minecraft:itemGroup.name.coral|minecraft:itemGroup.name.coral_decorations|minecraft:itemGroup.name.crop|minecraft:itemGroup.name.door|minecraft:itemGroup.name.dye|minecraft:itemGroup.name.enchantedBook|minecraft:itemGroup.name.fence|minecraft:itemGroup.name.fenceGate|minecraft:itemGroup.name.firework|minecraft:itemGroup.name.fireworkStars|minecraft:itemGroup.name.flower|minecraft:itemGroup.name.glass|minecraft:itemGroup.name.glassPane|minecraft:itemGroup.name.glazedTerracotta|minecraft:itemGroup.name.goatHorn|minecraft:itemGroup.name.grass|minecraft:itemGroup.name.hanging_sign|minecraft:itemGroup.name.harnesses|minecraft:itemGroup.name.helmet|minecraft:itemGroup.name.hoe|minecraft:itemGroup.name.horseArmor|minecraft:itemGroup.name.lanterns|minecraft:itemGroup.name.leaves|minecraft:itemGroup.name.leggings|minecraft:itemGroup.name.lightning_rod|minecraft:itemGroup.name.lingeringPotion|minecraft:itemGroup.name.log|minecraft:itemGroup.name.minecart|minecraft:itemGroup.name.miscFood|minecraft:itemGroup.name.mobEgg|minecraft:itemGroup.name.monsterStoneEgg|minecraft:itemGroup.name.mushroom|minecraft:itemGroup.name.nautilus_armor|minecraft:itemGroup.name.netherWartBlock|minecraft:itemGroup.name.ominousBottle|minecraft:itemGroup.name.ore|minecraft:itemGroup.name.permission|minecraft:itemGroup.name.pickaxe|minecraft:itemGroup.name.planks|minecraft:itemGroup.name.potion|minecraft:itemGroup.name.potterySherds|minecraft:itemGroup.name.pressurePlate|minecraft:itemGroup.name.products|minecraft:itemGroup.name.rail|minecraft:itemGroup.name.rawFood|minecraft:itemGroup.name.record|minecraft:itemGroup.name.sandstone|minecraft:itemGroup.name.sapling|minecraft:itemGroup.name.sculk|minecraft:itemGroup.name.seed|minecraft:itemGroup.name.shelf|minecraft:itemGroup.name.shovel|minecraft:itemGroup.name.shulkerBox|minecraft:itemGroup.name.sign|minecraft:itemGroup.name.skull|minecraft:itemGroup.name.slab|minecraft:itemGroup.name.smithing_templates|minecraft:itemGroup.name.spear|minecraft:itemGroup.name.splashPotion|minecraft:itemGroup.name.stainedClay|minecraft:itemGroup.name.stairs|minecraft:itemGroup.name.stone|minecraft:itemGroup.name.stoneBrick|minecraft:itemGroup.name.sword|minecraft:itemGroup.name.trapdoor|minecraft:itemGroup.name.walls|minecraft:itemGroup.name.wood|minecraft:itemGroup.name.wool|minecraft:itemGroup.name.woolCarpet}}</div>
+***** {{nbt|boolean|is_hidden_in_commands}}: Whether or not the block is hidden from commands.
+**** [[#States|{{nbt|compound|states}}]]: Definitions of custom block state names and their possible values.
+**** [[#Traits|{{nbt|compound|traits}}]]: The block traits to enable, which provide access to specific vanilla states.
+*** {{nbt|compound|components}}: The block's [[block components|components]]. This defines the block's behavior and visuals.
+*** {{nbt|list|permutations}}: The block's permutations, which allow for components to be added only under certain conditions.
+**** {{nbt|compound}}: ''A permutation''
+***** {{nbt|string|condition}}: The condition when this permutation's components should be active. This should be a [[molang]] expression resulting in a boolean.
+***** {{nbt|compound|components}}: The [[block components|components]] that should be active when the {{cd|condition}} is true.
+</div>
+
+
+=== States ===
+The {{nbt|compound|states}} object is used to define custom [[block states]]. Only custom states are allowed, using a vanilla state or the "minecraft" namespace will cause an error and fail.
+The object consists of state names as properties, and an array of possible values for each state. Integer states can also be defined as a range using an object. Block state values can be queried in permutations using the [[molang]] query <code>"query.block_state(<nowiki>'</nowiki>''<state_name>''<nowiki>'</nowiki>)"</code>.
+
+Examples:
+
+<syntaxhighlight lang=json copy>
+"states": {
+  "example:string_state": ["a", "b", "c"],
+  "example:int_state": [1,2,3],
+  "example:bool_state": [true,false],
+  "example:int_state_2": {
+    "min": 0,
+    "max": 10
+  }
+}
+</syntaxhighlight>
+
+=== Traits ===
+The {{nbt|compound|traits}} object is used to add vanilla block traits, which allow for custom blocks to have access to some vanilla block states. This object only gives access to the states, other functionality usually has to be added using permutations.
+The object consists of traits and their enabled states:
+
+====<code>minecraft:connection</code>====
+{{Experimental|be|be=Upcoming Creator Features|untilbe=26.0|section=1}}
+
+Gives blocks the boolean states {{cd|minecraft:connection_north|minecraft:connection_south|minecraft:connection_east|minecraft:connection_west|d=and}}, allowing for the block to connect to blocks next to it.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:connection}}
+** {{nbt|list|enabled_states}}: Which states to enable. The only valid value is <code>minecraft:cardinal_connections</code>.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"traits": {
+  "minecraft:connection": {
+    "enabled_states": ["minecraft:cardinal_connections"]
+  }
+}
+</syntaxhighlight>
+
+====<code>minecraft:placement_position</code>====
+
+Gives blocks states related to where the player places the block. Two states are available:
+* <code>minecraft:vertical_half</code>: The half of the block space that the block was placed in, allowing for stair and slab functionality. Possible values are {{cd|top|bottom|d=and}}.
+* <code>minecraft:block_face</code>: The block face that the player placed the block on, allowing for log and pillar functionality. Possible values are {{cd|up|down|east|north|west|south|d=and}}.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:placement_position}}
+** {{nbt|list|enabled_states}}: Which states to enable. Valid values are {{cd|minecraft:vertical_half|minecraft:block_face|d=and}}.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"traits": {
+  "minecraft:placement_position": {
+    "enabled_states": ["minecraft:vertical_half"]
+  }
+}
+</syntaxhighlight>
+
+====<code>minecraft:placement_direction</code>====
+
+Gives blocks states related to the direction in which the player places the block. Three states are available:
+* <code>minecraft:cardinal_direction</code>: The direction the player was facing when the block was placed. Possible values are {{cd|north|south|east|west|d=and}}.
+* <code>minecraft:facing_direction</code>: Same as <code>minecraft:cardinal_direction</code>, but allows up and down as well. Possible values are {{cd|up|down|east|north|west|south|d=and}}.
+* <code>minecraft:corner</code>: Allows the block to form corners with other blocks like stairs. Possible values are {{cd|none|inner_left|inner_right|outer_left|outer_right|d=and}}{{onlyExperimental|Beta APIs}}.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:placement_direction}}
+** {{nbt|list|enabled_states}}: Which states to enable. Valid values are {{cd|minecraft:cardinal_direction|minecraft:facing_direction|minecraft:corner_and_cardinal_direction|d=and}}{{onlyExperimental|Beta APIs}}. <code>minecraft:corner_and_cardinal_direction</code> enables both the <code>minecraft:cardinal_direction</code> and <code>minecraft:corner</code> states.
+** {{nbt|float|y_rotation_offset}}: The offset to apply to the y rotation of the block. Can be {{cd|0.0|90.0|180.0|270.0|d=or}}.
+** {{nbt|list|blocks_to_corner_with}}: A list of blocks (or [[Block tag (Bedrock Edition)|block tags]]) to consider for <code>minecraft:corner</code>.
+*** {{nbt|string}}{{nbt|compound}}: Either a block identifier or an object.
+**** {{nbt|string|tags}}: A molang expression representing the tags of the target blocks.
+</div>
+
+Example:
+
+<syntaxhighlight lang=json copy>
+"traits": {
+  "minecraft:placement_direction": {
+    "enabled_states": ["minecraft:corner_and_cardinal_direction"],
+    "blocks_to_corner_with": [{"tags": "q.any_tag('minecraft:cornerable_stairs')"}]
+  }
+}
+</syntaxhighlight>
+
+== History==
+{{HistoryTable
+|{{HistoryLine|Bedrock}}
+|{{HistoryLine||1.12.0|dev=beta 1.12.0.2|Block definition was added with {{cd|identifier}} defines the identifier of the block. Must have a namespace that isn't {{cd|minecraft}}, {{cd|is_experimental}} only registers the block if the {{cd|Use Experimental Gameplay}} toggle is enabled in world settings and {{cd|register_to_creative_menu}} causes the block to appear in the {{cd|Construction}} category of the creative menu but custom blocks cannot be added to the [[recipe book]] at this time.}}
+|{{HistoryLine||1.16.100|Removed {{cd|is_experimental}} and {{cd|register_to_creative_menu}}.}}
+|{{HistoryLine||1.16.100|dev=beta 1.16.100.56|exp=Holiday Creator Features|Added field {{cd|events}} with {{cd|d=and|add_mob_effect|damage|decrement_stack|die|play_effect|play_sound|remove_mob_effect|run_command|set_block|set_block_at_pos|set_block_property|spawn_loot|swing|teleport|transform|trigger}}.}}
+|{{HistoryLine||1.16.210|dev=beta 1.16.210.56|exp=Holiday Creator Features|Updated {{cd|decrement_stack}} response added {{cd|ignore_game_mode}} parameter which determines whether the stack will be decremented when the player is in creative mode.}}
+|{{HistoryLine||1.19.30|Added {{cd|menu_category}} with contains {{cd|category}} which determines which tab this block is placed into amd contains {{cd|group}} which determines which other items this block is grouped with.}}
+|{{HistoryLine||1.19.40|dev=Preview 1.19.40.21|Added flag {{cd|is_hidden_in_commands}} in {{cd|menu_category}} to control whether or not a block can be used in commands.|{{cd|minecraft:direction}} is no longer exposed as a data-driven block property in properties. Blocks throw a content error when the {{cd|minecraft}} namespace is used.}}
+|{{HistoryLine||1.19.70|dev=Preview 1.19.70.23|Released block [[#States|properties]] and [[Block components#Permutations|permutations]] out of experimental in JSON formats 1.19.70 and higher.}}
+|{{HistoryLine||1.20.0|dev=Preview 1.20.0.20|exp=Upcoming Creator Features|Added experimental support for {{cd|BlockTraits}} in block JSON with field {{cd|traits}}. {{cd|BlockTraits}} are a shortcut for creators to add vanilla [[block states]] and setter functions to data-driven blocks. Can parse {{cd|minecraft:placement_direction}} with the only available value being {{cd|minecraft:cardinal_direction}}.}}
+|{{HistoryLine|||dev=Preview 1.20.0.21|Added the {{cd|minecraft:facing_direction}} to the {{cd|minecraft:placement_direction}}.}}
+|{{HistoryLine|||dev=Preview 1.20.0.22|Changed {{cd|minecraft:cardinal_direction}} and {{cd|minecraft:facing_direction}} states from int to string type. {{cd|minecraft:cardinal_direction}} has four values {{cd|["north", "south", "east", "west"]}} and {{cd|minecraft:facing_direction}} has six values {{cd|["down", "up", "north", "south", "east", "west"]}}.}}
+|{{HistoryLine|||dev=Preview 1.20.0.23|Added the trait {{cd|minecraft:placement_position}} with {{cd|minecraft:block_face}} is a six value string state ({{cd|down}}, {{cd|up}}, {{cd|north}}, {{cd|south}}, {{cd|east}}, {{cd|west}}) that contains info on which block face the player clicked on when the block was placed and {{cd|minecraft:vertical_half}} is a 2 value string state ({{cd|bottom}}, {{cd|top}}) with info on whether the block was placed in the lower or upper half of the block position.}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.21|Renamed field {{cd|properties}} to {{cd|states}}.}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.21|exp=Holiday Creator Features|Renamed {{cd|set_block_property}} response to {{cd|set_block_state}}.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.20.21|Moved traits with {{cd|minecraft:placement_direction}} and {{cd|minecraft:placement_position}} block traits out of experimental. These traits can be used for blocks with {{cd|format_version}} 1.20.20 or bigger.}}
+|{{HistoryLine||1.21.20|dev=Preview 1.21.20.23|Removed the "Holiday Creator Features" experiment Because of this, {{cd|events}} were also removed.}}
+|{{HistoryLine||1.21.60|dev=Preview 1.21.60.23|Updated {{cd|menu_category}} and updated {{cd|group}} parameter to require a namespace e.g. {{cd|minecraft:itemGroup.name.concrete}}.}}
+|{{HistoryLine||1.21.130|dev=Preview 1.21.130.20|exp=Upcoming Creator Features|Added a new block trait, {{cd|minecraft:connection}}, to expose behavior like [[fence]]s or [[glass pane]]s where blocks connect to other blocks around them. Using this trait with the example below adds the bool states {{cd|d=and|minecraft:connection_north|minecraft:connection_east|minecraft:connection_south|minecraft:connection_west}}.}}
+|{{HistoryLine||1.21.130|dev=Preview 1.21.130.24|exp=Beta APIs|Added new {{cd|minecraft:corner_and_cardinal_direction}} to the {{cd|minecraft:placement_direction}} block trait, which enables the {{cd|minecraft:corner}} state with values {{cd|none|inner_left|inner_right|outer_left|outer_right|d=and}} to provide similar behavior to how [[stairs]] in Vanilla work. This requires the {{cd|use_beta_features}} flag on your block.}}
+|{{HistoryLine|upcoming bedrock}}
+|{{HistoryLine||26.0|dev=Preview 26.0.27|The Block Trait {{cd|minecraft:connection}} can now be used without the Upcoming Creator Features toggle.|{{cd|minecraft:corner_and_cardinal_direction}} in {{cd|minecraft:placement_direction}} can now be used without the Beta APIs toggle.}}
+}}
+
+== Navigation ==
+{{Navbox Bedrock Edition}}

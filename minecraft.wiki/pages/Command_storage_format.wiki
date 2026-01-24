@@ -1,0 +1,45 @@
+{{exclusive|java}}
+The '''command_storage_''<namespace>''.dat''' files are {{w|gzip}} compressed [[NBT Format|NBT]] files located in the <samp>data</samp> folder in a savegame. They store information about the {{cmd|data}} command storage in the world. Each [[namespace]] in the storage has its own data file.
+
+== Usage ==
+The command storage of [[NBT]] data is an efficient way for [[commands]] to access or save NBT data without an overhead for [[block entities]] or [[entities]] reading from or writing to the NBT data.
+
+Each command storage is a general purpose, key-value storage, identified by a [[resource location]] to prevent unintentional conflicts.
+
+{{cmd|data get}}, {{cmd|data modify|link=none}}, and {{cmd|execute (if{{!}}unless) data}} can read from the storage, while {{cmd|data merge|link=none}}, {{cmd|data modify|link=none}}, {{cmd|data remove|link=none}}, and {{cmd|execute store|link=none}} can write to the storage.
+
+The storage can also be accessed by [[text component]]s.
+
+== Directory structure ==
+<div class="treeview">
+*{{File|directory|''world save directory''}}
+**{{File|directory|data}}
+***{{File|file|command_storage_''<namespace>''.dat}}
+</div>
+Multiple {{cd|command_storage_''<namespace>''.dat}} files may be present in the {{cd|data}} directory.
+
+== NBT structure ==
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|compound|data}}: The actual saved data.
+*** {{nbt|compound|contents}}: Contains all the data storage under the namespace of the command storage.
+**** {{nbt|compound|''<path>''}}: The data associated with a particular [[resource location]] {{code|''<namespace>'':''<path>''}}.
+***** Custom content as set by the {{cmd|data}} or {{cmd|execute store}} commands. 
+** {{nbt|int|DataVersion}}: The [[data version]] in which this file is saved.
+</div>
+Multiple {{nbt|compound}} compound tags of different names may exist under {{nbt|compound|contents}} tag.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.15|dev=19w38a|Added [[command storage]] data for the level.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[de:Datenspeicher]]
+[[fr:Format de stockage des commandes]]
+[[ja:コマンドストレージフォーマット]]
+[[pt:Formato de armazenamento de comandos]]
+[[zh:命令存储存储格式]]

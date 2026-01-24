@@ -1,0 +1,39 @@
+{{indev|Java|drop=26.1}}
+{{wip}}
+A '''world clock''' is a feature that contains an internal time that increases every tick.
+
+== Format ==
+World clocks can be defined in data packs under the {{cd|world_clock}} registry (i.e. found under <samp>data/<namespace>/world_clock/<id>.json</samp>)
+* World clocks can be paused or resumed, and the time of the clock can be changed or queried from the {{cmd|time}} command.
+* Format: object with no fields
+
+By default, there is only one world clock, named {{cd|minecraft:overworld}}.
+
+== Behavior ==
+The world clock is loaded once only when the client is started. Using {{cmd|reload}} cannot reload the world clock; The client must be restarted.
+
+The world clock itself does not contain any data; The game differentiates world clocks by recognizing their IDs. Every world clock represents an internal time, and during that, every [[game tick]] will increase. The settings of the world clock and whether it is paused is controlled by the {{cmd|time}} command.
+
+If the {{gmr|advance_time}} game rule is set to <code>false</code>, the world clock will not increase even if it is not paused.
+
+In a [[world]], every [[dimension]] will get their own world clock and the default value of a certain world clock shown by the {{cmd|time}} command according to their dimension type, and confirm which time marker s are used according to the [[timeline]] that uses this world clock.
+
+The time that a world has run is not controlled by the world clock.
+
+=== Time marker ===
+The '''time marker''' gives a specific name to the specific ticks in the world clock. Time marker is defined in {{nbt|compound|time_markers}} in a timeline. It will be registered to the world clock used by this timeline when the client is started.
+
+The time marker can be used in the {{cmd|time}} command. Besides this, the game defines the following time markers that control the game events, they are usually not shown in the tips of commands:
+*<code>wake_up_from_sleep</code>: When the [[player]] wakes up, the tick that the game advances the time to. The time will not advance if this time marker does not exist.
+*<code>roll_village_siege</code>: The time that the game starts to determine whether a [[zombie siege]] has happened. If this time marker does not exist, the game will not determine if a zombie siege has happened.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java upcoming}}
+|{{HistoryLine||26.1|dev=snap3|Added world clocks.}}
+}}
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[ja:世界時計]]
+[[zh:世界时钟定义格式]]

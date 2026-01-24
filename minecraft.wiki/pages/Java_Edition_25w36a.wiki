@@ -1,0 +1,188 @@
+{{Dangerous version|The game crashes when an [[ender chest]], another [[player]], or a [[Monster Spawner|spawner]] set to spawn [[mannequin]]s is rendered in the world.|type=crash|edition=java|version=development}}
+{{Infobox version
+|title=Minecraft 25w36a
+|image=25w36a.jpg
+|image2=Java Edition 25w36a.png
+|edition=Java
+|type=Snapshot
+|date=September 2, 2025
+|jsonhash=4ea6923a98f7abec2914a7e51ebec23cecf09e11
+|clienthash=ae36ffc5291e78d5157346d4d6f275938baa9742
+|clientmap=1f66a65e2aaf58af9ec944f3b072f703a4c39543
+|serverhash=4d094c84219be8bbe23bcec02e1c016e12717e17
+|servermap=16fbcd86b56362a06269cef21b3ad784d8264b5f
+|parent=1.21.9
+|prevparent=1.21.8
+|prev=25w35a
+|next=25w36b
+|nextparent=1.21.10
+}}<onlyinclude>
+
+'''25w36a''' is the seventh [[snapshot]] for [[Java Edition 1.21.9]], released on September 2, 2025.<ref>{{snap|25w36a|id=a|September 2, 2025}}</ref> It improves several textures and visual features, adds the ability to set different [[world border]]s in different dimensions, and adds a new technical mob.
+
+== Additions ==
+=== Non-mob entities ===
+'''[[File:Steve (slim) JE2.png|50px]] [[Mannequin]]'''
+* Added a new type of technical entity called <code>minecraft:mannequin</code> which can only be spawned with summon commands.
+** A mannequin is a player avatar without a connected player.
+** Mannequins always show an "NPC" text where a Player's <code>below_score</code> score would show.
+** Mannequins function as living entities, like [[armor stand]]s.
+*** They can hold and wear equipment, have attributes & effects, take damage, etc.
+** Data Fields:
+*** <code>profile</code> - Which profile to show on the entity. This is either a Player profile (same format as a <code>minecraft:profile</code> component) or a Mannequin profile with the following fields:
+**** <code>texture</code> - Namespaced ID of the skin texture to use.
+***** The skin is specified relative to the <code>textures</code> folder and with a <code>.png</code> suffix.
+***** e.g. <code>entity/player/wide/steve</code> will use the default wide Steve skin.
+**** <code>cape</code> - Optional namespaced ID of the cape texture to use.
+***** When specified, uses the same format as the <code>texture</code> field.
+***** Omitting this field means the mannequin has no cape.
+**** <code>elytra</code> - Optional namespaced ID of the elytra texture to use.
+***** When specified, uses the same format as the <code>texture</code> field.
+***** Omitting this field means the mannequin uses the cape texture, or if that is also omitted, the default elytra texture when wearing elytra.
+**** <code>model</code> - Optional model type, one of <code>wide</code> and <code>slim</code>.
+***** If omitted, <code>wide</code> is used.
+*** <code>hidden_layers</code> - List of outer skin layers to hide.
+**** Valid entries: <code>cape</code>, <code>jacket</code>, <code>left_sleeve</code>, <code>right_sleeve</code>, <code>left_pants_leg</code>, <code>right_pants_leg</code>, <code>hat</code>.
+*** <code>main_hand</code> - Which hand is the main hand of the mannequin.
+**** One of <code>left</code> and <code>right</code>.
+** This entity highly resembles the [[Mob (entity)|Mob]] entity removed long ago in [[Java Edition Beta 1.2|Beta 1.2]], as it is has a player skin and has no movement AI.
+
+== Changes ==
+=== Blocks === 
+'''[[Copper lantern]]''' and '''[[copper torch]]'''
+* Adjusted the colors to make them more discernible to color blind players.
+
+'''[[Shelf]]'''
+* Powered shelves can now only connect to other powered shelves facing the exact same direction.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|86.0}}.
+
+'''[[End flash]]'''
+* While the ender dragon fog effect is active, the flash source in the sky is not visible and the brightness of the light affecting the world is reduced.
+
+'''[[Key binds]]'''
+* Multiple key binds that have the same key assigned to them can now work together, while before only one would work.
+** For example, it's now possible to bind the {{key|d}} key to Jump and Strafe Left, to jump and strafe left at the same time.
+** The red warning for assigning the same key to multiple key binds is changed to yellow.
+* Added a Spectator category in the key binds screen, alongside the pre-existing Highlight Players key bind.
+* The spectator hotbar menu key can now be rebound.
+
+'''[[Particles]]'''
+* {{cd|dragon_breath}} now optionally takes a {{cd|power}} parameter (float, default {{cd|1.0}}), which is multiplied onto its initial velocity, after all randomness.
+* {{cd|instant_effect}} and {{cd|effect}} now optionally take {{cd|power}} (float, default {{cd|1.0}}) and {{cd|color}} (rgb, default {{cd|0xFFFFFF}}) parameters.
+* {{cd|flash}} now requires a {{cd|color}} parameter (argb).
+
+'''[[Rendering]]'''
+* Particles outside of players view are not rendered anymore, which provides a performance improvement in some cases.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|68.0}}.
+
+'''Server Code of Conduct'''
+* Formatting codes are now stripped from code of conduct files.
+
+'''[[Shader]]s'''
+* The following unused shaders have been removed:
+** {{samp|core/position_color_lightmap.vsh}}
+** {{samp|core/position_color_lightmap.fsh}}
+** {{samp|core/position_color_tex_lightmap.vsh}}
+** {{samp|core/position_color_tex_lightmap.fsh}}
+* Minor change to uv calculations in the <code>minecraft_sample_lightmap</code> function in the <code>core/terrain.vsh</code> program.
+
+'''[[UI]]'''
+* Double-clicking a word in edit box now selects it.
+
+'''[[World border]]'''
+* The world border is now dimension-specific.
+** This means that each dimension can have its own world border size, position, etc.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w36a
+|;From released versions before 1.21
+|223142|Player can move while spectating a marker.
+|225088|Overworld surface is darker than before on low brightness.
+|234737|Typo in exception message: "{{cd|EmtyPoolElement}}".
+|236508|The title within the "Add Server" menu is displayed as "Edit Server Info".
+|237590|The word "chunks" is improperly capitalized within the render and simulation distance sliders.
+|238273|"Locked by another running instance of Minecraft" lacks punctuation.
+|249205|"{{cd|minecraft.used:minecraft.potion}}" increases by a value of two when using water bottles to create mud in creative mode.
+|250062|Several strings throughout the game contain comma splices.
+|250193|Server log does not use the string representation of a player's GameProfile on a disconnect during encryption.
+|254668|Pressing {{key|Escape}} on the death screen's title screen warning respawns the player.
+|257792|Output slot for trading menu is off-center.
+|258191|Root system feature allows hanging root vertical span of {{cd|0}}, causing error.
+|259347|Height limit warning message is shown when right-clicking the top of a block at the build height limit with a bucket.
+|262370|Some multiplayer strings are untranslatable.
+|264962|Strings that contain two inputs for a given action have inconsistent spacing and apostrophes.
+|265807|Mobs don't drown if their {{cd|Air}} NBT is less than {{cd|-19}}.
+|;From 1.21.3
+|278435|Mushroom Fields biome doesn't generate pumpkin patches despite being specified in vanilla datapack.
+|;From 1.21.4
+|277975|The first line of the command execution warning in an item's tooltip is missing punctuation.
+|279123|Some strings that reference Minecraft Realms use inconsistent or missing verb forms.
+|279153|Some strings that mention the base values of attributes are missing articles.
+|279173|The "{{cd|chat.disabled.invalid_command_signature}}" string is missing an article before the word "Command".
+|279174|The "{{cd|gamerule.spawnChunkRadius.description}}" string is missing an article before the word "Amount".
+|279175|Some multiplayer disconnection strings are missing articles and demonstratives.
+|279176|The "{{cd|gamerule.commandModificationBlockLimit.description}}" string is missing an article before the word "Number".
+|279212|Some narration strings are missing articles and possessive determiners.
+|;From 1.21.5
+|295829|Test instance block GUI uses "Batch" instead of "Environment".
+|;From 1.21.6
+|298605|When creating a Water World superflat world, the player spawns at the bottom of the sea.
+|299105|Tears and Lava Chicken music disc 'desc' translations are unused.
+|;From 1.21.8
+|301619|Game mode translation key is used in the console message sent when a player tries to switch their game mode without permission.
+|;dev
+|300055|You get the advancement Wax On for changing the pose of a Copper Golem Statue while holding Honeycomb.
+|300088|Items placed by a copper golem in a double chest do not update redstone comparators reading the right side of the double chest.
+|300109|Lightning bolt does not remove oxidation from the lightning rod.
+|300169|The {{cd|CustomName}} tag of a copper golem statue is not kept when mined.
+|300192|No darker trim for copper.
+|300201|Breaking a copper golem statue with a pose does not retain its pose.
+|300416|Copper golems' pathfinding to chests is biased to northwest.
+|300558|Copper golems can open locked chests without an appropriate key item.
+|300729|Incorrect or unusually obvious pixels on the weathered and exposed copper bars.
+|300961|The armor layer on husks no longer reflects their larger size compared to other humanoids.
+|301099|Copper chests worn on copper golems' heads are not visible.
+|301250|Upon exiting the gamemode switcher ({{Key|F3+F4}}) while viewing the credits, the player still does not resume viewing the credits and instead remains in the end in a phantom state until they relog.
+|301258|Copper golem statues in the walking pose have a bit of their necks poking through their arms.
+|301259|Shelf {{cd|align_items_to_bottom}} in block entity data doesn't work.
+|301261|The right arm of the copper golem statue isn't connected to its body.
+|301276|The hand animation no longer plays when shearing copper golems.
+|301277|Item frames with maps and paintings cannot share a corner anymore.
+|301278|The code of conduct screen renders carriage return characters.
+|301283|Sprint and sneak input can get 'stuck' if a screen is opened right as the input is pressed.
+|301310|The “Transfer Now” button in the realms menu renders outside the selection box.
+|301312|You cannot begin to use items while looking at copper golems.
+|301324|Sitting copper golem statue nose is rotated incorrectly.
+|301330|Malicious server can force client to remain stuck on code of conduct screen.
+|301374|Evokers can now spawn in Peaceful difficulty.
+|;prev
+|301519|Trying to use a command block while the "{{cd|enableCommandBlocks}}" gamerule is set to false says "Command blocks are not enabled on this server" even if you're not on a server.
+|301523|Some gamerule description strings consist of inconsistent concluding punctuation, redundantly include “or not”, and are grammatically incorrect.
+|301524|The block breaking animation on banners now amplifies with each pattern applied.
+|301546|Bells do not display ringing animation when another bell is nearby.
+|301577|Block light sources produce shadows around themselves under skylight.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|x_TLVuM5FUM|jDYmkVMtE9k}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w36a]]
+[[es:Java Edition 25w36a]]
+[[fr:Édition Java 25w36a]]
+[[ja:Java Edition 25w36a]]
+[[lzh:二五週三六甲]]
+[[pt:Edição Java 25w36a]]
+[[ru:25w36a (Java Edition)]]
+[[uk:25w36a (Java Edition)]]
+[[zh:Java版25w36a]]

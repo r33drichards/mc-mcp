@@ -1,0 +1,179 @@
+{{Infobox version
+|title=Minecraft 21w15a
+|image=21w15a.jpg
+|image2=Java Edition 21w15a.png
+|edition=Java
+|type=Snapshot
+|date=April 14, 2021
+|jsonhash=0acb2600bb2fe418868f911c8d5659239f396512
+|clienthash=749805abb797f201a76e2c6ad2e7ff6f790bb53c
+|clientmap=168453c06a67e83d6544f2d02b0c6ce756269f95
+|serverhash=0a39422009a7aa01dd185043746c50dc909dc345
+|servermap=d5ac0492465e6abc2e980504f7d6ca1e07248d24
+|otherdl={{dl|643b1f8f7f71c74ffc913e8572f52fd5bca88282|custom|name=CavesAndCliffsPreview.zip|title=Data pack}}<ref group=note>Re-enables features set to release for [[Java Edition 1.18|1.18]].</ref>
+|parent=1.17
+|prevparent=1.16.5
+|prev=21w14a
+|next=21w16a
+|nextparent=1.17.1
+}}
+<onlyinclude>
+
+'''21w15a''' is the seventeenth [[snapshot]] for [[Java Edition 1.17]], released on April 14, 2021,<ref>{{snap|21w15a|April 14, 2021}}</ref> which adds blocks of raw metal and the ability for [[goat]]s to ram mobs and [[armor stand]]s, as well as some reorders of the items in the [[Creative inventory]] menu. It also reverts most changes to world generation made in previous snapshots, such as height limit and [[cave]] types. Due to the technical challenges on the new cave generations and the effects of the COVID-19 pandemic on the developers, these changes were moved to [[Java Edition 1.18|1.18]].<ref>[https://www.youtube.com/watch?v=6YgKUZnUyak Caves and Cliffs Announcement]</ref><ref>{{Mcnet|a-caves---cliffs-announcement|A Caves & Cliffs announcement|April 14, 2021}}</ref><ref>{{cite|url=https://help.minecraft.net/hc/en-us/articles/360059400852|title=Minecraft: Caves & Cliffs Update FAQ|website=Minecraft Help Center|date=April 17, 2021|quote=the first (1.17) released on June 8, and the second (1.18) released on November 30.}}</ref>
+
+== Additions ==
+=== Blocks ===
+'''{{Animate|Block of Raw Copper JE2 BE2.png; Block of Raw Iron JE3 BE2.png; Block of Raw Gold JE3 BE2.png|32px}} Blocks of raw metal'''
+* Added [[block of raw iron]], [[block of raw copper]] and [[block of raw gold]].
+** [[Piglin]]s don't pick up blocks of raw gold,<ref>{{Bug|MC-223141}}</ref> and don't get angry when a nearby player mines them.<ref>{{Bug|MC-223145}}</ref>
+** Obtained through [[crafting]], and can be crafted back into their respective raw metal.
+** Can't be [[smelt]]ed.<ref>{{Bug|MC-223185}} – resolved as "Invalid"</ref>
+
+=== Non-mob entities ===
+'''[[Marker]]'''
+* Added the marker entity meant for custom use cases like map making and data packs.
+** Only exists on the server side, is never sent to clients.
+** Does not do any updates of their own.
+** Has a {{nbt|compound|data}} compound field that can contain any data.
+
+=== Command format ===
+'''{{cmd|debug function}}'''
+* New debug subcommand executes command with same syntax as function.
+** Every executed command, message (even if it would be normally invisible), result or error is stored to file.
+** Cannot be run from inside functions.
+
+=== Sounds ===
+'''[[Bone meal]]'''
+* Added sounds for using bone meal.
+
+'''[[Goat]]'''
+* Added various new sounds for screaming goats.
+
+=== General ===
+'''<samp>[[server.properties]]</samp> arguments'''
+* <code>resource-pack-prompt</code>
+** Adds a custom message to be shown on resource pack prompt when <code>require-resource-pack</code> is used.
+** Expects chat component syntax, can contain multiple lines.
+
+== Changes ==
+=== Blocks ===
+'''[[Gold ore]], [[lapis lazuli ore]], [[deepslate copper ore]], [[deepslate lapis lazuli ore]]'''
+* Slightly tweaked the textures of these blocks.
+
+=== Items ===
+'''Raw metal'''
+* Tweaked the textures of [[raw iron]], [[raw gold]] and [[raw copper]].
+
+=== Mobs ===
+'''[[Goat]]s'''
+* Now avoid walking on [[powder snow]].
+* Can now ram other mobs and [[armor stand]]s to knock them a few blocks.
+** [[Creeper]]s don't explode when attacked by a goat.
+
+'''[[Axolotl]]s'''
+* Gain one and a half minutes of moisture when a splash water bottle is thrown at them.
+
+=== World generation ===
+'''[[World height]]'''
+* World height increase has been reverted and is now once again 256 blocks (from Y=0 to Y=255).
+* Worlds created in snapshot [[21w05b]] or any earlier version can now once again be opened.
+* Worlds created in any version between snapshot [[21w06a]] and [[21w14a]] can no longer be opened.
+** This can be bypassed by setting the data version in <code>[[Java Edition level format#level.dat format|level.dat]]</code> to anywhere from 2692 and below, to 2709 or higher. However, this causes issues.
+* Creating a new world with the Prototype Data pack (or putting the data pack in an existing world with the bypass above) can try out the world generation for the later update using a data pack which activates the changes as an experimental custom world.
+
+'''[[Cave]]s'''
+* Noise caves and aquifers have been switched off.
+* Cave and [[canyon]] carvers have been returned to their old settings.
+* Crack carvers have been switched off.
+
+'''[[Ore]] distribution'''
+* Ore distribution has been reverted to [[Ore/Pre-1.17 distribution|the pre-1.17 distribution]].
+* [[Copper ore]] now generates between the bottom of the world and Y=192, being most common around Y=96.
+
+'''[[Tuff]]'''
+* Now generates in blobs from Y=0 to Y=16.
+
+=== General ===
+'''[[Title screen]]'''
+* The main menu background is now in an [[amethyst geode]].
+
+'''[[Creative inventory]]'''
+* Reordered some blocks in the "Building Blocks" tab:
+** [[Ancient debris]] was moved among other ores.
+** [[Block of copper]] and [[block of netherite]] were moved among other metal blocks.
+** [[Nether gold ore]] was moved among other ores.
+** [[Block of amethyst]] was moved among other ore blocks.
+** [[Deepslate emerald ore]] was moved among other ores.
+** [[Cracked deepslate bricks]] and [[cracked deepslate tiles]] were moved among other [[deepslate]] blocks.
+** [[Dripstone block]] was moved among other "stone" blocks.
+
+== Fixes ==
+{{fixes|fixedin=21w15a
+|;old
+|183540|Ancient debris is not grouped together with other ores in the Creative inventory.
+|202543|Ancient debris comes after netherite block in creative inventory.
+|203300|Nether Gold Ore is not grouped with Nether Quartz Ore in creative inventory.
+|218023|Netherite blocks are not grouped with iron and gold blocks in the Creative inventory.
+|;dev
+|203855|A geode <code>configured_feature</code> causes a crash when <code>use_alternate_layer0_chance</code> is used with no entries in <code>inner_placements</code>.
+|208816|No terrain nor feature generation currently supports negative Y values.
+|212145|Summoning Glow Lichen using {{cmd|setblock}} doesn't place any lichen but creates light until the block is updated.
+|212273|Glow Lichen doesn't render when being held by an Enderman.
+|214792|Underwater canyons do not have obsidian/magma/bubble column generation.
+|214800|Several cases of random, isolated blocks of water generating underground.
+|215073|Dungeons are extremely rare in 21w06a.
+|215836|Deepslate uses the same color as stone on maps.
+|215844|Stone still generates around lava pools at low levels.
+|216015|Ocean Monuments in Water World presets don't spawn correctly.
+|216588|Feature placement - <code>java.lang.IllegalArgumentException: bound must be positive</code>.
+|216961|Hundreds of "<code>Empty range decorator: cxd@3ea95f79 [0--8]</code>" log entries when creating and loading chunks in "Overworld", "Tunnelers' Dream" and "Desert" superflat preset.
+|217254|Desert temples in superflat generate way too high.
+|217645|Dripstone block is not grouped with other stone blocks in the Creative inventory.
+|218022|Blocks of copper are not grouped with other metal blocks in the Creative inventory.
+|218024|Amethyst blocks are not grouped with other gem blocks in the Creative inventory.
+|218588|Cracked deepslate bricks & tiles are in the incorrect position in the creative inventory.
+|218698|Infested deepslate makes the old "stone" sounds.
+|218705|Deepslate emerald ore is separated from other deepslate ores in the creative inventory.
+|218749|Deepslate coal ore doesn't drop experience.
+|218944|Copper ore and deepslate copper ore have inconsistent textures.
+|219924|Lapis Lazuli Ore and deepslate Lapis Lazuli Ore have inconsistent textures.
+|219972|Deepslate gold ore has an inconsistent pixel.
+|221501|Water splash potions don't give the axolotl 1.5 minutes of moisture.
+|221552|Goat subtitles showing as translation key.
+|221633|Goats sink in water and lava.
+|221680|The nether fog behaves rarely when going deeper than y{{=}}0.
+|221718|Lava fog repeatedly fails to render each block at certain y-levels.
+|221728|Goats have duplicated sound ids.
+|221798|Blindness doesn't render correctly.
+|222104|Beacon beam fog is incorrectly computed.
+|222266|Goats don't attack.
+|;previous
+|222522|Nether Gold Ore is no longer smeltable.
+|222531|Tuff blobs doesn't generate between heights 0-16.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|sGHPlQifxR0|WI-QuaffQ50}}
+
+== Gallery ==
+<gallery widths="300" heights="200">
+Raw-Ore-blocks.jpg|Comparison of raw ore blocks
+21w15aRawMetalTextureChanges.png|Texture changes from 21w14a to 21w15a
+</gallery>
+
+== References ==
+{{Reflist}}
+
+== Notes ==
+{{Notelist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:21w15a]]
+[[es:Java Edition 21w15a]]
+[[fr:Édition Java 21w15a]]
+[[ja:Java Edition 21w15a]]
+[[pt:Edição Java 21w15a]]
+[[ru:21w15a (Java Edition)]]
+[[zh:Java版21w15a]]

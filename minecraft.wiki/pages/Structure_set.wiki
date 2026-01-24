@@ -1,0 +1,209 @@
+A '''structure set''' is used to determine the position of [[Structure/JSON format|structures]] in the world during [[Custom world generation|world generation]]. They are configured using [[JSON]] files stored within a [[data pack]] in the path {{cd|data/<namespace>/worldgen/structure_set}} or an [[add-on]] in the path {{cd|<root BP>/worldgen/structure_sets}}. Structure sets are not referenced in a [[Custom dimension|dimension]] or [[Custom biome|biome]]. Instead, the existence of the resource is enough to make the structures generate. The valid biomes of a structure are determined by the structure itself (see [[Structure/JSON format]]). 
+
+The structure sets uses the {{nbt|compound|placement}} to determine the placement of structures. For any position a random structure is selected from the {{nbt|list|structures}} list. If the selected structure can't be placed because its not in a valid biome, a different structure is selected.
+
+== JSON format ==
+{{el|java}}:
+{{/JSON format}}
+<div class="treeview">
+{{el|bedrock}}:
+* {{nbt|compound|Structure Set}}
+**{{nbt|string|format_version}}: The version of the game to run this file as. Can be a version above 1.21.20.
+**{{nbt|compound|minecraft:structure_set}}: 
+***{{nbt|compound|description}}
+****{{nbt|string|identifier}}: The identifier used for the structure set.
+***{{nbt|compound|placement}}: How the structures should be placed.
+****{{nbt|string|type}}: The type of spread. Can be <code>minecraft:random_spread</code>.
+****{{nbt|float|salt}}: A random 8 number sequence used for randomizing placement similarly to a world seed.
+****{{nbt|float|spacing}}: Size in chunks of the grid space used to place the structure
+****{{nbt|float|separation}}: Padding between placements of set placements.
+****{{nbt|string|spread_type}}: Algorithm used when placing structures. Can be <code>linear</code>.
+***{{nbt|list|structures}}: Weighted list of structures that can be placed.
+****{{nbt|compound}}: A structure to be placed.
+*****{{nbt|string|structure}}: A structure identifer.
+*****{{nbt|float|weight}}: Determines the chance of it being chosen over others. Must be a positive integer.
+</div>
+== Placement types ==
+The placement type determines how the structures are spread in a world. There are two placement types.
+=== random_spread ===
+Structures are spread evenly in the entire world. In vanilla, this placement type is used for most structures (like [[bastion remnant]]s or [[swamp hut]]s{{only|java}}). The world is split into squares with side length of {{nbt|int|spacing}} chunks. One structure is placed in a random position within each square. A structure can't be placed in {{nbt|int|separation}} chunks along the positive X/Z edge of a square.
+
+<div class="treeview">
+* additional fields:
+** {{nbt|string|spread_type}}: (optional, defaults to <code>linear</code>) One of <code>linear</code> or <code>triangular</code>{{info needed|it is unclear what the difference is between the spread types}}.
+** {{nbt|int|spacing}}: Average distance between two neighboring generation attempts. Value between 0 and 4096 (inclusive).
+** {{nbt|int|separation}}: Minimum distance (in chunks) between two neighboring attempts. Value between 0 and 4096 (inclusive). Has to be strictly smaller than {{nbt|int|spacing}}. The maximum distance of two neighboring generation attempts is {{cd|2*spacing - separation}}.
+</div>
+
+=== concentric_rings ===
+{{exclusive|java|section=1}}
+A fixed number of structures is placed in concentric rings around the origin of the world. In vanilla, this placement is only used for [[stronghold]]s. 
+
+<div class="treeview">
+* additional fields:
+** {{nbt|integer|distance}}: The thickness of a ring plus that of a gap between two rings. Value between 0 and 1023 (inclusive). Unit is '''6 chunks'''
+** {{nbt|integer|count}}: The total number of generation attempts in this dimension. Value between 1 and 4095 (inclusive).
+** {{nbt|string}}{{nbt|list|preferred_biomes}}: {{json ref/biome|tag=1}} &mdash; Biomes in which the structure is likely to be generated{{info needed|it is unclear how the "likely" mechanic works}}.
+** {{nbt|integer|spread}}: How many attempts are on the closest ring to spawn. Value between 0 and 1023 (inclusive). The number of attempts on the Nth ring is: <code>spread * (N^2 + 3 * N + 2) / 6</code>, until the number of attempts reaches the total {{nbt|integer|count}}.
+</div>
+
+== Default structure sets ==
+{| class="wikitable collapsible"
+! Structure set
+! Structures
+! {{Tooltip|Separation|Minimum distance (in chunks) between two neighboring attempts}}
+! {{Tooltip|Spacing|Average distance (in chunks) between two neighboring attempts}}
+! Salt
+! Notes
+|-
+| <code>ancient_cities</code>
+| {{EnvLink|Ancient City}}
+| 8
+| 24
+| 20083232
+|
+|-
+| <code>buried_treasures</code>
+| {{EnvLink|Buried Treasure}}
+| 0
+| 1
+| 0
+| Probability of 1%, locate_offset of x:9, y:0, z:9
+|-
+| <code>desert_pyramids</code>
+| {{EnvLink|Desert Pyramid}}
+| 8
+| 32
+| 14357617
+|
+|-
+| <code>end_cities</code>
+| {{EnvLink|End City}}
+| 11
+| 20
+| 10387313
+|
+|-
+| <code>igloos</code>
+| {{EnvLink|Igloo}}
+| 8
+| 32
+| 14357618
+|
+|-
+| <code>jungle_temples</code>
+| {{EnvLink|Jungle Pyramid}}
+| 8
+| 32
+| 14357619
+|
+|-
+| <code>mineshafts</code>
+| {{EnvLink|Mineshaft}}<br/>{{EnvLink|Badlands Mineshaft|link=Mineshaft}}
+| 0
+| 1
+| 0
+| Probability of 0.4%
+|-
+| <code>nether_complexes</code>
+| 40% {{EnvLink|Nether Fortress}}<br/>60% {{EnvLink|Bastion Remnant}}
+| 4
+| 27
+| 30084232
+|
+|-
+| <code>nether_fossils</code>
+| {{EnvLink|Nether Fossil}}
+| 1
+| 2
+| 14357921
+|
+|-
+| <code>ocean_monuments</code>
+| {{EnvLink|Ocean Monument}}
+| 5
+| 32
+| 10387313
+| Triangular spread type
+|-
+| <code>ocean_ruins</code>
+| {{EnvLink|Ocean Ruin}}
+| 8
+| 20
+| 14357621
+|
+|-
+| <code>pillager_outposts</code>
+| {{EnvLink|Pillager Outpost}}
+| 8
+| 32
+| 165745296
+| Probability of 20%, exclusion zone of 10 chunks from any village
+|-
+| <code>ruined_portals</code>
+| {{EnvLink|Ruined Portal}}
+| 15
+| 40
+| 34222645
+|
+|-
+| <code>shipwrecks</code>
+| {{EnvLink|Shipwreck}}
+| 4
+| 24
+| 165745295
+|
+|-
+| <code>strongholds</code>
+| {{EnvLink|Stronghold}}
+|
+|
+| 0
+| Concentric rings distance=32 count=128 spread=3
+|-
+| <code>swamp_huts</code>
+| {{EnvLink|Swamp Hut}}
+| 8
+| 32
+| 14357620
+|
+|-
+| <code>trail_ruins</code>
+| {{EnvLink|Trail Ruins}}
+| 8
+| 34
+| 83469867
+|
+|-
+| <code>trial_chambers</code>
+| {{EnvLink|Trial Chambers}}
+| 12
+| 34
+| 94251327
+|
+|-
+| <code>villages</code>
+| {{EnvLink|Plains Village}}<br/>{{EnvLink|Desert Village}}<br/>{{EnvLink|Savanna Village}}<br/>{{EnvLink|Snowy Village}}<br/>{{EnvLink|Taiga Village}}
+| 8
+| 34
+| 10387312
+|
+|-
+|<code>woodland_mansions</code>
+| {{EnvLink|Woodland Mansion}}
+| 20
+| 80
+| 10387319
+| Triangular spread type
+|}
+
+== External links ==
+* [https://misode.github.io/worldgen/structure-set/ Structure set Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Konstruktionssammlung]]
+[[fr:Ensemble de structures]]
+[[pt:Conjunto de estruturas]]
+[[zh:结构集]]

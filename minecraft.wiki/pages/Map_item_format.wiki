@@ -1,0 +1,3602 @@
+[[Map]]s do not store their information in the item; instead, they save a map number in the [[Data component format#map id|minecraft:map_id]] component that corresponds to the map number (ID) of a saved file. Their information is placed in the "data" directory within the world's save directory.
+
+{{IN|JE}} each map has its own file associated with its ID, and there is one file that keeps track of the highest (most recently created) map ID.
+
+{{IN|BE}} each map can create 6 files, 1 associated with its original ID, 4 extra files that represent different scales of the map (which are stored as the <code>parentMapId</code>s), and another 1 extra file if the map was locked with a [[glass pane]].
+
+When used in [[the Nether]], maps render as a kind of static, making them unreadable.
+
+== Data folder structure ==
+{{IN|JE}}, the file [[#idcounts.dat_format|idcounts.dat]] contains the latest ID for current map. Each map's file name uses the format '''map_<#>.dat''', where <#> is the map's unique number.
+
+{{IN|BE}}, the map item files are contained in the mojang variant of the '''LevelDB''' file format. Each map's file name uses its own unique number, without using any prefix.
+
+== <samp>map_''<#>''.dat format</samp> (Java) ==
+'''map_''<#>''.dat''' files are GZip'd [[NBT format|NBT]] files.
+
+=== NBT structure ===
+<div class="treeview">
+*{{nbt|compound}} The root tag.
+**{{nbt|compound|data}}: The map data.
+***{{nbt|byte|scale}}: How zoomed in the map is (it is in 2<sup>scale</sup> wide blocks square per pixel, even for 0, where the map is 1:1). Default 3, minimum 0 and maximum 4.
+***{{nbt|string|dimension}}: For <1.16 (byte): 0 = The [[Overworld]], -1 = [[The Nether]], 1 = [[The End]], any other value = a static image with no player pin. In >=1.16 this is the resource location of a dimension instead. {{more info}}
+***{{nbt|byte|trackingPosition}}: 1 (default) indicates that a positional arrow should be shown when the map is near its center coords. 0 indicates that the position arrow should never be shown.
+***{{nbt|byte|unlimitedTracking}}: 1 allows the player position indicator to show as a smaller dot on the map's edge when the player is farther than 320 * (scale+1) blocks from the map's center. 0 makes the dot instead disappear when the player is farther than this distance. Defaults to 0 for maps created from an empty map and 1 for [[Explorer Map]]s.
+***{{nbt|byte|locked}}: 1 if the map has been locked in a [[cartography table]].
+***{{nbt|int|xCenter}}: Center of map according to real world by X.
+***{{nbt|int|zCenter}}: Center of map according to real world by Z.
+***{{nbt|list|banners}}: List of banner markers added to this map. May be empty.
+****{{nbt|compound}} A banner marker.
+*****{{nbt|string|Color}}: The color of the banner. Allowed values: <code>white</code>, <code>orange</code>, <code>magenta</code>, <code>light_blue</code>, <code>yellow</code>, <code>lime</code>, <code>pink</code>, <code>gray</code>, <code>light_gray</code>, <code>cyan</code>, <code>purple</code>, <code>blue</code>, <code>brown</code>, <code>green</code>, <code>red</code>, <code>black</code>.
+*****{{nbt|string|Name}}: The custom name of the banner, in JSON text. May not exist.
+*****{{nbt|compound|Pos}}: The block position of the banner in the world.
+******{{nbt|int|X}}: The x-position of the banner.
+******{{nbt|int|Y}}: The y-position of the banner.
+******{{nbt|int|Z}}: The z-position of the banner.
+***{{nbt|list|frames}}: List of map markers added to this map. May be empty.
+****{{nbt|compound}} A marker.
+*****{{nbt|int|EntityId}}: Arbitrary unique value for the marker.
+*****{{nbt|int|Rotation}}: The rotation of the marker, ranging from 0 to 360.
+*****{{nbt|compound|Pos}}: The block position of the marker in the world.
+******{{nbt|int|X}}: The x-position of the marker.
+******{{nbt|int|Y}}: The y-position of the marker.
+******{{nbt|int|Z}}: The z-position of the marker.
+***{{nbt|byte-array|colors}}: Width * Height array of color values ('''16384 entries''' for a default 128×128 map). Color can be accessed via the following method: colorID = Colors[widthOffset + heightOffset * width], where (widthOffset==0, heightOffset==0) is left upper point.
+**{{nbt|int|DataVersion}}: The version the map was created. If not present, defaults to 1343 ([[Java Edition 1.12.2|1.12.2]])
+</div>
+
+When this structure is loaded, Colors array is transformed to standard dimension (if it's necessary) and then structure is saved with standard height and width.
+
+== LevelDB format (Bedrock) ==
+
+=== NBT structure ===
+<div class="treeview">
+*{{nbt|compound}}: The root tag.
+**{{nbt|long|mapId}}: The Unique ID of the map.
+**{{nbt|long|parentMapId}}: The Unique ID's of the parent maps.
+**{{nbt|byte|dimension}}: 0 = The [[Overworld]], 1 = [[The Nether]], 2 = [[The End]], any other value = a static image with no player pin.
+**{{nbt|byte|fullyExplored}}: 1 if the map is full explored.
+**{{nbt|byte|mapLocked}}: 1 if the map has been locked in a [[cartography table]].
+**{{nbt|byte|scale}}: How zoomed in the map is, and must be a number between 0 and 4 (inclusive) that represent the level. Default 0. If this is changed in an [[anvil]] or a [[cartography table]], the Unique ID of the map changes.
+**{{nbt|byte|unlimitedTracking}}: Unknown. Default 0.
+**{{nbt|short|height}}: The height of the map. Is associated with the scale level.
+**{{nbt|short|width}} The width of the map. Is associated with the scale level.
+**{{nbt|int|xCenter}}: Center of the map according to real world by X.
+**{{nbt|int|zCenter}}: Center of the map according to real world by Z.
+**{{nbt|list|decorations}}: A list of optional icons to display on the map.
+***{{nbt|compound}}: An individual decoration.
+****{{nbt|compound|data}}
+*****{{nbt|int|rot}}: The rotation of the symbol, ranging from 0 to 15. South = 0, West = 4, North = 8, East = 12.
+*****{{nbt|int|type}}: The ID of the [[Map icons.png|map icon]] to display.
+*****{{nbt|int|x}}: The horizontal column (x) where the decoration is located on the map (per pixel).
+*****{{nbt|int|y}}: The vertical column (y) where the decoration is located on the map (per pixel).
+****{{nbt|compound|key}}
+*****{{nbt|int|blockX}}: The world x-position of the decoration.
+*****{{nbt|int|blockY}}: The world y-position of the decoration.
+*****{{nbt|int|blockZ}}: The world z-position of the decoration.
+*****{{nbt|int|type}}: Unknown.
+**{{nbt|byte-array|colors}}: An array of bytes that represent color values ('''65536 entries''' for a default 128×128 map), each pixel is represented as 4 bytes (r,g,b,a), colors can be accessed with rgba = colors.slice((xOffset + yOffset * 128) * 4, (xOffset + yOffset * 128 + 1) * 4).
+</div>
+
+== <samp>idcounts.dat</samp> format ==
+The <samp>idcounts.dat</samp> file keeps track of the latest map added. It is stored as a Gzip'd [[NBT format|NBT]] file.
+
+=== NBT structure ===
+<div class="treeview">
+*{{nbt|compound}} The root tag.
+**{{nbt|compound|data}}
+***{{nbt|int|map}}: Latest map ID.
+**{{nbt|int|DataVersion}}: [[Data version]]
+</div>
+
+== Color table ==
+Maps use a color table to store the colors efficiently by ID.
+
+=== Base colors ===
+<!--
+{| class="wikitable"
+|-
+|{{DataChecked|java|1.21.5}}
+|2025
+|-
+|{{DataChecked|snapshot|1.21.5}}
+|2025
+|-
+|}
+-->
+Blocks are colored according to their material. Each material has a base color that is multiplied by 135, 180, 220 or 255, and then divided by 255 to make the map color. Each base color below is associated with four map colors&mdash;to get the first map color ID for a base color, multiply the base color ID by 4. (Note: ID 0 has 4 gradients of itself despite them all being transparent.)
+{{/header|
+{{/entry
+| id = 0 NONE
+| blocks = [[air]], [[void air]], [[cave air]], [[barrier]], [[cake]] (including cake with [[candle]]s), [[powered rail]], [[detector rail]], [[torch]]es, [[redstone wire]], [[ladder]], [[rail]], [[lever]], [[button]]s, [[repeater]], [[tripwire hook]], [[tripwire]], [[flower pot]] (including potted plants), [[head]], [[comparator]], [[activator rail]], [[End rod]], [[glass]], [[glass pane]], [[Nether portal]], [[stained glass pane]] (all colors), [[structure void]], [[iron bars]], [[iron chain]], [[light block]], [[pink petals]]{{only|be|short=1}}, [[pointed dripstone]]{{only|be|short=1}}, [[redstone lamp]]{{only|be|short=1}}, [[test instance block]]{{only|je|short=1}}
+}}
+
+{{/entry
+| id = 1 GRASS
+| rgb = 127, 178, 56
+| blocks = [[grass block]], [[slime block]]
+}}
+
+{{/entry
+| id = 2 SAND
+| rgb = 247, 233, 163
+| blocks = [[sand]], [[suspicious sand]], birch ([[planks]], [[log]] (vertical), [[stripped log]], [[wood]], [[stripped wood]], [[sign]], [[pressure plate]], [[trapdoor]], [[stairs]], [[slab]], [[fence gate]], [[fence]], [[door]]), [[sandstone]] (all variants, all slabs, all stairs, all walls), [[glowstone]], [[End stone]], [[End stone bricks]] (slab, stairs, wall), [[bone block]], [[turtle egg]], [[scaffolding]], [[candle]], ochre [[froglight]], [[frogspawn]]
+}}
+
+{{/entry
+| id = 3 WOOL
+| rgb = 199, 199, 199
+| blocks = [[cobweb]], [[mushroom stem]], [[bed]] (head), [[white candle]]
+}}
+
+{{/entry
+| id = 4 FIRE
+| rgb = 255, 0, 0
+| blocks = [[lava]], [[TNT]], [[fire]], [[redstone block]]
+}}
+
+{{/entry
+| id = 5 ICE
+| rgb = 160, 160, 255
+| blocks = [[ice]], [[frosted ice]], [[packed ice]], [[blue ice]]
+}}
+
+{{/entry
+| id = 6 METAL
+| rgb = 167, 167, 167
+| blocks = [[block of iron]], [[iron door]], [[brewing stand]], [[heavy weighted pressure plate]], [[iron trapdoor]], [[lantern]], [[anvil]] (all damage levels), [[grindstone]], [[lodestone]], [[heavy core]]{{only|je|short=1}}, [[pale oak leaves]], [[pale oak sapling]], [[copper trapdoor]]{{only|be|short=1}} (including waxed and exposed/weathered variations), [[closed eyeblossom]]
+}}
+
+{{/entry
+| id = 7 PLANT
+| rgb = 0, 124, 0
+| blocks = [[sapling]], [[flower]]s, [[wheat]] (ages 0-5), [[sugar cane]], [[pumpkin stem]], [[melon stem]], [[lily pad]], [[cocoa]], [[carrots]], [[potatoes]], [[beetroots]], [[sweet berry bush]], [[short grass]]{{only|je|short=1}}, [[tall grass]], [[fern]]{{only|je|short=1}}, [[large fern]], [[vines]]{{only|je|short=1}}, [[leaves]]{{only|je|short=1}} (except [[pale oak leaves]], [[cherry leaves]]), [[cactus]], [[bamboo]], [[cave vines]], [[spore blossom]], (flowering) [[azalea]], [[dripleaf]] (big and small), [[pink petals]]{{only|je|short=1}}, [[wildflowers]], [[bush]], [[torchflower seeds]], [[pitcher pod]], [[hanging roots]]{{only|be|short=1}}
+}}
+
+{{/entry
+| id = 8 SNOW
+| rgb = 255, 255, 255
+| blocks = [[snow]], [[snow block]], white ([[bed]] (foot), [[wool]], [[stained glass]], [[carpet]], [[shulker box]], [[glazed terracotta]], [[concrete]], [[concrete powder]]), [[powder snow]], [[lodestone]]{{only|be|short=1}}
+}}
+
+{{/entry
+| id = 9 CLAY
+| rgb = 164, 168, 184
+| blocks = [[clay]], [[infested block]] (all varieties), [[heavy core]]{{only|be|short=1}}
+}}
+
+{{/entry
+| id = 10 DIRT
+| rgb = 151, 109, 77
+| blocks = [[dirt]], [[coarse dirt]], [[farmland]], [[dirt path]], [[granite]] (slab, stairs, wall), [[polished granite]] (slab, stairs), jungle ([[planks]], [[log]] (vertical), [[stripped log]], [[wood]], [[stripped wood]], [[sign]], [[pressure plate]], [[trapdoor]], [[stairs]], [[slab]], [[fence gate]], [[fence]], [[door]]), [[jukebox]], [[brown mushroom block]], [[rooted dirt]], [[hanging roots]]{{only|je|short=1}}, [[packed mud]]
+}}
+
+{{/entry
+| id = 11 STONE
+| rgb = 112, 112, 112
+| blocks = [[stone]] ([[slab]], [[stairs]]), [[andesite]] (slab, stairs, wall), [[polished andesite]] (slab, stairs), [[cobblestone]] (slab, stairs, wall), [[bedrock]], [[gold ore]], [[iron ore]], [[coal ore]], [[lapis lazuli ore]], [[dispenser]], [[mossy cobblestone]] (slab, stairs, wall), [[monster spawner]], [[diamond ore]], [[furnace]], [[stone pressure plate]], [[redstone ore]], [[stone bricks]] (all variants, all slabs, all stairs, all walls), [[emerald ore]], [[ender chest]], [[dropper]], [[smooth stone]] (slab), [[observer]], [[smoker]], [[blast furnace]], [[stonecutter]], [[sticky piston]], [[piston]], [[piston head]], [[gravel]], [[suspicious gravel]], acacia [[log]] (side), [[cauldron]] (including cauldrons with [[water]], [[lava]], or [[powder snow]]), [[hopper]], [[copper ore]], [[crafter]], [[vault]], [[trial spawner]], pale oak [[wood]], pale oak [[log]] (side), [[infested block]]{{only|be|short=1}} (not including infested [[deepslate]]), [[heavy core]]
+}}
+
+{{/entry
+| id = 12 WATER
+| rgb = 64, 64, 255
+| blocks = [[kelp]], [[seagrass]], [[water]], [[bubble column]], waterlogged [[leaves]]
+}}
+
+{{/entry
+| id = 13 WOOD
+| rgb = 143, 119, 72
+| blocks = oak ([[planks]], [[log]] (vertical), [[stripped log]], [[wood]], [[stripped wood]], [[sign]], [[door]], [[pressure plate]], [[fence]], [[trapdoor]], [[fence gate]], [[slab]], [[stairs]]), [[note block]], [[bookshelf]], [[chiseled bookshelf]], [[chest]], [[crafting table]], [[trapped chest]], [[daylight detector]], [[loom]], [[barrel]], [[cartography table]], [[fletching table]], [[lectern]], [[smithing table]], [[composter]], [[bamboo sapling]], [[dead bush]], [[petrified oak slab]], [[beehive]], [[banner]]s (all colors, when not as markers)
+}}
+
+{{/entry
+| id = 14 QUARTZ
+| rgb = 255, 252, 245
+| blocks = [[diorite]] (stairs, slab, wall), [[polished diorite]] (stairs, slab), birch [[log]] (side), [[quartz block]] (all variants, all slabs, all stairs), [[sea lantern]], [[target]], pale oak ([[planks]], [[log]] (vertical), [[stripped log]], [[stripped wood]], [[sign]], [[pressure plate]], [[trapdoor]], [[stairs]], [[slab]], [[fence gate]], [[fence]], [[door]])
+}}
+
+{{/entry
+| id = 15 COLOR_ORANGE
+| rgb = 216, 127, 51
+| blocks = acacia ([[planks]], [[log]] (vertical), [[stripped log]], [[stripped wood]]{{only|je|short=1}}, [[sign]], [[trapdoor]], [[slab]], [[stairs]], [[pressure plate]], [[fence gate]], [[fence]], [[door]]), [[red sand]], orange ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[pumpkin]], [[carved pumpkin]], [[jack o'lantern]], [[terracotta]], [[red sandstone]] (all variants, all stairs, all slabs, all walls), [[honey block]], [[honeycomb block]], [[block of copper]] (including all cut, waxed, stair, trapdoor{{only|je|short=1}}, and slab variants), [[lightning rod]], [[block of raw copper]], [[creaking heart]] (all orientations, active & inactive), [[open eyeblossom]]
+}}
+
+{{/entry
+| id = 16 COLOR_MAGENTA
+| rgb = 178, 76, 216
+| blocks = magenta ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[purpur]] (all variants, slab, stairs)
+}}
+
+{{/entry
+| id = 17 COLOR_LIGHT_BLUE
+| rgb = 102, 153, 216
+| blocks = light blue ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[soul fire]]
+}}
+
+{{/entry
+| id = 18 COLOR_YELLOW
+| rgb = 229, 229, 51
+| blocks = yellow ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), bamboo ([[planks]], [[stripped]], [[sign]], [[door]], [[pressure plate]], [[fence]], [[trapdoor]], [[fence gate]], [[slab]], [[stairs]]), [[bamboo mosaic]] ([[slab]], [[stairs]]), [[sponge]], [[wet sponge]], [[hay bale]], horn coral ([[coral block]], [[coral]]{{only|je|short=1}}, [[coral fan]]{{only|je|short=1}}), [[bee nest]], [[short dry grass]], [[tall dry grass]], [[wheat]] (ages 6,7)
+}}
+
+{{/entry
+| id = 19 COLOR_LIGHT_GREEN
+| rgb = 127, 204, 25
+| blocks = lime ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[melon]]
+}}
+
+{{/entry
+| id = 20 COLOR_PINK
+| rgb = 242, 127, 165
+| blocks = pink ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), brain coral ([[coral block]], [[coral]]{{only|je|short=1}}, [[coral fan]]{{only|je|short=1}}), pearlescent [[froglight]], [[cherry leaves]], [[cherry sapling]], [[cactus flower]]
+}}
+
+{{/entry
+| id = 21 COLOR_GRAY
+| rgb = 76, 76, 76
+| blocks = gray ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), acacia ([[wood]], [[stripped wood]]{{only|be|short=1}}), dead coral ([[coral block]], [[coral]], [[coral fan]]), [[tinted glass]], [[dried ghast]]
+}}
+
+{{/entry
+| id = 22 COLOR_LIGHT_GRAY
+| rgb = 153, 153, 153
+| blocks = light gray ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[structure block]], [[jigsaw block]], [[pale moss carpet]], [[pale moss block]], [[test block]]{{only|je|short=1}}
+}}
+
+{{/entry
+| id = 23 COLOR_CYAN
+| rgb = 76, 127, 153
+| blocks = cyan ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[prismarine]] (slab, stairs, wall), warped ([[warped roots|roots]], [[Nether fungus]]), [[twisting vines]], [[Nether sprouts]], [[sculk sensor]]{{only|je|short=1}}, [[calibrated sculk sensor]], warped ([[pressure plate]]{{only|be|short=1}}, [[sign]]{{only|be|short=1}}, [[slab]]{{only|be|short=1}}, [[trapdoor]]{{only|be|short=1}}, [[fence]]{{only|be|short=1}})
+}}
+
+{{/entry
+| id = 24 COLOR_PURPLE
+| rgb = 127, 63, 178
+| blocks = [[shulker box]], purple ([[wool]], [[carpet]], [[shulker box]],{{only|be|short=1}} [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[mycelium]], [[chorus plant]], [[chorus flower]], [[repeating command block]], bubble coral ([[coral block]], [[coral]]{{only|je|short=1}}, [[coral fan]]{{only|je|short=1}}), [[amethyst block]], [[budding amethyst]], [[amethyst cluster]], [[amethyst bud]] (all sizes)
+}}
+
+{{/entry
+| id = 25 COLOR_BLUE
+| rgb = 51, 76, 178
+| blocks = blue ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), tube coral ([[coral block]], [[coral]],{{only|je|short=1}} [[coral fan]]{{only|je|short=1}})
+}}
+
+{{/entry
+| id = 26 COLOR_BROWN
+| rgb = 102, 76, 51
+| blocks = brown ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), dark oak ([[planks]], [[log]], [[stripped log]], [[wood]], [[stripped wood]], [[sign]], [[pressure plate]], [[trapdoor]], [[stairs]], [[slab]], [[fence gate]], [[fence]], [[door]]), spruce ([[log]] (side)), [[soul sand]], [[command block]], [[brown mushroom]], [[soul soil]], [[leaf litter]]
+}}
+
+{{/entry
+| id = 27 COLOR_GREEN
+| rgb = 102, 127, 51
+| blocks = green ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[End portal frame]], [[chain command block]], [[sea pickle]], [[moss carpet]], [[moss block]], [[dried kelp block]]
+}}
+
+{{/entry
+| id = 28 COLOR_RED
+| rgb = 153, 51, 51
+| blocks = red ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[bricks]] (slab, stairs, wall), [[red mushroom block]], [[Nether wart]], [[enchanting table]], [[Nether wart block]], fire coral ([[coral block]], [[coral]]{{only|je|short=1}}, [[coral fan]]{{only|je|short=1}}), [[red mushroom]], [[shroomlight]], mangrove ([[planks]], [[log]] (vertical), [[stripped log]], [[wood]], [[stripped wood]], [[sign]], [[door]], [[pressure plate]], [[fence]], [[trapdoor]], [[fence gate]], [[slab]], [[stairs]]), [[sniffer egg]]
+}}
+
+{{/entry
+| id = 29 COLOR_BLACK
+| rgb = 25, 25, 25
+| blocks = black ([[wool]], [[carpet]], [[shulker box]], [[bed]] (foot), [[stained glass]], [[glazed terracotta]], [[concrete]], [[concrete powder]], [[candle]]), [[obsidian]], [[End portal]], [[dragon egg]], [[block of coal]], [[End gateway]], [[basalt]], [[polished basalt]], [[smooth basalt]], [[block of netherite]], [[ancient debris]], [[crying obsidian]], [[respawn anchor]], [[blackstone]] (all variants, all stairs, all slabs, all walls), [[gilded blackstone]], [[sculk]], [[sculk vein]], [[sculk catalyst]], [[sculk shrieker]], [[sculk sensor]]{{only|be|short=1}}
+}}
+
+{{/entry
+| id = 30 GOLD
+| rgb = 250, 238, 77
+| blocks = [[block of gold]], [[light weighted pressure plate]], [[bell]], [[block of raw gold]]
+}}
+
+{{/entry
+| id = 31 DIAMOND
+| rgb = 92, 219, 213
+| blocks = [[block of diamond]], [[beacon]], [[prismarine bricks]] (slab, stairs), [[dark prismarine]] (slab, stairs), [[conduit]]
+}}
+
+{{/entry
+| id = 32 LAPIS
+| rgb = 74, 128, 255
+| blocks = [[block of lapis lazuli]]
+}}
+
+{{/entry
+| id = 33 EMERALD
+| rgb = 0, 217, 58
+| blocks = [[block of emerald]]
+}}
+
+{{/entry
+| id = 34 PODZOL
+| rgb = 129, 86, 49
+| blocks = [[podzol]], spruce ([[planks]], [[log]] (vertical), [[stripped log]], [[wood]], [[stripped wood]], [[sign]], [[pressure plate]], [[trapdoor]], [[stairs]], [[slab]], [[fence gate]], [[fence]], [[door]]), oak [[log]] (side), jungle [[log]] (side), [[campfire]], [[soul campfire]], mangrove [[log]] (side), [[mangrove roots]], [[muddy mangrove roots]]
+}}
+
+{{/entry
+| id = 35 NETHER
+| rgb = 112, 2, 0
+| blocks = [[netherrack]], [[Nether bricks]] (fence, slab, stairs, wall, chiseled, cracked), [[Nether gold ore]], [[Nether quartz ore]], [[magma block]], [[red Nether bricks]] (slab, stairs, wall), crimson ([[crimson roots|roots]], [[Nether fungus]]), [[weeping vines]], crimson ([[pressure plate]]{{only|be|short=1}}, [[sign]]{{only|be|short=1}}, [[slab]]{{only|be|short=1}}, [[trapdoor]]{{only|be|short=1}}, [[fence]]{{only|be|short=1}})
+}}
+
+{{/entry
+| id = 36 TERRACOTTA_WHITE
+| rgb = 209, 177, 161
+| blocks = white [[terracotta]], [[calcite]], cherry ([[planks]], [[log]] (vertical), [[stripped log]] (vertical), [[sign]], [[pressure plate]], [[trapdoor]], [[stairs]], [[slab]], [[fence gate]], [[fence]], [[door]])
+}}
+
+{{/entry
+| id = 37 TERRACOTTA_ORANGE
+| rgb = 159, 82, 36
+| blocks = orange [[terracotta]], [[redstone lamp]]{{only|je|short=1}}, [[resin bricks]] (fence, slab, stairs, wall, chiseled), [[block of resin]], [[resin clump]]
+}}
+
+{{/entry
+| id = 38 TERRACOTTA_MAGENTA
+| rgb = 149, 87, 108
+| blocks = magenta [[terracotta]]
+}}
+
+{{/entry
+| id = 39 TERRACOTTA_LIGHT_BLUE
+| rgb = 112, 108, 138
+| blocks = light blue [[terracotta]]
+}}
+
+{{/entry
+| id = 40 TERRACOTTA_YELLOW
+| rgb = 186, 133, 36
+| blocks = yellow [[terracotta]]
+}}
+
+{{/entry
+| id = 41 TERRACOTTA_LIGHT_GREEN
+| rgb = 103, 117, 53
+| blocks = lime [[terracotta]]
+}}
+
+{{/entry
+| id = 42 TERRACOTTA_PINK
+| rgb = 160, 77, 78
+| blocks = pink [[terracotta]], cherry ([[stripped log]] (side), [[stripped wood]])
+}}
+
+{{/entry
+| id = 43 TERRACOTTA_GRAY
+| rgb = 57, 41, 35
+| blocks = gray [[terracotta]], [[cherry log]] (side), [[cherry wood]], [[tuff]] (all variants, all slabs, all stairs, all walls)
+}}
+
+{{/entry
+| id = 44 TERRACOTTA_LIGHT_GRAY
+| rgb = 135, 107, 98
+| blocks = light gray [[terracotta]], exposed [[copper]] (including all cut, waxed, stair, trapdoor{{only|je|short=1}} and slab variants), [[mud bricks]] (slab, stairs, wall)
+}}
+
+{{/entry
+| id = 45 TERRACOTTA_CYAN
+| rgb = 87, 92, 92
+| blocks = cyan [[terracotta]], [[mud]]
+}}
+
+{{/entry
+| id = 46 TERRACOTTA_PURPLE
+| rgb = 122, 73, 88
+| blocks = purple ([[terracotta]], [[shulker box]]{{only|je|short=1}})
+}}
+
+{{/entry
+| id = 47 TERRACOTTA_BLUE
+| rgb = 76, 62, 92
+| blocks = blue [[terracotta]]
+}}
+
+{{/entry
+| id = 48 TERRACOTTA_BROWN
+| rgb = 76, 50, 35
+| blocks = brown [[terracotta]], [[pointed dripstone]],{{only|je|short=1}} [[dripstone block]]
+}}
+
+{{/entry
+| id = 49 TERRACOTTA_GREEN
+| rgb = 76, 82, 42
+| blocks = green [[terracotta]]
+}}
+
+{{/entry
+| id = 50 TERRACOTTA_RED
+| rgb = 142, 60, 46
+| blocks = red [[terracotta]], [[decorated pot]]
+}}
+
+{{/entry
+| id = 51 TERRACOTTA_BLACK
+| rgb = 37, 22, 16
+| blocks = black [[terracotta]]
+}}
+
+{{/entry
+| id = 52 CRIMSON_NYLIUM
+| rgb = 189, 48, 49
+| blocks = crimson [[nylium]]
+}}
+
+{{/entry
+| id = 53 CRIMSON_STEM
+| rgb = 148, 63, 97
+| blocks = crimson ([[door]], [[stairs]], [[log|stem]], [[stripped stem]], [[fence gate]], [[planks]], [[pressure plate]]{{only|je|short=1}}, [[sign]]{{only|je|short=1}}, [[slab]]{{only|je|short=1}}, [[trapdoor]]{{only|je|short=1}}, [[fence]]{{only|je|short=1}})
+}}
+
+{{/entry
+| id = 54 CRIMSON_HYPHAE
+| rgb = 92, 25, 29
+| blocks = crimson ([[hyphae]], [[stripped hyphae]])
+}}
+
+{{/entry
+| id = 55 WARPED_NYLIUM
+| rgb = 22, 126, 134
+| blocks = warped [[nylium]], oxidized [[copper]] (including all cut, waxed, stair, trapdoor{{only|je|short=1}}, and slab variants)
+}}
+
+{{/entry
+| id = 56 WARPED_STEM
+| rgb = 58, 142, 140
+| blocks = warped ([[door]], [[stairs]], [[log|stem]], [[stripped stem]], [[fence gate]], [[planks]], [[pressure plate]],{{only|je|short=1}} [[sign]]{{only|je|short=1}}, [[slab]]{{only|je|short=1}}, [[trapdoor]]{{only|je|short=1}}, [[fence]]{{only|je|short=1}}), weathered [[copper]] (including all cut, waxed, stair, trapdoor{{only|je|short=1}}, and slab variants)
+}}
+
+{{/entry
+| id = 57 WARPED_HYPHAE
+| rgb = 86, 44, 62
+| blocks = warped ([[hyphae]], [[stripped hyphae]])
+}}
+
+{{/entry
+| id = 58 WARPED_WART_BLOCK
+| rgb = 20, 180, 133
+| blocks = [[warped wart block]]
+}}
+
+{{/entry
+| id = 59 DEEPSLATE
+| rgb = 100, 100, 100
+| blocks = deepslate ([[gold ore]], [[iron ore]], [[coal ore]], [[lapis ore]], [[diamond ore]], [[redstone ore]], [[emerald ore]], [[copper ore]]), [[deepslate]] (all variants, all stairs, all slabs, and all walls), [[infested block|infested]] deepslate, [[reinforced deepslate]]
+}}
+
+{{/entry
+| id = 60 RAW_IRON
+| rgb = 216, 175, 147
+| blocks = [[block of raw iron]]
+}}
+
+{{/entry
+| id = 61 GLOW_LICHEN
+| rgb = 127, 167, 150
+| blocks = [[glow lichen]], verdant [[froglight]]
+}}
+}}
+
+=== Tints ===
+{{for|tints in ingame rendering|Color#Biome colors}}
+In [[Bedrock Edition]] maps, certain blocks lack their own color and instead are assigned a color based on biome. These blocks are categorized by tint, with all blocks in a given tint sharing the same color within a biome.
+==== Foliage ====
+*{{BlockLink|Oak Leaves}}
+*{{BlockLink|Jungle Leaves}}
+*{{BlockLink|Acacia Leaves}}
+*{{BlockLink|Dark Oak Leaves}}
+*{{BlockLink|Mangrove Leaves}}
+*{{BlockLink|Vines}}
+
+==== Grass ====
+*{{BlockLink|Grass Block}}
+*{{BlockLink|Short Grass}} (note {{BlockLink|Tall Grass}} is not included)
+*{{BlockLink|Fern}} (note {{BlockLink|Large Fern}} is not included)
+*[[Coral]]s and [[Coral Fan]]s
+
+==== Water ====
+*{{BlockLink|Water}}
+
+=== Map colors ===
+Each base color above has 4 associated map colors below. The conversion works by multiplying each of the red, green, and blue values by a value and then dividing by 255, finally rounding down to a whole number. As of [[Java Edition 1.8.1-pre1|1.8.1-pre1]], the fourth base color variant is now multiplied by 135, providing a darker set of colors rather than just a clone of the second base color variant.
+{| class="wikitable" data-description="Map colors"
+|-
+! Map Color ID
+!Multiply R,G,B By
+!= Multiplier 
+|-
+| Base Color ID&times;4 + 0
+|180
+|{{#expr:180/255 round 2}} 
+|-
+| Base Color ID&times;4 + 1
+|220
+|{{#expr:220/255 round 2}} 
+|-
+| Base Color ID&times;4 + 2
+| 255 (same color)
+|{{#expr:255/255 round 2}} 
+|-
+| Base Color ID&times;4 + 3
+|135
+|{{#expr:135/255 round 2}}
+|}
+[[File:Map colors.png|alt=|none|thumb|912x912px|All the different shades of each color]]
+[[File:Map colors oklab organized.png|alt=All map colors and shades organized from black to white in Oklab with the index number below each set.|thumb|width=912x912|All map colors and shades organized from black to white in Oklab with the index number below each set.|none]]
+
+
+=== Map pixel art ===
+
+[[File:Map Pixel Art Train.jpg|350px|thumb|right|Redstonehelper uses the staircase method in survival]]
+
+People have used the map to create pixel art. The default map has an image size of 128×128 and reads each block as a specific color. By placing blocks in a specific arrangement, it is possible to create pixel art images. Constructing the image covers a square area 8 chunks on a side, and requires 16,384 blocks (256 stacks worth) not counting any support blocks.
+
+Two methods exist for creating map pixel art: flat and staircase. The flat method involves laying the pixel image across a flat surface, effectively creating a floor. The flat method is the easier of the two methods, but offers a smaller palette of only 61 colors. The staircase method offers 183 colors, but is much more complicated to use. In the staircase method, blocks are placed at different elevations to obtain specific color variations. A block's color is darker if placed at a lower elevation than the block north of it, or brighter if placed at a higher elevation than the block north of it. (This is a case of the mapping convention of [[Wikipedia:Top-left lighting|top lighting]].)
+
+With the flat method, the 2nd shade of each color group on the lists below can be used. For the staircase method, the first 3 shades of the color groups below can be used. The 4th shade can be obtained only with the use of an external tool.
+<!-- === 1.13 Color Table === -->
+
+=== Full color tables ===
+{{msgbox
+| class = msgbox-yellow
+| mini = 1
+| title = The content of this section is disputed.
+| text = The color IDs for 1.7.2, 1.8.1, and 1.12 appear incompatible with each other, which conflicts with third-party code samples.
+}}
+
+{{/header|caption=1.12 Color Table (Map color ID)|class=collapsible collapsed|
+{{/entry
+| id = 0
+| rgb = Transparent
+| blocks = Unexplored
+}}
+{{/entry
+| id = 1
+| rgb = Transparent
+| blocks = Unexplored
+}}
+{{/entry
+| id = 2
+| rgb = Transparent
+| blocks = Unexplored
+}}
+{{/entry
+| id = 3
+| rgb = Transparent
+| blocks = Unexplored
+}}
+{{/entry
+| id = 4
+| rgb = 89, 125, 39
+| blocks = Grass Block, Slime Block
+}}
+{{/entry
+| id = 5
+| rgb = 109, 153, 48
+| blocks = Grass Block, Slime Block
+}}
+{{/entry
+| id = 6
+| rgb = 127, 178, 56
+| blocks = Grass Block, Slime Block
+}}
+{{/entry
+| id = 7
+| rgb = 67, 94, 29
+| blocks = Grass Block, Slime Block
+}}
+{{/entry
+| id = 8
+| rgb = 174, 164, 115
+| blocks = Sand, Sandstone (plain, Smooth, Chiseled, Stairs, Slab), Birch Wood (vertical Log, Planks, Stairs, Slab), Mushroom Block with pores texture facing up, Bone Block, Glowstone, End Stone, End Stone Bricks, Birch Wood (Door, Fence, Fence Gate)
+}}
+{{/entry
+| id = 9
+| rgb = 213, 201, 140
+| blocks = Sand, Sandstone (plain, Smooth, Chiseled, Stairs, Slab), Birch Wood (vertical Log, Planks, Stairs, Slab), Mushroom Block with pores texture facing up, Bone Block, Glowstone, End Stone, End Stone Bricks, Birch Wood (Door, Fence, Fence Gate)
+}}
+{{/entry
+| id = 10
+| rgb = 247, 233, 163
+| blocks = Sand, Sandstone (plain, Smooth, Chiseled, Stairs, Slab), Birch Wood (vertical Log, Planks, Stairs, Slab), Mushroom Block with pores texture facing up, Bone Block, Glowstone, End Stone, End Stone Bricks, Birch Wood (Door, Fence, Fence Gate)
+}}
+{{/entry
+| id = 11
+| rgb = 130, 123, 86
+| blocks = Sand, Sandstone (plain, Smooth, Chiseled, Stairs, Slab), Birch Wood (vertical Log, Planks, Stairs, Slab), Mushroom Block with pores texture facing up, Bone Block, Glowstone, End Stone, End Stone Bricks, Birch Wood (Door, Fence, Fence Gate)
+}}
+{{/entry
+| id = 12
+| rgb = 140, 140, 140
+| blocks = Mushroom Block with stem texture facing up, Cobweb, Bed head
+}}
+{{/entry
+| id = 13
+| rgb = 171, 171, 171
+| blocks = Mushroom Block with stem texture facing up, Cobweb, Bed head
+}}
+{{/entry
+| id = 14
+| rgb = 199, 199, 199
+| blocks = Mushroom Block with stem texture facing up, Cobweb, Bed head
+}}
+{{/entry
+| id = 15
+| rgb = 105, 105, 105
+| blocks = Mushroom Block with stem texture facing up, Cobweb, Bed head
+}}
+{{/entry
+| id = 16
+| rgb = 180, 0, 0
+| blocks = TNT, Block of Redstone, Lava, Fire
+}}
+{{/entry
+| id = 17
+| rgb = 220, 0, 0
+| blocks = TNT, Block of Redstone, Lava, Fire
+}}
+{{/entry
+| id = 18
+| rgb = 255, 0, 0
+| blocks = TNT, Block of Redstone, Lava, Fire
+}}
+{{/entry
+| id = 19
+| rgb = 135, 0, 0
+| blocks = TNT, Block of Redstone, Lava, Fire
+}}
+{{/entry
+| id = 20
+| rgb = 112, 112, 180
+| blocks = Ice, Frosted Ice, Packed Ice
+}}
+{{/entry
+| id = 21
+| rgb = 138, 138, 220
+| blocks = Ice, Frosted Ice, Packed Ice
+}}
+{{/entry
+| id = 22
+| rgb = 160, 160, 255
+| blocks = Ice, Frosted Ice, Packed Ice
+}}
+{{/entry
+| id = 23
+| rgb = 84, 84, 135
+| blocks = Ice, Frosted Ice, Packed Ice
+}}
+{{/entry
+| id = 24
+| rgb = 117, 117, 117
+| blocks = Block of Iron, Iron Door, Iron Trapdoor, Iron Bars, Weighted Pressure Plate (Heavy), Anvil, Brewing Stand
+}}
+{{/entry
+| id = 25
+| rgb = 144, 144, 144
+| blocks = Block of Iron, Iron Door, Iron Trapdoor, Iron Bars, Weighted Pressure Plate (Heavy), Anvil, Brewing Stand
+}}
+{{/entry
+| id = 26
+| rgb = 167, 167, 167
+| blocks = Block of Iron, Iron Door, Iron Trapdoor, Iron Bars, Weighted Pressure Plate (Heavy), Anvil, Brewing Stand
+}}
+{{/entry
+| id = 27
+| rgb = 88, 88, 88
+| blocks = Block of Iron, Iron Door, Iron Trapdoor, Iron Bars, Weighted Pressure Plate (Heavy), Anvil, Brewing Stand
+}}
+{{/entry
+| id = 28
+| rgb = 0, 87, 0
+| blocks = Leaves, Sapling, Tall Grass, Flower, Lily Pad, Wheat, Carrots, Potatoes, Beetroots, Sugar Canes, Pumpkin Stem, Melon Stem, Cactus, Vines, Cocoa, small red or brown Mushroom
+}}
+{{/entry
+| id = 29
+| rgb = 0, 106, 0
+| blocks = Leaves, Sapling, Tall Grass, Flower, Lily Pad, Wheat, Carrots, Potatoes, Beetroots, Sugar Canes, Pumpkin Stem, Melon Stem, Cactus, Vines, Cocoa, small red or brown Mushroom
+}}
+{{/entry
+| id = 30
+| rgb = 0, 124, 0
+| blocks = Leaves, Sapling, Tall Grass, Flower, Lily Pad, Wheat, Carrots, Potatoes, Beetroots, Sugar Canes, Pumpkin Stem, Melon Stem, Cactus, Vines, Cocoa, small red or brown Mushroom
+}}
+{{/entry
+| id = 31
+| rgb = 0, 65, 0
+| blocks = Leaves, Sapling, Tall Grass, Flower, Lily Pad, Wheat, Carrots, Potatoes, Beetroots, Sugar Canes, Pumpkin Stem, Melon Stem, Cactus, Vines, Cocoa, small red or brown Mushroom
+}}
+{{/entry
+| id = 32
+| rgb = 180, 180, 180
+| blocks = White Wool, Snow Block, Snow Layer, White Carpet, White Stained Glass, White Stained Glass Pane, White Bed foot, White Glazed Terracotta, White Concrete, White Concrete Powder
+}}
+{{/entry
+| id = 33
+| rgb = 220, 220, 220
+| blocks = White Wool, Snow Block, Snow Layer, White Carpet, White Stained Glass, White Stained Glass Pane, White Bed foot, White Glazed Terracotta, White Concrete, White Concrete Powder
+}}
+{{/entry
+| id = 34
+| rgb = 255, 255, 255
+| blocks = White Wool, Snow Block, Snow Layer, White Carpet, White Stained Glass, White Stained Glass Pane, White Bed foot, White Glazed Terracotta, White Concrete, White Concrete Powder
+}}
+{{/entry
+| id = 35
+| rgb = 135, 135, 135
+| blocks = White Wool, Snow Block, Snow Layer, White Carpet, White Stained Glass, White Stained Glass Pane, White Bed foot, White Glazed Terracotta, White Concrete, White Concrete Powder
+}}
+{{/entry
+| id = 36
+| rgb = 115, 118, 129
+| blocks = Clay, Infested Block (Stone, Cobblestone, Stone Brick, Mossy Stone Brick, Cracked Stone Brick, Chiseled Stone Brick)
+}}
+{{/entry
+| id = 37
+| rgb = 141, 144, 158
+| blocks = Clay, Infested Block (Stone, Cobblestone, Stone Brick, Mossy Stone Brick, Cracked Stone Brick, Chiseled Stone Brick)
+}}
+{{/entry
+| id = 38
+| rgb = 164, 168, 184
+| blocks = Clay, Infested Block (Stone, Cobblestone, Stone Brick, Mossy Stone Brick, Cracked Stone Brick, Chiseled Stone Brick)
+}}
+{{/entry
+| id = 39
+| rgb = 86, 88, 97
+| blocks = Clay, Infested Block (Stone, Cobblestone, Stone Brick, Mossy Stone Brick, Cracked Stone Brick, Chiseled Stone Brick)
+}}
+{{/entry
+| id = 40
+| rgb = 106, 76, 54
+| blocks = Jungle Wood (vertical Log, Planks, Stairs, Slab), Brown Mushroom Block with cap texture facing up, Dirt, Coarse Dirt, Jukebox, Granite (plain, Polished), Farmland, Grass Path, Jungle Wood (Door, Fence, Fence Gate)
+}}
+{{/entry
+| id = 41
+| rgb = 130, 94, 66
+| blocks = Jungle Wood (vertical Log, Planks, Stairs, Slab), Brown Mushroom Block with cap texture facing up, Dirt, Coarse Dirt, Jukebox, Granite (plain, Polished), Farmland, Grass Path, Jungle Wood (Door, Fence, Fence Gate)
+}}
+{{/entry
+| id = 42
+| rgb = 151, 109, 77
+| blocks = Jungle Wood (vertical Log, Planks, Stairs, Slab), Brown Mushroom Block with cap texture facing up, Dirt, Coarse Dirt, Jukebox, Granite (plain, Polished), Farmland, Grass Path, Jungle Wood (Door, Fence, Fence Gate)
+}}
+{{/entry
+| id = 43
+| rgb = 79, 57, 40
+| blocks = Jungle Wood (vertical Log, Planks, Stairs, Slab), Brown Mushroom Block with cap texture facing up, Dirt, Coarse Dirt, Jukebox, Granite (plain, Polished), Farmland, Grass Path, Jungle Wood (Door, Fence, Fence Gate)
+}}
+{{/entry
+| id = 44
+| rgb = 79, 79, 79
+| blocks = Cobblestone (block, Stairs, Slab), Stone (block, Slab), Stone Brick (plain, Cracked, Chiseled, Stairs, Slab), Moss Stone, Mossy Stone Bricks, Gravel, Andesite (plain, Polished), Ore (Coal, Iron, Gold, Redstone, Lapis Lazuli, Diamond, Emerald), Bedrock, Furnace, Dispenser, Dropper, Hopper, Observer, horizontal Acacia Log, Cobblestone Wall, Mossy Cobblestone Wall, Stone Pressure Plate, Cauldron, Piston and Sticky Piston (base, Head, Extension), Ender Chest, Spawner
+}}
+{{/entry
+| id = 45
+| rgb = 96, 96, 96
+| blocks = Cobblestone (block, Stairs, Slab), Stone (block, Slab), Stone Brick (plain, Cracked, Chiseled, Stairs, Slab), Moss Stone, Mossy Stone Bricks, Gravel, Andesite (plain, Polished), Ore (Coal, Iron, Gold, Redstone, Lapis Lazuli, Diamond, Emerald), Bedrock, Furnace, Dispenser, Dropper, Hopper, Observer, horizontal Acacia Log, Cobblestone Wall, Mossy Cobblestone Wall, Stone Pressure Plate, Cauldron, Piston and Sticky Piston (base, Head, Extension), Ender Chest, Spawner
+}}
+{{/entry
+| id = 46
+| rgb = 112, 112, 112
+| blocks = Cobblestone (block, Stairs, Slab), Stone (block, Slab), Stone Brick (plain, Cracked, Chiseled, Stairs, Slab), Moss Stone, Mossy Stone Bricks, Gravel, Andesite (plain, Polished), Ore (Coal, Iron, Gold, Redstone, Lapis Lazuli, Diamond, Emerald), Bedrock, Furnace, Dispenser, Dropper, Hopper, Observer, horizontal Acacia Log, Cobblestone Wall, Mossy Cobblestone Wall, Stone Pressure Plate, Cauldron, Piston and Sticky Piston (base, Head, Extension), Ender Chest, Spawner
+}}
+{{/entry
+| id = 47
+| rgb = 59, 59, 59
+| blocks = Cobblestone (block, Stairs, Slab), Stone (block, Slab), Stone Brick (plain, Cracked, Chiseled, Stairs, Slab), Moss Stone, Mossy Stone Bricks, Gravel, Andesite (plain, Polished), Ore (Coal, Iron, Gold, Redstone, Lapis Lazuli, Diamond, Emerald), Bedrock, Furnace, Dispenser, Dropper, Hopper, Observer, horizontal Acacia Log, Cobblestone Wall, Mossy Cobblestone Wall, Stone Pressure Plate, Cauldron, Piston and Sticky Piston (base, Head, Extension), Ender Chest, Spawner
+}}
+{{/entry
+| id = 48
+| rgb = 45, 45, 180
+| blocks = Water
+}}
+{{/entry
+| id = 49
+| rgb = 55, 55, 220
+| blocks = Water
+}}
+{{/entry
+| id = 50
+| rgb = 64, 64, 255
+| blocks = Water
+}}
+{{/entry
+| id = 51
+| rgb = 33, 33, 135
+| blocks = Water
+}}
+{{/entry
+| id = 52
+| rgb = 100, 84, 50
+| blocks = Oak Wood (vertical Log, Planks, Stairs, Slab), Crafting Table, Bookshelf, Note Block, Oak Wood (Door, Fence, Fence Gate), Dead Bush, Wooden Pressure Plate, Wooden Trapdoor, Sign, Chest, Trapped Chest, Banner, Daylight Sensor
+}}
+{{/entry
+| id = 53
+| rgb = 123, 102, 62
+| blocks = Oak Wood (vertical Log, Planks, Stairs, Slab), Crafting Table, Bookshelf, Note Block, Oak Wood (Door, Fence, Fence Gate), Dead Bush, Wooden Pressure Plate, Wooden Trapdoor, Sign, Chest, Trapped Chest, Banner, Daylight Sensor
+}}
+{{/entry
+| id = 54
+| rgb = 143, 119, 72
+| blocks = Oak Wood (vertical Log, Planks, Stairs, Slab), Crafting Table, Bookshelf, Note Block, Oak Wood (Door, Fence, Fence Gate), Dead Bush, Wooden Pressure Plate, Wooden Trapdoor, Sign, Chest, Trapped Chest, Banner, Daylight Sensor
+}}
+{{/entry
+| id = 55
+| rgb = 75, 63, 38
+| blocks = Oak Wood (vertical Log, Planks, Stairs, Slab), Crafting Table, Bookshelf, Note Block, Oak Wood (Door, Fence, Fence Gate), Dead Bush, Wooden Pressure Plate, Wooden Trapdoor, Sign, Chest, Trapped Chest, Banner, Daylight Sensor
+}}
+{{/entry
+| id = 56
+| rgb = 180, 177, 172
+| blocks = Horizontal Birch Log, Diorite (plain, Polished), Quartz (Block, Chiseled, Pillar, Stairs, Slab), Sea Lantern
+}}
+{{/entry
+| id = 57
+| rgb = 220, 217, 211
+| blocks = Horizontal Birch Log, Diorite (plain, Polished), Quartz (Block, Chiseled, Pillar, Stairs, Slab), Sea Lantern
+}}
+{{/entry
+| id = 58
+| rgb = 255, 252, 245
+| blocks = Horizontal Birch Log, Diorite (plain, Polished), Quartz (Block, Chiseled, Pillar, Stairs, Slab), Sea Lantern
+}}
+{{/entry
+| id = 59
+| rgb = 135, 133, 129
+| blocks = Horizontal Birch Log, Diorite (plain, Polished), Quartz (Block, Chiseled, Pillar, Stairs, Slab), Sea Lantern
+}}
+{{/entry
+| id = 60
+| rgb = 152, 89, 36
+| blocks = Acacia Wood (vertical Log, Planks, Stairs, Slab), Pumpkin, Jack o'Lantern, Red Sand, Red Sandstone (plain, Smooth, Chiseled, Stairs, Slab), Terracotta/Hardened Clay, Orange Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 61
+| rgb = 186, 109, 44
+| blocks = Acacia Wood (vertical Log, Planks, Stairs, Slab), Pumpkin, Jack o'Lantern, Red Sand, Red Sandstone (plain, Smooth, Chiseled, Stairs, Slab), Terracotta/Hardened Clay, Orange Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 62
+| rgb = 216, 127, 51
+| blocks = Acacia Wood (vertical Log, Planks, Stairs, Slab), Pumpkin, Jack o'Lantern, Red Sand, Red Sandstone (plain, Smooth, Chiseled, Stairs, Slab), Terracotta/Hardened Clay, Orange Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 63
+| rgb = 114, 67, 27
+| blocks = Acacia Wood (vertical Log, Planks, Stairs, Slab), Pumpkin, Jack o'Lantern, Red Sand, Red Sandstone (plain, Smooth, Chiseled, Stairs, Slab), Terracotta/Hardened Clay, Orange Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 64
+| rgb = 125, 53, 152
+| blocks = Purpur (Block, Pillar, Slab), Magenta Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 65
+| rgb = 153, 65, 186
+| blocks = Purpur (Block, Pillar, Slab), Magenta Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 66
+| rgb = 178, 76, 216
+| blocks = Purpur (Block, Pillar, Slab), Magenta Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 67
+| rgb = 94, 40, 114
+| blocks = Purpur (Block, Pillar, Slab), Magenta Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 68
+| rgb = 72, 108, 152
+| blocks = Light Blue Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 69
+| rgb = 88, 132, 186
+| blocks = Light Blue Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 70
+| rgb = 102, 153, 216
+| blocks = Light Blue Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 71
+| rgb = 54, 81, 114
+| blocks = Light Blue Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 72
+| rgb = 161, 161, 36
+| blocks = Hay Bale, Sponge, Wet Sponge, Yellow Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 73
+| rgb = 197, 197, 44
+| blocks = Hay Bale, Sponge, Wet Sponge, Yellow Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 74
+| rgb = 229, 229, 51
+| blocks = Hay Bale, Sponge, Wet Sponge, Yellow Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 75
+| rgb = 121, 121, 27
+| blocks = Hay Bale, Sponge, Wet Sponge, Yellow Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 76
+| rgb = 89, 144, 17
+| blocks = Melon, Lime Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 77
+| rgb = 109, 176, 21
+| blocks = Melon, Lime Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 78
+| rgb = 127, 204, 25
+| blocks = Melon, Lime Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 79
+| rgb = 67, 108, 13
+| blocks = Melon, Lime Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 80
+| rgb = 170, 89, 116
+| blocks = Pink Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 81
+| rgb = 208, 109, 142
+| blocks = Pink Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 82
+| rgb = 242, 127, 165
+| blocks = Pink Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 83
+| rgb = 128, 67, 87
+| blocks = Pink Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 84
+| rgb = 53, 53, 53
+| blocks = Gray Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 85
+| rgb = 65, 65, 65
+| blocks = Gray Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 86
+| rgb = 76, 76, 76
+| blocks = Gray Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 87
+| rgb = 40, 40, 40
+| blocks = Gray Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 88
+| rgb = 108, 108, 108
+| blocks = Structure Block, Light Gray Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 89
+| rgb = 132, 132, 132
+| blocks = Structure Block, Light Gray Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 90
+| rgb = 153, 153, 153
+| blocks = Structure Block, Light Gray Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 91
+| rgb = 81, 81, 81
+| blocks = Structure Block, Light Gray Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 92
+| rgb = 53, 89, 108
+| blocks = Prismarine, Cyan Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 93
+| rgb = 65, 109, 132
+| blocks = Prismarine, Cyan Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 94
+| rgb = 76, 127, 153
+| blocks = Prismarine, Cyan Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 95
+| rgb = 40, 67, 81
+| blocks = Prismarine, Cyan Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 96
+| rgb = 89, 44, 125
+| blocks = Repeating Command Block, Mycelium, Purple Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 97
+| rgb = 109, 54, 153
+| blocks = Repeating Command Block, Mycelium, Purple Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 98
+| rgb = 127, 63, 178
+| blocks = Repeating Command Block, Mycelium, Purple Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 99
+| rgb = 67, 33, 94
+| blocks = Repeating Command Block, Mycelium, Purple Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 100
+| rgb = 36, 53, 125
+| blocks = Blue Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 101
+| rgb = 44, 65, 153
+| blocks = Blue Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 102
+| rgb = 51, 76, 178
+| blocks = Blue Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 103
+| rgb = 27, 40, 94
+| blocks = Blue Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 104
+| rgb = 72, 53, 36
+| blocks = Dark Oak Wood (vertical or horizontal Log, Planks, Stairs, Slab, Door, Fence, Fence Gate), horizontal Spruce Log, Impulse Command Block, Soul Sand, Brown Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 105
+| rgb = 88, 65, 44
+| blocks = Dark Oak Wood (vertical or horizontal Log, Planks, Stairs, Slab, Door, Fence, Fence Gate), horizontal Spruce Log, Impulse Command Block, Soul Sand, Brown Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 106
+| rgb = 102, 76, 51
+| blocks = Dark Oak Wood (vertical or horizontal Log, Planks, Stairs, Slab, Door, Fence, Fence Gate), horizontal Spruce Log, Impulse Command Block, Soul Sand, Brown Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 107
+| rgb = 54, 40, 27
+| blocks = Dark Oak Wood (vertical or horizontal Log, Planks, Stairs, Slab, Door, Fence, Fence Gate), horizontal Spruce Log, Impulse Command Block, Soul Sand, Brown Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 108
+| rgb = 72, 89, 36
+| blocks = Chain Command Block, End Portal, Green Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 109
+| rgb = 88, 109, 44
+| blocks = Chain Command Block, End Portal, Green Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 110
+| rgb = 102, 127, 51
+| blocks = Chain Command Block, End Portal, Green Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 111
+| rgb = 54, 67, 27
+| blocks = Chain Command Block, End Portal, Green Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 112
+| rgb = 108, 36, 36
+| blocks = Bricks (block, Slab, Stairs), Nether Wart Block, Nether Wart, Enchantment Table, Red Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 113
+| rgb = 132, 44, 44
+| blocks = Bricks (block, Slab, Stairs), Nether Wart Block, Nether Wart, Enchantment Table, Red Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 114
+| rgb = 153, 51, 51
+| blocks = Bricks (block, Slab, Stairs), Nether Wart Block, Nether Wart, Enchantment Table, Red Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 115
+| rgb = 81, 27, 27
+| blocks = Bricks (block, Slab, Stairs), Nether Wart Block, Nether Wart, Enchantment Table, Red Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 116
+| rgb = 17, 17, 17
+| blocks = Block of Coal, Obsidian, Dragon Egg, End Gateway, End Portal, Black Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 117
+| rgb = 21, 21, 21
+| blocks = Block of Coal, Obsidian, Dragon Egg, End Gateway, End Portal, Black Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 118
+| rgb = 25, 25, 25
+| blocks = Block of Coal, Obsidian, Dragon Egg, End Gateway, End Portal, Black Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 119
+| rgb = 13, 13, 13
+| blocks = Block of Coal, Obsidian, Dragon Egg, End Gateway, End Portal, Black Wool/Carpet/Glass/Concrete/Glazed Terracotta/Bed foot
+}}
+{{/entry
+| id = 120
+| rgb = 176, 168, 54
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+{{/entry
+| id = 121
+| rgb = 215, 205, 66
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+{{/entry
+| id = 122
+| rgb = 250, 238, 77
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+{{/entry
+| id = 123
+| rgb = 132, 126, 40
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+{{/entry
+| id = 124
+| rgb = 64, 154, 150
+| blocks = Block of Diamond, Prismarine Bricks, Dark Prismarine, Beacon
+}}
+{{/entry
+| id = 125
+| rgb = 79, 188, 183
+| blocks = Block of Diamond, Prismarine Bricks, Dark Prismarine, Beacon
+}}
+{{/entry
+| id = 126
+| rgb = 92, 219, 213
+| blocks = Block of Diamond, Prismarine Bricks, Dark Prismarine, Beacon
+}}
+{{/entry
+| id = 127
+| rgb = 48, 115, 112
+| blocks = Block of Diamond, Prismarine Bricks, Dark Prismarine, Beacon
+}}
+{{/entry
+| id = 128
+| rgb = 52, 90, 180
+| blocks = Lapis Lazuli Block
+}}
+{{/entry
+| id = 129
+| rgb = 63, 110, 220
+| blocks = Lapis Lazuli Block
+}}
+{{/entry
+| id = 130
+| rgb = 74, 128, 255
+| blocks = Lapis Lazuli Block
+}}
+{{/entry
+| id = 131
+| rgb = 39, 67, 135
+| blocks = Lapis Lazuli Block
+}}
+{{/entry
+| id = 132
+| rgb = 0, 153, 40
+| blocks = Block of Emerald
+}}
+{{/entry
+| id = 133
+| rgb = 0, 187, 50
+| blocks = Block of Emerald
+}}
+{{/entry
+| id = 134
+| rgb = 0, 217, 58
+| blocks = Block of Emerald
+}}
+{{/entry
+| id = 135
+| rgb = 0, 114, 30
+| blocks = Block of Emerald
+}}
+{{/entry
+| id = 136
+| rgb = 91, 60, 34
+| blocks = Spruce Wood (vertical Log, Planks, Stairs, Slab, Door, Fence, Fence Gate), horizontal Oak Log, horizontal Jungle Log, Podzol
+}}
+{{/entry
+| id = 137
+| rgb = 111, 74, 42
+| blocks = Spruce Wood (vertical Log, Planks, Stairs, Slab, Door, Fence, Fence Gate), horizontal Oak Log, horizontal Jungle Log, Podzol
+}}
+{{/entry
+| id = 138
+| rgb = 129, 86, 49
+| blocks = Spruce Wood (vertical Log, Planks, Stairs, Slab, Door, Fence, Fence Gate), horizontal Oak Log, horizontal Jungle Log, Podzol
+}}
+{{/entry
+| id = 139
+| rgb = 68, 45, 25
+| blocks = Spruce Wood (vertical Log, Planks, Stairs, Slab, Door, Fence, Fence Gate), horizontal Oak Log, horizontal Jungle Log, Podzol
+}}
+{{/entry
+| id = 140
+| rgb = 79, 1, 0
+| blocks = Netherrack, Nether Bricks, Nether Brick Stairs, Nether Brick Fence, Red Nether Brick, Nether Quartz Ore, Magma Block
+}}
+{{/entry
+| id = 141
+| rgb = 96, 1, 0
+| blocks = Netherrack, Nether Bricks, Nether Brick Stairs, Nether Brick Fence, Red Nether Brick, Nether Quartz Ore, Magma Block
+}}
+{{/entry
+| id = 142
+| rgb = 112, 2, 0
+| blocks = Netherrack, Nether Bricks, Nether Brick Stairs, Nether Brick Fence, Red Nether Brick, Nether Quartz Ore, Magma Block
+}}
+{{/entry
+| id = 143
+| rgb = 59, 1, 0
+| blocks = Netherrack, Nether Bricks, Nether Brick Stairs, Nether Brick Fence, Red Nether Brick, Nether Quartz Ore, Magma Block
+}}
+{{/entry
+| id = 144
+| rgb = 147, 124, 113
+| blocks = White Terracotta
+}}
+{{/entry
+| id = 145
+| rgb = 180, 152, 138
+| blocks = White Terracotta
+}}
+{{/entry
+| id = 146
+| rgb = 209, 177, 161
+| blocks = White Terracotta
+}}
+{{/entry
+| id = 147
+| rgb = 110, 93, 85
+| blocks = White Terracotta
+}}
+{{/entry
+| id = 148
+| rgb = 112, 57, 25
+| blocks = Orange Terracotta
+}}
+{{/entry
+| id = 149
+| rgb = 137, 70, 31
+| blocks = Orange Terracotta
+}}
+{{/entry
+| id = 150
+| rgb = 159, 82, 36
+| blocks = Orange Terracotta
+}}
+{{/entry
+| id = 151
+| rgb = 84, 43, 19
+| blocks = Orange Terracotta
+}}
+{{/entry
+| id = 152
+| rgb = 105, 61, 76
+| blocks = Magenta Terracotta
+}}
+{{/entry
+| id = 153
+| rgb = 128, 75, 93
+| blocks = Magenta Terracotta
+}}
+{{/entry
+| id = 154
+| rgb = 149, 87, 108
+| blocks = Magenta Terracotta
+}}
+{{/entry
+| id = 155
+| rgb = 78, 46, 57
+| blocks = Magenta Terracotta
+}}
+{{/entry
+| id = 156
+| rgb = 79, 76, 97
+| blocks = Light Blue Terracotta
+}}
+{{/entry
+| id = 157
+| rgb = 96, 93, 119
+| blocks = Light Blue Terracotta
+}}
+{{/entry
+| id = 158
+| rgb = 112, 108, 138
+| blocks = Light Blue Terracotta
+}}
+{{/entry
+| id = 159
+| rgb = 59, 57, 73
+| blocks = Light Blue Terracotta
+}}
+{{/entry
+| id = 160
+| rgb = 131, 93, 25
+| blocks = Yellow Terracotta
+}}
+{{/entry
+| id = 161
+| rgb = 160, 114, 31
+| blocks = Yellow Terracotta
+}}
+{{/entry
+| id = 162
+| rgb = 186, 133, 36
+| blocks = Yellow Terracotta
+}}
+{{/entry
+| id = 163
+| rgb = 98, 70, 19
+| blocks = Yellow Terracotta
+}}
+{{/entry
+| id = 164
+| rgb = 72, 82, 37
+| blocks = Lime Terracotta
+}}
+{{/entry
+| id = 165
+| rgb = 88, 100, 45
+| blocks = Lime Terracotta
+}}
+{{/entry
+| id = 166
+| rgb = 103, 117, 53
+| blocks = Lime Terracotta
+}}
+{{/entry
+| id = 167
+| rgb = 54, 61, 28
+| blocks = Lime Terracotta
+}}
+{{/entry
+| id = 168
+| rgb = 112, 54, 55
+| blocks = Pink Terracotta
+}}
+{{/entry
+| id = 169
+| rgb = 138, 66, 67
+| blocks = Pink Terracotta
+}}
+{{/entry
+| id = 170
+| rgb = 160, 77, 78
+| blocks = Pink Terracotta
+}}
+{{/entry
+| id = 171
+| rgb = 84, 40, 41
+| blocks = Pink Terracotta
+}}
+{{/entry
+| id = 172
+| rgb = 40, 28, 24
+| blocks = Gray Terracotta
+}}
+{{/entry
+| id = 173
+| rgb = 49, 35, 30
+| blocks = Gray Terracotta
+}}
+{{/entry
+| id = 174
+| rgb = 57, 41, 35
+| blocks = Gray Terracotta
+}}
+{{/entry
+| id = 175
+| rgb = 30, 21, 18
+| blocks = Gray Terracotta
+}}
+{{/entry
+| id = 176
+| rgb = 95, 75, 69
+| blocks = Light Gray Terracotta
+}}
+{{/entry
+| id = 177
+| rgb = 116, 92, 84
+| blocks = Light Gray Terracotta
+}}
+{{/entry
+| id = 178
+| rgb = 135, 107, 98
+| blocks = Light Gray Terracotta
+}}
+{{/entry
+| id = 179
+| rgb = 71, 56, 51
+| blocks = Light Gray Terracotta
+}}
+{{/entry
+| id = 180
+| rgb = 61, 64, 64
+| blocks = Cyan Terracotta
+}}
+{{/entry
+| id = 181
+| rgb = 75, 79, 79
+| blocks = Cyan Terracotta
+}}
+{{/entry
+| id = 182
+| rgb = 87, 92, 92
+| blocks = Cyan Terracotta
+}}
+{{/entry
+| id = 183
+| rgb = 46, 48, 48
+| blocks = Cyan Terracotta
+}}
+{{/entry
+| id = 184
+| rgb = 86, 51, 62
+| blocks = Purple Terracotta
+}}
+{{/entry
+| id = 185
+| rgb = 105, 62, 75
+| blocks = Purple Terracotta
+}}
+{{/entry
+| id = 186
+| rgb = 122, 73, 88
+| blocks = Purple Terracotta
+}}
+{{/entry
+| id = 187
+| rgb = 64, 38, 46
+| blocks = Purple Terracotta
+}}
+{{/entry
+| id = 188
+| rgb = 53, 43, 64
+| blocks = Blue Terracotta
+}}
+{{/entry
+| id = 189
+| rgb = 65, 53, 79
+| blocks = Blue Terracotta
+}}
+{{/entry
+| id = 190
+| rgb = 76, 62, 92
+| blocks = Blue Terracotta
+}}
+{{/entry
+| id = 191
+| rgb = 40, 32, 48
+| blocks = Blue Terracotta
+}}
+{{/entry
+| id = 192
+| rgb = 53, 35, 24
+| blocks = Brown Terracotta
+}}
+{{/entry
+| id = 193
+| rgb = 65, 43, 30
+| blocks = Brown Terracotta
+}}
+{{/entry
+| id = 194
+| rgb = 76, 50, 35
+| blocks = Brown Terracotta
+}}
+{{/entry
+| id = 195
+| rgb = 40, 26, 18
+| blocks = Brown Terracotta
+}}
+{{/entry
+| id = 196
+| rgb = 53, 57, 29
+| blocks = Green Terracotta
+}}
+{{/entry
+| id = 197
+| rgb = 65, 70, 36
+| blocks = Green Terracotta
+}}
+{{/entry
+| id = 198
+| rgb = 76, 82, 42
+| blocks = Green Terracotta
+}}
+{{/entry
+| id = 199
+| rgb = 40, 43, 22
+| blocks = Green Terracotta
+}}
+{{/entry
+| id = 200
+| rgb = 100, 42, 32
+| blocks = Red Terracotta
+}}
+{{/entry
+| id = 201
+| rgb = 122, 51, 39
+| blocks = Red Terracotta
+}}
+{{/entry
+| id = 202
+| rgb = 142, 60, 46
+| blocks = Red Terracotta
+}}
+{{/entry
+| id = 203
+| rgb = 75, 31, 24
+| blocks = Red Terracotta
+}}
+{{/entry
+| id = 204
+| rgb = 26, 15, 11
+| blocks = Black Terracotta
+}}
+{{/entry
+| id = 205
+| rgb = 31, 18, 13
+| blocks = Black Terracotta
+}}
+{{/entry
+| id = 206
+| rgb = 37, 22, 16
+| blocks = Black Terracotta
+}}
+{{/entry
+| id = 207
+| rgb = 19, 11, 8
+| blocks = Black Terracotta
+}}
+}}
+
+:''Note: The description may not list every possible block. Example: In 1.8.1, any block that uses colored wool can also use colored carpet or colored pane glass.''
+{{/header|caption=1.8.1 Color Table (Map color ID)|class=collapsible collapsed|
+{{/entry
+| id = 0
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 1
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 2
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 3
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 4
+| rgb = 89, 125, 39
+| blocks = Grass, Slime Block
+}}
+
+{{/entry
+| id = 5
+| rgb = 109, 153, 48
+| blocks = Grass, Slime Block
+}}
+
+{{/entry
+| id = 6
+| rgb = 127, 178, 56
+| blocks = Grass, Slime Block
+}}
+
+{{/entry
+| id = 7
+| rgb = 67, 94, 29
+| blocks = Grass, Slime Block
+}}
+
+{{/entry
+| id = 8
+| rgb = 174, 164, 115
+| blocks = Sand, Sandstone, Birch plank, Glowstone, Endstone
+}}
+
+{{/entry
+| id = 9
+| rgb = 213, 201, 140
+| blocks = Sand, Sandstone, Birch plank, Glowstone, Endstone
+}}
+
+{{/entry
+| id = 10
+| rgb = 247, 233, 163
+| blocks = Sand, Sandstone, Birch plank, Glowstone, Endstone
+}}
+
+{{/entry
+| id = 11
+| rgb = 130, 123, 86
+| blocks = Sand, Sandstone, Birch plank, Glowstone, Endstone
+}}
+
+{{/entry
+| id = 12
+| rgb = 138, 138, 138
+| blocks = Bed, Cobweb
+}}
+
+{{/entry
+| id = 13
+| rgb = 169, 169, 169
+| blocks = Bed, Cobweb
+}}
+
+{{/entry
+| id = 14
+| rgb = 197, 197, 197
+| blocks = Bed, Cobweb
+}}
+
+{{/entry
+| id = 15
+| rgb = 104, 104, 104
+| blocks = Bed, Cobweb
+}}
+
+{{/entry
+| id = 16
+| rgb = 180, 0, 0
+| blocks = Lava, TNT, Redstone Block
+}}
+
+{{/entry
+| id = 17
+| rgb = 220, 0, 0
+| blocks = Lava, TNT, Redstone Block
+}}
+
+{{/entry
+| id = 18
+| rgb = 255, 0, 0
+| blocks = Lava, TNT, Redstone Block
+}}
+
+{{/entry
+| id = 19
+| rgb = 135, 0, 0
+| blocks = Lava, TNT, Redstone Block
+}}
+
+{{/entry
+| id = 20
+| rgb = 112, 112, 180
+| blocks = Ice, Packed Ice
+}}
+
+{{/entry
+| id = 21
+| rgb = 138, 138, 220
+| blocks = Ice, Packed Ice
+}}
+
+{{/entry
+| id = 22
+| rgb = 160, 160, 255
+| blocks = Ice, Packed Ice
+}}
+
+{{/entry
+| id = 23
+| rgb = 84, 84, 135
+| blocks = Ice, Packed Ice
+}}
+
+{{/entry
+| id = 24
+| rgb = 117, 117, 117
+| blocks = Iron Block, Iron items, Brewing Stand
+}}
+
+{{/entry
+| id = 25
+| rgb = 144, 144, 144
+| blocks = Iron Block, Iron items, Brewing Stand
+}}
+
+{{/entry
+| id = 26
+| rgb = 167, 167, 167
+| blocks = Iron Block, Iron items, Brewing Stand
+}}
+
+{{/entry
+| id = 27
+| rgb = 88, 88, 88
+| blocks = Iron Block, Iron items, Brewing Stand
+}}
+
+{{/entry
+| id = 28
+| rgb = 0, 87, 0
+| blocks = Leaves, Flowers, Grass
+}}
+
+{{/entry
+| id = 29
+| rgb = 0, 106, 0
+| blocks = Leaves, Flowers, Grass
+}}
+
+{{/entry
+| id = 30
+| rgb = 0, 124, 0
+| blocks = Leaves, Flowers, Grass
+}}
+
+{{/entry
+| id = 31
+| rgb = 0, 65, 0
+| blocks = Leaves, Flowers, Grass
+}}
+
+{{/entry
+| id = 32
+| rgb = 180, 180, 180
+| blocks = Wool, Snow
+}}
+
+{{/entry
+| id = 33
+| rgb = 220, 220, 220
+| blocks = Wool, Snow
+}}
+
+{{/entry
+| id = 34
+| rgb = 255, 255, 255
+| blocks = Wool, Snow
+}}
+
+{{/entry
+| id = 35
+| rgb = 135, 135, 135
+| blocks = Wool, Snow
+}}
+
+{{/entry
+| id = 36
+| rgb = 115, 118, 129
+| blocks = Clay
+}}
+
+{{/entry
+| id = 37
+| rgb = 141, 144, 158
+| blocks = Clay
+}}
+
+{{/entry
+| id = 38
+| rgb = 164, 168, 184
+| blocks = Clay
+}}
+
+{{/entry
+| id = 39
+| rgb = 86, 88, 97
+| blocks = Clay
+}}
+
+{{/entry
+| id = 40
+| rgb = 129, 74, 33
+| blocks = Dirt, Coarse Dirt, Jungle Plank, Granite
+}}
+
+{{/entry
+| id = 41
+| rgb = 157, 91, 40
+| blocks = Dirt, Coarse Dirt, Jungle Plank, Granite
+}}
+
+{{/entry
+| id = 42
+| rgb = 183, 106, 47
+| blocks = Dirt, Coarse Dirt, Jungle Plank, Granite
+}}
+
+{{/entry
+| id = 43
+| rgb = 96, 56, 24
+| blocks = Dirt, Coarse Dirt, Jungle Plank, Granite
+}}
+
+{{/entry
+| id = 44
+| rgb = 79, 79, 79
+| blocks = Stone, Cobblestone, Ores, Acacia Log, *Many others*
+}}
+
+{{/entry
+| id = 45
+| rgb = 96, 96, 96
+| blocks = Stone, Cobblestone, Ores, Acacia Log, *Many others*
+}}
+
+{{/entry
+| id = 46
+| rgb = 112, 112, 112
+| blocks = Stone, Cobblestone, Ores, Acacia Log, *Many others*
+}}
+
+{{/entry
+| id = 47
+| rgb = 59, 59, 59
+| blocks = Stone, Cobblestone, Ores, Acacia Log, *Many others*
+}}
+
+{{/entry
+| id = 48
+| rgb = 101, 84, 51
+| blocks = Oak Plank, Wooden Items, Mushroom (block), Banners, Daylight Sensor
+}}
+
+{{/entry
+| id = 49
+| rgb = 123, 103, 62
+| blocks = Oak Plank, Wooden Items, Mushroom (block), Banners, Daylight Sensor
+}}
+
+{{/entry
+| id = 50
+| rgb = 143, 119, 72
+| blocks = Oak Plank, Wooden Items, Mushroom (block), Banners, Daylight Sensor
+}}
+
+{{/entry
+| id = 51
+| rgb = 76, 63, 38
+| blocks = Oak Plank, Wooden Items, Mushroom (block), Banners, Daylight Sensor
+}}
+
+{{/entry
+| id = 52
+| rgb = 45, 45, 180
+| blocks = Water
+}}
+
+{{/entry
+| id = 53
+| rgb = 55, 55, 220
+| blocks = Water
+}}
+
+{{/entry
+| id = 54
+| rgb = 64, 64, 255
+| blocks = Water
+}}
+
+{{/entry
+| id = 55
+| rgb = 33, 33, 135
+| blocks = Water
+}}
+
+{{/entry
+| id = 56
+| rgb = 180, 177, 172
+| blocks = Quartz, Sea Lantern, Birch Log
+}}
+
+{{/entry
+| id = 57
+| rgb = 220, 217, 211
+| blocks = Quartz, Sea Lantern, Birch Log
+}}
+
+{{/entry
+| id = 58
+| rgb = 255, 252, 245
+| blocks = Quartz, Sea Lantern, Birch Log
+}}
+
+{{/entry
+| id = 59
+| rgb = 135, 133, 129
+| blocks = Quartz, Sea Lantern, Birch Log
+}}
+
+{{/entry
+| id = 60
+| rgb = 152, 89, 36
+| blocks = Orange Wool/Glass/Stained Clay, Pumpkin, Hardened Clay, Acacia Plank
+}}
+
+{{/entry
+| id = 61
+| rgb = 186, 109, 44
+| blocks = Orange Wool/Glass/Stained Clay, Pumpkin, Hardened Clay, Acacia Plank
+}}
+
+{{/entry
+| id = 62
+| rgb = 216, 127, 51
+| blocks = Orange Wool/Glass/Stained Clay, Pumpkin, Hardened Clay, Acacia Plank
+}}
+
+{{/entry
+| id = 63
+| rgb = 114, 67, 27
+| blocks = Orange Wool/Glass/Stained Clay, Pumpkin, Hardened Clay, Acacia Plank
+}}
+
+{{/entry
+| id = 64
+| rgb = 125, 53, 152
+| blocks = Magenta Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 65
+| rgb = 153, 65, 186
+| blocks = Magenta Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 66
+| rgb = 178, 76, 216
+| blocks = Magenta Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 67
+| rgb = 94, 40, 114
+| blocks = Magenta Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 68
+| rgb = 72, 108, 152
+| blocks = Light Blue Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 69
+| rgb = 88, 132, 186
+| blocks = Light Blue Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 70
+| rgb = 102, 153, 216
+| blocks = Light Blue Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 71
+| rgb = 54, 81, 114
+| blocks = Light Blue Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 72
+| rgb = 161, 161, 36
+| blocks = Yellow Wool/Glass/Stained Clay, Sponge, Hay Bale
+}}
+
+{{/entry
+| id = 73
+| rgb = 197, 197, 44
+| blocks = Yellow Wool/Glass/Stained Clay, Sponge, Hay Bale
+}}
+
+{{/entry
+| id = 74
+| rgb = 229, 229, 51
+| blocks = Yellow Wool/Glass/Stained Clay, Sponge, Hay Bale
+}}
+
+{{/entry
+| id = 75
+| rgb = 121, 121, 27
+| blocks = Yellow Wool/Glass/Stained Clay, Sponge, Hay Bale
+}}
+
+{{/entry
+| id = 76
+| rgb = 89, 144, 17
+| blocks = Lime Wool/Glass/Stained Clay, Melon
+}}
+
+{{/entry
+| id = 77
+| rgb = 109, 176, 21
+| blocks = Lime Wool/Glass/Stained Clay, Melon
+}}
+
+{{/entry
+| id = 78
+| rgb = 127, 204, 25
+| blocks = Lime Wool/Glass/Stained Clay, Melon
+}}
+
+{{/entry
+| id = 79
+| rgb = 67, 108, 13
+| blocks = Lime Wool/Glass/Stained Clay, Melon
+}}
+
+{{/entry
+| id = 80
+| rgb = 170, 89, 116
+| blocks = Pink Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 81
+| rgb = 208, 109, 142
+| blocks = Pink Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 82
+| rgb = 242, 127, 165
+| blocks = Pink Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 83
+| rgb = 128, 67, 87
+| blocks = Pink Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 84
+| rgb = 53, 53, 53
+| blocks = Gray Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 85
+| rgb = 65, 65, 65
+| blocks = Gray Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 86
+| rgb = 76, 76, 76
+| blocks = Gray Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 87
+| rgb = 40, 40, 40
+| blocks = Gray Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 88
+| rgb = 108, 108, 108
+| blocks = Light Gray Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 89
+| rgb = 132, 132, 132
+| blocks = Light Gray Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 90
+| rgb = 153, 153, 153
+| blocks = Light Gray Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 91
+| rgb = 81, 81, 81
+| blocks = Light Gray Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 92
+| rgb = 53, 89, 108
+| blocks = Cyan Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 93
+| rgb = 65, 109, 132
+| blocks = Cyan Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 94
+| rgb = 76, 127, 153
+| blocks = Cyan Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 95
+| rgb = 40, 67, 81
+| blocks = Cyan Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 96
+| rgb = 89, 44, 125
+| blocks = Purple Wool/Glass/Stained Clay, Mycelium
+}}
+
+{{/entry
+| id = 97
+| rgb = 109, 54, 153
+| blocks = Purple Wool/Glass/Stained Clay, Mycelium
+}}
+
+{{/entry
+| id = 98
+| rgb = 127, 63, 178
+| blocks = Purple Wool/Glass/Stained Clay, Mycelium
+}}
+
+{{/entry
+| id = 99
+| rgb = 67, 33, 94
+| blocks = Purple Wool/Glass/Stained Clay, Mycelium
+}}
+
+{{/entry
+| id = 100
+| rgb = 36, 53, 125
+| blocks = Blue Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 101
+| rgb = 44, 65, 153
+| blocks = Blue Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 102
+| rgb = 51, 76, 178
+| blocks = Blue Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 103
+| rgb = 27, 40, 94
+| blocks = Blue Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 104
+| rgb = 72, 53, 36
+| blocks = Brown Wool/Glass/Stained Clay, Soul Sand, Dark Oak Plank
+}}
+
+{{/entry
+| id = 105
+| rgb = 88, 65, 44
+| blocks = Brown Wool/Glass/Stained Clay, Soul Sand, Dark Oak Plank
+}}
+
+{{/entry
+| id = 106
+| rgb = 102, 76, 51
+| blocks = Brown Wool/Glass/Stained Clay, Soul Sand, Dark Oak Plank
+}}
+
+{{/entry
+| id = 107
+| rgb = 54, 40, 27
+| blocks = Brown Wool/Glass/Stained Clay, Soul Sand, Dark Oak Plank
+}}
+
+{{/entry
+| id = 108
+| rgb = 72, 89, 36
+| blocks = Green Wool/Glass/Stained Clay, End Portal Frame
+}}
+
+{{/entry
+| id = 109
+| rgb = 88, 109, 44
+| blocks = Green Wool/Glass/Stained Clay, End Portal Frame
+}}
+
+{{/entry
+| id = 110
+| rgb = 102, 127, 51
+| blocks = Green Wool/Glass/Stained Clay, End Portal Frame
+}}
+
+{{/entry
+| id = 111
+| rgb = 54, 67, 27
+| blocks = Green Wool/Glass/Stained Clay, End Portal Frame
+}}
+
+{{/entry
+| id = 112
+| rgb = 108, 36, 36
+| blocks = Red Wool/Glass/Stained Clay, Huge Red Mushroom, Brick, Enchanting Table
+}}
+
+{{/entry
+| id = 113
+| rgb = 132, 44, 44
+| blocks = Red Wool/Glass/Stained Clay, Huge Red Mushroom, Brick, Enchanting Table
+}}
+
+{{/entry
+| id = 114
+| rgb = 153, 51, 51
+| blocks = Red Wool/Glass/Stained Clay, Huge Red Mushroom, Brick, Enchanting Table
+}}
+
+{{/entry
+| id = 115
+| rgb = 81, 27, 27
+| blocks = Red Wool/Glass/Stained Clay, Huge Red Mushroom, Brick, Enchanting Table
+}}
+
+{{/entry
+| id = 116
+| rgb = 17, 17, 17
+| blocks = Black Wool/Glass/Stained Clay, Dragon Egg, Block of Coal, Obsidian
+}}
+
+{{/entry
+| id = 117
+| rgb = 21, 21, 21
+| blocks = Black Wool/Glass/Stained Clay, Dragon Egg, Block of Coal, Obsidian
+}}
+
+{{/entry
+| id = 118
+| rgb = 25, 25, 25
+| blocks = Black Wool/Glass/Stained Clay, Dragon Egg, Block of Coal, Obsidian
+}}
+
+{{/entry
+| id = 119
+| rgb = 13, 13, 13
+| blocks = Black Wool/Glass/Stained Clay, Dragon Egg, Block of Coal, Obsidian
+}}
+
+{{/entry
+| id = 120
+| rgb = 176, 168, 54
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+
+{{/entry
+| id = 121
+| rgb = 215, 205, 66
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+
+{{/entry
+| id = 122
+| rgb = 250, 238, 77
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+
+{{/entry
+| id = 123
+| rgb = 132, 126, 40
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+
+{{/entry
+| id = 124
+| rgb = 64, 154, 150
+| blocks = Block of Diamond, Prismarine, Prismarine Bricks, Dark Prismarine, Beacon
+}}
+
+{{/entry
+| id = 125
+| rgb = 79, 188, 183
+| blocks = Block of Diamond, Prismarine, Prismarine Bricks, Dark Prismarine, Beacon
+}}
+
+{{/entry
+| id = 126
+| rgb = 92, 219, 213
+| blocks = Block of Diamond, Prismarine, Prismarine Bricks, Dark Prismarine, Beacon
+}}
+
+{{/entry
+| id = 127
+| rgb = 48, 115, 112
+| blocks = Block of Diamond, Prismarine, Prismarine Bricks, Dark Prismarine, Beacon
+}}
+
+{{/entry
+| id = 128
+| rgb = 52, 90, 180
+| blocks = Lapis Lazuli Block
+}}
+
+{{/entry
+| id = 129
+| rgb = 63, 110, 220
+| blocks = Lapis Lazuli Block
+}}
+
+{{/entry
+| id = 130
+| rgb = 74, 128, 255
+| blocks = Lapis Lazuli Block
+}}
+
+{{/entry
+| id = 131
+| rgb = 39, 67, 135
+| blocks = Lapis Lazuli Block
+}}
+
+{{/entry
+| id = 132
+| rgb = 0, 153, 40
+| blocks = Block of Emerald
+}}
+
+{{/entry
+| id = 133
+| rgb = 0, 187, 50
+| blocks = Block of Emerald
+}}
+
+{{/entry
+| id = 134
+| rgb = 0, 217, 58
+| blocks = Block of Emerald
+}}
+
+{{/entry
+| id = 135
+| rgb = 0, 114, 30
+| blocks = Block of Emerald
+}}
+
+{{/entry
+| id = 136
+| rgb = 90, 59, 34
+| blocks = Podzol, Spruce Plank
+}}
+
+{{/entry
+| id = 137
+| rgb = 110, 73, 41
+| blocks = Podzol, Spruce Plank
+}}
+
+{{/entry
+| id = 138
+| rgb = 127, 85, 48
+| blocks = Podzol, Spruce Plank
+}}
+
+{{/entry
+| id = 139
+| rgb = 67, 44, 25
+| blocks = Podzol, Spruce Plank
+}}
+
+{{/entry
+| id = 140
+| rgb = 79, 1, 0
+| blocks = Netherrack, Quartz Ore, Nether Wart, Nether Brick Items
+}}
+
+{{/entry
+| id = 141
+| rgb = 96, 1, 0
+| blocks = Netherrack, Quartz Ore, Nether Wart, Nether Brick Items
+}}
+
+{{/entry
+| id = 142
+| rgb = 112, 2, 0
+| blocks = Netherrack, Quartz Ore, Nether Wart, Nether Brick Items
+}}
+
+{{/entry
+| id = 143
+| rgb = 59, 1, 0
+| blocks = Netherrack, Quartz Ore, Nether Wart, Nether Brick Items
+}}
+}}
+
+{{/header|caption=1.7.2 Color Table (Map Color ID)|class=collapsible collapsed|
+
+{{/entry
+| id = 0
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 1
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 2
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 3
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 4
+| rgb = 89, 125, 39
+| blocks = Grass, Mycelium, Hay Bale
+}}
+
+{{/entry
+| id = 5
+| rgb = 109, 153, 48
+| blocks = Grass, Mycelium, Hay Bale
+}}
+
+{{/entry
+| id = 6
+| rgb = 127, 178, 56
+| blocks = Grass, Mycelium, Hay Bale
+}}
+
+{{/entry
+| id = 7
+| rgb = 67, 94, 29
+| blocks = Grass, Mycelium, Hay Bale
+}}
+
+{{/entry
+| id = 8
+| rgb = 174, 164, 115
+| blocks = Sand, Gravel
+}}
+
+{{/entry
+| id = 9
+| rgb = 213, 201, 140
+| blocks = Sand, Gravel
+}}
+
+{{/entry
+| id = 10
+| rgb = 247, 233, 163
+| blocks = Sand, Gravel
+}}
+
+{{/entry
+| id = 11
+| rgb = 130, 123, 86
+| blocks = Sand, Gravel
+}}
+
+{{/entry
+| id = 12
+| rgb = 180, 0, 0
+| blocks = Lava, TNT
+}}
+
+{{/entry
+| id = 13
+| rgb = 220, 0, 0
+| blocks = Lava, TNT
+}}
+
+{{/entry
+| id = 14
+| rgb = 255, 0, 0
+| blocks = Lava, TNT
+}}
+
+{{/entry
+| id = 15
+| rgb = 135, 0, 0
+| blocks = Lava, TNT
+}}
+
+{{/entry
+| id = 16
+| rgb = 112, 112, 180
+| blocks = Ice, Packed Ice
+}}
+
+{{/entry
+| id = 17
+| rgb = 138, 138, 220
+| blocks = Ice, Packed Ice
+}}
+
+{{/entry
+| id = 18
+| rgb = 160, 160, 255
+| blocks = Ice, Packed Ice
+}}
+
+{{/entry
+| id = 19
+| rgb = 84, 84, 135
+| blocks = Ice, Packed Ice
+}}
+
+{{/entry
+| id = 20
+| rgb = 117, 117, 117
+| blocks = Iron Block, Iron items, Brewing Stand, Sponge
+}}
+
+{{/entry
+| id = 21
+| rgb = 144, 144, 144
+| blocks = Iron Block, Iron items, Brewing Stand, Sponge
+}}
+
+{{/entry
+| id = 22
+| rgb = 167, 167, 167
+| blocks = Iron Block, Iron items, Brewing Stand, Sponge
+}}
+
+{{/entry
+| id = 23
+| rgb = 88, 88, 88
+| blocks = Iron Block, Iron items, Brewing Stand, Sponge
+}}
+
+{{/entry
+| id = 24
+| rgb = 0, 87, 0
+| blocks = Leaves, Flowers, Grass, Pumpkin, Melon
+}}
+
+{{/entry
+| id = 25
+| rgb = 0, 106, 0
+| blocks = Leaves, Flowers, Grass, Pumpkin, Melon
+}}
+
+{{/entry
+| id = 26
+| rgb = 0, 124, 0
+| blocks = Leaves, Flowers, Grass, Pumpkin, Melon
+}}
+
+{{/entry
+| id = 27
+| rgb = 0, 65, 0
+| blocks = Leaves, Flowers, Grass, Pumpkin, Melon
+}}
+
+{{/entry
+| id = 28
+| rgb = 180, 180, 180
+| blocks = Wool, Snow
+}}
+
+{{/entry
+| id = 29
+| rgb = 220, 220, 220
+| blocks = Wool, Snow
+}}
+
+{{/entry
+| id = 30
+| rgb = 255, 255, 255
+| blocks = Wool, Snow
+}}
+
+{{/entry
+| id = 31
+| rgb = 135, 135, 135
+| blocks = Wool, Snow
+}}
+
+{{/entry
+| id = 32
+| rgb = 115, 118, 129
+| blocks = Clay
+}}
+
+{{/entry
+| id = 33
+| rgb = 141, 144, 158
+| blocks = Clay
+}}
+
+{{/entry
+| id = 34
+| rgb = 164, 168, 184
+| blocks = Clay
+}}
+
+{{/entry
+| id = 35
+| rgb = 86, 88, 97
+| blocks = Clay
+}}
+
+{{/entry
+| id = 36
+| rgb = 129, 74, 33
+| blocks = Dirt, Coarse Dirt, Podzol
+}}
+
+{{/entry
+| id = 37
+| rgb = 157, 91, 40
+| blocks = Dirt, Coarse Dirt, Podzol
+}}
+
+{{/entry
+| id = 38
+| rgb = 183, 106, 47
+| blocks = Dirt, Coarse Dirt, Podzol
+}}
+
+{{/entry
+| id = 39
+| rgb = 96, 56, 24
+| blocks = Dirt, Coarse Dirt, Podzol
+}}
+
+{{/entry
+| id = 40
+| rgb = 79, 79, 79
+| blocks = Stone, Cobblestone, Ores, Sandstone, *Many others*
+}}
+
+{{/entry
+| id = 41
+| rgb = 96, 96, 96
+| blocks = Stone, Cobblestone, Ores, Sandstone, *Many others*
+}}
+
+{{/entry
+| id = 42
+| rgb = 112, 112, 112
+| blocks = Stone, Cobblestone, Ores, Sandstone, *Many others*
+}}
+
+{{/entry
+| id = 43
+| rgb = 59, 59, 59
+| blocks = Stone, Cobblestone, Ores, Sandstone, *Many others*
+}}
+
+{{/entry
+| id = 44
+| rgb = 45, 45, 180
+| blocks = Water
+}}
+
+{{/entry
+| id = 45
+| rgb = 55, 55, 220
+| blocks = Water
+}}
+
+{{/entry
+| id = 46
+| rgb = 64, 64, 255
+| blocks = Water
+}}
+
+{{/entry
+| id = 47
+| rgb = 33, 33, 135
+| blocks = Water
+}}
+
+{{/entry
+| id = 48
+| rgb = 73, 58, 35
+| blocks = Log/Tree/Wood
+}}
+
+{{/entry
+| id = 49
+| rgb = 89, 71, 43
+| blocks = Log/Tree/Wood
+}}
+
+{{/entry
+| id = 50
+| rgb = 104, 83, 50
+| blocks = Log/Tree/Wood
+}}
+
+{{/entry
+| id = 51
+| rgb = 55, 43, 26
+| blocks = Log/Tree/Wood
+}}
+
+{{/entry
+| id = 52
+| rgb = 180, 177, 172
+| blocks = Quartz
+}}
+
+{{/entry
+| id = 53
+| rgb = 220, 217, 211
+| blocks = Quartz
+}}
+
+{{/entry
+| id = 54
+| rgb = 255, 252, 245
+| blocks = Quartz
+}}
+
+{{/entry
+| id = 55
+| rgb = 135, 133, 129
+| blocks = Quartz
+}}
+
+{{/entry
+| id = 56
+| rgb = 152, 89, 36
+| blocks = Orange Wool/Stained Clay, Hardened Clay
+}}
+
+{{/entry
+| id = 57
+| rgb = 186, 109, 44
+| blocks = Orange Wool/Stained Clay, Hardened Clay
+}}
+
+{{/entry
+| id = 58
+| rgb = 216, 127, 51
+| blocks = Orange Wool/Stained Clay, Hardened Clay
+}}
+
+{{/entry
+| id = 59
+| rgb = 114, 67, 27
+| blocks = Orange Wool/Stained Clay, Hardened Clay
+}}
+
+{{/entry
+| id = 60
+| rgb = 125, 53, 152
+| blocks = Magenta Wool/Stained Clay
+}}
+
+{{/entry
+| id = 61
+| rgb = 153, 65, 186
+| blocks = Magenta Wool/Glass/Stained Clay
+}}
+
+{{/entry
+| id = 62
+| rgb = 178, 76, 216
+| blocks = Magenta Wool/Stained Clay
+}}
+
+{{/entry
+| id = 63
+| rgb = 94, 40, 114
+| blocks = Magenta Wool/Stained Clay
+}}
+
+{{/entry
+| id = 64
+| rgb = 72, 108, 152
+| blocks = Light Blue Wool/Stained Clay
+}}
+
+{{/entry
+| id = 65
+| rgb = 88, 132, 186
+| blocks = Light Blue Wool/Stained Clay
+}}
+
+{{/entry
+| id = 66
+| rgb = 102, 153, 216
+| blocks = Light Blue Wool/Stained Clay
+}}
+
+{{/entry
+| id = 67
+| rgb = 54, 81, 114
+| blocks = Light Blue Wool/Stained Clay
+}}
+
+{{/entry
+| id = 68
+| rgb = 161, 161, 36
+| blocks = Yellow Wool/Stained Clay
+}}
+
+{{/entry
+| id = 69
+| rgb = 197, 197, 44
+| blocks = Yellow Wool/Stained Clay
+}}
+
+{{/entry
+| id = 70
+| rgb = 229, 229, 51
+| blocks = Yellow Wool/Stained Clay
+}}
+
+{{/entry
+| id = 71
+| rgb = 121, 121, 27
+| blocks = Yellow Wool/Stained Clay
+}}
+
+{{/entry
+| id = 72
+| rgb = 89, 144, 17
+| blocks = Lime Wool/Stained Clay
+}}
+
+{{/entry
+| id = 73
+| rgb = 109, 176, 21
+| blocks = Lime Wool/Stained Clay
+}}
+
+{{/entry
+| id = 74
+| rgb = 127, 204, 25
+| blocks = Lime Wool/Stained Clay
+}}
+
+{{/entry
+| id = 75
+| rgb = 66, 108, 13
+| blocks = Lime Wool/Stained Clay
+}}
+
+{{/entry
+| id = 76
+| rgb = 170, 89, 116
+| blocks = Pink Wool/Stained Clay
+}}
+
+{{/entry
+| id = 77
+| rgb = 208, 109, 142
+| blocks = Pink Wool/Stained Clay
+}}
+
+{{/entry
+| id = 78
+| rgb = 242, 127, 165
+| blocks = Pink Wool/Stained Clay
+}}
+
+{{/entry
+| id = 79
+| rgb = 128, 67, 87
+| blocks = Pink Wool/Stained Clay
+}}
+
+{{/entry
+| id = 80
+| rgb = 53, 53, 53
+| blocks = Gray Wool/Stained Clay
+}}
+
+{{/entry
+| id = 81
+| rgb = 65, 65, 65
+| blocks = Gray Wool/Stained Clay
+}}
+
+{{/entry
+| id = 82
+| rgb = 76, 76, 76
+| blocks = Gray Wool/Stained Clay
+}}
+
+{{/entry
+| id = 83
+| rgb = 40, 40, 40
+| blocks = Gray Wool/Stained Clay
+}}
+
+{{/entry
+| id = 84
+| rgb = 108, 108, 108
+| blocks = Light Gray Wool/Stained Clay
+}}
+
+{{/entry
+| id = 85
+| rgb = 132, 132, 132
+| blocks = Light Gray Wool/Stained Clay
+}}
+
+{{/entry
+| id = 86
+| rgb = 153, 153, 153
+| blocks = Light Gray Wool/Stained Clay
+}}
+
+{{/entry
+| id = 87
+| rgb = 81, 81, 81
+| blocks = Light Gray Wool/Stained Clay
+}}
+
+{{/entry
+| id = 88
+| rgb = 53, 89, 108
+| blocks = Cyan Wool/Stained Clay
+}}
+
+{{/entry
+| id = 89
+| rgb = 65, 109, 132
+| blocks = Cyan Wool/Stained Clay
+}}
+
+{{/entry
+| id = 90
+| rgb = 76, 127, 153
+| blocks = Cyan Wool/Stained Clay
+}}
+
+{{/entry
+| id = 91
+| rgb = 40, 67, 81
+| blocks = Cyan Wool/Stained Clay
+}}
+
+{{/entry
+| id = 92
+| rgb = 89, 44, 125
+| blocks = Purple Wool/Stained Clay
+}}
+
+{{/entry
+| id = 93
+| rgb = 109, 54, 153
+| blocks = Purple Wool/Stained Clay
+}}
+
+{{/entry
+| id = 94
+| rgb = 127, 63, 178
+| blocks = Purple Wool/Stained Clay
+}}
+
+{{/entry
+| id = 95
+| rgb = 67, 33, 94
+| blocks = Purple Wool/Stained Clay
+}}
+
+{{/entry
+| id = 96
+| rgb = 36, 53, 125
+| blocks = Blue Wool/Stained Clay
+}}
+
+{{/entry
+| id = 97
+| rgb = 44, 65, 153
+| blocks = Blue Wool/Stained Clay
+}}
+
+{{/entry
+| id = 98
+| rgb = 51, 76, 178
+| blocks = Blue Wool/Stained Clay
+}}
+
+{{/entry
+| id = 99
+| rgb = 27, 40, 94
+| blocks = Blue Wool/Stained Clay
+}}
+
+{{/entry
+| id = 100
+| rgb = 72, 53, 36
+| blocks = Brown Wool/Stained Clay
+}}
+
+{{/entry
+| id = 101
+| rgb = 88, 65, 44
+| blocks = Brown Wool/Stained Clay
+}}
+
+{{/entry
+| id = 102
+| rgb = 102, 76, 51
+| blocks = Brown Wool/Stained Clay
+}}
+
+{{/entry
+| id = 103
+| rgb = 54, 40, 27
+| blocks = Brown Wool/Stained Clay
+}}
+
+{{/entry
+| id = 104
+| rgb = 72, 89, 36
+| blocks = Green Wool/Stained Clay
+}}
+
+{{/entry
+| id = 105
+| rgb = 88, 109, 44
+| blocks = Green Wool/Stained Clay
+}}
+
+{{/entry
+| id = 106
+| rgb = 102, 127, 51
+| blocks = Green Wool/Stained Clay
+}}
+
+{{/entry
+| id = 107
+| rgb = 54, 67, 27
+| blocks = Green Wool/Stained Clay
+}}
+
+{{/entry
+| id = 108
+| rgb = 108, 36, 36
+| blocks = Red Wool/Stained Clay
+}}
+
+{{/entry
+| id = 109
+| rgb = 132, 44, 44
+| blocks = Red Wool/Stained Clay
+}}
+
+{{/entry
+| id = 110
+| rgb = 153, 51, 51
+| blocks = Red Wool/Stained Clay
+}}
+
+{{/entry
+| id = 111
+| rgb = 81, 27, 27
+| blocks = Red Wool/Stained Clay
+}}
+
+{{/entry
+| id = 112
+| rgb = 17, 17, 17
+| blocks = Black Wool/Stained Clay, Block of Coal
+}}
+
+{{/entry
+| id = 113
+| rgb = 21, 21, 21
+| blocks = Black Wool/Stained Clay, Block of Coal
+}}
+
+{{/entry
+| id = 114
+| rgb = 25, 25, 25
+| blocks = Black Wool/Stained Clay, Block of Coal
+}}
+
+{{/entry
+| id = 115
+| rgb = 13, 13, 13
+| blocks = Black Wool/Stained Clay, Block of Coal
+}}
+
+{{/entry
+| id = 116
+| rgb = 176, 168, 54
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+
+{{/entry
+| id = 117
+| rgb = 215, 205, 66
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+
+{{/entry
+| id = 118
+| rgb = 250, 238, 77
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+
+{{/entry
+| id = 119
+| rgb = 132, 126, 40
+| blocks = Block of Gold, Weighted Pressure Plate (Light)
+}}
+
+{{/entry
+| id = 120
+| rgb = 64, 154, 150
+| blocks = Block of Diamond
+}}
+
+{{/entry
+| id = 121
+| rgb = 79, 188, 183
+| blocks = Block of Diamond
+}}
+
+{{/entry
+| id = 122
+| rgb = 92, 219, 213
+| blocks = Block of Diamond
+}}
+
+{{/entry
+| id = 123
+| rgb = 48, 115, 112
+| blocks = Block of Diamond
+}}
+
+{{/entry
+| id = 124
+| rgb = 52, 90, 180
+| blocks = Lapis Lazuli Block
+}}
+
+{{/entry
+| id = 125
+| rgb = 63, 110, 220
+| blocks = Lapis Lazuli Block
+}}
+
+{{/entry
+| id = 126
+| rgb = 74, 128, 255
+| blocks = Lapis Lazuli Block
+}}
+
+{{/entry
+| id = 127
+| rgb = 39, 67, 135
+| blocks = Lapis Lazuli Block
+}}
+
+{{/entry
+| id = 128
+| rgb = 0, 153, 40
+| blocks = Block of Emerald
+}}
+
+{{/entry
+| id = 129
+| rgb = 0, 187, 50
+| blocks = Block of Emerald
+}}
+
+{{/entry
+| id = 130
+| rgb = 0, 217, 58
+| blocks = Block of Emerald
+}}
+
+{{/entry
+| id = 131
+| rgb = 0, 114, 30
+| blocks = Block of Emerald
+}}
+
+{{/entry
+| id = 132
+| rgb = 14, 14, 21
+| blocks = Obsidian
+}}
+{{/entry
+| id = 133
+| rgb = 18, 17, 26
+| blocks = Obsidian
+}}
+
+{{/entry
+| id = 134
+| rgb = 21, 20, 31
+| blocks = Obsidian
+}}
+
+{{/entry
+| id = 135
+| rgb = 11, 10, 16
+| blocks = Obsidian
+}}
+{{/entry
+| id = 136
+| rgb = 79, 1, 0
+| blocks = Netherrack, Quartz Ore, Nether Wart, Nether Brick Items
+}}
+
+{{/entry
+| id = 137
+| rgb = 96, 1, 0
+| blocks = Netherrack, Quartz Ore, Nether Wart, Nether Brick Items
+}}
+
+{{/entry
+| id = 138
+| rgb = 112, 2, 0
+| blocks = Netherrack, Quartz Ore, Nether Wart, Nether Brick Items
+}}
+
+{{/entry
+| id = 139
+| rgb = 59, 1, 0
+| blocks = Netherrack, Quartz Ore, Nether Wart, Nether Brick Items
+}}
+}}
+
+{{/header|caption=Original Color Table (Map Color ID)|class=collapsible collapsed|
+
+{{/entry
+| id = 0
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 1
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 2
+| blocks = Not explored
+}}
+
+{{/entry
+| id = 3
+| rgb = 89, 125, 39
+| blocks = Grass, Mycelium, Hay Bale
+}}
+
+{{/entry
+| id = 4
+| rgb = 109, 153, 48
+| blocks = Grass, Mycelium, Hay Bale
+}}
+
+{{/entry
+| id = 5
+| rgb = 127, 178, 56
+| blocks = Grass, Mycelium, Hay Bale
+}}
+
+{{/entry
+| id = 6
+| rgb = 174, 164, 115
+| blocks = Sand, Gravel, Soul Sand
+}}
+
+{{/entry
+| id = 7
+| rgb = 213, 201, 140
+| blocks = Sand, Gravel, Soul Sand
+}}
+
+{{/entry
+| id = 8
+| rgb = 247, 233, 163
+| blocks = Sand, Gravel, Soul Sand
+}}
+
+{{/entry
+| id = 9
+| rgb = 180, 0, 0
+| blocks = Lava, TNT
+}}
+
+{{/entry
+| id = 10
+| rgb = 220, 0, 0
+| blocks = Lava, TNT
+}}
+
+{{/entry
+| id = 11
+| rgb = 255, 0, 0
+| blocks = Lava, TNT
+}}
+
+{{/entry
+| id = 12
+| rgb = 112, 112, 180
+| blocks = Ice
+}}
+
+{{/entry
+| id = 13
+| rgb = 138, 138, 220
+| blocks = Ice
+}}
+
+{{/entry
+| id = 14
+| rgb = 160, 160, 255
+| blocks = Ice
+}}
+
+{{/entry
+| id = 15
+| rgb = 117, 117, 117
+| blocks = Wool *all colors*, Iron Block, Iron items, Ore Blocks
+}}
+
+{{/entry
+| id = 16
+| rgb = 144, 144, 144
+| blocks = Wool *all colors*, Iron Block, Iron items, Ore Blocks
+}}
+
+{{/entry
+| id = 17
+| rgb = 167, 167, 167
+| blocks = Wool *all colors*, Iron Block, Iron items, Ore Blocks
+}}
+
+{{/entry
+| id = 18
+| rgb = 0, 87, 0
+| blocks = Leaves, Flowers, Grass, Pumpkin, Melon
+}}
+
+{{/entry
+| id = 19
+| rgb = 0, 106, 0
+| blocks = Leaves, Flowers, Grass, Pumpkin, Melon
+}}
+
+{{/entry
+| id = 20
+| rgb = 0, 124, 0
+| blocks = Leaves, Flowers, Grass, Pumpkin, Melon
+}}
+
+{{/entry
+| id = 21
+| rgb = 180, 180, 180
+| blocks = Snow
+}}
+
+{{/entry
+| id = 22
+| rgb = 220, 220, 220
+| blocks = Snow
+}}
+
+{{/entry
+| id = 23
+| rgb = 255, 255, 255
+| blocks = Snow
+}}
+
+{{/entry
+| id = 24
+| rgb = 115, 118, 129
+| blocks = Clay
+}}
+
+{{/entry
+| id = 25
+| rgb = 141, 144, 158
+| blocks = Clay
+}}
+
+{{/entry
+| id = 26
+| rgb = 164, 168, 184
+| blocks = Clay
+}}
+
+{{/entry
+| id = 27
+| rgb = 129, 74, 33
+| blocks = Dirt
+}}
+
+{{/entry
+| id = 28
+| rgb = 157, 91, 40
+| blocks = Dirt
+}}
+
+{{/entry
+| id = 29
+| rgb = 183, 106, 47
+| blocks = Dirt
+}}
+
+{{/entry
+| id = 30
+| rgb = 79, 79, 79
+| blocks = Stone, Cobblestone, Bricks, Ores, Sandstone, *Many others*
+}}
+
+{{/entry
+| id = 31
+| rgb = 96, 96, 96
+| blocks = Stone, Cobblestone, Bricks, Ores, Sandstone, *Many others*
+}}
+
+{{/entry
+| id = 32
+| rgb = 112, 112, 112
+| blocks = Stone, Cobblestone, Bricks, Ores, Sandstone, *Many others*
+}}
+
+{{/entry
+| id = 33
+| rgb = 45, 45, 180
+| blocks = Water
+}}
+
+{{/entry
+| id = 34
+| rgb = 55, 55, 220
+| blocks = Water
+}}
+
+{{/entry
+| id = 35
+| rgb = 64, 64, 255
+| blocks = Water
+}}
+
+{{/entry
+| id = 36
+| rgb = 73, 58, 35
+| blocks = Log/Tree/Wood
+}}
+
+{{/entry
+| id = 37
+| rgb = 89, 71, 43
+| blocks = Log/Tree/Wood
+}}
+
+{{/entry
+| id = 38
+| rgb = 104, 83, 50
+| blocks = Log/Tree/Wood
+}}
+}}
+
+== Algorithm ==
+[[File:MapWaterLevels.png|right|thumb|912x912px|The depth ranges for water]]
+
+The natural generation makes use of [[Heightmap]]s to determine which block should be drawn.
+
+For all blocks other than water, the shade is based on the height difference with the block directly north of it. If the current block is shorter, the 1st shade is used; if they are the same height, the 2nd shade is used; and if the current block is taller, the 3rd shade is used. The 4th shade does not occur naturally in this context. Blocks that use the NONE color are not drawn; they instead draw the block underneath them.
+
+For water, the map conveys the depth to the first non-water block beneath it. To represent this, the algorithm uses five distinct levels of depth: the 3 shades, plus two intermediate checker patterns that alternate between the two adjacent shades.
+
+When the [[Void]] is present on a map, it is drawn as the STONE color. Additionally, when a block that uses the NONE color is above the void and nothing else, nothing is drawn, resembling unexplored areas of a map.
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|java beta}}
+|{{HistoryLine||?|When Notch was adding maps for the first time he did not use the [[NBT Format|NBT]] format.<ref name="previousversion">{{tweet|notch|65360048049754112}}</ref>}}
+|{{HistoryLine||1.6|dev=Test Build 3|Added [[map]]s.
+|Map IDs are limited to the size of a short (32,768<!-- Note: through testing, this is the actual value - not 65535 or 65536 - shorts are signed in Java and in the NBT format -->).<ref name="mapsize">{{tweet|notch|62970142207913984}}</ref>}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8.1|dev=pre1|Added the color "NETHER" (35), increasing the number of base colors from 35 to 36.
+|The shading multiplier for the fourth color is changed from 220 (0.86) to 135 (0.53).}}
+|{{HistoryLine||1.12|dev=17w17a|Added 16 map colors for every color of [[terracotta]]: "TERRACOTTA_WHITE" (36), "TERRACOTTA_ORANGE" (37), "TERRACOTTA_MAGENTA" (38), "TERRACOTTA_LIGHT_BLUE" (39), "TERRACOTTA_YELLOW" (40), "TERRACOTTA_LIGHT_GREEN" (41), "TERRACOTTA_PINK" (42), "TERRACOTTA_GRAY" (43), "TERRACOTTA_LIGHT_GRAY" (44), "TERRACOTTA_CYAN" (45), "TERRACOTTA_PURPLE" (46), "TERRACOTTA_BLUE" (47), "TERRACOTTA_BROWN" (48), "TERRACOTTA_GREEN" (49), "TERRACOTTA_RED" (50), and "TERRACOTTA_BLACK" (51), increasing the number of base colors from 36 to 52.}}
+|{{HistoryLine||1.13|dev=17w47a|Maps ids are no longer shorts, but rather ints, as they are no longer based on damage values of the item.
+|{{code|idcounts.dat}} now uses an int instead of a short.}}
+|{{HistoryLine|||dev=18w19a|Added {{code|DataVersion}} to saved {{code|map_<#>.dat}}. ({{code|idcounts.dat}} still doesn't have a {{code|DataVersion}}.)}}
+|{{HistoryLine||1.14|dev=19w02a|Added {{code|locked}} to saved {{code|map_<#>.dat}}.}}
+|{{HistoryLine|||dev=19w04a|Added {{code|DataVersion}} to {{code|idcounts.dat}}.
+|{{code|idcounts.dat}} is now gzipped.}}
+|{{HistoryLine||1.16|dev=Pre-release 6|Added 7 new colors: "CRIMSON_NYLIUM" (52), "CRIMSON_STEM" (53), "CRIMSON_HYPHAE" (54), "WARPED_NYLIUM" (55), "WARPED_STEM" (56), "WARPED_HYPHAE" (57), and "WARPED_WART_BLOCK" (58), increasing the number of base colors from 52 to 59.}}
+|{{HistoryLine||1.17|dev=21w15a|Added 2 new colors: "DEEPSLATE" (59) and "RAW_IRON" (60), increasing the number of base colors from 59 to 61.}}|{{HistoryLine|||dev=21w16a|Added a new color: "GLOW_LICHEN" (61), increasing the number of base colors to 62.}}}}
+
+== External links ==
+Listed below are some libraries and tools used for modifying and exporting map data.
+{| class="wikitable" data-description="Code examples"
+!Name
+!Game Version
+!Language 
+!Link to Source
+|-
+|minecraftmap
+|1.7
+|Python
+|[https://github.com/spookymushroom/minecraftmap/blob/master/minecraftmap/__init__.py __init__.py]
+|-
+|MCModify
+|1.8
+|Java
+|[https://github.com/LB--/MCModify/blob/java/src/main/java/com/lb_stuff/mcmodify/minecraft/Map.java Map.java]
+|-
+|mcmapimg
+|1.19
+|Python
+|[https://github.com/joodicator/mcmapimg/blob/master/mcmapimg/mcmapimg.py mcmapimg.py]
+|-
+|MapColors
+|1.21
+|Java
+|[https://github.com/nothub/MapColors github.com/nothub/MapColors]
+|-
+|Palette
+|1.21
+|Java
+|[https://github.com/plonck/palette github.com/plonck/palette]
+|}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+[[Category:Development]]
+
+[[de:Kartendaten]]
+[[fr:Format de carte (objet)]]
+[[ja:地図アイテムフォーマット]]
+[[nl:Kaart object formaat]]
+[[pt:Formato de item do mapa]]
+[[zh:地图存储格式]]

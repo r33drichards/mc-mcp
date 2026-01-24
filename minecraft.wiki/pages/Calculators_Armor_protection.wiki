@@ -1,0 +1,62 @@
+{{wip|Reverse calculating the needed armor and toughness given damage}}
+This tool calculates how much damage a given amount of armor protects against, with some other parameters. The outputs are rounded to 2 decimal places.
+
+<onlyinclude>
+<div style="border: 1px solid #ccc; border-radius: 4px; display: block; width: 100%; padding: 1em; box-sizing: border-box;" class="calculator-container">
+'''Calculate percent damage reduction and damage taken'''
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+{{simplecalc label|{{tooltip|Armor|See &quot;Armor&quot; in item tooltip}}:|for=armor}} <div class="cdx-text-input">
+{{simplecalc|id=armor|type=number|default=0|min=0|max=30|step=1|decimals=0|class-live=cdx-text-input__input}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-top: 0.2em;">
+{{simplecalc label|{{tooltip|Armor toughness|See &quot;Armor Toughness&quot; in item tooltip}}:|for=armortoughness}} <div class="cdx-text-input">
+{{simplecalc|id=armortoughness|type=number|default=0|min=0|max=20|step=1|decimals=0|class-live=cdx-text-input__input}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-top: 0.2em;">
+{{simplecalc label|[[Breach]] level:|for=breach}} <div class="cdx-text-input">
+{{simplecalc|id=breach|type=number|default=0|min=0|max=255|step=1|decimals=0|class-live=cdx-text-input__input}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-top: 0.2em;">
+{{simplecalc label|Weapon damage:|for=damage}} <div class="cdx-text-input">
+{{simplecalc|id=damage|type=number|default=0|min=0|class-live=cdx-text-input__input}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-top: 0.2em;">
+{{simplecalc label|Percent damage reduction:}} <div class="cdx-text-input">
+{{simplecalc|type=plain|default=0|formula=max(0, (min(20, max(armor/5, armor - (4*damage)/(min(armortoughness, 20)+8)))/25)-breach*0.15)*100|decimals=2}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-top: 0.2em;">
+{{simplecalc label|Damage taken:}} <div class="cdx-text-input">
+{{simplecalc|type=plain|default=0|formula=damage*(1 - max(0, (min(20, max(armor/5, armor - (4*damage)/(min(armortoughness, 20)+8)))/25)-breach*0.15))|decimals=2}}</div>
+</div>
+</div>
+</onlyinclude>
+<!--
+This tool calculates the armor points required to reduce damage by the amount entered, assuming that [[armor toughness]] is 0. Note that percentage damage reduction cannot be greater than 80% and that armor cannot be greater than 30.
+
+<onlyinclude>
+<div style="border: 1px solid #ccc; border-radius: 4px; display: block; width: 100%; padding: 1em; box-sizing: border-box;" class="calculator-container">
+'''Calculate minimum armor required'''
+
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+{{simplecalc label|Weapon damage:|for=damage}} <div class="cdx-text-input">
+{{simplecalc|id=damage|type=number|default=0|min=0|class-live=cdx-text-input__input}}</div>
+</div>
+
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-top: 0.2em;">
+{{simplecalc label|Percent damage reduction:}} <div class="cdx-text-input">
+{{simplecalc|id=damagereduction|type=number|default=0|min=0|max=80|class-live=cdx-text-input__input|formula=100*(1-damagetaken/damage)}}</div>
+</div>
+
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; margin-top: 0.2em;">
+{{simplecalc label|Damage taken:}} <div class="cdx-text-input">
+{{simplecalc|id=damagetaken|type=number|default=0|min=0|class-live=cdx-text-input__input|formula=damage-damage*damagereduction/100}}</div>
+</div>
+
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1em; margin-top: 0.2em;">
+{{simplecalc label|{{tooltip|Armor|See &quot;Armor&quot; in item tooltip}}:|for=armor}} <div class="cdx-text-input">
+{{simplecalc|id=armor|type=plain|default=0|decimals=0|formula=ifgreater(ceil(ifgreater(damagereduction, 4*damage/(0+8), damagereduction/4+4*damage/(0+8), 1.25*damagereduction)), 30, NaN, ceil(ifgreater(damagereduction, 4*damage/(0+8), damagereduction/4+4*damage/(0+8), 1.25*damagereduction)))}}</div>
+</div>
+
+</div>
+</onlyinclude>
+-->

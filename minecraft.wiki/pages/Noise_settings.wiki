@@ -1,0 +1,134 @@
+{{exclusive|java}}
+'''Noise settings''' are for generating the shape of the terrain and noise caves, and what blocks the terrain is generated with, stored as [[JSON]] files within a [[data pack]] in the path {{cd|data/<namespace>/worldgen/noise_settings}}, and are used with the {{cd|minecraft:noise}} generator in a dimension. Vanilla settings include {{cd|minecraft:overworld}} for normal [[Overworld]] generation, {{cd|minecraft:amplified}} for [[Amplified]] Overworld generation, {{cd|minecraft:nether}} for regular [[The Nether|Nether]] generation, {{cd|minecraft:caves}} for Cave (Nether-like generation but with Overworld [[terrain features]]) generation, {{cd|minecraft:end}} for regular [[The End|End]] generation, and {{cd|minecraft:floating_islands}} for Floating Islands (similar to The End outer islands) generation.
+
+== JSON format ==
+<div class="treeview">
+* {{nbt|compound}}: Root object.
+** {{/JSON format}}
+</div>
+
+== Noise router ==
+{{Main|Noise router}}
+
+The '''noise router''' is a collection of [[density function]]s. Density functions compute a value for each block position. They are used for terrain generation, biome layout, aquifers, ore veins, and more. 
+
+== Surface rule ==
+{{Main|Surface rule}}
+
+'''Surface rules''' are used to determine the block for each solid position of the terrain. Noise settings contains one root {{nbt|compound|surface_rule}} field that contains all the logic for placing the different surface blocks.
+
+== Defaults ==
+
+These are the default settings for some vanilla presets. For brevity, some fields are summarized or omitted entirely; the vanilla data pack's <code>minecraft/worldgen/noise_settings</code> directory has them in full.
+
+Amplified and large biomes are the same as Overworld generation, but the {{nbt|compound|noise_router}} is adjusted.
+
+{| class="wikitable"
+|+
+!Property
+!Overworld
+!Caves
+!Floating Islands
+!The Nether
+!The End
+|-
+|{{nbt|int|sea_level}}
+|63
+|32
+| -64
+| 32
+|0
+|-
+|{{nbt|boolean|disable_mob_generation}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|{{tc|yes|true}}
+|-
+|{{nbt|boolean|ore_veins_enabled}}
+|{{tc|yes|true}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|-
+|{{nbt|boolean|aquifers_enabled}}
+|{{tc|yes|true}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|{{tc|no|false}}
+|-
+| {{nbt|boolean|legacy_random_source}}
+|{{tc|no|false}}
+|{{tc|yes|true}}
+|{{tc|yes|true}}
+|{{tc|yes|true}}
+|{{tc|yes|true}}
+|-
+|{{nbt|compound|default_block}}
+| colspan=3| {{BlockLink|Stone}}
+| {{BlockLink|Netherrack}}
+| {{BlockLink|End Stone}}
+|-
+| {{nbt|compound|default_fluid}}
+| colspan=3 | {{BlockLink|Water}}
+| {{BlockLink|Lava}}
+| {{BlockLink|Air}}
+|-
+| {{nbt|list|spawn_target}}
+| Two spawn targets
+| Empty
+| Empty
+| Empty
+| Empty
+|-
+| {{nbt|int|noise.min_y}}
+| -64
+| -64
+| 0
+| 0
+| 0
+|-
+| {{nbt|int|noise.height}}
+| 384
+| 192
+| 256
+| 128
+| 128
+|-
+| {{nbt|int|noise.size_horizontal}}
+| 1
+| 1
+| 2
+| 1
+| 2
+|-
+| {{nbt|int|noise.size_vertical}}
+| 2
+| 2
+| 1
+| 2
+| 1
+|-
+| {{nbt|compound|surface_rule}}
+| The usual Overworld rules: places bedrock, deepslate, grass, and all biome-specific blocks.
+| Similar to the Overworld, but with a bedrock roof and tweaked to allow generating dirt and grass not on the surface.
+| Similar to the Overworld, but with no bedrock floor and tweaked to allow generating dirt and grass not on the surface.
+| Places the bedrock floor and roof, and biome-specific blocks.
+| Places end stone only.
+|}
+
+== History ==
+{{empty section}}
+
+== External links ==
+* [https://misode.github.io/worldgen/noise-settings/ Noise settings Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Rauscheinstellungen]]
+[[fr:Paramètres de bruit]]
+[[zh:噪声设置]]

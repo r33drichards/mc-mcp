@@ -1,0 +1,161 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.11022.0<br>'''Android''': 1.21.110.22
+| image = Bedrock 1.21.110.22 PatchNotes.jpg
+| image2 = Bedrock 1.21.110.22.png
+| build = 35591689
+| editorver = 1.0.6
+| versioncode = '''Android''':<br />
+952111022 (armeabi-v7a, 34)<br />
+962111022 (x86, 34)<br />
+972111022 (arm64-v8a, 34)<br />
+982111022 (x86_64, 34)
+| date = July 30, 2025
+| server = 1.21.110.22
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.110.22.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.110.22.zip Linux]
+| parent = 1.21.111
+| prevparent = 1.21.101
+| prev = Preview 1.21.110.20
+| next = Preview 1.21.110.23
+| nextparent = 1.21.112
+}}
+<onlyinclude>
+
+'''Beta 1.21.110.22''' (ChromeOS, Android) or '''Preview 1.21.110.22''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the second beta/''Preview'' version for [[Bedrock Edition 1.21.111]]{{note|1.21.110 is not a version of the game and its betas are instead part of 1.21.111.|name=1.21.111}}, released on July 30, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/38434933991821-Minecraft-Beta-Preview-1-21-110-22|title=Minecraft Beta & Preview - 1.21.110.22|website=Minecraft Feedback|date=July 30, 2025}}</ref> which adds [[copper horse armor]], and fixes bugs.
+
+== Additions ==
+=== Items ===
+'''[[Copper Horse Armor]]'''
+*Added copper horse armor.
+**Has the same loot table and chance of generating as iron horse armor.
+** Give {{armor|4}}.
+
+== Changes ==
+=== Blocks ===
+'''[[Copper Golem Statue]]'''
+*Scraping and reviving an unoxidized copper golem statue now damages the axe.
+*Added controller input hint text for using block to change pose.
+
+'''[[Lightning Rod]]'''
+*Lightning rods now oxidize like other copper blocks and the lightning rod on the copper golem.
+
+'''[[Shelf]]'''
+*Hoppers and droppers can now add or remove items to/from the shelf.
+*Shelves can now be waterlogged.
+*Shelf storage now affects comparator's output signal depending on which slots are occupied:
+**Each shelf slot corresponds to 1 bit
+**The signal strength is determined by converting the 3 bits of the slots into a decimal value
+**All slots empty [000] means a signal strength of 0
+**Only the first slot occupied [100] means a signal strength of 1
+**Only the second slot occupied [010] means a signal strength of 2
+**Only the third slot occupied [001] means a signal strength of 4
+**All slots occupied [111] means a signal strength of 7
+*Non-solid blocks can no longer be placed on the top, bottom, front or sides of the shelf.
+*Powered shelves now connect even when they are made of different types of wood.
+
+=== Gameplay ===
+'''Camera'''
+*Rider rotation lock now applies to cameras when using camera relative movement.
+
+=== General ===
+'''Blending'''
+*Enabled blending for legacy chunks.
+**This fixes an issue where blocks were missing from the terrain after loading into the world on some starter biomes.
+
+'''UI'''
+*Resized the "Textures & More" button icon to be in line with the other button icons.
+
+=== Technical ===
+'''AI Goals'''
+*Made the schemas for the following goals stricter when parsing and will fail to load an entity json that has invalid data in versions {{cd|1.21.110}} and newer:
+**{{cd|minecraft:behavior.roar}}
+**{{cd|minecraft:behavior.slime_attack}}
+**{{cd|minecraft:behavior.slime_float}}
+**{{cd|minecraft:behavior.slime_keep_on_jumping}}
+**{{cd|minecraft:behavior.slime_random_direction}}
+**{{cd|minecraft:behavior.sniff}}
+**{{cd|minecraft:behavior.sonic_boom}}
+**{{cd|minecraft:behavior.stay_near_noteblock}}
+**{{cd|minecraft:behavior.swim_idle}}
+**{{cd|minecraft:behavior.swim_up_for_breath}}
+**{{cd|minecraft:behavior.swim_wander}}
+**{{cd|minecraft:behavior.swoop_attack}}
+
+'''[[Commands]]'''
+*Updated {{cmd|locate biome}} to support underground biomes:
+**Y axis is more accurate to exactly where the biome is.
+
+'''Components'''
+*Updates to {{cd|minecraft:dash_action}}:
+**Added new field {{cd|direction}} taking either {{cd|entity}} or {{cd|passenger}} as its value. Defaults to {{cd|entity}}:
+***{{cd|entity}}:
+****Behaves like before.
+***{{cd|passenger}}:
+****Momentum applied from the dash action will now instead be applied in the view direction of the passenger entity, using the {{cd|horizontal_momentum}} as forward momentum and {{cd|vertical_momentum}} as upward momentum in the direction of the passenger. Short of it: looking up with horizontal momentum will launch you upwards.
+***Old schemas with format version older than {{cd|1.21.110}} will automatically receive the {{cd|entity}} direction.
+
+'''Entity Components'''
+*Changed the schema for the {{cd|minecraft:experience_reward}} entity component so that the {{cd|on_bred}} and {{cd|on_death}} members no longer accept arrays; only single Molang expressions are now supported for each member.
+
+'''[[Gameplay]]'''
+*From {{cd|1.21.110}} onward, the free camera and fixed boom cameras use camera relative strafe as default scheme.
+
+'''Item Components'''
+*Repairing an item using the {{cd|minecraft:repairable}} item component no longer fails when a stack larger than strictly needed is used as repair material.
+*Added the new {{cd|minecraft:fire_resistant}} item component, which determines whether an item is immune to burning when dropped in fire or lava.
+** Functions like [[netherite]] items.
+
+'''[[Item]]s'''
+*{{cd|poly_mesh}} is now documented as a deprecated feature:
+**It was already treated as deprecated, but the documentation did not reflect this.
+*{{cd|texture_meshes}} is no longer documented as an experimental feature:
+**It was already treated as non-experimental, but the documentation did not reflect this.
+
+'''Network Protocol'''
+*Modified the binary format of {{cd|PlayerArmorDamagePacket}}.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.110.22 Preview
+|;old
+|62252|Block directional placement is asymmetrical for command blocks when certain coordinates are negative
+|152962|Armor pieces don't display toughness stat
+|179110|Invert Y-Axis for touch controls does not work in Spectator mode
+|184808|"Switch sneaking and jumping" option also changes flying and swimming up
+|223011|Parity issue: Glass blocks held by endermen are visually opaque
+|223744|The title inside Copper Chest container is incorrect
+|223876|Copper Golem takes fall damage
+|;prev
+|225217|Nether wood shelves flammable
+|225226|Shelves do not interact with comparators
+|225315|Crimson Shelf and Warped Shelf can be used as fuel for the Furnace.
+|225441|Full bundles in shelf became empty after returning from the Nether
+|otherissuescount=9}}
+'''Other'''
+*Fixed position of copper golem spawn egg to be after the iron golem spawn egg.
+*Fixed an issue with being unable to continue destroying valid blocks in adventure mode when they are behind water.
+*Fixed the shelf place and take item sounds not playing.
+*Fixed the shelf power on and off sounds not playing.
+*Fixed attempting to place a painting on a block that already has a painting spamming its place sound effect even though it cannot be placed.
+*Colored text on signs no longer appear dark in Vibrant Visuals.
+*Fixed Realms crash in liquid sensing system.
+*Fixed a crash when wearing some character creator pieces that support custom colorization.
+*Fix for custom biomes no longer appearing in game.</onlyinclude>
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.111 betas]]
+
+[[de:Bedrock Edition beta 1.21.110.22]]
+[[es:Bedrock Edition Preview 1.21.110.22]]
+[[pt:Edição Bedrock Preview 1.21.110.22]]
+[[ru:Preview 1.21.110.22 (Bedrock Edition)]]
+[[uk:Preview 1.21.110.22 (Bedrock Edition)]]
+[[zh:基岩版1.21.110.22]]

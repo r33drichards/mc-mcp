@@ -1,0 +1,108 @@
+{{Infobox command
+|name=enchant
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Adds an [[enchantment]] to a player's selected [[item]], subject to the same restrictions as an [[anvil mechanics|anvil]].<ref>{{bug|MC-261942}}</ref> Also works on any mob or entity holding a [[weapon]]/[[tool]]/[[armor]] in its main hand.
+
+==Syntax==
+
+* '''Java Edition'''
+: <code>enchant <targets> <enchantment> [<level>]</code>
+
+* '''Bedrock Edition'''
+: <code>enchant <player: target> <enchantmentId: int> [level: int]</code>
+: <code>enchant <player: target> <enchantmentName: Enchant> [level: int]</code>
+
+==Arguments==
+
+{{argument|targets|entity|player: target|CommandSelector<Actor>}}
+: Specifies the target(s).
+: {{arg desc|je=entity|amount=multiple|type=entities|be=actor}}
+
+{{el|je|short=1}}: {{argument|enchantment|resource}}<br>
+{{el|be|short=1}}: {{argument|be=1|enchantmentId: int|int}} or {{argument|enchantmentName: Enchant|enum}}
+: Specifies the [[enchantment]] to be added to the item held in main hand by the target.
+: {{arg desc|je=resource|registry=minecraft:enchantment|be=enum}}
+
+{{argument|level|integer|level: int|int}}
+: Specifies the enchantment level. Should be not greater than the maximum level for the specified enchantment<ref>Although <code>/enchant</code> enforces maximum levels and compatibility, other commands (such as {{cmd|give}}, {{cmd|replaceitem}}, and {{cmd|data}}) can bypass these restrictions.</ref>. If not specified, defaults to 1.
+: {{arg desc|be=int|je=integer|min=0}} {{IN|bedrock}}, it should be between 1 and 2147483647 (inclusive).
+
+== Result ==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more entities (named player must be online).|fail|fail}}
+{{Result table|<code>level: int</code> is lower than 1.|N/A}}
+{{Result table|<code><level></code> or <code>level: int</code> is greater than the maximum level for the specified enchantment.|fail}}
+{{Result table|All the selected entities meet one or more of the following conditions:
+*There's no item in its hand.
+*The enchantment is not valid for items in its main hand.
+*The enchantment conflicts with current enchantments (for example, "Piercing" cannot be given to a crossbow which already has "Multishot", and "Sharpness III" cannot be given to a sword which already has "Sharpness I").
+*Items in its main hand already have this enchantment{{only|java}}.
+*Items in its main hand already have this enchantment with its maximum level{{only|bedrock}}.
+}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of players whose items are successfully enchanted.}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|the number of players whose items are successfully enchanted.}}
+{{Output table}}
+
+== Examples ==
+
+* To give the [[Infinity]] enchantment to all players holding a bow:
+*: <code>/enchant @a infinity</code>
+* To enchant the nearest player's held sword with [[Sharpness]] 5:
+*: <code>/enchant @p sharpness 5</code>
+
+== History ==
+{{Expand section}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.4.4|dev=pre|Added {{cmd|/enchant|link=none}}.}}
+|{{HistoryLine||1.13|dev=17w45a|Removed {{cmd|enchant|link=none}}.}}
+|{{HistoryLine|||dev=18w06a|Re-added {{cmd|enchant|link=none}}.}}
+|{{HistoryLine||1.19.3|dev=22w42a|{{cd|<enchantment>}} now accepts a [[argument types|<code>resource</code> argument]], instead of <code>item_enchantment</code>.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 5|Added {{cmd|enchant|link=none}}.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.19.20|dev=Preview 1.19.20.22|{{cd|/enchant}} command now can be applied on mobs.<ref>{{bug|MCPE-113623||resolution=Fixed}}</ref>}}
+|{{HistoryLine||1.19.50|dev=Preview 1.19.50.20|Using the {{cd|/enchant}} command to apply the same level of enchantment no longer results in a higher level being applied.<ref>{{bug|MCPE-153204||resolution=Fixed}}</ref>}}
+}}
+
+== References ==
+<references/>
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/enchant?view=minecraft-bedrock-stable|title=<code>/enchant</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/enchant]]
+[[es:Comandos/enchant]]
+[[ja:コマンド/enchant]]
+[[ko:명령어/enchant]]
+[[lzh:令/enchant]]
+[[pt:Comandos/enchant]]
+[[ru:Команды консоли/enchant]]
+[[th:คำสั่ง/enchant]]
+[[uk:Команди консолі/enchant]]
+[[zh:命令/enchant]]

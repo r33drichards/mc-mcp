@@ -1,0 +1,205 @@
+{{Infobox version
+|title=Minecraft 21w20a
+|image=21w20a.jpg
+|image2=Java Edition 21w20a.png
+|edition=Java
+|type=Snapshot
+|date=May 19, 2021
+|jsonhash=e8a53814450fd98c2d5de5eca8e89cf6760c89d2
+|clienthash=f756009979e33058d57695a3599b4a2544d856ca
+|clientmap=e6bf5879f4ae3778540cf304483e035ef72416a3
+|serverhash=054b2065dd63c3e4227879046beae7acaeb7e8d3
+|servermap=8d6960e996a40b8350f5973d8a237469a9a6a7bc
+|otherdl={{dl|233aa01c6db99ffcf95594e384e72671ae279ced|custom|name=CavesAndCliffsPreview.zip|title=Data pack}}<ref group=note>Re-enables features set to release for [[Java Edition 1.18|1.18]].</ref>
+|parent=1.17
+|prevparent=1.16.5
+|prev=21w19a
+|next=1.17 Pre-release 1
+|nextparent=1.17.1
+}}<onlyinclude>
+
+'''21w20a''' is the twenty-second and final [[snapshot]] for [[Java Edition 1.17]], released on May 19, 2021,<ref>{{snap|21w20a|May 19, 2021}}</ref> which makes tweaks and fixes bugs, most of which relate to [[axolotl]] behavior and world generation issues.
+
+== Additions ==
+=== General ===
+'''[[NBT format]]'''
+* Added <code>HasVisualFire</code> tag.
+** Entities with this tag visually appear on fire, even if they are not actually on fire.
+
+'''[[Tag]]s'''
+* Added the <code>features_cannot_replace</code> block tag.
+** Contains [[bedrock]], [[Monster Spawner|spawners]], [[chest]]s, and [[end portal frame]]s.
+
+== Changes ==
+=== Blocks ===
+'''[[Glow lichen]]'''
+* Now drops the correct amount of glow lichen if there's multiple in one block space.
+
+'''[[Rooted dirt]]'''
+* Tilling rooted dirt with a hoe now converts it into dirt, and pops out [[hanging roots]], to match the behavior {{in|BE}}.<ref>{{bug|MC-220128}}</ref>
+
+'''[[Structure block]]'''
+* All invisible blocks are now displayed as small cubes by save mode structure blocks; previously barriers and light blocks would not display at all.<ref>{{bug|MC-102220}}</ref><ref>{{bug|MC-221833}}</ref>
+** Variants of air still all appear identical and are not distinguished.<ref>{{bug|MC-221834}}</ref>
+{| class="wikitable" style="text-align:center"
+!
+! [[Air]], [[cave air]] and [[void air]]
+! [[Structure void]]
+! [[Barrier]]
+! [[Light Block|Light]]
+|-
+! Before
+| [[File:Air (shown) JE2.png|80px]]
+| [[File:Structure Void (shown) JE2.png|80px]]
+| [[File:Blank.png|80px]]
+| [[File:Blank.png|80px]]
+|-
+! After
+| [[File:Air (shown) JE2.png|80px]]
+| [[File:Structure Void (shown) JE3.png|80px]]
+| [[File:Barrier (shown) JE1.png|80px]]
+| [[File:Light (shown) JE1.png|80px]]
+|}
+
+=== Items ===
+'''[[Big dripleaf]]'''
+* Tweaked the inventory model.
+
+'''[[Light block]]'''
+* Changed the textures of inventory icons to prevent overlap with the stack number.
+
+=== Mobs ===
+'''[[Axolotl]]'''
+* Now only play dead when in water.
+* Can no longer be fed tropical fish, only buckets of tropical fish, as axolotls in real life eat live fish. This also brings it to parity with Bedrock Edition.<ref>{{bug|MCPE-123573|||Works As Intended}}</ref>
+* When fed with a bucket of tropical fish, it returns a water bucket instead of a bucket.
+
+'''[[Llama]]'''
+* No longer spit at players on [[Peaceful]] difficulty.
+
+=== World generation ===
+'''[[Amethyst geode]]s'''
+* Are rarer.
+
+=== General ===
+'''[[Java Edition distance effects|Distance effects]]'''
+* Fixed a precision loss issue with <code>minecraft:location_check</code>.<ref>{{bug|MC-205680}}</ref>
+
+'''[[Narrator]]'''
+* GUI narration now includes position and usage of hovered or focused element.
+
+'''[[Tag]]s'''
+* Added the <code>cave_vines_plant</code> block to the <code>bee_growables</code> block tag.
+** The <code>cave_vines</code> block was already in this tag.
+* Removed the tropical fish item from the <code>axolotl_tempt_items</code> item tag.
+
+'''Text'''
+* Changed the strings "Chat disabled by launcher option, cannot send message" and "Chat not allowed by account settings, cannot send message" to "Chat disabled by launcher option. Cannot send message" and "Chat not allowed by account settings. Cannot send message", respectively.
+
+'''Protocol'''
+* While connecting to a server, the client sends a handshake packet with "hostname" and "port" field directly padded with address given in address text field directly, instead of converting them to the real hostname and port.
+
+== Fixes ==
+{{fixes|fixedin=21w20a
+|;old
+|610|Grass / Flowers / Snow are placed incorrectly in newly created chunks.
+|102220|[[Barrier]] Blocks are not shown when "Show Invisible Blocks" is selected in Save Structure Blocks.
+|106613|[[Shulker]] no longer continue close or open when it hurt in the peaceful mode.
+|125858|Grass / flowers / snow / trees are placed incorrectly in [[Superflat]] World.
+|137452|[[Bamboo]] grows in lots of inappropriate places in Bamboo Jungles.
+|149777|Crash when loading world: <code>java.util.ConcurrentModificationException</code> when using Java 11 or above.
+|166187|Some [[mob]]s still try to hit players in [[Peaceful]].
+|172304|[[Piglin]]s, [[piglin brute]]s, [[hoglin]]s, [[zoglin]]s and axolotls can attack their own teammates.
+|189535|Catching a [[fish]] in a [[bucket]] on [[creative]] mode doesn't give player new bucket.
+|191338|Name color for [[Minecart with Command Block]] is incorrect.
+|192591|Name color for [[Structure Void]] is incorrect.
+|197328|[[Entities]] sometimes don't render behind the water surface on Fast or Fancy graphics.
+|198200|Crash when leaving out processors in a template pool: <code>java.lang.IllegalArgumentException</code>: bound must be positive.
+|199702|"<code>netherrack_replace_blobs</code>" of large size can cause inconsistent generation.
+|207324|[[Mob]]s and particles sometimes don't fully render behind stained or tinted glass.
+|220694|Name color for [[knowledge book]] is incorrect.
+|223322|[[Chorus flower]]s can be broken with projectiles in spawn protection.
+|;dev
+|203712|[[Amethyst Geode]]s cause floating water/lava to generate when intersecting water/lava caves/pools.
+|203867|Amethyst geodes can overwrite bedrock.
+|204393|Lava [[Cauldron]] emits redstone signal strength 1 instead of 3.
+|204902|[[Dirt path]]s are no longer compatible with the programmer art resource pack.
+|205104|Rideable mobs are not affected by powder snow's freezing effect while being ridden.
+|205120|Freezing hearts aren't displayed properly in Programmer Art resource pack.
+|205250|Amethyst geodes can generate in a stronghold and can potentially destroy the end portal frames.
+|205680|<code>minecraft:location_check</code> predicate floating point imprecision.
+|206107|[[Parrot]]s sitting on shoulders do not freeze in powder snow.
+|206131|[[Amethyst block]]s are transparent / don't conduct Redstone.
+|206601|Potion particles are showing when looking through spyglass.
+|206839|[[Pointed dripstone]]s cause extreme durability damage to helmets.
+|207366|Trying to modify the world height of a world after it's already been generated gives a null pointer exception.
+|208586|Axolotls get stuck and spin constantly on top of lily pads.
+|208589|Axolotls have a swimming animation (move their body up- and downwards) when on land.
+|208617|Axolotls sometimes twitch rapidly when adjusting their rotation.
+|208624|An axolotl is not correctly centered whilst inside of a boat.
+|208641|Axolotl movement glitch on stairs.
+|208649|Breeding [[axolotl]] with a bucket of tropical gives back a bucket instead of a water bucket.
+|208654|Collecting an axolotl with a [[water bucket]] in creative mode replaces the original bucket.
+|208675|Axolotls sometimes use walking animation when in shallow [[water]].
+|208682|Axolotls frequently get stuck inside of waterlogged blocks.
+|208691|Axolotls play dead even when they take damage without being attacked by an entity.
+|208735|Axolotls attempt to pathfind towards unreachable water, then start spinning, eventually drying out and dying.
+|209324|[[Pointed Dripstone]] can be broken with tridents in spawn protection.
+|212125|Only one glow lichen drops when using shears on multiple in a single block space.
+|212531|Shulkers can rotate their heads up and down.
+|212931|Fire extinguishing sound doesn't play when mobs are extinguished with rain/water.
+|214041|Mob can't properly or difficult walk on big dripleaf, when the big dripleaf is 4 blocks or more from the ground.
+|214909|Top half of a small dripleaf can turn into a ghost block when placing it in water while the water is being removed.
+|215665|Amethyst Geodes can overlap with dungeons.
+|216214|<code>netherrack_replace_blobs</code> with water as target crashes the game.
+|216980|Comma splices in two source strings (EN_US).
+|217113|[[Fox]]es spawned inside of powder snow sleeps.
+|217608|The big dripleaf texture is not vertically centered.
+|217610|Too much of the big dripleaf is hidden when placed inside of an item frame.
+|217742|[[Campfire]]s and [[TNT]] can be lit by players using arrows shot from flame bows in spawn protection.
+|219856|F3 + L isn't sorted alphabetically in the debug screen.
+|219870|The Mojang loading screen upon start up flashes black.
+|220063|[[Sweet berries]] and glow berries sound events are named extremely differently.
+|220128|Parity Issue: Rooted dirt won't turn into the dirt and drop roots item after tilling with hoe in Java.
+|220867|[[Fossil]]s can generate through bedrock.
+|221566|Name color for light is incorrect.
+|221833|Light blocks are not shown within structure block bounds with Show Invisible Blocks on.
+|221863|[[Powder Snow]] can be broken by players on fire in spawn protection.
+|221984|Collecting an axolotl in a bucket and then placing it resets its kill cooldown.
+|222002|Light item displays the wrong level number.
+|222116|Splash water bottles doesn't extinguish candle cakes.
+|222797|Axolotl can be bred with just tropical fish items, not just bucket ones.
+|223371|Powder snow can be destroyed through the use of a flame bow in spawn protection.
+|223372|You can decrease the level of a water or powder snow cauldron, through the use of an entity on fire in spawn protection.
+|224320|<code>minecraft.used:minecraft.potion</code> doesn't increase when filling a partially filled cauldron with a water bottle.
+|224322|Powder snow can create ghost blocks in creative mode.
+|224480|Powder snow doesn't melt into water in cauldrons.
+|224482|Superflat presets no longer generate with decorations.
+|225078|Upgrading from 1.12.2 and below will cause items to lose enchantments.
+|225253|[[Dying]] in a [[nether portal]] softlocks the player on the "You Died!" menu.
+|;previous
+|225347|<code>cave_vines_plant</code> isn't in <code>#bee_growables</code>.
+|225352|Geodes have not been made "significantly rarer".
+|;private
+|225360|Cannot resolve SRV records: unknown host.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|b-FVbBiimYI|RkFa1AOwJKY}}
+
+== References ==
+{{reflist}}
+
+== Notes ==
+{{Notelist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:21w20a]]
+[[es:Java Edition 21w20a]]
+[[fr:Édition Java 21w20a]]
+[[ja:Java Edition 21w20a]]
+[[pt:Edição Java 21w20a]]
+[[ru:21w20a (Java Edition)]]
+[[zh:Java版21w20a]]

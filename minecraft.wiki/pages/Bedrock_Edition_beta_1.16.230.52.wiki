@@ -1,0 +1,142 @@
+{{Infobox version
+|edition=Bedrock
+|image=Axolotl 1.16.230.52.jpg
+|image2=Bedrock 1.16.230.52.png
+|type=Beta
+|internal=
+'''Windows''': 1.16.23052.0<br>
+'''Xbox One''': 1.16.23052.70<br>
+'''Android''': 1.16.230.52<br>
+|parent=1.17.0
+|date='''Xbox, Windows 10, Android:''' March 31, 2021
+|prevparent=1.16.221
+|prev=beta 1.16.230.50
+|next=beta 1.16.230.54
+|nextparent=1.17.1
+}}<onlyinclude>
+
+'''Beta 1.16.230.52''' is the second beta version for [[Bedrock Edition 1.17.0]],{{efn|Bedrock Edition 1.16.230 would not be a version of the game and its betas are instead part of [[Bedrock Edition 1.17.0|1.17.0]].<ref>{{tweet|CornerHardMC|1397616108056707072|Correct, no 1.16.230|May 26, 2021}}</ref>}} released on March 31, 2021,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/360059243391|title=Minecraft Beta - 1.16.230.52 (Xbox One/Windows 10/Android)|website=Minecraft Feedback|date=March 31, 2021}}</ref> which adds [[axolotl]] and [[Deepslate (disambiguation)|deepslate]] variants behind [[Experimental Gameplay|experimental]] toggle, and fixes bugs.
+
+== Additions ==
+=== Blocks ===
+'''[[Deepslate]]'''
+* Currently only generated in blobs below y=16.
+* Has a hardness value greater than that of [[stone]] but can be mined with any [[pickaxe]].
+* Drops [[cobbled deepslate]] when mined.
+* Can be obtained only with a [[Silk Touch]] pickaxe.
+* There are 19 variants in total.
+
+'''[[Cobbled Deepslate]]'''
+* Drops from [[deepslate]] when mined with a pickaxe without [[Silk Touch]].
+* Can't be used interchangeably with [[cobblestone]] and [[blackstone]] in crafting recipes of basic tools, furnaces and brewing stands.<ref>{{Bug|MCPE-123669}}</ref>
+* Can be crafted into respective stairs, slabs and walls, [[polished deepslate]], [[chiseled deepslate]], [[deepslate bricks]] and [[deepslate tiles]], which can be used to craft their respective stairs, slabs, and walls (excluding chiseled deepslate).
+** Deepslate bricks and deepslate tiles can also be smelted onto their cracked variants.
+* Can now be smelted back into deepslate.
+
+'''[[Deepslate ore]]s'''
+* Added deepslate variants of all ores, including iron, gold, copper, coal, diamond, redstone, emerald, and lapis lazuli.
+** Deepslate ore variants for [[Copper Ore|copper]], [[Emerald Ore|emerald]], and [[Coal Ore|coal ore]] do not generate by default.
+* Takes twice as long to mine as normal ores.
+* Has the texture of [[deepslate]] replacing the normal stone texture.
+* Takes place of ores that generate in deepslate.
+* Can be used in blasting and smelting recipes like normal ores.
+
+'''[[Oxidized Copper]] and [[Oxidized Cut Copper]]'''
+* Can now be waxed.
+
+=== Mobs ===
+'''[[Axolotl]]'''
+* Axolotls will spawn underground, in water.
+* Holding a bucket of tropical fish will cause nearby axolotls to follow the player on both land and water.
+** Axolotls cannot be tamed but they can be bred by feeding them buckets of tropical fish.
+* Axolotls will attack fish, squid, drowned, and guardians.
+* Axolotls come in a variety of colors, all with an equal chance of spawning except for blue.
+** Blue axolotls have a small chance of spawning as a mutation when breeding 2 axolotls.
+* Axolotls can survive on dry land for a few minutes. After that they will start to dry out and take continuous damage until rehydrated.
+* When taking damage, there is a chance that the axolotl will play dead. While playing dead, the axolotl will regenerate health and mobs will be unable to target the axolotl.
+* When a player kills a mob that the axolotl was attacking, they are rewarded with the regeneration effect, and their mining fatigue is removed if they have it.
+* Axolotls can be picked up with buckets, like fish.
+
+== Changes ==
+=== World generation ===
+'''[[Cave]]s'''
+* Deepslate is generated in blobs below y = 16.
+
+'''[[Ore]]s'''
+* Ore is generated as normal, when the ore is generated where Deepslate has been generated, [[deepslate ore]] is generated instead.
+
+=== Technical ===
+'''GameTest Framework'''
+* GameTest
+** <code>function assertEntityData(position : BlockLocation, entityIdentifier : string, callback : function(entity: Entity))</code>
+*** Asserts that the given condition is true for all entities of the given type at the given location
+** <code>function spawnItem(itemType : ItemStack, position : Location)</code> 
+*** Spawns an item at the given location
+** <code>function assertIsWaterlogged(position : BlockLocation, isWaterlogged : bool)</code>
+*** Asserts that the block at the given location is waterlogged
+** <code>function assertRedstonePower(position : BlockLocation, power : number)</code> 
+*** Asserts the redstone power level at the given location
+** Added Commands.run
+* New Effect APIs on the Entity Type
+** <code>function getAmplifier()</code> 
+*** Gets the effect's amplifier level
+** <code>function getDuration()</code>
+*** Gets the effect's remaining duration
+** <code>function addEffect(effectType : EffectType, duration : number, amplifier: number)</code>
+*** Adds an effect to the entity
+** <code>function getEffect(effectType : EffectType)</code>
+*** Gets an effect from the entity
+* Updated constructor to ItemStack
+* Updated ItemType
+** <code>constructor (x : number, y: number, z: number)</code> 
+*** World coordinates
+** <code>function getName()</code> 
+*** Gets the item's name
+* Add new enumerations: <code>Minecraft.Effects</code> & <code>Minecraft.Items</code>
+
+== Fixes ==
+'''General'''
+* Improved underwater visibility in all sorts of water, water-filled caverns in particular.
+* Oxidized copper block variants can now be waxed
+* Tweaked which blocks can be placed on pointed dripstone, to match {{JE}} ({{bug|MCPE-116098}}, {{bug|MCPE-116056}}, {{bug|MCPE-116050}})
+* Pointed dripstone now correctly breaks when pushed by piston ({{bug|MCPE-116095}})
+* Dripstone and pointed dripstone now have correct sounds when walking/jumping on them ({{bug|MCPE-119694}})
+* Glow lichen is now under the nature category of the Creative inventory ({{bug|MCPE-122600}})
+* Lightning rods now correctly activate observers when struck by lightning
+* Big dripleaf can now be waterlogged
+* Big dripleaf now untilts correctly after getting hit by a projectile ({{bug|MCPE-121666}})
+* Small dripleaf can now also be placed on dirt, farmland, grass, moss blocks, and podzol as long as its stem is underwater
+* Moss block now blocks water ({{bug|MCPE-121796}})
+* Ladder, vines, twisting vines, weeping vines, sweet berry bush, Nether sprouts, and fire can now be placed on moss blocks ({{bug|MCPE-121828}})
+* Spore blossoms correctly drop themselves when broken with shears ({{bug|MCPE-122054}})
+* Mobs can now pathfind across moss blocks ({{bug|MCPE-121967}})
+* Lush caves can now contain classic "jungle" vines
+* Fixed a bug where the screen reader did not read the focused button on some screens
+* Fixed a bug where English screen reader pronounced "A button" as "a button", now saying "Button A" instead
+* Tridents in players' and mobs' hands are now correctly positioned in all perspective modes ({{bug|MCPE-116681}})
+* Trident raising animation modified for first person to more closely match the previous version
+* Water buckets can now be used to pick up fish ({{bug|MCPE-94520}})
+
+'''Mobs'''
+* Rabbits can now raid carrot crops ({{bug|MCPE-113321}})
+* Animals can no longer be fed infinitely until they are bred ({{bug|MCPE-19309}})</onlyinclude>
+
+== Notes ==
+
+<references group="fn"/>
+
+== References ==
+
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[de:Bedrock Edition beta 1.16.230.52]]
+[[es:Bedrock Edition beta 1.16.230.52]]
+[[fr:Édition Bedrock bêta 1.16.230.52]]
+[[it:Bedrock Edition beta 1.16.230.52]]
+[[ja:Bedrock Edition beta 1.16.230.52]]
+[[pt:Edição Bedrock beta 1.16.230.52]]
+[[ru:Beta 1.16.230.52 (Bedrock Edition)]]
+[[zh:基岩版1.16.230.52]]

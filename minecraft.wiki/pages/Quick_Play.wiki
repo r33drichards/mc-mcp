@@ -1,0 +1,124 @@
+'''Quick Play''' is a feature available in the ''[[Minecraft Launcher]]'', allowing players to directly join a [[singleplayer]] world or a [[multiplayer]] server, by skipping the screens and menus in-between.<ref>{{mcnet|quick-play-coming-java-and-bedrock-edition|Quick Play is coming to Java and Bedrock Edition|February 12, 2024}}</ref>
+
+== Usage ==
+[[File:Launcher Quick Play.png|thumb|The launcher with the Quick Play bar in the top right.]]
+
+Quick Play instances are created automatically once you play in a world or a server. They appear as icons stacked next to the green "Play" button on the ''Java Edition'' or ''Bedrock Edition'' tabs of the launcher. By hovering over the icons with the mouse, all buttons are shown separately and show the name, installation, last played date, multiplayer type, and game mode. 
+Instances are sorted from the most recently played (bottom) to the least recently played (top).
+
+There are a total of five slots. Once they are all filled, playing another world causes the oldest instance to be removed from the list, and the newest instance to be added. This behavior can be avoided by pinning instances; however, pinned instances still count for the five slots.
+
+Quick Play works for both [[Java Edition|''Java Edition'']] and [[Bedrock Edition|''Bedrock Edition'']], and creates instances for [[worlds]], ''Editor'' [[projects]], [[servers]] and [[Realms]]. Realms can also be opened through Quick Play from the "Realms" tab.
+
+If one plays a world with the same name, the icon is reused.
+
+=== Disabling Quick Play ===
+[[File:Launcher settings Quick Play.png|thumb|Settings related to Quick Play in the launcher.]]
+
+Quick Play can be toggled in the [[Minecraft Launcher#Settings|launcher settings]]. Disabling it does not remove instances, therefore enabling it again displays previously saved instances.
+
+To actually remove quick play instances, you can click on the "Delete All Quick Play Entries" button. After a confirmation dialog, it deletes all instances, pinned and unpinned, of the user currently logged in.
+
+== Options ==
+[[File:Edit Quick Play Game Java.png|thumb|The edit window for Java Edition quick play.]]
+[[File:Edit Quick Play Game Bedrock.png|thumb|The edit window for Bedrock Edition quick play.]]
+
+Quick Play instances can be customized by clicking on the button at the right of quick play icons.
+
+An instance icon can be changed. For [[Java Edition|''Java Edition'']], these are the same 3D-rendered icons as the ones for [[Minecraft Launcher#Installations|installations]]. For [[Bedrock Edition|''Bedrock Edition'']], these are 2D square icons. It is also possible to select a custom icon, which must be 128x128 pixels in size.
+
+An instance can be pinned, which moves it to the very left. On the edit screen, pinned and non-pinned instances are separated by a vertical bar. To change order of pinned instances, you have to unpin and pin again an instance.
+
+The third option, "Show Title Initial", displays the first letter of the instance name on the icon, in uppercase. For example, on the first image on the right, checking this option would display an uppercase white "M" in front of the logo.
+
+== Command line arguments ==
+{{exclusive|java|section=1}}
+
+The following table describes the command line arguments used to launch the game directly into a world.
+
+{| class="wikitable" data-description="Command line arguments"
+|-
+! Argument
+! Description
+! Example
+|-
+| {{cd|quickPlayPath}}
+| Takes a specified path of a file containing information about the world to join, relative to the [[.minecraft|run directory]].
+| {{cd|--quickPlayPath "quickPlay/log.json"}} (resolved into {{cd|.minecraft/quickPlay/log.json}})
+|-
+| {{cd|quickPlaySingleplayer}}
+| Takes a specified identifier representing the folder name of the world.
+| {{cd|--quickPlaySingleplayer "New World"}}
+|-
+| {{cd|quickPlayMultiplayer}}
+| Takes a specified identifier representing the IP address and port of the server, separated by a colon.
+| {{cd|--quickPlayMultiplayer "localhost:25565"}}
+|-
+| {{cd|quickPlayRealms}}
+| Takes a specified identifier representing the ID of the Realm.
+| {{cd|--quickPlayRealms "1234"}}
+|}
+
+== JSON format ==
+This is the JSON format for <samp>launcher_quick_play.json</samp>, located in the root of the <samp>[[.minecraft]]</samp> folder.
+
+<div class="treeview">
+* {{nbt|compound}} The root object.
+** {{nbt|compound|quickPlayData}}
+*** {{nbt|list|<remoteId>}}: A list of Quick Play instances. The field name is the remote ID of a Microsoft account.
+**** {{nbt|string|customizedIcon}}: The image data of the customized icon, if applicable.
+**** {{nbt|long|epochLastPlayedTimeMs}}: The timestamp when the world or server was last played.
+**** {{nbt|string|id}}: The ID of the instance. For singleplayer, this is the folder name of the world. For multiplayer, this is the server IP address. If {{nbt|string|source}} is {{cd|Launcher}}, seems to always be {{cd|bedrock-retail}}.
+**** {{nbt|string|name}}: The name of the instance, which is the user-defined name of the world or server.
+**** {{nbt|string|source}}: The source of the instance. Can be {{cd|Java}}, {{cd|Bedrock}} or {{cd|Launcher}}. Additional fields depend on its value.
+**** {{nbt|int|pinnedIndex}}: If the instance is pinned, represents the index in the pinned list.
+****; If {{cd|source}} is {{cd|Java}}, additional field is as follows<nowiki>:</nowiki>
+**** {{nbt|compound|javaInstance}}: An object representing a Java Edition quick play instance.
+***** {{nbt|string|configId}}: The ID of the [[launcher_profiles.json|launcher profile]].
+***** {{nbt|compound|game}}
+****** {{nbt|string|gamemode}}: The default [[game mode]] of the world. Can be {{cd|adventure}}, {{cd|creative}}, {{cd|spectator}} or {{cd|survival}}.
+****** {{nbt|string|type}}: The type of the world. Can be {{cd|singleplayer}}, {{cd|multiplayer}} or {{cd|realms}}.{{verify|couldn't check for realms}}
+****; If {{cd|source}} is {{cd|Bedrock}}, additional field is as follows<nowiki>:</nowiki>
+**** {{nbt|compound|bedrockInstance}}: An object representing a Bedrock Edition quick play instance.
+***** {{nbt|string|gamemode}}: The default [[game mode]] of the world. Can be {{cd|Adventure}}, {{cd|Creative}}, {{cd|Spectator}} or {{cd|Survival}}.
+***** {{nbt|compound|local}}
+****** {{nbt|string|levelId}}: The unique ID of the world.
+****** {{nbt|string|name}}: The user-defined name of the world.
+***** {{nbt|string|type}}: The type of the world. Can be {{cd|singleplayer}}, {{cd|multiplayer}} or {{cd|realms}}.{{verify|couldn't check for realms}}
+***** {{nbt|string|versionId}}: The version ID of the instance. Seems to always be {{cd|retail}}.
+****; If {{cd|source}} is {{cd|Launcher}}, additional field is as follows<nowiki>:</nowiki>
+**** {{nbt|compound|productQuickPlay}}: An object representing a Launcher instance. This type of instance does not appear in the launcher.
+***** {{nbt|string|productId}}: The ID of the product. Seems to always be {{cd|bedrock}}.
+***** {{nbt|string|versionId}}: The version ID of the instance. Seems to always be {{cd|retail}}.
+** {{nbt|int|version}}: The version number of the file.
+</div>
+
+The Quick Play feature is stored only locally in the run directory.
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20|dev=23w14a|Added support for Quick Play, with new command line arguments that allow the game to be launched directly into a world.}}
+}}
+
+=== ''Minecraft Launcher'' ===
+{{HistoryTable
+|{{HistoryLine|launcher}}
+|{{HistoryLine||2.7.12|Added quick play for {{JE}} as an experimental feature, disabled by default.<ref>[https://feedback.minecraft.net/hc/en-us/community/posts/18189595004173 Java Quick Play in the Launcher] - August 15, 2023</ref>}}
+|{{HistoryLine||2.17.13|Added quick play for {{BE}}, enabled by default.
+|Quick play for {{JE}} is no longer experimental, and now enabled by default.}}
+|{{HistoryLine||2.19.2|Quick Play has been temporarily turned off for {{BE}}.}}
+|{{HistoryLine||?|Quick Play has been re-enabled for {{BE}}.}}
+}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+{{Navbox Bedrock Edition}}
+
+[[de:Schnellspiel]]
+[[fr:Partie rapide]]
+[[zh:快速进入游戏]]

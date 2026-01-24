@@ -1,0 +1,204 @@
+{{outdated|The format only existed in [[Java_Edition_Infdev_20100624|Infdev 20100624]] and was promptly scrapped, reverting to the [[Java_Edition_Alpha_level_format|Alpha level format]] when [[Java_Edition_Infdev_20100625-0922|Infdev 20100625-0922]] was released the following day.|edition=java}}
+{{exclusive|java}}
+{{conjecture}}
+
+The '''Zone file format''' is the [[Wikipedia:Binary file|binary file format]] for storing Java Edition [[chunk]]s in [[Java Edition Infdev_20100624|Infdev 20100624]]. Each file stores a group of 32×32 chunks called a '''zone'''. The format temporarily took the place of the [[Java Edition Alpha level format|Alpha level format]] but was reverted in the version immediately after due to the new save format being completely uncompressed and making world files obscenely large compared to those with the Alpha level format. A quick 5 minute walk produces a world size of several hundred megabytes. Later versions cannot read worlds saved in this format, and attempting to open one causes the entire world to regenerate.
+
+== World folder structure ==
+An Infdev 20100624 level is actually a single folder containing at least one file named '''level.dat'''.
+
+The level folder will have a '''data''' folder containing '''zone_X_Z.dat''' and '''entities_X_Z.dat''' files where X and Z are the [[wikipedia:Base 36|base36]] representation of the first chunk position loaded within the zone at the time of saving.<ref>It should be the zone coordinates but due to a coding error the first chunk position loaded is used instead. This is also the cause of the [[Java_Edition_Infdev_20100624#Bugs|chunks sometimes don't save]] bug as the game doesn't always load the correct zone file.</ref>
+
+=== <samp>level.dat</samp> format ===
+The <samp>[[Java Edition level format#level.dat format|level.dat]]</samp> file is a GZip'd [[NBT]] file that stores global level data (time of day, player health, inventory, velocity, and position within the map, etc.). Most importantly, it stores the Random Seed that the terrain generator uses to seamlessly generate more terrain on the fly.
+
+This file has this structure:<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|compound|Data}}: Global level data.
+*** {{nbt|long|LastPlayed}}: Stores the Unix time stamp (in milliseconds) when the player saved the game.
+*** {{nbt|long|SizeOnDisk}}: Estimated size of the entire world in bytes.
+*** {{nbt|long|RandomSeed}}: Random number providing the random seed for the terrain.
+*** {{nbt|int|SpawnX}}: X coordinate of the level's spawn position.
+*** {{nbt|int|SpawnY}}: Y coordinate of the level's spawn position.
+*** {{nbt|int|SpawnZ}}: Z coordinate of the level's spawn position.
+*** {{nbt|long|Time}}: Stores the current "time of day" in ticks. There are 20 ticks per real-life second, and 24000 ticks per Minecraft [[day/night cycle]], making the full cycle length 20 minutes. 0 is the start of [[Day/night cycle#Daytime|daytime]], 12000 is the start of [[Day/night cycle#Sunset/Dusk|sunset]], 13800 is the start of [[Day/night cycle#Nighttime|nighttime]], 22200 is the start of [[Day/night cycle#Sunrise/Dawn|sunrise]], and 24000 is daytime again. The value stored in level.dat is always increasing and can be larger than 24000, but the "time of day" is always modulo 24000 of the "Time" field value.
+*** {{nbt|compound|Player}}: The [[Singleplayer]] player for the level.
+**** {{nbt|list|Pos}}: List of 3 TAG_Doubles for the X, Y, and Z position of the player.
+**** {{nbt|list|Rotation}}: List of 2 TAG_Floats for the yaw and pitch of the player's view.
+**** {{nbt|list|Motion}}: List of 3 TAG_Doubles for the X, Y, and Z motion in meters per tick.
+**** {{nbt|float|FallDistance}}: How far the player has fallen.
+**** {{nbt|short|Health}}: The number of hit points the player has. 20 is 10 hearts.
+**** {{nbt|short|AttackTime}}: Number of ticks the player is immune to attacks.
+**** {{nbt|short|HurtTime}}: Number of ticks the player is red from being attacked.
+**** {{nbt|short|DeathTime}}: Number of ticks the player has been dead for - used for controlling the death animation.
+**** {{nbt|short|Air}}: The number of ticks before the player starts to drown. Starts at 300.
+**** {{nbt|short|Fire}}: When negative, the number of ticks before the player can catch on fire. When positive, the number of ticks before the fire is extinguished.
+**** {{nbt|int|Score}}: The player's score. The score was never utilized.
+**** {{nbt|list|Inventory}}: List of TAG_Compounds representing the items in the player's inventory.
+***** {{nbt|compound}} An inventory item.
+****** {{nbt|byte|Slot}}: The slot the item is in.
+****** {{nbt|short|id}}: The item [[Java Edition data values#IDs|ID]].
+****** {{nbt|short|Damage}}: The item's [[Java Edition data values#Data|data]] value, or damage value for tools.
+****** {{nbt|byte|Count}}: The number of this item in the stack. Range -128 to 127. Values less than 2 are not displayed in-game.
+</div>
+
+=== <samp>Zone format</samp> ===
+
+{| class="wikitable"
+!Name
+!Size (bytes)
+!Description
+|-
+|Magic number
+|4
+|A number used to identify the file. Always <code>13 73 70 00</code>
+|-
+|Version
+|2
+|A version identifier byte. Always <code>00 00</code>
+|-
+|Chunk count
+|2
+|The number of chunks stored in this zone. <code>04 00</code> (1024) max.
+|-
+|Chunk offsets
+|2048
+|Holds '''''Chunk Count''''' offsets which point to chunk data. Stored as 1024 16-bit integers.
+Empty chunk locations are marked with <code>00 00</code> and should be skipped.
+|-
+|Padding
+|2040
+|
+|-
+|Chunk slots
+|Variable
+|Concatenated chunk data. See table below for detail.
+Each chunk is at an offset of <code>(''chunk_offset'' - 1) * (32768 * 3 + 256) + 4096</code>
+|}
+
+{| class="wikitable"
+|+Chunk slot
+!Name
+!Size (bytes)
+!Description
+|-
+|Chunk X
+|4
+|The X chunk coordinate.
+|-
+|Chunk Z
+|4
+|The Z chunk coordinate.
+|-
+|Last update
+|8
+|The tick when the chunk was last updated.
+|-
+|Terrain populated
+|8
+|1 or 0 (true/false) - true if Minecraft has generated special features in this chunk such as trees, flowers, ores, dungeons. This is a boolean stored as a 64-bit integer.
+|-
+|Padding
+|232
+|
+|-
+|Blocks
+|32768
+|YZX ordered block IDs, 8 bits per block.
+Indexed with <code>y + z * ChunkSizeY(=128) + x * ChunkSizeY(=128) * ChunkSizeZ(=16)</code>
+|-
+|Data
+|16384
+|YZX ordered block data, 4 bits per block.
+|-
+|Sky light
+|16384
+|Stores the maximum sky light that reaches each block, regardless of current time. 4 bits per block.
+|-
+|Block light
+|16384
+|Stores the amount of block-emitted light in each block. 4 bits per block.
+|-
+|Height map
+|256
+|ZX ordered height map information, 8 bits per XZ column.
+Indexed with <code>z * ChunkSizeX(=16) * x</code>
+|}
+
+=== <samp>Entity format</samp> ===
+
+{| class="wikitable"
+!Name
+!Size (bytes)
+!Description
+|-
+|Magic number
+|4
+|A number used to identify the file. Always <code>13 73 70 01</code>
+|-
+|Version
+|2
+|A version identifier byte. Always <code>00 00</code>
+|-
+|Entity count
+|4
+|The number of entities stored in this entity zone.
+|-
+|Padding
+|1014
+|
+|-
+|Entity slots
+|Variable
+|Concatenated GZIP'd [[NBT format|NBT]] data of the entity or tile entity. See table below for detail.
+Each entity is at an offset of <code>''entity_index'' * 512 + 1024</code>. ''entity_index'' being the current iteration value up till '''''Entity count'''''.
+|}
+
+{| class="wikitable"
+|+Entity slot
+!Name
+!Size (bytes)
+!Description
+|-
+|Chunk position
+|2
+|The relative chunk position within the zone that the entity is in, shifted into one value.
+If the Chunk position is less than 0, apply [[wikipedia:Unary_operation#Negation|unary negation]] to the value before continuing.<br>
+Extract the chunk X, Z positions with:<br>
+<code>x = ('''''Chunk position''''' - 1) % 32</code><br>
+<code>z = ( ('''''Chunk position''''' - 1) >> 5) % 32</code>
+|-
+|Compressed data size
+|2
+|The number of bytes to read for the compressed entity or tile entity data.
+|-
+|Next extended entity data index
+|4
+|The index of the next entity slot containing additional entity data if '''''Compressed data size''''' is greater than 500. Its value is <code>-1</code> if no other slots follow. This value is equivalent to the ''entity_index'' value above, with the actual offset needing to be calculated separately.
+|-
+|Previous extended entity data index
+|4
+|The index of the previous slot that links back to earlier entity data. Its value is <code>-1</code> if this is the first slot. This value is also equivalent to the ''entity_index'' value above, with the actual offset needing to be calculated separately.
+|-
+|Compressed data
+|Variable
+|The GZIP'd NBT entity or tile entity data.
+|}
+
+== See also ==
+* [[Java Edition Alpha level format|Alpha level format]]
+* [[Java Edition level format|Level format]] for [[Java Edition#Official release|Minecraft 1.0.0]]
+** [[Region file format]]
+** [[Anvil file format]]
+*** [[Chunk format]]
+
+== Notes ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[fr:Format de niveau de l'édition Java Infdev 20100624]]
+[[pt:Formato de nível da Edição Java Infdev 20100624]]

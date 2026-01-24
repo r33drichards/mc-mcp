@@ -1,0 +1,299 @@
+{{Infobox version
+| title = Minecraft 23w07a
+| image = 23w07a.jpg
+| image2 = Java Edition 23w07a.png
+| edition = Java
+| type = Snapshot
+| date = February 15, 2023
+| jsonhash = 6b59a5fa2d8e90751db364d49fa54ae2a34f2bf2
+| clienthash = 7b424208f0aa7d386d9a527eeb4dd3d427477fec
+| clientmap = 18a8f444d4e0b71ea77415b3367f0c0e4ad935a1
+| serverhash = b919e6e1683a4b6f37f2717c7841e88e306bdc94
+| servermap = b87658adbb3c8fdd8d9c873d464a8d3058bde61c
+| parent = 1.19.4
+| prevparent = 1.19.3
+| prev = 23w06a
+| next = 1.19.4 Pre-release 1
+| nextparent = 1.20
+}}<onlyinclude>
+
+'''23w07a''' is the fifth and final [[snapshot]] for [[Java Edition 1.19.4]], released on February 15, 2023,<ref>{{snap|23w07a|February 15, 2023}}</ref> which adds the [[sniffer]], [[cherry grove]]s, and [[archaeology]] under experimental features, and fixes bugs.
+
+== Additions ==
+=== Non-mob entities ===
+'''[[Interaction]]'''
+* A new type of entity that records {{ctrl|attack|text=attacks}} and {{ctrl|interact|text=interactions}}. Interactions (<code>interaction</code>) are invisible and of a custom size, with following fields:
+** <code>width</code>: Width of the entity's bounding box (default is 1).
+** <code>height</code>: Height of the entity's bounding box (default is 1).
+** <code>attack</code>: An action object, records the last attack action on the entity.
+** <code>interaction</code>: An action object, records the last interaction action on the entity.
+** <code>response</code>: Boolean specifying if interacting should trigger a response (arm swing, sound effects, etc - default <code>false</code>).
+* Introduced action object accordingly. When an action is stored, it always has two fields:
+** <code>player</code>: The UUID (in standard integer array format) of the player performing the action.
+** <code>timestamp</code>: The timestamp of the game tick when the event happened (stored as a long).
+* This made following command usage possible:
+** Execute command as the last player who attacked the entity when using {{cmd|execute on attacker}}.
+** Execute command as the last player who interacted with the entity when using {{cmd|execute on target}}.
+* Advancement triggers also got triggered, when:
+** Interacting with an interaction entity: <code>player_interacted_with_entity</code>.
+** Attacking an interaction entity: <code>player_hurt_entity</code>.
+
+=== General ===
+'''[[Recipe]]'''
+* Added a new recipe serializer <code>crafting_decorated_pot</code> for the new [[decorated pot]] recipe.
+* Added <code>show_notification</code> field to recipes.
+** Accepts a boolean which determines if a notification is shown when unlocking this recipe.
+** Defaults to <code>true</code> if isn't specified.
+
+'''[[Tag]]s'''
+* Added following item tags:
+** <code>#axes</code>: contains {{cd|d=and|diamond_axe|stone_axe|golden_axe|netherite_axe|wooden_axe|iron_axe}}.
+** <code>#breaks_decorated_pots</code>: contains {{cd|#tools}}.
+** <code>#hoes</code>: contains {{cd|d=and|diamond_hoe|stone_hoe|golden_hoe|netherite_hoe|wooden_hoe|iron_hoe}}.
+** <code>#pickaxes</code>: contains {{cd|d=and|diamond_pickaxe|stone_pickaxe|golden_pickaxe|netherite_pickaxe|wooden_pickaxe|iron_pickaxe}}.
+** <code>#shovels</code>: contains {{cd|d=and|diamond_shovel|stone_shovel|golden_shovel|netherite_shovel|wooden_shovel|iron_shovel}}.
+** <code>#swords</code>: contains {{cd|d=and|diamond_sword|stone_sword|golden_sword|netherite_sword|wooden_sword|iron_sword}}.
+** <code>#tools</code>: contains {{cd|d=and|#axes|#hoes|#pickaxes|#shovels|#swords|trident}}.
+
+== Changes ==
+=== Blocks ===
+'''[[Jukebox]]'''
+* Now emits a redstone signal of 15 while playing a [[music disc]].
+* [[Dropper]]s and [[hopper]]s can now interact with it.
+
+=== Gameplay ===
+'''[[Horse]] breeding'''
+* When breeding horses and the like, the babies' speed, jump height and health are no longer biased toward the average.
+** This change is intended to make horse breeding a viable way of getting great horses, if a player starts with good parents and puts in enough time and [[golden carrot]]s.
+
+=== General ===
+'''[[Realms]]'''
+* Updated the "Realms" screen to be more in line with the "Singleplayer" and "Multiplayer" screens.
+
+'''[[Recipe]]'''
+* The [[crafting table]] recipe is unlocked immediately on creating a new world.
+* The [[crossbow]] and [[soul campfire]] recipes are no longer unlocked by [[stick]]s.
+
+'''[[Resource pack]]'''
+* The vanilla resource pack <code>en_us</code> language file is now sorted alphanumerically by key.
+
+== Experimental ==
+These additions and changes only take effect when the 1.20 experimental data pack is enabled.
+
+=== Additions ===
+==== Blocks ====
+'''[[File:Cherry Leaves (fast) JE1.png|32px]] [[Cherry leaves]]'''
+* A new type of leaves.
+* Have pink particles falling underneath.
+
+'''[[File:Stripped Cherry Log JE1 BE1.png|32px]] [[File:Cherry Log JE1 BE1.png|32px]] [[Cherry log]]'''
+* A new type of log, as well as a stripped variant.
+* Can be used to craft cherry woods and planks.
+* The stripped variant can be used to craft [[cherry hanging sign]].
+
+'''[[File:Cherry Planks JE1 BE1.png|32px]] [[Cherry planks]]'''
+* A new type of plank.
+* Can be used to craft cherry [[File:Cherry Button JE1 BE1.png|32px]] [[button]]s, [[File:Cherry Door JE1.png|32px]] [[door]]s, [[File:Cherry Fence (EW) JE1.png|32px]] [[fence]]s, [[File:Cherry Fence Gate JE1 BE1.png|32px]] [[fence gate]]s, [[File:Cherry Pressure Plate JE1 BE1.png|32px]] [[pressure plate]]s, [[File:Cherry Sign (0) JE1 BE1.png|32px]] [[sign]]s, [[File:Cherry Slab JE1 BE1.png|32px]] [[slab]]s, [[File:Cherry Stairs JE1 BE1.png|32px]] [[stairs]], and [[File:Cherry Trapdoor JE1 BE1.png|32px]] [[trapdoor]]s.
+
+'''[[File:Cherry Sapling JE1 BE1.png|32px]] [[Cherry sapling]]'''
+* A new type of sapling.
+* Can be placed in [[flower pot]]s.
+
+'''[[File:Stripped Cherry Wood JE1 BE1.png|32px]] [[File:Cherry Wood JE1 BE1.png|32px]] [[Cherry wood]]'''
+* A new type of wood, as well as a stripped variant.
+* Can be used to craft cherry planks.
+
+'''[[File:Decorated Pot (N) JE1 BE1.png|32px]] [[Decorated pot]]'''
+* Can be crafted with any 4 pottery shards or [[brick]] items, shaped rhombic.
+** The type of crafting material decides which picture would occur on each side of the crafted decorated pot.
+*** The possible pictures are decided by the type of pottery shard which is used to craft.
+*** The brick item doesn't have a picture.
+* Very fragile, and easy to break.
+** Break apart into its crafting materials when broken using any block-breaking tool.
+** Drop itself when broken using an empty hand or an block-breaking tool with Silk Touch, or when moved by [[piston]]s.
+
+'''[[File:Pink Petals 3 (N) JE1.png|32px]] [[Pink petals]]'''
+* A new type of a flower, which generates naturally in cherry groves.
+* Renewable when applying a bone meal to an existing one or to the ground of cherry groves.
+* Similar to [[sea pickle]], can be placed up to 4 in one dirt-related block.
+* Can be placed directionally.
+* Can be crafted into a [[pink dye]].
+
+'''[[File:Suspicious Sand JE1 BE1.png|32px]] [[Suspicious sand]]'''
+* Looks like sand, but rougher.
+* Affected by gravity, vanishes when landing.
+* Drops nothing when mined or moved, even if mining with [[Silk Touch]].
+* Generates naturally in [[desert pyramid]]s and [[desert well]]s, with different archaeological loot tables.
+* Brushing the suspicious sand with a brush extracts objects.
+** Has 4 stages of extracting, recovers gradually when stop brushing.
+** Turns to regular sand when extraction is done.
+** An item can be extracted only from suspicious sand with a valid archaeological loot table.
+
+'''[[File:Torchflower JE1 BE1.png|32px]] [[Torchflower]]'''
+* A new type of flower, grows from [[torchflower seeds]] after 2 stages (3 stages in total).
+* Doesn't emit light.
+* If grown fully, it drops itself only when broken, otherwise drop the seed.
+* Can be crafted into an [[orange dye]].
+* Can be planted in a [[flower pot]].
+
+==== Items ====
+'''[[File:Brush JE1 BE1.png|32px]] [[Brush]]'''
+* A tool which can be used to brush things.
+* Can be crafted with 3 [[string]] and 2 [[stick]]s, like the shape of crafting [[pickaxe]]s.
+* Consumes 1 durability when extracting an item from a suspicious sand successfully.
+* Does nothing when brushing anything other than suspicious sand.
+
+'''[[File:Archer Pottery Sherd JE1.png|32px]] [[File:Arms Up Pottery Sherd JE1 BE2.png|32px]] [[File:Prize Pottery Sherd JE1 BE2.png|32px]] [[File:Skull Pottery Sherd JE1 BE2.png|32px]] [[Pottery shard]]s'''
+* Have pictures on them.
+* Cannot be crafted and are only found by brushing suspicious sand.
+
+'''[[Spawn egg]]s'''
+* [[File:Sniffer Spawn Egg JE1 BE1.png|32px]] [[Sniffer spawn egg]]
+
+'''[[File:Torchflower Seeds JE1 BE1.png|32px]] [[Torchflower seeds]]'''
+* A new type of seed, which can be planted on [[farmland]] and grows into a torchflower.
+* Can only be obtained if a sniffer it digs up.
+
+==== Mobs ====
+'''[[File:Sniffer JE1 BE1.png|32px]] [[Sniffer]]s'''
+* A new passive friendly mob, which is the mob vote winner of [[Minecraft Live 2022]], and considered as the first "ancient" mob.
+* Very large (2&times;2 full blocks).
+* Have {{hp|14}} points of health.
+* Cannot spawn naturally.
+* Cannot be tempted or tamed.
+* Often sniff in the air and occasionally dig for torchflower seeds.
+** The digging has a cooldown of 8 minutes.
+** The last 20 dug blocks are remembered with a <code>sniffer_explored_positions</code> memory, and are not eligible for digging again.
+* Can be bred with torchflower seeds.
+* Drop [[moss block]] when killed.
+
+==== Non-mob entities ====
+'''[[File:Cherry Boat JE1 BE1.png|32px]] [[Cherry boat]]'''
+* A new type of boat, crafted with cherry planks.
+
+'''[[File:Cherry Boat with Chest JE1 BE1.png|32px]] [[Cherry boat with chest]]'''
+* A new type of boat with chest, crafted with a cherry boat and a chest.
+
+==== World generation ====
+'''{{EnvLink|Cherry tree}}'''
+* A new type of tree which can be grown from cherry saplings.
+* Occasionally generated with a [[bee nest]].
+* Tree trunks fork or bend high up, and are then covered up in large, round canopies of cherry leaves.
+
+'''{{BiomeLink|Cherry grove}}'''
+* A new biome which contains pretty cherry blossom trees.
+* Located in the [[mountains]], like [[meadow]]s.
+* [[Sheep]], [[donkey]]s, and [[bee]]s can spawn here.
+
+==== General ====
+'''[[Particles (Java Edition)|Particles]]'''
+* Added {{cd|d=and|dripping_cherry_leaves|falling_cherry_leaves|landing_cherry_leaves}}, which appear underneath the cherry leaves.
+
+'''[[Tag]]s'''
+* Added following block tags:
+** <code>#cherry_logs</code>: contains {{cd|d=and|cherry_log|cherry_wood|stripped_cherry_log|stripped_cherry_wood}}.
+** <code>#sniffer_diggable_block</code>: contains {{cd|d=and|dirt|grass_block|podzol|coarse_dirt|rooted_dirt|moss_block|mud|muddy_mangrove_roots}}.
+* Added following item tags:
+** <code>#cherry_logs</code>: contains {{cd|d=and|cherry_log|cherry_wood|stripped_cherry_log|stripped_cherry_wood}}.
+** <code>#decorated_pot_shards</code>: contains {{cd|d=and|brick|pottery_shard_archer|pottery_shard_prize|pottery_shard_arms_up|pottery_shard_skull}}.
+** <code>#sniffer_food</code>: contains <code>torchflower_seeds</code>.
+
+=== Changes ===
+==== World generation ====
+'''[[Desert pyramid]]'''
+* Now includes a new room filled with [[sand]] and [[suspicious sand]].
+** Some sand appear exposed, and can be found at the same height as [[blue terracotta]].
+
+'''[[Desert well]]'''
+* Now includes suspicious sand underwater.
+
+==== Gameplay ====
+'''[[Advancement]]'''
+* The cherry grove is now required to be visited for the "Adventuring Time" advancement.
+
+==== General ====
+'''[[Tag]]s'''
+* Added <code>cherry_boat</code> into the <code>#boats</code> item tag.
+* Added <code>cherry_button</code> into the <code>#wooden_buttons</code> block and item tags.
+* Added <code>cherry_chest_boat</code> into the <code>#chest_boats</code> item tag.
+* Added <code>cherry_door</code> into the <code>#wooden_doors</code> block and item tags.
+* Added <code>cherry_fence_gate</code> into the <code>#fence_gates</code> block and item tags.
+* Added <code>cherry_fence</code> into the <code>#wooden_fences</code> block and item tags.
+* Added <code>cherry_grove</code> into the <code>#is_mountain</code> biome tag.
+* Added <code>cherry_hanging_sign</code> into the <code>#ceiling_hanging_signs</code> block tag and <code>#hanging_signs</code> item tag.
+* Added <code>cherry_leaves</code> into the <code>#leaves</code> block tag.
+* Added <code>cherry_leaves</code> and <code>pink_petals</code> into the <code>#flowers</code> and <code>#mineable/hoe</code> block tags.
+* Added <code>cherry_log</code> into the <code>#overworld_natural_logs</code> block tag.
+* Added <code>#cherry_logs</code> into the <code>#logs_that_burn</code> block tag.
+* Added <code>cherry_planks</code> into the <code>#planks</code> block and item tags.
+* Added <code>cherry_pressure_plate</code> into the <code>#wooden_pressure_plates</code> block and item tags.
+* Added <code>cherry_sapling</code> into the <code>#saplings</code> block tag.
+* Added <code>cherry_sign</code> into the <code>#standing_signs</code> block tag and <code>#signs</code> item tag.
+* Added <code>cherry_slab</code> into the <code>#wooden_slabs</code> block and item tags.
+* Added <code>cherry_stairs</code> into the <code>#wooden_stairs</code> block and item tags.
+* Added <code>cherry_trapdoor</code> into the <code>#wooden_trapdoors</code> block and item tags.
+* Added <code>cherry_wall_hanging_sign</code> into the <code>#wall_hanging_signs</code> block tag.
+* Added <code>cherry_wall_sign</code> into the <code>#wall_signs</code> block tag.
+* Added <code>pink_petals</code> into the <code>#inside_step_sound_blocks</code> block tag.
+* Added <code>suspicious_sand</code> into the <code>#sand</code> block tag.
+
+== Fixes ==
+{{fixes|fixedin=23w07a
+|;From released versions before 1.19
+|16533|Horse Breeding never exceeds egg/spawn horse attributes.
+|64522|Server show as "Old" in server list while starting.
+|84633|Resource packs: {{cd|ambientocclusion}} flag only respects topmost parent.
+|134448|Drowned animation glitch.
+|181412|Removing a jukebox with a command while it's playing a music disc won't stop playing the music disc.
+|194080|Elytra model stutters by flying and turning.
+|209409|Sitting cats sink in water.
+|226729|Memory leakage problem in native operations.
+|238920|Soul campfire recipe unlocks when obtaining a stick.
+|248249|{{cd|minecraft:forest_rock}} feature does not work correctly when used with {{cmd|place}}.
+|;From 1.19.3
+|256465|Baby camels can enter boats despite adult camels not being able to.
+|257282|Allays sometimes have a several-second delay before deciding to follow the player.
+|258457|Resource Pack won't load if it contains reference to non-existing particles.
+|258459|Invalid forced resource pack can cause infinite reload loop on client.
+|258580|Player is kicked from a server for flying in death screen when dying on a Horse or Camel.
+|258624|The Title Screen Warning menu doesn't disappear after the player respawns.
+|258697|Invalid translation of {{cd|translationKey{{=}}narration.suggestion}} in command block GUI.
+|258902|Opening a lectern on Adventure mode and closing it causes inventory desyncs.
+|258907|Advancement trigger {{cd|player_interacted_with_entity}} doesn't work with {{cd|area_effect_cloud}} entity when used {{cd|glass_bottle}} item on it.
+|259107|Opening the crafting recipe book selects the recipe that appears under the mouse cursor.
+|259241|Turtles can spawn inside each other causing them to get stuck and play constant sounds.
+|259797|Z-fighting occurs on the bottom of boots.
+|;dev
+|259218|Onboarding isn't resumed after restarting Minecraft.
+|259240|The game crashes when navigating with arrow keys after changing key binds.
+|259489|Experimental "disabled items" can still be suggested as fuel by the recipe book.
+|259573|Blast Protection does not reduce explosion knockback in creative game mode.
+|259675|Capes occasionally jitter when moving and adjusting your rotation.
+|259691|Drowned that are swimming render outside of their hitboxes when looking up or down.
+|259729|"Falling Block" can appear in death messages.
+|;previous
+|259796|Creeper does not flash white and expand before exploding.
+|259805|Players cannot dismount when riding {{cd|d=and|item_display|block_display|text_display}} using the {{cmd|ride}} command.
+|259808|Allay wing animation skips frames/loops incorrectly as of 23w06a.
+|259816|Odd behavior when an {{cd|item_display}}, {{cd|block_display}}, or {{cd|text_display}} entity mounts another entity.
+|259819|Z-fighting on the text of text displays.
+|259999|Entities mounted on display entities do not visually update until after resync.
+|260000|Saved Y Pos of entities mounted on display entities does not update internally in NBT.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|PbEkbjBUm2U}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:23w07a]]
+[[es:Java Edition 23w07a]]
+[[fr:Édition Java 23w07a]]
+[[ja:Java Edition 23w07a]]
+[[pt:Edição Java 23w07a]]
+[[ru:23w07a (Java Edition)]]
+[[zh:Java版23w07a]]

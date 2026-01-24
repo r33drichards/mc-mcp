@@ -1,0 +1,110 @@
+This is the specification for the [[Bedrock Edition level format|level format]] in [[Pocket Edition v0.1.0 alpha]] up to [[Pocket Edition v0.2.0 alpha]] where the format was changed to [[NBT format|NBT]] instead of raw binary.
+==level.dat==
+{| class="wikitable sortable"
+! Data
+! Length (Bytes)
+! Description
+|-
+| Header
+| 8
+| A little-endian 32 bit integer used to identify the version of the tool used to save the file, always 1 followed by a little-endian 32 bit integer that marks the size of the file subtract the header.
+|-
+| Seed
+| 4
+| A big-endian 32 bit signed integer
+|-
+| Spawn X
+| 4
+| A big-endian 32 bit signed integer
+|-
+| Spawn Y
+| 4
+| A big-endian 32 bit signed integer
+|-
+| Spawn Z
+| 4
+| A big-endian 32 bit signed integer
+|-
+| Estimated world size
+| 8
+|  A big-endian 64 bit integer representing the world size in bits{{verify}}
+|-
+| Last Played
+| 4
+| A big-endian 32 bit unix timestamp indicating when the level was last saved, will overflow and become negative at '''03:14:08 UTC on 19 January 2038''' due to [[wikipedia:Year 2038 problem|the year 2038 problem]] and will overflow every ~136 years after that.
+|-
+| Length of World Name in Bytes
+| 2
+| A big-endian unsigned 16 bit integer
+|-
+| World Name
+| Variable
+| A [[wikipedia:Code_page_437|CP437]] encoded string<ref group="note">This is due to the font texture found in the assets folder of the apk, future versions may render non-ASCII characters differently</ref>
+|}
+
+==player.dat==
+{| class="wikitable sortable"
+! Data
+! Length (Bytes)
+! Description
+|-
+| Header
+| 8
+| A little-endian 32 bit integer used to identify the version of the tool used to save the file, always 1 followed by a little-endian 32 bit integer that marks the size of the file subtract the header, always 80.
+|-
+| Pos X
+| 4
+| A little-endian 32 bit float
+|-
+| Pos Y
+| 4
+| A little-endian 32 bit float
+|-
+| Pos Z
+| 4
+| A little-endian 32 bit float
+|-
+| Motion X
+| 4
+| A little-endian 32 bit float
+|-
+| Motion Y
+| 4
+| A little-endian 32 bit float
+|-
+| Motion Z
+| 4
+| A little-endian 32 bit float
+|-
+| Pitch
+| 4
+| A little-endian 32 bit float, an error in the code causes this value to be read incorrectly
+|-
+| Yaw
+| 4
+| A little-endian 32 bit float representing the player's yaw in degrees
+|-
+| Unknown
+| 4
+| A little-endian 32 bit float
+|-
+| Fire
+| 2
+| A little-endian signed short representing the number of ticks until the fire is put out. Negative values reflect how long the player can stand in fire before burning. Default value: -20
+|-
+| Air
+| 2
+| A little-endian signed short representing how much air the player has, in ticks. Fills to a maximum of 300 in air. Decreases while underwater.{{verify}}
+|-
+| Unknown
+| 4
+|
+|-
+| Hotbar
+| 36
+| 9 slots that take up 4 bytes each, the first two bytes is the item ID<ref group="note">Every items from Pocket Edition [[Pocket Edition v0.1.0 alpha|0.1.0]] to [[Pocket Edition v0.1.3 alpha|0.1.3]] has an ID only takes up 1 byte with the exception of [[Camera]], which takes 2 bytes (c8 01).</ref>. The other two bytes have unknown use and are always 0x00. The last slot is always saved as 0xFF for every byte, it's known to be a hotbar slot as the <code>minecraftpe</code> library loops through 9 hotbar slots.
+|}
+== Notes ==
+{{notelist}}
+[[Category:Development]]
+[[pt:Formato de nível da Edição Bedrock/v0.1.0 alpha]]

@@ -1,0 +1,140 @@
+{{Redirect|Give|the option in the teacher menu|Teacher Menu#Give}}
+{{Infobox command
+| name = give
+| oplevel =
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+| others = [[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Gives a specified amount of a certain [[item]] to one or more [[player]]s.
+
+== Usage ==
+Gives the specified item(s) to the target(s). If <code><targets></code> or <code>player: target</code> resolves to multiple targets, each receives the specified number of items.
+
+If there is enough room in the player's inventory, or the player is in creative mode, gives the specified item(s). {{IN|java}}, this also summons a "fake" [[Item (entity)|item entity]], with its {{cd|PickupDelay}} tag set to {{cd|32767}} and its {{cd|Age}} tag set to {{cd|5999}}, which would make it impossible to be picked up, and have it despawn within one tick.
+
+If there is not enough room in the player's inventory, and the player is not in creative mode, gives the specified item(s) until the inventory is full, and summons the rest items as a [[Item (entity)|item entity]] dropped by the player. {{IN|java}}, the item's {{cd|Owner}} tag is set to the target and its {{cd|PickupDelay}} tag is set to {{cd|0}} so that it can be picked up only by that player at any time. {{IN|bedrock}}, the item entity is dropped by the player as normal, having a 10-tick pickup delay and being able to be picked up by any entity. {{IN|bedrock}}, when dropping the item entity, the item using progress of the player is discarded. {{IN|bedrock}}, the "Use doors and switches" option (in the "Player Permission" screen) disables the player to drop any item entity, even caused by the {{cd|/give}} command.
+
+== Syntax ==
+* '''Java Edition'''
+:<code>give <targets> <item> [<count>]</code>
+
+* '''Bedrock Edition'''
+:<code>give <player: target> <itemName: Item> [amount: int] [data: int] [components: json]</code>
+
+== Arguments ==
+{{argument|targets|entity|player: target|CommandSelector<Player>}}
+: Specifies the target(s) to give item(s) to.
+: {{arg desc|je=entity|amount=multiple|type=players|be=player}}
+
+{{argument|item|item_stack|itemName: Item|enum}}
+: Specifies the item to give.
+: {{arg desc|je=item_stack|be=CommandItem}}
+
+{{argument|count|integer|amount: int|int}}
+:Specifies the number of items to give. If not specified, defaults to <code>1</code>.
+: {{arg desc|je=integer|be=int|min=1}} {{IN|bedrock}}, it should be between 1 and 32767 (inclusive).
+
+{{el|be|short=1}}: {{argument|be=1|data: int|int}} 
+: Specifies the item [[data value]] of the given item(s). Values that are invalid for the specified item id revert to 0. If not specified, defaults to 0.
+: {{arg desc|be=int}} It should be between 0 and 32767 (inclusive).<!-- do not put 16-bit integer as it redundant -->
+
+{{el|be|short=1}}: {{argument|be=1|components: json|Json::Value}} 
+: Specifies the [[item components]] of the given item(s). Like data tags but supports only <code>minecraft:can_place_on</code>, <code>minecraft:can_destroy</code>, <code>minecraft:item_lock</code>, and <code>minecraft:keep_on_death</code> functions (see [[#Examples]]).
+: {{arg desc|be=Json::Value}}
+
+== Result ==
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code>player: target</code> is a target selector that is not of [[Target_selectors#Player_type_and_single_type|player type]].|N/A|fail}}
+{{Result table|<code>amount: int</code> is not between 1 and 32767.|succeed}}
+{{Result table|<code>data: int</code> is not between 0 and 32767.}}
+{{Result table|<code>components: json</code> is not an [[item components]].|N/A}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more online players.|fail}}
+{{Result table|<code><item></code> or <code>itemName: item</code> is an ungivable item.}}
+{{Result table|<code><count></code> is larger than 100 stack worth items.{{note|This should fail, but it currently succeeds due to {{bug|MC-302537}}.}}|succeed|N/A}}
+{{Result table|succeed}}
+{{Result table}}
+
+{{Notelist}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0}}
+{{Output table|On success|1|1|the number of targeted players}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|the number of players who are given item(s)}}
+{{Output table}}
+
+== Examples == 
+* To give the nearest player a pig [[spawn egg]]:
+** <code>/give @p pig_spawn_egg</code>
+* To give the nearest player a [[diamond sword]] with Lore that says "Example":
+** <code>/give @p diamond_sword[lore=["Example"]] 1</code>{{only|java}}
+* To give all players a potion that has the [[Night Vision]] effect:
+** <code>/give @a potion[potion_contents={potion:"minecraft:night_vision"}] 1</code>{{only|java}}
+** <code>/give @a potion 1 5</code>{{only|bedrock}} 
+* To give a random player a [[Sharpness]] X diamond sword:
+** <code>/give @r diamond_sword[enchantments={"minecraft:sharpness":10}] 1</code>{{only|java}}
+* To give the player executing the command a [[block of diamond]] that can be placed on [[dirt]] and can break [[blocks of quartz]], even in Adventure mode.
+** <code>/give @s diamond_block[can_place_on={blocks:"dirt"},can_break={blocks:"quartz_block"}] 1</code>{{only|java}}
+** <code><nowiki>/give @s diamond_block 1 0 {"minecraft:can_place_on":{"blocks":["dirt"]},"minecraft:can_destroy":{"blocks":["quartz_block"]}} </nowiki></code>{{only|bedrock}}
+* To give all players a level 2 Wither Potion with [[Knockback]] X:
+** <code>/give @a potion[enchantments={"minecraft:knockback":10},potion_contents={custom_effects:[{id:"minecraft:wither",amplifier:1,duration:3600}]}] 1</code>{{only|java}}
+* To give the nearest player a diamond sword that is not dropped upon death:
+** <code><nowiki>/give @p diamond_sword 1 0 {"keep_on_death":{}}</nowiki></code>{{only|bedrock}}
+* To give all players a stick that cannot be dropped or crafted with:
+** <code><nowiki>/give @a stick 1 0 {"item_lock":{"mode":"lock_in_inventory"}}</nowiki></code>{{only|bedrock}}
+* To give a random player a [[wooden shovel]] that cannot be moved from its slot, dropped, or crafted with:
+** <code><nowiki>/give @r wooden_shovel 1 0 {"item_lock":{"mode":"lock_in_slot"}}</nowiki></code>{{only|bedrock}}
+* To give the nearest player a grass block that works like a [[pickaxe]]:
+** <code><nowiki>/give @p grass_block[max_stack_size=1,max_damage=100,damage=0,tool={default_mining_speed:2,damage_per_block:1,rules:[{blocks:"#mineable/pickaxe",speed:8,correct_for_drops:true}]}] 1</nowiki></code>{{only|java}}
+* To give a random player an [[item frame]] that is invisible:
+** <code>/give @r minecraft:item_frame[minecraft:entity_data={id:item_frame,Invisible:1b}] 1</code>{{only|java}}
+*To give the nearest player a spawn egg that looks like a wolf spawn egg but spawns a cat:
+**<code>/give @p minecraft:wolf_spawn_egg[entity_data={id:"minecraft:cat"}]</code> {{only|java}}
+*To give the nearest player 36 stacks of 64 totems each:
+**<code>/give @s minecraft:totem_of_undying[max_stack_size=64] 2304</code> {{only|java}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||v1.0.15|([[Alpha server 0.1.0]]) Added {{cmd|give|link=none}}. 
+|The {{cmd|give|link=none}} [[commands|command]] always gives exactly one of the specified [[item]] (by numeric ID) to the specified [[player]].}}
+|{{HistoryLine||v1.0.16_01|Added count argument to {{cmd|give|link=none}}.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.0.0|dev=Beta 1.9 Prerelease 4|Added [[damage]] value argument to {{cmd|give|link=none}}.}}
+|{{HistoryLine||1.3.1|dev=12w16a|{{cmd|give|link=none}} is now usable in singleplayer.}}
+|{{HistoryLine||1.4.2|dev=12w38a|{{cmd|give|link=none}} now gives items directly to the player instead of dropping them from the player.}}
+|{{HistoryLine||1.5|dev=13w04a|{{cmd|give|link=none}} now accepts [[Java Edition pre-flattening data values|data value]] as the fourth argument.}}
+|{{HistoryLine||1.7.2|dev=13w36a|Added {{cd|dataTag}} argument to {{cmd|give|link=none}}.}}
+|{{HistoryLine||1.8|dev=14w32a|{{cmd|give|link=none}} can no longer make 'illegal' stacks (such as 24 [[ender pearl]]s or 5 [[iron sword]]s).}}
+|{{HistoryLine||1.12|dev=17w16b|{{cmd|give|link=none}} now uses the {{cd|@s}} selector, for giving specifically yourself an item.}}
+|{{HistoryLine||1.17|dev=21w10a|{{cmd|give|link=none}} can now only give up to 100 stacks worth of items at a time.}}
+|{{HistoryLine||1.20.5|dev=24w09a|Replaced item NBT tag with [[data component]]s, therefore changing the syntax.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|give|link=none}}.
+|The functionality is almost equivalent to the [[Java Edition 1.10|Java 1.10]] usage, except there is no support for [[data tag]]s and the [[player]] target is optional in {{cmd|give|link=none}}.}}
+}}
+
+== See also ==
+* {{cmd|summon}} – summon any entity at any location
+
+== External links ==
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/give?view=minecraft-bedrock-stable|title=<code>/give</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/give]]
+[[es:Comandos/give]]
+[[ja:コマンド/give]]
+[[pt:Comandos/give]]
+[[ru:Команды консоли/give]]
+[[uk:Команди консолі/give]]
+[[zh:命令/give]]

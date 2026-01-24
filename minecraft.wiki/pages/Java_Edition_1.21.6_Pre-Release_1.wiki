@@ -1,0 +1,223 @@
+{{Infobox version
+|title=Minecraft 1.21.6 Pre-Release 1
+|image=1.21.6-pre1.jpg
+|image2=Java Edition 1.21.6-pre1.png
+|edition=java
+|type=Pre-release
+|date=May 28, 2025
+|jsonhash=722f25402ce4f1b6f6f56d75415d461a6e8aa421 |jsonfile=1.21.6-pre1
+|clienthash=d4eb1d0c95d32b74b5c0341453249e09806c544e
+|clientmap=8cdf340eb7c734dcc5b60af32534589217c3587c
+|serverhash=197f0896f6bafc45b7cd1c90b88f7979dfcc99fe
+|servermap=4a630c21cd201b7d81f957923d0e6c30174534ad
+|parent=1.21.6
+|prevparent=1.21.5
+|prev=25w21a
+|next=1.21.6 Pre-Release 2
+|nextparent=1.21.7
+}}<onlyinclude>
+'''1.21.6 Pre-Release 1''' (known as '''1.21.6-pre1''' in the launcher) is the first pre-release for [[Java Edition 1.21.6]], released on May 28, 2025.<ref>{{Mcnet|minecraft-1-21-6-pre-release-1|Minecraft 1.21.6 Pre-Release 1|May 28, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Tags]]'''
+* Added the {{cd|#quick_actions}} dialog tag.
+** Dialogs to open when pressing {{control|quick actions}}.
+
+== Changes ==
+===Blocks===
+'''[[Dried ghast]]'''
+* The dried ghast now emits a vibration frequency of 11 from the [[sculk sensor]] when its block state changes.
+* The ambient dried ghast sounds are now adjusted under the Blocks sound option instead of the Ambient/Environment option.
+
+'''[[Carpet]]'''
+* Shearing carpets for [[llama]]s now emits a vibration frequency of 6, while unequipping it emits a vibration frequency of 4 from the [[sculk sensor]].
+
+=== Items ===
+'''[[Saddle]]'''
+* Shearing saddles now emits a vibration frequency of 6, while unequipping it emits a vibration frequency of 4 from the [[sculk sensor]].
+
+''' [[Horse armor]]'''
+* Shearing horse armor now emits a vibration frequency of 6, while unequipping it emits a vibration frequency of 4 from the [[sculk sensor]].
+
+=== Mobs ===
+'''[[Happy ghast]]'''
+* A player riding a happy ghast can no longer completely fly through a happy ghast ridden by another player.
+
+=== General ===
+'''[[Controls]]'''
+* A new keybind called "Quick Actions" has been added to allow users to access a set of content-configured dialogs.
+** Default key: {{Key|G}}
+** This feature is configured by {{cd|minecraft:quick_actions}} dialog tag.
+*** If this tag is empty, the keybind does nothing.
+*** If this tag has a single element, the keybind will open this dialog.
+*** If this tag has multiple elements, the keybind will lead to {{cd|minecraft:quick_actions}} dialog which (by default) lets user select one of the tag elements.
+*** If this dialog is removed, the keybind does nothing.
+** This option is intended to be used in custom content and by servers, so this tag is empty by default.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|79}}.
+* The {{cd|minecraft:custom}} click event has been expanded to carry full a NBT tag.
+
+'''[[Dialog]]s'''
+* Dialogs can now configure if they pause the game and if they close after an action is taken.
+* Every dialog can now have inputs and can submit information.
+** The definition of actions has been changed to accommodate that.
+** The dedicated input dialog types have been removed, since they are redundant now.
+** The order of elements is:
+*** Body
+*** Inputs
+*** Actions
+
+* Common Dialog fields
+** New fields:
+*** {{cd|pause}} - if the dialog screen should pause the game in single-player mode, default: {{cd|true}}.
+*** {{cd|after_action}} - an additional operation performed on the dialog after click or submit actions, default: {{cd|close}}.
+**** {{cd|close}} - closes the dialog and returns to the previous non-dialog screen (if any).
+**** {{cd|none}} - does nothing, i.e. keeps the current dialog screen open.
+***** Only available if pause is false to avoid locking the game in single-player mode.
+**** {{cd|wait_for_response}} - replace the current dialog with a "Waiting for Response" screen.
+***** Servers are expected to eventually replace this screen with a new dialog.
+***** To avoid accidental locking, a "Back" button will become active after 5 seconds.
+****** Clicking this button will continue as if the dialog was closed (i.e. the game returns to the previous non-dialog screen, if any).
+***** The "Waiting for Response" screen will unpause the game in single-player mode to avoid locking the game.
+
+* Dialog Types
+** {{cd|minecraft:multi_action}}, {{cd|minecraft:server_links}}, {{cd|minecraft:dialog_list}}
+*** Replaced field {{cd|on_cancel}} with {{cd|exit_action}}, holding an optional action.
+**** If {{cd|exit_action}} is present, a button for it will appear in footer, otherwise the footer is not present.
+**** {{cd|exit_action}} is also used for the Escape action.
+** Removed {{cd|minecraft:simple_input_form}}.
+*** Since any dialog can now have inputs, this dialog can be replaced by {{cd|minecraft:notice}}.
+** Removed {{cd|minecraft:multi_action_input_form}}.
+*** Since any dialog can now have inputs, this dialog can be replaced by {{cd|minecraft:multi_action}} (without any specified {{cd|exit_action}}).
+
+* Input Control Types
+** {{cd|minecraft:custom}} click event, all inputs will now return either a string or an NBT tag, depending on context.
+** {{cd|minecraft:text}}
+*** Output values:
+**** As template substitution: contents without modification.
+**** As tag: a string tag with contents without modification.
+** {{cd|minecraft:boolean}}
+*** Output values:
+**** As template substitution: {{cd|on_true}} when checked, {{cd|on_false}} when unchecked.
+**** As tag: 1b when checked, 0b when unchecked.
+** {{cd|minecraft:number_range}}
+*** Output values:
+**** As template substitution: text representation of current value.
+***** Whole numbers will be sent without decimal point.
+**** As tag: a float tag with current value.
+
+* Dialog Body Types
+** Hover and click events on text components within bodies now work as expected.
+*** Click events are handled by the dialog screen like any other action - that means it will also run the {{cd|after_action}}.
+
+* Actions
+** The format of actions has been changed due to the merging of plain and input dialogs.
+** After every action the dialog will always evaluate the contents of the {{cd|after_action}} field (see above).
+** Fields:
+*** Kept fields: {{cd|label}}, {{cd|tooltip}}, {{cd|width}}
+**** New field: {{cd|action}} (replaces {{cd|on_click}} and {{cd|on_submit}}) - an action to perform when button is clicked, optional object with fields:
+**** {{cd|<type-specific>}} - see below, depends on type
+
+* Action Types
+** Static Dialog 
+*** All existing {{cd|click_event}} actions (except for {{cd|open_file}}) are included as dialog action types.
+*** Uses same format as {{cd|click_event}} on text components (but with action replaced with type). For example, when using {{cd|show_dialog}}, entry for action button will look like:
+<syntaxhighlight lang="json">
+{
+ "label": "some label",
+ "action": {
+  "type": "show_dialog",
+  "dialog": "some:id"
+ }
+}
+</syntaxhighlight>
+** {{cd|minecraft:dynamic/run_command}}
+*** This action will build a run_command event using a provided macro template.
+*** The macro will be expanded with string values from all inputs.
+**** For example, if the macro template is {{cd|some_command $(some_input)}}, the string value from the input with {{cd|key}} of {{cd|some_input}} will be used for the template expansion.
+**** Inputs not used in macro will be ignored, while macro parameters not matching any inputs will be replaced with an empty string.
+*** Fields:
+**** {{cd|template}} - a string with a macro template to be interpreted as a command.
+** {{cd|minecraft:dynamic/custom}}
+*** This method will build a {{cd|minecraft:custom}} event using all input values.
+*** All input contents will be sent together inside a compound tag, with tag value of each input put under id from {{cd|key}} field of that input.
+*** Additional static fields can be added to payload.
+*** Fields:
+**** {{cd|additions}} - fields to be added to payload, optional compound tag.
+**** {{cd|id}} - namespaced ID.
+
+'''[[Item model]]s'''
+* Item model definitions now have a boolean field {{cd|oversized_in_gui}} which is false by default
+** If true, the item model will be allowed to be bigger than its item slot
+** If false, the item model will be clipped to the item slot size when being rendered in GUI
+** This ability of items being rendered outside their slots should not be considered officially supported, it was temporarily restored as an exception since many servers are relying on it
+** At some point in the future it is meant to be replaced with an officially supported way of achieving similar functionality
+* Introduced new item model {{cd|minecraft:player_head}} to handle player profile texture loading and rendering
+* Removed support for {{cd|minecraft:profile}} from {{cd|minecraft:head}}
+* {{cd|minecraft:player_head}} special model type
+** Renders a player head.
+** Uses profile from the {{cd|minecraft:profile}} component to load a texture. Renders a default texture until the profile texture is fully loaded.
+** No fields.
+* {{cd|minecraft:head}} special model type
+** No longer supports profile from {{cd|minecraft:profile}} component to load a player texture.
+** Renders a default player texture when {{cd|kind}} is {{cd|player}} and no texture override is supplied.
+** Fields remain unchanged.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|63}}.
+* Added {{cd|oversized_in_gui}} item model field.
+* Introduced new player head special model <code>type.Minecraft</code>.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=1.21.6 Pre-release 1
+|;From released versions before 1.21
+|94800|URL shown in open URL dialog is not shortened.
+|140819|Lectern model extends past inventory slot.
+|200092|{{cmd|setworldspawn}} seems to ignore the 'angle' parameter.
+|272825|Custom filled maps from 23w31a and earlier do not upgrade properly in later versions.
+|;From 1.21.5
+|280276|Some item models can still clip into the block below when hovering on the ground.
+|297868|Items in the {{cd|armor.body}} and saddle slots are not kept when dying while the game rule {{cd|keepInventory}} is set to true.
+|297893|{{cd|prevent_equipment_drop}} enchantment effect does not work with {{cd|armor.body}} and saddle slots.
+|297894|{{cmd|clear}} command does not clear {{cd|armor.body}} and saddle slots.
+|;dev
+|296420|'{{cmd|datapack create}}' can create directories with illegal names.
+|296431|Clipping item sprites to stay in slot makes it impossible to hide the slot for resource packs.
+|296458|Player heads in the inventory don't show the right skin.
+|297275|Players can desync from their mounts when jumping on a happy ghast.
+|297550|Happy ghasts don’t remain stationary correctly when players dismount them while other players are still controlling them.
+|297807|Clicking "Save and Quit to Title" in the dialog warning menu takes you to the server list even if the world is singleplayer or locally-hosted LAN.
+|297817|Newly placed paintings sometimes appear at a different position.
+|297848|The menu background is not shown for a short amount of time when leaving a world from a dialog.
+|297897|Players can fall through happy ghasts.
+|297899|FPS drops due to clouds.
+|297906|Running a command with a large output whilst on a dedicated server causes a kick and no logged output.
+|297915|The name plates of entities with an empty custom name are now rendered incorrectly.
+|298071|All naturally spawned zombie villagers are professionless since 25w16a.
+|;prev
+|298101|Sniffers now show the digging animation instead of the walking animation.
+|298116|The warning text in the confirm link screen is no longer visible.
+|298117|All buttons at the bottom of the Realms screen are clickable when no realm is selected.
+|298139|Items bigger than the size of a slot incorrectly bleed over onto other items.
+|298146|GUI items disappear at high screen resolutions.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|S9V6CzZEOJk|9Vm3HYyn_0c}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:1.21.6-pre1]]
+[[es:Java_Edition_1.21.6_Pre-Release_1]]
+[[fr:Édition Java 1.21.6 Pre-Release 1]]
+[[ja:Java_Edition_1.21.6_Pre-Release_1]]
+[[pt:Edição Java 1.21.6 Pre-Release 1]]
+[[ru:1.21.6 Pre-Release 1 (Java Edition)]]
+[[uk:1.21.6 Pre-Release 1 (Java Edition)]]
+[[zh:Java版1.21.6-pre1]]

@@ -1,0 +1,137 @@
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Hopper-Loop Pulse Divider'''
+
+2×(3 + pulse count/2)×3
+
+''output pulse:'' 3 ticks
+
+The bottom-right hopper contains a single item.
+
+ | input+rd-ew | SB | rt-w!+SB-u | ho-e+rd-se! | ho-e+rd-sew! | Dr-s+rd-sw! | rc-e | output+rd-ew |-
+ | | | rt-n | ho-n+rd-new! | ho-w+rd-new! | ho-w+rd-nw! | |
+
+}}
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Dropper-Hopper Pulse Divider'''
+
+3×4×2 (24 block volume)<br />flat
+
+''output pulse:'' (4 × pulse count) ticks
+
+The dropper contains a number of items equal to the pulse count. The bottom-left hopper contains a single item.
+
+ | input+rd-ew | Dr-e | ho-w | rt-s! | | |-
+ | | rc-s! | rc-s | SB | rd | |-
+ | | ho-e | ho-w | rc-e | SB | output+rd-ew
+
+}}
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Dropper-Dropper Pulse Divider'''
+
+3×6×2 (36 block volume)<br />flat
+
+''output pulse:'' (2 × pulse count) ticks
+
+The left dropper contains a number of items equal to the pulse count. The left hopper contains a single non-stackable item.
+
+ | input+rd-ew | SB | Dr-e | Dr-w | SB | rr-w1 | rd-sw | |-
+ | | | rc-s! | rc-s | | rd-se | rd-nw | |-
+ | | | ho-e | ho-w | SB | rs-e | SB | output+rd-ew
+
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Inverted Binary Divider / Counter (wide)'''
+
+3×5×2 (30 block volume)<br />flat, silent, 3-wide stackable (alternating)
+
+''output pulse:'' 2 off-ticks
+
+This circuit triggers on a 2-tick off-pulse input, and outputs a pulse for every two input pulses. It can be stacked to obtain a divider for any power of 2 (2, 4, 8, 16, etc).
+
+ |              |        |                |              | rd-se! | rd-sw!         | -
+ |              | rd-se! | output+rd-sew! | input+rr-e1! | lr-s1  | rd-ns!         | -
+ |              | rr-n1  | rr-n2!         |              | SB     | rt-w!          | -
+ |              | SB     | rt-w!          |              | rr-s1  | rr-s2!         | -
+ | input+rr-e1! | lr-n1  | rd-ns!         |              | rd-ne! | output+rd-new! | -
+ |              | rd-ne! | rd-nw!         |              |        |                | -
+
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | caption =
+
+'''Inverted Binary Divider / Counter (tall)'''
+
+2×5×3 (30 block volume)<br />silent, 2-wide stackable (alternating)
+
+''output pulse:'' 2 off-ticks
+
+This version of the circuit trades height and an extra torch to reduce the circuit width to two blocks for closer stacking, but is otherwise identical to the flat version.
+
+ |              |                |              | rd-ns!+rt-s!   | -
+ | rd-se!       | output+rd-sew! | input+rr-e1! | lr-s1+SB-u     | -
+ | rr-n2!       | rr-n1          | rt-e!        | SB+rd          | -
+ | rt-e!        | SB+rd          | rr-s2!       | rr-s1          | -
+ | input+rr-e1! | lr-n1+SB-u     | rd-ne!       | output+rd-new! | -
+ |              | rd-ns!+rt-n!   |              |                | -
+
+}}
+
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | size = 24
+ | caption =
+
+'''Binary Divider reset circuit (top view)'''
+
+'''Reset pulse:''' 3 ticks off or longer
+
+Counter reset circuit which can be added to the binary divider. Parts of the divider circuit are overlaid in lighter color to show positioning; these will be located 2 blocks higher than the reset circuit (see side view).
+
+ | | | input+rd-ns!+R&#x305; | | | ts+lighter | ts+rd-ns!+lighter | -
+ | | | rd-ns! | ts+rd-se!+lighter | output+rd-sew!+lighter | input+rr-e1!+lighter | ts+lr-s1+lighter | -
+ | | | rd-ns! | | rd-ew! | rr-e3! | SB+rt | -
+ | | rt-e+SB-u+rd-ns| SB | rr-e3! | SB+rt | | rd-ew! | -
+ |input+rd-ew!+P&#x305;+lighter|rc-e!|ts+rd-ew!+lighter|input+rr-e1!+lighter|ts+lr-n1+lighter|ts+rd-ne!+lighter|output+rd-new!+lighter| -
+ | | | | ts+lighter | ts+rd-ns!+lighter | | | -
+
+}}
+{{Schematic
+
+ | style = display: inline-block; float: none; vertical-align: text-top;
+ | size = 24
+ | caption =
+
+'''Binary Divider reset circuit (side view)'''
+
+Viewed from the side, this shows the location of the torches below the solid blocks of the main divider circuit, and the torch and blocks giving input to the comparator.
+
+ |                   |        |      |               | rt-$n!+SB-u+rd-$ |     | rd-$+SB-u+rt-$n! |  | -
+ |input+P&#x305;+rd-$!| rc-$e! | rd-$!|rr-$e1!+rt-$e!| SB    | rr-$e1!+rt-$e! | SB | rr-$e1!+rt-$e! | -
+ | AB                | SB     | AB   | AB        | rt-$+ts-u | AB      | rt-$+ts-u | AB             | -
+ |       | rt-$e  |SB+rd-ns!+R&#x305;| rr-$e3!   | SB+rd-$!  | rr-$e3! | rd-$!+SB-u | rr-$e3!       | -
+
+}}
+
+[[Category:Ajax loaded pages]]
+[[Category:Redstone circuits/Pulse|P]]

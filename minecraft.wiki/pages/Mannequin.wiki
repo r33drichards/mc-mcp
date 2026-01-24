@@ -1,0 +1,113 @@
+{{About|the entity that resembles a player in {{JE}}|the interactive mob in {{BE}} and {{EE}}|NPC}}
+{{distinguish|Armor Stand}}
+{{exclusive|java}}
+{{Infobox entity
+|image=Alex (slim) JE2.png
+|health={{hp|20}}
+|size=Height: 1.8 blocks<br>Width: 0.6 blocks
+|spawn=By commands
+|usableitems= 
+}}
+'''Mannequins''' are [[mob]]-like [[entities]] that resemble a [[player]]'s avatar without having a connected player.
+
+== Spawning ==
+Mannequins can only be spawned with {{cmd|summon}} or {{cmd|execute summon}}. They do not spawn naturally or have an associated [[spawn egg]].
+
+== Drops ==
+=== On death ===
+Mannequins do not drop any [[item]]s or [[experience]] upon death.
+
+== Behavior ==
+Mannequins function like a player avatar, even if the player is not connected. They can hold items in their hands, wear [[armor]], take damage, and have attributes and effects. Unlike [[player]]s, they cannot pick up items, though they can have items placed into their hands or armor slots with commands.
+
+[[Vindicator]]s named "Johnny" will attack mannequins, but other hostile mobs will not.
+
+Models will match those of players, with the specific exception of [[deadmau5]], whose ears will not render. Mojang have confirmed that this is not something they consider an issue.<ref>{{bug|MC-301771}}</ref>
+
+Although player avatars do, mannequins will not take damage when outside the [[world border]].
+
+== Sounds ==
+{{/Sounds}}
+
+== Data values ==
+=== ID ===
+{{ID table
+|edition=java
+|firstcolumnname=Entity
+|generatetranslationkeys=y
+|displayname=Mannequin
+|nameid=mannequin
+|translationkey=entity.minecraft.mannequin
+|foot=1
+}}
+
+=== Entity data ===
+<!-- Removed -->
+<section begin="entity data"/><div class="treeview">
+* {{nbt|compound}} Entity data
+** {{nbt inherit/entity}}
+** {{nbt inherit/mob}}
+** '''except for''' the tags: {{cd|CanPickUpLoot}}, {{cd|DeathLootTable}}, {{cd|DeathLootTableSeed}}, {{cd|drop_chances}}, {{cd|home_pos}}, {{cd|home_radius}}, {{cd|leash}}, {{cd|LeftHanded}}, {{cd|NoAI}}, {{cd|PersistenceRequired}}.
+** {{nbt|compound|profile}} Which profile to show on the entity. This is either a Player profile (same format as a <code>[[Data component format/profile|minecraft:profile]]</code> component) or a Mannequin profile with the following fields:
+*** {{nbt|string|texture}} Namespaced ID of the skin texture to use. 
+**** The skin is specified relative to the <code>textures</code> folder and with a <code>.png</code> suffix.
+**** e.g. <code>entity/player/slim/alex</code> will use the default slim Alex skin.
+**** Specifying an invalid resource location will result in use of the [[missing texture]], rather than falling back to a default skin.
+*** {{nbt|string|cape}} - Optional namespaced ID of the cape texture to use.
+**** When specified, uses the same format as the <code>texture</code> field.
+**** Omitting this field means the mannequin has no cape.
+**** Specifying an invalid resource location will result in use of the missing texture, rather than displaying no cape.
+*** {{nbt|string|elytra}} - Optional namespaced ID of the elytra texture to use.
+**** When specified, uses the same format as the <code>texture</code> field.
+**** Omitting this field means the mannequin uses the cape texture, or if that is also omitted, the default elytra texture when wearing elytra.
+**** Specifying an invalid resource location will result in use of the missing texture, rather than the default elytra.
+*** {{nbt|string|model}} - Optional model type, one of <code>wide</code> and <code>slim</code>.
+**** If omitted, <code>slim</code> is used.
+** {{nbt|list|hidden_layers}} - List of outer skin layers to hide.
+*** Valid entries: <code>cape</code>, <code>jacket</code>, <code>left_sleeve</code>, <code>right_sleeve</code>, <code>left_pants_leg</code>, <code>right_pants_leg</code>, <code>hat</code>.
+** {{nbt|string|main_hand}} - Which hand is the main hand of the mannequin.
+*** One of <code>left</code> and <code>right</code>.
+** {{nbt|string|pose}} - The pose of the mannequin.
+*** Valid entries: <code>standing</code>, <code>crouching</code>, <code>swimming</code>, <code>fall_flying</code>, <code>sleeping</code>
+** {{nbt|bool|immovable}} - Optional boolean specifying that the mannequin cannot be moved (defaults to <code>false</code>).
+** {{nbt|string}}{{nbt|list}}{{nbt|compound|description}} - Optional [[text component]] shown where a [[Player]]'s <code>below_name</code> score would show.
+*** The default "NPC" (<code>entity.minecraft.mannequin.label</code>) text is shown if omitted.
+** {{nbt|bool|hide_description}} - Optional boolean specifying that no description should be shown at all.
+*** A mannequin with the description hidden displays as if a [[Player]] had no <code>below_name</code> display.
+</div><section end="entity data"/>
+
+== Advancements ==
+Advancements that apply to all mobs:
+{{collapse|content={{load advancements|Take Aim;Arbalistic;A Throwaway Joke;Adventure;Over-Overkill;Mob Kabob}}
+}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.9|dev=25w36a|Added mannequins.
+|[[File:Steve (slim) JE2.png|32px]] Mannequins currently use the classic{{verify|The displayed texture is entity/player/slim/steve but the data says entity/player/wide/steve. Additionally, summoning a mannequin with the classic skin texture is different than summoning a mannequin without data.}} Steve skin with the slim model by default.}}
+|{{HistoryLine|||dev=25w37a|[[File:Steve (classic) JE6.png|32px]] Mannequins now use the classic Steve skin with the classic model by default.}}
+|{{HistoryLine|||dev=pre1|[[File:Alex (slim) JE2.png|32px]] Mannequins now use the slim Alex skin with the slim model by default.
+|Mannequins description text can now be configured.
+|Now accept {{cd|minecraft:profile}} component from spawner items.
+|{{cd|CustomNameVisible}} tag now works on mannequins. Previously, mannequins always acted as if the tag was set to true.}}
+}}
+
+== Issues ==
+{{issue list|projects=mc}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox entities|other}}
+
+[[de:Spielerpuppe]]
+[[it:Manichino]]
+[[ja:マネキン]]
+[[ko:마네킹]]
+[[lzh:人偶]]
+[[pl:Manekin]]
+[[pt:Manequim]]
+[[ru:Манекен]]
+[[zh:玩家模型]]

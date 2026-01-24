@@ -1,0 +1,126 @@
+{{Infobox version
+|edition=Java
+|image=Java Edition 14w29a.png
+|type=Snapshot
+|date=July 16, 2014
+|parent=1.8
+|clienthash=e8775d2214111c9600daffb5fcc15f8e6381f9a8
+|jsonhash=5222c2bfda606abf4c181bd4d2da5c2f583da9cb
+|serverhash=c16a61be653b5921391c55b337640ddfd7a5b472
+|exehash=65b3fdb3dbc4a8f8bb5f4418f7a37fe28ca74afe
+|prevparent=1.7.10
+|prev=14w28b
+|next=14w29b
+|nextparent=1.8.1
+}}<onlyinclude>
+
+'''14w29a''' is the thirty-sixth [[snapshot]] for [[Java Edition 1.8]], released on July 16, 2014.<ref>{{cite|url=https://web.archive.org/web/20140722120942/https://mojang.com/2014/07/minecraft-snapshot-14w29a/|title=Minecraft snapshot 14w29b|date=July 16, 2014|website=Mojang.com|author=[[Searge]]}}</ref><ref>{{tweet|SeargeDP|489436626171342848|Snapshot 14w29a is now available. We successfully bent space around time and got a performance boost out of it:|July 16, 2014}}</ref>
+This snapshot contains a lot of optimizations specifically targeting render performance.
+
+== Additions ==
+=== Command format ===
+'''Gamerules'''
+* <code>reducedDebugInfo</code>
+** Gamerule to enable/disable reduced information on the F3 [[debug screen]].
+** Op-only unlike the 'Reduced debug info' toggle in multiplayer settings.
+** Overrides 'reduced debug info' settings in clients.
+* The ability to create gamerule variables.<ref>http://www.reddit.com/r/Minecraft/comments/2aw5nh/new_queryresults_and_gamerule_variables/</ref>
+** These are dummy gamerules which don't actually affect the world, but can be used with {{cmd|stats}} with the new <code>QueryResults</code> argument to update a scoreboard objective based on the value of that gamerule.
+** Declare using {{cmd|gamerule <newRuleName> <value>}}.
+** Access using {{cmd|gamerule <newRuleName>}}.
+
+=== Options ===
+'''Multiplayer settings'''
+* 'Reduced debug info' toggle to enable/disable reduced information on the F3 [[debug screen]].
+
+'''Video settings'''
+* 'Use VBOs' toggle to enable/disable vertex buffer objects.
+* Offers a ~10% performance increase when set to ON.
+
+== Changes ==
+=== Blocks ===
+'''[[Beacon]]s, [[bed]]s, [[chest]]s, [[ender chest]]s, [[head]]s, [[sign]]s'''
+* Now display the cracking animation.
+** [[Bed]]s did display the cracking animation previously, but not on their top and bottom.
+
+'''[[Stairs]]'''
+* Flipped inventory texture back to original orientation.
+
+=== World generation ===
+'''[[Ore]] generation'''
+* More than twice as fast.<ref>{{tweet|SeargeDP|488715162086813696|According to my profiler, generating 30k chunks of ore took 215ms before and now only takes 96ms.|July 14, 2014}}</ref>
+
+=== Command format ===
+'''{{cmd|particle}}'''
+* Additionally has a <code>force</code> argument after the <code>count</code> which can be set to <code>normal</code> or <code>force</code>.
+* This forces particles to show even if the player's 'Particle' toggle is set to minimal or decreased.
+
+'''{{cmd|time}}'''
+* {{cmd|time query <value>}} argument to check the time.
+** Has an another argument after that which can be <code>daytime</code> or <code>gametime</code> to check either the number of ticks since the start of the day or the number of ticks since the world was created, respectively.
+
+'''{{cmd|worldborder}}'''
+* {{cmd|worldborder get}} argument to see the current size of the border.
+
+'''[[Scoreboard]]'''
+* Sidebar is now also secondarily sorted by alphabetical order on the name.
+
+== Fixes ==
+{{fixes|fixedin=14w29a|prefix=Minecraft
+|;old
+|71|Mobs don't spawn next to water streams if the x and z coordinates are negative.
+|393|Starvation prevents sleeping in bed on peaceful.
+|404|Viewing a map while invisible still shows both hands holding it.
+|455|Standing on exact x {{=}} 0, z {{=}} 0 coordinates prevents breaking / placing block in northwest.
+|486|Zombies and skeletons don't burn on slabs.
+|506|You can make smooth sandstone into smooth sandstone.
+|665|Minecarts and TNT are not moved by water currents.
+|676|Signs and chests do not display cracking animation.
+|1677|Retracting piston shows ghost hitbox of technical block.
+|14800|Sociable zombies spawn in the nether upon pigman damage.
+|61586|Client freezes for ~1 second in multiplayer when opacity of a block changes next to unloaded chunk.
+|;dev
+|46531|Weird texture overlay while spectating squid underwater.
+|48106|Entity teleportation bug.
+|53033|Unable to disable <code>nameTagVisilibity</code> for someone in spectator mode.
+|54012|Piston arm is visible sticking through the back of the piston.
+|57516|<code>CanPickUpLoot</code> and <code>CustomNameVisible</code> not working.
+|57876|Furnaces don't get placed correctly when a village is generated on server.
+|57939|Wrong orientation for fire created on nonflammable block's side.
+|58037|Items being held improperly.
+|59052|Cannot add fake players or named entities to scoreboard teams.
+|59634|Players get the message "Your game mode has been updated" even when <code>sendCommandFeedback {{=}}false</code>.
+|59923|Trapdoors are open when a player places them.
+|59946|Iron trapdoors appear on the opposite side of where they are placed when open (east-west orientation).
+|60279|Detector rails render as unpowered, even when powered.
+|61033|{{cmd|particle}} command doesn't work.
+|61449|Piston hitbox.
+|61454|Ping indicator extends over the right side of the tab list.
+|62024|Block on Zombie Villager's head is rendered in relation to the body.
+|;prev
+|61451|Frame-rate drop in 14w28b.
+|61453|{{cmd|title}} command writing errors on the server log.
+|61505|Mob spawners count min/max spawn delay with a rate of 10 instead of 1.
+|61519|Chests that should be oriented east/west are oriented north in desert temples.
+|61577|<code>CommandStats</code> are not used when a command sign is right-clicked by non-OPs.
+|61666|Cannot {{cmd|setblock}} or fill ender chests.
+|61711|Sidebar scoreboard shows the lowest scores and not the best when hitting the limit of the sidebar.
+|61795|Rails (any) crash nearby clients when pushed by sticky pistons repeatedly / pushed into entities.
+}}
+
+== Trivia ==
+* 14w29a was previously removed from the [[launcher]] for some time, but was added back in September 2018.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:14w29a]]
+[[es:Java Edition 14w29a]]
+[[fr:Édition Java 14w29a]]
+[[ja:Java Edition 14w29a]]
+[[pt:Edição Java 14w29a]]
+[[ru:14w29a (Java Edition)]]
+[[zh:Java版14w29a]]

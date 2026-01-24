@@ -1,0 +1,195 @@
+{{Infobox version
+| image =  Bedrock 1.20.0.23 PatchNotes.png
+| image2 = Bedrock 1.20.0.23.png
+| image3 = Bedrock 1.20.0.23 (updated_panorama).png
+| edition = bedrock
+| type = Preview
+| server = 1.20.0.23
+| build = 15319142
+| editorver = 0.3.5
+| versioncode = '''Android''':<br>
+952000023 (armeabi-v7a, 33)<br>
+962000023 (x86, 33)<br>
+972000023 (arm64-v8a, 33)<br>
+982000023 (x86_64, 33)<br>
+| date = '''Windows, Android, iOS, iPadOS, Xbox''' - May 3, 2023
+| internal = '''Windows, Xbox''': 1.20.23.0<br>'''Android, iOS, iPadOS''': 1.20.0.23
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.0.23.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.0.23.zip Linux]
+| parent = 1.20.0
+| prevparent = 1.19.83
+| prev = Preview 1.20.0.22
+| next = Preview 1.20.0.24
+| nextparent = 1.20.1
+}}<onlyinclude>
+'''Beta 1.20.0.23''' (Android) or '''Preview 1.20.0.23''' (Windows, iOS, iPadOS, Xbox) is the fourth  beta/''Preview'' version for [[Bedrock Edition 1.20.0]], released on May 3, 2023<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/15421902578701|title=Minecraft Beta & Preview - 1.20.0.23|website=Minecraft Feedback|date=May 3, 2023}}</ref> which brings more parity from {{JE}} and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Gameplay]]'''
+* Added new achievements:
+** Planting the past
+*** Plant any Sniffer seed
+** Careful restoration
+*** Make a Decorated Pot out of 4 Pottery Sherds
+
+== Changes ==
+=== General ===
+'''[[Title Screen|Title screen]]'''
+* The [[panorama]] was changed to showcase a [[cherry grove]] biome.
+* Changed the [[panorama]] rotation to clockwise.
+
+=== Technical ===
+'''[[Bedrock Dedicated Server]]'''
+*Content logs now show in dedicated server console window with a configurable log level using these new server properties:
+**{{cd|content-log-level}} - Sets the minimum level for content logs to output. Allowed values: {{cd|verbose}}, {{cd|info}}, {{cd|warning}}, {{cd|error}}. Default: {{cd|info}}.
+***Note: This log level also affects content logs written to disk when using {{cd|content-log-file-enabled<nowiki>=</nowiki>true}}.
+**{{cd|content-log-console-output-enabled}} - Enables or disables content log output to the console window. Default: {{cd|info}}.
+
+'''[[Entities]]'''
+*Custom entities with internal-only components or AI goals will fail to load in game.
+*Custom entities are restricted to overriding Vanilla entities released before 1.20. Invalid entities used in the {{cd|identifier}} or {{cd|runtime_identifier}} field will result in content errors.
+
+'''[[Item]]s'''
+*Released the following item components out of experimental in json formats {{cd|1.20.0}} and higher:
+**{{cd|minecraft:display_name}}
+**{{cd|minecraft:durability}}
+**{{cd|minecraft:fuel}}
+**{{cd|minecraft:entity_placer}}
+**{{cd|minecraft:icon}}
+
+'''[[Accessibility]]'''
+*Added new "Chat Message Duration" accessibility setting to change how long chat messages remain on screen (3 seconds by default).
+*Renamed "Notification Duration" to "Toast Notification Duration".
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" experimental toggle.
+=== Changes ===
+==== Technical ====
+'''[[Add-On]]s and Script Engine'''
+*Added {{cd|PlacementPosition}} ({{cd|minecraft:placement_position}}) {{cd|BlockTrait}} block trait.
+**Adds states {{cd|minecraft:block_face}} and/or {{cd|minecraft: vertical_half}}.
+**{{cd|minecraft:block_face}} is a six value string state ({{cd|down}}, {{cd|up}}, {{cd|north}}, {{cd|south}}, {{cd|east}}, {{cd|west}}) that contains info on which block face the player clicked on when the block was placed.
+**{{cd|minecraft:vertical_half}} is a 2 value string state ({{cd|bottom}}, {{cd|top}}) with info on whether the block was placed in the lower or upper half of the block position.
+**Both of these states are set when the block is placed ({{cd|onPlayerPlace}}).
+
+'''[[API]]'''
+*Moving {{cd|getComponent(componentId: string): EntityComponent | undefined }} method to {{cd|1.2.0}}.
+*Moving {{cd|getComponents(): EntityComponent[]}} method to {{cd|1.2.0}}.
+*Moving {{cd|hasComponent(componentId: string): boolean}} method to {{cd|1.2.0}}.
+*Moving {{cd|EntityComponent}} class to {{cd|1.2.0}}.
+*Moving {{cd|EntityBaseMovementComponent}} class to {{cd|1.2.0}}:
+**Moving {{cd|readonly}} {{cd|maxTurn: number}} property to {{cd|1.2.0}}.
+**Moving the following additional {{cd|EntityBaseMovementComponent}} subclasses to {{cd|1.2.0}}:
+***{{cd|EntityMovementAmphibiousComponent}}
+***{{cd|EntityMovementBasicComponent}}
+***{{cd|EntityMovementFlyComponent}}
+***{{cd|EntityMovementGenericComponent}}
+***{{cd|EntityMovementHoverComponent}}
+***{{cd|EntityMovementJumpComponent}}
+***{{cd|EntityMovementSkipComponent}}
+*Renamed {{cd|EntityIsDyableComponent}} class to {{cd|EntityIsDyeableComponent}} and moved to {{cd|1.2.0}}.
+*Moving the following additional {{cd|EntityComponent}} subclasses to {{cd|1.2.0}}:
+**{{cd|EntityCanClimbComponent}}
+**{{cd|EntityCanFlyComponent}}
+**{{cd|EntityCanPowerJumpComponent}}
+**{{cd|EntityColorComponent}}
+**{{cd|EntityFireImmuneComponent}}
+**{{cd|EntityFloatsInLiquidComponent}}
+**{{cd|EntityFlyingSpeedComponent}}
+**{{cd|EntityFrictionModifierComponent}}
+**{{cd|EntityGroundOffsetComponent}}
+**{{cd|EntityIsBabyComponent}}
+**{{cd|EntityIsChargedComponent}}
+**{{cd|EntityIsChestedComponent}}
+**{{cd|EntityIsHiddenWhenInvisibleComponent}}
+**{{cd|EntityIsIgnitedComponent}}
+**{{cd|EntityIsIllagerCaptainComponent}}
+**{{cd|EntityIsSaddledComponent}}
+**{{cd|EntityIsShakingComponent}}
+**{{cd|EntityIsShearedComponent}}
+**{{cd|EntityIsStackableComponent}}
+**{{cd|EntityIsStunnedComponent}}
+**{{cd|EntityIsTamedComponent}}
+**{{cd|EntityMarkVariantComponent}}
+**{{cd|EntityPushThroughComponent}}
+**{{cd|EntityScaleComponent}}
+**{{cd|EntitySkinIdComponent}}
+**{{cd|EntityVariantComponent}}
+**{{cd|EntityWantsJockeyComponent}}
+*Added class {{cd|EffectTypes}}
+**Added function {{cd|get(identifier: string): EffectType}} - Returns the effect type if it exists.
+**Added function {{cd|getAll(): EffectType[]}} - Returns all of the effects.
+*Updated class {{cd|Effect}}.
+**Updated {{cd|duration}} property. Is the duration of the effect in ticks.
+**Added property {{cd|typeId}}. Returns the effect’s type id.
+*Added interface {{cd|EntityEffectOptions { amplifier?: number, showParticles?: boolean <nowiki>}</nowiki>}}
+**Added function {{cd|removeEffect(effectType: EffectType | string): boolean}} - Removes an effect from an entity. Returns {{cd|false}} if the effect is not found or does not exist.
+**Updated function {{cd|getEffect(effectType: EffectType | string): Effect | undefined}} - Gets the effect if it exists on the entity. Otherwise returns {{cd|undefined}}.
+**Updated function {{cd|addEffect(effectType: EffectType | string, duration: number, options?: EntityEffectOptions): boolean}} - Adds an effect to the entity. Returns {{cd|false}} if the effect cannot be added (the effect does not exist, the duration is negative).
+*Items using the minimum duration for the {{cd|minecraft:fuel}} component now work in the [[Blast Furnace]] and [[Smoker]].
+
+'''[[Item]]s'''
+*Items with the {{cd|minecraft:throwable}} component now trigger the throw sound effect when used
+
+'''Scripting'''
+*After Events
+**All non-before events have been moved from {{cd|world.events}} to {{cd|world.afterEvents}}.
+**{{cd|events}} has been removed from the world object.
+**After events do not execute immediately, instead they are deferred until a later point in the tick when they are flushed. It is guaranteed that all events fired in a tick are flushed within a tick.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.0.23 Preview
+|;old
+|141124|Inactive scroll buttons can still play scroll sounds
+|156331|The title on the Behavior pack dialogue box is not capitalized correctly
+|166581|Camera goes black when sneaking in a space that is 1.5 blocks high
+|167247|Experience orbs do not merge
+|168885|Calibrated sculk sensor ignores some redstone inputs
+|169423|Z-fighting occurs on the sniffers' heads and ears
+|;previous
+|168805|Some brushing sounds missing
+|169491|Sniffer eggs can be destroyed by fluids, which is different from turtle eggs
+|169492|Pitcher Plant can be farmed with bone meals on the plant
+|169497|Sniffer egg crack uses "block.turtle_egg.crack" sound event despite "block.sniffer_egg.crack" existing
+|169522|Sign in Xbox screen image is upside-down.
+|169530|Calibrated sculk sensors doesn't receive redstone signals going through blocks
+|169540|Banner Shield and Trimmed Armor persists when placed in the bottom Grindstone slot instead of the top slot (java parity)
+|169562|Amethyst resonance doesn't work when block of amethyst is placed above or below the sculk sensor
+|169654|Crash when brush breaks
+|169929|Relic Music Disc doesn't generate as an archeology loot in the trail ruins
+|otherissuescount=17}}
+'''Other'''
+*Screen reader now properly reads description in popping window after disabling "Require Encrypted Websockets".
+*Screen reader now properly reads description in popping window after disabling "Allow mobile data for online play".
+*Sculk Sensors, Calibrated Sculk Sensors, and Sculk Shriekers will no longer lose in-flight vibrations when leaving the world.
+*Fixed an issue where the Calibrated Sculk Sensor tendrils were not lighting uniformly.
+*Fixed custom textures that override vanilla blocks with aux metadata as a list of textures.
+*Breaking Pitcher Plants with Fortune enchanted tools will now not drop more than one flower.
+*Bone Meal now can’t be used on Torchflowers to spawn other flowers.
+*Using Bone Meal on a Torchflower Crop will now always make it grow one stage.
+*Sniffer Egg can now be placed in water and lava.
+*Screen fade effect when sleeping or using camera fade command will no longer appear when a picture is taken.
+*Sculk Sensors and Calibrated Sculk Sensors now play their "power off" sound at the end of the Cooldown phase instead of the Active phase.
+*Fixed issues with keyboard navigation on some menu screens on iOS and Android.
+*Fixed a bug where respawning in VR sometimes softlocks the player in the death screen.
+*Text shadowboxes now have the correct opacity on interactable block screens.
+*Distinct green particles are now emitted by the player under effect of Hero of the Village status effect.
+*Fixed a graphical issue where a gamepad icon would display over another screen.
+*Fixed an issue were the setting had no affect on how long toasts remained on display.
+{{fixes|project=REALMS|fixedin=1.20.0.23 Preview
+|;old
+|11276|When playing split screen, if the second player logs out, it disconnects both players from realm|otherissuescount=0}}</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.0 betas]]
+[[de:Bedrock Edition beta 1.20.0.23]]
+[[es:Bedrock Edition beta 1.20.0.23]]
+[[ko:Bedrock Edition 프리뷰 1.20.0.23]]
+[[pt:Edição Bedrock Preview 1.20.0.23]]
+[[uk:Preview 1.20.0.23 (Bedrock Edition)]]
+[[zh:基岩版1.20.0.23]]

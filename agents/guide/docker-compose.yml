@@ -1,0 +1,19 @@
+services:
+  guide:
+    build: ../..
+    image: mc-mcp
+    container_name: mc-guide
+    network_mode: host
+    environment:
+      - MC_HOST=localhost
+      - MC_PORT=25565
+      - MC_USERNAME=guide
+      - MC_AUTH=offline
+      - VIEWER_PORT=3155
+      - MCP_TRANSPORT=http
+      - MCP_PORT=3255
+    volumes:
+      - ../../state:/usr/src/app/state
+      - .:/usr/src/app/agent
+      - ../../mineflayer:/usr/src/app/mineflayer
+      - ../../minecraft.wiki:/usr/src/app/minecraft.wiki

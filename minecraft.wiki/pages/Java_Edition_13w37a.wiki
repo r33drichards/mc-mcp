@@ -1,0 +1,118 @@
+{{Infobox version
+|title=13w37a
+|image=13w37a Banner.png
+|image2=Java Edition 13w37a.png
+|edition=Java
+|type=Snapshot
+|parent=1.7.2
+|date=September 12, 2013
+|clienthash=02a9c7237e5a2b68d62d3cacd36d23c0437a14d5
+|jsonhash=2f33c613a4bb81ef5f56be03a8f578208ada382a
+|serverhash=c3d3d936394b35f20b871b140f5a8e6079822e51
+|exehash=6bb92bba0a587ce863d7e7184345c5b3f6fd6681
+|prevparent=1.6.4
+|prev=13w36b
+|next=13w37b
+|nextparent=1.7.4
+}}<onlyinclude>
+
+'''13w37a''' is the third [[snapshot]] for [[Java Edition 1.7.2]], released on September 12, 2013,<ref>{{cite|url=https://web.archive.org/web/20130912164327/https://mojang.com/2013/09/minecraft-snapshot-13w37a/|title=Minecraft snapshot 13w37a|author=[[Dinnerbone]]|website=Mojang.com|date=September 12, 2013}}</ref> which adds the {{cmd|setblock}} and {{cmd|testforblock}} commands and increases the [[command block]] length limit.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|setblock}} '''
+* Places blocks without the use of <code>FallingSand</code>.
+** Syntax: {{cmd|setblock <x> <y> <z> <TileName> [dataValue] [oldBlockHandling] [dataTag]}}.
+** Valid values for <code>oldBlockHandling</code>: "replace" places the specified block (throws error message if the same block exists already), "keep" only places blocks in air, and "destroy" mines the existing block and drops an item before placing the new block.
+
+'''{{cmd|testforblock}} '''
+* Check for blocks in specific locations.
+** Syntax: {{cmd|testforblock <x> <y> <z> <TileName> [dataValue] [dataTag]}}.
+* All blocks beyond X/Z 30 million (±30,000,000) from origin now act as solid blocks, and cannot be targeted with the crosshair.
+** This includes air blocks, essentially creating an invisible wall which extends infinitely, even above and below the chunks.
+** As all blocks function as solid, if the player is moved outside the boundary via external tools, they are unable to move outside the block space they are within.
+** Despite the above, the camera can still move normally.
+*** This reveals that ghost chunks still generate, as the camera can pass through normally solid blocks beyond the boundary.
+
+== Changes ==
+=== Blocks ===
+'''[[Command block]]s'''
+* Increased the character limit to "many thousand characters".<ref>{{tweet|dinner|383683701814853632|Command block limit was changed to many thousand characters long a while ago.|September 27, 2013}}</ref>
+
+'''[[Lava]]'''
+* Lava source blocks can no longer be destroyed by explosions.
+
+'''[[Technical block]]s'''
+* [[Java Edition removed features#Obtainable until 1.7.2|Removed]] the item forms of many blocks: [[bed]] (26), [[piston]] head and extension (34 & 36), [[redstone]] wire (55), [[wheat crops]] (59), standing and wall [[sign]] (63 & 68), wooden and iron [[door]] (64 & 71), lit [[redstone ore]] (74), unlit [[redstone torch]] (75), [[sugar cane]] (83), [[cake]] (92), unpowered and powered [[repeater]] (93 & 94), [[pumpkin]] and [[melon]] stem (104 & 105), [[nether wart]] (115), [[brewing stand]] (117), [[cauldron]] (118), lit [[redstone lamp]] (124), [[tripwire]] (132), [[flower pot]] (140), [[skull]] (144), and unpowered and powered [[comparator]] (149 & 150). 
+** They can no longer be obtained with {{cmd|give}}, but can be created with {{cmd|setblock}}.
+** Because the game is still told to drop a lit redstone lamp when mining a lit lamp with Silk Touch, doing so results in a <samp>java.lang.NullPointerException</samp> crash as such an item no longer exists.
+** This removal has been done by adding method <code>Sets.newHashSet(new Block[] {''unobtainable blocks here''})</code>, and manual removal of blocks from <code>Sets.newHashSet</code> would restore ItemBlocks of aforementioned blocks. 
+
+=== World generation ===
+'''[[Mesa]]'''
+* Slightly changed mesa biome generation to appear more layered.
+
+=== Gameplay ===
+'''[[Nether portal]]s'''
+* Planned to have odd width to allow for design variations.
+* Can be built large enough so that [[ghast]]s can enter the Overworld.
+* Portals can now be activated from any block within the portal, not just the bottom (when any fire block appears inside the frame).
+* New nether portal building rules: any size from 4×5 to 23×23, but rectangular.
+
+=== Command format ===
+'''{{cmd|give}}'''
+* Now prints renamed items' name in chat and show tooltips when hovered over.
+
+'''Block/item IDs'''
+* Can now be referred to with names instead of IDs.
+
+=== General ===
+'''[[Chat]]'''
+* Improved the chat system.
+** "Useful to map makers, modders, players and server admins".
+* Added a way to do things when clicking things in chat, like executing a command.
+** Other actions include opening a URL and showing an item tooltip when hovered on.
+* "Saved screenshot as" messages can now be clicked to open the [[screenshot]], takes players to the .minecraft folder.
+* Names can now be clicked to PM people.
+* Added {{cmd|tellraw <player> <raw json message>}} to send chat messages with custom functionality to players - sender does not appear.
+** Syntax example: <code>/tellraw @p {text:"Daytime? ",color:"green",extra:[{text:"Click here!",color:"blue",clickEvent:{action:"run_command",value:"/time set day"}},{text:" Nighttime? "},{text:"Click here!",color:"blue",clickEvent:{action:"run_command",value:"/time set night"}},{text:" Have fun!"}]}</code>.
+
+== Fixes ==
+{{fixes|fixedin=13w37a|prefix=Minecraft
+|;old
+|4973|Zombie pigman from Nether portal still spawns even if <code>doMobSpawning</code> is false.
+|10077|Adjacent obsidian blocks prevent Nether portal appearing.
+|28400|Breeding animals gives xp even if <code>doMobLoot</code> gamerule is false.
+|28768|Horse breeding doesn't produce markings correctly on foal.
+|29088|Shearing sound does not play when shearing a mooshroom.
+|30070|Flowing lava can be blown up by TNT. <!-- was really fixed in this version, despite tracker saying fixed in 1.8 -->
+|;dev
+|29432|Water and ice no longer transparent on fast graphics.
+|29493|Minecraft crash near 30 million blocks.
+|29505|Some plants not working properly with flowerpots.
+|29530|All the new flowers give only 1 of their respective dye whereas dandelions and 'roses' (now poppies) still give 2.
+|29866|Thorns enchantment backfires.
+|30405|Flint and steel sound and hand animation do not play when igniting a creeper.
+|;prev
+|30181|Statistics and achievements un-pause the game.
+|30465|Ender crystals in the overworld cause non-reasonable amount of lag.
+|30615|Sugar cane can be placed on ground without a water source.
+}}</onlyinclude>
+
+== Trivia ==
+* 13w37a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:13w37a]]
+[[es:Java Edition 13w37a]]
+[[fr:Édition Java 13w37a]]
+[[ja:Java Edition 13w37a]]
+[[ko:Java Edition 13w37a]]
+[[pt:Edição Java 13w37a]]
+[[ru:13w37a (Java Edition)]]
+[[zh:Java版13w37a]]

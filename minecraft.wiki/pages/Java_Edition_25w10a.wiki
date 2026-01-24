@@ -1,0 +1,150 @@
+{{Infobox version
+|title=Minecraft 25w10a
+|image=25w10a.jpg
+|image2=Java Edition 25w10a.png
+|edition=Java
+|type=Snapshot
+|date=March 5, 2025
+|jsonhash=2129cf8d425f8f4ac7210b908683723811c37040
+|clienthash=77fd403d0e8e091571f914891ec359db196a4252
+|clientmap=78b6ff754335c4c3dba82ab3f94471d076578d47
+|serverhash=0177c3a044813dc7d10b43b14b7f47224bd43067
+|servermap=218c144d03dfb0db51a15e4a05ff793703e5a54a
+|parent=1.21.5
+|prevparent=1.21.4
+|prev=25w09b
+|next=1.21.5 Pre-Release 1
+|nextparent=1.21.6
+}}<onlyinclude>
+
+'''25w10a''' is the tenth and final [[snapshot]] for [[Java Edition 1.21.5]], released on March 5, 2025.<ref>{{snap|25w10a|id=a|March 5, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Game rule]]'''
+* Added the {{cd|tntExplodes}} game rule. Previously, that was only avaliable on Legacy Console Edition and ''Bedrock Edition''.
+** When {{cd|false}}, [[TNT]] will not explode and cannot be primed by any means.
+*** Trying to do so directly, like with a [[flint and steel]], will show a message on the action bar.
+*** Powering a TNT block with redstone makes it simply vanish, as does blowing it up with a [[creeper]].
+*** A TNT block on [[fire]] can burn up as if it was a [[plank]].
+** Default value: {{cd|true}}
+
+'''[[Tag]]'''
+* Added {{cd|#flowers}} item tag.
+** Corresponds to the {{cd|#flowers}} block tag.
+
+== Changes ==
+=== Blocks ===
+'''[[Cactus flower]]'''
+* Can now be placed on [[farmland]].
+* Can now be picked up and carried by [[endermen]].
+
+'''[[Test block]] and [[test instance block]]'''
+* Their textures have been updated.
+
+=== Mobs ===
+'''[[Cow]]'''
+* The new models have been tweaked so the horn placement and leg positioning now match the model on Bedrock Edition.
+* The textures of temperate cow legs no longer have harsh borders due to a mirroring issue.
+* The heads of baby cows are now positioned correctly.
+
+'''[[Sheep]]'''
+* Its wool texture has been tweaked to remove the stark line at the back.
+
+=== General ===
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|70}}.
+
+'''[[Entity data]]'''
+* Custom data (previously present only on [[marker]]s) is now available on all entities.
+** It is exposed as a {{cd|minecraft:custom_data}} component, so it can be set by spawning items and matched by predicates.
+** The component is currently stored in a field called {{cd|data}}.
+** It is stored only if it's non-empty.
+
+'''[[Predicate]]s'''
+* Block predicates
+** New optional fields have been added to block predicates: {{cd|components}} and {{cd|predicates}}.
+** Their functionality and format are identical to the fields {{cd|components}} and {{cd|predicates}} on item predicates, but they operate on block entity components (when present).
+*** When present, {{cd|components}} will match exact contents of block entity components.
+*** When present, {{cd|predicates}} will match partial contents of block entity components.
+
+* Entity predicates
+** A new optional field has been added to entity predicates: {{cd|predicates}}.
+*** Its functionality and format is identical to the field {{cd|predicates}} on item predicates, but they operate on entity components.
+**** When present, {{cd|predicates}} will match partial contents of entity components.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|54}}.
+* "Global" uniforms may now be defined in any shader, and the game will attempt to fill it.
+** Currently, these are: {{cd|ModelViewMat}}, {{cd|ProjMat}}, {{cd|TextureMat}}, {{cd|ScreenSize}}, {{cd|ColorModulator}}, {{cd|Light0_Direction}}, {{cd|Light1_Direction}}, {{cd|GlintAlpha}}, {{cd|FogStart}}, {{cd|FogEnd}}, {{cd|FogColor}}, {{cd|FogShape}}, {{cd|LineWidth}}, {{cd|GameTime}}, {{cd|ModelOffset}}.
+** The type of the uniform must match what it would normally be, or it'll be undefined behavior.
+
+'''[[SNBT]] format'''
+* SNBT now also supports following operations:
+** {{cd|bool(arg)}} - converts argument to boolean.
+*** If argument is a boolean value, returns value directly.
+*** If argument is a number value, returns true if it is non-zero.
+** {{cd|uuid(str)}} - converts string representation of UUID to integer array.
+* Implicit infinite float values (like 1e1000) are now rejected.
+
+'''[[Sounds]]'''
+* Blocks that are broken by a [[piston]] now play their breaking sound.
+
+'''[[Tag]]'''
+* Added {{cd|cactus_flower}} to {{cd|#enderman_holdable}} block tag.
+* Removed blocks that mine instantly without a tool from the {{cd|#mineable/axe}}, and {{cd|#sword_efficient}} block tags.
+
+'''[[Title screen]]'''
+* The [[panorama]] was changed to showcase the [[Spring to Life]].
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w10a
+|;From released versions before 1.21
+|203550|Blocks broken by pistons do not play breaking sounds.
+|269386|Flow Pottery Sherd is not in the correct spot in the creative inventory.
+|270043|Reduced armor glint applies to tridents.
+|;dev
+|279414|Flying far away in spectator mode and switching to creative softlocks the game for a while.
+|279920|Beacons play the deactivation sound every game tick while on the death screen.
+|279967|Temperate cows have strange mapping/harsh borders because of the leg texture becoming mirrored.
+|279993|Baby cows' heads are incorrectly positioned.
+|280050|The mule saddle texture is missing in the Programmer Art resource pack.
+|280061|Test instance block has flipped lighting direction.
+|280063|{{cd|crafting_transmute}} recipes don't give an output if the output stack has the same count as the stack in the crafting grid.
+|280106|Cactus flowers cannot be held by endermen.
+|280109|Leash all frog variants advancement is not deterministic in data generation.
+|280113|Shears no longer consume durability when used on insta-mined blocks.
+|280143|Monster spawner and trial spawner tooltip no longer displays the "Interact with Spawn Egg" hint.
+|280159|New cow model does not match Bedrock Edition.
+|280242|Not all ambient sounds have been moved to the "Ambient/Environment" category.
+|280244|Temperate cow model in Java does not have its new horn placement from Bedrock Edition.
+|280285|Some game events can crash the game when attempting to create vibration resonance with an amethyst block.
+|280315|Crash when listing suggestions with invalid Unicode escapes.
+|;prev
+|280325|The player hand flickers in first-person mode.
+|280337|Slimes freeze the game.
+|280360|The game stops updating frames while loading chunks.
+|280379|Frozen screen when entering any UI or after a few minutes of playing.
+|280383|Items in inventories sometimes do not render.
+|280423|Block textures flicker randomly.
+|280439|Values out of bounds for float and double parse successfully in SNBT resulting in storing the value Infinity.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|cDnodfKQ5_s|raSxpv8SJn8}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w10a]]
+[[es:Java Edition 25w10a]]
+[[fr:Édition Java 25w10a]]
+[[ja:Java Edition 25w10a]]
+[[ko:Java Edition 25w10a]]
+[[pt:Edição Java 25w10a]]
+[[ru:25w10a (Java Edition)]]
+[[uk:25w10a (Java Edition)]]
+[[zh:Java版25w10a]]

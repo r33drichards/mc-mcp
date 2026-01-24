@@ -1,0 +1,651 @@
+{{Infobox version
+| title = Minecraft 24w33a
+| image = 24w33a.jpg
+| image2 = Java Edition 24w33a.png
+| edition = Java
+| type = Snapshot
+| date = August 15, 2024
+| jsonhash = 53f1719bb1f00112f083cc491442383260675575
+| clienthash = 376d3cee0b5043b11163dfac67f0a6197c3e97bc
+| clientmap = fe81a68fa00560299ac7a2261873615d9eff8f57
+| serverhash = 90f9c80aeef3966343e661a1487b7918c90ae61d
+| servermap = cf969f99b7bad6ef4f53aa7a221ed722a959ae1b
+| parent = 1.21.2
+| prevparent = 1.21.1
+| prev = 
+| next = 24w34a
+| nextparent = 1.21.3
+}}<onlyinclude>
+
+'''24w33a''' is the first [[snapshot]] for [[Java Edition 1.21.2]], released on August 15, 2024,<ref>{{snap|24w33a|August 15, 2024}}</ref> which updates [[bundle]]s, adds the [[Minecart Improvements]] and [[Redstone Experiments]] experimental data packs, makes various changes, and fixes bugs.
+
+== Additions ==
+=== Items ===
+'''[[Banner pattern]]s'''
+* Added two new banner patterns for parity with {{BE}}:
+** [[File:Field Masoned Banner Pattern JE1 BE2.png|32px]] [[Field masoned banner pattern]]
+** [[File:Bordure Indented Banner Pattern JE1 BE2.png|32px]] [[Bordure indented banner pattern]]
+
+=== Mobs ===
+'''[[Dolphin]]s, [[glow squid]], [[squid]]'''
+* Now have a baby variant.
+** Due to a bug, baby dolphins do not spawn naturally.<ref>{{bug|MC-275642}}</ref>
+
+'''[[Salmon]]'''
+* Now have small and large variants.
+
+=== Non-mob entities ===
+'''[[TNT]] and [[minecart with TNT]]'''
+* Added optional field <code>explosion_power</code>.
+** Defaults to 4.
+** For TNT minecarts, field value is added to speed-based explosion power.
+
+=== Gameplay ===
+'''[[Attribute]]s'''
+* Added <code>tempt_range</code> attribute which can be used to change the range at which temptable mobs can be tempted.
+
+'''[[Death messages]]'''
+* Added a new death message for when killed by a mace smash attack.
+**'''{{ph|player/mob}} was smashed by {{ph|player}}'''
+**'''{{ph|player/mob}} was smashed by {{ph|player}} with {{ph|item}}'''
+
+'''[[Sounds]]'''
+* Added unique break, fall, hit, place, and step sounds for the [[monster spawner]].
+
+=== General ===
+'''[[Data component format]]'''
+* Added <code>minecraft:repairable</code> item stack component.
+<div class="treeview">
+:* {{nbt|compound|repairable}}
+:** {{nbt|string}}{{nbt|list|items}}: item, list of items, or hash-prefixed item tag matching what can be used to repair this item.
+</div>
+:* Items with this component can be repaired, if damageable, in an anvil using the specified ingredient.
+:* e.g. <code>repairable={items:'stick'}</code>
+
+* Added <code>minecraft:enchantable</code> item stack component.
+<div class="treeview">
+:* {{nbt|compound|enchantable}}
+:** {{nbt|int|value}}: positive integer, a higher value allows enchantments with a higher cost to be picked.
+</div>
+:* If present, and applicable enchantments are available, items with the component can be enchanted in an enchanting table.
+:* e.g. <code>enchantable={value:15}</code>
+
+'''[[Experiments]]'''
+* Added the [[Minecart Improvements]] and [[Redstone Experiments]] experimental data packs.
+
+'''[[Goat horn instrument definition]]'''
+* Goat horn instruments are now data-driven.
+* They are now defined in a data pack registry folder called <code>instrument</code>.
+** Like other registries, changing this content in data packs is considered experimental and requires a full world re-load to take effect.
+** Fields:
+*** <code>sound_event</code>: the sound event the instrument plays.
+*** <code>range</code>: the maximum range (in blocks) at which the sound can be heard.
+*** <code>use_duration</code>: the amount of time (in seconds) the instrument is considered in use after triggering, which also serves as its cooldown.
+*** <code>description</code>: a text component used as the description of the instrument in item tooltips.
+
+'''[[Options]]'''
+* Added new video setting "Reduce FPS when" which controls when the game limits its maximum frame rate.
+** Options include：
+*** AFK: FPS limited to 30 if the game hasn't received input for 1 minute, and further limits FPS to 10 after 9 minutes. Also limits FPS to 10 when the game is minimized.
+*** Minimized: only limits FPS to 10 when the game is minimized.
+** Defaults to AFK.
+
+'''[[Painting variant definition]]'''
+* Added new optional fields <code>author</code> and <code>title</code>, holding text components to be displayed in the creative menu tooltip.
+** This replaces previous mechanism where those values were derived from variant name.
+* Author tooltip has been removed for <code>earth</code>, <code>wind</code>, <code>fire</code>, <code>water</code> and <code>wither</code> variants.
+
+'''[[Tags]]'''
+* Added following item tags:
+** <code>furnace_minecart_fuel</code>: items that can be used to refuel a furnace minecart.
+** <code>villager_picks_up</code>: items that a villager tries to pick up from the ground.
+** Added new tags to control which items can be used to craft and repair various tool sets:
+*** <code>wooden_tool_materials</code>
+*** <code>iron_tool_materials</code>
+*** <code>gold_tool_materials</code>
+*** <code>diamond_tool_materials</code>
+*** <code>netherite_tool_materials</code>
+* Added <code>mace_smash</code> damage tag.
+
+== Changes ==
+=== Blocks ===
+'''[[Loom]]'''
+* Now requires [[field masoned banner pattern]] and [[bordure indented banner pattern]] to craft corresponding banners.
+
+'''[[Nether portal]]'''
+* Reduced teleport cooldown for [[minecart]]s and [[boat]]s from 15 seconds to 0.5 seconds.
+* Reduced teleport cooldown for [[projectile]]s from 15 seconds to 0.1 seconds.
+
+'''[[Redstone comparator]]s and [[redstone repeater]]s'''
+* The powered models have changed.
+
+=== Items ===
+'''[[Banner pattern]]s'''
+* Added unique item textures for each banner pattern.
+* Each banner pattern item now includes their pattern in their name instead of as a subtitle.
+
+'''[[Bundle]]'''
+* Updated textures, models and sounds for bundles.
+** Bundle icon has new models and textures.
+** The bundle UI has new textures and scaling.
+** Added a new sound for when failing to add an item to a bundle.
+
+'''[[Redstone torch]]'''
+* The textures and models were updated.
+
+'''[[Shield]]'''
+* Enchanted shields now have the same reduced glint as enchanted armor.
+
+'''[[Smithing template]]s'''
+* Are now named after their template type instead of the generic "Smithing Template" name.
+** They instead specify that they are a smithing template through a subtitle in the hover text.
+** The [[coast armor trim]] is unaffected by this change.<ref>{{bug|MC-275204}}</ref>
+
+'''[[Suspicious stew]]'''
+* Recipes for it are now shown in [[recipe book]].
+
+=== Mobs ===
+'''[[Bat]]'''
+* Can now spawn at any height, not just below sea level, as long as it is dark enough and there is a solid block to spawn on.
+
+'''[[Bee]]s'''
+* Now wander around randomly for less time after exiting a nest/hive.
+* If a bee has a known nest/hive, it travels less far from it, thus being less likely to get lost.
+* Significantly increased the amount of time a bee can take to return to a known nest/hive before it gives up trying to return home.
+* Bees are now a lot less likely to get stuck on corners or when they are close to a nest/hive they are trying to return to.
+* Bees are also now a lot less likely to try and pathfind to a flower they cannot reach.
+
+'''[[Breeze]]'''
+* No longer have a minimum distance required to attack a target.
+
+'''[[Wolves]]'''
+* Can now also be fed cod, cooked cod, salmon, cooked salmon, tropical fish, pufferfish and rabbit stew to heal, breed them or speed up their growth.
+
+=== World generation ===
+'''[[Feature]]'''
+* Removed unused <code>seagrass_simple</code> feature.
+
+'''[[Trial chambers]]'''
+* Added new variations to the hallways, including "encounters": short challenges leading to a larger chamber.
+* Numerous changes are made, such as removing the [[oak tree]] in <code>corridor/entrance_1</code> and tweaking <code>corridor/straight_6 </code>
+* Beds in intersections now have their colors randomized.
+* Replaced the empty chests at the entrance of chamber with a hopper and barrel to better show the players that these are meant for disposal and inventory management.
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* The Over-Overkill advancement now requires a smash attack.
+
+'''[[Attribute]]'''
+* Attribute IDs no longer have <code>generic.</code>, <code>player.</code> and <code>zombie.</code> prefixes.
+
+'''[[Raid]]'''
+* No longer starts if the raiders cannot find a place to spawn within a reasonable distance of the village they are trying to raid.
+
+'''[[Rarity]]'''
+* Reevaluated rarity values for the following items:
+
+:'''Common'''
+*{{ItemLink|End Crystal}}
+*{{ItemLink|Golden Apple}}
+
+:'''Uncommon'''
+{{columns-list|colwidth=16em|
+*{{BlockLink|Sniffer Egg}}
+*{{BlockLink|Conduit}}
+*{{ItemLink|Chainmail Helmet}}
+*{{ItemLink|Chainmail Chestplate}}
+*{{ItemLink|Chainmail Leggings}}
+*{{ItemLink|Chainmail Boots}}
+*{{ItemLink|Recovery Compass}}
+*{{ItemLink|Disc Fragment 5}}
+*{{ItemLink|Nautilus Shell}}
+*{{ItemLink|Echo Shard}}
+*{{ItemLink|Goat Horn}}
+*{{ItemLink|Pottery Sherd}}
+*{{ItemLink|Ominous Bottle}}
+*{{ItemLink|Ominous Banner}}
+*{{ItemLink|Netherite Upgrade}}
+*{{ItemLink|Sentry Armor Trim}}
+*{{ItemLink|Dune Armor Trim}}
+*{{ItemLink|Coast Armor Trim}}
+*{{ItemLink|Wild Armor Trim}}
+*{{ItemLink|Tide Armor Trim}}
+*{{ItemLink|Snout Armor Trim}}
+*{{ItemLink|Rib Armor Trim}}
+*{{ItemLink|Wayfinder Armor Trim}}
+*{{ItemLink|Shaper Armor Trim}}
+*{{ItemLink|Raiser Armor Trim}}
+*{{ItemLink|Host Armor Trim}}
+*{{ItemLink|Flow Armor Trim}}
+*{{ItemLink|Bolt Armor Trim}}
+*{{ItemLink|Music Disc 13}}
+*{{ItemLink|Music Disc Cat}}
+*{{ItemLink|Music Disc Blocks}}
+*{{ItemLink|Music Disc Chirp}}
+*{{ItemLink|id=music-disc-creator-music-box|Music Disc Creator (Music Box)}}
+*{{ItemLink|Music Disc Far}}
+*{{ItemLink|Music Disc Mall}}
+*{{ItemLink|Music Disc Mellohi}}
+*{{ItemLink|Music Disc Stal}}
+*{{ItemLink|Music Disc Strad}}
+*{{ItemLink|Music Disc Ward}}
+*{{ItemLink|Music Disc 11}}
+*{{ItemLink|Music Disc Wait}}
+*{{ItemLink|Music Disc Relic}}
+*{{ItemLink|Music Disc 5}}
+*{{ItemLink|Music Disc Precipice}}
+}}
+
+:'''Rare'''
+{{columns-list|colwidth=16em|
+*{{ItemLink|Enchanted Golden Apple}}
+*{{ItemLink|Trident}}
+*{{ItemLink|Nether Star}}
+*{{ItemLink|Ward Armor Trim}}
+*{{ItemLink|Eye Armor Trim}}
+*{{ItemLink|Vex Armor Trim}}
+*{{ItemLink|Spire Armor Trim}}
+*{{ItemLink|Wither Skeleton Skull}}
+*{{ItemLink|Skull Charge Banner Pattern}}
+*{{ItemLink|Thing Banner Pattern}}
+}}
+
+:'''Epic'''
+{{columns-list|colwidth=16em|
+*{{ItemLink|Elytra}}
+*{{ItemLink|Dragon Head}}
+*{{ItemLink|Silence Armor Trim}}
+}}
+
+=== General ===
+'''[[Data component format]]'''
+* The title specified in the <code>written_book_content</code> component is now prioritized over <code>custom_name</code> and <code>item_name</code> for any item with a non-empty title in this component.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now <code>49</code>.
+
+'''[[Debug screen]]'''
+* The value "B" in the row "E" has been removed from the debug screen.
+
+'''[[Enchantment definition]]'''
+* Added support for enchantment trigger <code>projectile_spawned</code> in the following items:
+** Snowballs
+** Tridents
+** Small fireballs
+** Thrown potions
+** Ender pearls
+** Fishing rod
+** Firework rocket
+** Wind charge
+** Eggs
+
+'''[[Loot table]]'''
+* Sheep shearing is now controlled by loot tables found as <code>shearing/sheep/{{ph|color}}</code>.
+* Mooshroom shearing is now controlled by loot tables found as <code>shearing/mooshroom/{{ph|variant}}</code>.
+* Snow golem shearing is now controlled by a loot table found as <code>shearing/snow_golem</code>.
+
+'''Network protocol'''
+* Added <code>minecraft:client_tick_end</code> serverbound packet during play phase, sent when the client finishes processing its current tick. <!-- changelog says vanilla doesn't use it but it's a lie. -->
+* Added ability for custom servers to override the order that players appear in the 'tab list'.
+** This is controlled by a non-negative ordering index that is sorted highest to lowest.
+* The client now shares the state of the 'Particles' limiter option to be used by custom servers.
+
+'''Performance'''
+* Improved server performance when the render distance is high.
+* Reduced performance impact when loading and generating chunks.
+
+'''[[Raw JSON text format]]'''
+* Invalid <code>selector</code> patterns in chat components now causes commands to fail to parse, instead of resolving to an empty string.
+
+'''[[Realms]]'''
+* Extended the <code>text-filtering-config</code> in order to support an internal migration for Realms profanity filtering.
+** Servers currently utilizing the <code>text-filtering-config</code> are able to continue to do so without any changes.
+
+'''[[Recipes]]'''
+* The <code>crafting_special_suspiciousstew</code> recipe type has been removed.
+* The format used for recipe ingredients has been simplified and aligned with other fields that accept item lists (like item predicates):
+** For items: <code>{ "item": "{{ph|item id}}" }</code> now becomes <code>"{{ph|item id}}"</code>.
+** For tags: <code>{ "tag": "{{ph|tag id}}" }</code> now becomes <code>"#{{ph|tag id}}"</code>.
+** Lists of items are still allowed, but tags can no longer appear in such list.
+** Remaining restrictions:
+*** <code>minecraft:air</code> can't appear anywhere in ingredient.
+*** ingredient must have at least one tag or item.
+** Fields <code>template</code>, <code>base</code> and <code>addition</code> in <code>smithing_transform</code> and <code>smithing_trim</code> recipes are now optional instead of accepting empty list.
+
+'''Reporting'''
+* Added skin reporting reason "Sexually inappropriate" for skins that are graphic in nature relating to sexual acts, sexual organs, and sexual violence.
+* Removed skin reporting reason "Defamation" due to lack of relevance for skins.
+* Removed skin reporting reason "Threat of harm to others" due to already being covered by "Harassment or bullying" reporting reason
+* Added a text label above the name reporting description box to clarify that only the name of the player is subject to the report
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now <code>35</code>.
+* Removals and renames of some deprecated translations is now automatically applied at startup.
+** Packs that used those translations need to re-add them manually.
+** The full list is available in <code>/assets/minecraft/lang/deprecated.json</code> file inside the game's JAR file.
+* Updated the format of post-processing effect definitions.
+** The <code>ChunkOffset</code> uniform in terrain shaders has been renamed to <code>ModelOffset</code>
+** <code>intarget</code> and <code>auxtargets</code> have been merged into a single <code>inputs</code> list, as specified by the input format below.
+** <code>outtarget</code> has been renamed to <code>output</code> with the same format.
+** <code>targets</code> is now a map between target name and target definition, as opposed to a list.
+*** Inline target names are replaced with an empty object.
+**** For example, <code>["swap"]</code> becomes <code>{"swap": {}}</code>
+*** Target definitions with a specific size remain the same, with the <code>name</code> field moved into the map key.
+**** For example, <code>[{"name": "potato", "width": 16, "height": 16}]</code> becomes <code>{"potato": {"width": 16, "height": 16}}</code>
+* Added support for emissive layers for block models.
+** Added an optional <code>light_emission</code> field to block model elements.
+** Integer value between 0 and 15, with 0 being the default value (no light emission).
+** If specified and non-zero, this behaves as the minimum light level that the element can receive.
+* The texture map for the arrow and bee stinger models have been updated.
+* The model and UV mapping of the dragon egg have been updated.
+
+'''[[server.properties]]'''
+* Added the option <code>pause-when-empty-seconds</code>.
+** When set to a positive value, causes the server to pause when no player has been online for that many seconds.
+** Defaults to 60.
+* Removed the options: <code>spawn-animals</code> and <code>spawn-npcs</code>
+
+'''[[Telemetry]]'''
+* Added some information about data pack structure (for example, data-driven registries) to generated reports.
+
+== Experimental ==
+Note:
+* The additions and changes to [[bundle]]s only take effect when the 'Bundles' experimental data pack is enabled.
+* The additions and changes to [[redstone]] only take effect when the '[[Redstone Experiments]]' experimental data pack is enabled.
+* The additions and changes to [[minecart]]s only take effect when the '[[Minecart Improvements]]' experimental data pack is enabled.
+
+=== Changes ===
+==== Items ====
+'''[[Bundle]]s'''
+* The crafting recipe for bundles have been changed to one string and one leather.
+* Now have a tooltip that shows the items inside.
+** If a bundle has less than 8 item types inside, the tooltip shows all of them.
+** Otherwise the tooltip shows the top two rows of items and the others are hidden below.
+* When selecting an item to remove, the bundle icon shows that item poking out of the bundle.
+* When holding a bundle in hand, the player can empty it onto the ground by right-clicking.
+* It is possible to select any of the visible items to pull out of the bundle.
+** Right-clicking takes the first item.
+** Using the number keys or scroll wheel to select a different item, then right-click to take it.
+
+'''[[Redstone dust]]'''
+* The performance impact of redstone wire (connected blocks of redstone dust) has been improved.
+* Redstone wire now only triggers block updates on blocks that may receive power from the wire.
+* Before a line of wire causes block updates, the new signal strength of all connected wires is set.
+* The update order around redstone wire has been changed. 
+
+==== Non-mob entities ====
+'''[[Minecart]]s'''
+* Articulate their movement better when going fast, riding on the rail all the time.
+** Now smoothly turn along with the track and are less likely to halt or derail.
+* Can now jump better.
+** They keep their vertical momentum when the track ends with a slope.
+** Tilt to visually articulate while in the air.
+** No rail grinding sound is played when minecarts are flying through the air.
+* Can no longer be placed within another minecart by the player or a dispenser.
+* Can now consistently be placed next to each other along a track.
+* Can now pick up mobs more consistently when moving along a track.
+
+==== General ====
+'''[[Game rule]]'''
+* Added new gamerule <code>minecartMaxSpeed</code> that changes the maximum speed of minecarts.
+** Defaults to <code>8</code> and goes up to <code>1000</code> blocks per second.
+** Setting it to a specific value does not guarantee that a minecart can reach that particular max speed - there are built in air resistances and similar effects that the speed added through slopes or powered rails need to overcome.
+** This gamerule only exists in worlds with the experiment [[Minecart Improvements]] enabled.
+
+'''[[Options]]'''
+* Added a new accessibility setting that makes players follow the rotation of minecarts they ride.
+** Defaults to off.
+** Only has effect when within a world with the experiment [[Minecart Improvements]] enabled.
+
+== Fixes ==
+{{fixes|fixedin=24w33a
+|;From released versions before 1.21
+|379|{{cd|spawn-animals}} and {{cd|spawn-npcs{{=}}false}} removes all villagers and prevents summoning new mobs.
+|1673|Several mobs can pop off paintings, item frames and leads and destroy minecarts, armor stands and anything in item form even when {{cd|mobGriefing}} is turned off.
+|3266|The player's experience level overflows once it exceeds the integer limit.
+|3697|TNT submerged in water can destroy item frames, paintings, armor stands, and other similar entities.
+|4665|Anvil consuming two unbroken items of the same kind when renaming them.
+|14800|When zombie villagers, husks, drowned or zombified piglins are damaged, they spawn regular zombie reinforcements.
+|39263|Cannot set horizontal motion for squid on land.
+|49628|When in Spectator mode, the head overlay shows even if it is set not to show in the skin customization options.
+|53602|Projectiles don't collide with the world border.
+|58294|Squids and glow squids do not collide properly with solid blocks.
+|59471|String can be duplicated using tripwire hooks.
+|72494|In Statistics screen "m" is the same unit for both minutes and meters.
+|75494|Lead item drop is not affected by {{cd|doEntityDrops}} gamerule.
+|86252|Shields can continue to block after entity changes dimensions due to client and server desync.
+|89883|Squid and glow squid collision error and rubberbanding.
+|101376|Elytra appearance doesn't update in first-person mode; only in third-person.
+|112257|Some NBT tags require the correct suffix.
+|120417|The dragon egg block model is incorrect.
+|121013|"{{cd|follow_range}}" attribute only targets mobs on (roughly) the same Y level.
+|125642|Bone meal is consumed when used on fern, grass and seagrass even if it cannot grow.
+|127995|The player can use bone meal on sea pickles in situations where no sea pickles will grow.
+|129055|Issues breaking tripwire with shears.
+|129826|{{cd|["shade": false]}} is missing from potted cross models, resulting in most potted plants appearing darker than they should.
+|130097|Tropical fish fin UV mapping is wrong.
+|132804|Low follow range attribute also affects mobs' idle wandering range.
+|133862|Optimize world screen backup button has inaccurate text.
+|135971|Can't use {{key|Ctrl}}+{{key|Q}} in crafting table.
+|137053|The player cannot set the "{{cd|CanBreakDoors}}" NBT tag of drowneds to "{{cd|1b}}".
+|144761|Animated texture interpolation ignores alpha channel during transition from/to transparent pixels.
+|145656|Attribute "{{cd|follow_range}}" is not working for hostile mobs before they find the target.
+|148041|Two separate translation lines for the same thing, "Bells Rung" statistic.
+|151828|Woodland mansion structure "{{cd|1x1_b3}}" has dark oak leaf block with persistent tag set to "false".
+|156579|Creative players can fly through portals when going quickly enough using elytra or Riptide trident.
+|158389|Raid results in victory if it cannot find a valid spawn point.
+|161913|Misalignment on edges/corners of clouds.
+|162713|Clouds are generated with offset to east and south.
+|165182|Inventory/GUI textures no longer handle translucent pixels correctly.
+|166880|Pufferfish spikes model seems to be broken.
+|170863|Dropping item stacks from the player's hotbar in any creative inventory tab other than "Survival Inventory" deletes items.
+|174732|Semi-transparent status effect textures do not render correctly in the inventory or beacon UI.
+|176937|Deleting items using the drop key while a tab is open in the Creative inventory plays hand animation, even if the item isn't dropped.
+|177452|Unneeded faces inside repeater models.
+|177453|Unneeded faces inside comparator models.
+|179629|Faces in between cloud "blocks" can still render from outside of the cloud.
+|180272|{{samp|en_us.json}} contains unused strings.
+|182478|Mob armor generates starting with boots rather than helmet.
+|182877|Piglins use one hand to hold a loaded crossbow.
+|183518|High CPU usage on hypervisor host possibly due to excessive syscall usage by Minecraft server.
+|183636|{{cd|follow_range}} attribute not working for piglins.
+|187920|Bees sometimes give up when returning home.
+|188217|Bees circle above flowers that are covered by all sides.
+|190163|Zoglin spawn eggs don't occasionally spawn baby zoglins on their own accord.
+|190484|Sneaking players' name tags are partly invisible depending on what angle you're facing.
+|195754|Illagers in raids continuously try and fail to pick up ominous banners if they can't reach them.
+|199238|Unneeded faces and missing cullface in dragon egg model.
+|203748|Filled lava cauldrons are able to be put under water.
+|206074|Survival tab of Creative inventory desyncs if changed manually after an external change.
+|209947|{{cd|minecraft:block/scaffolding_unstable}} has incorrect cullfaces.
+|212213|Squids unable to be affected by Knockback enchantment.
+|214662|Redstone torches on repeaters and comparators are shaded differently from normal redstone torches.
+|215332|Glow squids lack a baby variant.
+|215752|Z-fighting with paintings and item frames in solid blocks.
+|224035|Small dripleaf's model is inconsistent.
+|224454|Entities don't recognize azaleas or flowering azaleas as obstacles when pathfinding.
+|225270|Goats can move armor stands even with {{cd|mobGriefing}} turned off.
+|225422|Squids and glow squids do not move smoothly in the water compared to other aquatic mobs.
+|226038|Scheduled functions are part of weather in profile results.
+|226687|Sea Level is assumed to be Y{{=}}63 in numerous parts of Minecraft.
+|227139|Sky fog stutters.
+|227169|The main hand is positioned incorrectly when holding a loaded crossbow in your offhand.
+|233603|HUD / Hotbar rendering can heavily impact frame rate performance.
+|234318|Small dripleaf stems intersect its leaves.
+|239581|Bees do not become angry at the closest player when hive is exploded.
+|240948|Filled powder snow cauldrons are able to be put under water.
+|241873|Ravagers can move armor stands even with {{cd|mobGriefing}} turned off.
+|243413|Some explorer maps are missing their icon.
+|244720|"Erased cached data" button in Optimize World is not labeled in the right order when using {{key|tab}}.
+|245510|Piglin brute's {{cd|generic.follow_range}} attribute functions oddly.
+|247238|Sky fog is not cylindrical.
+|249067|Ominous banners lose their rarity color when renamed using anvils.
+|249901|Frogs don't play the frog eating sound when given a slime ball.
+|256422|Some words within some strings use right single quotation marks instead of apostrophes.
+|257309|Monster spawner tries to spawn wardens and zoglins when the difficulty is Peaceful.
+|257318|Non-transparent toasts and some buttons that should be transparent in custom Resource Pack.
+|258971|{{cd|ClientboundUpdateRecipesPacket}} breaks after multiple recipes use big tags.
+|259687|"Distance by Elytra" statistic is approximately doubled.
+|259798|Block hitboxes cause semi-transparent blocks not to render behind them in lower than "Fabulous" graphics settings.
+|260013|Baby llama's head has incorrect scale method.
+|260858|The word "ticks" within a "{{cmd|schedule}}" command feedback message is always pluralized.
+|260859|Some words within a tick profiling feedback message are always pluralized.
+|260860|Some words within some chat delay strings are always pluralized.
+|260913|The word "blocks" within some "{{cmd|spreadplayers}}" command feedback messages is always pluralized.
+|260914|"{{cmd|spreadplayers}}" strings for entities consist of inconsistent noun usage.
+|261691|Bees get stuck while trying to pathfind to inaccessible flowers.
+|262112|Wither skull's bounding box is wrongly positioned in the first tick, and cannot be selected with volume checks in commands.
+|262175|The "{{cd|advancements.adventure.trim_with_any_armor_pattern.description}}" text contains incorrect English grammar.
+|262498|Underground seagrass feature files exist despite never generating.
+|262652|Dragon egg's side texture is mapped strangely as of 1.8 (and the model is also unoptimized).
+|263838|{{cd|doLimitedCrafting}} gamerule does not work on suspicious stew.
+|263858|Text displays are rendered differently compared to name tags.
+|264886|Geode features ignore the {{cd|invalid_blocks}} field.
+|264986|Item count of fuel slot affects the way smelting recipe book moves ingredients.
+|265554|Aaron Cherof listed as "Aaron Cherof\u00a0" in {{samp|credits.json}}.
+|265693|Movement does not reset a player's last action time.
+|265695|The feedback for setting the idle timeout to 0 minutes does not reflect the actual behavior.
+|265703|{{cd|BrushableBlock}}'s codec misspells "completed" as "comleted".
+|265990|Burning arrows can light candles and cakes with candles outside the world border.
+|266441|Multiple trial chambers templates have missing or incorrect blocks.
+|266949|Monster spawner tries to spawn breezes when the difficulty is Peaceful.
+|267006|The "Distance Flown" statistic rapidly increases when standing in ender dragon's hitbox.
+|267107|Spawners unsuccessfully try to summon hostile entities on Peaceful difficulty.
+|267308|Profiling with {{key|F3+L}} while game is frozen spams output with errors.
+|267401|All the player skin report's category descriptions use the chat message ones.
+|267838|Projectile yaw rotations have incorrect interpolation, causing flickering.
+|267889|The "blocked_slot" bundle texture has a miscolored pixel.
+|268045|The name of entity argument is plural in query literal node of the {{cmd|experience}} command.
+|268220|Zoglins ignore monster spawning requirements when spawning naturally.
+|268241|The bottom faces of vaults aren't culled when covered by blocks.
+|268518|Attribute {{cd|generic.luck}} only affects players.
+|268528|Cave vines can be pollinated infinitely (instead of limit of 10).
+|268645|Scheduling a macro function silently fails.
+|268929|{{samp|pack.png}} does not support translucent pixels.
+|269083|Effect background texture in inventory renders translucent pixels as opaque.
+|269152|{{cd|nine_slice}} texture scaling will cause ridiculous levels of lag when used on small textures.
+|269352|The breeze rod uses an incorrect model for holding.
+|269375|Breeze's wind charge attack can move or break armor stands when {{cd|mobGriefing}} is disabled.
+|269428|Mace fall damage multiplier does not apply to mobs.
+|269440|Text fields render translucent pixels as opaque.
+|269441|Difficulty lock button renders translucent pixels as opaque.
+|269445|Some empty slot icons render translucent pixels as opaque.
+|269528|Recipe book tabs are rendered over items held by the mouse cursor.
+|269549|Items held in cursor are rendered behind recipe book UI elements.
+|269622|Previous/Next Page buttons render translucent pixels as opaque.
+|269627|Toasts render translucent pixels as opaque.
+|269656|Feeding parrots poison while holding mace grants Over-Overkill challenge.
+|269738|Recipe book cannot quick-move oversized item stacks into applicable recipe slots.
+|269751|Advancement frames render translucent pixels as opaque.
+|269814|Can’t feed fish to wolves.
+|269832|Gamemode switcher sprites render translucent pixels as opaque.
+|269834|Statistics screen sprites render translucent pixels as opaque.
+|269895|Breezes missing higher fidelity jump animation from Bedrock Edition.
+|269936|Transferable list (resource pack, data pack) screen buttons render translucent pixels as opaque.
+|269937|World list buttons render translucent pixels as opaque.
+|269996|Custom names of interaction entities render at wrong location.
+|270051|Recipe book button renders translucent pixels as opaque.
+|270299|New data pack component crafting doesn't work with suspicious stews.
+|270314|"Use a Bundle" toast pops up repeatedly if player constantly left-clicks on a bundle while holding an item.
+|270348|Some slime trial spawners in trial chambers won't spawn slimes without player intervention.
+|270510|{{cd|youJustLostTheGame}} is not the first item in the mappings.
+|270518|Scrollers in block UIs render translucent pixels as opaque.
+|270519|"Error" textures in block/entity GUIs do not support translucent textures.
+|270527|"tile" texture scaling also causes incredible lag with small textures.
+|270563|Furnace, blast furnace and smoker smelting progress and burn time indicators do not support translucent textures.
+|270564|Brewing stand fuel, bubbles and progress sprites do not support translucent textures.
+|270570|TPS chart uses OS locale specific number formatting.
+|270571|{{cmd|tick}} command uses OS locale specific number formatting.
+|270614|A trapdoor in {{cd|chamber_8}} is rotated the wrong way.
+|270640|Anvil text field does not support translucent textures.
+|270641|Crafter UI sprites do not support translucent pixels.
+|270678|Tabs in recipe book and Creative inventory do not support translucent pixels.
+|270680|Buttons in the beacon GUI do not support translucent pixels.
+|270692|Textures for empty slots do not support translucent pixels.
+|270696|Traps are generated behind walls in trial chambers.
+|270697|Stonecutter recipe buttons render translucent pixels as opaque.
+|270698|Loom recipe buttons render translucent pixels as opaque.
+|270726|Advancement backgrounds render translucent pixels as opaque.
+|270741|Realms main menu icons do not render translucent pixels correctly, but accessibility/language icons do.
+|270764|Recipe book buttons and icons do not render translucent pixels correctly.
+|270765|Bundle background does not handle translucent pixels correctly.
+|270775|Ominous vaults sometimes fail to generate.
+|271113|Bees occasionally freeze right before they enter the hives.
+|271191|Poor saving performance due to large amount of item frames.
+|272020|Players' capes don't move with the yaw of their bodies when swinging.
+|272414|Redundant calculation causes 2x lag during explosions.
+|272506|Fast switching between servers causes disconnect.
+|;From 1.21
+|271486|The tree in the "{{cd|entrance_1}}" room of trial chambers is not removed.
+|271628|Enchantment effect "{{cd|projectile_spawned}}" doesn't trigger for fishing rods and tridents.
+|272207|Trial chambers no longer generate a bed in the secret room nearing the entrance.
+|272327|Attribute effects not properly postfixed with slot name.
+|272603|Riding an entity into the end fountain skips the credits.
+|272649|After a chest with the item component "{{cd|container_loot}}" is opened, it will appear on the subsequent pick block.
+|272766|When riding a minecart through a portal, the direction the player is facing after they go through the portal is not the same as when they entered.
+|272802|Ender pearls deal no damage to their owners after switching dimensions and landing.
+|272804|The mining fatigue animation plays in reverse.
+|272805|Command blocks made from pick block still do not activate when placed near sources of power.
+|272821|Wind charges incorrectly negate fall damage.
+|272932|Auto-save text in the pause menu is rendered at the wrong position.
+|273076|Breeze immediately forgets the player once line of sight is lost, even through transparent blocks.
+|273239|Trial spawners rapidly change block state when switching gamerule "{{cd|doMobSpawning}}" from false to true.
+|273263|Attributes are retained even if destroyed by "{{cd|damage_item}}".
+|273281|"{{cd|projectile_spawned}}" enchantment component runs predicates and effects on projectiles before all of their data has been assigned.
+|273288|Dropping a stack of items while in the Creative mode inventory deletes them.
+|273311|Taking near {{cd|Float.MAX_VALUE}} damage from mob attack through commands on Hard causes NaN Absorption and Health.
+|273328|Stars are smaller than supposed to.
+|273361|Entities teleported to the player from a force loaded chunk are not rendered.
+|273377|Blocks can be edited without having a debug stick in the player's hand.
+|273400|Baby zombified piglin chicken jockeys immediately teleport.
+|273427|Respawn anchor loses charges when returning from the End.
+|273464|Incorrect partial tick during screen render.
+|273489|Sneaking players' name tags are barely visible.
+|273578|Interaction entities position passengers incorrectly.
+|273662|Trial spawners cannot spawn silverfish at all/have unusually long delays between spawns.
+|272670|Crash while saving entity NBT - {{cd|Cannot encode empty ItemStack}}.
+|273672|When {{cd|spectatorsGenerateChunks}} is set to false, the player cannot stop spectating an entity without running {{cmd|spectate}}.
+|273758|Ominous item spawner's animation breaks if the {{samp|level.dat}} "Time" value is over a certain number.
+|273771|Passengers can glitch into walls when their mounts are killed.
+|273811|Ender pearls don't teleport the player if they haven't been in the pearl's dimension after relog.
+|273822|The words "forwards" and "backwards" within two movement key bind strings aren't spelled in American English.
+|273828|Movement predicate is incorrect for stationary players until either mouse is moved or one second elapses.
+|273850|Shield enchantment glint is too bright to clearly see banner patterns.
+|273914|Client game options that do not constitute sending a network packet will send one anyway.
+|273939|Capes clip through the player when taking knockback.
+|273960|The NBT data stored in the world affects copying a decorated pot in Creative mode.
+|274030|Item stacks with a count over 99 cause the player to get kicked from their world in Creative mode.
+|274244|{{cd|minecraft:villager_plantable_seeds}} tag does not allow farmer villagers to pick up items.
+|274371|Depleting a respawn anchor doesn't play any sound.
+|274372|{{cd|using_item}} advancement trigger keeps being activated even after the item stops being used, after teleporting to another dimension.
+|274400|Dispensers firing a wind charge play the crafter crafting world event, showing incorrect particles beneath the block.
+|274519|Minecraft resaves all maps with every autosave.
+|274657|Ominous banner's orange name is handled as a custom text color, rather than as a rarity.
+|274708|Exiting the end portal first time removes player attribute modifiers.
+|274852|"{{cd|item_name}}" component has priority over signed book title.
+|274911|If the raid begins more than 112 blocks above the ground, all illagers will be summoned and the player wins.
+|274960|Registries allow duplicate entries.
+|;Private bugs
+|273555|Using a crossbow enchanted with Quick Charge 0 crashes the game.<ref>https://web.archive.org/web/20240619090548/https://bugs.mojang.com/browse/MC-273555</ref>
+}}</onlyinclude>
+
+== Trivia ==
+* 24w33a currently holds the record for the largest number of bug fixes in a single snapshot, as well as in any development version, at 225.
+
+== Videos ==
+{{slicedlime|pf9h28NZGf0|wQmG7wj7yYw|7pKOx4AOCkQ}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w33a]]
+[[es:Java Edition 24w33a]]
+[[fr:Édition Java 24w33a]]
+[[ja:Java Edition 24w33a]]
+[[pt:Edição Java 24w33a]]
+[[ru:24w33a (Java Edition)]]
+[[uk:24w33a (Java Edition)]]
+[[zh:Java版24w33a]]

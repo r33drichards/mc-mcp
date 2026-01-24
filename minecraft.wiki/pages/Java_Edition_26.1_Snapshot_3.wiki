@@ -1,0 +1,255 @@
+{{Infobox version
+|title=Minecraft 26.1 Snapshot 3
+|image=26.1-snapshot-3.jpg
+|image2=Java Edition 26.1-snapshot-3.png
+|edition=java
+|type=Snapshot
+|date=January 13, 2026
+|clienthash=7d4a5d1026cbd2fec3db1c801cf9d25e0e558285
+|jsonhash=4cc909f0660a57a897fb6cb2a1e6604696b5aca4
+|jsonfile=26.1-snapshot-3
+|serverhash=430ae0858fe2663346745a7be773cebc68a79e31
+|parent=26.1
+|prevparent=1.21.11
+|prev=26.1 Snapshot 2
+|next=
+|nextparent=
+}}
+<onlyinclude>
+
+'''26.1 Snapshot 3''' (known as '''26.1-snapshot-3''' in the [[launcher]]) is the third [[snapshot]] for [[Java Edition 26.1]], released on January 13, 2026.<ref>{{Mcnet|minecraft-26-1-snapshot-3|Minecraft 26.1 Snapshot 3|January 13, 2026}}</ref> It adds several [[data pack]] features, those being: new block and fluid [[Tag_(Java_Edition)|tags]] to control whether [[plant]]s, foliage, or [[crop]]s can be placed on a given block; and [[world clock]]s and [[time marker]]s.
+
+== Additions ==
+=== General ===
+'''Block [[Tag_(Java_Edition)|tags]]'''
+* Added the following tags which determine which blocks a category of vegetation can be placed on and survive.
+** {{cd|#supports_vegetation}} for blocks that provide support to the following blocks: {{columns-list|colwidth=14em|
+*** {{BlockLink|Bush}}
+*** {{BlockLink|Short Grass}}
+*** {{BlockLink|Tall Grass}}
+*** {{BlockLink|Fern}}
+*** {{BlockLink|Large Fern}}
+*** {{BlockLink|Pitcher Plant}}
+*** {{BlockLink|Sunflower}}
+*** {{BlockLink|Lilac}}
+*** {{BlockLink|Rose Bush}}
+*** {{BlockLink|Peony}}
+*** {{BlockLink|Eyeblossom}}
+*** {{BlockLink|Firefly Bush}}
+*** {{BlockLink|Pink Petals}}
+*** {{BlockLink|Wildflowers}}
+*** {{BlockLink|Dandelion}}
+*** {{BlockLink|Torchflower}}
+*** {{BlockLink|Poppy}}
+*** {{BlockLink|Blue Orchid}}
+*** {{BlockLink|Allium}}
+*** {{BlockLink|Azure Bluet}}
+*** {{BlockLink|Red Tulip}}
+*** {{BlockLink|Orange Tulip}}
+*** {{BlockLink|White Tulip}}
+*** {{BlockLink|Pink Tulip}}
+*** {{BlockLink|Oxeye Daisy}}
+*** {{BlockLink|Cornflower}}
+*** {{BlockLink|Sweet Berry Bush}}
+*** {{BlockLink|Sapling|id=oak-sapling}}
+}}
+** {{cd|#supports_crops}} for blocks that provide support to the following crops at all growth stages:
+*** {{BlockLink|Wheat}}
+*** {{ItemLink|Carrot}}
+*** {{ItemLink|Potato}}
+*** {{ItemLink|Beetroot}}
+*** {{BlockLink|Torchflower Crop}}
+*** {{BlockLink|Pitcher Plant}}
+** {{cd|#supports_stem_crops}}
+** {{cd|#supports_pumpkin_stem}}
+** {{cd|#supports_melon_stem}}
+** {{cd|#supports_sugar_cane}}
+** {{cd|#supports_sugar_cane_adjacently}}
+*** Which blocks satisfy adjacency support requirements for sugar cane
+** {{cd|#supports_cactus}}
+** {{cd|#supports_chorus_plant}}
+** {{cd|#supports_chorus_flower}}
+** {{cd|#supports_nether_sprouts}}
+** {{cd|#supports_azalea}}
+** {{cd|#supports_warped_fungus}}
+** {{cd|#supports_crimson_fungus}}
+** {{cd|#supports_mangrove_propagule}}
+** {{cd|#supports_hanging_mangrove_propagule}}
+** {{cd|#supports_nether_wart}}
+** {{cd|#supports_warped_roots}}
+** {{cd|#supports_crimson_roots}}
+** {{cd|#supports_wither_rose}}
+** {{cd|#supports_cocoa}}
+** {{cd|#supports_lily_pad}}
+** {{cd|#supports_frogspawn}}
+*** Empty by default
+** {{cd|#support_override_cactus_flower}}
+*** [[Cactus flowers]] can be placed on blocks in this tag even if they do not have a sturdy top face.
+* Added the following tags which determine which blocks are not able to support specific categories of vegetation.
+** {{cd|#cannot_support_seagrass}}
+** {{cd|#cannot_support_kelp}}
+* Added {{cd|#grows_crops}} which defines which blocks beneath allow the following crops to grow:
+** {{BlockLink|Wheat}}
+** {{ItemLink|Carrot}}
+** {{ItemLink|Potato}}
+** {{ItemLink|Beetroot}}
+** {{BlockLink|Torchflower Crop}}
+** {{BlockLink|Pitcher Plant}}
+** {{BlockLink|Pumpkin Stem}}
+** {{BlockLink|Melon Stem}}
+* Added the following tags to define which blocks can start particular types of [[bubble column]]s.
+** {{cd|#enables_bubble_column_drag_down}}
+*** [[Magma block]] by default.
+** {{cd|#enables_bubble_column_push_up}}
+*** [[Soul sand]] by default.
+
+'''Fluid [[Tag_(Java_Edition)|tags]]'''
+* Added tags to determine which fluids can support the following blocks:
+** {{cd|#supports_lily_pad}}
+** {{cd|#supports_frogspawn}}
+* Added {{cd|#supports_sugar_cane_adjacently}}
+** Contains fluids satisfy adjacency support requirements for [[sugar cane]].
+* Added {{cd|#bubble_columns_can_occupy}} fluid tag to define which fluids a [[bubble column]] can occupy with water as default.
+
+'''[[Time marker]]s'''
+* Time markers assign a particular name to a specific (optionally repeating) point in time for a specific world clock. Time markers replace the previously predetermined names that could be used by {{cmd|time set}}, for example {{cd|day}} or {{cd|night}}.
+* Time markers will exist within the context of a specific world clock. This means that even though the different time markers are defined by different Timelines, only one Time Marker can exist with a particular id for a particular world clock. It also means that two world clocks can have a time marker with the same name.
+** Built-in uses of time markers
+*** Some time markers are used to drive Vanilla game behavior. Usually, they are configured to not show up in {{cmd|time}} commands.
+**** {{cd|minecraft:wake_up_from_sleep}} - the time to advance the dimension's default clock to when players in that dimension wake up after sleeping.
+**** {{cd|minecraft:roll_village_siege}} - the time of the dimension's default clock at which the random chance for a zombie village siege to occur should be evaluated.
+
+'''[[World clock]]s'''
+* Each world clock contains an internal time that increases every tick. A world clock can be defined in data packs under the {{cd|world_clock}} registry (i.e. found under <samp>data/<namespace>/world_clock/<id>.json</samp>)
+* A world clock can be paused or resumed, and the time of the clock can be changed or queried, using the {{cmd|time}} command.
+** This allows different [[Dimension definition|dimensions]] to have different clocks.
+* Format: object with no fields
+
+== Changes ==
+=== Blocks ===
+'''[[Tripwire]]'''
+* The tripwire texture is now rendered as alpha cutout instead of transparent. In other words, the texture is now opaque thus making tripwire easier to see.
+
+=== Command format ===
+'''{{cmd|swing}}'''
+* Both arguments can now be omitted.
+** The entity selector will be {{cd|@s}} if omitted
+** Which hand to swing will be {{cd|mainhand}} if omitted
+
+'''{{cmd|time}}'''
+* The {{cmd|time}} command is now based on world clocks.
+** A clock can be optionally specified as an input for the time command with {{cmd|time of <clock> ...}}.
+** If the clock is not specified ({{cmd|time ...}} as before), the default clock for the dimension is used.
+* The return value (e.g. from {{cmd|execute store}}) from the {{cd|set}} and {{cd|add}} subcommands is now the total elapsed ticks of the clock instead of the current time of day.
+* Syntax:
+** {{cmd|time [of <clock>] set <time>}} - sets the total elapsed ticks of the clock.
+** {{cmd|time [of <clock>] set <timemarker>}} - advances the clock forward to the next occurrence of the time marker..
+*** For the {{cd|minecraft:overworld}} clock, the available time markers are: {{cd|day}}, {{cd|noon}}, {{cd|night}}, and {{cd|midnight}}
+** {{cmd|time [of <clock>] add <time>}} - adds ticks to the clock, can be a negative or a positive number.
+** {{cmd|time [of <clock>] pause}} - pauses the clock.
+** {{cmd|time [of <clock>] resume}} - resumes the clock.
+** {{cmd|time [of <clock>] query <timeline>}} - displays and returns the current number of ticks within the timeline's period.
+** {{cmd|time [of <clock>] query <timeline> repetitions}} - displays and returns the number of times the timeline's period has repeated.
+** {{cmd|time [of <clock>] query time}} - displays and returns the total elapsed ticks of the clock.
+** {{cmd|time query gametime}} - as before, the total elapsed ticks within the world (unaffected by changes made to clocks using {{cmd|time}}).
+
+=== General ===
+'''General'''
+* Additional tweaks to JVM configuration.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|97.0}}.
+
+'''[[Debug screen]]'''
+* The {{cd|day_count}} debug entry has been split from {{cd|local_difficulty}}.
+
+'''[[Dimension type]]s'''
+* Added the field {{cd|default_clock}}: optional [[world clock]] ID.
+** Specifies the default clock that will be used for the {{cmd|time}} command.
+*** If a default clock is specified, the time command requires an explicit clock argument.
+** Also specifies the clock to which {{cd|minecraft:wake_up_from_sleep}} and {{cd|minecraft:roll_village_siege}} time markers apply.
+*** If not specified, those time markers will never apply in that dimension.
+
+'''[[Game rule]]s'''
+* The game rules screen is now accessible in-game through a new World Options screen in the pause menu.
+* A search bar has been added to the top of the game rules screen, both in-game and in the world creation menu.
+
+'''[[Game Test]]s'''
+* Replaced {{cd|time_of_day}} with {{cd|clock_time}}.
+** Added a new required field {{cd|clock}}: world clock ID, the clock within which to set time (from the existing time field).
+
+'''[[Options]]'''
+* The difficulty button in the pause menu has been replaced with a button leading to a new screen - World Options.
+** The world options screen contains the difficulty button as well as a button for changing game rules.
+** The game rules screen is available for all operators and otherwise disabled.
+
+'''[[Predicate]]s'''
+* {{cd|minecraft:time_check}} loot predicate
+** Added {{cd|clock}} field: a world clock ID, specifies which world clock the time check should be done for.
+
+'''[[Recipe]]s'''
+* {{cd|result}} field should now be more consistent across all recipe types that contain it.
+** It will now accept short form (e.g. "{{cd|minecraft:foo}}", which is equivalent to <code>{"id":"minecraft:foo", "count": 1}</code>).
+** For recipe types {{cd|smelting}}, {{cd|blasting}}, {{cd|smoking}} and {{cd|campfire_cooking}} this field now also accepts {{cd|count}} field.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|78.0}}.
+
+'''[[Tag]]s'''
+* Block Tags
+** Renamed the following tags for consistency:
+*** {{cd|#dry_vegetation_may_place_on}} → {{cd|#supports_dry_vegetation}}
+*** {{cd|#bamboo_plantable_on}} → {{cd|#supports_bamboo}}
+*** {{cd|#small_dripleaf_placeable}} → {{cd|#supports_small_dripleaf}}
+*** {{cd|#big_dripleaf_placeable}} → {{cd|#supports_big_dripleaf}}
+*** {{cd|#mushroom_grow_block}} → {{cd|#overrides_mushroom_light_requirement}}
+**** [[Mushroom]]s cannot survive without a light level below 13 if not in the above tag.
+*** {{cd|#snow_layer_can_survive_on}} → {{cd|#support_override_snow_layer}}
+**** Snow layers can be placed on blocks in this tag even if they do not have a top full face.
+*** {{cd|#snow_layer_cannot_survive_on}} → {{cd|#cannot_support_snow_layer}}
+
+'''[[Timeline]]s'''
+* Added a {{cd|clock}} field: a world clock ID, specifies which world clock the timeline is tied to.
+** This field is required, but to match previous behavior the {{cd|minecraft:overworld}} clock can be used
+* Added an optional {{cd|time_markers}} field, an optional map between namespaced Time Marker IDs and either an int or a Time Marker object.
+** Format:
+*** Non-negative int, the tick that the time marker marks.
+*** Or object with fields:
+**** {{cd|ticks}}: int between {{cd|0}} and {{cd|period_ticks}}, the tick that the time marker marks.
+**** {{cd|show_in_commands}}: optional boolean, specifies whether the Time Marker will show up in command suggestions.
+***** Default: {{cd|false}}
+
+== Fixes ==
+{{fixes|project=MC|fixedin=26.1-snapshot-3
+|;From released versions before 26.1
+|233911|Sleeping in a bed and waking up no longer instantly sets the daytime sky 
+|297536|Z-fighting occurs on the debug crosshair.
+|299992|Unexpected behavior when giving or testing for an item with certain components manually specified as their default values.
+|305292|Copper chests use the Christmas present texture.
+|;dev
+|305105|The spear in an entity's main hand gets animated when their off hand arm is swung using /swing.
+|305156|Dialog elements are not displayed until the UI is refreshed.
+|305251|Breezes are aggressive toward every mob.
+|305261|The {{cd|enchant_with_levels}} and {{cd|enchant_randomly}} functions can crash the game.
+|305459|Villagers spawned from spawn eggs use the biome at the world origin (0, 0, 0) for their variant.
+|;prev
+|305540|Wandering traders sell pumpkins instead of kelp for 3 emeralds.
+|305577|Piglins no longer flee from greater numbers of hoglins.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|YLHTLf8RNIs|ILnYqYftvX4}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|2026}}
+
+[[de:26.1-snapshot-3]]
+[[es:Java Edition 26.1 Snapshot 3]]
+[[fr:Édition Java 26.1 Snapshot 3]]
+[[ja:Java Edition 26.1 Snapshot 3]]
+[[pt:Edição Java 26.1 Snapshot 3]]
+[[ru:26.1 Snapshot 3 (Java Edition)]]
+[[zh:Java版26.1-snapshot-3]]

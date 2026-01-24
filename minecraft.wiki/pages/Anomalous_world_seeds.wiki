@@ -1,0 +1,82 @@
+{{wip}}
+Certain [[world seed]]s are known for producing unexpected results when used for generating worlds, often due to interacting with random number generators in certain ways.
+
+== Diagonal feature repetition ==
+{{info needed section|Why does in earlier Java Edition versions, did only the first of each seed list in Matthew's video<ref name="Bolan1">{{ytl|UtNXUMrSIxQ|This Minecraft Seed Makes Everything Repeat|Matthew Bolan|January 5, 2020}}</ref> seem to actually work?}}
+[[File:Endlesscanyon wideangle.png|thumb|Seed 1669320484 in [[Bedrock Edition]], with repeating [[canyon]]s. The [[coordinate]]s of this screenshot are -1265, 300, 0.]]
+It is possible for feature generation, specifically that which governs objects such as trees, ores, lakes and other similar minor structures, to repeat diagonally if certain values happen to equal each other or one to equal the other's negative.<ref name="Bolan1">{{ytl|UtNXUMrSIxQ|This Minecraft Seed Makes Everything Repeat|Matthew Bolan|January 5, 2020}}</ref> For example, {{in|JE}} before 1.18, the seed {{code|102496288339226}} will cause features to repeat along the positive-positive diagonal, and the seed {{code|74811678275130}} will cause them to repeat along the positive-negative diagonal. Prior to [[Java Edition Beta 1.8]], [[cave]]s were also affected by this diagonal repetition.
+
+What appears to be the exact same effect can be seen {{in|BE}} with different seeds. The seeds {{code|1669320484}} and {{code|289849025}}, for example, cause trees, monster rooms, amethyst geodes and world decorations to repeat on the positive-negative diagonal.<ref name="bedrockrepeat">{{bug|MCPE-95011}}</ref> It is not known if there are any seeds that cause repetition on the positive-positive diagonal.
+
+== Zero as output from pRNG function ==
+{{exclusive|java|section=1}}
+[[File:Duplicate Caves.png|thumb|Seed 164311266871034 in spectator mode. Caves are repetitive along the Z axis.]]
+Java's built-in Math.random() function will output a pseudorandom value for any given input value; it is possible for this output value to be 0, just as any other number.<ref>https://stackoverflow.com/questions/3065554/can-javas-random-function-be-zero</ref> In such a case, certain types of population data for adjacent chunks will be changed by zero (i.e. unchanged), resulting in affected structures generating identically in adjacent chunks.<ref>{{bug|MC-111378||Math error (random generation of zero) causing map gen to fail|Won't Fix}}</ref> The structures primarily affected by this are [[carver]]s (caves, [[canyon]]s, underwater caves and underwater canyons) and [[mineshaft]]s. Certain aspects of feature placement, such as [[water lake]]s, also appear to suffer placement affected to a much more minor extent, which is most pronounced in controlled environments such as [[superflat]] worlds with features enabled.{{info needed|investigate this further}}
+
+{{code|Random.nextDouble()}} will return a value of {{code|0}} on the first call if the provided value is {{code|107038380838084}}, on the second call if the value is {{code|164311266871034}}, and on the third call if the value is {{code|240144965573432}}.
+* In vanilla, the seed {{code|107038380838084}} will cause affected structures to repeat every chunk on the X-axis, and the seed {{code|164311266871034}} will cause affected structures to repeat every chunk on the Z-axis. The seed {{code|240144965573432}} does not appear to have any effects.
+* When using certain mods such as [https://www.curseforge.com/minecraft/mc-mods/tall-worlds Tall Worlds] or [https://www.curseforge.com/minecraft/mc-mods/opencubicchunks OpenCubicChunks] which institute a three-dimensional chunk system, the seed {{code|107038380838084}} will cause affected structures to repeat every chunk on the X-axis, and the seed {{code|164311266871034}} will cause affected structures to repeat every chunk on the Y-axis, and the seed {{code|240144965573432}} will cause affected structures to repeat every chunk on the Z-axis.
+
+Certain carvers, for unknown reasons, use a salt of either -1 or -2 when generating. As a result, not all carver types will repeat in one given world. If we take the X-axis seed as an example:
+* {{code|107038380838084}} causes some carver caves to repeat, most often those near the surface
+* {{code|107038380838083}} generally causes deeper underground carver caves to repeat
+* {{code|107038380838082}} causes canyons to repeat; carver caves appear to be unaffected
+
+In general, if a [[data pack]] is used to add new carvers to generation, each carver type will have its own salt.
+
+=== Integer overflow and higher periods ===
+{{empty section}}
+
+== Non-orthogonal mineshaft repetition ==
+{{empty section|Some information to include: Matthew's video<ref>{{ytl|UtNXUMrSIxQ|This Minecraft Seed Makes Everything Repeat|Matthew Bolan|January 5, 2020}}</ref> has two example seeds in the description. How do they do what they do?}}
+
+== Possible BE biome color corruption ==
+{{empty section|Some information to include: See comment threads on https://www.reddit.com/r/MCPE/comments/5i6sae/recursive_infinite_mineshaft_seeds_on_mcpe/ and actually attempt to confirm this happens in game.}}
+
+== Shadow seeds ==
+It is possible for different seeds to share major generational characteristics with other seeds through certain mechanisms.
+
+=== Biome shadow seeds ===
+In Java Edition before 1.18, by adding the constant -7379792620528906219 (in calculation) to the world seed, it was possible to obtain a "shadow seed". In this seed, biome arrangements were identical to the ones of the original seed, but locations of features (caves, hills) and generated structures (villages, temples, etc.) were different in the new seed.
+
+=== Unused bits ===
+In [[Java Edition]] before 1.18, the shapes of the biomes were generated using only the upper 24 bits of the world seed. Additionally, caves and [[badlands]] terracotta patterns only use the upper 48 bits of the world seed.
+
+== General information ==
+{{Main|World seed}}
+===Generation quirks ===
+Through certain seeds, it is possible to observe interesting effects.
+
+==== Changing terrain without changing some structures ====
+Only certain sections of the seed are used to generate specific features within the world. It is possible to generate multiple worlds with identical cave systems, Nether biomes and other arrangements of generated structures simply by converting the seed into binary and tweaking the desired bits.<ref>https://www.minecraftforum.net/forums/minecraft-java-edition/seeds/2229720-can-two-different-seeds-produce-identical-worlds</ref> An example is the seed generator using only the first 48 bits to generate cave systems and badlands clay banding layers.
+
+Any seed calculated as {{code|4294967296 × n + 1669320484}} also generate maps with repeating features.
+
+==== Repetition ====
+{{IN|bedrock}}, Mineshaft generation repeats vertically in the seeds {{code|-1171867832}} and {{code|1000686894}}.{{more information needed|Why is this the case?}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java infdev}}
+|{{HistoryLine||20100616-1808|First version known to be affected by diagonal repetition seeds. Caves will repeat diagonally.}}
+|{{HistoryLine||?|Trees also repeat diagonally on diagonal repetition seeds.{{info needed|Confirmed for inf-20100624, inconclusive earlier. Trees used to depend on a noise generator and it's uncertain as to when this was changed to be feature-based.}}}}
+|{{HistoryLine|java beta}}
+|{{HistoryLine||1.8|dev=Pre-release|Caves have changed to no longer generate as features, and therefore no longer will repeat diagonally. They will instead now repeat orthogonally under a different class of "broken" seeds.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=18w06a|Certain seeds, such as 82025653894727, would not repeat features diagonally in versions prior to this, but will do so from this version onwards. The exact reasoning for this is unknown.}}
+|{{HistoryLine|||dev=pre7|A salt of -1 has been implemented that causes underwater caves and non-underwater canyons to repeat on different seeds from non-underwater caves and underwater canyons.}}
+|{{HistoryLine||1.17|dev=21w07a|Orthogonal repetition seeds now also affect the transition from stone to grimstone/deepslate, causing striking horizontal patterns not present in "normal" seeds.}}
+|{{HistoryLine|||dev=21w08a|A salt of -2 has been implemented alongside the introduction of crack carvers that causes them to repeat on different seeds from either caves or conventional canyons.}}
+|{{HistoryLine||1.18|dev=Experimental Snapshot 1|Crack carvers no longer exist. The -2 salt now affects all types of ravines instead.
+|The seeds that cause underwater caves and non-underwater ravines to repeat now also appear to affect some other, presumably new non-underwater carvers.{{info needed|Which? Potentially related to whatever minecraft:cave_extra_underground is?}}}}
+|{{HistoryLine|||dev=Pre-release 7|All existing seeds featuring diagonal feature repetition appear to have been patched; while the phenomenon presumably still exists, no seeds exhibiting it from this version onward have been found.}}
+}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Java Edition technical]]
+[[Category:Bedrock Edition]]

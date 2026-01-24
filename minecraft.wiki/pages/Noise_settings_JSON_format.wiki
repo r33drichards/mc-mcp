@@ -1,0 +1,29 @@
+**{{nbt|int|sea_level}}: The sea level in this dimension. Note that this value only affects world generation. The sea level for mob spawning is a fixed value 63.
+**{{nbt|boolean|disable_mob_generation}}: Disables creature spawning upon chunk generation.
+**{{nbt|boolean|ore_veins_enabled}}: Whether [[ore vein]]s generate.
+**{{nbt|boolean|aquifers_enabled}}: Whether [[aquifer]]s generate. If set to false, almost all caves below sea level are filled with water.
+**{{nbt|boolean|legacy_random_source}}: Whether to use the old random number generator from before 1.18 for world generation.
+**{{nbt|compound|default_block}}: The default block used for the terrain.
+*** {{nbt inherit/block_state}}
+**{{nbt|compound|default_fluid}}: The default block used for seas and lakes.
+*** {{nbt inherit/block_state}}
+**{{nbt|list|spawn_target}}: (Required, but can be empty) A list of climate parameters to specify the points around which the player tries to spawn. The game selects some horizonal locations that are not more than 2560 blocks away from the origin (0,0), then sample the noise values ("depth" noise and "offset" are always 0), and calculate <code>((x^2+z^2)^2) / 390625 + (the square of the mininum distance to the ranges in the list)</code>. The player spawns near the location where this value is smallest.
+***{{nbt|compound}}：A range.
+****{{nbt inherit/parameter point}}
+**{{nbt|compound|noise}}: Fields for world generation.
+***{{nbt|int|min_y}}: The minimum Y coordinate where terrain starts generating. Value between -2032 and 2031 (both inclusive). Must be divisible by 16.
+*** {{nbt|int|height}}: The total height where terrain generates. Value between 0 and 4064 (both inclusive). Must be divisible by 16. And <code>min_y + height</code> cannot exceed 2032.
+*** {{nbt|int|size_horizontal}}: Value between 0 and 4 (both inclusive). Note that the noise breaks into the 12×12 block section per chunk for the value 3.
+*** {{nbt|int|size_vertical}}: Value between 0 and 4 (both inclusive)
+** {{nbt|compound|noise_router}}: The [[noise router]] routes density functions to noise parameters used for world generation.
+** {{nbt|compound|surface_rule}}: The main [[surface rule]] to place blocks in the terrain.
+<noinclude>
+
+[[Category:Java Edition]]
+[[Category:Data packs]]
+
+[[fr:Génération du monde personnalisée/Paramètres de bruit]]
+[[ja:ワールド生成のカスタマイズ/noise settings]]
+[[pt:Geração de mundo personalizado/configurações de ruído]]
+[[uk:Генерація користувацького світу/параметри шуму]]
+[[zh:噪声设置/direct codec]]

@@ -1,0 +1,91 @@
+{{distinguish|Commands/data}}
+{{exclusive|java}}
+{{Infobox command
+|name=datapack
+|oplevel=
+*2 (<code>/datapack (disable<nowiki>|</nowiki>enable<nowiki>|</nowiki>list)</code>)
+*4 (<code>/datapack create</code>)
+}}
+
+Controls the loading/unloading of [[data pack]]s.
+
+Note that feature flags can be enabled through data pack only when creating the [[world]]. Data packs requiring a feature flag that is not enabled cannot be loaded by this command.
+
+If a built-in datapack in the path of <code>datapacks</code> in the vanilla datapack is enabled during world creating, it cannot be disabled by this command.
+
+==Syntax==
+
+: <code>datapack disable <name></code>
+::Disable the specified pack.
+: <code>datapack enable <name></code>
+::Load the specified pack.
+: <code>datapack enable <name> (first|last)</code>
+::Load this pack before (lowest priority) or after (highest priority) all others (lowest or highest priority).
+: <code>datapack enable <name> (before|after) <existing></code>
+::Load this pack just before (lower priority) or after (higher priority) an ''existing'' pack.
+: <code>datapack list [available|enabled]</code>
+::List all data packs, or list only the available/enabled ones. Hovering over the data packs in the chat output shows their description defined in their <code>pack.mcmeta</code>.
+: <code>datapack create <id> <description></code>
+::Creates new empty directory data pack for current world.
+
+==Arguments==
+
+{{argument|name|string}}
+: Specifies the name of the data pack.
+: {{arg desc|je=string|type=phrase}}
+
+{{argument|existing|string}}
+: Specifies the name of an existing enabled data pack.
+: {{arg desc|je=string|type=phrase}}
+
+{{argument|id|string}}
+: Created pack name, must be a valid directory name.
+: {{arg desc|je=string|type=phrase}}
+
+{{argument|description|string}} 
+: text component to be placed in description in <code>pack.mcmeta</code>.
+: {{arg desc|je=string|type=phrase}}
+
+==Result==
+
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/datapack enable ...<br>/datapack disable ...|<code><name></code> is not a valid data pack.|fail}}
+{{Result table|The data pack has already been enabled/disabled.}}
+{{Result table|cmd=/datapack enable <name> ...|Pack <code><name></code> requires enabling a feature flag that is not enabled via data pack when creating world.}}
+{{Result table|cmd=/datapack enable ... <existing>|<code><existing></code> is not an existing enabled data pack.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/datapack enable ...<br>/datapack disable ...|On success|1|1|The number of packs that are loaded after executing.}}
+{{Output table|cmd=/datapack list [available{{!}}enabled]|On success|1|1|the number of data packs that are listed}}
+{{Output table}}
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=17w46a|Added {{cmd|datapack|link=none}}.}}
+|{{HistoryLine||1.19.3|dev=22w42a|Added feature flags. Data pack requiring feature flag that is not enabled cannot load by this command now.}}
+|{{HistoryLine||1.20.5|dev=24w11a|<code>/datapack disable</code> doesn't work in this snapshot.<ref>{{bug|MC-269373|||fixed}}</ref>}}
+|{{HistoryLine|||dev=24w12a|If a built-in datapack in the path of <code>datapacks</code> in the vanilla datapack folder is enabled during world creation, it can no longer be disabled by this command.}}
+|{{HistoryLine||1.21.6|dev=25w15a|Added {{cmd|datapack create|link=none}}.}}
+}}
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/datapack]]
+[[es:Comandos/datapack]]
+[[ja:コマンド/datapack]]
+[[pt:Comandos/datapack]]
+[[ru:Команды консоли/datapack]]
+[[th:คำสั่ง/datapack]]
+[[zh:命令/datapack]]

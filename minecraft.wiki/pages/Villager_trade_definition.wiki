@@ -1,0 +1,37 @@
+{{in development|java||26.1}}
+Villager [[trade]]s are stored as [[JSON]] files within a [[data pack]] in the path {{cd|data/<namespace>/villager_trade}}. Despite their name, they also control the trades of [[wandering trader]]s.
+
+== JSON format ==
+
+<div class="treeview">
+* {{nbt|compound}}: The root object.
+** {{nbt|compound|wants}}: The item needed for the trade (i.e. the price)
+*** {{nbt|string|id}}: The [[resource location]] of the item.
+*** {{nbt|int}}{{nbt|float}}{{nbt|compound|count}}: Optional [[number provider]] (defaults to {{cd|1}}) determining the number of items required
+*** {{nbt|compound|components}}: Optional map of components that are required on the item
+**** See [[Data component format]]
+** {{nbt|compound|additional_wants}}: Secondary item needed for the trade
+*** Same format as {{nbt|compound|wants}}
+** {{nbt|compound|gives}}: The item given by the trade
+*** {{nbt inherit/itemnoslot}}
+** {{nbt|list|given_item_modifiers}}: Optional list of modifiers to apply to the item given by the trade
+*** {{nbt|compound}}: An inline [[item modifier]]. The {{cd|reference}} modifier is not supported.
+** {{nbt|int}}{{nbt|float}}{{nbt|compound|max_uses}}: Optional [[number provider]] (defaults to {{cd|4}}, minimum {{cd|1}}) determining the maximum amount of uses of this trade.
+** {{nbt|int}}{{nbt|float}}{{nbt|compound|reputation_discount}}: Optional [[number provider]] (defaults to {{cd|0}}, minimum {{cd|0}}) determining how much reputation (such as discounts and penalties) affect the count of {{nbt|compound|wants}}. {{more info|how is this calculated?}}
+** {{nbt|int}}{{nbt|float}}{{nbt|compound|xp}}: Optional [[number provider]] (defaults to {{cd|1}}, minimum {{cd|0}}) determining how much xp the merchant gets when the trade is done.
+** {{nbt|list}}{{nbt|compound|merchant_predicate}}: Optional [[predicate]] on the merchant that needs to pass for this trade to be offered. The {{cd|reference}} predicate is not supported.
+** {{nbt|string}}{{nbt|list|double_trade_price_enchantments}}: Optional &mdash; {{json ref|enchantment|tag=1}} that when present after {{nbt|list|given_item_modifiers}} is run double the count of the {{nbt|compound|wants}} item (when the {{cd|additional_trade_cost}} [[item component]] is present).
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|Java upcoming}}
+|{{HistoryLine||26.1|dev=snap1|Villager trades are now data-driven.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Handelsdefinition]]
+[[ja:取引のカスタマイズ]]
+[[zh:村民交易定义格式]]

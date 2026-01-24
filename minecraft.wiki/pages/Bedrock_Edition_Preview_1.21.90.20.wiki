@@ -1,0 +1,246 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.9020.0<br>'''Android''': 1.21.90.20
+| image = Bedrock 1.21.90.20 PatchNotes.jpeg
+| image2 = Bedrock 1.21.90.20.png
+| build = 32724063
+| editorver = 0.9.6
+| versioncode = '''Android''':<br />
+952109020 (armeabi-v7a, 34)<br />
+962109020 (x86, 34)<br />
+972109020 (arm64-v8a, 34)<br />
+982109020 (x86_64, 34)
+| date = April 22, 2025
+| server = 1.21.90.20
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.90.20.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.90.20.zip Linux]
+| parent = 1.21.90
+| prevparent = 1.21.84
+| prev = 
+| next = Preview 1.21.90.21
+| nextparent = 1.21.91
+}}
+<onlyinclude>
+
+'''Beta 1.21.90.20''' (ChromeOS, Android) or '''Preview 1.21.90.20''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the first beta/''Preview'' version for [[Bedrock Edition 1.21.90]], released on April 22, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/36030119254925-Minecraft-Beta-Preview-1-21-90-20|title=Minecraft Beta & Preview - 1.21.90.20|website=Minecraft Feedback|date=April 22, 2025}}</ref> which improves [[lead]] functionality and makes [[Vibrant Visuals]] the default graphics mode on supported devices.
+
+== Changes ==
+=== Blocks ===
+'''[[Dried Ghast]]'''
+* The rarity is now common, matching its ingredients.
+* Has been moved from experimental features and is now available during normal gameplay.
+
+=== Items ===
+'''[[Lead]]'''
+* Using a firework rocket to boost while flying with an elytra now causes leashed mobs to unleash.
+* Entities can now be leashed to a pre-existing leash knot by interacting with it.
+* Players can retrieve entities tied to a leash knot by interacting with it.
+* Shears can now be used to remove leash knots.
+* Any leashable entity can now be leashed to any other leashable entity.
+** To leash an entity to another entity, the player must:
+*** Have the entity already leashed to themselves.
+*** Sneak and interact with the target entity while holding the lead.
+** Leashed entities can now be "stolen" by leashing them again, transferring ownership to the player.
+** If re-leashing an entity would result in immediate leash snapping due to distance, the re-leashing cannot be done.
+** To prevent erratic behavior when leashed to each other, llamas that are leashed no longer attempt to form caravans.
+** A leashed entity cannot be leashed to itself.
+** Baby mobs can only be leashed one way - to another entity; they cannot have other mobs leashed to them.
+* When leashed to a happy ghast, horses, camels, donkeys, mules, boats, chest boats, and sniffers now adjust their position gradually over time, aligning smoothly with their leash holder when suspended mid-air.
+* In all other cases, entities align to the direction they are being pulled and no longer behave erratically when suspended mid-air.
+* Mid-air friction now applies to Boats just like any other entity, meaning they can no longer orbit the player or behave excessively bouncily.
+* The distance at which leads break has been increased to 12 blocks, except for the happy ghast, which has a break distance of 16 blocks.
+* When the lead is pulled, leashed objects will now orient themselves towards the player who has the lead.
+* The distance between centers of entities bounding boxes is used to determine the distance between two leashed entities.
+* Boats and large leashable mobs that cannot fit in a boat (horses, donkeys, mules, camels, and sniffers) when leashed to a happy ghast are rendered with four leashes instead of one.
+** In this configuration, the happy ghast also features a rope layer wrapping around it.
+* Shears can now be used on leashed entities to unleash them, removing both incoming and outgoing leash connections.
+* Players cannot cut other players' leashes.
+* Dispensers can now use shears to unleash leashed entities.
+
+'''[[Harness]]'''
+* Has been moved from experimental features and is now available during normal gameplay.
+
+=== Mobs ===
+'''[[Happy Ghast]]'''
+* The happy ghast now turns more smoothly.
+* Harness goggles will now always be down as long as the harnessed Happy Ghast has at least one mounted player.
+* Has been moved from experimental features and is now available during normal gameplay.
+
+=== General ===
+'''Graphical'''
+* Made [[Vibrant Visuals]] the default graphics mode for supported devices.
+* Added the ability to data-drive some of the Vibrant Visuals / Deferred Graphics related settings per biome. Creators can provide multiple versions of atmospherics, color grading, lighting and/or water configurations as long as each has a unique {{cd|identifier}} and file name. The reserved JSON names for each group of settings (e.g., {{cd|lighting/global.json}}) will continue to function as before. Creators can utilize the {{cd|minecraft:atmosphere_identifier}}, {{cd|minecraft:color_grading_identifier}}, {{cd|minecraft:lighting_identifier}}, and {{cd|minecraft:water_identifier}} in Client Biome JSONs to connect particular rendering settings to a given biome. Note that certain parameters, such as tone mapping operators, caustics and wave simulation on/off cannot be customized per biome at this time. Parameters will be spatially blended as players move between biomes.
+* Increased back-scattering of light underwater in Vibrant Visuals.
+* Cloud shadows no longer pop in and out of view when looking around using Vibrant Visuals on Android devices.
+* Painting now renders with correct PBR properties, shadows and illumination when using Vibrant Visuals.
+* Added MERS texture support for signs in Vibrant Visuals.
+* Added new texture assets for a variety of trims, particles, spawn eggs, water and the dark oak boat in Vibrant Visuals.
+* Updated the appearance of metals for a variety of block textures in Vibrant Visuals.
+* Updated the cave vines, chorus flower, pumpkin, fire fly bush and a variety of other plant textures in Vibrant Visuals.
+* Updated the bee, dolphin, ghast, pig saddle and strider textures in Vibrant Visuals.
+
+=== Technical ===
+'''[[API]]'''
+*{{cd|@minecraft/server-ui 2.0.0}} is now released, {{cd|2.1.0-beta}} is the new beta version for {{cd|@minecraft/server-ui}}.
+*Added integer overflow detection in {{cd|ScoreboardObjective.addScore}}. Original value will be retained when overflow is detected.
+*{{cd|NamespaceNameError}} now has better error information and the name property value will now be set to {{cd|NamespaceNameError}}.
+*{{cd|BlockComponentPlayerDestroyEvent}} renamed to {{cd|BlockComponentPlayerBreakEvent}}.
+*{{cd|PlayerPlaceBlockBeforeEvent}} 
+**{{cd|permutationBeingPlaced}} renamed to {{cd|permutationToPlace}}.
+*{{cd|BlockCustomComponent}}
+**{{cd|onPlayerDestroy}} renamed to {{cd|onPlayerBreak}}.
+*Added {{cd|lookAt}} method on {{cd|Entity}}.
+*Added {{cd|customComponentParameters: CustomComponentParameters}} to {{cd|ItemCustomComponentInstance}}.
+*Added {{cd|customComponentParameters: CustomComponentParameters}} to {{cd|BlockCustomComponentInstance}}.
+*Custom components V2 now support assigning string, array, object, bool, or number.
+*{{cd|GameMode}} enum member names changed:
+**{{cd|survival}} renamed to {{cd|Survival}}.
+**{{cd|creative}} renamed to {{cd|Creative}}.
+**{{cd|adventure}} renamed to {{cd|Adventure}}.
+**{{cd|spectator}} renamed to {{cd|Spectator}}.
+
+'''[[Block]]s'''
+*Added a parameter to the culling rules schema to disable culling against full and opaque blocks.
+**{{cd|condition}} field is now optional.
+**removed {{cd|default}} as a value for {{cd|condition}} field in the culling rules schema.
+**added new optional {{cd|cull_against_full_and_opaque}} boolean field in the culling rules schema.
+***if not specified, it will be set to {{cd|true}}.
+***if set to {{cd|false}} culling against full and opaque blocks will not be considered.
+*When custom components v2 experiment is enabled, custom components can be assigned string, array, object, bool, or number:
+<syntaxhighlight lang="c++">
+"components": {  
+    "example_namespace:example_component": "foo",    "example_namespace:example_component2": 4,    "example_namespace:example_component3": [        "hello",        "world"    ],    "example_namespace:example_component4": true,    "example_namespace:example_component5": {        "stuff": 4    },}
+</syntaxhighlight>
+*Custom components v2 experiment no longer required to use custom components v2.
+*Custom components v2 is available in JSON versions 1.21.90 and higher
+*{{cd|minecraft:custom_components}} deprecated in 1.21.90.
+*The {{cd|minecraft:material_instances}} component will no longer produce a content error if the {{cd|*}} material is missing.
+
+'''[[Commands]]'''
+*Added integer overflow detection in {{cmd|scoreboard players operation}} for +=, -=, *=, /= and %=. Original value will be retained when overflow is detected.
+
+'''Components'''
+*Added the {{cd|minecraft:remove_in_peaceful}} component:
+**Determines whether an entity should despawn on "Peaceful" difficulty
+*Content warnings will log missing texture references for {{cd|minecraft:material_instances}} block component.
+*Added the {{cd|minecraft:leashable_to}} component:
+**Allows players to leash entities to the owner entity, retrieve those already leashed, or free them using shears.
+**Players can leash entities to the owner entity by sneaking and interacting while having entities leashed to themselves.
+**The {{cd|can_retrieve_from}} field determines whether players can retrieve entities leashed to the owner entity.
+*Added new fields to the {{cd|minecraft:leashable}} component:
+**{{cd|can_be_cut}}: Determines whether players can cut both incoming and outgoing leashes by using shears on the entity.
+**{{cd|spring_type}}: A {{cd|presets}} subfield that defines the type of spring-like force pulling the entity toward its leash holder.
+***Available values:
+****{{cd|bouncy}}: Simulates a highly elastic spring that never reaches equilibrium if the leashed entity is suspended mid-air.
+****{{cd|dampened}}: Simulates a dampened spring attached to the front of the leashed entity’s collision that reaches equilibrium if the entity is suspended mid-air and aligns with its movement direction.
+****{{cd|quad_dampened}}: Simulates four dampened springs connected to the center of each side of the entity's collision that reaches equilibrium if the entity is suspended mid-air and gradually aligns with the leash holder over time.
+**{{cd|rotation_adjustment}}: A {{cd|presets}} subfield that adjusts the rotation at which the entity reaches equilibrium.
+
+'''Entity Components'''
+*Added {{cd|minecraft:body_rotation_always_follows_head}} entity component:
+**Ensures the entity's body is always aligned with the head.
+**Does not override the {{cd|minecraft:body_rotation_blocked}} component.
+
+'''[[Experiments]]'''
+*Custom Components v2 experiment removed. Custom Components v2 is enabled when using {{cd|@minecraft/server}} version {{cd|2.0.0}} and above.
+
+'''[[Item]]s'''
+*When using Custom Components v2, custom components can be assigned string, array, object, bool, or number:
+<syntaxhighlight lang="c++">
+"components": {  
+    "example_namespace:example_component": "foo",    "example_namespace:example_component2": 4,    "example_namespace:example_component3": [        "hello",        "world"    ],    "example_namespace:example_component4": true,    "example_namespace:example_component5": {        "stuff": 4    },}
+</syntaxhighlight>
+*Custom components v2 experiment no longer required to use custom components v2.
+*Custom components v2 is available in JSON versions 1.21.90 and higher
+*{{cd|minecraft:custom_components}} deprecated in 1.21.90.
+
+'''Network Protocol'''
+*Added {{cd|ActorFlags::BODY_ROTATION_ALWAYS_FOLLOWS_HEAD}}.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Locator Bar" experimental toggles.
+
+=== Additions ===
+==== Technical ====
+'''API'''
+:{{cd|@minecraft/server 2.1.0-beta}}
+*Added class {{cd|PlayerHotbarSelectedSlotChangeAfterEvent}}. This will be triggered every time the hotbar slot changes.
+*Added enum {{cd|PlayerInventoryType}}.
+*Added class {{cd|PlayerInventoryItemChangeAfterEvent}}. This will be triggered every time an item changes in the player's inventory. This includes the 27 inventory slots and 9 for hotbar.
+*Added {{cd|stopSound}} and {{cd|stopAllSounds}} to {{cd|Dimension}} and {{cd|Player}}.
+
+:{{cd|@minecraft/debug-utilities 1.0.0-beta}}
+*Added new Debug Drawing feature:
+**Added new classes: {{cd|DebugArrow}}, {{cd|DebugBox}}, {{cd|DebugCircle}}, {{cd|DebugDrawer}}, {{cd|DebugLine}}, {{cd|DebugShape}}, {{cd|DebugSphere}}, {{cd|DebugText}}.  
+**Added new global object for accessing and using this new feature: {{cd|debugDrawer: DebugDrawer}}.
+
+=== Changes ===
+==== General ====
+'''UI'''
+*The jump and dash bars no longer take precedence over the locator bar while inactive in Creative Mode.
+* The interaction button in Creative Mode is now moved up for Touch devices so that it no longer covers the locator bar.
+*Player dots on the locator bar now show correctly while using split-screen.
+*The item name tooltip is no longer cut off while the locator bar is enabled in Creative Mode.
+*Player dots on the locator bar now show correctly in third person view while using split-screen.
+
+==== Technical ====
+'''API'''
+*Custom command registration will create an alias from the command name without the namespace.  
+**If the name has already been claimed, then the alias will not be created and a content log warning will appear.
+*Removed unused classes: {{cd|EntityIterator}}, {{cd|EntityTypeIterator}}, {{cd|FilterGroup}}, and {{cd|PlayerIterator}}.
+*Updated class {{cd|Container}}:
+**{{cd|reverseFind}} has been renamed to {{cd|findLast}}.  
+**{{cd|contains}} now returns undefined if it fails to find the item.  
+**{{cd|firstEmptySlot}} now returns undefined if it fails to find an empty slot. 
+**{{cd|firstItem}} now returns undefined if it fails to find the item.  
+**{{cd|find}} now returns undefined if it fails to find the item.  
+**{{cd|reverseFindnow}} returns undefined if it fails to find the item.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.90.20 Preview
+|;old
+|79331|Text Background Opacity doesn't work for most text
+|80066|Crimson and warped roots can be lit on fire and burn
+|88837|Piglin brutes do not despawn in Peaceful mode
+|181002|Trident isn't grouped next to tools/weapons in the creative tab
+|184566|{{cmd|playsound}} leaks across dimensions
+|187171|Bundle tootip was overlaps with the item tooltip
+|189370|Pressing up on the left thumbstick or D-pad while in the Graphics Mode dropdown menu takes the user to the top of the Video Settings menu
+|190647|Item breathing animation is not smooth when a world's Days Played count is high
+|191029|Block breaking animations do not stop after pausing the game
+|194367|The top layer of the Snowy Kingdom Preset uses full snow blocks instead of snow layers
+|199213|New items added in 1.21.80.25 preview have extra spaces in their names
+|201851|Happy ghast can be pushed too easily
+|212378|Baby Happy Ghast does not grow up naturally
+|otherissuescount=15}}
+'''Other'''
+*Fixed a bug where directional lighting cut out 8 blocks under the water surface while using Vibrant Visuals.
+*Non-waterlogged Dried Ghast blocks now only play ambient sounds when on top of a Soul Sand or a Soul Soil block.
+*Fixed an issue where jungle leaves did not become transparent when setting all leaf types to be transparent.
+*Fixed a crash that would sometimes occur when using command blocks.
+*Players mounted on the Happy Ghast no longer appear invisible to other players when the Happy Ghast is immobile.
+*Players mounted on the Happy Ghast no longer have their hitbox displaced when the Happy Ghast is immobile.
+*Happy Ghast no longer becomes a platform when a Player is standing next to it.
+*Fixed a bug where piloted Happy Ghast could be moved while non-riding players were standing on it.
+*Fixed a bug where Happy Ghast would keep looking at you after no longer being tempted.
+*Bundle UI now correctly disappears when switching Inventory tabs with controller input.
+*Tapping on the Bundles Tooltip on Touch devices no longer interacts with the UI behind it.
+*Fixed an issue where only changing the access of PlayStation friends to your world would not be saved when exiting the menu.
+*Fixed incorrect warnings for using valid older block ids with {{cd|minecraft:block_placer}} component.
+*Fixed {{cd|query.health}} in resource packs to return 0 for the Wither once it has died.
+*Fixed the Nether having overworld fog in Vibrant Visuals.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.90 betas]]
+
+[[de:Bedrock Edition beta 1.21.90.20]]
+[[ja:Bedrock Edition Preview 1.21.90.20]]
+[[pt:Edição Bedrock Preview 1.21.90.20]]
+[[ru:Preview 1.21.90.20 (Bedrock Edition)]]
+[[uk:Preview 1.21.90.20 (Bedrock Edition)]]
+[[zh:基岩版1.21.90.20]]

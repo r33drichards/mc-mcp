@@ -1,0 +1,376 @@
+{{for|API documentation|Mojang API}}
+
+[[Minecraft (franchise)|''Minecraft'' games]] use '''Microsoft accounts''' for '''authentication'''. There are multiple steps and different tokens required, but in the end, a normal ''Minecraft'' token will be received. Launching the game itself hasn't changed. All accounts now use this new system.
+
+== Microsoft OAuth2 flow ==
+Prior to any of these steps, you will first need to obtain an OAuth 2.0 client ID by [https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app creating a Microsoft Azure application]. You will ''not'' need to obtain a client secret.
+
+You can then use the [https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow OAuth2 authorization code flow] to obtain an access token. You'll need to present the user with a login page that, once completed, will redirect to a specified URL with the token in the query parameters. In non-web applications this typically involves spinning up a temporary HTTP server to handle the redirect. If you'd rather not do that, consider using the (slightly less automatic) [https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code device code flow] instead.
+
+In any case, you'll need to include <code>XboxLive.signin</code> in the <code>scope</code> parameter of the authorization request; otherwise the next endpoint will complain, and not in a helpful way.
+
+According  to [https://help.minecraft.net/hc/en-us/articles/16254801392141p this support Article], new created Azure Apps must apply for the Permission to use the Minecraft API using [https://aka.ms/mce-reviewappid this form]. If your App don't have the Permission <code>api.minecraftservices.com</code> will return a 403.
+
+<i>Note: You <b>must</b> use the <code>consumers</code> AAD tenant to sign in with the <code>XboxLive.signin</code> scope. Using an Azure AD tenant ID or the <code>common</code> scope will just give errors. This also means you cannot sign in with users that are in the AAD tenant, only with consumer Microsoft accounts.</i>
+
+== Authenticate with Xbox Live ==
+Now that we are authenticated with Microsoft, we can authenticate with Xbox Live.
+
+To do that, we send
+
+<syntaxhighlight lang="http">
+POST https://user.auth.xboxlive.com/user/authenticate
+Content-Type: application/json
+Accept: application/json
+</syntaxhighlight>
+<syntaxhighlight lang="json" line='line'>
+{
+    "Properties": {
+        "AuthMethod": "RPS",
+        "SiteName": "user.auth.xboxlive.com",
+        "RpsTicket": "d=<access token>" // your access token from the previous step here, make sure that it is prefixed with `d=`
+    },
+    "RelyingParty": "http://auth.xboxlive.com",
+    "TokenType": "JWT"
+}
+</syntaxhighlight>
+
+Again, it will complain if you don't set <code>Content-Type: application/json</code> and <code>Accept: application/json</code>.
+It will also complain if your SSL implementation does not support SSL renegotiations.
+
+The response will look like this:
+
+<syntaxhighlight lang="json" line='line'>
+{
+    "IssueInstant": "2020-12-07T19:52:08.4463796Z",
+    "NotAfter": "2020-12-21T19:52:08.4463796Z",
+    "Token": "token", // save this, this is your xbl token
+    "DisplayClaims": {
+        "xui": [
+            {
+                "uhs": "userhash" // save this
+            }
+        ]
+    }
+}
+</syntaxhighlight>
+
+== Obtain XSTS token for Minecraft ==
+
+Now that we are authenticated with XBL, we need to get a XSTS token, we can use to login to Minecraft.
+
+<syntaxhighlight lang="http">
+POST https://xsts.auth.xboxlive.com/xsts/authorize
+Content-Type: application/json
+Accept: application/json
+</syntaxhighlight>
+<syntaxhighlight lang="json" line='line'>
+{
+    "Properties": {
+        "SandboxId": "RETAIL",
+        "UserTokens": [
+            "xbl_token" // from above
+        ]
+    },
+    "RelyingParty": "rp://api.minecraftservices.com/",
+    "TokenType": "JWT"
+}
+</syntaxhighlight>
+
+Again, set content type and accept to json and ensure SSL renegotiation is supported by your client.
+
+<blockquote>
+''Note:'' When trying to get the XSTS token for the '''[[Minecraft Wiki:Projects/wiki.vg merge/Bedrock_Realms|bedrock realms]] API''', you need to change the following:  
+<syntaxhighlight lang="json">"RelyingParty": "https://pocket.realms.minecraft.net/"</syntaxhighlight>
+
+also you can stop at this point, as the [[Minecraft Wiki:Projects/wiki.vg merge/Bedrock_Realms|bedrock realms]] API uses the XSTS token directly instead of a separate auth scheme.
+</blockquote>
+
+Response will look like this:
+
+<syntaxhighlight lang="json" line='line'>
+{
+    "IssueInstant": "2020-12-07T19:52:09.2345095Z",
+    "NotAfter": "2020-12-08T11:52:09.2345095Z",
+    "Token": "token", // save this, this is your xsts token
+    "DisplayClaims": {
+        "xui": [
+            {
+                "uhs": "userhash" // same as last request
+            }
+        ]
+    }
+}
+</syntaxhighlight>
+
+The endpoint can return a 401 error with the below response:
+
+<syntaxhighlight lang="json" line='line'>
+{
+    "Identity": "0",
+    "XErr": 2148916238,
+    "Message": "",
+    "Redirect": "https://start.ui.xboxlive.com/AddChildToFamily"
+}
+</syntaxhighlight>
+
+The Redirect parameter usually will not resolve or go anywhere in a browser, likely they're targeting Xbox consoles.
+
+Noted XErr codes and their meanings:
+
+* '''2148916227''': The account is banned from Xbox.
+* '''2148916233''': The account doesn't have an Xbox account. Once they sign up for one (or login through minecraft.net to create one) then they can proceed with the login. This shouldn't happen with accounts that have purchased Minecraft with a Microsoft account, as they would've already gone through that Xbox signup process.
+* '''2148916235''': The account is from a country where Xbox Live is not available/banned
+* '''2148916236''': The account needs adult verification on Xbox page. (South Korea)
+* '''2148916237''': The account needs adult verification on Xbox page. (South Korea)
+* '''2148916238''': The account is a child (under 18) and cannot proceed unless the account is added to a Family by an adult. This only seems to occur when using a custom Microsoft Azure application. When using the Minecraft launchers client id, this doesn't trigger.
+* '''2148916262''': <i>TBD, happens rarely without any additional information.</i>
+
+== Authenticate with Minecraft ==
+
+Now we can finally start talking to Minecraft. The XSTS token from the last request allows us to authenticate with Minecraft using
+<syntaxhighlight lang="http">
+POST https://api.minecraftservices.com/authentication/login_with_xbox
+Content-Type: application/json
+Accept: application/json
+</syntaxhighlight>
+<syntaxhighlight lang="json" line='line'>
+{
+    "identityToken": "XBL3.0 x=<userhash>;<xsts_token>"
+}
+</syntaxhighlight>
+
+Response:
+<syntaxhighlight lang="json" line='line'>
+{
+    "username": "some uuid", // this is not the uuid of the account
+    "roles": [],
+    "access_token": "minecraft access token", // jwt, your good old minecraft access token
+    "token_type": "Bearer",
+    "expires_in": 86400
+}
+</syntaxhighlight>
+
+This access token allows us to launch the game, but, we haven't actually checked if the account owns the game. Everything until here works with a normal Microsoft account!
+
+== Checking game ownership ==
+
+So let's use our mc access token to check if a product licence is attached to the account.
+
+<syntaxhighlight lang="http">
+GET https://api.minecraftservices.com/entitlements/mcstore
+Authorization: Bearer <Minecraft Access Token>
+</syntaxhighlight>
+
+The access token goes into the auth header: <code>Authorization: Bearer <Minecraft Access Token></code>. (Keep in mind that <code>Bearer </code> is actually the prefix you must include!)
+
+If the account owns the game, the response will look like this:
+
+<syntaxhighlight lang="json" line="line">{
+    "items": [ // re-ordered for better reading
+        {
+            "name": "product_minecraft",
+            "signature": "jwt"
+        },
+        {
+            "name": "game_minecraft",
+            "signature": "jwt"
+        },
+        {
+            "name": "product_minecraft_bedrock",
+            "signature": "jwt"
+        },
+        {
+            "name": "game_minecraft_bedrock",
+            "signature": "jwt"
+        },
+        {
+            "name": "product_dungeons", // only present if user have Minecraft Dungeons
+            "signature": "jwt"
+        },
+        {
+            "name": "game_dungeons", // only present if user have Minecraft Dungeons
+            "signature": "jwt"
+        },
+        {
+            "name": "product_legends", // only present if user have Minecraft Legends
+            "signature": "jwt"
+        },
+        {
+            "name": "game_legends", // only present if user have Minecraft Legends
+            "signature": "jwt"
+        },
+        {
+            "name": "product_game_pass_pc", // only present if user get the game by Xbox Game Pass
+            "signature": "jwt"
+        },
+        {
+            "name": "product_game_pass_ultimate", // only present if user get the game by Xbox Game Pass (Ultimate?)
+            "signature": "jwt"
+        },
+    ],
+    "signature": "jwt",
+    "keyId": "1"
+}</syntaxhighlight>
+
+The JWTs in items contain the values:
+<syntaxhighlight lang="json" line="line">{
+  "typ": "JWT",
+  "alg": "RS256",
+  "kid": "1",
+  "x5t": "IUtWwYtrS_IzIKJbi6s4kVh_E5s"
+}.{
+  "signerId": "2535436228373764",
+  "name": "product_minecraft" // varies for products / games
+}.[Signature]</syntaxhighlight>
+
+the last JWT looks like this decoded:
+
+<syntaxhighlight lang="json" line="line">{
+  "typ": "JWT",
+  "alg": "RS256",
+  "kid": "1",
+  "x5t": "IUtWwYtrS_IzIKJbi6s4kVh_E5s"
+}.{
+  "entitlements": [ // re-ordered for better reading
+    {
+      "name": "product_minecraft" 
+    },
+    {
+      "name": "game_minecraft"
+    },
+    {
+      "name": "product_minecraft_bedrock"
+    },
+    {
+      "name": "game_minecraft_bedrock"
+    },
+    {
+      "name": "product_dungeons" // only present if user have Minecraft Dungeons
+    },
+    {
+      "name": "game_dungeons" // only present if user have Minecraft Dungeons
+    },
+    {
+      "name": "product_legends" // only present if user have Minecraft Legends
+    },
+    {
+      "name": "game_legends" // only present if user have Minecraft Legends
+    },
+    {
+      "name": "product_game_pass_pc" // only present if user get the game by Xbox Game Pass
+    },
+    {
+      "name": "product_game_pass_ultimate" // only present if user get the game by Xbox Game Pass (Ultimate?)
+    }
+  ],
+  "signerId": "2535436228373764",
+  "nbf": 1765293178, // unix timestamp
+  "exp": 1765466158, // unix timestamp
+  "iat": 1765293358, // unix timestamp
+  "platform": "PC_LAUNCHER" // unknow if other values presents
+}.[Signature]</syntaxhighlight>
+If the account doesn't own the game, the items array will be empty.
+
+Note that the signature should always be checked with the public key from Mojang to verify that it is a legitimate response from the official servers:
+<syntaxhighlight lang="pem">
+-----BEGIN PUBLIC KEY-----
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtz7jy4jRH3psj5AbVS6W
+NHjniqlr/f5JDly2M8OKGK81nPEq765tJuSILOWrC3KQRvHJIhf84+ekMGH7iGlO
+4DPGDVb6hBGoMMBhCq2jkBjuJ7fVi3oOxy5EsA/IQqa69e55ugM+GJKUndLyHeNn
+X6RzRzDT4tX/i68WJikwL8rR8Jq49aVJlIEFT6F+1rDQdU2qcpfT04CBYLM5gMxE
+fWRl6u1PNQixz8vSOv8pA6hB2DU8Y08VvbK7X2ls+BiS3wqqj3nyVWqoxrwVKiXR
+kIqIyIAedYDFSaIq5vbmnVtIonWQPeug4/0spLQoWnTUpXRZe2/+uAKN1RY9mmaB
+pRFV/Osz3PDOoICGb5AZ0asLFf/qEvGJ+di6Ltt8/aaoBuVw+7fnTw2BhkhSq1S/
+va6LxHZGXE9wsLj4CN8mZXHfwVD9QG0VNQTUgEGZ4ngf7+0u30p7mPt5sYy3H+Fm
+sWXqFZn55pecmrgNLqtETPWMNpWc2fJu/qqnxE9o2tBGy/MqJiw3iLYxf7U+4le4
+jM49AUKrO16bD1rdFwyVuNaTefObKjEMTX9gyVUF6o7oDEItp5NHxFm3CqnQRmch
+HsMs+NxEnN4E9a8PDB23b4yjKOQ9VHDxBxuaZJU60GBCIOF9tslb7OAkheSJx5Xy
+EYblHbogFGPRFU++NrSQRX0CAwEAAQ==
+-----END PUBLIC KEY-----
+</syntaxhighlight>
+See the JWT standard[https://auth0.com/docs/tokens/json-web-tokens/validate-json-web-tokens] for more details.
+
+In case the public key ever changes, it can be extracted from the launcher library:
+
+<syntaxhighlight lang="bash">
+strings ~/.minecraft/launcher/liblauncher.so > launcher-strings.txt
+</syntaxhighlight>
+
+The created file <code>launcher-strings.txt</code> will include 2 strings which begin with <code>-----BEGIN PUBLIC KEY-----</code> and end with <code>-----END PUBLIC KEY-----</code>.
+The first key seems to be the one used for the JWT tokens, use of the second key is unknown.
+
+== Getting the profile ==
+
+Now that we know that the account owns the game, we can get their profile in order to fetch the UUID:
+
+<syntaxhighlight lang="http">
+GET https://api.minecraftservices.com/minecraft/profile
+Authorization: Bearer <Minecraft Access Token>
+</syntaxhighlight>
+
+The response will look like this, if the account owns the game:
+
+<syntaxhighlight lang="json" line='line'>
+{
+    "id": "986dec87b7ec47ff89ff033fdb95c4b5", // the real uuid of the account, woo
+    "name": "HowDoesAuthWork", // the mc user name of the account
+    "skins": [
+        {
+            "id": "6a6e65e5-76dd-4c3c-a625-162924514568",
+            "state": "ACTIVE",
+            "url": "http://textures.minecraft.net/texture/1a4af718455d4aab528e7a61f86fa25e6a369d1768dcb13f7df319a713eb810b",
+            "variant": "CLASSIC",
+            "alias": "STEVE"
+        }
+    ],
+    "capes": [
+        {
+            "id": "5af20372-79e0-4e1f-80f8-6bd8e3135995",
+            "state": "ACTIVE",
+            "url": "http://textures.minecraft.net/texture/2340c0e03dd24a11b15a8b33c2a7e9e32abb2051b2481d0ba7defd635ca7a933",
+            "alias": "Migrator"
+        }
+    ]
+}
+</syntaxhighlight>
+
+Else it will look like this:
+
+<syntaxhighlight lang="json" line='line'>
+{
+    "path": "/minecraft/profile",
+    "error": "NOT_FOUND",
+    "errorMessage": "The server has not found anything matching the request URI"
+}
+</syntaxhighlight>
+
+Note that Xbox Game Pass users who haven't logged into the new Minecraft Launcher at least once will not return a profile, and will need to login once after activating Xbox Game Pass to setup their Minecraft username.
+
+You should now have all necessary data (the mc access token, the username and the uuid) to launch the game. Well done!
+
+== Sample implementations ==
+
+* [https://gist.github.com/dewycube/223d4e9b3cddde932fbbb7cfcfb96759 minecraft_auth.py]: Authentication like the launcher does (i.e. code flow) + refresh token request. (broken)
+* A fully working kotlin implementation can be found [https://gitlab.bixilon.de/bixilon/minosoft/-/blob/master/src/main/java/de/bixilon/minosoft/util/account/microsoft/MicrosoftOAuthUtils.kt] here using device tokens.
+* A fully working cli wrapper in Java using device tokens [https://github.com/covers1624/DevLogin here]
+* A rough sample implementation in Java (using javafx and its webview) [https://github.com/MiniDigger/MiniLauncher/blob/master/launcher/src/main/java/me/minidigger/minecraftlauncher/launcher/gui/MsaFragmentController.java here].
+* A fully working Java library supporting 4 login flows can be found [https://github.com/RaphiMC/MinecraftAuth here].
+* An implementation in Go [https://gist.github.com/rbrick/be8ed86864fc5d77aa6c979053cfc892 here].
+* An implementation in JS can be found [https://github.com/PrismarineJS/node-minecraft-protocol/blob/master/src/client/microsoftAuth.js here] and one using JS/TS [https://gist.github.com/Plagiatus/ce5f18bc010395fc45d8553905e10f55 here]
+* An implementation in Python can be found [https://codeberg.org/JakobDev/minecraft-launcher-lib/src/branch/master/minecraft_launcher_lib/microsoft_account.py here]
+* An implementation in Rust can be found [https://gist.github.com/OverHash/a71b32846612ba09d8f79c9d775bfadf here].
+* A Kotlin library (JVM + JS) can be found [https://github.com/TheNullicorn/ms-to-mca here].
+* A C# library using webview and [https://github.com/AzureAD/microsoft-authentication-library-for-dotnet MSAL.NET] can be found [https://github.com/CmlLib/CmlLib.Core.Auth.Microsoft here].
+* A Rust library can be found [https://crates.io/crates/minecraft-msa-auth here].
+* A Rust library that includes useful stuff for launchers can be also found [https://crates.io/crates/minecraft-essentials here].
+* A PHP library can be found [https://github.com/Aberdeener/minecraft-oauth/ here].
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Java Edition protocol]]
+{{license wiki.vg}}
+
+[[fr:Authentification Microsoft]]
+[[zh:Mojang API#Microsoft身份验证]]

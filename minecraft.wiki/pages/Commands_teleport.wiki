@@ -1,0 +1,167 @@
+{{about|the command in the current version (since [[Java Edition 1.13]] ([[Java Edition 1.13|17w45a]]))|the command in former game versions|Commands/tp/Before Java Edition 17w45a}}
+{{Infobox command
+|name=teleport
+|alias={{cmd|tp|link=none}}
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Teleports [[entities]] (players, mobs, etc.).
+
+Although most [[commands]] can affect only [[chunk]]s that have already been generated, {{cmd|teleport}} can send entities into chunks that have yet to be generated. Right before teleporting, the game generates the destination chunk.
+
+==Syntax==
+
+* '''Java Edition'''
+: <code>teleport <destination></code>
+: <code>teleport <targets> <destination></code>
+:: Teleports the executor or the specified entity(s) to the position of an entity, and makes its rotation the same as the specified entity's.
+: <code>teleport <location></code>
+:: Teleports the executor to a certain position (and changes its rotation to the command's execution rotation).
+: <code>teleport <targets> <location></code>
+:: Teleports the entity(s) to a certain position (without changing their rotation).
+: <code>teleport <targets> <location> <rotation></code>
+: <code>teleport <targets> <location> facing <facingLocation></code>
+: <code>teleport <targets> <location> facing entity <facingEntity> [<facingAnchor>]</code>
+:: Teleports the entity(s) to a certain position and changes their rotation to the specified rotation.
+
+* '''Bedrock Edition'''
+: <code>teleport <destination: target></code>
+: <code>teleport <victim: target> <destination: target> [checkForBlocks: Boolean]</code>
+:: Teleports the executor or the specified entity(s) to the position of an entity, and makes it face horizontally, and make its horizontal rotation the same as the specified entity's.
+: <code>teleport <destination: x y z> [checkForBlocks: Boolean]</code>
+: <code>teleport <victim: target> <destination: x y z> [checkForBlocks: Boolean]</code>
+:: Teleports the executor or the specified entity(s) to a certain position (without changing its rotation).
+: <code>teleport <destination: x y z> [yRot: value] [xRot: value] [checkForBlocks: Boolean]</code>
+: <code>teleport <destination: x y z> facing <lookAtPosition: x y z> [checkForBlocks: Boolean]</code>
+: <code>teleport <destination: x y z> facing <lookAtEntity: target> [checkForBlocks: Boolean]</code>
+: <code>teleport <victim: target> <destination: x y z> [yRot: value] [xRot: value] [checkForBlocks: Boolean]</code>
+: <code>teleport <victim: target> <destination: x y z> facing <lookAtPosition: x y z> [checkForBlocks: Boolean]</code>
+: <code>teleport <victim: target> <destination: x y z> facing <lookAtEntity: target> [checkForBlocks: Boolean]</code>
+:: Teleports the executor or the specified entity(s) to a certain position and changes their rotation to the specified rotation.
+
+==Arguments==
+
+{{argument|targets|entity|victim: target|CommandSelector<Actor>}}
+: Specifies the entity(s) to be teleported. If not specified, defaults to the command's executor.
+: {{arg desc|je=entity|amount=multiple|type=entities|be=actor}}
+
+{{argument|location|vec3|destination: x y z|CommandPositionFloat}}
+: Specifies the coordinates to teleport the target(s) to.
+: {{arg desc|je=vec3|be=CommandPositionFloat}}
+
+{{argument|destination|entity|destination: target|CommandSelector<Actor>}}
+: Specifies the entity to teleport the target(s) to.
+: {{arg desc|je=entity|amount=single|type=entities|be=actor}}
+
+{{el|je|short=1}}: {{argument|rotation|rotation}}<br>
+{{el|be|short=1}}: {{argument|be=1|yRot: value|RelativeFloat}} and {{argument|xRot: value|RelativeFloat}}
+: Specifies the rotation.
+: {{arg desc|je=rotation|be=RelativeFloat}}
+
+{{argument|facingLocation|vec3|lookAtPosition: x y z|CommandPositionFloat}}
+: Specifies the coordinates to make the target(s) facing to.
+: {{arg desc|je=vec3|be=CommandPositionFloat}}
+
+{{argument|facingEntity|entity|lookAtEntity: target|CommandSelector<Actor>}}
+: Specifies the entity to make the target(s) facing to.
+: {{arg desc|je=entity|amount=multiple|type=entities|be=actor}}
+
+{{el|je|short=1}}: {{argument|facingAnchor|entity_anchor}}
+: Specifies whether the entity'eyes or feet to make the target(s) facing to. If not specified, defaults to feet. {{IN|java}}, the anchor of the targets can be changed with {{cmd|execute anchored}}. {{IN|bedrock}}, always facing the entity's feet from the targets' feet.
+: {{arg desc|je=entity_anchor}}
+
+{{el|be|short=1}}: {{argument|be=1|checkForBlocks: Boolean|enum}}
+: {{arg desc|be=bool}}
+: If set to <code>true</code>, teleports the target(s) only if the target(s) would not collide with a block it cannot be inside (Note: this allows teleporting into flowers as well as midair). If <code>false</code> or not specified, the default behavior applies (do no check; just teleport the target(s)).
+
+==Result==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more entities (named players must be online).|fail|fail}}
+{{Result table|<code><destination></code>, <code><facingEntity></code>, <code>destination: target</code>, or <code>lookAtEntity: target</code> fails to resolve to a single entity (named player must be online).}}
+{{Result table|Destinated position's <''x''> or <''z''> exceeds the range of [-30000000, 30000000), or <''y''> exceeds the range of [-20000000, 20000000).||success}}
+{{Result table|<code>checkForBlocks: Boolean</code> is true and the specified position is obscured.|N/A|fail}}
+{{Result table|succeed}}
+{{Result table}}
+
+==Output==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of the specified entities }}
+{{Output table|edition=be|On fail|0}}
+{{Output table|cmd=/teleport <destination: x y z> ...|On success|1}}
+{{Output table|cmd=/teleport <victim: target> <destination: x y z> ...|On success|the number of targeted victim entities}}
+{{Output table|cmd=/teleport <destination: target> ...|On success|2}}
+{{Output table|cmd=/teleport <victim: target> <destination: target> ...|On success|the number of victims plus 1}}
+{{Output table}}
+
+==Examples==
+
+* To teleport the executing player to Alice: <code>teleport Alice</code>
+
+* To teleport all players to the executing player: <code>teleport @a @s</code>
+
+* To teleport the executing player to x=100 and z=100, but three blocks above their current position: <code>teleport 100 ~3 100</code>
+* To teleport the executing player 1 block forward <code>teleport ^ ^ ^1</code>
+
+* To rotate the nearest player 10 degrees to the right without changing their position:  <code>execute as @p at @s run teleport @s ~ ~ ~ ~10 ~</code>
+
+* When used via the [[Commands/execute|execute]] command, can teleport between the Overworld, the Nether and the End:
+**To teleport the executing player to the same coordinates, but in the Nether:
+***<code>execute in minecraft:the_nether run teleport ~ ~ ~</code>{{only|java}}
+***<code>execute in nether run teleport ~ ~ ~</code>{{only|bedrock}}
+**To teleport all players to x=84 y=57 z=79 in the End:
+*** <code>execute as @a in minecraft:the_end run teleport 84 57 79</code>{{only|java}}
+***<code>execute as @a in the_end run teleport 84 57 79</code>{{only|bedrock}}
+**To teleport Alex to x=251 y=64 z=-160 in the Overworld:
+*** <code>execute as Alex in minecraft:overworld run teleport 251 64 -160</code>{{only|java}}
+*** <code>execute as Alex in overworld run teleport 251 64 -160</code>{{only|bedrock}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java classic}}
+|{{HistoryLine||0.0.18a|Added {{cmd|teleport|link=none}}.}}
+|{{HistoryLine|java indev}}
+|{{HistoryLine||0.31|dev=20091231-1856|Removed {{cmd|teleport|link=none}}.{{check version|Was it removed individually in this specific version, or was it no longer able to be used in Indev just like every other command?}}}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.10|dev=pre1|Added {{cmd|teleport|link=none}}, which is like {{cmd|tp|link=Commands/tp/Before Java Edition 17w45a}}, except that the target parameter is mandatory, the 'teleport to other player' usage is unavailable, and the use of relative coordinates is relative to the executor of the command, rather than relative to the target.}}
+|{{HistoryLine||1.13|dev=17w45a|{{cmd|tp|link=none}} is no longer different from {{cmd|teleport|link=none}} now, and became an alias of {{cmd|teleport|link=none}}.}}
+|{{HistoryLine|||dev=18w01a|Added <code>facing</code> to {{cmd|teleport|link=none}}, which causes the target entity to face an entity or a location.}}
+|{{HistoryLine|||dev=18w02a|{{cmd|teleport|link=none}} has been simplified a bit and players can now teleport to entities in other dimensions.}}
+|{{HistoryLine||1.16|dev=20w06a|{{cmd|teleport|link=none}} now cannot teleport an entity to a position where <x> or <z> exceeds the range of [-30000000, 30000000), or <y> exceeds the range of [-20000000, 20000000)}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|teleport|link=none}}.|The coordinates have a maximum of 999,999,999 although it's possible to teleport beyond the maximum by using relative coordinates.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.2.0|dev=beta 1.2.0.2|Added <code>facing</code> mode.
+|The maximum coordinates for {{cmd|teleport|link=none}} have been increased from 999,999,999 to ~3.402824e+38 (2<sup>128</sup>).}}
+|{{HistoryLine||1.2.5|dev=beta 1.2.5.15|The maximum coordinates for {{cmd|teleport|link=none}} have been reduced to 30,000,000.
+|Attempting to teleport beyond the maximum coordinates no longer outputs an error message.|Exceeding the maximum coordinates is no longer possible.}}
+|{{HistoryLine||1.13.0|dev=beta 1.13.0.13|Added <code>checkForBlocks: Boolean</code>.}}
+|{{HistoryLine||1.19.40|dev=Preview 1.19.40.23|Players can now teleport to entities in other dimensions, with the "Upcoming Creator Features" experimental toggle enabled.}}
+|{{HistoryLine||1.19.50|dev=Preview 1.19.50.23|Teleporting to entities in other dimension no longer requires the "Upcoming Creator Features" experimental toggle to be enabled.}}
+|{{HistoryLine||1.19.70|dev=Preview 1.19.70.20|Rotation in the teleport command is now relative to the executor of the command instead of the target. Old usage of rotations in commands remain relative to the target mob for backward compatibility.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/teleport?view=minecraft-bedrock-stable|title=<code>/teleport</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/teleport]]
+[[es:Comandos/tp]]
+[[ja:コマンド/teleport]]
+[[pt:Comandos/teleport]]
+[[ru:Команды консоли/teleport]]
+[[zh:命令/teleport]]

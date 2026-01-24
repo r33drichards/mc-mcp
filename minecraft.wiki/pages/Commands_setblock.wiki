@@ -1,0 +1,108 @@
+{{Infobox command
+|name=setblock
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+Changes a [[block]] to another block.
+
+== Syntax ==
+* '''Java Edition'''
+: <code>setblock <pos> <block> [destroy|keep|replace|strict]</code>
+* '''Bedrock Edition'''
+: <code>setblock <position: x y z> <tileName: Block> <blockStates: block states> [destroy|keep|replace]</code>
+: <code>setblock <position: x y z> <tileName: Block> [destroy|keep|replace]</code>
+
+== Arguments ==
+{{argument|pos|block_pos|position: x y z|CommandPosition}}
+: Specifies the position of the block to be changed.
+: {{arg desc|je=block_pos|be=CommandPosition}}
+
+{{argument|block|block_state|tileName: Block|enum}}
+: Specifies the new block.
+: {{arg desc|je=block_state|be=Block}}
+
+{{el|be|short=1}}: {{argument|be=1|blockStates: block states|BlockStateCommandParam}}
+: Specifies the [[block states]] to use for the block.
+: {{Arg desc|be=BlockStateCommandParam}}
+
+{{code|destroy{{!}}keep{{!}}replace}} and {{code|destroy{{!}}keep{{!}}replace{{!}}strict}}
+: Specifies how to handle the block change. Must be one of:
+:* <code>destroy</code> — The old block [[drops]] both itself and its contents (as if destroyed by a [[player]]). Plays the appropriate block breaking noise.
+:* <code>keep</code> — Only [[air]] blocks are changed (non-air blocks are unchanged).
+:* <code>replace</code> — The old block drops neither itself nor any contents. Plays no sound.
+:* <code>strict</code> — Place blocks as-is without triggering block updates and shape updates.
+: If not specified, defaults to <code>replace</code>.
+
+== Result ==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|The specified position is unloaded or out of the world.|fail|fail}}
+{{Result table|Trying to place block in [[debug mode]].||N/A}}
+{{Result table|cmd=/setblock ... keep|Trying to change a non-air block.||fail}}
+{{Result table|cmd=/setblock ... keep<br>/setblock ... replace<br>/setblock ... strict|Trying to replace a block with an identical copy (ignoring the block entity).}}
+{{Result table|Trying to replace some kinds of redstone components with an unstable block (e.g. replacing one of two adjacent standing redstone torches with a TNT block)<ref>{{bug|MC-255198}}</ref>.||success}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== Examples ==
+* Put a chest facing east at your feet
+** <code>setblock ~ ~ ~ chest[facing=east]</code>{{only|java}}
+** <code>setblock ~ ~ ~ chest ["minecraft:cardinal_direction"="east"]</code>{{only|bedrock}}
+* Place a sign next to it {{in|java}}
+** <code>setblock ~ ~ ~-1 birch_sign{Text1:'"My chest"',Text2:'"Do not open!"'}</code> (Note the two sets of quotes around the text. They are required.)
+* Put a top quartz slab at the top of your head
+** <code>setblock ~ ~2 ~ quartz_slab[type=top]</code>{{only|java}}
+** <code>setblock ~ ~2 ~ quartz_slab ["minecraft:vertical_half"="top"]</code>{{only|bedrock}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.7.2|dev=13w37a|Added {{cmd|setblock|link=none}}.}}
+|{{HistoryLine||1.11|dev=16w32a|Added [[block state]] support to {{cmd|setblock|link=none}}.}}
+|{{HistoryLine||1.16|dev=20w06a|{{cd|/setblock ~ ~ ~ air destroy}} now can destroy liquids.<ref>{{bug|MC-163286|resolution=Fixed}}</ref>}}
+|{{HistoryLine||1.21.5|dev=25w02a|The behavior of {{cmd|setblock}} command has changed in how it handles block entity data.|Accepts a new option: <code>strict</code>.|New syntax for commands to use the new strict option.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.16.0|dev=build 1|Added {{cmd|setblock|link=none}}.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.210|dev=beta 1.16.210.53|Added [[block state]] support to {{cmd|setblock|link=none}}.}}
+|{{HistoryLine||1.19.70|dev=Preview 1.19.70.21|Removed <code>tileData: int</code> argument.}}
+}}
+
+== See also ==
+* {{cmd|data}} — modifies the data tags of a block or entity
+* {{cmd|clone}} — copies blocks from one region to another
+* {{cmd|fill}} — fills a region with a block
+
+== References ==
+<references/>
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/setblock?view=minecraft-bedrock-stable|title=<code>/setblock</code> Command|website=Microsoft Learn|date=June 17, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/setblock]]
+[[ja:コマンド/setblock]]
+[[pt:Comandos/setblock]]
+[[ru:Команды консоли/setblock]]
+[[uk:Команди консолі/setblock]]
+[[zh:命令/setblock]]

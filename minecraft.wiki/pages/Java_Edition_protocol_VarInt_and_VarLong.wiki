@@ -1,0 +1,151 @@
+Variable-length format such that smaller numbers use fewer bytes.  These are very similar to [http://developers.google.com/protocol-buffers/docs/encoding#varints Protocol Buffer Varints]: the 7 least significant bits are used to encode the value and the most significant bit indicates whether there's another byte after it for the next part of the number.  The least significant group is written first, followed by each of the more significant groups; thus, VarInts are effectively little endian (however, groups are 7 bits, not 8).
+
+VarInts are never longer than 5 bytes, and VarLongs are never longer than 10 bytes. Within these limits, unnecessarily long encodings (e.g. <code>81 00</code> to encode 1) are allowed.
+
+Pseudocode to read and write VarInts and VarLongs:
+
+<syntaxhighlight lang="java">
+private static final int SEGMENT_BITS = 0x7F;
+private static final int CONTINUE_BIT = 0x80;
+</syntaxhighlight>
+<syntaxhighlight lang="java">
+public int readVarInt() {
+    int value = 0;
+    int position = 0;
+    byte currentByte;
+
+    while (true) {
+        currentByte = readByte();
+        value |= (currentByte & SEGMENT_BITS) << position;
+
+        if ((currentByte & CONTINUE_BIT) == 0) break;
+
+        position += 7;
+
+        if (position >= 32) throw new RuntimeException("VarInt is too big");
+    }
+
+    return value;
+}
+</syntaxhighlight>
+<syntaxhighlight lang="java">
+public long readVarLong() {
+    long value = 0;
+    int position = 0;
+    byte currentByte;
+
+    while (true) {
+        currentByte = readByte();
+        value |= (long) (currentByte & SEGMENT_BITS) << position;
+
+        if ((currentByte & CONTINUE_BIT) == 0) break;
+
+        position += 7;
+
+        if (position >= 64) throw new RuntimeException("VarLong is too big");
+    }
+
+    return value;
+}
+</syntaxhighlight>
+<syntaxhighlight lang="java">
+public void writeVarInt(int value) {
+    while (true) {
+        if ((value & ~SEGMENT_BITS) == 0) {
+            writeByte(value);
+            return;
+        }
+
+        writeByte((value & SEGMENT_BITS) | CONTINUE_BIT);
+
+        // Note: >>> means that the leftmost bits are filled with zeroes regardless of the sign,
+        // rather than being filled with copies of the sign bit to preserve the sign.
+        // In languages that don't have a ">>>" operator, This behavior can often be selected by
+        // performing the shift on an unsigned type.
+        value >>>= 7;
+    }
+}
+</syntaxhighlight>
+<syntaxhighlight lang="java">
+public void writeVarLong(long value) {
+    while (true) {
+        if ((value & ~((long) SEGMENT_BITS)) == 0) {
+            writeByte(value);
+            return;
+        }
+
+        writeByte((value & SEGMENT_BITS) | CONTINUE_BIT);
+
+        // Note: >>> means that the leftmost bits are filled with zeroes regardless of the sign,
+        // rather than being filled with copies of the sign bit to preserve the sign.
+        // In languages that don't have a ">>>" operator, This behavior can often be selected by
+        // performing the shift on an unsigned type.
+        value >>>= 7;
+    }
+}
+</syntaxhighlight>
+
+{{warning|Note Minecraft's VarInts are identical to {{wikipedia|LEB128}} with the slight change of throwing a exception if it goes over a set amount of bytes.}}
+
+{{warning|Note that Minecraft's VarInts are not encoded using Protocol Buffers; it's just similar.  If you try to use Protocol Buffers Varints with Minecraft's VarInts, you'll get incorrect results in some cases.  The major differences:
+* Minecraft's VarInts are all signed, but do not use the ZigZag encoding.  Protocol buffers have 3 types of Varints: <code>uint32</code> (normal encoding, unsigned), <code>sint32</code> (ZigZag encoding, signed), and <code>int32</code> (normal encoding, signed).  Minecraft's are the <code>int32</code> variety.  Because Minecraft uses the normal encoding instead of ZigZag encoding, negative values always use the maximum number of bytes.
+* Minecraft's VarInts are never longer than 5 bytes and its VarLongs will never be longer than 10 bytes, while Protocol Buffer Varints will always use 10 bytes when encoding negative numbers, even if it's an <code>int32</code>.}}
+
+Sample VarInts:
+
+{| class="wikitable"
+ ! Value !! Hex bytes !! Decimal bytes
+ |-
+ | 0 || 0x00 || 0
+ |-
+ | 1 || 0x01 || 1
+ |-
+ | 2 || 0x02 || 2
+ |-
+ | 127 || 0x7f || 127
+ |-
+ | 128 || 0x80 0x01 || 128 1
+ |-
+ | 255 || 0xff 0x01 || 255 1
+ |-
+ | 25565 || 0xdd 0xc7 0x01 || 221 199 1
+ |-
+ | 2097151 || 0xff 0xff 0x7f || 255 255 127
+ |-
+ | 2147483647 || 0xff 0xff 0xff 0xff 0x07 || 255 255 255 255 7
+ |-
+ | -1 || 0xff 0xff 0xff 0xff 0x0f || 255 255 255 255 15
+ |-
+ | -2147483648 || 0x80 0x80 0x80 0x80 0x08 || 128 128 128 128 8
+ |}
+
+Sample VarLongs:
+
+{| class="wikitable"
+ ! Value !! Hex bytes !! Decimal bytes
+ |-
+ | 0 || 0x00 || 0
+ |-
+ | 1 || 0x01 || 1
+ |-
+ | 2 || 0x02 || 2
+ |-
+ | 127 || 0x7f || 127
+ |-
+ | 128 || 0x80 0x01 || 128 1
+ |-
+ | 255 || 0xff 0x01 || 255 1
+ |-
+ | 2147483647 || 0xff 0xff 0xff 0xff 0x07 || 255 255 255 255 7
+ |-
+ | 9223372036854775807 || 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0x7f || 255 255 255 255 255 255 255 255 127
+ |-
+ | -1 || 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0x01 || 255 255 255 255 255 255 255 255 255 1
+ |-
+ | -2147483648 || 0x80 0x80 0x80 0x80 0xf8 0xff 0xff 0xff 0xff 0x01 || 128 128 128 128 248 255 255 255 255 1
+ |-
+ | -9223372036854775808 || 0x80 0x80 0x80 0x80 0x80 0x80 0x80 0x80 0x80 0x01 || 128 128 128 128 128 128 128 128 128 1
+ |}
+<noinclude>
+{{license wiki.vg}}
+</noinclude>

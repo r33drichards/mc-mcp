@@ -1,0 +1,253 @@
+{{About|unofficial [[game customization]] via direct modifications|the official modding API {{in|BE}}|Add-on|the similar mechanism {{in|JE}}|Data pack}}
+{{Disclaimer}}
+[[File:The Aether dimension with custom entity.png|thumb|[https://www.curseforge.com/minecraft/mc-mods/aether The Aether], a popular mod released in 2011, originally created by [[kingbdogz]], now working in [[Mojang Studios]] as a game designer.]]
+A '''mod''' (short for ''modification'') is a piece of unofficial code that is injected into the game for the purpose of modifying its behavior. They can be used to enhance the game by means ranging from fixing [[bug]]s, adjusting [[Gameplay|core mechanics]], to completely revamping the way the game is played with unique features.
+
+== Overview ==
+Mods are primarily {{w|user-created content}} used to alter the base game to create unique experiences that are not usually present from [[vanilla]]. They allow players to customize the look and feel of the game, give more options and customization, or expand the game with new [[progression]] and [[mechanics]]. Mods have control over various aspects of the game, where developers can modify or add custom features, such as [[physics]], [[graphics]], [[user interface]], and various [[gameplay]] features (such as [[entities]], [[item]]s, [[block]]s, [[world generation]], and [[dimension]]s, usually through the game's [[Registry|registries]]<ref>{{cite
+|url=https://docs.neoforged.net/docs/concepts/registries#data-generation-for-datapack-registries
+|title=Registries
+|website=NeoForged docs}}</ref><ref>{{cite
+|url=https://wiki.fabricmc.net/tutorial:registry
+|title=Intro to Registries
+|website=Fabric Wiki
+|access-date=December 25, 2025
+}}</ref>).
+
+While many mods add content, others act as utilities that are designed to improve the game while being close to [[vanilla]]. There are [[w:Program optimization|optimization]] mods that modify the game's [[rendering]] to improve [[w:Frame rate#Computer games|frame rates]] and load times, making the game more accessible on lower-end hardware (see also [[Tutorial:Improving frame rate]]).<ref>{{cite
+|url=https://modrinth.com/mod/sodium
+|title=Sodium
+|website=Modrinth
+|access-date=December 25, 2025
+}}</ref><ref>{{cite
+|url=https://www.rockpapershotgun.com/the-best-minecraft-performance-mods
+|title=The best Minecraft performance mods
+|website=Rock Paper Shotgun
+|date=April 12, 2021
+|access-date=December 25, 2025
+}}</ref> Other client side mods may also fix several [[w:Software bug|bugs]] and improve stability of the base game,<ref>{{cite
+|url=https://modrinth.com/mod/modernfix
+|title=ModernFix
+|website=Modrinth
+|access-date=December 25, 2025
+}}</ref><ref>{{cite
+|url=https://docs.papermc.io/paper/misc/paper-bug-fixes/
+|title=Bug fixes
+|website=PaperMC Docs
+|date=April 19, 2025
+|access-date=December 25, 2025
+}}</ref> such as reducing crashes and micro-stutter, and fixing several [[Tutorial:Block and item duplication|block and item duplication]] bugs.
+
+Mods are usually designed for specific [[Version types#Release versions|release version]]s of the game. When the game is updated, the mod must also be updated accordingly, otherwise it may no longer work for current and future versions.<ref name="rps-update-breaks-mod">{{cite|url=https://www.rockpapershotgun.com/minecrafts-new-faster-update-schedule-will-probably-fill-modders-with-both-despair-and-nostalgia|title=Minecraft's new faster update schedule will probably fill modders with both despair and nostalgia|author=Edwin Evans-Thirlwell|website=Rock Paper Shotgun|date=September 11, 2024}}</ref>
+
+=== Modding support ===
+{{JE}} is written in {{w|Java}} and runs on JVM, which for technical reasons makes creating mods relatively easy. Modding strongly depend on decompilation to [[Tutorial:See Minecraft's code|see the game's source code]]. Because Java compiles to bytecode rather than machine code, it is highly susceptible to decompilation,<ref>{{cite
+|url=https://jameshamilton.eu/research/what-decompilation
+|title=What is decompilation?
+|author=James Hamilton
+|website=Dr James Hamilton
+|date=July 7, 2010
+|access-date=December 25, 2025
+}}</ref> allowing modders to {{w|reverse-engineer}} the game logic easily. Due to this, a prolific modding scene exists for that edition, which has matured over a decade, and has created several programs and tools for modding, notably mod loaders.<ref>{{cite
+|url=https://madelinemiller.dev/blog/minecraft-java-bedrock-edition/
+|title=Should you run a Minecraft Java Edition or Bedrock Edition server?
+|author=Maddy Miller
+|website=madelinemiller.dev
+|date=January 28, 2021
+|access-date=December 25, 2025
+}}</ref>
+
+For older versions, [[obfuscation map]]s provided by Mojang and the community which ease the process of reverse-engineering the game. The unobfuscated versions of the game also lets modders directly see the game's source code without obfuscation maps.<ref>{{mcnet|removing-obfuscation-in-java-edition|Removing obfuscation in Java Edition}}</ref>
+
+{{BE}} is written in {{w|C++}} and runs as {{w|machine code}}, which makes it technically challenging to mod. Mods for that edition exist, but are much less common and less complex, both due to technical challenges, and other reasons such as low interest from the community and [[add-on]]s providing official means of adding content to the game.
+
+In ''Java Edition'', a mod loader is used to inject modifications into the game. Mod loaders serve as an intermediary between the game's and the mod's code, they provide two main functions for modding: (1) providing system of [[API]] and tools to develop new mods and communicate with the game, and (2) managing loading mods simultaneously while keeping them compatible with each other.<ref>{{cite
+|url=https://wiki.fabricmc.net/documentation:fabric_loader
+|title=Fabric Loader
+|website=Fabric Wiki
+|access-date=December 25, 2025
+}}</ref><ref>{{cite
+|url=https://cybrancee.com/blog/history-of-minecraft-mod-loaders
+|title=History of Minecraft Mod Loaders: Why Are There So Many?
+|author=Burn
+|website=Cybrancee
+|date=August 9, 2025
+|access-date=December 25, 2025
+}}</ref><ref>{{cite
+|url=https://www.sportskeeda.com/minecraft/every-mod-loader-minecraft
+|title=Every mod loader for Minecraft
+|website=Sportskeeda
+|date=November 18, 2023
+|access-date=December 25, 2025
+}}</ref> There are many well-known mod loaders, such as [[Mods/Forge|Forge]], [https://fabricmc.net/ Fabric], [https://quiltmc.org/ Quilt], and [https://neoforged.net/ NeoForge]. Each mod loader supports different system and API for developing mods. Because of this, mods designed for specific mod loader are not likely interoperable with another mod loader, and vice versa.
+
+[[Add-on]]s serve as the official modding API in ''Bedrock Edition'', they can add new content and modify existing features and customizations in the game. In comparison to ''Java Edition'' mods, add-ons may be limited in terms of features and customization, but are far more friendly and less complex for creators.<ref name="pcgamer-je-vs-be">{{cite|url=https://www.pcgamer.com/minecraft-java-vs-bedrock-windows/|title=Minecraft: Java Edition vs Bedrock Edition|author=Wesley Copeland|website=PC Gamer|date=February 27, 2024}}</ref> An official modding API was planned for ''Java Edition'', called "Plugin API" (dubbed "Workbench"), but was subsequently abandoned, with no further mentions or developments of it after [[Java Edition 1.9]] (see {{slink|Mentioned features|Workbench (Plugin API)}}).
+
+In [[Bedrock Edition 1.21.20]], Mojang Studios removed debug information ({{cd|bedrock_server.pdb}} file) from [[Bedrock Dedicated Server]], making modding more difficult for ''Bedrock Edition''.<ref>{{cite|title=Did Mojang Just Remove Modding For Minecraft Bedrock?|section=Minecraft Bedrock 1.21.20 Update|author=Nathan Young|website=Apex Hosting|date=August 15, 2024|url=https://apexminecrafthosting.com/did-mojang-just-remove-modding-for-minecraft-bedrock/}}</ref>
+
+While there are other ways to change the experience of ''Minecraft'', such as [[resource pack]]s and [[data pack]]s, the ability to load these is part of the [[vanilla]] game and usually not considered modding (see [[Game customization]]).
+
+=== Integration with data packs ===
+{{Exclusive|Java|section=1}}
+
+Historically, the modification of features such as [[advancement]]s, [[enchantment]]s, [[dimension]]s, or [[world generation]] have required the usage of mods. However, in later versions of the game, the additions and expansions of [[data pack]]s and [[resource pack]]s have allowed several of these features to be implemented into the game without any modification of or addition to the game's code. Most modern mod loaders allow data packs and resource packs to be included alongside a mod to provide additional data and resources, such as [[model]]s or [[recipe]]s.<ref name="fabric-custom-resources">{{Cite|title=Custom Data/Resource pack Resources|website=Fabric Wiki|url=https://wiki.fabricmc.net/tutorial:custom_resources}}</ref>
+
+== Types of mods ==
+{{See also|w:Client-server model}}
+{{redirect|Fabric|the in-game block|Wool}}
+{{Exclusive|Java|section=1}}
+[[File:Custom world generation mod and shader pack.jpg|thumb|right|''Minecraft'' can be made to look very different with the addition of shader packs and [[world generation]] mods.]]
+
+=== Client-based ===
+{{va|Client mods}} are direct modifications of the ''Minecraft'' game files. They control and add custom content for [[mob]]s, [[particle]]s, [[item]]s, and [[block]]s, such as [[model]]s, [[sound]]s, [[texture]]s, and [[GUI]]s, but require the [[server]] to implement the game mechanics behind them (see {{slink||Server-based}}). They usually modify the client software, or {{cd|[[client.jar]]}} file.
+
+Functional client mods like [[ftb:Sodium (mod)|Sodium]] and [[ftb:OptiFine|OptiFine]] modify and enhance client side features of the game, such as [[graphics]] fidelity and rendering, while not adding or changing any [[gameplay]] features, making them perfectly compatible with [[vanilla]] server without any modifications.
+
+=== Server-based ===
+{{va|Server mods}} are modifications to the official ''Minecraft'' [[server.jar|server software]]. They control features that are handled exclusively in the [[server]], primarily the game [[mechanics]], such as [[physics]], [[mob AI]], [[chat]], [[commands]], player interactions (e.g. [[crafting]], [[smelting]], opening [[chest]]s or [[inventory]], [[Breaking|block placement and destruction]]), [[world generation]], and much more. They cannot control client side features, and are limited in terms of custom content. Most mods are installed together on the server and client side, allowing for more freedom and complete game customization.
+
+Server mods are commonly used to enhance server [[Server#Management|administration]] with more functionality and ease of use. They can provide tools to protect against [[griefing]] and [[cheating]], implement tiered privileges for commands, automate server backup, monitor server performance, optimize [[gameplay]] features, and more. Most server mods are compatible with [[vanilla]] client, without requiring the same modifications on their end (see [[Tutorial:Glossary#semivanilla|semivanilla]]). Most [[Server#Minigame|multiplayer minigame]]s, such as [[spleef]], capture the flag, sky wars and bed wars, are implemented using server mods.
+
+Server mods may be referred to as ''plugins'', mainly on [https://www.spigotmc.org/ Spigot] mod loader and its derivatives. Some are implemented as [[w:Adapter pattern|wrapper]]s, which do not modify the server software directly, instead monitoring its output and sending commands to it, typically using the [[RCON]] protocol.
+
+=== Shader pack ===
+{{about|unofficial implementation of shader using game modifications|official shader implementation in [[resource pack]]s|Shader|section=1}}
+
+A shader pack is a client mod used to alter the visuals and looks of ''Minecraft''. They primarily change the game's [[graphics]], and enhance it by adding shadows, lightnings, reflections, and other customization. Shader packs require a mod designed to load them, such as [https://www.irisshaders.dev/ Iris Shaders] or [[ftb:OptiFine|OptiFine]]. When combined with [[resource pack]], shader packs can drastically transform the game's appearance, allowing players to customize into different styles and settings like medieval, realistic, cinematic, and cartoonish.
+
+Additionally, resource pack can include custom material data loaded by shader packs for use in {{w|physically based rendering}} (PBR). Modern shader packs can implement {{w|path tracing}} and {{w|global illumination}} (GI) for ''Minecraft'', most notably, [https://www.sonicether.com/seus/ SEUS PTGI] and [https://continuum.graphics/continuum-rt/ Continuum RT] have done this.
+
+=== Mod pack ===
+
+A mod pack is a collections of mods that have been put together and configured so that they work together. Mod packs are often centered around a general theme like tech, quests, or magic. Mod packs often have either custom [[launcher]]s or installers that make installing and running the mod pack easy. Some of the most popular mod packs include [[ftb:Feed The Beast|Feed The Beast]], [[ftb:Tekkit|Tekkit]], [[ftb:RLCraft|RLCraft]], [[ftb:Hexxit|Hexxit]], and [https://all-themods.com/ ATM(All The Mods)].
+
+In addition to making it easy to install mod pack clients, certain launchers can also download server mod packs.
+
+== Modded flag{{Anchor|Crash reports}}==
+{{Exclusive|Java|section=1}}
+If ''Minecraft'' crashes, a modified game is flagged in the [[crash]] report. This is possible by first checking the client or server brand is ''[[vanilla]]'' branded, then verifying if the {{w|Java class}} (where the game crashed from) is signed from a signature file, which is stored on the <code>META-INF</code> directory with <code>.SF</code> file extension in the JAR archive.<ref>The checks can be seen on {{jcp|net.minecraft.util.ModCheck}} class ([[Obfuscation map|Mojang mapping]])</ref><ref>{{Citation|url=https://dev.java/learn/jvm/tool/security/jarsigner/#signed-jar-file|title=Jarsigner - Signing Your JARs|author=Oracle and/or its affiliates|website=Dev.java|date=September 14, 2021|section=The Signed JAR File}}</ref> These checks are done on both [[client.jar]] and [[server.jar]] files.
+
+The signature file that comes from the vanilla build of the game is named <code>MOJANGCS.SF</code>, and stored on the <code>META-INF</code> directory like any other signature files. The creator of the signature file is listed as ''Microsoft''.<ref>The <code>Created-By</code> entry of <code>client.jar/META-INF/MOJANGCS.SF</code> file.</ref>
+
+The crash report text includes one of these lines near the bottom:<!-- Do not change the crash report text unless it is reflected from the source code. -->
+
+*{{cd|Is Modded: Probably not. ''<environment>'' jar signature and brand is untouched}} &ndash; the ''environment'' (either client or server) brand is unaltered and the signature file is ''validated''.{{note|name=signature-validation|The only ''validation'' the game does is checking if a signature file exists, regardless from Microsoft or third-party; that means technically, the signature file could be replaced or added by another one resulting in a false positive.}}
+
+*{{cd|Is Modded: Very likely; ''<environment>'' jar signature invalidated}} &ndash; the ''environment'' (either client or server) is unaltered but the signature file is ''invalidated''.{{note|name=signature-validation}}
+
+*{{cd|Is Modded: Definitely; ''<environment>'' brand changed to ''<custom brand>''}} &ndash; the ''environment'' (either client or server) brand is changed to a ''custom brand'' specified by the mod loader, such as {{cd|'forge'}}, {{cd|'neoforge'}}, {{Cd|'quilt'}}, or {{cd|'fabric'}}, which are for [[Forge]], [[ftb:NeoForge|NeoForge]], [[ftb:Quilt|Quilt]], and [[ftb:Fabric|Fabric]] respectively. However, the game does not check the signature file any further.
+<!--
+[Note for future editors]
+
+There is a bit of missing information from this:
+
+Since the signature validation is done by checking if the signers from "Class.getSigners()" method exist (check the ModStatus class), then where did that method gets the signers from? Either using "Class.setSigners()" somewhere in the Minecraft codebase, or some JVM black magic I did not know.
+
+Regardless, it is unnecessary to add {{Missing information}} template for this, since I think this section already has enough information.
+
+-Outrowed
+-->
+
+A shortened example crash report is given below:
+
+{{cr|1=
+---- Minecraft Crash Report ----
+// Uh... Did I do that?
+
+Time: 1/1/17 12:00 AM
+Description: Manually triggered debug crash
+
+
+A detailed walkthrough of the error, its code path, and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- System Details --
+Details:
+	Minecraft Version: 1.12
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 1.8.0_131, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 524288000 bytes (500 MB) / 536870912 bytes (512 MB) up to 1073741824 bytes (1024 MB)
+	JVM Flags: 4 total; -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump -XX:+DisableExplicitGC
+	IntCache: cache: 0, tcache: 0, allocated: 0, tallocated: 0
+	Launched Version: 1.12
+	LWJGL: 2.9.4
+	OpenGL: AMD Radeon (TM) R9 999 GL version 9.9.99999 Compatibility Profile Context 99.99.999.999, ATI Technologies Inc.
+	GL Caps: Using GL 1.3 multitexturing.
+Using GL 1.3 texture combiners.
+Using framebuffer objects because OpenGL 3.0 is supported and separate blending is supported.
+Shaders are available because OpenGL 2.1 is supported.
+VBOs are available because OpenGL 1.5 is supported.
+
+	Using VBOs: No
+	'''Is Modded: Probably not. client jar signature and brand is untouched'''
+	Type: Client (map_client.txt)
+	Resource Packs: 
+	Current Language: English (US)
+	Profiler Position: N/A (disabled)
+	CPU: 9x Intel(R) Core(TM) i9-9999Z CPU @ 9.99GHz
+}}
+
+== Trivia ==
+* [https://aether.wiki.gg/wiki/The_Aether The Aether], a popular mod released in 2011,<ref>{{Citation|url=https://gamerant.com/minecraft-mod-aether-update-modern-versions/|title=Popular Minecraft Mod Gets Update for Modern Versions|author=Bruna Telles|website=Game Rant}}</ref> was referenced in an [[23w13a_or_b|April Fools 2023]] update, where players would be able to build the [[other portal]] out of [[glowstone]] and [[water]], with striking similarity to the Aether portal. In the mod, players can transport to a [[w:Paradise|Heaven]]-like dimension using the portal, serving as a counterpart to the [[Nether]]'s hellish environment accessed through an obsidian and fire portal. In its heyday, the mod was easily one of the most popular and iconic ''Minecraft'' mods, leading some players to believe it was actually in vanilla ''Minecraft''.<ref>{{Citation|url=https://www.sportskeeda.com/minecraft/minecraft-redditor-draws-aether-portal-betrayal|title=Minecraft Redditor draws the Aether portal betrayal|author=Akshat Kabra|website=Sportskeeda|date=2022-06-03}}</ref>{{#section:Other Portal|sky-dimension-trivia}}<!-- See [[Other Portal#Trivia]] -->
+
+== Gallery ==
+<gallery>
+File:The Aether.jpg|The Aether, a popular mod released in 2011 created by [[kingbdogz]].
+File:The Aether's sky island.jpg|The Aether is similar to the unimplemented [[sky dimension]].
+File:Twilight Forest.jpg|The Twilight Forest, another popular dimension mod.
+File:Tamedkargooalexmobs.png|A [[tamed]] kangaroo with [[netherite]] [[armor]] from Alex's Mobs.
+File:Macaw bridges.png|The Macaw's Bridges mod adds bridges to the game.
+</gallery>
+
+=== Historical screenshots ===
+<gallery>
+File:Custom Indev world generator.png|An example of a world generator mod (custom [[Indev]] map generator)
+</gallery>
+
+== See also ==
+*[[Add-on]]s, a feature {{in|Bedrock}} that allows modders to more easily add content to the game.
+*[[Data packs]] and [[resource packs]], features {{in|Java}} which allow the addition of specific content to the game without the use of code modification.
+*[[Tutorial:Programs and editors/Modding]] showcases tools for installing and making mods.
+*[[ftb:|Feed The Beast Wiki]] for looking up information about specific mods.
+*{{Slink|MCW:Hey Wiki|Supported wikis}} for a list of wikis for specific mods.
+*{{w|Minecraft modding}} on Wikipedia, which includes extensive history of ''Minecraft'' modding, from [[Version formats#Alpha|alpha]] to [[Version formats#Release|release]] era.
+**{{w|Video game modding}} on Wikipedia, which explains general video game modding.
+*[[ModJam]], a form of community event where participants create fan-made content for ''Java Edition'' within a set period of time. Typically focuses on mod-related content, but [[World|map]]s, [[resource pack]]s, and mod packs have all been included to various degrees.
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+
+== External links ==
+*[https://www.curseforge.com/minecraft/mc-mods CurseForge] and [https://modrinth.com/mods Modrinth], which are popular repositories for hosting user-created content, mainly ''Java Edition'' mods, data packs, and other content.
+*[https://neoforged.net/ Neoforged], [https://fabricmc.net/ Fabric], and [https://quiltmc.org/en/ QuiltMC], which are popular mod loaders for ''Java Edition''.
+*[https://mcpedl.com MCPEDL], which is a popular repository for hosting user-created content exclusively for ''Bedrock Edition'', such as add-ons, behavior packs, resource packs, and other content. It is managed by the same [[w:Overwolf|company]] that hosts {{w|CurseForge}}.
+** There is also [https://modbay.org/ Modbay], a less popular alternative.
+*[https://help.minecraft.net/hc/en-us/articles/4409139065613 Mods for ''Minecraft: Java Edition''], the official [[Minecraft Help Center]] article.
+
+== Navigation ==
+{{Navbox mods}}
+{{Navbox Java Edition}}
+{{Navbox Bedrock Edition}}
+
+[[Category:Mods]]
+[[Category:Game customization]]
+[[Category:Community]]
+
+[[de:Modifikation]]
+[[es:Mod]]
+[[fr:Mods]]
+[[hu:Modok]]
+[[it:Mod]]
+[[ja:Mod]]
+[[ko:모드]]
+[[nl:Mods]]
+[[pl:Modyfikacje]]
+[[pt:Mods]]
+[[ru:Модификации]]
+[[th:ม็อด]]
+[[uk:Модифікація]]
+[[zh:加载器Mod]]

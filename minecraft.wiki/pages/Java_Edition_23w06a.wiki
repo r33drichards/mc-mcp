@@ -1,0 +1,320 @@
+{{Infobox version
+| title = Minecraft 23w06a
+| image = 23w06a.jpg
+| image2 = Java Edition 23w06a.png
+| edition = Java
+| type = Snapshot
+| date = February 8, 2023
+| jsonhash = 92ed97b686fe8904d8ec00fd486c435582fd0155
+| clienthash = 824248d1bfd3ab53c6bd0b6568a4ad86d772bd04
+| clientmap = eb346f0182a6c81b3fcccbe586ebe9dcc729e498
+| serverhash = daaed1fac98d17bd76f8fd43268f1c1b97230b59
+| servermap = 1ce40d5437e644ef89545dc70f0efae1877c3ae4
+| parent = 1.19.4
+| prevparent = 1.19.3
+| prev = 23w05a
+| next = 23w07a
+| nextparent = 1.20
+}}<onlyinclude>
+
+'''23w06a''' is the fourth [[snapshot]] for [[Java Edition 1.19.4]], released on February 8, 2023,<ref>{{snap|23w06a|February 8, 2023}}</ref> which introduces [[display]] entities, {{cmd|damage}} command, damage types and [[tag]]s, and fixes bugs.
+
+== Additions ==
+=== Non-mob entities ===
+'''[[Display]] entities'''
+* Including block display, item display, and text display.
+** Like [[marker]]s, don't tick and have no collisions or physics.
+** Models render at entity position, with normal rotation around X and Y axis (so it can be controlled by teleport commands), but also with additional arbitrary model transform.
+* 2 new data types added, each of them has 2 forms, but only one for saving, as following:
+** <code>rotation</code>
+*** Quaternion form (used for saving): array of 4 numbers, describing components (x, y, z, w).
+*** Axis-angle form: object with following fields:
+**** <code>axis</code>: 3D vector.
+**** <code>angle</code>: Angle in radians.
+** <code>transformation</code>: Arbitrary affine transform, composed as following fields and following order:
+*** Matrix form: array of 16 numbers, describing row-major matrix.
+*** Decomposed form (used for saving): object with following fields:
+**** <code>translation</code>: 3D vector.
+**** <code>left_rotation</code>: <code>rotation</code> object.
+**** <code>scale</code>: 3D vector.
+**** <code>right_rotation</code>: <code>rotation</code> object.
+* Some properties of display entities can be interpolated, to create gradual changes over time for clients, instead of instantaneous jumps.
+** Display entities keep track of current and previous values of interpolated values:
+*** All properties marked as "interpolated" are part of a single interpolation set.
+*** Any update to interpolated property cause all values of interpolation set to be saved as "current".
+**** Data command executions that do not change value of property (even if it's present in NBT) do not count as updates.
+**** Updates are synchronized to clients at most once per tick, so multiple updates within command still count as single update.
+*** Previous current values are saved as "previous".
+*** If interpolation is enabled, entity transitions between "previous" and "current" values over time.
+*** Start of interpolation (entity fully in "previous" state) is defined by field <code>interpolation_start</code> (game time, in ticks).
+**** Set to -1 to load current game time instead.
+*** End of interpolation (entity fully in "current" state) is defined as <code>interpolation_start</code> + <code>interpolation_duration</code> (in ticks).
+* Every entity in family has the following fields:
+** <code>transformation</code>: transformation applied to model (after normal entity orientation). Defaults to identity. Interpolated.
+** <code>billboard</code>: option to control if entity should pivot to face player when rendered:
+*** <code>fixed</code>: No rotation (default).
+*** <code>vertical</code>: Entity can pivot around vertical axis.
+*** <code>horizontal</code>: Entity can pivot around horizontal axis.
+*** <code>center</code>: Entity can pivot around center point.
+** <code>brightness</code>: If present, overrides light values used for rendering. Omitted by default (which means rendering uses values from entity position). Object has two fields:
+*** <code>sky</code>: Value of skylight, from 0 to 15.
+*** <code>block</code>: Value of block light, from 0 to 15.
+** <code>view_range</code>: Maximum view range of this entity. Actual distance depends on client-side render distance and entity distance scalling. Default value 1.0 (roughly the same as fireball).
+** <code>shadow_radius</code>: Size of shadow. Defaults to 0 (no shadow). Interpolated.
+** <code>shadow_strength</code>: Strength of the shadow. Controls the opacity of the shadow as a function of distance to block below. Defaults to 1. Interpolated.
+** <code>width</code>, <code>height</code>: Describe size of culling bounding box. Bounding box spans vertically <code>y</code> to <code>y+height</code> and horizontally <code>width/2</code> in all directions from entity position. If either field is set to 0, culling is disabled. Both default to 0.
+** <code>glow_color_override</code>: Override glow border color. Defaults to 0 (use team color).
+* Besides common fields, these entity types also have some exclusive fields for their different usages:
+** Item display (<code>item_display</code>): Displays a single item stack (stack can be changed with commands by setting slot <code>inventory.0</code>).
+*** <code>item</code>: Item stack to display. Same format as in inventory.
+**** Example: <code>{id: "minecraft:dirt", Count: 1}</code>
+*** <code>item_display</code>: Describes item model transform applied to item (as defined in <code>display</code> section in model JSON)
+**** Values: <code>none</code> (default), {{cd|d=,|thirdperson_lefthand|thirdperson_righthand|firstperson_lefthand|firstperson_righthand|head|gui|ground|fixed}}.
+** Block display (<code>block_display</code>): Displays a block state, does not display block entities, even if they would normally be created on block placement (like [[chest]]).
+*** <code>block_state</code>: Block state to display. Same format as item held by [[endermen]].
+**** Example: <code>{Name:"minecraft:dirt"}</code>.
+** Text display (<code>text_display</code>): Displays a text component (backgrounds uses new shader types <code>rendertype_text_background</code> and <code>rendertype_text_background_see_through</code>).
+*** <code>text</code>: Text to display. Components are resolved with the context of the display entity.
+*** <code>line_width</code>: Line width used to split lines (note: new line can be also added with <code>\n</code> characters). Defaults to 200.
+*** <code>text_opacity</code>: Opacity (alpha component) of rendered text. Defaults to 255. Interpolated.
+*** <code>background</code>: Color of background. Includes alpha channel. Defaults to 0x40000000. Interpolated.
+*** <code>default_background</code>: If true, rendering uses default text background color (same as in chat). Defaults to false.
+*** <code>shadow</code>: Should text be displayed with shadow. Defaults to false.
+*** <code>see_through</code>: Should text be visible through blocks. Defaults to false.
+*** <code>alignment</code>: How text should be aligned.
+**** Values: <code>center</code> (default), <code>left</code>, <code>right</code>.
+
+=== Command format ===
+'''[[Game rule]]'''
+* Added <code>doVinesSpread</code>.
+** Defaults to <code>true</code>.
+** Determines if [[vines]] spread to nearby blocks.
+** Does not affect [[cave vines]], [[twisting vines]] and [[weeping vines]].
+
+'''{{cmd|damage}}'''
+* A new command to apply damage to entities, with following syntaxes:
+** {{cmd|link=none|damage <target> <amount> [<damageType>] [at <location>]}}
+** {{cmd|link=none|damage <target> <amount> [<damageType>] [by <entity>] [from <cause>]}}
+* Parameters:
+** <code>target</code>: The entity to damage.
+** <code>amount</code>: Amount of damage to inflict.
+** <code>damageType</code>: The type of damage to inflict.
+*** This determines how the damage affects the entity as well as which [[death message]] is displayed.
+** <code>location</code>: The location the damage originated at (when no entity caused the damage).
+*** For instance, it might represent the location of a [[bed]] exploding in [[the Nether]].
+** <code>entity</code>: The entity inflicting the damage.
+** <code>cause</code>: The cause of the damage, in the case of indirect damage.
+*** Example: When shot by an arrow, the <code>entity</code> is the [[arrow]] projectile while <code>cause</code> might be a [[skeleton]].
+
+'''{{cmd|execute}}'''
+* Added {{cmd|link=none|execute summon}} sub-command, with the following syntax:
+** {{cmd|link=none|execute summon <entity> -> execute}}
+* This sub-command is for summoning new entity and binding context (<code>@s</code>) to it. Meant to simplify entity setup and reduce need for raw NBT editing.
+
+=== General ===
+'''[[Data pack]]'''
+* Added [[damage type]]s, which are a new registry.
+** Determines how damage is handled by the game.
+** Includes which attributes the damage has as well as which death message is used when an entity dies due to that type of damage, example: <syntaxhighlight lang="json">
+{
+	"exhaustion": 0.1,
+ 	"message_id": "arrow",
+	"scaling": "when_caused_by_living_non_player"
+}</syntaxhighlight>
+** Fields:
+*** <code>message_id</code>: The message id used for deaths caused by this damage type.
+**** Combined with other string fragments to form a translation key.
+*** <code>exhaustion</code>: The amount of hunger [[exhaustion]] caused by this damage type.
+*** <code>scaling</code>: Whether this damage type scales with difficulty levels. Possible values:
+**** <code>never</code>: Damage is always the same.
+**** <code>always</code>: Damage always scales with difficulty.
+**** <code>when_caused_by_living_non_player</code>: Damage scales with difficulty if it was caused by a living entity who is not a player.
+*** <code>effects</code>: Optional field controlling how damage manifests when inflicted on players. Possible values:
+**** <code>hurt</code> (default): The default hurt sound.
+**** <code>thorns</code>: Thorns hurt sound.
+**** <code>drowning</code>: Drowning sound.
+**** <code>burning</code>: A single tick of burning sound.
+**** <code>poking</code>: Berry bush poke sound.
+**** <code>freezing</code>: Freeze tick sound.
+*** <code>death_message_type</code>: Optional field that controls if special death message variants are used. Possible values:
+**** <code>default</code> (default): No special death message logic is applied.
+**** <code>fall_variants</code>: Show a variant of fall damage death instead of a regular death message, e.g. <code>death.fell.assist.item</code>.
+**** <code>intentional_game_design</code>: Show the intentional game design message instead of a regular death message.
+** Damage type [[tag]]s control many aspects of how damage from different sources are interpreted.
+
+'''[[Options]]'''
+* Added "Damage Tilt" accessibility option, for controlling the amount of camera shake when being hurt.
+* Added a tooltip in the Key Binds screen that specifies which keybinds are conflicting.
+
+'''[[Tag]]'''
+* Added following damage type tags:
+** <code>#always_most_significant_fall</code>: contains <code>out_of_world</code>.
+** <code>#always_triggers_silverfish</code>: contains <code>magic</code>.
+** <code>#avoids_guardian_thorns</code>: contains <code>magic</code>.
+** <code>#burns_armor_stands</code>: contains <code>on_fire</code>.
+** <code>#bypasses_armor</code>: contains {{cd|d=and|on_fire|in_wall|cramming|drown|fly_into_wall|generic|wither|dragon_breath|freeze|starve|fall|freeze|stalagmite|magic|indirect_magic|out_of_world|sonic_boom}}.
+** <code>#bypasses_effects</code>: contains <code>starve</code>.
+** <code>#bypasses_enchantments</code>: contains <code>sonic_boom</code>.
+** <code>#bypasses_invulnerability</code>: contains <code>out_of_world</code>.
+** <code>#bypasses_resistance</code>: contains <code>out_of_world</code>.
+** <code>#damages_helmet</code>: contains {{cd|d=and|falling_anvil|falling_block|falling_stalactite}}.
+** <code>#ignites_armor_stands</code>: contains <code>in_fire</code>.
+** <code>#is_drowning</code>: contains <code>drown</code>.
+** <code>#is_explosion</code>: contains {{cd|d=and|fireworks|explosion|player_explosion|bad_respawn_point}}.
+** <code>#is_fall</code>: contains <code>fall</code> and <code>stalagmite</code>.
+** <code>#is_fire</code>: contains {{cd|d=and|in_fire|on_fire|lava|hot_floor|unattributed_fireball|fireball}}.
+** <code>#is_freezing</code>: contains <code>freeze</code>.
+** <code>#is_lightning</code>: contains <code>lightning_bolt</code>.
+** <code>#is_projectile</code>: contains {{cd|d=and|arrow|trident|mob_projectile|unattributed_fireball|fireball|wither_skull|thrown}}.
+** <code>#no_anger</code>: contains <code>mob_attack_no_aggro</code>.
+** <code>#no_impact</code>: contains <code>drown</code>.
+** <code>#witch_resistant_to</code>: contains {{cd|d=and|magic|indirect_magic|sonic_boom|thorns}}.
+** <code>#wither_immune_to</code>: contains <code>drown</code>.
+
+'''General'''
+* Added <code>--pidFile</code> argument to dedicated server command line for printing {{w|Process identifier|Process ID (PID)}} to file.
+
+== Changes ==
+=== Blocks ===
+'''[[Jukebox]]'''
+* Now emits a note particle above them while playing a [[music disc]], to match {{BE}}.
+
+'''[[Sculk sensor]]'''
+* Are now able to detect more actions included in several existing and new game events, such as the following:
+** <code>block_change</code>:
+*** Using shears on [[cave vines]], [[kelp]], [[twisting vines]] and [[weeping vines]].
+*** Picking an item from a cave vine or a [[lectern]].
+*** Interacting with items placed on both types of [[item frame]]s.
+*** Trampling [[farmland]] into regular [[dirt]].
+*** Charging up a [[respawn anchor]].
+*** Interacting with a [[composter]].
+** <code>block_place</code>:
+*** [[Turtle]] and [[frog]]s laying eggs.
+** <code>container_close</code>:
+*** Closing a [[minecart with chest]] or a [[boat with chest]].
+** <code>entity_dismount</code> (new game event, with signal 6):
+*** Dismount any passenger from any vehicle.
+** <code>entity_interact</code>:
+*** Dyeing a [[sheep]].
+*** Attaching or removing a [[lead]] from an entity.
+** <code>entity_mount</code> (new game event, with signal 7):
+*** Mount any passenger to any vehicle.
+
+=== Items ===
+'''[[Shield]]'''
+* A sound is now played when a shield is placed into the offhand slot.
+
+=== Non-mob entities ===
+'''[[Minecart with hopper]]'''
+* No longer aggravates [[piglin]]s when opened.
+
+=== General ===
+'''"[[Create New World]]" screen'''
+* Tabs can be switched with the keyboard by pressing {{key|Ctrl+Tab}} and {{key|Ctrl+Shift+Tab}}.
+* Specific tabs can also be navigated to by pressing {{key|Ctrl}} + <code>''Tab Number''</code>.
+* Added a screen to easily enable/disable experimental features.
+** Can always be found under the "More" tab.
+** In snapshots, a shortcut button can be found under the "Game" tab.
+
+'''[[Creative inventory]]'''
+* Added [[painting]] variants to "Functional Blocks" tab.
+** Paintings with pre-defined variant now display author, title and size in description when hovered over.
+** The "Operator Utilities" tab contains the four paintings that are not available in Survival mode.
+* Added [[fire charge]] to the "Ingredients" tab.
+
+'''[[Data pack]]'''
+* Increased data pack version to <code>12</code>.
+
+'''[[Options]]'''
+* Renamed "Notification Display Time" accessibility option to "Notification Time".
+* Texts in options buttons now have a scrolling animation whenever they are too large to fit.
+
+'''{{samp|[[options.txt]]}}'''
+* Removed <code>heldItemTooltips</code>.
+
+'''[[Predicate]]'''
+* Removed {{cd|d=and|is_projectile|is_explosion|bypasses_armor|bypasses_invulnerability|bypasses_magic|is_fire|is_magic|is_lightning}} fields from damage type predicates.
+* A new <code>tags</code> array has been added. Each entry has two fields:
+** <code>id</code>: The ID of a damage type tag.
+** <code>expected</code>: Whether the damage is expected to have or not have the tag for the predicate to match.
+
+== Experimental ==
+These changes only take effect when the 1.20 experimental data pack is enabled.
+
+=== Changes ===
+==== Item ====
+'''Trimmed [[armor]]'''
+* Swapped <code>iron</code> and <code>iron_darker</code> palette, then made <code>iron_darker</code> darker overall.
+* Added a darkest pixel to <code>chestplate_trim</code> trim item texture.
+
+== Fixes ==
+{{fixes|fixedin=23w06a
+|;From released versions before 1.19
+|12729|Z-fighting can be seen on leggings and boots worn by entities.
+|145765|Both "Text Background" settings strings are overflowing the buttons.
+|156443|In some languages, text is too long and escapes buttons.
+|198874|Opening a Minecart with Hopper provokes Piglins, even though opening a Hopper doesn't provoke them.
+|209622|Sculk sensors do not detect item frame / glow item frame interactions.
+|209896|Sculk sensors are not activated upon placing glowstone into respawn anchors.
+|209907|Sculk sensors are not activated upon attaching or removing leads from fences.
+|209929|Sculk sensors are not activated upon filling composters.
+|210276|Sculk sensors are not activated upon trampling farmland.
+|210294|Sculk sensors are not activated upon mounting or dismounting any non-biological entities.
+|210334|Sculk sensors are not activated upon sheep being dyed.
+|210707|Sculk sensors are not activated upon closing chest boats, chest rafts, or chest minecarts.
+|210715|Sculk sensors are not activated upon attaching or removing leads from entities.
+|212501|Sculk sensors are not activated upon collecting books from lecterns.
+|213803|Sculk sensors are not activated upon harvesting glow berries from cave vines.
+|215767|Sculk sensors do not detect turtles laying an egg.
+|233972|Text can appear outside of buttons in the key binds menu when assigning keys to functions or when multiple functions are assigned to the same key.
+|236988|Sculk sensors are not activated upon using shears on cave/twisting/weeping vines or kelp.
+|237450|The "Simulation Distance" text can appear outside of its slider.
+|237879|Sculk sensors are not activated upon villagers working with composters.
+|249878|Text can appear outside of the "Device" button within the music and sound options menu.
+|;From 1.19
+|251917|No gear equipping sound or subtitle when a shield is placed into the offhand slot.
+|251934|Sculk sensors are not activated upon frogs laying frogspawn.
+|252434|Sculk sensors are activated when interacting with fences while holding leads.
+|;From 1.19.2
+|257558|Sculk sensors are activated upon interacting with minecarts with hoppers.
+|257873|Swapping an armor piece with an armor piece of the same type doesn't play its equipping sound.
+|258156|The Warden does not deal the same amount of damage to the player and entities in difficult mode.
+|;From 1.19.3
+|258622|Fire charge isn't in the Ingredients tab in creative inventory.
+|;dev
+|259193|The "Notification Display Time" text can appear outside of its slider.
+|259195|Using {{cmd|ride}} on an entity in another dimension causes client/server desync.
+|259197|The damage tilt effect isn't accessible-friendly.
+|259221|Using the {{cmd|ride}} command on invalid entities teleports players to their position.
+|259224|Blocking attacks with shields causes the damage tilt to play and red damage tint to show.
+|259227|{{cmd|execute if loaded <pos>}} alone always fails.
+|259233|Argument error messages for low values are inconsistently spelled.
+|259245|An enderman ridden with {{cmd|ride}} constantly teleports if the player looks at the enderman's eyes.
+|259247|The {{cmd|execute on owner}} sub-command does not select the owner of a horse, donkey, llama, or mule.
+|259360|The {{cd|selectWorld.mapFeatures.info}} string is missing a comma after the word "Shipwrecks".
+|259432|Single missing pixel in {{cd|chestplate_trim}} item texture.
+|259442|Can't shift click items into second anvil slot.
+|259454|Loot table for hoglin stable chests uses the loot table for bridge chests instead.
+|259468|{{cd|empty_slot_amethyst_shard}} does not show in Smithing Table slot.
+|;previous
+|259599|Curse of Binding armor can be removed by swapping armor with right click in hotbar.
+|259635|The color palettes for {{cd|iron}} and {{cd|iron_darker}} trims are flipped.
+|259640|The lightest three colors of {{cd|iron}} and {{cd|iron_darker}} color palettes are identical.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|6bg3O6u-ZzQ}}
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:23w06a]]
+[[es:Java Edition 23w06a]]
+[[fr:Édition Java 23w06a]]
+[[ja:Java Edition 23w06a]]
+[[pt:Edição Java 23w06a]]
+[[ru:23w06a (Java Edition)]]
+[[zh:Java版23w06a]]

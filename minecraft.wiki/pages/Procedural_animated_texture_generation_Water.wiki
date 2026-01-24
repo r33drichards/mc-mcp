@@ -1,0 +1,31 @@
+==== Still water ====
+Adapted from https://github.com/UnknownShadow200/ClassiCube/wiki/MInecraft-Classic-lava-animation-algorithm#water
+
+Every frame, for each position in the still water texture array, the respective values for <samp>soup_heat</samp>, <samp>pot_heat</samp> and <samp>flame_heat</samp> are calculated as detailed below:
+
+* {{code|Calculates a local_soup_heat equal to the sum of the 3x1 soup_heat neighborhood around the current element.}} 
+* {{code|Calculates the new soup_heat as the sum of the local_soup_heat divided by 3.3F plus the pot_heat times 0.8F}}
+* {{code|Calculates the new pot_heat as the current pot_heat plus the flame_heat times 0.05. pot_heat is clamped to a minimum of 0.}}
+* {{code|Calculates the new flame_heat as the current flame_heat minus 0.1F.}}
+** {{code|However, there is a 0.05 in 1 random chance that flame_heat is set to 0.5.}}
+
+Once the above arrays have been updated, for each pixel in the water texture, the color and alpha values are calculated based on <samp>soup_heat</samp>:
+
+* {{code|Calculates a color_heat as the soup_heat clamped between 0 and 1 inclusive.}}
+* {{code|Then it calculates the color components of the pixel as follows:}}
+** {{code|float red {{=}} 32 + color_heat^2 * 32}}
+** {{code|float green {{=}} 50 + color_heat^2 * 64}}
+** {{code|float blue {{=}} 255}}
+** {{code|float alpha {{=}} 146 + color_heat^2 * 50}}
+
+The <samp>red</samp>, <samp>green</samp> and <samp>blue</samp> values are then converted to bytes and assigned to the texture accordingly.
+
+==== Flowing water ====
+{{info needed section|
+* how the flowing texture was generated - presumably similarly to still water
+* how it was generated before late infdev added the translational aspect}}
+In addition, the flowing water texture also uses a spatial translation to give the appearance of movement. This transformation moves the flowing water texture downwards by one pixel after a fixed amount of time,{{info needed|how long is this interval of time?}} wrapping the bottom layer of the texture back to the top.
+
+<noinclude>
+[[pt:Geração de textura animada processual/Água]]
+</noinclude>

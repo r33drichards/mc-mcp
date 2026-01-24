@@ -1,0 +1,52 @@
+{{More images}}
+{{Infobox version
+| title = v0.7.4
+| edition = Editor
+| type =
+| date = October 9, 2024
+| client = 1.21.50.20
+| prevparent = 0.7.0
+| prev = 0.7.3
+| next = 0.7.5
+| nextparent = 0.8.0
+}}
+'''Bedrock Editor v0.7.4''' is a minor alpha release for the [[Bedrock Editor]] released on October 9, 2024.<ref>https://github.com/Mojang/minecraft-editor/discussions/201</ref><ref>https://feedback.minecraft.net/hc/en-us/articles/30892949042189</ref>
+
+== Changes ==
+'''Brush tool'''
+* Selection now has a freehand select that uses brushes to paint
+* Updated general brush functionality:
+** Brush shapes are visualized as grey wireframes, and show only affected blocks in yellow
+** Cursor Control / Mouse Mode is now using a common control which is shared across extensions
+** Brush Selection, Masking and Brush Properties is now using a custom control which is shared across extensions
+** Brush Painting now visualizes only affected blocks
+* Added support for brush shape offsets.
+
+'''API'''
+* Added {{cd|addToggleGroup}} function to {{cd|IPropertyPane}} API to create toggle groups with selectable icon buttons.
+* Added an optional {{cd|infoTooltip}}: {{cd|TooltipInteractiveContent}} property to {{cd|IRootPropertyPane}} API, displayed as an icon in the drawer header. Interactive tooltips remain active on hover and support links and paragraphs.
+* Added {{cd|serialize(obj)}} and {{cd|deserialize(string)}} functions. These act like {{cd|JSON.stringify/JSON.parse}} but will use custom {{cd|serializers/deserializers}} registered with {{cd|registerSerializationForType}}.
+** {{cd|CompoundBlockVolume}} and {{cd|BlockVolume}} are able to be serialized and deserialized with these functions.
+* Added {{cd|registerSerializationForType<T>(constructor, name, serializer, deserializer)}} which registers any type with custom serialization/deserialization for serialize and deserialize.
+* Updated Block Masks to work when empty (always match).
+* Added {{cd|cancel}} property to {{cd|endPainting()}}.
+* Added mouse button event data to the widget state change event so that server scripts can track mouse button events (press, release, drag) and the state of modifier keys ({{keys|shift}}, {{keys|ctrl}}).
+* Changed deleted {{cd|fillColor}} and {{cd|outlineColor}} in {{cd|CursorProperties}} so that causes the Cursor colors to return back to the colors of those keys in the currently-selected theme.
+
+'''Others'''
+* Added a new settings screen in View > View Settings to configure certain view related settings (like invisible block visibility and chunk boundaries)
+* Added control buttons next to the hotbar to switch the active palette and manage other palettes.
+* Updated Selection Volume and Cursor colors to default to the colors of those keys in the currently-selected theme. 
+* Changed Client Widget X, Y, and Z arrows to always be the colors of those keys in the currently-selected theme. 
+
+== Fixes ==
+* Fixed issues with selection being cleared on tool focus change.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Editor versions|alpha}}
+
+[[pt:Bedrock Editor 0.7.4]]
+[[uk:0.7.4 (Bedrock Editor)]]

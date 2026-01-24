@@ -1,0 +1,412 @@
+{{exclusive|bedrock|education}}
+{{Infobox command
+|name=playanimation
+|oplevel=1
+|cheat=1
+}}
+
+Sends an animation request to clients to make one or more [[entities]] play an [[animation]]. This [[command]] has an equivalent function in the script API: [https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/entity#playanimation Entity.playAnimation].
+
+== Usage ==
+This command only sends an animation request to client sides. The server side doesn't process the animation at all.
+
+If the target entity is not loaded on the client, the client cannot receive the animation request.
+
+The client processes the request based on the contents of its [[resource packs]], so players using different resource packs in the same [[server]] may see different animations.
+
+=== Animation controller ===
+
+Animation controllers are state-machines. State machines are a special kind of logic management, that relies on a series of states. Each state has three properties:
+* What to do in the current state
+* Transitions
+* The fade-out duration when transitioning to another state
+Each transition has two properties:
+* The target state to transition into
+* The condition to transition into the target state
+A state machine can be in only one state at a time. For example if you play an animation on the animation controller <code>controller.animation.player.root</code> on a player, then any other player animations such as sneaking, walking, hand moving, swimming, sleeping, jumping etc. won't play on that player, until this controller returns to a vanilla state. 
+
+In an animation controller, there are two types of states:
+* '''Animation Specified State'''
+** Created by <code>/playanimation</code>.
+** Doesn't have a name. The <code>animation</code> is used as the unique identifier of the state.
+** Contains <code>animation</code> for what to do in the current state, <code>blend_out_time</code> for fade-out duration, and transitions. Each transition contains a <code>next_state</code> and a <code>stop_expression</code>.
+** The transitions are in an ordered list. Transitions added into the list earlier are checked earlier in each tick. So, when there are multiple transitions whose conditions are met, only the one that is added into the list earlier is executed.
+* '''Resource Pack Defined State'''
+** Defined by resource packs.
+** Has a name. Its name is used as the unique identifier of the state.
+** Contains <code>animations</code> for what to do in the current state, <code>transitions</code> for the transitions, and <code>blend_transition</code> for fade-out duration.
+** The transitions are in an ordered list. Transitions at the front of the list are checked earlier in each tick. So, when there are multiple transitions whose conditions are met, only the topmost one is executed.
+
+<code>/playanimation</code> command cannot interact with Resource Pack Defined States, except to add a transition (into an Animation Specified State) with <code>next_state</code> being one of them.
+
+Animation controllers can be defined for an entity type by resource packs with several Resource Pack Defined States (see also [https://learn.microsoft.com/en-us/minecraft/creator/reference/content/animationsreference/examples/animationcontroller official doc]). Animation controllers can also be created by this command as described below. There are also animation controllers in behavior packs running on the server side, but they do not control the animation.
+
+Animation controllers on an entity are not saved and are cleared when the entity becomes unloaded on the client, or when the player leaves and rejoins the game.
+
+Animation controllers on an entity return to their default states when the resource pack is reloaded by minimizing or taping out the client game window, but states in the animation controllers won't be cleared.
+
+Animation controller <code>controller.animation.player.root</code> on a player returns to its default state when the player opens the dressing room, but states in the animation controller won't be cleared.
+
+=== Behavior ===
+When the client receives the request, it first creates the specified animation controller on this entity if not existing. Then, the client adds a new Animation Specified State of the specified <code>animation</code> into the controller and sets the <code>blend_out_time</code> of this state. Then adds a transition with the <code>next_state</code> and the <code>stop_expression</code> into this state. Finally, it sets the current state of the controller to this new state.
+
+If the specified controller already exists on the targeted entity, and the Animation Specified State of the specified <code>animation</code> already exists in the controller, when the client receives the request, the <code>blend_out_time</code> of this Animation Specified State is updated to the new value. And then, if in this state there's no transition that has the same <code>next_state</code> and the same <code>stop_expression</code>, a new transition with the <code>next_state</code> and the <code>stop_expression</code> is added into this state. Finally, it sets the current state of the controller to this state.
+
+If specifying an animation controller defined by resource packs, the command work the same as described above. But note that because this command cannot interact with Resource Pack Defined States (except to add a transition with <code>next_state</code> being one of them), after playing an animation, to make the controller return to a Resource Pack Defined State, you have to make sure an Animation Specified State has a transition with <code>next_state</code> being a Resource Pack Defined State.
+
+==List of animations==
+
+{| class="wikitable" style="text-align:center;"
+! style="text-align:left;" | Name
+! style="text-align:left;" | Description
+! style="text-align:left;" | Version added
+! style="text-align:left;" | Stackable
+! style="text-align:left;" | Needs animation controller
+! style="text-align:left;" | Possible usage
+! style="text-align:left;" | Works in EDe
+|-
+| style="text-align:left;" |animation.humanoid.base_pose
+| style="text-align:left;" |Original animation of humanoid (player)
+! style="text-align:left;" | 
+! style="text-align:left;" |No
+! style="text-align:left;" |No
+! style="text-align:left;" |Reset any animation
+|-
+| style="text-align:left;" |animation.ghast.scale
+| style="text-align:left;" |Scales body, legs, arms to size of ghast.
+! style="text-align:left;" | 
+! style="text-align:left;" | Yes
+! style="text-align:left;" | No
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.humanoid.riding.legs
+| style="text-align:left;" |Animation of sitting.
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.humanoid.celebrating
+| style="text-align:left;" |This animation plays when pillagers celebrate their victory in raid.
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.humanoid.big_head
+| style="text-align:left;" |This just scales your head.
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.agent.move
+| style="text-align:left;" |Levitates your body
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.armor_stand.athena_pose
+| style="text-align:left;" |
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.armor_stand.brandish_pose
+| style="text-align:left;" |
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.armor_stand.cancan_a_pose
+| style="text-align:left;" |
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.camel.walk
+| style="text-align:left;" |This animation will make your body wobbly
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.camel.sit_down
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.camel.sit
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.camel.stand_up
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.camel.dash
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.sniffer.walk
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.sniffer.longsniff
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.sniffer.search
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.sniffer.dig
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.sniffer.stand_up
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.sniffer.feeling_happy
+| style="text-align:left;" |
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.humanoid.tooting_goat_horn
+| style="text-align:left;" |Animation makes you point right hand.
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" | Can be used to point item in your hand, for showing it.
+|-
+| style="text-align:left;" |animation.humanoid.holding_brush
+| style="text-align:left;" |Makes item in your hand bigger.
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | Yes
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.humanoid.brushing
+| style="text-align:left;" |This animation will make item your holding move like brush.
+! style="text-align:left;" | 1.20
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.armadillo.peek
+| style="text-align:left;" |Moves your head side to side then dislocates it.
+! style="text-align:left;" | 1.21
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.armadillo.unroll
+| style="text-align:left;" |
+! style="text-align:left;" | 1.21
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.breeze.idle
+| style="text-align:left;" |Slowly 1 pixel wide moves your head down and up.
+! style="text-align:left;" | 1.21
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.breeze.jump
+| style="text-align:left;" |Your body charges then jumps really high.
+! style="text-align:left;" | 1.21
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.breeze.shot
+| style="text-align:left;" |
+! style="text-align:left;" | 1.21
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.player.holding_heavy_core
+| style="text-align:left;" |Makes item in your hand smaller.
+! style="text-align:left;" | 1.21.50
+! style="text-align:left;" | Yes
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.armor_stand.holding_heavy_core
+| style="text-align:left;" | Same as animation.player.holding_heavy_core
+! style="text-align:left;" | 1.21.50
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.creaking.walk
+| style="text-align:left;" |You’ll be twitching when moved.
+! style="text-align:left;" | 1.21.50
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.creaking.attack
+| style="text-align:left;" |Your body would twitch.
+! style="text-align:left;" | 1.21.50
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.creaking.sway
+| style="text-align:left;" |Your arm would twitch.
+! style="text-align:left;" | 1.21.50
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|-
+| style="text-align:left;" |animation.creaking.twitch
+| style="text-align:left;" |Your player will twitch.
+! style="text-align:left;" | 1.21.50
+! style="text-align:left;" | 
+! style="text-align:left;" | 
+! style="text-align:left;" |
+|}
+
+==Syntax==
+
+:<code>playanimation <entity: target> <animation: string> [next_state: string] [blend_out_time: float] [stop_expression: string] [controller: string]</code>
+
+==Arguments==
+
+{{argument|be=1|entity: target|CommandSelector<Actor>}}
+: Specifies the targeted entities.
+: {{arg desc|be=actor}}
+
+{{argument|be=1|animation: string|basic_string}}
+: Specifies a state (Animation Specified State) by specifying an animation. The state is added into the controller and set as current state of the controller.
+: {{arg desc|be=basic_string}}
+: Should be an [[Animation names|animation name]] (e.g. <code>animation.wolf.angry</code> for any entity type), or an animation shortcut defined under the Json path <code>"minecraft:client_entity"."animations"</code> in the <samp><a_resource_pack>/entity/<entity_name>.entity.json</samp> file (e.g. <code>wolf_angry</code> for only wolf entity). Animation controller shortcuts under this Json path do not work here.
+: Be careful when using animations with <code>.v1.0</code> at the end because it may be incompatible with the version of current world, this may result in lagging and a possible crash.
+: If the entered string isn't a valid animation in resource packs, the client does not respond to the animation request at all.
+
+{{argument|be=1|next_state: string|basic_string}}
+: Specifies the <code>next_state</code> by specifying an animation (of an Animation Specified State) or a name (of a Resource Pack Defined State). Defaults to {{cd|"default"}} if not specified.
+: {{arg desc|be=basic_string}}
+: Can be an animation shortcut defined under the Json path <code>"minecraft:client_entity"."animations"</code> in the <samp><a_resource_pack>/entity/<entity_type>.entity.json</samp> file (e.g. <code>wolf_angry</code> for only wolf entity). Animation controller shortcuts under this Json path do not work here. Animation names do not work here.
+: Can also be the name of a Resource Pack Defined State under the Json path <code>"animation_controllers"."<controller_name>"."states"</code> in the <samp><a_resource_pack>/animation_controllers/<entity_type>.animation_controller.json</samp> file.
+: If a Resource Pack Defined State and an animation shortcut have the same name, the next state becomes an Animation Specified State that plays both animations in the Resource Pack Defined State and the animation from shortcut.
+: If the entered string is a valid animation shortcut, but there's no such an Animation Specified State in the controller, the controller can still transition into this non-existent state and be stuck there. It cannot transition into other states, until this state is created into this controller by another <code>/playanimation</code> command, or the controller is changed into another state by <code>/playanimation</code> command.
+: If the entered string isn't a valid animation shortcut or a valid Resource Pack Defined State name, the next state becomes an Animation Specified State that plays no animation.
+
+{{argument|be=1|blend_out_time: float|float}}
+: Specifies the duration of the fade-out when the state transitions into another state. Defaults to 0 if not specified.
+: {{arg desc|be=float}}
+
+{{argument|be=1|stop_expression: string|basic_string}}
+: Specifies the conditions for transitioning into the next state.
+: {{arg desc|be=basic_string}}
+: Should be a [[Molang|Molang expression]]. Defaults to {{cd|query.any_animation_finished}} if not specified.
+: For example, if you want the animation to end when the player starts sneaking: <code>"query.is_sneaking"</code> or <code>"return query.is_sneaking;"</code>.
+: For another example, after running the following two commands, when the player jumps, it quickly switches between the two animations:
+:* <code>/playanimation @a riding.legs riding.arms 0 query.is_jumping ''controller_name''</code>
+:* <code>/playanimation @a riding.arms riding.legs 0 query.is_jumping ''controller_name''</code>
+:Since this Molang expression is executed every tick when the controller is in this state (the Animation Specified State specified by the <code>animation: string</code>), this can also be used to set entity Molang variables. An example of this is that using <code>"variable.test_variable = 1234; return 0;"</code> sets the Molang variable <code>variable.test_variable</code> to 1234. It is possible to set multiple Molang variables at once with this, an example of that is <code>"variable.test_variable_a = 1234; variable.test_variable_b = -9876; return 0;"</code>. If you set multiple variables, each one needs to be separated by a semicolon (;). This can be useful for animations that require certain entity Molang variables to be set in order to work and function properly.
+: Note: When setting the entity Molang variables, <code>return 0;</code> is used to make the controller stuck in the state, which can be omitted because complex Molang expressions return 0 by default when there's no <code>return</code> expression, e.g. <code>"variable.variable_name = value;"</code>. But the semicolon right after the value is required, or else it just produces a content log error. Another important thing to note is that this is client-side only, meaning that the variables are only set for clients who has the entity loaded when the command was run, and the variables reset when the entity is unloaded from the client. Also, it is important to pay attention to the checking order between multiple transitions as [[#Animation controller|described above]]. Also note that a transition that has the same <code>next_state</code> and the same <code>stop_expression</code> with an existing transition cannot be added into the transitions list as [[#Behavior|described above]], but adding some spaces into <code>stop_expression</code> can avoid this. Also, the animation specified in the <code>animation: string</code> must be a valid animation in order for setting the Molang variables to work.
+
+{{argument|be=1|controller: string|basic_string}}
+: Specifies a controller on the target entity. Defaults to {{cd|"__runtime_controller"}} if not specified.
+:{{arg desc|be=basic_string}}
+:Can be any string, or an animation controller from a resource pack defined under the Json object <code>"animation_controllers"</code> in the <samp><a_resource_pack>/animation_controllers/<entity_type>.animation_controller.json</samp> file.
+
+==Result==
+
+{{Result table|onlybe=1}}
+{{Result table|the arguments are not specified correctly||unparseable}}
+{{Result table|if <code>entity: target</code> fails to resolve to one or more online entities (named players must be online)||fail}}
+{{Result table|succeed}}
+{{Result table}}
+
+==Output==
+
+{{Output table|onlybe=1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+==Example==
+
+To make piglin brutes perform a "victory dance": 
+:{{Cd|code=/playanimation @e[type=piglin_brute] animation.piglin.celebrate_hunt_special a 0}}
+To make the foxes sit down until they leave the ground. Once leaving the ground, the foxes become in sleep state:
+:<code>/playanimation @e[type=fox] sit sleep 0 "!query.is_on_ground" ''controller_name''</code>
+:Or:
+:<code>/playanimation @e[type=fox] sit sleep 0 "query.is_on_ground == 0.0" ''controller_name''</code>
+To make a very large entity (change the last value to something else and rerun to make it even bigger):
+:<code>/playanimation @s animation.ghast.scale a 0 false la</code>
+To make a player sit down until they move:
+:<code>/playanimation @a animation.player.riding.legs a 0 query.is_moving ''controller_name''</code>
+To make a player's legs flip upside down into their body until they jump:
+:<code>/playanimation @a animation.player.move.legs.inverted a 0 query.is_jumping ''controller_name''</code>
+To make a player's body freeze and stop all player animations from playing on that player (Note: the animation controller has to be <code>controller.animation.player.root</code> for this to work):
+:<code>/playanimation @s sleeping a 0 true controller.animation.player.root</code>
+To make the player upside down (''run the previous command first''):
+:#<code>/playanimation @s animation.player.base_pose.upside_down a 0 false a</code>
+:#<code>/playanimation @s animation.player.move.legs.inverted a 0 false b</code>
+:#<code>/playanimation @s animation.player.holding a 0 false c</code>
+:#<code>/playanimation @s animation.player.bob a 0 false d</code>
+:#<code>/playanimation @s animation.player.look_at_target.inverted a 0 false e</code>
+:#<code>/playanimation @s animation.player.move.arms a 0 false f</code>
+:#<code>/playanimation @s animation.player.attack.positions a 0 false g</code>
+:#<code>/playanimation @s animation.player.attack.rotations a 0 false h</code>
+
+==History==
+
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.100|dev=beta 1.16.100.52|Added {{cmd|playanimation|link=none}}.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/playanimation?view=minecraft-bedrock-stable|title=<code>/playanimation</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/playanimation]]
+[[ja:コマンド/playanimation]]
+[[pt:Comandos/playanimation]]
+[[ru:Команды консоли/playanimation]]
+[[zh:命令/playanimation]]

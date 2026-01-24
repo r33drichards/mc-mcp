@@ -1,0 +1,262 @@
+{{Infobox version
+|title=Minecraft 17w17a
+|edition=Java
+|image=17w17a.png
+|image2=Java Edition 17w17a.png
+|type=Snapshot
+|date=April 26, 2017
+|parent=1.12
+|clienthash=fa78ab696aa02914171deb57e31cfb737506f272
+|jsonhash=b2ffee6fc34b1f2cba708c544492ea939d6773fc
+|serverhash=3795d253cfef44f1f1467422b4399d1770484dc0
+|prevparent=1.11.2
+|prev=17w16b
+|next=17w17b
+|nextparent=1.12.1
+}}
+<onlyinclude>
+
+'''17w17a''' is the eighth [[snapshot]] for [[Java Edition 1.12]], released on April 26, 2017.<ref>{{snap|17w17a|April 26, 2017}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Advancement]]s'''
+* Added 11 advancements and 2 advancement tabs: "Nether" and "The End".
+** Advancements added in this version include:
+{{AdvancementTable|Nether}}
+{{AdvancementRow
+|title=Nether
+|bg=plain
+|Nether Wart
+|Bring summer clothes
+|—
+|Enter the [[nether portal block]].
+|nether/root
+}}
+{{AdvancementRow
+|title=Return to Sender
+|bg=fancy
+|Ghast Tear
+|Destroy a Ghast with a fireball
+|Nether
+|Kill a [[ghast]] by deflecting a ghast fireball back into it via hitting or shooting a projectile at the fireball.
+|nether/return_to_sender
+}}
+{{AdvancementRow
+|title=A Terrible Fortress
+|bg=plain
+|Nether Bricks
+|Break your way into a Nether Fortress
+|Nether
+|Enter a [[nether fortress]].
+|nether/find_fortress
+}}
+{{AdvancementRow
+|title=Spooky Scary Skeleton
+|bg=plain
+|Wither Skeleton Skull
+|Obtain a wither skeleton's skull
+|A Terrible Fortress
+|Have an [[blaze rod]] in the inventory.
+|nether/get_wither_skull
+}}
+{{AdvancementTable|foot}}
+{{AdvancementTable|The End}}
+{{AdvancementRow
+|title=The End
+|bg=plain
+|End Stone
+|Or the beginning?
+|—
+|Enter the [[end portal block]].
+|end/root
+}}
+{{AdvancementRow
+|title=Free the End
+|bg=plain
+|Dragon Head
+|Good luck
+|The End
+|Kill the [[ender dragon]].
+|end/kill_dragon
+}}
+{{AdvancementRow
+|title=The Next Generation
+|bg=oval
+|Dragon Egg
+|Hold the Dragon Egg
+|Free the End
+|Have a [[dragon egg]] in the inventory.
+|end/dragon_egg
+}}
+{{AdvancementRow
+|title=The End... Again...
+|bg=oval
+|End Crystal
+|Respawn the ender dragon
+|Free the End
+|—
+|end/respawn_dragon
+}}
+{{AdvancementRow
+|title=You Need a Mint
+|bg=oval
+|Dragon's Breath
+|Collect dragon's breath in a glass bottle
+|Free the End
+|Have a bottle of [[dragon's breath]] in the inventory.
+|end/dragon_breath
+}}
+{{AdvancementRow
+|title=City at the End of the Game
+|bg=plain
+|Purpur Block
+|Go on in, what could happen?
+|Remote Getaway	
+|Enter an [[end city]].
+|end/find_end_city
+}}
+{{AdvancementRow
+|title=Great View From Up Here
+|bg=fancy
+|Shulker Shell
+|Levitate for at least 30 seconds
+|City at the End of the Game
+|Have the [[Levitation]] effect for at least 30 seconds.
+|end/levitate
+}}
+{{AdvancementTable|foot}}
+* New <code>levitation</code> trigger, with the following conditions:
+** <code>duration</code> - number of ticks the player is levitating for.
+** <code>distance</code> - distance the player levitated so far.
+** Both can be either a range (<code>min</code> and / or <code>max</code>) or a value (<code>value</code>)
+* New <code>feature</code> condition added to the <code>location</code> trigger.
+** The value is a feature name as used in the {{cmd|locate}} command.
+
+'''[[NBT format]]'''
+* <code>UpdateLastExecution</code> (byte):
+** Defaults to <code>1b</code>. If set to <code>0b</code>, loops can be created, where the same command block can run multiple times in one tick.
+* <code>LastExecution</code> (long):
+** Stores the tick a chain command block was last executed in.
+* <code>toBeDisplayed</code> (list):
+** Added into the <code>recipeBook</code> compound of the player.
+** Within are recipe names that the player has unlocked but not viewed in the crafting helper yet.
+** Used for remembering to play the animation for new recipes.
+
+'''[[Sound]]s'''
+* New [[note block]] sounds:
+** {{BlockLink|Bone block}} = xylophone
+** {{BlockLink|Block of gold}} = bell
+** {{BlockLink|Clay}} = flute
+** {{BlockLink|Packed ice}} = chime
+** {{BlockLink|Wool}} = guitar
+
+* New sound effects:
+** [[Parrot]]s
+** [[Illusioner]]s
+** Casting a [[fishing rod]]
+** Reeling in a fishing rod
+** Throwing an [[eye of ender]]
+** An eye of ender exploding or popping back into item form
+** Putting ender eye in [[end portal frame]]s
+** Completing the [[end portal]] and activating it
+** [[Boat]] paddles
+
+== Changes ==
+=== Blocks ===
+'''[[Terracotta]]'''
+* It has now unique colors on the [[map]].
+
+'''[[Bed]]s'''
+* Each leg can now be [[Resource pack|textured]] individually.
+
+=== Mobs ===
+'''[[Illusioner]]s'''
+* Its Blindness spell is only cast if the [[regional difficulty]] is 3 or above.
+
+'''[[Shulker]]s'''
+* Reverted the purple shulker color change from [[17w16a]].
+
+=== Command format ===
+* {{cmd|advancement}}:
+** Added five modifiers to the {{cmd|advancement grant}} and {{cmd|advancement revoke}} commands:
+*** "everything" - all advancements, no specification required (same as "*")
+*** "from" - this advancement, its children, and their children, etc.
+*** "until" - this advancement, its parent, and its parent, etc.
+*** "through" - both of the above
+*** "only" - this advancement, and nothing else
+** Examples:
+*** {{cmd|advancement grant dinnerbone until story/form_obsidian}}
+*** {{cmd|advancement revoke dinnerbone everything}}
+
+=== General ===
+'''[[Advancement]]s'''
+* Changed and moved around many existing advancements:
+** "Withering Heights" is now an offspring of "Spooky Scary Skeleton".
+** "Into Fire" is now an offspring of "A Terrible Fortress".
+** "Remote Getaway" is now an offspring of "Free the End", and works properly when player throws an ender pearl into the [[gateway]].
+** "Sky's the Limit" is now an offspring of "City at the End of the Game", and is now a "goal" type advancement.
+** "Zombie Doctor" and "Eye Spy" are now offspring of "We Need to Go Deeper".
+** "Eye Spy" now requires the player to enter the [[stronghold]].
+** "A Weak Brew" was replaced with "Local Brewery" (<code>nether/brew_potion</code>), which is an offspring of "Into Fire" and requires the player to retrieve any potion from a [[brewing stand]].
+** Illusioner now counts for "Monster Hunter" and is required for "Monsters Hunted", which makes the advancement unobtainable.
+** "Sniper Duel" not requires a skeleton to be killed.
+* Advancements can now execute commands when achieved.
+** The command written in the rewards section of the advancement is executed as the player (for example writing <code>/say @s</code> would be equivalent to <code>/execute <the_player_who_obtained_this_advancement> ~ ~ ~ say @s</code>)
+* Advancement icons now allow data values.
+** Specifically, <code>icon</code> has switched from being a string to an object.
+*** Within it are a required <code>item</code> string (specifying the item ID) and an optional <code>data</code> integer, specifying the metadata of the item
+* The "damage flags object" now contains two new entity objects:
+** <code>source_entity</code> - specifies the "owner" of the damage that was dealt.
+** <code>direct_entity</code> - specifies the direct cause of the damage.
+
+'''[[Crafting]]'''
+* Optimized the [[recipe book]].
+
+== Fixes ==
+{{fixes|fixedin=17w17a|prefix=Minecraft
+|;old
+|116623|Stained hardened clay / terracotta blocks do not have correct color on map
+|;dev
+|114979|advancement command doesn't allow bulk grant/revoking
+|115056|"Remote Getaway" advancement cannot be obtained by using ender pearls
+|115170|Advancements Test Command Success Uses the Wrong Translation
+|115173|Unsuccessful advancement test command has player and advancement name interchanged
+|115442|Advancement alerts aren't aligned to the top-right corner
+|115574|"Sniper Duel" advancement triggered when killing non-skeleton mob at distance
+|115740|Inconsistent error message for /advancement grant @p *
+|115805|Fences/panes/walls/bars/torches connect to a number of non-solid blocks
+|115821|Tooltips with long titles in the advancements menu are cut off
+|115880|'Take Aim' advancement granted by projectiles other than arrows
+|115936|Narrator does not properly read output from /say, /tell and /tellraw command
+|115940|Division by zero crash with alternating /recipe commands
+|116016|Advancement "adventure/trade" uses criteria named "shot_arrow"
+|116245|"Zombie Doctor" advancement description has a period, while others don't
+|;previous
+|116471|Conditional command blocks SuccessCount doesn't update
+|116514|"durability" option for item-based triggers succeeds for items without durability
+|116516|"item_durability_changed" triggers when base change is 0, but not when Unbreaking reduces the change to 0
+|116536|Recipe red/white outline is inconsistent while searching
+|116650|Wooden fences connect to nether brick fence
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|8wfLFwwRwaI}}
+
+== Trivia ==
+* 17w17a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:17w17a]]
+[[es:Java Edition 17w17a]]
+[[fr:Édition Java 17w17a]]
+[[ja:Java Edition 17w17a]]
+[[nl:17w17a]]
+[[pt:Edição Java 17w17a]]
+[[ru:17w17a (Java Edition)]]
+[[zh:Java版17w17a]]

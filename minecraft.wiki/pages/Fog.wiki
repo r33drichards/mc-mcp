@@ -1,0 +1,414 @@
+{{for|the command {{in|bedrock}}|Commands/fog}}
+[[File:Swamp water fog.png|thumb|The dense, brown [[water]] fog in a [[swamp]].]]
+'''Fog''' is a rendering feature intended for obscuring the player's view distance, usually for atmospheric effect or for seamlessly occluding sharp boundaries such as unloaded [[chunk]]s. While traditionally referring to [[render distance]], there are many other types of fog that can be encountered in-game under specific circumstances.
+
+== Fog types ==
+
+=== Render distance fog ===
+[[File:Air fog.png|thumb|Default air fog is what causes the brighter sky color at zenith, and slight fading at the edge of the render distance.]]
+This refers to fog that is dependent of the [[render distance]], which includes '''air fog''' in the Overworld and the End {{In|be}}, or general fog in all dimensions {{In|je}}.
+
+The sight distance in the render distance fog is equal to the render distance, and the shape is a cylinder, which begins to appear at 92% of the render distance. Its color depends mainly on the [[biome]] the camera is in, and is affected by:
+* the current day-time, and the [[Effect (dimension)|effect]] the dimension uses
+** For the Overworld effect, the brightness of the color changes with day time.
+** For the Nether effect, the brightness of the color is ''not'' affected by day time.
+** For the End effect, the brightness of the color does not change with day time, but is 15% of the biome fog color.
+* the current [[sky]] color<!--affected by lightning-->, and the render distance
+** The smaller the render distance, the closer the color of the fog is adjusted to the sky color.
+** When the render distance is 32, the color of the fog is not affected by the sky color.
+* the direction the player is facing during a sunrise or sunset if the render distance is not less than 4
+* the current [[weather]]
+The base fog color is {{Color|#c0d8ff}} {{In|je}} and {{Color|#abd2ff}} {{In|be}}. In the [[End]], the fog color is {{Color|#a080a0}} in ''Java Edition'' and {{Color|#0b080c}} in ''Bedrock Edition''. In [[pale gardens]], the fog color is {{Color|#817770}}. 
+[[File:Weather fog.png|thumb|Weather fog is colored gray and obstructs a larger part of the view distance.]]
+In ''Bedrock Edition'', a separate type of render distance fog is used during [[precipitation]], known as '''weather fog'''. This fog is much denser; it appears at 23% of the render distance and becomes opaque at 70% of the render distance. The base color changes to {{Color|#666666}}, or {{Color|#403C44}} in pale gardens.
+
+=== Environmental fog ===
+{{Exclusive|java|section=1}}[[File:Environmental Fog.png|thumb|Environmental fog shown through the zoom of a [[spyglass]].]]
+This refers to fog that renders ambiently inside chunks in the [[Overworld]]{{verify|is it dimension based, or does it depend on the [[dimension effect]]?}} that are far away from the player. This type of fog grows in strength at greater distances from the player and does not change with render distance.
+
+==== Rain fog ====
+Environmental fog grows in strength during [[precipitation]]. Rain-based fog becomes weaker when the player is not exposed to as much [[sky light]] (sky light is always the same regardless of the weather or [[daylight cycle]]). This creates the effect of the fog getting weaker when the player is not in the rain.
+
+=== Special fog ===
+This refers to fog used in special cases, which does not change with render distance.
+
+==== Water fog ====
+[[File:Transition fog mid.png|thumb|Water fog in a [[river]], after 5 seconds.]]
+When the camera is in [[water]], a dedicated fog in the shape of a cylinder is applied to simulate this. Underwater fog progressively recedes with time spent underwater. The color and distance{{Only|be|short=1}} depends on the [[biome]] the camera is in (see {{Slink|Water|Color}} for a full list). {{IN|je}}, [[swamp]]s and [[mangrove swamp]]s have a thicker fog than most other biomes, which is controlled by the biome [[tag]] <code>has_closer_water_fog</code>.
+
+When the camera descends into water, a much thicker initial fog is applied first, with the same color but obscuring the distance at 0.01 blocks, which is blended for 25% with regular fog at the start. The transition fog slowly disappears, being blended for 60% at 5 seconds and removed at 30 seconds.
+
+==== Lava fog ====
+[[File:Lava fog.png|thumb|Lava fog is so dense that it even fades held items on the [[HUD]].]]
+When the camera is in [[lava]], an even thicker fog in the shape of a sphere is applied. Its color is {{Color|#991A00}}. With this fog, normally the player can see only 1 block away. The [[Fire Resistance]] effect can mitigate the fog so that the sight distance becomes 3 blocks. In [[Spectator]] mode, the fog is even less opaque to reveal objects located within up to half the render distance.
+
+==== Powder snow fog ====
+Being beneath [[powder snow]] imparts another fog in the shape of a sphere. Its color is {{Color|#9FBBC8}}. With this fog, normally the player can see only 2 blocks away. In [[Spectator]] mode, the fog becomes thinner so that things within half of the render distance are visible.
+
+==== Nether fog ====
+{{IN|be}}, sky and weather fog in [[Nether]] biomes has a specified range of blocks and does not change with the render distance, like other types of sky and weather fog. In the shape of a sphere, it begins to appear at 10 blocks and becomes opaque at 96 blocks. The color depends on the [[biome]], which is {{Color|#330808}} in [[Nether Wastes|Nether wastes]], {{Color|#1a051a}} in [[Warped Forest|warped forests]], {{Color|#330303}} in [[Crimson Forest|crimson forests]], {{Color|#1b4745}} in [[Soul Sand Valleys|soul sand valleys]], and {{Color|#685f70}} in [[Basalt Deltas|basalt deltas]].
+
+=== Volumetric fog ===
+{{Exclusive|bedrock|section=1}}
+[[File:Vibrant Visuals volumetric fog comparison.png|thumb|A comparison of volumetric fog off vs on in a [[Pale Garden|pale garden]].]]
+[[File:Vibrant Visuals underwater lighting.png|thumb|Volumetric fog applied underwater.]]
+With [[Vibrant Visuals]] and [[ray tracing]], an additional type of fog is applied on top of regular fog settings. Volumetric fog has strong effect on how [[light]] behaves, which can be faded out, make the fog glow, or scatter into light shafts. The fog types used for volumetric fog are the same as all other fogs (sky, weather, water, lava, lava resistance). At Y=320 and higher, volumetric fog is not rendered.
+
+All types of fog can scatter or absorb different colors light while it travels through air, [[clouds]], or water objects, which can provide additional colors for these objects.
+
+With Vibrant Visuals, fog in water and air can affect how light shafts behave with the [https://glossary.ametsoc.org/wiki/Henyey-greenstein_phase_function Henyey-Greenstein G phase function].
+
+The density, scattering, absorption, and Henyey-Greenstein G values for air fog are different for some biomes. Additionaly, color grading makes all types of fog appear in different colors for each biome.
+
+* Default: 
+** Density: 0
+** Scattering: 0 for all RGB channels
+** Absorption: 0 for all RGB channels
+** Henyey-Greenstein G: 0.75.
+** Biomes: {{BiomeLink|All others|id=plains|link=Biome}}
+* Semi-humid:
+** Density: 0.05
+** Scattering: 0.04 for all RGB channels
+** Absorption: 0 for all RGB channels
+** Henyey-Greenstein G: 0.6
+** Biomes: {{BiomeLink|Beach}}, {{BiomeLink|Snowy Taiga}}, {{BiomeLink|Snowy Taiga Hills}}, {{BiomeLink|Snowy Taiga Mountains}}, {{BiomeLink|Deep Lukewarm Ocean}}, {{BiomeLink|Deep Warm Ocean}}, {{BiomeLink|Windswept Forest}}, {{BiomeLink|Gravelly Mountains+|id=modified gravelly mountains}}, {{BiomeLink|Lukewarm Ocean}}, {{BiomeLink|Old Growth Pine Taiga}}, {{BiomeLink|Giant Tree Taiga Hills}}, {{BiomeLink|Old Growth Spruce Taiga}}, {{BiomeLink|Giant Spruce Taiga Hills}}, {{BiomeLink|Taiga}}, {{BiomeLink|Taiga Hills}}, {{BiomeLink|Taiga Mountains}}, {{BiomeLink|Warm Ocean}}
+* Humid:
+** Density: 0.05
+** Scattering: 0.06 for all RGB channels
+** Absorption: 0 for all RGB channels
+** Henyey-Greenstein G: 0.4
+** Biomes: {{BiomeLink|Bamboo Jungle}}, {{BiomeLink|Bamboo Jungle Hills}}, {{BiomeLink|Sparse Jungle}}, {{BiomeLink|Modified Jungle Edge}}, {{BiomeLink|Jungle}}, {{BiomeLink|Jungle Hills}}, {{BiomeLink|Modified Jungle}}, {{BiomeLink|Lush Caves}}, {{BiomeLink|Mangrove Swamp}}
+* {{BiomeLink|Ice Spikes}}:
+** Density: 0.05
+** Scattering: 0.02 for all RGB channels
+** Absorption: 0 for all RGB channels
+** Henyey-Greenstein G: 0.3
+* {{BiomeLink|Mushroom Fields}} and {{BiomeLink|Mushroom Field Shore}}:
+** Density: 0.05
+** Scattering: 0.01 for all RGB channels
+** Absorption: 0.042, 0.137, 0.012
+** Henyey-Greenstein G: 0.3
+* {{BiomeLink|Pale Garden}}:
+** Density: 0.07
+** Scattering: 0.5 for all RGB channels
+** Absorption: 0.25, 0.125, 0.125
+** Henyey-Greenstein G: 0.3
+* {{BiomeLink|Dark Forest}} and {{BiomeLink|Dark Forest Hills}}:
+** Density: 0.05
+** Scattering: 0.04 for all RGB channels
+** Absorption: 0 for all RGB channels
+** Henyey-Greenstein G: 0.75
+* {{BiomeLink|Swamp}} and {{BiomeLink|Swamp Hills}}:
+** Density: 0.05
+** Scattering: 0.06 for all RGB channels
+** Absorption: 0.2549019753932953, 0.12995001673698426, 0.18875093758106233
+** Henyey-Greenstein G: 0.4
+* {{BiomeLink|The End}}
+** Density: 0.25
+** Scattering: 0.02 for all RGB channels
+** Absorption: 0 for all RGB channels
+** Henyey-Greenstein G: 0.8
+
+<gallery>
+Default volumetric fog.png|Default volumetric fog creates a glow around the sun and slight light shafts.
+Semi-humid volumetric fog.png|Semi-humid volumetric fog fades blocks in the distance with an orange color.
+Humid volumetric fog.png|Humid volumetric fog creates a warm atmosphere.
+Ice Spikes volumetric fog.png|In ice spikes, barely any light shafts appear and the fog tints the environment more gray.
+Mushroom Fields volumetric fog.png|Mushroom fields fog is purple, more noticable at the glow around the sun and at zenith.
+Pale Garden volumetric fog.png|Fog in pale gardens is very dense and decreases view distance, but allows light shafts to pass.
+Dark Forest volumetric fog.png|Fog in dark forests creates a glow around the sun and more light shafts, while coloring the rest of the sky dull blue.
+Swamp volumetric fog.png|Fog in swamps fades many objects in the distance with dark green.
+The End volumetric fog.png|The End volumetric fog is only visibile during an [[End flash]], and creates many light shafts and purple fading.
+</gallery>
+== Fog modifiers ==
+
+=== Height ===
+If the world is not a [[superflat]] world, and the camera is not in lava and not in powder snow, the brightness becomes <code>power(clamp((y-minY)*0.03125,0.0,1.0))</code> of the original, which means that the color changes to pure black gradually from <code>minY+32</code> to <code>minY</code>.
+
+=== Blindness and Darkness ===
+[[Blindness]] and [[Darkness]] set the fog color to pure black in the shape of a sphere. The sight distance with Blindness is 5 blocks, while the sight distance with Darkness is 15 blocks. Both Blindness- and Darkness-caused fog fade out when the effect ends, while Darkness fog also fades in.
+
+Blindness has a higher priority than Darkness. The two effects do not work if the camera is in lava or powder snow.
+
+=== Wither ===
+If there is a [[wither]] boss event, the color becomes darker and slightly redder.
+
+=== Night Vision ===
+If the camera is not in water, and the entity has no [[Darkness]] effect, [[Night Vision]] makes the color brighter.
+
+=== Nether and ender dragon ===
+If the entity has no Blindness or Darkness, in a dimension with the Nether [[Effect (dimension)|effect]],{{Only|je|short=1}} or a dimension where there's an ender dragon boss event, the sight distance in the render distance fog (not water, lava, powder snow fog) is half of the rendering distance, and the maximum sight distance is 96 blocks. The shape becomes a sphere.
+
+== Objects unaffected by fog ==
+Most things in the world are affected by fog. There are exceptions, most to all of which are presumably unintended:
+* The [[world border]]<ref>{{bug|MC-223566}}</ref>
+** Render distance fog is not used for the world border. It uses its own draw distance algorithm, which introduces inconsistencies.<ref>{{bug|MC-279571}}</ref> It being unaffected by fog is mainly visible via water, lava, powder fog, blindness and darkness fog.
+* Chunk border lines<ref>{{bug|MC-220523}}, {{bug|MC-221254}}</ref>
+** The [[core shader]] used for rendering these differs only from the normal shader used for translucent blocks in that it ignores fog. It is unknown if this was done intentionally, or is an oversight.
+* [[Charged creeper]] armor<ref>{{bug|MC-279051}}</ref>
+* [[Wither]] anti-projectile armor<ref>{{bug|MC-279052}}</ref>
+
+In addition, the beams emitted by [[beacon]]s and [[end gateway]]s use an outdated spherical fog boundary, rather than the modern cylinder shape.<ref>{{bug|MC-279049}}, {{bug|MC-279050}}</ref> The intended behavior may be for beacon beams to be unaffected by fog, at least of certain types and in some directions.<ref>{{bug|MC-231123}}</ref>
+
+== Custom fogs ==
+{{For|the fog settings in resource packs|Fog definition}}{{Exclusive|bedrock|section=1}}
+{{IN|be}}, the currently active fog settings can be changed with the {{cmd|fog}} command, which has settings for every [[biome]]. These fog settings can be customized using [[resource packs]], or new fog settings can be added. When applying a fog setting to a biome, the identifier needs to be specified in the [[Resource pack#Biomes|client biome]] JSON files.
+
+Active fog settings are determined from three aspects:
+* Custom fog stack (from {{cmd|fog}} command)
+* Fog settings for the current biome
+* Default fog setting
+
+Whenever the game needs to get the current fog, it checks the fog settings from these three aspects from the top (the newest fog setting in the fog stack from the command) to the bottom (default fog setting) in order, until it finds a fog definition for the current fog type.
+
+In other words, this is equivalent to that all fog settings from the three aspects are applied one by one from the bottom (default fog setting) to the top (the newest fog setting in the fog stack from the command) in order. The fogs in a fog setting applied later overrides that of earlier fog settings. Each fog type works independently.
+
+=== Vanilla fog settings ===
+* <code>minecraft:fog_[[Bamboo Jungle|bamboo_jungle]]</code>
+* <code>minecraft:fog_[[Bamboo Jungle Hills|bamboo_jungle_hills]]</code>
+* <code>minecraft:fog_[[Basalt Deltas|basalt_deltas]]</code>
+* <code>minecraft:fog_[[beach]]</code>
+* <code>minecraft:fog_[[Birch Forest|birch_forest]]</code>
+* <code>minecraft:fog_[[Birch Forest Hills|birch_forest_hills]]</code>
+* <code>minecraft:fog_[[Cherry Grove|cherry_grove]]</code>
+* <code>minecraft:fog_[[cold_beach]]</code>
+* <code>minecraft:fog_[[Cold Ocean|cold_ocean]]</code>
+* <code>minecraft:fog_[[cold_taiga]]</code>
+* <code>minecraft:fog_[[cold_taiga_hills]]</code>
+* <code>minecraft:fog_[[Cold taiga M|cold_taiga_mutated]]</code>
+* <code>minecraft:fog_[[Crimson Forest|crimson_forest]]</code>
+* <code>minecraft:fog_[[Deep Cold Ocean|deep_cold_ocean]]</code>
+* <code>minecraft:fog_[[Deep Frozen Ocean|deep_frozen_ocean]]</code>
+* <code>minecraft:fog_[[Deep Lukewarm Ocean|deep_lukewarm_ocean]]</code>
+* <code>minecraft:fog_[[Deep Cold Ocean|deep_cold_ocean]]</code>
+* <code>minecraft:fog_[[Deep Warm Ocean|deep_warm_ocean]]</code>
+* <code>minecraft:fog_default</code> (used by [[Old Growth Birch Forest|old growth birch forest]], [[Tall Birch Hills|tall birch hills]], [[Deep Dark|deep dark]], [[Dripstone Caves|dripstone caves]], [[grove]], [[meadow]], [[Shattered Savanna Plateau|shattered savanna plateau]], [[Snowy Slopes|snowy slopes]], and [[Stony Peaks|stony peaks]])
+* <code>minecraft:fog_[[desert]]</code>
+* <code>minecraft:fog_[[Desert Hills|desert_hills]]</code>
+* <code>minecraft:fog_dry</code> (used by [[Desert Lakes|desert lakes]], [[Frozen Peaks|frozen peaks]], [[Jagged Peaks|jagged peaks]], [[Legacy Frozen Ocean|legacy frozen ocean]], [[Modified Badlands Plateau|modified badlands plateau]], and [[Modified Wooded Badlands Plateau|modified wooded badlands plateau]])
+* <code>minecraft:fog_[[extreme_hills]]</code>
+* <code>minecraft:fog_[[extreme_hills_edge]]</code>
+* <code>minecraft:fog_[[extreme_hills_mutated]]</code>
+* <code>minecraft:fog_[[extreme_hills_plus_trees]]</code>
+* <code>minecraft:fog_[[extreme_hills_plus_trees_mutated]]</code>
+* <code>minecraft:fog_[[Flower Forest|flower_forest]]</code>
+* <code>minecraft:fog_[[forest]]</code>
+* <code>minecraft:fog_[[forest_hills]]</code>
+* <code>minecraft:fog_[[Frozen Ocean|frozen_ocean]]</code>
+* <code>minecraft:fog_[[Frozen River|frozen_river]]</code>
+* <code>minecraft:fog_[[hell]]</code>
+* <code>minecraft:fog_humid</code> (used by [[Modified Jungle Edge|modified jungle edge]])
+* <code>minecraft:fog_[[ice_mountains]]</code>
+* <code>minecraft:fog_[[ice_plains]]</code>
+* <code>minecraft:fog_[[ice_plains_spikes]]</code>
+* <code>minecraft:fog_[[jungle]]</code>
+* <code>minecraft:fog_[[jungle_edge]]</code>
+* <code>minecraft:fog_[[Jungle Hills|jungle_hills]]</code>
+* <code>minecraft:fog_[[Jungle M|jungle_mutated]]</code>
+* <code>minecraft:fog_[[Lukewarm Ocean|lukewarm_ocean]]</code>
+* <code>minecraft:fog_[[Mangrove Swamp|mangrove_swamp]]</code>
+* <code>minecraft:fog_[[mega_spruce_taiga]]</code>
+* <code>minecraft:fog_[[Mega Spruce Taiga M|mega_spruce_taiga_mutated]]</code>
+* <code>minecraft:fog_[[mega_taiga]]</code>
+* <code>minecraft:fog_[[mega_taiga_hills]]</code>
+* <code>minecraft:fog_[[Mega Taiga Mutated|mega_taiga_mutated]]</code> (unused)
+* <code>minecraft:fog_[[mesa]]</code>
+* <code>minecraft:fog_[[mesa_bryce]]</code>
+* <code>minecraft:fog_mesa_mutated</code> (unused)
+* <code>minecraft:fog_[[mesa_plateau]]</code>
+* <code>minecraft:fog_[[mesa_plateau_stone]]</code>
+* <code>minecraft:fog_[[mushroom_island]]</code>
+* <code>minecraft:fog_[[mushroom_island_shore]]</code>
+* <code>minecraft:fog_[[ocean]]</code>
+* <code>minecraft:fog_[[Pale Garden|pale_garden]]</code>
+* <code>minecraft:fog_[[plains]]</code>
+* <code>minecraft:fog_[[Powder Snow|powder_snow]]</code>
+* <code>minecraft:fog_[[river]]</code>
+* <code>minecraft:fog_[[roofed_forest]]</code>
+* <code>minecraft:fog_[[Roofed forest M|roofed_forest_mutated]]</code>
+* <code>minecraft:fog_[[savanna]]</code>
+* <code>minecraft:fog_[[savanna_mutated]]</code>
+* <code>minecraft:fog_[[Savanna Plateau|savanna_plateau]]</code>
+* <code>minecraft:fog_semi_humid</code> (used by [[Giant Spruce Taiga Hills|giant spruce taiga hills]] and [[Old Growth Spruce Taiga|old growth spruce taiga]])
+* <code>minecraft:fog_[[soulsand_valley]]</code>
+* <code>minecraft:fog_[[stone_beach]]</code>
+* <code>minecraft:fog_[[Sunflower Plains|sunflower_plains]]</code>
+* <code>minecraft:fog_[[swampland]]</code>
+* <code>minecraft:fog_[[Swampland M|swampland_mutated]]</code>
+* <code>minecraft:fog_[[taiga]]</code>
+* <code>minecraft:fog_[[Taiga Hills|taiga_hills]]</code> 
+* <code>minecraft:fog_[[Taiga Mountains|taiga_mutated]]</code> 
+* <code>minecraft:fog_[[The End|the_end]]</code> 
+* <code>minecraft:fog_[[Warm Ocean|warm_ocean]]</code> 
+* <code>minecraft:fog_[[Warped Forest|warped_forest]]</code>
+
+== Void fog ==
+{{Outdated|section=1|edition=java}}
+
+[[File:Void fog.png|400px|right]]
+
+In prior versions of ''Java Edition'' (specifically [[Java Edition Beta 1.8 Pre-release|Beta 1.8 Pre-release]] through [[14w34b]] inclusive, up to its removal in [[14w34c]]), a thick black fog was introduced. As the player descended below Y=26, this fog would start to appear. As the player traveled deeper, the fog at the edge of the render distance would become closer until the player reached the first layers of [[bedrock]], where visibility was reduced to just a few blocks, beyond which was complete darkness similar to the [[Blindness]] effect. The gray void particles started appearing below Y=7, as well as in the void.
+
+The existence of this fog depended on a lack of sky lighting. If vent holes were opened up to allow skylight to enter an otherwise secluded underground space, void fog would no longer be present, so long as the player kept near this skylight source.
+
+Void fog was removed late into 1.8's development for performance reasons and general community distaste.<ref>{{tweet|TheMogMiner|501766046681153536|Removed void fog today. Now we don't need to tick air blocks (seriously, WTH?), and honestly, who actually *liked* the void fog?|August 19, 2014}}</ref>
+<gallery>
+VoidFog.png|A player's view limit would decrease with depth.
+</gallery>
+{{-}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java classic}}
+|{{HistoryLine||0.0.12a|Added water and lava fog.
+|Lava fog in this version is similar to water fog, except orange in color.}}
+|{{HistoryLine||0.0.13a|Lava fog is now redder and appears much closer to the player.}}
+|{{HistoryLine||0.0.14a|Implemented render distance fog. It appears only for lit surfaces. Initially, it is blue in color.}}
+|{{HistoryLine||0.0.14a_08|Render distance fog is now white in color.}}
+|{{HistoryLine|java indev}}
+|{{HistoryLine||0.31|dev=20100107-1851|Level themes have been added, which feature different fog colors.
+|The fog color in Hell-themed worlds is {{color|#100400}}.}}
+|{{HistoryLine|||dev=20100122|The color of fog, [[clouds]] and the [[sky]] can now be configured via map editing.}}
+|{{HistoryLine||20100214|The fog color in Paradise-themed worlds is {{color|#C6DEFF}} by default.
+|The fog color in Woods-themed worlds is {{color|#4D5A5B}} by default.}}
+|{{HistoryLine|java infdev}}
+|{{HistoryLine||20100227-1414|With the deprecation of indev worlds, fog color is no longer customizable.
+|Fog color has been changed to {{color|#B0D0FF}}.}}
+|{{HistoryLine||20100618|Fog color has been changed to {{color|#C0D8FF}}.}}
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||v1.2.0|The fog color in the Nether is {{color|#330808}}.}}
+|{{HistoryLine|java beta}}
+|{{HistoryLine||1.8|dev=Pre-release|Added void fog.}}
+|{{HistoryLine|||dev=Pre-release 2 ;)|Many of void fog's effects can be circumvented by having sky access.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.0.0|dev=Beta 1.9 Prerelease 2|Added blindness fog.}}
+|{{HistoryLine|||dev=Beta 1.9 Prerelease 4|The fog color in the End is {{color|#131318}}.}}
+|{{HistoryLine||1.1|dev=11w48a|Players in creative mode can no longer see void fog.}}
+|{{HistoryLine||1.2.1|dev=12w03a|Added nether fog.}}
+|{{HistoryLine||1.3.1|dev=12w25a|The fog color in the End has been changed to {{color|#181318}}.}}
+|{{HistoryLine||1.7.2|dev=13w36a|The distance where fog starts has been doubled.}}
+|{{HistoryLine|||dev=13w38a|Re-adjusted fog to appear near the render distance limit again, reverting changes made in 13w36a.
+|Fog now covers 25% of the render distance, compared to 75% before 13w36a.}}
+|{{HistoryLine||1.8|dev=14w34c|Removed void fog and its associated particles.}}
+|{{HistoryLine||1.13|dev=18w08b|Water now appears fully fogged when entered, and gradually becomes clearer over time.
+|The [[Respiration]] enchantment and [[Water Breathing]] effect no longer have an effect on water fog.}}
+|{{HistoryLine|||dev=18w10a|Water fog now varies per biome.
+|Water fog no longer takes time to clear in [[Spectator]] mode.}}
+|{{HistoryLine||1.16|dev=20w06a|Fog color is now based on the current biome, rather than the dimension.
+|The End biomes are coded with a fog color of {{color|#A080A0}}.
+|The End dimension darkens every biome's fog color by 85%.}}
+|{{HistoryLine|||dev=20w09a|Fog color no longer changes abruptly when switching biomes.<ref>{{bug|MC-170879}}</ref>}}
+|{{HistoryLine|||dev=Pre-release 3|The [[Fire Resistance]] effect now makes under-lava fog slightly less harsh.}}
+|{{HistoryLine||1.16.2|dev=20w28a|Fog color is now something that can be changed by custom biomes.}}
+|{{HistoryLine|||dev=Pre-release 1|Added [[Effect (dimension)|dimension effects]], allowing for nether fog to be applied to any custom dimension.}}
+|{{HistoryLine||1.17|dev=20w46a|Added [[powder snow]], which has its own dedicated fog effect.}}
+|{{HistoryLine|||dev=20w48a|How submerged the player has to be in lava to see the fog effect has now changed.<ref>{{bug|MC-3615}} (did the other listed fix version change anything?)</ref>}}
+|{{HistoryLine|||dev=21w10a|Render distance fog is now spherical, and no longer changes based on the view angle.<ref>{{bug|MC-32452}}</ref><ref>This type of fog was previously available only for users of Nvidia GPUs, as it depended on the <pre>GL_NV_fog_distance</pre> OpenGL extension.</ref>}}
+|{{HistoryLine|||dev=21w11a|Underwater fog is now far less intense when in Spectator mode.{{verify}} However, it is still present.<ref>{{bug|MC-214186}}</ref>
+|Lava fog is now far less intense when in Spectator mode.<ref>{{bug|MC-71530}}</ref> However, it is still present.<ref>{{bug|MC-219893}}</ref>
+|Powder snow fog is now far less intense when in Spectator mode.<ref>{{bug|MC-213743}}</ref> However, it is still present.<ref>{{bug|MC-219894}}</ref>}}
+|{{HistoryLine||1.18.1|dev=Pre-release 1|World fog now starts further away from the player, to make distant terrain more visible.
+|Instead of applying fog as a spherical volume, it is now applied as a cylindrical volume, making it easier to see into the distance when standing on tall mountains.}}
+|{{HistoryLine||?|End portals and end gateways are now affected by fog in the manner that all other blocks are.}}
+|{{HistoryLine||1.21.6|dev=25w19a|Added environmental fog.}}
+|{{HistoryLine|||dev=25w20a|Fog is now applied to 3d HUD elements such as first person player hands and items in hands.|Slightly reduced rain and thunder weather fog.|Rain and thunder fog is now significantly reduced when the player is under blocks.}}
+|{{HistoryLine||1.21.11|dev=25w44a|Nether fog no longer becomes thicker when playing at lower render distances. Its thickness now always matches how it previously looked at 32 render distance.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket alpha}}
+|{{HistoryLine||v0.1.0|Added distance, water, and lava fog.
+|All fog types are a flat plane based on the camera angle. Render distance fog starts at 50% of the render distance and becomes fully opaque at the render distance limit. Water and lava fog both start at the camera and become fully opaque at 32 blocks and 3 blocks, respectively.}}
+|{{HistoryLine||v0.5.0|Render distance fog now covers 10% of the render distance.}}
+|{{HistoryLine||v0.6.0|Render distance fog now covers 40% of the render distance and is now blue instead of gray.}}
+|{{HistoryLine||v0.8.0|dev=build 1|Render distance fog now covers 30% of the render distance.
+|Due to changes made to chunk rendering in this version, fog is now visible only on chunks that are far enough away from the player. This can cause sharp borders between areas with and without render distance fog, especially on lower render distance settings. This also means that water and lava fog are no longer visible since this version made it so that far chunks do not render while water or lava fog is active.}}
+|{{HistoryLine|||dev=build 4|Water and lava fog are once again visible in rendered chunks.}}
+|{{HistoryLine||v0.9.0|dev=build 1|Render distance fog now covers <math>100[x-(x/2+8)]/x</math>% of the render distance, with <math>x</math> being the player's render distance in blocks.
+|This version also added a minimum start distance of 72 blocks to render distance fog, resulting in glitchy behavior if the player sets their render distance to 4 chunks.|In particular, setting the render distance to 4 chunks would cause water to become colored with the fog color, making it indistinguishable from the fog, and cause mobs to lose their textures and become colored with the fog color as well.}}
+|{{HistoryLine|||dev=build 2|The glitchy low render distance fog behavior in the previous build was fixed by adding a minimum distance of 4 blocks between the render distance limit and the start of the fog area, preventing render distance values lower than the minimum available through the settings from being used.}}
+|{{HistoryLine||v0.10.0|dev=build 1|Render distance fog now covers <math>100[x-(x/3.2+30)]/x</math>% of the render distance, with <math>x</math> being the player's render distance in blocks.
+|Render distance fog now becomes fully opaque at 20% of the distance between the player and the render distance limit.
+|The 72 block minimum start distance for render distance fog has been removed.
+|Water fog now becomes fully opaque 8 blocks away from the camera.
+|Lava fog now becomes fully opaque 1 block away from the camera.
+|[[Sky]] coloring is now visible through water and lava fog if the "Beautiful skies" toggle is enabled.}}
+|{{HistoryLine|||dev=build 2|All fog is now spherical and no longer changes based on the camera angle when [[fancy graphics]] is on.
+|Render distance fog now covers <math>100[x-(x/2+32)]/x</math>% of the render distance, with <math>x</math> being the player's render distance in blocks.
+|Render distance fog once again becomes fully opaque at the render distance limit.}}
+|{{HistoryLine||v0.12.1|dev=build 1|Added weather fog.}}
+|{{HistoryLine||v0.14.2|Render distance fog now covers <math>100[x-(x/2+12)]/x</math>% of the render distance, with <math>x</math> being the player's render distance in blocks.
+|Render distance fog now becomes fully opaque 16 blocks under the render distance limit.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.0|dev=beta 1.16.0.51|Added lava resistance fog.}}
+|{{HistoryLine||1.16.200|exp=Caves and Cliffs|dev=beta 1.16.200.52|Added powder snow fog.}}
+|{{HistoryLine||1.21.80|exp=Vibrant Visuals|dev=Preview 1.21.80.25|Added volumetric fog to each biome in [[Vibrant Visuals]], with new Henyey-Greenstein G light shafts.}}
+}}
+
+=== Legacy Console Edition ===
+{{HistoryTable
+|{{HistoryLine|console}}
+|{{HistoryLine||xbox=TU5|xbone=CU1|ps3=1.00|psvita=1.00|ps4=1.00|wiiu=patch 1|switch=1.0.1|Added Bedrock fog.}}
+|{{HistoryLine||xbox=TU6|Added a toggle to turn Void fog on and off. Fog is disabled by default. Void fog is dependent on the game hosts's settings.}}
+}}
+
+== Issues ==
+{{issue list}}
+
+== Gallery ==
+=== Screenshots ===
+<gallery>
+File:Void1.8.png|The void, covered in void fog.
+File:Fancyfog.png|Fancy fog setting.
+File:Fastfog.png|Fast fog setting.
+File:Dark underwater fog VV.png|Underwater fog with Vibrant Visuals when no directional light source is visible, which appears black and cyan.
+File:The End air fog.png|Air fog in [[The End (biome)|the End]] fades outer End islands with a dark color.
+File:Nether Wastes air fog.png|Air fog in [[Nether Wastes|Nether wastes]].
+File:Basalt Deltas air fog.png|Air fog in [[Basalt Deltas|basalt deltas]].
+File:Crimson Forest air fog.png|Air fog in a [[Crimson Forest|crimson forest]].
+File:Soul Sand Valley air fog.png|Air fog in a [[Soul Sand Valley|soul sand valley]].
+File:Warped Forest air fog.png|Air fog in a [[Warped Forest|warped forest]].
+File:Pale Garden air fog.png|Air fog in a [[Pale Garden|pale garden]].
+File:Pale Garden weather fog.png|Weather fog in a pale garden is darker gray than regular weather fog.
+File:Lava resistance fog.png|Lava fog with [[Fire Resistance]].
+File:Powder snow fog.png|[[Powder Snow|Powder snow]] fog.
+File:Powder snow fog VV.png|Powder snow fog with Vibrant Visuals appears brighter due to directional lighting and color grading.
+File:Transition fog min.png|Water transition fog after 1 second.
+File:Transition fog mid.png|Water transition fog after 5 seconds.
+File:Transition fog max.png|Water transition fog after 30 seconds.
+</gallery>
+
+==== Water fog colors in ''Bedrock Edition'' ====
+Note: Not all biomes with unique fog colors are shown here.<gallery>
+File:Swamp water fog.png|{{BiomeLink|Swamp}}
+File:Mangrove Swamp water fog.png|{{BiomeLink|Mangrove Swamp}}
+File:Snowy Plains water fog.png|{{BiomeLink|Snowy Plains}}
+File:Pale garden water fog.png|{{BiomeLink|Pale Garden}}
+File:Old Growth Pine Taiga water fog.png|{{BiomeLink|Old Growth Pine Taiga}}
+File:The End water fog.png|{{BiomeLink|The End}}
+File:Nether water fog.png|{{EnvLink|The Nether}} (except basalt deltas)
+File:Basalt Deltas water fog.png|{{BiomeLink|Basalt Deltas}}
+File:Mushroom Fields water fog.png|{{BiomeLink|Mushroom Fields}}
+File:Cherry Grove water fog.png|{{BiomeLink|Cherry Grove}}
+File:Deep Frozen Ocean water fog.png|{{BiomeLink|Deep Frozen Ocean}}
+File:Badlands water fog.png|{{BiomeLink|Badlands}}
+File:Jungle water fog.png|{{BiomeLink|Jungle}}
+File:Desert water fog.png|{{BiomeLink|Desert}}
+File:Flower Forest water fog.png|{{BiomeLink|Flower Forest}}
+File:Default water fog.png|{{BiomeLink|Old Growth Birch Forest}} (default) 
+</gallery>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox dimension effects}}
+{{Navbox environment}}
+
+[[es:Niebla]]
+[[ja:霧]]
+[[lzh:霧]]
+[[pt:Neblina]]
+[[zh:迷雾]]

@@ -1,0 +1,98 @@
+{{about|functions {{in|BE}}|the corresponding feature {{in|JE}}|Function (Java Edition)|other uses|Function}}
+'''Functions''' allow players to run lists of commands using text files with the extension <code>.mcfunction</code>. This page covers how to use functions {{in|BE}}.
+
+== Usage ==
+Text files must be placed into a top-level folder named "functions" within a [[behavior pack]], located at {{mono|behavior_packs/[''behavior_pack'']/functions}}. Subfolders can also be added to this folder. For example, running the function <code>sub/foo</code> runs the file located at {{mono|[''behavior_pack'']/functions/sub/foo.mcfunction}}.
+
+=== {{cmd|reload}} ===
+'''Note:''' Currently {{cmd|reload}} reloads only functions that already exist at the time the game is launched, meaning changes can be made to existing functions but the game must be restarted for newly added functions.
+
+=== Success results ===
+Upon successfully running a function, a message displays in chat: "Executed {{mono|[''amount'']}} Command(s) from function {{mono|[''function file directory'']}}." In version 1.12.0 this is "Successfully executed {{mono|[''amount'']}} function entries."
+
+== Function syntax ==
+Within the <code>.mcfunction</code> file, one valid command is placed per line, without the usual forward slash <code>/</code>. Players can add comments within the function text file by preceding them with a <code>#</code>. 
+
+=== {{cd|min_engine_version}} ===
+Functions require a minimum engine version specified in the pack {{cd|manifest.json}} file.
+
+This field determines which version of a command to run. The number specified here should match the version number of the game. For example, lets say that {{cmd|fill}} was changed in <code>1.9.0</code>. If your behavior pack has <code>"min_engine_version": [1, 8, 0]</code> and runs a function that contains {{cmd|fill}}, it runs the older version of fill (as if the version was still <code>1.8.0</code>).
+
+==== Manifest example ====
+<pre>
+{
+    "format_version": 1,
+    "header": {
+        "description": "Function worldedit",
+        "name": "Function worldedit",
+        "uuid": "11111111-1111-1111-1111-111111111111",
+        "version": [1, 11, 3],
+        "min_engine_version": [1, 11, 3]
+    },
+    "modules": [
+        {
+            "description": "",
+            "type": "data",
+            "uuid": "22222222-2222-2222-2222-222222222222",
+            "version": [1, 11, 3]
+        }
+    ]
+}
+</pre>
+
+=== Simple function example ===
+
+<pre>
+title @p title Test
+setblock ~ ~2 ~ diamond_ore
+say Test
+<nowiki>#</nowiki>this is a comment
+</pre>
+
+=== More complex function example ===
+This function builds a basic stone and wood house around the executor. Note that because the function runs commands in order, the glass windows and wooden door replace the stone walls created by the first command.
+
+<pre>
+fill ~-2 ~-1 ~-2 ~2 ~2 ~2 stonebrick 0 hollow
+fill ~-2 ~-1 ~-2 ~2 ~-1 ~2 planks
+fill ~ ~ ~2 ~ ~ ~2 wooden_door 1
+fill ~-2 ~1 ~ ~-2 ~1 ~ glass
+fill ~2 ~1 ~ ~2 ~1 ~ glass
+fill ~ ~1 ~-2 ~ ~1 ~-2 glass
+</pre>
+
+== Running a function ==
+Functions attempt to run all commands within a single tick, including the commands of nested functions called within another function. 
+
+=== Limits ===
+A single function call runs up to 10,000 commands (including calls to other functions, i.e. recursion).
+
+=== Commands ===
+==== {{cmd|function}} ====
+* Allows players to run a function once.
+* The commands in the function are run through the entity or command block that ran the <code>/function</code> command.
+* Usage: <code>/function <path/to/function/file></code>
+
+=== tick.json ===
+The '''tick.json''' file is also located in the {{mono|behavior_packs/[''behavior_pack'']/functions}} folder, specifying functions to be executed on every game tick. Functions running in this file are executed by the server at origin 0, 0, 0 in the overworld. Functions in this file are executed as soon as the world is initialized, regardless of whether or not the player has been loaded.
+
+<div class="treeview">
+*{{nbt|compound}} The root object.
+**{{nbt|list|values}}: A list of functions.
+***{{nbt|string}}: A function.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.8.0|dev=beta 1.8.0.8|Added function files.|Function files are available only in behavior packs.}}
+|{{HistoryLine||1.13.0|dev=beta 1.13.0.1|Function files are now visible in command list.}}
+}}
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[ja:関数 (Bedrock Edition)]]
+[[pt:Funções (Edição Bedrock)]]
+[[uk:Функція (Bedrock Edition)]]
+[[zh:基岩版函数]]

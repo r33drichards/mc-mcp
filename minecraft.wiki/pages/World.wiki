@@ -1,0 +1,134 @@
+{{distinguish|Map}}
+{{Missing information|world history.}}
+A '''world''' or '''level''' is an individual ''Minecraft'' "universe" which encompasses all [[Block|blocks]] and [[entities]] in each [[dimension]]. Worlds can be accessed and edited through the [[world selection menu]] from the [[main menu]] and can be created with the "[[Create New World]]" button.
+
+== Description ==
+Worlds are split into three [[dimension]]s, which are in turn composed of [[block]]s of various sizes, usually either cubic or composed of one or more cuboids, or of flat plane images, all of which are arranged in [[wikipedia:Cubic honeycomb|a Euclidean grid]]. [[Fluid]]s, [[entities]] and [[particles]] also exist within these worlds, and certain locations of the world can possess [[biome]]s and different levels of [[light]]. Blocks and entities can possess other attributes such as [[item]]s, [[effect]]s and, by extension, [[enchantment]]s. The terrain of world is [[World generation|procedurally generated]] before [[players]] can modify blocks and entities within. Various [[structure]]s and [[features]] can also generate inside worlds, sometimes containing [[chest]]s with [[chest loot|loot]] inside.
+
+A player can manage settings for gameplay and world generation before world creation in the [[Create New World]] screen, and after creation through [[game rules]] and the [[edit world]] screen.{{Only|be|short=1}} Worlds can be generated with several [[world types]], and there are generation options for the [[world seed]] and the [[Bonus Chest|bonus chest]]. From the world options, the player can manage the world file, including duplicating, deleting, exporting (to transfer the world or upload to a [[server]]),{{Only|be|short=1}} and uploading to [[Realms]]. Worlds can be modified using [[resource packs]], [[data packs]],{{Only|je|short=1}} [[behavior packs]],{{Only|be|short=1}} and [[experiments]]. World content can be created efficiently using projects in ''[[Bedrock Editor]]''.
+
+== Storage ==
+=== ''Java Edition'' ===
+{{main|Java Edition level format}}
+Each world is saved in its own separate folder in the <samp>[[.minecraft]]/saves</samp> folder. Files relating to [[chunk]]s in the Overworld are stored in the base world save folder, Nether files are stored in the <samp>DIM-1</samp> subfolder, and End files are stored in <samp>DIM1</samp>. Each dimension has its own {{cd|data|poi|region|d=and}} folders that is stored in its directory.
+
+=== ''Bedrock Edition'' ===
+{{See also|Bedrock Edition level format}}
+Each world is saved in its own separate folder in the <code>[[com.mojang]]/minecraftWorlds</code> folder. This world folder can be compressed into a <code>.zip</code> file, which can be changed into a <code>.mcworld</code> file to tranfer the world. Exporting worlds on Windows devices automatically zips the world in a <code>.mcworld</code> file, which can be imported on non-console devices by opening the file with the ''Minecraft'' app, or using the import world feature in the [[play]] screen. 
+
+==== Directory structure ====
+<div class="treeview">
+* {{File|directory|''internal world ID''}}
+** {{File|directory|behavior_packs}}: Contains world [[behavior packs]].
+** {{File|directory|db}}
+*** {{File|file|000005.ldb}}: Uneditable binary file.
+*** {{File|file|000006.log}}: Uneditable log file.
+*** {{File|file|''region ID''.dat}}{{note|The region ID is a 6-digit number. The region containing the player{{verify}} is a .log instead of a .dat.}}
+*** {{File|file|CURRENT.dat}}: Contains file name of the "MANIFEST-<ID>" file.
+*** {{File|file|LOCK.dat}}{{info needed|Not all worlds have this. Does is depend on the version in which the world was created?}}
+*** {{File|file|MANIFEST-<ID>.dat}}
+** {{File|file|[[Bedrock Edition level format#level.dat|level.dat]]}}
+** {{File|file|level.dat_old}}: File that can be used as a backup for the other DAT file.
+** {{File|file|levelname.txt}}: Contains the name of the world.
+** {{File|directory|resource_packs}}: Contains world [[Resource pack|resource packs]].
+** {{File|file|world_behavior_pack_history.json}}: Contains the UUID of all behavior packs that have ever been enabled for the world.
+** {{File|file|world_behavior_packs.json}}: Determines which behavior packs stored in {{File|directory|development_behavior_packs}} are enabled for the world.
+** {{File|file|world_icon.jpeg}}: The thumbnail of the world, which can be changed to an in-game [[screenshot]] in the edit world screen. Must be a 800x450 pixels JPEG file.
+** {{File|file|world_resource_pack_history.json}}: Contains the UUID of all resource packs that have ever been enabled for the world.
+** {{File|file|world_resource_packs.json}}: Determines which resource packs stored in {{File|directory|development_resource_packs}} are enabled for the world.
+* {{Notelist}}
+</div>
+
+==== World template ====
+A world file can be converted to a world template to easily modify its contents, such as add-ons and additional languages for the world name, in order to let a player create a new world with data stored in the template.<ref>{{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/documents/createaworldtemplate?view=minecraft-bedrock-stable|title=Create a World Template from an Exported World|website=Microsoft Learn|date=December 5, 2023}}</ref> A world template uses the same directory structure as regular world files, with a few additional JSON files.<div class="treeview">
+* {{File|directory|''internal world ID''}}
+** {{File|file|[[manifest.json]]}}: Mandatory file, must specify {{Cd|"world_template"}} type. Contains the name and ID of the world. If the name and description are set to {{Cd|pack.name}} and {{Cd|pack.description}}, these will be assigned the texts specified in the localization files. Optionally, {{Cd|"allow_random_seed" : true}} can be added to the header to override seeds stored in the world data and generate a new world with a random seed.
+** {{File|directory|texts}}
+*** {{File|file|languages.json}}: Specifies all languages used.
+*** {{File|file|''languagecode''_''COUNTRYCODE''.lang}}: A language file for localization. Multiple language files can be used.
+
+===== Localization =====
+The in-game name and description of the world template can be changed for any [[language]]. The LANG file should contain {{Cd|1=pack.name=}} followed by the name of the template, and {{Cd|1=pack.description=}} followed by the description. {{Cd|languages.json}} should contain an array of all language codes used.[[File:Ore UI - Play Screen "Worlds" Tab - Create From Template Button Screen Menu (Bedrock).png|thumb|The "Create from..." screen.]]
+
+===== Importing =====
+A finished world template can be zipped and packaged as a {{Cd|.mctemplate}} file. Opening this file will automatically import it as a world template, stored in {{Cd|com.mojang/world_templates}}. World templates can also be imported on Windows in the "Create from..."  screen opened after pressing the "Create new world" button in the [[play]] screen.
+
+All imported world templates are shown in the "Create from" screen. Selecting a world template will show the description, and opening it will open the [[Create New World]] screen with all data from the world template.
+
+World templates can also be purchased from the [[Marketplace]]. A list of Marketplace and [[Marketplace Pass]] world templates is shown in the "Create from..." screen, which can create a world similar to custom world templates.
+</div>
+
+== History ==
+{{Incomplete section|History of worlds for other editions}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java pre-classic}}
+|{{HistoryLine||rd-132211| Level data is saved in a single level.dat file inside the launcher folder.}}
+|{{HistoryLine|java classic}}
+|{{HistoryLine||0.0.13a|Added online level saving for players with accounts.}}
+|{{HistoryLine||0.0.13a_03|Fixed a bug on level saving by updating the LWJGL version.}}
+|{{HistoryLine||0.0.14a|Saved levels do not load properly.}}
+|{{HistoryLine||0.0.19a|Generating a new level while on a multiplayer server, or saving the server level, no longer works.}}
+|{{HistoryLine||0.25 SURVIVAL TEST|Added proper saving and loading of worlds.}}
+|{{HistoryLine||0.28|Altered the level saving/loading code.}}
+|{{HistoryLine||0.30|Online saving is no longer available for free accounts.
+|It is now possible to save a level locally.}}
+|{{HistoryLine|java indev}}
+|{{HistoryLine||0.31|dev=20091223-0040|New work-in-progress level format.
+|Level saving/loading no longer works.}}
+|{{HistoryLine|||dev=20100122-2251|Players can now save and load the game locally using the Indev level format.}}
+|{{HistoryLine|java infdev}}
+|{{HistoryLine||20100227-1414|Level saving and loading is no longer functional, as saving a level produces an empty .mclevel file.}}
+|{{HistoryLine||20100313|Since the game does not yet save anything to the disk, players lose data from chunks they unload.}}
+|{{HistoryLine||20100327|The game now automatically saves while playing.
+|Level saving is now possible again and uses the new Alpha level format.}}
+}}
+
+
+=== Legacy Console Edition ===
+{{HistoryTable
+|{{HistoryLine|console}}
+|{{HistoryLine||xbox=TU0|xbone=CU1|ps3=1.00|psvita=1.00|ps4=1.00|wiiu=Patch 1|switch=1.0.1|Added worlds. Worlds can be created, saved, and deleted.}}
+|{{HistoryLine||xbox=TU3|Added a save file cache to improve the speed of displaying the saves list.}}
+|{{HistoryLine||xbox=TU5|Added the ability to rename an existing world.|Added a confirmation dialog on the player choosing to exit without saving.}}
+}}
+
+==Issues==
+{{Issue list}}
+
+== Gallery ==
+=== ''Java Edition'' ===
+<gallery>
+MainMenu SPMain.png|The world selection screen {{in|je}}.
+1.21.11 Create New World - Game.png|The world creation screen {{in|je}}.
+</gallery>
+
+=== ''Bedrock Edition'' ===
+<gallery>
+Ore UI - Play Screen Menu "Worlds" Tab - Grid Mode (Bedrock).png|The "Worlds" tab of the "Play" menu {{in|be}}.
+Ore UI - Create New World Screen Menu "General" Tab Settings (Bedrock).png|The "Create New World" screen {{in|be}}.
+</gallery>
+
+== See also ==
+* [[Anvil file format]]
+* [[World type]]
+* [[World size]]
+* [[World border]]
+* [[World boundary]]
+* [[World generation]]
+* [[Autosave]]
+
+==References==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox environment}}
+
+[[es:Mundo]]
+[[fr:Monde]]
+[[ja:ワールド]]
+[[pt:Mundo]]
+[[ru:Мир]]
+[[uk:Світ]]
+[[zh:世界]]

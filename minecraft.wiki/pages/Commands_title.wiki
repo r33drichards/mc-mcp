@@ -1,0 +1,138 @@
+{{redirect|Title|the title screen|Title Screen}}
+{{Infobox command
+|name=title
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Controls text displayed on the screen.
+
+== Usage ==
+[[File:Title command.png|thumb|Example result of the title command.]]
+A screen title is displayed to players as a single line of large center-aligned text in the middle of their displays, and can include a subtitle; a second, separate line of text displayed just below the title. Text can also be printed to the [[action bar]], the space just above the player's [[hotbar]]. 
+
+{{IN|java}}, all of them are specified using [[Raw JSON text format|text components]]. {{IN|bedrock}}, the <code>/title</code> command uses plain text while <code>/titleraw</code> uses raw JSON text components.
+
+Screen titles can be set to fade in and fade out, and the duration they are displayed can also be specified. Screen titles scale in size with the GUI Scale, and screen titles that are too big to fit on the screen are not line-wrapped (they just overflow off the screen on both sides). Note that the "fadeIn", "stay", and "fadeOut" values of each player are only sent to their own client side rather than stored in the server side. For a client, these values are cross-save and cross-server. These values are reset only when the client restarts, and the default is 10 game ticks (0.5 seconds), 70 game ticks (3.5 seconds), and 20 game ticks (1 second).
+
+{{IN|be}}, the opacity of the black background of the title can be adjusted with the "Text Background Opacity" option in the [[Options#Accessibility|accessibility settings]].
+
+==Syntax==
+
+*'''Java Edition'''
+: <code>title <targets> (clear|reset)</code>
+: <code>title <targets> (title|subtitle|actionbar) <title></code>
+: <code>title <targets> times <fadeIn> <stay> <fadeOut></code>
+
+*'''Bedrock Edition (plain text)'''
+: <code>title <player: target> <clear|reset></code>
+: <code>title <player: target> <title|subtitle|actionbar> <titleText: message></code>
+: <code>title <player: target> times <fadeIn: int> <stay: int> <fadeOut: int></code>
+*'''Bedrock Edition (JSON)'''
+: <code>titleraw <player: target> <clear|reset></code>
+: <code>titleraw <player: target> <titleLocation: TileRawSet> <raw json titleText: json></code>
+: <code>titleraw <player: target> times <fadeIn: int> <stay: int> <fadeOut: int></code>
+
+===Detail===
+: <code>... clear</code>
+:: Clears the screen title from the screens of the specified player(s).
+: <code>... reset</code>
+:: Resets the subtitle text for the specified player(s) to blank text, and the fade-in, stay and fade-out times to their default values (defaults to 10 gt, 70 gt, and 20 gt).
+: <code>... subtitle ...</code>
+::If a screen title is currently being displayed to the specified player(s), changes the current subtitle to the specified text; otherwise, specifies the subtitle for the next screen title to be displayed to the specified player(s).
+: <code>... title ...</code>
+::Displays a screen title to the specified player(s), or changes the current screen title to the specified text. After fading out, resets the subtitle back to blank text, but does not reset fade-in, stay, and fade-out times.
+: <code>... actionbar ...</code>
+::Displays text on the action bar to the specified player(s), or changes the current action bar title.
+: <code>... times ...</code>
+::Changes the fade-in, stay, and fade-out times (measured in time durations) of all current and future screen titles for the specified player(s).
+
+==Arguments==
+
+{{argument|targets|entity|target: target|CommandSelector<Player>}}
+: Specifies the player(s) to display a screen title to.
+: {{arg desc|je=entity|amount=multiple|type=players|be=player}}
+
+{{el|je|short=1}}: {{argument|title|component}}<br>
+{{el|be|short=1}}: {{argument|be=1|titleText: message|CommandMessage}} or {{argument|be=1|raw json titleText: json|Json::Value}}
+: Specifies the text to display as a title, subtitle, or on the action bar.
+: {{IN|java}}, {{lcfirst:{{arg desc|je=component}}}}
+: {{IN|bedrock}},
+:* For <code>titleText: message</code>, {{lcfirst:{{arg desc|be=CommandMessage}}}}
+:* for <code>raw json titleText: json</code>, {{lcfirst:{{arg desc|be=Json::Value}}}}
+
+{{el|je|short=1}}: {{argument|fadeIn|time}}, {{argument|stay|time}} and {{argument|fadeOut|time}}<br>
+{{el|be|short=1}}: {{argument|be=1|fadeIn: int|int}}, {{argument|be=1|stay: int|int}}, and {{argument|be=1|fadeOut: int|int}}
+: Specifies the time for the screen title to fade in, stay, and fade out. {{IN|bedrock}}, it's specified in [[Tick|game tick]]s (1/20ths of a second), and values below 0 are treated as 0.
+: {{arg desc|je=time|min=0|be=int}}
+
+==Result==
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code>raw json message: json</code> is not a [[raw JSON text]].|N/A|fail}}
+{{Result table|<code>player: target</code> is a target selector that is not in [[Target selectors#Player type and single type|player type]].}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more online players.|fail}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of targeted players}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|the number of targeted players}}
+{{Output table}}
+
+==Examples==
+
+All of the following displays a bold screen title "Chapter I" with a gray italic subtitle "The story begins…" to all players.
+
+*{{IN|java}}:
+*# <code>/title @a subtitle {"text": "The story begins...", "color": "gray", "italic": true}</code>
+*# <code>/title @a title {"text": "Chapter I", "bold": true}</code>
+*{{IN|bedrock}} using plain text:
+*#<code>/title @a subtitle §7§oThe story begins...</code>
+*#<code>/title @a title §lChapter I</code>
+*{{IN|bedrock}} with raw text variants:
+*#<code>/titleraw @a subtitle {"rawtext": [{"text":"§7§oThe story begins..."}]}</code>
+*#<code>/titleraw @a title {"rawtext": [{"translate":"§lChapter %%s","with":["I"]}]}</code>
+
+== History ==
+{{missing info|/titleraw's history}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w20a|Added {{cmd|title|link=none}}.}}
+|{{HistoryLine||1.11|dev=16w32b|Added the ability for {{cmd|title|link=none}} to display text in the action bar position.}}
+|{{HistoryLine||1.19.4|dev=22w03a|Now {{cmd|title|link=none}} uses time [[argument types]] rather than integer.
+|Before this snapshot, these integer arguments specifies a time in game ticks.}}
+|{{HistoryLine||1.21.5|dev=25w02a|Text Components are now specified with SNBT instead of JSON.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket}}
+|{{HistoryLine||1.0.5|dev=alpha 1.0.5.0|Added {{cmd|title|link=none}}.}} 
+}}
+<gallery>
+Chapter 1.png|First image of the title command.
+</gallery>
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/title?view=minecraft-bedrock-stable|title=<code>/title</code> Command|website=Microsoft Learn|date=August 1, 2024}}
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/titleraw?view=minecraft-bedrock-stable|title=<code>/titleraw</code> Command|website=Microsoft Learn|date=August 1, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/title]]
+[[ja:コマンド/title]]
+[[pt:Comandos/title]]
+[[ru:Команды консоли/title]]
+[[zh:命令/title]]

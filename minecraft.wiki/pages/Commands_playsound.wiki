@@ -1,0 +1,110 @@
+{{Infobox command
+|name=playsound
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only{{only|bedrock|short=1}}
+}}
+Plays a specified [[sound]] to a player, in a location, and in a specific volume and pitch.
+
+== Syntax ==
+* '''Java Edition'''
+: <code>playsound <sound> [<''source''>] [<targets>] [<pos>] [<volume>] [<pitch>] [<minVolume>]</code>
+
+* '''Bedrock Edition'''
+: <code>playsound <sound: string> [player: target] [position: x y z] [volume: float] [pitch: float] [minimumVolume: float]</code>
+
+== Arguments ==
+{{argument|sound|resource_location|sound: string|basic_string}}
+: Specifies the sound to play.
+: {{IN|bedrock}}, {{lcfirst:{{arg desc|be=string}}}} Should be a sound definition defined in <samp>[[Sounds.json#Bedrock Edition values|sound_definitions.json]]</samp> (for example, <code>mob.pig.say</code>).
+: {{IN|java}}, {{lcfirst:{{arg desc|je=resource_location}}}} Should be a '''Sound Event''' defined in <samp>[[Sounds.json#Sound events|sounds.json]]</samp> (for example, <code>entity.pig.ambient</code>).
+: A sound event may be affiliated with multiple sounds, and the sound that is actually produced is chosen at random from them, modified by their "weight", just as the game normally would. For example, the <code>entity.pig.ambient</code> sound event plays one of several pig sounds at random, because the event has multiple sounds associated with it.
+:[[Resource pack]]s may add their own events to sounds.json; the command successfully plays these. File names are ''not'' used by this command; it strictly uses the events defined in sounds.json (which may not even be similar to the original file names and paths), and thus a resource pack adding new sound files must define events for them (this is not necessary when replacing old sounds already defined in events).
+
+{{el|je|short=1}}: {{code|<''source''>}}
+: Specifies the music category and options the sound falls under. Must be <code>master</code>, <code>music</code>, <code>record</code>, <code>weather</code>, <code>block</code>, <code>hostile</code>, <code>neutral</code>, <code>player</code>, <code>ambient</code>, <code>voice</code>, or <code>ui</code>. If omitted, <code>master</code> is used.
+
+{{argument|targets|entity|player: target|CommandSelector<Player>}}
+: Specifies the player(s) for whom the sound is going to be played. If not specified, defaults to the player who executes the command.
+: {{arg desc|je=entity|amount=multiple|type=players|be=player}}
+
+{{argument|pos|vec3|position: x y z|CommandPositionFloat}}
+: Specifies the [[Coordinates|position]] to play the sounds from.
+: {{arg desc|je=vec3|be=CommandPositionFloat}}
+
+{{argument|volume|float|volume: float|float}}
+: Specifies the distance that the sound can be heard. If not specified, defaults to 1. For values less than 1, the volume diminishes. For values greater than 1, the sound does not actually grow louder, but its audible range (a 16-block radius at 1) is multiplied by volume. There is always a gradual falloff to silence based on distance from the center of the sphere. For values equal to or less than 0, no player can hear the sound.
+: {{arg desc|je=float|min=0.0|be=Float}}
+
+{{argument|pitch|float|pitch: float|float}}
+: Specifies the pitch and speed of the sound. If not specified, defaults to 1.
+: {{arg desc|je=float|min=0.0|max=2.0|be=Float}}
+: {{IN|java}}, values less than 0.5 are equivalent to 0.5. Values lower than 1 lower the pitch and increase the duration; values greater than 1 raise the pitch and reduce the duration. The pitch value is a multiplier applied to the frequency, so if a value from 0.5 to 1 is doubled, the pitch goes an octave higher. (See {{slink|Note block|Usage}} for converting other intervals to pitch values, but be aware that 1 isn't F♯ for all sound effects.)
+: {{IN|bedrock}}, only values between 0 and 256 work. Values above 256 are equivalent to the default value; values less than 0 default to 1, while values equal to 0 makes the sound inaudible. The value of the pitch is also the value for the speed multiplier, ex. if you set the pitch to 2 then the sound will play at double the pitch and double the speed. 
+: Notice that in [[Bedrock Edition]], if you try to set a pitch value to a sound, then the speed of playing sound will be changed in turn. And the speed multiplier is just the value of this argument. 
+
+{{argument|minVolume|float|minimumVolume: float|float}}
+: Specifies the volume for targets outside the sound's normal audible sphere. If a target is outside the normal sphere, the sound is instead centered some short distance (two blocks away) from the target, and this argument determines its volume. If not greater than 0, targets outside the normal audible sphere cannot hear the sound.
+: If not specified, defaults to 0.0. 
+: {{arg desc|je=float|min=0.0|max=1.0|be=Float}}
+
+== Result ==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code>player: target</code> is a target selector that is not in [[Target selectors#Player type and single type|player type]].|N/A|fail}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more online players.|fail}}
+{{Result table|Nobody can hear the sound (<code>minVolume</code> or <code>minimumVolume: float</code> is not greater than 0.0, while all the targets are outside the normal audible sphere).}}
+{{Result table|One of the specified players cannot hear the sound{{needs testing}}.|N/A}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of players who can hear the sound}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|the number of targeted players}}
+{{Output table}}
+
+== Examples ==
+* To play the [[creeper]] hissing sound 3 blocks behind the nearest player:
+** <code>/[[execute]] as @p at @s run playsound entity.creeper.primed hostile @s ^ ^ ^-3 1 0.5</code>{{only|java}}
+** <code>/[[execute]] as @p at @s run playsound note.creeper @s ^ ^ ^-3 1 0.5</code>{{only|bedrock}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.6.1|dev=pre|Added {{cmd|playsound|link=none}}.}}
+|{{HistoryLine||1.9|dev=15w49a|{{cmd|playsound|link=none}} now accepts tab-completion.}}
+|{{HistoryLine|||dev=16w02a|{{cmd|playsound|link=none}} now requires a ''source'' parameter, specifying what is the sound's category for volume purposes.}}
+|{{HistoryLine||1.20.5|dev=24w09a|Can now be used without specifying the player (assuming {{cd|@s}}) and without specifying the mixer (assuming {{cd|master}}).}}
+|{{HistoryLine||1.21.6|dev=Pre-Release 3|Added new category {{cd|ui}}.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket}}
+|{{HistoryLine||1.0.5|dev=alpha 1.0.5.0|Added {{cmd|playsound|link=none}}.}}
+}}
+
+== See also ==
+* {{cmd|stopsound}} — Stops a sound.
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/playsound?view=minecraft-bedrock-stable|title=<code>/playsound</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/playsound]]
+[[es:Comandos/playsound]]
+[[ja:コマンド/playsound]]
+[[pt:Comandos/playsound]]
+[[ru:Команды консоли/playsound]]
+[[uk:Команди консолі/playsound]]
+[[zh:命令/playsound]]

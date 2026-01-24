@@ -1,0 +1,122 @@
+{{Infobox version
+|title=Minecraft 15w41a
+|image=Java Edition 15w41a.png
+|edition=Java
+|type=Snapshot
+|date=October 7, 2015
+|parent=1.9
+|clienthash=edcecdfe258c36fcc857dfce1ee40167587d250d
+|jsonhash=1667759ebf20581022f06b926976f8a0906950b4
+|serverhash=92fcc884b954fb7e87b163d478fd5ff91bdb1550
+|exehash=0ba1b8e7ba224914db5d8bfd06873064ef585466
+|prevparent=1.8.9
+|prev=15w40b
+|next=15w41b
+|nextparent=1.9.1
+}}<onlyinclude>
+
+'''15w41a''' is the thirty-first [[snapshot]] for [[Java Edition 1.9]], released on October 7, 2015.<ref>https://web.archive.org/web/20151007153111/https://www.mojang.com/2015/10/minecraft-snapshot-15w41a/</ref>
+
+== Additions ==
+=== Items ===
+'''[[File:Elytra (item) JE1 BE1.png|32px]] [[Elytra]] '''
+* They function according to hang glider aerodynamics.
+** Players don't receive fall damage if they fall from a small height while flying slowly (not nose-diving).
+** Players still receive fall damage if they nose-dive directly into the ground.
+* Have to be equipped in the "chestplate" slot in order to work.
+* Takes durability damage at a rate of 1/s.
+* Have 431 durability and can be repaired on an [[anvil]] using [[leather]].
+** When the durability reaches 1/432, elytra doesn't break or take damage. Instead, they stop working and the texture changes to broken-looking elytra.
+* Can be given the [[Unbreaking]] enchantment using an anvil or [[command]]s.
+* Legs make a "walking movement" animation when player is stalling in the air.
+* Found on [[end ship]]s within an [[item frame]], replacing the beacon/Searge's book.
+* They fold in when not in use.
+* Capes don't display while wearing.
+
+=== Command format ===
+'''[[NBT format]]'''
+* All entities
+** <code>Passengers</code> (list): Replaces the original <code>Riding</code> compound tag. It has the ability to specify multiple passengers at equal depths, unlike <code>Riding</code>. Instead of the deepest-nested <code>Riding</code> entity being the bottom-most in the stack of riding entities, the entity at the root of the data is at the bottom of the stack. For example, the armor stand in the following command is at the bottom of the stack while the cow and pig are at the same depth:
+*** <code>/summon ArmorStand ~ ~1 ~ {Passengers:[{id:"Cow"},{id:"Pig"}]}</code>.
+** <code>Riding</code> (compound): The <code>Riding</code> tag has been removed in favor of the new <code>Passengers</code> tag.
+* Players
+** <code>RootVehicle</code>
+*** With the introduction of the <code>Passengers</code> tag, this new compound holds a copy of the entity the player is currently riding. <code>AttachLeast</code> and <code>AttachMost</code> are the UUIDLeast and UUIDMost of that entity, while <code>Entity</code> holds the actual data.
+*** <code>/testfor @a {RootVehicle:{AttachLeast:1l,AttachMost:1l,Entity:{id:"Boat",CustomName:"Test"}}}</code>.
+* Boats
+** <code>Type</code> (string): Determines the wood material of the boat that is displayed. Values are: <code>oak</code>, <code>spruce</code>, <code>birch</code>, <code>jungle</code>, <code>acacia</code>, <code>dark_oak</code>.
+*** e.g. <code>/summon Boat ~ ~1 ~ {Type:"acacia"}</code>.
+
+== Changes ==
+=== Non-mob entities ===
+'''[[Boat]]s'''
+* Now are larger, somewhat slower (until [[15w42a]]), and have oars which the player rows.
+* Six different kinds of wood boats are available, corresponding to the types of wood.
+** Only oak [[boat]]s may be crafted, due to {{bug|MC-89942}}.
+** The tag <code>Type</code> (string) have now added for the boat [[entity]], taking values <code>oak</code>, <code>spruce</code>, <code>birch</code>, <code>jungle</code>, <code>acacia</code> and <code>dark_oak</code>.
+* Changed how player movement is sent and processed by the server, making boats much less susceptible to client/server position desync than they had been.
+* Boats are now much less fragile, no longer being destroyed by collisions while in the water, though they can still be destroyed by fall damage onto the ground.
+* Crafting recipe now includes a [[wooden shovel]] for the oars.
+* Now require oar movement to move, using the {{control|left}} and {{control|right}} keys – these controls were changed in a later snapshot, [[16w04a]].
+** The {{control|left}} key paddles the left oar, turning the boat to the right – and vice-versa.
+** Holding both {{control|left}} and {{control|right}} paddles both oars, propelling the player forward. Rapidly pressing {{control|left}} and {{control|right}} in alternation makes the boat travel even faster.
+** Using the mouse, the player can look fully to the left or to the right, but not behind. This does not turn the boat.
+** Holding the {{control|forward}}, {{control|back}} or {{control|sprint}} keys no longer have any effect.
+* The player cannot {{control|use}} or {{control|attack}} with items in hand while the boat is in motion. This was changed in [[15w42a]].
+* All entities can go into boats, with a maximum of two entities (including the player).
+* Mobs can no longer control boats.
+
+=== World generation ===
+'''[[End ship]]s'''
+* Removed [[hopper]] with book.
+* Removed [[iron block]]s.
+* Extended the [[obsidian]] pattern on the floor.
+* Added an item frame containing [[elytra]].
+
+=== Gameplay ===
+'''[[Combat]]'''
+* [[Sweep attack]]s no longer require the player to be standing still or be sneaking.
+
+'''[[Trading]]'''
+* Clerics now sell [[ender pearl]]s (for 4–7 emeralds) instead of [[eyes of ender]].
+** This means it is no longer possible to travel to [[the End]] without visiting [[the Nether]].
+
+=== General ===
+'''[[Cape]]s'''
+* [[Mojang Cape]] texture modified. Also, the capes are no longer displayed if the player is wearing [[elytra]].
+
+'''[[Multiplayer]]'''
+* Improved cheat detection.
+
+== Fixes ==
+{{fixes|fixedin=15w41a|prefix=Minecraft
+|;dev
+|84155|The End stops generating around X/Z ~{{=}} 524200.
+|84753|The outer islands of the end have terrain glitches after around 9,975,300 x.
+|87041|Kicked from server, console spams "Netty Epoll Server IO #6/ERROR".
+|88016|Multiplayer problems.
+|89125|Items sit on top of hoppers instead of going in them.
+|89699|1.9 snapshots resetting chunks with tamed cats.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|VS0RSHLvz6A}}
+
+== Trivia ==
+* 15w41a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:15w41a]]
+[[es:Java Edition 15w41a]]
+[[fr:Édition Java 15w41a]]
+[[it:Java Edition 15w41a]]
+[[ja:Java Edition 15w41a]]
+[[lzh:一五週四一甲]]
+[[pt:Edição Java 15w41a]]
+[[ru:15w41a (Java Edition)]]
+[[zh:Java版15w41a]]

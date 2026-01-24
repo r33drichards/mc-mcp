@@ -1,0 +1,792 @@
+{{About|the effects caused by the 32-bit float precision loss|other uses|Distance effects}}
+{{Exclusive|Bedrock}}
+As the player travels far from the world's origin in {{BE}}, things begin to break or the world starts to behave abnormally and become distorted. This is mostly caused by precision loss of the [[w:Single-precision floating-point format|32-bit floating point numbers]] used for location, which dedicates only 23 bits to the fraction; thus, for any position between ''n'' and ''2n'', where n is a power of 2, the precision error makes the world (including blocks and entities) offset by {{frac|''n''|8388608}} blocks, or {{frac|''n''|524288}} block pixels. For example, between X/Z ±16,777,216 and X/Z ±33,554,432, coordinates of all entities are multiples of 2, and only blocks at these coordinates can be rendered; blocks not at these values visually snap to them.
+
+There are a few effects that appear at coordinates other than powers of two, which are shaded in blue on this page. Furthermore, the game defines some intended horizontal and vertical limits for gameplay, such as teleporting being limited to X/Y/Z ±30,000,000. See [[World boundary]] for information on these limits.
+[[File:Bedrock Edition hard limits map.png|thumb|right|Map of other distance effects (dramatically not to scale). The Corner Slice Lands still have a [[bedrock]] ocean, despite the rendering effectively stopping due to one-dimensional terrain generation.]]
+== General effects ==
+Some effects can occur at any distance but gradually worsen as the coordinates increase. {{BE}} uses 32-bit floating points for many of its calculations, such as the player's position, as opposed to {{JE}}, which uses 64-bit floating points. A 32-bit floating point uses 23 of these bits for precision (the other 9 are used for the sign and the order of magnitude). Thus, there are 2<sup>23</sup> (8,388,608) possible positions for any given order of magnitude. For example, there are 8,388,608 possible positions between 1 and 2, each {{frac|1|8,388,608}} apart, but there are also 8,388,608 possible positions between 8,388,608 and 16,777,216, each a full block apart. In general, between 2<sup>''n''</sup> and 2<sup>''n''+1</sup>, the valid positions are 2<sup>''n''-23</sup> apart. At higher coordinates, the valid positions are farther apart, so the position is less precise. This principle has several implications.
+
+=== Block rendering errors ===
+Various blocks are rendered as partial blocks, and the game uses 32-bit floating points to calculate the corners. At high coordinates, these coordinates become offset, causing the block to render incorrectly. Blocks with more detailed models usually become glitched at lower coordinates. A few blocks start to render incorrectly at a relatively low 131,072 blocks, while full blocks continue to render correctly past 8,388,608 blocks up to X/Z ±16,777,216, farther out than most partial blocks.
+
+=== Terrain generation errors ===
+Many [[mountain]] biomes gradually stop generating at around X/Z ±2,812,332, replacing by lava lakes. Ancient cities will also be exposed above ground. On Windows, the terrain generation of the [[End]] begins to generate incorrectly beyond X/Z > ±9,991,500 (the exact starting position varies slightly depending on the seed), and the outer islands will be filled to almost solid.
+
+=== Slow movement becomes impossible ===
+For an entity to move, it advances a certain distance each tick. At slow speeds or high coordinates, the increase in distance per tick is so little that when rounding to the nearest valid position, the entity is placed at its original position, so it essentially does not move at all. More specifically, between 2<sup>''n''</sup> and 2<sup>''n''+1</sup>, an entity's speed is rounded to the nearest multiple of 20×2<sup>''n''-23</sup>, so it must move at least 10×2<sup>''n''-23</sup> to actually be considered moving.
+
+There are several ways to slow the player's movement, such as [[sneaking]], [[status effect]]s, using an item (e.g. drawing back a [[bow]]), or certain blocks (such as [[cobweb]]s and [[soul sand]]s). In addition, moving diagonally decreases the player's speed on any given axis. This effect can be amplified by moving almost (but not exactly) along an axis, and by walking into an object, one can do this without changing their coordinate on the other axis. Note that due to trigonometric rounding errors,{{verify|Not 100% sure if this is actually what's going on}} extremely small angles do not cause the player to move as slowly as expected. The slowest form of movement without walking into objects ([[sneaking]] through [[cobweb]] over [[blue ice]] with [[Slowness]] VI while touching [[powder snow]] and drawing back a [[bow]]) becomes impossible at 2048 blocks, and coincidentally, the slowest form of movement achievable by walking into an object at a slight angle also becomes impossible at 128 blocks; as a result, both methods must be used to slow the player down if one wishes to observe this effect at lower coordinates.
+
+=== Jitter ===
+The game normally runs at 60 frames per second, so when the player moves, the game must calculate the camera position on the intermediate frames between ticks. This is normally not an issue, but if the player is moving close to the slowest possible speed, the camera position on intermediate frames becomes distorted, the game starts to jitter and cause delay movements.
+
+Eventually, the slow speed and precision errors reach a point where the player advances by only one valid position per tick, forcing that the game to render the intermediate frames at exactly the starting or ending position. As a result, the camera moves as though the game ran at 20 frames per second instead of 60.
+
+Since slower speeds become jittery at lower coordinates, it is impossible to say exactly where jitter "starts", as it is an effect that gradually becomes more severe as the player moves further away from the center of the world. However, jittering at regular walking speed becomes obvious at or beyond X/Z ±524,288.
+
+=== Falling through the world ===
+At extreme coordinates, small entity hitboxes shrink to a width of 0, and such entities can fall through the edges of solid blocks. For example, if an entity smaller than {{frac|1|4}} blocks exceeds coordinate 2,097,152, its position is rounded to the nearest quarter. Since its hitbox extends less than {{frac|1|8}} from a valid position in each direction, both sides of the hitbox are rounded to the same position, so the apparent hitbox size is 0.
+
+In addition, it is possible to manipulate hitboxes and fall through the world at much lower coordinates. While the positions of the centers of entities are stored in NBT, the positions of the individual hitbox corners are stored in memory. If the player is crossing a power of 2, these corners may move at different speeds, if they are affected differently by floating-point precision errors, thus changing the hitbox size. The hitbox size resets to 0.6 in certain situations, including:{{info needed|Complete list?}}
+* Exiting and reloading the world.
+* Using the {{cmd|tp}} command.
+* Switching between [[walking]], [[sneaking]], [[crawling]], [[swimming]], and [[gliding]] positions.
+* Teleporting using [[ender pearl]]s or [[chorus fruit]].
+Again, if the player's hitbox size shrinks to 0, it becomes possible to fall through the edges of blocks and into the void.<ref>{{bug|MCPE-39299}}</ref> Conversely, it is possible to stretch one's hitbox to several blocks wide.<ref>{{ytl|q3BvjYdqM0g}}</ref>
+
+== Minor effects (X/Z ±0–131,071) ==
+Minor movement effects occurs here; no block distortion occurs here.<ref>{{Bug|MCPE-101723|Bedrock edition distance effects|4=Invalid}}</ref>
+{| class="wikitable"
+!Coordinates
+!Effects
+|-
+|X/Z ±1 (±2<sup>0</sup>)
+|
+* It becomes impossible to walk into an object at a 0.02-degree angle through [[cobweb]] over [[blue ice]] with [[Slowness]] VI (achievable in [[Survival]] mode by using the [[Potion of the Turtle Master|potion of the Turtle Master II]]) while touching [[powder snow]].
+** Using the above method of movement at (0,0), it is theoretically possible to fall through the world by crossing the X/Z ±1 limit. However, it is almost impossible to do at these coordinates, as it takes nearly 6 real-life days of non-stop gameplay (where one must start over if they exit the game).
+|-
+|X/Z ±128 (±2<sup>7</sup>)
+|
+* An extremely small amount of jitter appears at this point, noticeable only if the player using the method of movement described below.
+|-
+|X/Z ±256 (±2<sup>8</sup>)
+|
+* Lowest coordinates at which anyone has fallen through the world, although incredibly unlikely at this distance. Since the glitch is caused by hitbox corners affected by different levels of floating point precision errors, it could theoretically happen at X/Z ±1. This is caused by floating point precision errors causing hitboxes of blocks to have small gaps. If any entity's coordinate falls close to an edge of a block, then it will fall through the world and into the void. However, it is theoretically possible to fall through the world at the origin. The precision loss also affects the player's movement speed slightly, although only at extremely low speeds at this distance. However, this would require nearly 6 real-life days of nonstop gameplay (where one must start over if they exit the game). (see above)
+* Sneaking on blue ice with cobwebs while touching powder snow and under the effect of Slowness VI while using an item becomes impossible.
+* It becomes impossible to walk into an object at a 0.0025-degree angle. As discussed before, lower angles do not yield similar results at lower coordinates.
+|-
+|X/Z ±512 (±2<sup>9</sup>)
+|
+* Sneaking on blue ice with cobwebs and under the effect of Slowness VI while using an item becomes impossible.
+* The player has a very rare chance of falling through the world when colliding with a block.
+|-
+|X/Z ±1,024 (±2<sup>10</sup>)
+|
+* Sneaking on blue ice with cobwebs and under the effect of Slowness V while using an item becomes impossible.
+* Sneaking while under the effect of Slowness VI from [[Potion of the Turtle Master|potion of the Turtle Master II]] and using an item while in a [[sweet berry bush]] that is diagonally over [[ice]] with cobwebs becomes impossible.
+* Combining Slowness VI with Speed -4 (achievable only through commands) results in a lower speed that becomes impossible at X/Z ±256.{{verify}}
+* Spontaneously falling through the world is now possible from this point on, although extremely unlikely at this distance. This is caused by floating point precision errors causing hitboxes of blocks to have small gaps. If any entity's coordinate falls close to an edge of a block, then it falls through the world and into the void. The precision loss also affects the player's movement speed slightly, although only at extremely low speeds at this distance.
+|-
+|X/Z ±2,048 (±2<sup>11</sup>)
+|
+* This is the smallest observed distance of the player falling through the world; however, the player must move extremely slow, enough to allow this to happen. Because of this, it is hypothetically possible to fall through the world at X/Z: 0.
+* Sneaking on blue ice with cobwebs and under the effect of Slowness VI while using an item becomes impossible.
+|-
+|X/Z ±4,096 (±2<sup>12</sup>)
+|
+* Sneaking on blue ice with cobwebs while using an item becomes impossible.
+|-
+|X/Z ±8,192 (±2<sup>13</sup>)
+|
+* [[Cobwebs]] become 1 block wide instead of 0.998.{{verify|Not 100% sure if this is actually what's going on}}
+|-
+|X/Z ±16,384 (±2<sup>14</sup>)
+|
+* It becomes impossible to move in cobwebs on blue ice while using an item.
+* Very minor jittering during movement can be experienced beyond this point; it is noticeable if the player moves slowly.
+* It becomes impossible to sneak while using a [[spyglass]] with a [[Potion of the Turtle Master|potion of the Turtle Master II]].
+|-
+| style="color: #201b38; background: #ddddff" | Between X/Z ±≈19,188 and ±≈19,200
+|
+* The walking sound of the player becomes layered and plays fast when walking.
+* The player must rejoin the world for the glitch to have an effect. This also applies with the ≈40,960 and ≈44,036 block limitation on the walking sound effect. The coordinates of this glitch depends on what direction you travel in. The flat world preset also has the effect further away. Beyond this point, [[Speed]] IV is required to hear the sound again.
+** This happens most likely due to a walking sound precision loss that makes the game not being able to detect where the player is to play the sound at the player's coordinate. Oddly enough, other mobs are unaffected by this bug.
+|-
+|X/Z ±32,768 (±2<sup>15</sup>)
+|
+* It becomes impossible to sneak diagonally on top of [[soul sand]] with cobwebs while drawing back a [[bow]].<ref>{{bug|MCPE-30198||Cannot move diagonally while sneaking in cobwebs on soul sand while drawing back a bow at excessive coordinates}}</ref>
+* The screen starts to flicker when the player is at the edge of the powder snow when the player rotates the camera, even with leather boots on.
+* It becomes impossible to sneak on blue ice with cobwebs while touching powder snow.
+|-
+| style="color: #201b38; background: #ddddff" | Between X/Z ±≈40,960 and ±≈44,036
+|
+* The walking sound of the player stops being played when walking. The coordinates also depend on the movement direction. In [[Flat world|flat worlds]], this effect begins at higher distances. Beyond this point, [[Speed]] IV is required to hear the sound again.
+|-
+|X/Z ±65,536 (±2<sup>16</sup>)
+|
+* An extremely small amount of jitter when walking.
+* It becomes impossible to sneak diagonally on top of soul sand with cobwebs.
+* Sneaking vertically and out starts to become jittery, although one needs keen eyes to notice this.
+* It becomes impossible to move diagonally on top of ice with cobwebs while drawing back a bow.
+* Falling through the world is now possible when colliding with a block in the corners.<ref>{{bug|MCPE-39299||Fall through world at x:65536 z:65535|Won't Fix}}</ref>
+* The clouds start to become jittery, although one needs keen eyes to notice this.
+* With [[Vibrant Visuals]], the outline box begins to distort.
+|}
+== Medium effects (X/Z ±131,072–1,048,575) ==
+Eventually, some common forms of movement begin to glitch. In addition, blocks with detailed models begin to render incorrectly.
+{| class="wikitable"
+!Coordinates
+!Effects
+|-
+| X/Z ±131,072 (±2<sup>17</sup>)
+|
+* Climbing up [[ladder]]s, [[vine]]s, [[twisting vine]]s, and [[weeping vine]]s while sneaking is slightly slower than normal if climbing by walking against a block.<ref name="slowladder">{{bug|MCPE-102410||Climbing up ladders and vines while sneaking are slower after X/Z ±131,072}}</ref>
+* Sneaking diagonally starts to become jittery or bumpy. However, if the player is going full sneaking speed even without [[speed]] effect and the player is going really diagonally and does not have the [[Slowness]] effect, it's very hard to notice the bumps or jitter of it.
+* Sneaking diagonally through [[cobweb]]s becomes impossible.
+* When the player stops walking, they are bumped.
+* It becomes impossible to sneak horizontally on top of [[soul sand]] with cobwebs.
+* Flying at normal speed starts to become jittery.
+* Some blocks start to render distorted:
+** Handles of [[levers]] have very slight curvy lines.
+** [[Lecterns]] are slightly stretched to a full block.
+** [[Tripwire hooks]] start to have curvy lines.
+|-
+| X/Z ±262,144 (±2<sup>18</sup>)
+|
+* All entities are on the half of the block pixel.
+* Climbing up ladders and vines while sneaking is even slower and less smooth.<ref name=slowladder/>
+* Moving in powder snow while sneaking becomes impossible if the player waits for too long.
+* [[Sea pickles]] render with slightly thinner stems than normal.
+* Tripwire [[string]] becomes invisible.
+* [[Sweet berry bushes]] and cobwebs appear slightly larger.
+* Sneaking in soul sand with a spyglass becomes impossible.
+* Sneaking in all directions is more bumpy or bumpier.
+* [[Fireflies]] can no longer move horizontally.
+* The top part of the tripwire metal hook is thin and further distorted.
+|-
+| X/Z ±524,288 (±2<sup>19</sup>)
+|
+* All entities are on the edges of block pixels.
+* [[Painting]]s are pushed half a pixel into the block, causing the painting to turn black.
+* The inner part of [[item frame]]s render flush along the block, resulting in a [[w:Z-fighting|z-fighting]], which means that the inner part of [[item frame]]s becomes 2D.<ref name="flicker">{{bug|MCPE-52593||Some objects are glitched when entering the high X/Z coordinates|Incomplete}}</ref>
+* Walking horizontally while on [[cobweb]]s becomes impossible without the [[Weaving]] effect.
+* Moving with [[Slowness]] VI becomes impossible.
+* Moving in [[powder snow]] becomes entirely impossible while sneaking.
+* Jitter is easily noticeable beyond this point.
+* Most [[mob]]s are unable to jump on blocks correctly; this is probably due to entities being on the edge of block pixels.
+* [[Sea turtle]]s and [[axolotl]]s can no longer move on land.
+* The top part of [[candle]]s renders incorrectly and a single [[candle]] become flat, 2D or invisible.
+* It becomes impossible to sneak outside the X/Z axis on [[soul sand]] without using [[soul speed]] [[boots]].
+* Running on [[soul sand]] becomes noticeably bumpy.
+* The stem of [[mangrove propagule]]s renders incorrectly.
+* [[Lead]]s starts to become easily noticeable and distorted.
+* Walking is slightly slower than normal.
+* It starts to become harder to go from walking to sprinting on an axis.
+* The tripwire metal hook becomes flat.
+* [[Snowfall|Snow]] movement starts to jitter.
+|}
+
+== Major effects (X/Z ±1,048,576–16,777,215) ==
+{{info needed section|the following features and effects:
+* Leads
+* Cave generation
+* Raycasting, which seems to result in incorrect blocks being targeted
+* [[Spear]] there is a coordinate that mob cannot be charged with spear.}}
+Blocks are rendered based on their corners, whose coordinates are 32-bit floating point numbers. Generally, these are multiples of {{frac|1|16}}. Thus, most blocks render normally as long the floating points are precise to the nearest sixteenth. This breaks at X/Z ±1,048,576 (2<sup>20</sup>), and many partial blocks continue to render incorrectly as the coordinates go even farther out.<ref>{{bug|MCPE-102351||Rendering error beyond X/Z ±1,048,576}}</ref>
+
+When [[RTX]] (ray tracing) is enabled, the lighting is unaffected by floating-point precision errors, even though the block shapes themselves are incorrect.<ref>{{ytl|-CWqHjVdQXo|t=19s}}</ref>
+
+Many commonly-used forms of movement, such as sneaking and walking, becomes difficult or even impossible, with severe jittery. It becomes harder to stand on blocks and easier to fall through the world. In addition, the terrain starts to break down following the table.
+{| class="wikitable"
+!Coordinates
+!Effects
+|-
+| X/Z ±1,048,576 (±2<sup>20</sup>)
+|
+* [[Wall]]s render wider than normal.
+* [[Fence]]s (excluding the posts) and closed [[fence gate]]s render completely flat.
+* [[Door]]s and open [[trapdoor]]s render thinner than normal.
+* [[Iron bars]] and [[glass pane]]s render twice as wide than normal.
+* Climbing up ladders and vines while sneaking is extremely slow.
+* It becomes impossible to sneak diagonally (i.e. outside the X/Z axis).
+* Moving in [[powder snow]] becomes impossible if the player waits too long, though it is possible to escape by engaging the [[sprint]] function rapidly.
+* The cube inside [[slime block]]s is slightly wider than normal.
+* The cube inside [[honey block]]s is stretched to a full block, which results in [[w:Z-fighting|a flickering effect]].
+* [[Cake]]s appear stretched to a full block.
+* [[Fire]] renders a bit differently.
+* Sea pickles render in slightly different places without stems.
+* [[Lantern]]s render wider than usual and without the top part.
+* The logs in [[campfire]]s render farther apart, overlapping with each other.
+* In [[brewing stand]]s, the base renders incorrectly, and the central pole is invisible.
+* The bases of [[anvil]]s render incorrectly.
+* The supports of [[grindstone]]s render incorrectly.
+* The sides of item frames render wider than the top and bottom.
+* [[Flower pot]]s appear slightly wider.
+* The inside of [[beacon]]s render incorrectly.
+* The supports of [[bell]]s render incorrectly.
+* Horizontal [[End rod]]s render flat, while vertical End rods render only with their bases.
+* The shafts of [[lightning rod]]s render as flat.
+* [[Redstone]] renders slightly differently.
+* [[Torch]]es become 2D or invisible.
+* [[Button]]s placed anywhere other than the sides of blocks are distorted, and pushed buttons are pushed all the way into the block.
+* [[Pressure plate]]s cover an entire block.
+* [[Redstone repeater]]s and [[redstone comparator]]s render without torches.
+* [[Cocoa beans]] in the second stage render as wide as mature cocoa beans.
+* The [[Cactus|cacti]] renders as a full block, with gaps at the edges.
+* [[Bamboo]] renders wider than normal, flat, or invisible.
+* The [[dragon egg]] appears to be blockier.
+* [[Turtle egg]]s are distorted.
+* The small bumps on [[chorus plant]] stems disappear.
+* Medium amethyst buds are slightly smaller than normal.
+* The barrier in the [[void]] is effectively disabled.
+* Walking is faster than normal.
+* [[Lead]]s start appearing as a zigzag.
+* Item frames render 2D or become flat.
+* The stem of [[mangrove propagule]]s render twice as wide as normal.
+* [[Sniffer egg]]s become stretched to full block.
+* The first stage of [[pitcher pod]]s render wider than normal.
+* The second, third, and fourth stages of [[pitcher pod]]s are smaller than normal.
+* Ladders and vines become pushed into the block it is connected to.
+* The screen starts to flicker when the player is near powder snow, getting worse at higher coordinates, even with leather boots on. (Unlike beyond X/Z ±32,768, as it getting farther when the player go near it)
+* Running through [[cobweb]]s becomes impossible.
+* Firefly bushes are slightly wider.
+* [[Dried ghast]]s render incorrectly, tentacles are filled in the middle and squished.
+* Candles become 2D or invisible.
+* [[Chain]]s become flat.
+* The metal part of tripwire hooks becomes thick.
+** If both exceed the axis, the tripwire hook connect between metal and the base become 2D.
+* In [[Vibrant Visuals]], shadows start to distort and form more blocky shadows.
+|-
+| X/Z ±2,097,152 (±2<sup>21</sup>)
+|
+* It is now possible to fall into the void, but not guaranteed until 2^22.
+* Entities less than 0.25 blocks wide (such as baby turtles and dropped items) fall through the edges of the blocks, but can stand on the centers.
+* Moving while [[sneaking]] becomes nearly impossible without [[Swift Sneak]] II.
+* Walking feels very bumpy.
+* Dropped items that land on the edges of [[lava]] bounce off without burning.
+* Fence posts are invisible.
+* Open fence gates are completely flat.
+* Lightning rods render entirely flat.
+* Doors and trapdoors render wider than normal.
+* Iron bars and glass panes render completely flat.
+* The supports of [[scaffolding]] are invisible.
+* [[Cauldron]]s and [[composter]]s have completely flat walls and whatever is inside them are stretched to fit the top.
+* Flowers begin to distort.
+* The bottom part of [[hopper]]s are invisible.
+* Lecterns become more than a block wide.
+* [[Nether portal block]]s are completely flat.
+* Flowers, sweet berry bushes, cobwebs, and tall grass are much smaller than normal.
+* [[Hanging roots]] render thinner than normal.
+* All four stages of amethyst buds render thinner than normal.
+* The first stage of [[cocoa beans]] is flat.
+* [[Chorus flower]]s render as full blocks.
+* The top part of the dragon egg is flat, 2D or invisible, and are even more blocky.
+* The big bumps on [[chorus plant]] stems are bigger.
+* The stem of [[mangrove propagule]]s are invisible.
+* [[End rod]]s become invisible.
+* Climbing up ladders and vines becomes impossible without holding the jump button.
+* Standing still continuously triggers [[sculk sensor]]s.
+* The stems of [[pink petals]], [[leaf litter]], and [[wildflower]]s start to become distorted.
+* Tripwire hook becomes thin again similar to X/Z 524,288, but tripwire hook base become flat and undiggable.
+|-
+| style="color: #201b38; background: #ddddff" | X/Z ±2,812,333
+|
+* Terrain generation partially breaks down at this point. Certain sections of land do not generate any terrain whatsoever, leaving behind [[aquifer]]s, [[generated structures]], the [[lava]] that replaces all air below Y=-56, and the [[bedrock]] layer. Scattered [[monolith]]-like strips of land that extend up to approximately Y=250 can also be seen in these areas, monoliths occur only at negative/positive X or negative/positive Z coordinates. These terrain generation breakdowns most often occur in areas that contain [[mountain]] biomes.<ref>{{bug|MCPE-146021||Mountains won't generate higher in high distances, instead it generates a deep, glitched hole that sometimes generates aquifers|Won't Fix}}</ref>
+* Depending on what platform/console that player is on, these terrain breakdowns differ between terrain-less areas and monolith-like strips. For example, on PlayStation, these breakdowns result in monolith-like strips of land, while on Xbox, they do not generate any terrain at all. On Nintendo Switch, the breakdown does not happen at all and on Windows and mobile it could be both, but the terrain never generates normally past this limit on Windows and mobile.{{More information needed|What about Realms?}}
+* On Xbox, when loading up some worlds made in previous versions, there is a chance of seeing chunks entirely filled with water in these terrain-less areas, replacing any chunk that had no terrain generated within it. These "water chunks" do not affect what was previously generated there, and simply fill the chunk with water up to approximately Y=64. These chunks can also be either partially frozen or completely frozen into chunks full of ice depending on their location. They do not generate outside of the terrain-less areas. On some occasions, these chunks can have small parts of land inside of them. 
+* The cause for these water chunks is unknown, and only one player so far is known to have witnessed this.
+|-
+| X/Z ±4,194,304<ref>{{bug|MCPE-19828||Blocks after X/Z ±4,194,304 are non-solid|WAI}}</ref> (±2<sup>22</sup>)
+|
+* It becomes extremely difficult to traverse the world on foot from here. To continue navigating around the world, players need to use [[ender pearl]]s, [[chorus fruit]], [[elytra]] with [[firework]]s or a [[Riptide]] [[trident]] (if raining or underwater), horseback, [[boat]]s, or any method that would be at least five blocks per second normally (the minimum speed possible from here is 10 blocks per second), meaning moving in normal walking speed is impossible.
+* One can travel on foot past 4,194,304 by jumping once and sprinting. If it were walking, then it would only move 1 block.
+* Players cannot jump normally. The [[Jump Boost]] effect does not work. [[Stairs]] and [[slab]]s or blocks less than 0.5 blocks tall still work past this point.
+* Moving while [[sprinting]] works only if the player looks directly into an axis and is faster than normal.
+* Entities less than 0.5 blocks wide (such as [[Item (entity)|items]] and [[silverfish]]) fall through the edges of blocks, but can still stand on the centers. This is likely because the hitbox corners on both sides round to the same coordinates, resulting in a "null" hitbox; however, it is not confirmed.{{verify}}
+* Status effect particles snap to the center of the player, causing them to bunch around the center of the screen.
+* All stages of amethyst buds are stretched to a full block.
+* [[Door]]s and open [[trapdoor]]s render completely flat.
+* The floating point precision loss causes at least half of the valid coordinates to be considered "invalid", making it very hard to stand on blocks and easy to fall through the world beyond this point.<ref>{{ytl|tyDxEOoHMgg}}</ref>
+* The stems of both [[big dripleaves]] and [[small dripleaves]] become two-dimensional.
+* [[Eyes of ender]] placed inside [[End portal frame]]s are stretched to cover the entire block.
+* [[Piston]] bases are stretched to full block. If retracted, the front "flickers" between the head and base textures.
+* [[Crop]]s, [[hanging roots]], and [[seagrass]] render on the edges of blocks.
+* Certain Non-full blocks like [[fence]]s, [[torch]]es, [[bamboo]], and [[lantern]]s become flat and other blocks like [[lectern]]s become completely distorted.
+* The second stage of [[cocoa beans]] is flat just like the first stage.
+* The third stage of [[cocoa beans]] appears stretched as a full block.
+* When the player is in [[powder snow]] the screen sometimes flickers fighting trying to see if the player is inside or outside of powder snow even with [[leather armor]] on.
+* [[Swimming]] works only if the player is near a [[dolphin]], or with the [[Speed]] effect{{verify|does the Speed effect affect swimming speed?}}.
+* The second highest top part of the [[dragon egg]] is invisible including the highest part.
+* Chains are 2 blocks wide.{{verify|No, they are flat}}
+* [[Heavy core]]s and [[dried ghast]]s become stretched to a full block.
+* [[Lantern]]s render two-dimensional (invisible if both coordinates exceed this value).
+* [[Head|Head block]]s and [[conduit]]s are stretched to a full block. (with the hitbox stretched)
+* [[Flower pot]]s becomes 2D or flat.
+* [[Tripwire hook]] becomes 2D or flat.
+|-
+| X/Z ±8,388,608 (±2<sup>23</sup>)
+|
+* Coordinates of all entities are integers (1 block), meaning that all entities are on the edges of blocks. As a result, most entities less than 1 block wide (including [[player]]s) always fall through blocks, except when using [[Speed]] VIII. The only entities that can stand on blocks from this point onward are [[boat]]s, [[minecart]]s on rails (when placed correctly), [[spider]]s, [[horse]]s, [[camel]]s, [[iron golem]]s, [[polar bear]]s, [[ravager]]s, any entities with Speed VIII or higher, and [[panda]]s. The player falls through blocks if the player rides an entity other than the ones described above, uses an ender pearl, gets in [[water]] or [[lava]] or teleports beyond this coordinate.
+** If only one coordinate exceeds this value, blocks still have collision detection from the side.
+** The player can still be considered "under" blocks, meaning that [[phantom]]s do not spawn. Thus, it is theoretically possible to travel to and from the Stripe Lands in Survival using above-average in speed [[horse]]s.
+** A side effect of this is that players will fall into the void infinitely, since the [[Void#Bedrock Edition and Minecraft Education|invisible barrier]] at Y=-105 is no longer solid.
+* The minimum movement speed is increased to ten blocks per second, meaning that sprinting, boats (except on ice), horses (except for the faster ones mentioned above), and swimming are no longer usable sources as a method of movement.
+* To fly in [[Creative]] mode, the player must sprint or look directly along an axis, unless the player position is controlled by 64-bit doubles instead of 32-bit floats. The [[Speed]] effect does not work, due to {{bug|MCPE-61425}}. In addition, flying at this coordinate is bumpy, even when the player is sprinting and looking directly along an axis.
+* Most blocks that normally render as partial blocks are either stretched to become full blocks, or squished to become 2-dimensional. The exception is a few blocks that render normally no matter how far out the player travels, such as [[chest]]s, [[bell]]s, [[sign]]s, [[copper golem statue|copper golem statues]], and [[bed]]s.
+** If both coordinates exceed this value, partial blocks that normally render as 2D this far out become 1-dimensional and are therefore completely invisible.
+**[[Stairs]] render like full blocks or slabs, with stretched or squished textures.
+**[[Anvil]] bases are stretched to full block.
+**The inside part of [[beacons]] is stretched to full block.
+**[[Button]]s of any kind placed on top or bottom of blocks appear as fat as a [[pressure plate]].
+**Pumpkin and melon stems attached to their respective blocks render on the edge of the farmland that has an even coordinate.
+** Flowers, tall grass, cobwebs, sweet berry bushes, dead bushes and doors appear two-dimensional.
+* The [[terracotta]] strata in [[badlands]] biomes start to become noticeably distorted at this point.
+* The blade of a [[stonecutter]] duplicates, with each blade appearing on the edge.
+* [[Spore blossom]]s are stretched so that the player sees only half of the flower.
+* Entering active [[End portal]]s becomes impossible.
+* The [[End portal block]] becomes unable to teleport entities.
+* [[Ender dragon]]s start to flap their wings faster, getting worse the higher coordinates they are at.
+* [[Wither]]s start to destroy blocks at any directions, including vertically.
+* The first and second stage of [[cocoa beans]] are either pushed into the block when placed horizontally and render as full blocks when placed vertically.
+* The shadows of [[sign]]s are at the edge of the block the sign is on.
+* The notes that come from [[jukebox]]es and [[noteblock]]s are on the edges of the block.
+* [[Caves]] sometimes generate with perfect curves or horizontal halls.
+* Riding a [[minecart]] or more minecarts on active [[powered rail]] becomes impossible.
+* [[Chain]]s are stretched to a full block.
+* [[Mangrove propagule]]s are stretched to 2 blocks wide.
+*[[Leaf litter]], [[pink petals]], and [[wildflowers]] are stretched.
+* Tripwire string is now visible again but stretched to a full block.
+*[[Redstone dust]], [[glass pane]]s, [[iron bar]]s, [[tripwire hook]]s, [[fence]]s and closed [[fence gate]]s are stretched to a full block.
+*[[Torch]]es render flat at the edges of the block.
+* The player can no longer stand on top of [[shulker]]s.
+* [[Shelves]] become 2D in one axis and 3D in one axis, if both axis exceed the value, both axis rendered 2D instead of 1D.
+* [[Canyon]]s generate slightly different.
+* Raindrops are at the edge of the block.
+* [[Pointed dripstone]]s become 2D.
+|}
+
+== Game-breaking effects (X/Z ≥±16,777,216) ==
+{{info needed section|*Notable effects beyond the 32-bit limit (X/Z ≥2,147,483,648) and the 128-bit limit.
+*''Bedrock Editor'' beyond X/Z ≥33,554,432.}}
+Here, the rendering fundamentally breaks down to the point where [[blocks]] are no longer visible. The minimum speed for moving gradually increases, up to the point that regular Creative mode flying is no longer possible, and the player is limited to flying with an [[elytra]] and a [[Riptide]] trident, or a glitch where the speed from [[Soul Speed]] is infinitely applied to Creative mode flying.
+
+At extreme coordinates near the integer limit, the game crashes.
+{| class="wikitable"
+!Coordinates
+!Effects
+|-
+| X/Z ±16,777,216<ref>{{bug|MCPE-11418||Weird behavior at high X/Z coordinates ("far lands").|WAI}}</ref> (±2<sup>24</sup>)
+|
+* The floating point precision errors cause only blocks with even coordinates not divisible by 4 to render, and are stretched to 2 blocks wide. Blocks at other coordinates are rounded to the nearest multiple of 4 and render 2 dimensional. Blocks render only if they are "exposed" to air or another see-through block. This phenomenon is known as the "Stripe Lands".{{Conjecture|tag=1}} In the "Corner Stripe Lands" where both coordinates exceed this value, blocks with both coordinates 2 mod 4 render double length and double width, blocks with 1 such coordinate render 2D and double length, and blocks with no such coordinate render 1D (thus, the block is completely invisible unless the player is inside it).
+** This does not impact the way maps are rendered.
+** If the player manages to set their coordinate to an odd number or move into any area not rendered, they get stuck in a glitched position, unable to move the camera view properly, or move in any direction.
+* Only [[ghast]]s, large [[slime]]s, and large [[magma cube]]s have collision detection and do not fall through the world.
+* The game doesn't recognize that the player is in [[water]] if the player's coordinates are a multiple of 4, causing the player to fall through water and into the [[void]], it is unable to enter [[swimming]], and the fog is black or dark blue. However, water still causes the player to exit [[gliding]], and [[boat]]s still float.
+** In the Corner Stripe Lands, water is recognized only if both X and Z coordinates are not a multiple of 4.
+* The minimum speed is increased to 20 blocks per second, meaning that it is no longer possible to move using regular Creative mode flight or with [[horse]]s without using [[speed]] effect, leaving only flight by an elytra (either with [[firework rocket]]s or a Riptide trident), a [[horse]] with [[speed]] effect and teleportation by any means.
+** Moving using fast Creative mode flight is still possible, but only if the player looks directly into an axis.
+* In any biome where multiple blocks can generate as part of the top surface layer, such as [[windswept hills]] and [[old growth taiga]]s, their surfaces become distorted and start to form blocky shapes. The terracotta strata in [[badlands]] biomes have also become further distorted. Because the majority of blocks do not render in the Stripe Lands, this is noticeable only when viewed on a map.
+* In ''[[Bedrock Editor]]'', placing objects beyond this point places as stripes.
+* If the map is turned on in ''Bedrock Editor'' beyond that point, it matches with stripes.
+|-
+|  X/Z ±33,554,432 (±2<sup>25</sup>)
+|
+* Horizontal block rendering stops completely, leaving only vertical block rendering in its place, marking the start of the "Slice Lands".{{conjecture|tag=1}} The floating point precision errors cause only blocks with even coordinates not divisible by 8 to render, and are stretched to 4 blocks wide, marking the start of the. Blocks whose sides are "concealed", such as naturally generated water, are completely invisible.
+** At this point, the slices are 4 blocks apart, but the gap widths double for every power of 2.
+** It has become difficult to place blocks from this point onward. The player must look at an existing block and extend it along an axis. The only way to generate blocks without external tools is with [[structure block|structure blocks]].
+** Past this point, blocks are now completely invisible on a [[flat world]] in some low-end and mid-end devices.
+**This is probably due to world does not render anymore.
+* Block rendering essentially stops completely, causing the map to be blank from their outward in the Corner Slice Lands;<ref>{{ytl|wurHDkvIKhQ}}</ref> almost all blocks are rendered as one-dimensional, and are therefore impossible to see, although some particles emitted from specific blocks, like torches, could still indicate their presence. Only certain [[block entities]] and any normally visible [[water]] side textures render in this area, which means that, due to the End having no water nor lava, it is almost completely invisible.
+* [[Water]] can be viewed only from the side, and becomes completely non-solid.
+* The minimum movement speed is increased to 40 blocks per second, meaning that thrown [[ender pearl]]s no longer work. Teleportation is now possible only by chorus fruit because teleportation by commands stops at 30,000,000 blocks. Elytra either require a steep angle or a Riptide trident in [[rain]] to propel the player. Thrown [[trident]]s, [[arrow]]s shot from [[bow]]s or [[crossbow]]s and [[ender dragon]]s are the only other entities that can move horizontally beyond this point, other than the player. Ghasts can no longer move horizontally either, but they do remain airborne without ever falling into the void, while moving vertically.
+* To move, the player must glide with elytra at a downward angle of approximately 45 degrees, or use [[Riptide]]. Note that because the player is not considered to be "in water", Riptide can be activated only by rain.
+* Another way of moving is by sprint-flying over [[Soul Sand|soul sand]] while wearing [[Soul Speed]] boots in Creative or Spectator mode, which causes the speed boost to be added to the speed of sprint-flying.
+* When one uses external tools to teleport past X/Z ±33,554,432, the chunks might not load, meaning that the player becomes immobile and the terrain becomes invisible.{{verify}}
+*On some low-end and mid-end devices, the world does not render anymore, and if the player teleports back to X/Z 0, the player can't interact with the world anymore and has to relog. This can be fixed by reloading the world and teleporting back to near X/Z 30,000,000 and teleport back to X/Z 0.
+*If the player tries to load into the world on some low-end and mid-end devices, beyond this point, it crashes, which prevents the world from being played on without editing the coordinates of the player or the spawn point with an NBT editor.
+* It becomes impossible to shoot any mob.
+* [[Phantom]]s can no longer move horizontally.
+* In modern versions, if a Riptide trident is used beyond that point, it becomes easy for the player to get stuck, and if the player moves back, they automatically get teleported to this coordinate without using the teleport command.
+* The map becomes invisible when the map turns on in the ''Bedrock Editor'' beyond that point.
+* In [[Vibrant Visuals]], shadows start to become invisible, because it only left vertical rendering, resulting a shadow loss.
+|-
+| X/Z ±67,108,864 (±2<sup>26</sup>)
+|
+* The floating point precision errors cause only blocks with even coordinates not divisible by 16 to render, and are stretched to 8 blocks wide. Blocks whose sides are "concealed", such as naturally generated water, are completely invisible.
+* The minimum movement speed is increased to 80 blocks per second, meaning that thrown [[trident]]s cannot move horizontally and the use of an [[elytra]] requires a [[Riptide]] trident. It is possible to move only when raining.
+* It becomes impossible to look horizontally in third person view.
+* If both X and Z exceed this value, setting the player to third person view causes the game to crash.
+|-
+| X/Z ±134,217,728 (±2<sup>27</sup>)
+|
+* The floating point precision errors cause only blocks with even coordinates not divisible by 32 to render, and are stretched to 16 blocks wide.
+* The visual gaps are 16 blocks wide.
+* All entities are on the edges of chunks.
+* The minimum movement speed is increased to 160 blocks per second, meaning that [[arrow]]s shot from [[bow]]s or [[crossbow]]s cannot move horizontally. Riptide I works only if the player looks directly along an axis and does it many times; with Riptide II, the player doesn't have to use it as much to propel. Even ender dragons can no longer move horizontally, but they do remain airborne, similarly to ghasts.
+** This is because the ender dragon is 16 blocks in length but the slices are now 16 blocks apart depending on the size.
+* Some chunks start to render incorrectly despite make terrain messed up via [[map]].
+* Teleportation using [[chorus fruit]] becomes impossible, marking the absolute edge of the world reachable without external tools.<!--Please visit the talk page if you want to change this limit to 268,435,456.-->
+|-
+| X/Z ±268,435,456 (±2<sup>28</sup>)
+|
+* The floating point precision errors cause only blocks with even coordinates not divisible by 64 to render, and are stretched to 32 blocks wide.
+* The visual gaps are 32 blocks wide.
+* The minimum movement speed is increased to 320 blocks per second, meaning that [[Riptide]] level I no longer works, and Riptide II barely works. More specifically, Riptide II works only if the player looks directly along an axis and does it many times.
+* It is impossible for any entity to move horizontally, without modifying the player's flying speed, unless the player position is controlled by 64-bit doubles.
+|-
+| X/Z ±536,870,912 (±2<sup>29</sup>)
+|
+* The floating point precision errors cause only blocks with even coordinates not divisible by 128 to render, and are stretched to 64 blocks wide.
+* Some devices (low and mid-end classes) can no longer survive in this position and frequently crash at this point. If players can successfully go to this coordinate or over, they can survive for few seconds before the game crashes. Therefore, increasing the render distance can crash the game and only mid-high-end and high-end devices can survive at this position.
+* The minimum movement speed is increased to 640 blocks per second, meaning that no vanilla methods of movement work anymore, due to {{edition|bedrock}}'s speed limit of 320 blocks per second.
+|-
+| X/Z ±1,073,741,824 (±2<sup>30</sup>)
+|
+* The floating point precision errors cause only blocks with even coordinates not divisible by 256 to render, and are stretched to 128 blocks wide.
+* The minimum movement speed is increased to 1,280 blocks per second, meaning that Riptide levels below IV no longer work.
+* The world is completely invisible with a render distance of 15 chunks, 7 or less.
+* Parts of the world go invisible depending where the players camera is at.
+* It becomes impossible to render fancy leaves with a render distance of 16 chunks, 7 or less.
+* Could crash beyond this point on some lower end devices.
+|-
+| X/Z ±[[w:2,147,483,647#In computing|2,147,483,647]] (±2<sup>31</sup> − 1)
+|
+* The game crashes near this point, as this is above the maximum value for a signed 32-bit binary integer in C++<ref>{{tweet|jeb|122350670648066049|The Pocket Edition is ported to C++|2011-10-7}}</ref><ref>{{cite|url=https://news.xbox.com/en-us/wp-content/uploads/sites/2/2021/04/Minecraft-Franchise-Fact-Sheet_April-2021.pdf|title=Minecraft Franchise Fact Sheet|date=April 4, 2021|website=Xbox Wire}}</ref> (using a 32-bit system). Specifically, the game crashes if the player attempts to load a chunk that is within 64 blocks of this limit of 2 frames, so increasing the render distance can make the rendering limit get closer and crash the game.
+* In older versions, teleporting a few blocks just before this limit causes the player to get stuck in a glitched position after a few seconds, being unable to move in any direction (althrough moving the camera is still possible). This happens especially with a high render distance.
+|}
+
+== Beyond the 32-bit limit ==
+These distances are practically not reachable since the game runs on 32-bit integers, and therefore all effects are theoretical. Every power of two in coordinates, the visual gaps double in width, and the minimum movements speed doubles.
+{| class="wikitable"
+|-
+! Coordinates
+!Effects
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±2,147,483,648 (±2<sup>31</sup>)
+|
+* The visual gaps are 256 blocks wide.
+* The minimum movement speed is increased to 2,560 blocks per second, meaning that Riptide trident levels below 18 no longer work.
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±34,359,738,368 (2<sup>35</sup>)
+|
+* This would be the point where chunks begin to be overwritten, so the game would presumably crash as a result, much like how it occurs on ''Java Edition'', since chunk coordinates are also 32-bit integers.
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±281,474,976,710,656 (±2<sup>48</sup>)
+|
+* The game may crash and is very likely to crash again on 64-bit low-end devices at this point.
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±9,007,199,254,740,992 (2<sup>53</sup>)
+|
+* The player hand start to jitter, increasing at every power of two.
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±53,905,378,846,979,748 (±{{frac|(2<sup>63</sup>) – 1|171.103}}) 
+|
+* The [[Far Lands]] would presumably generate and start at this excepted distance, give or take billions of blocks of offset, since the terrain's generation algorithms, involving high, low and selector noise generators, use 64-bit floats. However, since the source code is unavailable to the public, it is impossible to modify the game to allow terrain generation past the 32-bit maximum signed integer limit, unlike in {{JE}}, making them inaccessible regardless of the means to do so.
+*The Corner Far Lands would presumably look like the stack from ''Java Edition''.
+* It's unclear if the Far Lands and Corner Far Lands would still break down.
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±9,223,372,036,854,775,807 (±2<sup>63</sup> – 1)
+|
+*The game, assuming it were patched to use 64-bit doubles, would crash near this point while using 64-bit systems, as this is above the maximum value for a signed 64-bit binary integer in [[w:C++|C++]]. Also, the game would also crash if the player attempts to load a chunk beyond this coordinate, so increasing the render distance can make the rendering limit get closer, resulting again in a crash.{{verify}}{{info needed}}
+|-
+| style="color: #222222; background: #dddddd" | X/Z ~3.4028237e+38 or ±3.4028237x10<sup>38</sup> (±2<sup>128</sup>) 
+|
+*This is the maximum value for a 32-bit floating-point number {{in|be}} and [[w:C++|C++]]. Beyond this point, it is excepted that the player's coordinates would roll over to read "Infinity", as the 32-bit floating point precision has run out of bits to represent coordinate data. It's impossible to go further than this point, as a value of "Infinity" would break rendering code in ''Bedrock Edition''. It is even likely that this could also overflow to read "NaN" (not a number) or a null value, which, again, would break rendering code and result in unpredictable behavior, such as visual glitches, invalid positioning, and even the game crashing as a result.{{verify}}
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±1 duodecillion (±10<sup>39</sup>)
+|
+*Caves at this point would generate only as single hollowed-out blocks, every 2, 4 and so on.{{verify|This isn't a power of two, and there is no reason why powers of ten would have special effects.}}
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±≥1 tredecillion (±10<sup>42</sup>) to ~2.2300745e+43 or ±2.2300745*10<sup>43</sup> (±2<sup>144</sup>)<br>[very rough estimation]{{check the code}}<br>
+|
+* The game crashes on some certain 64-bit mid-high-end devices.
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±1 quindecillion (±10<sup>48</sup>)
+|
+* [[Sound]]s start to play twice at this point{{verify|This isn't a power of two, and there is no reason why powers of ten would have special effects.}}
+** After 500 quindecillion (±5*10<sup>50</sup>), sounds start to play incorrectly.{{More information needed|How exactly do they play incorrectly?}}
+*** After 2 sexdecillion (±2*10<sup>51</sup>), sounds start to mute.
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±1 vigintillion (±10<sup>63</sup>)
+|
+* A cone shape appears on this coordinate.{{verify|This isn't a power of two, and there is no reason why powers of ten would have special effects.}}
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±1 googol (±10<sup>100</sup>)
+|
+* Beyond this point, the player sometimes gets stuck at these coordinates.{{More information needed|How exactly do they get stuck at these coordinates?}}{{verify|This isn't a power of two, and there is no reason why powers of ten would have special effects.}}
+|-
+| style="color: #222222; background: #dddddd" | X/Z ±1 gargoogol (±10<sup>200</sup>)
+|
+* Beyond this point, setting the player to third person view causes the game to crash.{{verify|This isn't a power of two, and there is no reason why powers of ten would have special effects.}}
+|-
+| style="color: #000000; background: #888888" | X/Z ±1 centillion (±10<sup>303</sup>)
+|
+* At this point, eating causes the game to freeze and has a 70% chance that it causes the game to crash.{{verify|This isn't a power of two, and there is no reason why powers of ten would have special effects.}}
+|-
+| style="color: #ffffff; background: #000000" |X/Z ±~1.7976931e+308 (±2<sup>1024</sup>)
+|
+*This is the maximum value for a patched 64-bit floating-point number {{in|be}} and [[w:C++|C++]]. Beyond this point, just like with the limit of the 32-bit float at around 3.4028237e+38, it is excepted that the player's coordinates would also roll over to read "Infinity", assuming it were patched to use 64-bit doubles, as the 64-bit double precision has run out of bits to represent coordinate data. It's impossible to go further than this point, as a value of "Infinity" would break rendering code in ''Bedrock Edition''. It is even likely that this could also overflow to read "NaN" (not a number) or a null value, which, again, would break rendering code and result in unpredictable behavior, such as visual glitches, invalid positioning, and even the game crashing as a result.{{info needed}}
+{{See also|Java Edition hard limits}}
+|}
+
+== Stripe Lands ==
+[[File:Stripe Lands Swamp.jpg|thumb|197x197px|The "Stripe Lands" at X/Z 16,777,216.]]
+[[File:Stripe Lands_0.jpg|thumb|197x197px|Ditto but captured in the new version]]
+The "Stripe Lands" are an artifact of the game's rendering and block hitbox calculation, rather than a quirk relating directly to terrain generation.<ref name="StripeLands">{{reddit|name=stripe lands|sub=MCPE|24sshy/no_far_lands_how_about_the_stripe_lands|chah6ah|context=3|MCPE uses single precision (faster and more mobile-friendly), so, sadly, you notice the first jittering around 700k and it's well unplayable around 900k.|mojang_tommo|May 5, 2014}}</ref> The Stripe Lands start at X/Z ±16,777,216. They exist because coordinates are off by up to a full block, causing the blocks themselves (not just their corners) to appear in the wrong places. 
+
+As it can be difficult to use [[Creative]] mode flight to move here, using an elytra propelled with either a [[Riptide]] trident or [[firework rockets]] allows the user to easily move through this region. A [[spear]] enchanted with [[Lunge]] III is very useful for more precise movement, due to it moving the player to the next valid position.
+
+Past X/Z ±33,554,432, all blocks are rendered as two-dimensional, and the gap between valid blocks doubles to 1 out of four, which makes horizontal block rendering stop completely, marking the "Slice Lands". This gap doubles again at every power of 2 and reaches 128 blocks wide at X/Z: ±1,073,741,824. This is the widest the gaps can be since the game crashes near X/Z: ±2,147,483,648 (Unless it uses 64-bit and 128-bit devices).
+
+== Vertical effects ==
+{{Missing information|
+*Falling with the [[slow falling]] effect.
+*Flying vertically using [[elytra]] and [[firework]]s
+*Jumping while wearing elytra and having slow falling.
+*Flying vertically in [[creative]].
+*Mobs getting pulled by [[balloon]]s.
+}}
+Like the X and Z axis, the game breaks at excessive Y coordinates. Since blocks cannot be placed at [[altitude]]s higher than Y=128 in the Nether and the End, or Y=320 in the Overworld, block rendering glitches do not occur, but many forms of vertical entity movement become impossible and other effects do.
+
+Vertical effects are not encounterable in the Nether or the [[void]] below any dimension in [[Survival]] mode, because a [[bedrock]] barrier prevents all entities from entering the void without using [[Tutorial:The Void|glitches]]. Furthermore, a barrier from [[invisible bedrock]] stops all entities at Y=-40 in the Nether and the End or Y=-104 in the Overworld, while taking {{hp|4}} damage every half second (except players in [[Creative]] mode). Beyond this entities can move only vertically using the "fall through the world" glitch past ±8,388,608, or teleporting below the barrier.
+{| class="wikitable"
+!Coordinates
+!Effects
+|-
+|Y ±65,536
+|
+* [[Particles (Bedrock Edition)|Particles]] turn black or dull green depending on the time of day within 64 blocks of this limit, this occurs at every power of 2 starting from this point.{{Verify}}
+* Particles appear to be jittering only if the player has Levitation I or II and floats with them or looks at them closely.
+* When the player looks up and down with sensitivity on a low number like 0, the player in 3rd person appears bumpy.
+* [[Snow]] starts to have a jittery movement beyond this point, getting worse the higher the height is.
+|-
+|Y ±131,072
+|
+* Most effect particles cannot rise into the air.
+* Opening the inventory is impossible if the player hits this point between ±131,072 and ±262,144; the inventory still works if the world is reloaded or the player teleports beyond ±262,144, but not below that point.
+* [[Particles (Bedrock Edition)|Particle]] jitter is noticeable beyond this point and appears to be jittering even if the player is standing still.
+|-
+|Y ±262,144
+|
+* Floating with [[Levitation]] I becomes slightly slower than normal.
+* It becomes impossible for [[chicken]]s to fall with [[slow falling]].
+* All effect particles cannot rise into the air.
+|-
+|Y ±524,288
+|
+* Floating with Levitation I becomes slightly faster than normal.
+* It becomes possible to notice jumping being less smooth if the player summons a [[shulker]] this high and jumps on the [[shulker]].
+|-
+|Y ±1,048,576
+|
+* Levitation II floating is slightly faster at this point.
+* It becomes impossible to float with Levitation I, and particles turn black.
+|-
+|Y ±2,097,152
+|
+* Floating upward by holding the jump button with [[elytra]] and [[slow falling]] is no longer possible.
+* There is a delay between when the player exits flight mode while having [[slow falling]] and when the player actually starts falling. However, noticing the [[slow falling]] delay is kind of hard.
+* Floating with Levitation II and lower becomes impossible.
+* Slightly looking upward while gliding with [[elytra]] could keep the player's height constant.
+* It becomes impossible for [[chicken]]s to fall.
+|-
+|Y ±4,194,304
+|
+* Flying upward in Creative is faster than normal.
+* If the player summons a [[shulker]] this high and falls on it, after the player lands on the [[shulker]] the players hand moves up and down rapidly (only if view bobbing is on). If the player switches to 3rd person during the small jumps, the player appears as if the player was not jumping.
+* It is impossible to jump without [[Jump Boost]] effect.
+* Floating with Levitation V and lower becomes impossible.
+|-
+|Y ±8,388,608
+|
+* Status effect particles snap to the head, feet, and center of the player, resulting in a glitched animation assuming the player is in first person.
+* [[Slow Falling]] causes the player to be stuck in mid-air, however, [[Particles (Bedrock Edition)|particles]] turn black within 8,192 blocks of this limit.
+* It becomes impossible for [[boat]]s and [[minecart]]s to fall.
+* Flying upward in Creative is no longer possible, although the player can still fly downward.
+* There is a noticeable delay between when the player exits flight mode and when the player actually starts falling.
+* Flying downward in Creative is much significantly faster than normal.
+* If the player spawns and gets on a [[shulker]], the player appears floating slightly above the [[shulker]] even in Survival mode.
+* Floating with Levitation 11 and lower becomes impossible.
+|-
+|Y ±16,777,216
+|
+* The delay described above is even longer.
+* Flying downward in Creative is no longer possible.
+* Floating with Levitation 22 and lower becomes impossible.
+* It is possible to fly over [[border]] blocks.
+* The player moves slightly in negative X and Z coordinates.
+|-
+|Y ±33,554,432
+|
+* The delay described above is over twice as long as the previous one.
+* Floating with Levitation 44 and lower becomes impossible.
+* [[Phantom]]s can no longer swoop up or down at the player.
+* It becomes impossible for [[Sand]], [[gravel]] and dropped items to fall.
+* Flying upward with [[elytra]] and [[firework rocket]]s becomes impossible.
+* [[Snow]] particles become suspended in the air.
+|-
+|Y ±67,108,864
+|
+* Falling becomes impossible.
+* Projectiles falling down becomes impossible.
+* in 3rd person the player can look only horizontal or vertical.
+* Floating with Levitation 88 and lower becomes impossible.{{verify|Do higher levels allow entities to float beyond this height?}}
+* Flying upward with [[elytra]] and jump button in Creative becomes impossible.
+|-
+|Y ±134,217,728
+|
+* Floating with Levitation 177 and lower becomes impossible.
+* It becomes impossible to look up or down in 3rd person.
+|-
+|Y ±268,435,456
+|
+* Floating with any Levitation level like 255 becomes impossible since 255 is the maximum vanilla level possible.
+|-
+|Y ±536,870,912
+|
+* Some devices (low and mid-end classes) can no longer survive in this position and frequently crash at this point. If players can successfully go to this coordinate or over, they can survive for few seconds before the game crashes. Therefore, increasing the render distance can crash the game and only high-end devices can survive at this position.
+|-
+|Y ±1,073,741,824
+|
+* Could crash beyond this point on some lower end devices.
+|-
+|Y ±2,147,483,647
+|
+* The game crashes near these coordinates on 32-bit devices (see above), although, since the position is 64-bit, there can be a few rendered frames left before it crashes when the player teleports here.
+|-
+|Y ±9,223,372,036,854,775,807 (±2<sup>63</sup> – 1)
+|
+* The game, assuming it were patched to use 64-bit doubles, would crash near this point while using 64-bit systems, as this is above the maximum value for a signed 64-bit binary integer in [[w:C++|C++]]. Also, the game would also crash if the player attempts to load a chunk beyond this coordinate, so increasing the render distance can make the rendering limit get closer, resulting again in a crash.{{verify}}
+|-
+| style="color: #222222; background: #dddddd" | Y ~3.4028237e+38 or ±3.40x10^38 (2<sup>128</sup>)
+|
+* The maximum 32-bit floating-point integer {{in|be}} and [[w:C++|C++]]. Beyond this point, just like with the limit of the 32-bit float at around 3.4028237e+38 in the X/Z axis, it is excepted that the player's coordinates would also roll over to read "Infinity", as the 32-bit floating point precision has run out of bits to represent coordinate data. It's impossible to go further than this point, as a value of "Infinity" would break rendering code in ''Bedrock Edition''. It is even likely that this could also overflow to read "NaN" (not a number) or a null value, which, again, would break rendering code and result in unpredictable behavior, such as visual glitches, invalid positioning, and even the game crashing as a result.{{verify}}
+|-
+| style="color: #ffffff; background: #000000" | Y ±~1.7976931e+308 (2<sup>1024</sup>)
+|
+* The maximum patched 64-bit floating-point integer {{in|be}} and [[w:C++|C++]], comparable to {{JE}}. Beyond this point, just like with the limit of the 32-bit float at around 3.4028237e+38 in the X/Z axis or the limit of the 64-bit double in the X/Z axis, it is excepted that the player's coordinates would also roll over to read "Infinity", assuming it were patched to use 64-bit doubles, as the 64-bit double precision has run out of bits to represent coordinate data. It's impossible to go further than this point, as a value of "Infinity" would break rendering code in ''Bedrock Edition''. It is even likely that this could also overflow to read "NaN" (not a number) or a null value, which, again, would break rendering code and result in unpredictable behavior, such as visual glitches, invalid positioning, and even the game crashing as a result.
+|}
+
+== History ==
+{{main|Bedrock Edition distance effects/Historical effects|Far Lands}}
+== Gallery ==
+<!-- PLEASE do not upload files with names like "Screenshot 20251006-031135.png". This is not allowed by the style guide, give them actual names based on their contents-->
+=== Below 131,072 ===
+<gallery>
+Screen flickering in powder snow.mp4|The screen flickers when at the edge of the powder snow past X/Z 32,768.
+Vibrant visuals outline box distortion.png|Outline boxes are distorted using [[Vibrant Visuals]] past X/Z 65,536.
+Black Particles.png|Black particles happen at every power of 2 starting around Y ±65,536.
+</gallery>
+
+=== 131,072 - 1,048,575 ===
+<gallery>
+Distorted tripwire hook.png|Tripwire hooks appear distorted past X/Z ±131,072, with noticeable curvy lines.
+Distorted lever handle.png|Lever handles appear distorted past X/Z ±131,072, with slight curvy lines.
+Lectern past 131072.png|Lecterns appear distorted past X/Z ±131,072, slightly stretched to full blocks.
+Further distorted tripwire hook.png|The top part of the metal hook is thin and further distorted after X/Z ±262,144.
+Item frame beyond 524,288.png|Inner part of item frames becomes 2D after X/Z ±524,288.
+Candles beyond 524,288.png|Top part of candles rendering incorrectly beyond X/Z ±524,288.
+Black painting beyond 524,288.png|Paintings turn black beyond X/Z ±524,288.
+Black painting beyond 524,288 different effect.png|Paintings are pushed half a pixel into the block beyond X/Z ±524,288.
+Thin tripwire hook.png|Metal hook of tripwire hooks are thin beyond X/Z ±524,288.
+Screenshot 20251006-031135.png|Item frames become inaccurate beyond ±524,288 X/Z.
+Screenshot 20251006-031318.png|Paintings positioned on the Z axis no longer render correctly beyond ±524,288 X/Z.
+Screenshot 20251006-041128.png|Candle tips no longer render correctly beyond ±524,288 X/Z.
+</gallery>
+
+=== 1,048,576 - 16,777,215 ===
+==== Terrain breakdown ====
+<gallery>
+BE Terrain Breakdown - Void.png|Terrain failing to generate correctly beyond X/Z ±2,812,333, exposing [[aquifer]]s to the surface
+Lost of mountain in bedrock 1.png|Disappearing mountain biomes and exposed lava lake
+Lost of mountain in bedrock 2.png|Another landscape
+2022-06-23 (17).png|An ancient city exposed by the generation failing.
+2022-09-10 (11).png|A woodland mansion and pillager outpost generating in the failed terrain.
+2022-06-23 (1).png|Terrain failing near the Stripe Lands.
+BETerrainBreakdownThreshold.png|The edge of the terrain breakdown
+Stuffed Islands in The End.png|The starting point of the End terrain malfunction
+Stuffed Islands in The End Corner.png|Terrain in a corner
+Stuffed Islands in The End Overlook.png|Overhead view
+End terrain malfunction in Stripe Lands.png|End terrain malfunction near the Stripe Lands
+BE Terrain Breakdown - Monolith.png|[[Monolith]]-like structures generating beyond X/Z ±2,812,333
+Image5.png|At exactly 2,812,333 blocks on mobile.
+</gallery>
+
+==== Other effects ====
+<gallery>
+Thick tripwire hook.png|Tripwire hook becomes thick beyond 1,048,576
+Firefly bush bigger.png|Firefly bushes are slightly wider beyond 1,048,576
+Screenshot 2024-11-30 164219.png|Torches become 2D or invisible after 1,048,576
+Screenshot 2024-11-30 175123.png|Blocks, entities, and items glitching after 1,048,576
+ThickTripwirehook X axis.png|Render of a tripwire hook beyond 1,048,576 in one direction
+Torch z ±1048576.png|Render of a torch beyond 1,048,576 in one direction
+Highway streetlight shaped tripwire hook.png|Tripwire hook base becomes flat and metal thin again shaped like highway streetlights beyond 2,097,152.
+BEFenceGateGlitch.png|Fence gate texture renders flat after 2,097,152
+OutpostFenceRenderError.png|Fence post renders invisible in a pillager outpost beyond ±2,097,152
+Tripwire hook highway shaped Z axis.png|Render of a tripwire hook beyond 2,097,152 in one direction
+Tripwire hooks become 2D and base invisible.png|Render of a tripwire hook beyond 2,097,152 in both directions
+2d tripwire hook metal.png|Tripwire metal becomes 2d beyond 4,194,304.
+Eyesinx4194304.jpg|An [[End portal frame]] containing an [[eye of ender]] placed beyond 4,194,304
+BE redstone 4194304.png|Redstone posted beyond 4,194,304 blocks. Redstone lines are completely invisible and the rest of redstone renders incorrectly (one of the crosses is connected to four lines).
+BE redstone 8388608.png|Redstone placed beyond 8,388,608 blocks. Unlike the [[Java Edition distance effects#Redstone wire|similar historical redstone model issue on ''Java Edition'']], redstone lines are stretched to a full block in both directions.
+Zipcave.png|A cave generated beyond 8,388,608, with serrated-looking edge walls in front and the perfect holes in the back.
+BE Badlands 8388608.png|A badlands biome beyond 8,388,608, with noticeably distorted terracotta strata.
+Fences8388608.png|Fences after 8,388,608 (left) and before (right).
+Image2.png|At exactly 8,388,608 blocks, where flowers become 2-dimensional.
+SplitStonecutterError.png|Stonecutter blades duplicate on the edge after 8,388,608
+Stretched and 2d tripwire hook.png|Tripwire hooks become completely distorted, one stretched to a full block without the metal part, one becomes 2D and the metal part becomes invisible beyond 8,388,608.
+Canyon near far lands.png|[[Canyon]]s generate more blocky beyond 8,388,608.
+Chain X 8388608.png|Render of a chain beyond 8,388,608 in one direction
+Chain both axis.png|Render of a chain beyond 8,388,608 in both directions
+Z fighting piston.png|The piston head Z-fighting with the piston brain.
+CactusRenderingErrorBE.png|Cacti incorrectly render as full blocks, with gaps at the edges
+BEComposterCauldronRenderError.png|Cauldron and composter have completely flat walls
+Beyond some point crops become 2d on each side.png|Beyond some point crops become 2D on each side.
+Screenshot 20251007-182834.png|Some blocks, including the [[shelf]], are stretched or rendered incorrectly.
+BEFenceGlitch.png|Fence texture renders flat
+Lead past 1048576.png|Leads zig zag beyond X/Z 1,048,576
+Dripstone past 8388608.png|Pointed dripstone beyond X/Z 8,388,608
+Shadow past 8388608.png|Shadows appears blocky past X/Z 8,388,608
+</gallery>
+
+=== 16,777,216 - 2,147,483,647 ===
+==== Stripe Lands ====
+<gallery>
+Stripe Lands.jpg|The first screenshot posted of the Stripe Lands, by [[Tommaso Checchi]], at 32,000,000.<ref>{{tweet|tomcc|463398793723928576|So, I've teleported to X{{=}}32.000.000... the Stripe Lands?|May 5, 2014}}</ref>
+Stripe Lands Start.jpg|The start of the Stripe Lands at 16,777,216
+2022-06-23 (14) (1).png|A village near the Stripe Lands
+Frozen Stripe Lands.jpg|A frozen ocean biome in the Stripe Lands
+Stripe Lands Ruins.png|Underwater ruins in the Stripe Lands
+Stripe Lands Mesa.png|Eroded badlands in the Stripe Lands
+2022-09-10 (14).png|A high shot of the Stripe Lands
+2022-06-23 (4).png|A cave in the Stripe Lands
+Pillagernearstripelands.png|A pillager outpost in the Stripe Lands with failed terrain
+Flat Stripe Lands.jpg|The Stripe Lands in a flat world
+Corner Stripe Lands.jpg|The start of the Corner Stripe Lands
+Screenshot 2023 -454 -998952.png|The Corner Stripe Lands
+BE Badlands 16777216.png|A badlands biome beyond 16,777,216, featuring even more distorted terracotta strata
+BE Windswept Gravelly Hills 16777216.png|A [[windswept gravelly hills]] biome beyond 16,777,216
+2022-06-23 (14).png|Terrain failing in the Stripe Lands
+2022-06-23 (16).png|Terrain failing in the Corner Stripe Lands
+Image4.png|The monolith-like terrain bug in the Stripe Lands
+Nether dot chunk.png|The Corner Stripe Lands in the Nether
+Speed horse past 16,777,216.mp4|A player riding a horse past 16,777,216, which does not fall through the world
+Stripe Lands in Editor.png|Stripe Lands in ''[[Bedrock Editor]]'', notice a map matching with stripes
+Bedrock Editor Terrain breakdown.png|Terrain breakdown and Stripe Lands in ''Bedrock Editor''
+Educationstripelands.png|The Stripe Lands captured {{in|ee}}
+</gallery>
+
+==== Slice Lands ====
+<gallery>
+Stripe Lands between Slice Lands.png|Water in Stripe Lands and Slice Lands
+Stripe lands and 2d lands.png|The boundary area in the form of Slice Lands and Stripe Lands
+Screenshot 20251008-180532.png|Blocks become invisible after 33,554,432 in [[flat]] worlds.
+Slice Lands in Bedrock Edition 1.21.130..png|The Stripe and Slice Lands using [[Vibrant Visuals]]
+Corner Slice Lands.png|The start of the Corner Slice Lands
+Woodland mansion in corner slice lands.png|Woodland mansion in the Corner Slice Lands
+BE Block Entities 33554432.png|Block entities rendering in the Corner Slice Lands
+BE Water 33554432.png|Water rendering in the Corner Slice Lands
+Screenshot 2025-11-30 192027.png|The beginning of the Slice Lands in modern versions of ''Bedrock Edition''
+Screenshot 2025-11-30 192144.png|The beginning of the Slice Lands in a [[forest]]
+</gallery>
+
+==== Beyond the Slice Lands ====
+<gallery>
+MCBE Stripe Lands Pos 67108864.jpg|The world beyond 67,108,864, with a distance of eight blocks between rendered sections
+StripelandsMCPE.jpg|The world beyond 134,217,728, with a distance of 1 chunk between rendered sections
+MCBE Stripe Lands Pos 268435456.jpg|The world beyond 268,435,456, with a distance of two chunks between rendered sections
+Stripeless Lands 536870912.png|The world beyond 536,870,912, with a distance of four chunks between rendered sections. A large area in front of the player is completely invisible, presumably due to the fructum culling losing precision.
+MCPEFarLandsEnd.png|The world beyond X/Z ±1,073,741,824, with a distance of eight chunks between rendered sections
+</gallery>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{navbox environment}}
+{{DEFAULTSORT:Distance effects}}
+[[Category:Glitches]]
+[[ja:距離効果/Bedrock Edition]]
+[[zh:距离现象/基岩版]]
+[[Category:Analysis]]

@@ -1,0 +1,364 @@
+'''Command context''' (also know as '''execution context''', '''command origin''', '''command source stack''') is a set of parameters like the executor and execution environment. It is used to provide context for [[command]] execution or [[raw JSON text]] resolution.
+
+== Behaviors ==
+There are mainly 8{{only|java|short=1}}/7{{only|bedrock|short=1}} parameters in command context:
+* '''[[#Execution Permission Level|Execution Permission Level]]'''
+* Executor Parameters, including:
+** '''[[#Executor Parameters|Executor Name]]'''
+** '''[[#Executor Parameters|Executor Entity]]'''
+* Execution Environment Parameters, including:
+** '''[[#Execution Dimension|Execution Dimension]]'''
+** '''[[#Execution Position|Execution Position]]'''
+** '''[[#Execution Rotation|Execution Rotation]]'''
+** '''[[#Execution Anchor|Execution Anchor]]'''{{only|java}}
+* '''[[#Execution Output Callback|Execution Output Callback]]'''
+
+When [[command]]s are executed or [[raw JSON text]]s are resolved in different scenarios, corresponding contexts are provided, to allow them to work in different scenarios.
+
+When running a function with the {{cmd|function}} command, the context for commands inside the function inherits the Executor Parameters, Execution Environment Parameters, and Execution Permission Level from the context of {{cmd|function}} command, while the Execution Output Callback is not inherited. {{IN|java}}, the Execution Permission Level of commands in a function is limited to 2 or below, so, if the {{cmd|function}} command is executed with 2 or higher Execution Permission Level, the command inside the function is executed with Execution Permission Level being 2.
+
+{{IN|bedrock}}, the context for commands in functions scheduled by {{cmd|schedule}} command also inherits the Executor Parameters, Execution Environment Parameters, and Execution Permission Level from the context of {{cmd|schedule}} command.
+
+=== Dynamic values ===
+{{exclusive|bedrock|section=1}}
+{{IN|java}}, the Executor Name and each Execution Environment Parameters in a context are '''static''', and each of them exists independently. In other words, if these parameters are not modified with {{cmd|execute}}, they do not change during the command execution, or during the execution of each command in a function. For example, even if the name of the Executor Entity is modified in a function, it does not change the Executor Name in the context of subsequent commands in the function; For another example, for {{cmd|1=execute at @n[type=sheep] run function test}}, even if a {{cmd|tp}} command in a function {{cd|test}} changes the position, rotation, or dimension of the sheep entity, it does not affect the Execution Position, Execution Rotation, and Execution Dimension in the context of subsequent commands in the function, since the values of all these parameters are static after being modified by the {{cd|at}} subcommand and they are no longer related to the sheep entity itself.
+
+{{IN|bedrock}} parameter values are static in some cases but '''dynamic''' in other cases. When dynamic, the value of a parameter does not exist independently, but rather it is a reference to an entity and fetches values from the entity in real time. For example, when an Execution Position is dynamic, it depends on an entity and obtains its position in real time, i.e., if the entity is moved in a function, the Execution Position in the context of subsequent commands in the function is the position of the entity after the move.<ref>{{bug|MCPE-179363}}</ref>
+
+Specifically, dynamic values exist in the following cases:
+* When the player executes a command in the chat bar, or a command is requested through a WebSocket server connected with the client, the Execution Position, Execution Rotation, and Execution Dimension are dynamic and referring to the player entity.
+* When a command block minecart executes the command in it, the Execution Position and Execution Rotation are dynamic, referring to this minecart entity.
+* When an entity event response defined in a behavior pack executes a command, or a script executes a command with entity class, or an animation controller in a behavior pack executes a command, or an NPC executes a command, the Executor Name, Execution Position, Execution Rotation, and Execution Dimension are dynamic and referring to the entity.
+* {{cmd|execute}} command converts the Executor Name to a dynamic value referring to the Executor Entity. That is, when a command is executed in a {{cmd|execute}} command, the Executor Name of it is always dynamic, fetched from the Executor Entity in real time, regardless of whether there is a static Executor Name in the context of the {{cmd|execute}}.
+* {{cd|at ...}} and {{cd|positioned as ...}} subcommands in {{cmd|execute}} set the Execution Position to a dynamic value, referring to the specified entity.
+* {{cd|at ...}} and {{cd|rotated as ...}}  subcommands in {{cmd|execute}} set the Execution Rotation to a dynamic value, referring to the specified entity.
+
+If the Execution Position is dynamic, it fetches the position from an entity in real time. But, if this entity is [[riding]] on another entity, there is a special treatment:
+* If the hitbox bottom of this entity is lower than the hitbox bottom of the mount, the mount's hitbox bottom is used as the Y coordinate of the Execution Position.
+** For example, if a player is riding on a minecart, the player's X and Z coordinates and the minecart's Y coordinate are used as the Execution Position.
+
+If the entity which a dynamic value refers to has been removed from the world (e.g., an armor stand is killed, or a sheep finishes its death animation), the dynamic value cannot be fetched. In this case, default values of parameters are used:
+* Executor Name defaults to an empty string
+* Execution Dimension defaults to empty
+* Execution Position defaults to <code>(0, 0, 0)</code>
+* Execution Rotation defaults to <code>(0, 0)</code>
+For example, when {{cmd|execute run say hi}} is executed in the command block, as mentioned above, the Executor Name converts to a dynamic value by the {{cmd|execute}} command, referring to the Executor Entity. Since there is no Executor Entity in the context, the Executor Name of {{cmd|say hi}} is an empty string.
+
+For another example, if the Executor Entity is removed before a function schedule (scheduled by {{cmd|schedule}}) is executed, the schedule cannot be executed because the Execution Dimension is missing in the context.
+
+A dynamic value is converted to a static value in the following cases:
+* {{cmd|execute}} command converts the Execution Dimension to a static value.
+* {{cmd|execute}} command converts the Execution Rotation to a static value.
+* {{cd|align ...}} subcommand in {{cmd|execute}} converts the Execution Position to a static value.
+* {{cd|in ...}} subcommand in {{cmd|execute}} converts the Execution Position to a static value.
+* {{cd|positioned <''coordinates''>}} subcommand in {{cmd|execute}} converts the Execution Position to a static value.
+* {{cd|facing ...}} subcommand in {{cmd|execute}} converts the Execution Rotation to a static value.
+* {{cd|rotated <''angles''>}} subcommand in {{cmd|execute}} converts the Execution Rotation to a static value.
+* If the Execution Position is a dynamic value, then {{cd|anchored ...}} subcommand in {{cmd|execute}} converts the Execution Position to a static value, being the position at the referred entity's feet or eyes; If the Execution Position is a static value, {{cd|anchored ...}} subcommand does not take any effect.<ref>{{bug|MCPE-162681}} and {{bug|MCPE-165051}}</ref>
+
+For example:
+* When a player executes {{cmd|function ...}} in the chat bar, the Execution Position, Execution Rotation and Execution Dimension of commands in the function are dynamic, referring to the player.
+* When a player executes {{cmd|execute run <''command''>}} in the chat bar, the Execution Position of the {{cd|<''command''>}} is dynamic, while the Execution Rotation and Execution Dimension are static.
+* When a player executes {{cmd|execute at @s run <''command''>}} in the chat bar, the Execution Position and Execution Rotation of the {{cd|<''command''>}}} are dynamic, while the Execution Dimension is static.
+* When a player executes {{cmd|execute at @s rotated ~ ~ run <''command''>}} in the chat bar, the Execution Position of the {{cd|<''command''>}} is dynamic, while the Execution Rotation and Execution Dimension are static.
+* When a player executes {{cmd|execute at @s rotated ~ ~ positioned ~ ~ ~ run <''command''>}} in the chat bar, the Execution Position, Execution Rotation and Execution Dimension of the {{cd|<''command''>}} are all static.
+* When a player executes {{cmd|execute positioned ~ ~ ~ run <''command''>}} in the chat bar, the Execution Position, Execution Rotation and Execution Dimension of the {{cd|<''command''>}} are all static.
+* If there are at least three entities in a dimension, and a player in the dimension executes {{cmd|1=execute rotated as @e[c=3] run tp @s ~ ~1 ~}} in the chat bar, the player is teleported to 3 blocks above its original position.
+
+== Parameters ==
+=== Execution Permission Level ===
+{{main|Permission level}}
+The Execution Permission Level cannot be modified by {{cmd|execute}} command.
+
+{{IN|java}}, in the context of commands in a function called by a {{cmd|function}} command, the Execution Permission Level is limited to 2 or less. If the Execution Permission Level of the {{cmd|function}} command is greater than 2, the commands in the function is executed with Execution Permission Level of 2.
+
+=== Executor Parameters ===
+There are two Executor Parameters, Executor Name and Executor Entity, where the Executor Entity parameter may be empty (e.g. when a command is executed by a command block). Executor parameters are used in the following scenarios:
+* When sending a message using commands such as {{cmd|tell}} or {{cmd|say}}, the Executor Name is used as the sender name of the message.
+* <code>@s</code> [[target selector]] directly selects the Executor Entity.
+* By default, the target of commands such as {{cmd|tp}} and {{cmd|kill}} is the Executor Entity.
+* By default, the target player of commands such as {{cmd|clear}}, {{cmd|gamemode}}, and {{cmd|playsound}} is the Executor Entity, if it is a player entity.
+* {{IN|je}}, commands such as {{cmd|trigger}} and {{cmd|teammsg}} take effect on the Executor Entity, if the Executor Entity is a player.
+* {{IN|je}}, [[#Execution Anchor|Execution Anchor]] modifies the Y coordinate based on the eye height of the Executor Entity.
+
+They can be modified using {{cd|as}}, {{cd|on}}, and {{cd|summon}} subcommands in {{cmd|execute}} command. {{IN|je}}, the Executor Name and Executor Entity are always modified at the same time. {{IN|be}}, only the Executor Entity is modified, and as mentioned above, the Executor Name remains a dynamic value referring to the Executor Entity.
+
+=== Execution Dimension ===
+Execution Dimension is the [[dimension]] in which the command takes effect. Execution Dimension is used in the following scenarios:
+* Whenever [[coordinates]] are specified, the coordinates are specified within the Execution Dimension.
+* [[Target selector]]s with <code>distance</code>{{only|je|short=1}}, <code>r</code>{{only|be|short=1}}, <code>rm</code>{{only|be|short=1}}, <code>dx</code>, <code>dy</code>, or <code>dz</code> being specified, only entities in the Execution Dimension are selected.
+* {{IN|java}}, [[target selector]]s with <code>x</code>, <code>y</code>, or <code>z</code> being specified, only entities in the Execution Dimension are selected, too.
+* Commands such as {{cmd|locate}} works within the Execution Dimension.
+
+Execution Dimension can be modified using {{cd|at}} and {{cd|in}} subcommands in the {{cmd|execute}} command. {{IN|bedrock}}, the {{cmd|execute}} command itself converts the Execution Dimension to a static value.
+
+=== Execution Position ===
+Execution Position is the [[coordinates]] that the command takes effect from. Execution Position is used in the following scenarios:
+* [[Coordinates#Commands|Relative coordinates]] are relative to the Execution Position.
+* {{IN|java}}, the origin of [[Coordinates#Commands|local coordinates]] is based on the Execution Position and affected by the Executor Anchor.
+* {{IN|bedrock}}, the origin of [[Coordinates#Commands|local coordinates]] is the Execution Position.
+* {{IN|java}}, the start point of {{cmd|execute facing ...}} and {{cmd|tp ... facing ...}} is based on the Execution Position and affected by the Executor Anchor.
+* {{IN|bedrock}}, the start point of {{cmd|execute facing ...}} and {{cmd|tp ... facing ...}} is the Execution Position.
+* Commands such as {{cmd|locate}} use the Execution Position as its start point.
+* By default, the target position of commands such as {{cmd|locate}} is the Execution Position.
+
+Execution Position can be modified using {{cd|align}}, {{cd|at}}, {{cd|positioned}} subcommands in {{cmd|execute}} command, and {{cd|in}} subcommand also affects the Execution Position. {{IN|be}}, {{cd|at}} and {{cd|positioned as}} subcommands set the Execution Position to a dynamic value referring to the specified entity. {{IN|bedrock}}, {{cd|align}}, {{cd|anchored}}, {{cd|in}}, and {{cd|positioned <''coordinates''>}} subcommands convert the Execution Position to a static value.
+
+=== Execution Rotation ===
+Execution Rotation is the rotation that the command is executed with. Execution Rotation is used in the following scenarios:
+* The coordinate system of [[Coordinates#Commands|local Coordinates]] is based on the Execution Rotation.
+* Relative rotation specified with a tilde ({{cd|~}}) in commands such as {{cmd|tp}} and {{cmd|spawnpoint}} is relative to the Execution Rotation.
+
+Execution Rotation can be modified using {{cd|at}}, {{cd|facing}}, and {{cd|rotated}} subcommands in the {{cmd|execute}} command. {{IN|be}}, {{cd|as}} and {{cd|rotated as}} subcommands set the Execution Rotation to a dynamic value referring to the specified entity. {{IN|bedrock}}, {{cmd|execute}} command itself and its {{cd|facing}}, {{cd|rotated <''angle''>}} subcommands converts the Execution Rotation to a static value.
+
+=== Execute Anchor ===
+{{exclusive|java|section=1}}
+Execute Anchor determines whether the position of eyes or feet of the Executor Entity is used as the origin of [[local coordinates]], and the start point of {{cd|facing}} in {{cmd|teleport}} and of {{cd|facing}} subcommand in {{cmd|execute}}.
+* If it is foot, uses the Execution Position directly.
+* If it is eyes, based on the Execution Position, the eye height of the Executor Entity is added into the Y coordinate.
+
+Execution Anchor are used only in the following scenarios:
+* [[Local coordinates]].
+* The start point of {{cd|facing ...}} subcommand in {{cmd|execute}}.
+* The start point of {{cmd|tp ... facing ...}}.
+
+Execute Anchor can be modified using {{cd|anchored}} subcommand in {{cmd|execute}} command.
+
+Executor Anchor parameter does not exist {{in|be}}. Instead, {{in|be}}, the {{cd|anchored}} subcommand in {{cmd|execute}} directly modifies the Execution Position. If the Execution Position is originally dynamic, the {{cd|anchored}} subcommand converts it to a static value, being the position of feet or eyes of the entity being referred by the dynamic value; If the Execution Position is static, {{cd|anchored}} subcommand does not have any effect at all.
+
+=== Execution Output Callback ===
+Execution Output Callbacks are used to receive [[Commands#Output|output values]] of a command.
+
+A command executed in a [[command block]], a [[minecart with command block]], or a script{{only|be}} has a callback that sends the success count to the command block or minecart.
+
+{{IN|java}}, {{cd|store}} subcommand in {{cmd|execute}} command can be used to add a new callback while the existing callbacks are retained. Existing callbacks cannot be cleared by {{cmd|execute}} command.
+
+The context of commands in a function called by a {{cmd|function}} or {{cmd|schedule}} does not inherit the Execution Output Callbacks of the {{cmd|function}} or {{cmd|schedule}} command.
+
+== Contexts in various scenarios ==
+=== Command execution ===
+==== Server console ====
+The context of commands entered in the server console is:
+* Execution Permission Level: 4
+* Executor Name: <code>Server</code>
+* Executor Entity: None
+* Execution Dimension: Overworld
+* Execution Position:  Bottom northwest corner of the block at the [[world spawn]]{{only|java}}/<code>(0, 0, 0)</code>{{only|bedrock}}
+* Execution Rotation: <code>(0, 0)</code>
+* Execution Anchor{{only|je|short=1}}: Feet
+* Execution Output Callback: None
+
+==== Functions executed by the server-side ====
+A [[function]] is executed by the server-side when:
+* {{IN|je}}, the function is called via <code>load</code> or <code>tick</code> tags.
+* {{IN|be}}, the function is called via <code>load.json</code> or <code>tick.json</code>.
+* {{IN|je}}, the function is scheduled by {{cmd|schedule}} command.
+
+The context of commands in a function executed by the server-side is:
+* Execution Permission Level: 2{{only|java}}/1{{only|bedrock}}
+* Executor Name: <code>Server</code>
+* Executor Entity: None
+* Execution Dimension: Overworld
+* Execution Position:  Bottom northwest corner of the block at the [[world spawn]]{{only|java}}/<code>(0, 0, 0)</code>{{only|bedrock}}
+* Execution Rotation: <code>(0, 0)</code>
+* Execution Anchor{{only|je|short=1}}: Feet
+* Execution Output Callback: None
+
+==== Player ====
+The context of commands that are entered in the chat bar, or requested via a WebSocket server connected with the client {{in|be}}, is:
+* Execution Permission Level: The permission level of the player
+* Executor Name: The name of the player; or <code>External</code> for commands requested by a WebSocket {{in|be}}
+* Executor Entity: The player
+* Execution Dimension: The dimension the player is in (Dynamic value {{in|bedrock}})
+* Execution Position: The position of the player (Dynamic value {{in|bedrock}})
+* Execution Rotation: The rotation of the player (Dynamic value {{in|bedrock}})
+* Execution Anchor{{only|je|short=1}}: Feet
+* Execution Output Callback: None
+
+==== Command block ====
+The context of commands that are executed in a [[command block]] is:
+* Execution Permission Level: 2{{only|java}}/1{{only|bedrock}}
+* Executor Name: The custom name of the command block. If it has no custom name, defaults to <code>@</code>{{only|java}}/<code>!</code>{{only|bedrock}}.
+* Executor Entity: None
+* Execution Dimension: The dimension the command block is in
+* Execution Position: The center of the command block
+* Execution Rotation: The rotation of the command block{{only|java}}/<code>(0, 0)</code>{{only|bedrock}}
+* Execution Anchor{{only|je|short=1}}: Feet
+* Execution Output Callback: Sends the success count to the command block
+
+==== Minecart with command block ====
+The context of commands that are executed in a [[minecart with command block]] is:
+* Execution Permission Level: 2{{only|java}}/1{{only|bedrock}}
+* Executor Name: The custom name of the minecart. If it has no custom name, defaults to <code>@</code>{{only|java}}/<code>!</code>{{only|bedrock}}.
+* Executor Entity: The minecart with command block
+* Execution Dimension: The dimension the minecart is in
+* Execution Position: The position of the minecart (Dynamic value {{in|bedrock}})
+* Execution Rotation: The rotation of the minecart (Dynamic value {{in|bedrock}})
+* Execution Anchor{{only|je|short=1}}: Feet
+* Execution Output Callback: Sends the success count to the command block
+
+==== Sign ====
+{{exclusive|java|section=1}}
+The context of commands executed when a player clicks a [[sign]] block is:
+* Execution Permission Level: 2
+* Executor Name: The name of the player
+* Executor Entity: The player
+* Execution Dimension: The dimension the sign block is in
+* Execution Position: The center of the block the sign is in
+* Execution Rotation: <code>(0, 0)</code>
+* Execution Anchor: Feet
+* Execution Output Callback: None
+
+==== Advancement reward ====
+{{exclusive|java|section=1}}
+The context of commands in the [[function (Java Edition)|function]] called by a {{nbt|string|function}} reward in a [[Advancement definition|custom advancement]] is: 
+* Execution Permission Level: 2
+* Executor Name: The name of the player that gets the advancement
+* Executor Entity: The player that gets the advancement
+* Execution Dimension: The dimension the player is in
+* Execution Position: The position of the player
+* Execution Rotation: The rotation of the player
+* Execution Anchor: Feet
+* Execution Output Callback: None
+
+==== Enchantment effect ====
+{{exclusive|java|section=1}}
+The context of commands in the [[function (Java Edition)|function]] called by a <code>run_function</code> [[Enchantment definition#run_function|enchantment effect]] is:
+* Execution Permission Level: 2
+* Executor Name: The name of the affected entity of the enchantment effect
+* Executor Entity: The affected entity of the enchantment effect
+* Execution Dimension: The dimension the enchantment takes effects in
+* Execution Position: The position the enchantment takes effects at
+* Execution Rotation: The rotation of the affected entity of the enchantment effect
+* Execution Anchor: Feet
+* Execution Output Callback: None
+
+==== Entity in behavior packs ====
+{{exclusive|bedrock|section=1}}
+
+The context of commands executed via an entity event response defined in a behavior pack, or via entity class in a script, or an animation controller in a behavior pack, or a dialogue of an [[NPC]] entity is:
+* Execution Permission Level: 1
+* Executor Name: The name of the entity (Dynamic value {{in|bedrock}})
+* Executor Entity: The entity
+* Execution Dimension: The dimension the entity is in (Dynamic value {{in|bedrock}})
+* Execution Position: The position of the entity (Dynamic value {{in|bedrock}})
+* Execution Rotation: The rotation of the rotation (Dynamic value {{in|bedrock}})
+* Execution Output Callback: If via entity class in a script, returns the success count
+
+==== Dimension in scripts ====
+{{exclusive|bedrock|section=1}}
+The context of commands executed via Dimension class in a script: 
+* Execution Permission Level: 1
+* Executor Name: Script Engine
+* Executor Entity: None
+* Execution Dimension: The dimension
+* Execution Position: <code>(0, 0, 0)</code>
+* Execution Rotation: <code>(0, 0)</code>
+* Execution Output Callback: Returns the success count
+
+=== Raw JSON text resolution ===
+When resolving a [[raw JSON text]], relative coordinates, local coordinates, and target selectors in it are resolved based on a command context. The Execution Output Callback parameter in the command context is not used by raw JSON text.
+
+Note that if the {{nbt|string|name}} field is <code>*</code> in a <code>score</code> type text, the reader's own score is displayed. In addition to the command context, the readers of the raw JSON text are also listed below.
+
+==== Called by a command ====
+A [[raw JSON text]] called by a command inherits the context of the command. Including:
+* {{cmd|bossbar}}{{only|je}}
+** Reader: None
+* {{cmd|tellraw}}
+** Reader: Each player that receives the message
+* {{cmd|title}}
+** Reader: Each player that receives the title
+
+==== Written book being opened by a player ====
+{{exclusive|java|section=1}}
+The context when a [[written book]] is being opened by a player is:
+* Execution Permission Level: The permission level of the player
+* Executor Name: The name of the player
+* Executor Entity: The player
+* Execution Dimension: The dimension the player is in
+* Execution Position: The position of the player
+* Execution Rotation: The rotation of the player
+* Execution Anchor: Feet
+* Reader: The player
+
+==== Written book being placed on a lectern ====
+{{exclusive|java|section=1}}
+The context when a written book is being placed on a [[lectern]] is:
+* Execution Permission Level: 2
+* Executor Name: <code>Lectern</code>
+* Executor Entity: None
+* Execution Dimension: The dimension the lectern is in
+* Execution Position: The center of the block the lectern is in
+* Execution Rotation: <code>(0, 0)</code>
+* Execution Anchor: Feet
+* Reader: None
+
+==== Sign ====
+{{exclusive|java|section=1}}
+The context when the text in a [[sign]] block is being changed via NBT is:
+* Execution Permission Level: 2
+* Executor Name: <code>Sign</code>
+* Executor Entity: None
+* Execution Dimension: The dimension the sign is in
+* Execution Position: The center of the block the sign is in
+* Execution Rotation: <code>(0, 0)</code>
+* Execution Anchor: Feet
+* Reader: None
+
+==== Text display entity ====
+{{exclusive|java|section=1}}
+The context when the text in a [[text display]] entity is being changed 
+* Execution Permission Level: 2
+* Executor Name: The name of the text display entity
+* Executor Entity: The text display entity
+* Execution Dimension: The dimension the text display entity is in
+* Execution Position: The position of the text display entity
+* Execution Rotation: The rotation of the text display entity
+* Execution Anchor: Feet
+* Reader: The text display entity
+
+==== Item modifier ====
+{{exclusive|java|section=1}}
+In [[item modifier]], <code>set_name</code> and <code>set_lore</code> functions resolve the raw JSON text only if the entity specified with {{nbt|string|entity}} does exist, with the following context:
+* Execution Permission Level: 2
+* Executor Name: The name of the entity specified with {{nbt|string|entity}}
+* Executor Entity: The entity specified with {{nbt|string|entity}}
+* Execution Dimension: The dimension that the entity specified with {{nbt|string|entity}} is in
+* Execution Position: The position of the entity specified with {{nbt|string|entity}}
+* Execution Rotation: The rotation of the entity specified with {{nbt|string|entity}}
+* Execution Anchor: Feet
+* Reader: The entity specified with {{nbt|string|entity}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=17w45a|Reworked {{cmd|execute}} command. Now can modify each context parameter independently.
+|Removed the [[Commands/stats|command stat]] callback in command context.
+|Added {{cmd|execute store ...}}, allowing to add custom output callbacks into the command context.}}
+|{{HistoryLine|||dev=18w02a|Added Execution Anchor parameter.
+|Added {{cmd|execute anchored ...}}, which can modify the execution anchor.}}
+|{{HistoryLine||1.20|dev=23w16a|Now {{cmd|return}} command sets the return values of a [[function]] via command context.}}
+|{{HistoryLine||1.20.3|dev=23w41a|Now functions called by a {{cmd|function}} command no longer inherit its output callbacks.}}
+|{{HistoryLine|||dev=23w44a|Now {{cmd|return}} command sets the return values of a [[function]] via new function system, instead of via command context.}}
+
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.9.0|dev=beta 1.9.0.2|Commands from command blocks no longer extend to other dimensions.<ref>{{bug|MCPE-33892|||fixed}}</ref>}}
+|{{HistoryLine||1.13.0|dev=beta 1.13.0.1|Now {{cd|detect}} option in {{cd|/execute}} uses the position and rotation of the executor entity.<ref>{{bug|MCPE-29942|||fixed}}</ref>}}
+|{{HistoryLine||1.16.220|dev=beta 1.16.220.50|Using {{cmd|teleport}} with {{cd|/execute}} command now uses the dimension of the executor entity<ref>{{bug|MCPE-44104|||fixed}}</ref>}}
+|{{HistoryLine||1.19.10|exp=Upcoming Creator Features|dev=Preview 1.19.10.20|Added new {{cmd|execute|link=None}} syntax, which can modify each context parameter independently.}}
+|{{HistoryLine||1.19.50|dev=Preview 1.19.50.23|The new {{cmd|execute|link=none}} syntax is no longer behind the "Upcoming Creator Features" experimental toggle.
+|Running {{cmd|execute as}} from Command Blocks no longer inherits rotation from the entity.<ref>{{bug|MCPE-162680|||fixed}}</ref>}}
+|{{HistoryLine||1.19.70|dev=beta 1.19.70.20|
+Rotation in the {{cmd|teleport}} command is now relative to the execution rotation instead of the rotation of the target entity.}}
+}}
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox Java Edition}}
+{{Navbox Bedrock Edition}}
+
+[[ja:コマンド文脈]]
+[[zh:命令上下文]]

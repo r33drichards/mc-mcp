@@ -1,0 +1,1661 @@
+{{cleanup}}
+
+This page is a near-comprehensive list of all known distance effects throughout the game's history. A page that only accounts for those that affect the latest versions of the game can be found at [[Java Edition distance effects]].
+
+== Table of known effects ==
+{{see also|Java Edition hard limits}}
+''Note: This history section is sorted by when each case was fixed, shaded areas in gray in the introduction/fix columns are non-actual versions or testing for versions needed, and shaded areas in yellow indicate distance effects affecting in the development versions only.''
+
+=== High-distance precision loss bugs ===
+{{info needed section|
+* Piston sounds lost precision somewhat at high distances, which can be detected by ear - from my memory, it affects 1.4 but was fixed in or before 1.6
+* Further research is needed into mob spawning and pathfinding precision loss, and its overall history - will likely require direct analysis of spawning/pathfinding code. Pathfinding was definitely broken in 19w08b
+* Test item frame drop location throughout history
+* {{bug|MC-205680}}}}
+{| class="wikitable sortable mw-collapsible" data-description="Spatial distance effect history"
+! Added
+! Changed in
+! Change type
+! Error
+! Example
+! Notes
+|-
+! {{tc|unknown|Likely Classic}}
+! [[Java Edition Indev 20100218-0011|Indev 20100218-0011]]
+| {{tc|planned|Feature removed<br>(with regression)}}
+| [[Rain]] appears stretched out at extreme heights.
+| [[File:Weather rendering precision loss 1.png|64px]]
+| Effectively returned in later versions with the introduction of Winter Mode, and proper weather in Beta 1.5
+|-
+! {{tc|unknown|Likely from the start}}
+! [[Java Edition Infdev 20100227-1414|Infdev 20100227-1414]]
+| {{tc|yes|Fixed}}
+| Entities use 32-bit floats for position, rather than doubles.
+|
+| [[#Indev entity movement|''→ Go to section'']]
+|-
+! {{tc|unknown|Likely from the start}}
+! [[Java Edition Infdev 20100227-1414|Infdev 20100227-1414]]
+| {{tc|yes|Fixed}}
+| Entities & player hitbox lose precision past X/Z: +8,388,608, resulting in to flattened hitbox, which makes them fall into a void.
+|
+|
+|-
+! {{tc|unknown|Likely from the start}}
+! [[Java Edition Infdev 20100313|Infdev 20100313]]<ref name="notch">Likely due to changes mentioned in https://notch.tumblr.com/post/443693773/the-world-is-bigger-now ([https://web.archive.org/web/20111212094340/https://notch.tumblr.com/post/443693773/the-world-is-bigger-now archive])</ref>
+| {{tc|yes|Fixed}}
+| Blocks stop being solid after X/Z: +16,777,216.
+|
+|
+|-
+! {{tc|unknown|Likely Classic}}
+! [[Java Edition Infdev 20100313|Infdev 20100313]]<ref name="notch" />
+| {{tc|yes|Fixed}}
+| Particles are stretched and deformed at high distances.
+| [[File:Particles lose precision.png#|64px]]
+|
+|-
+! [[Java Edition 0.0.13a|0.0.13a]]
+! [[Java Edition Infdev 20100313|Infdev 20100313]]<ref name="notch" />
+| {{tc|yes|Fixed}}
+| The outline box of blocks shakes and jitters considerably at high distances.
+| [[File:Outline box rendering precision loss.png|64px]]
+| [[#Indev/Infdev hitbox rendering issue|''→ Go to section'']]
+|-
+! {{tc|unknown|Likely from the start}}
+! [[Java Edition Infdev 20100313|Infdev 20100313]]<ref name="notch" />
+| {{tc|yes|Fixed}}
+| World rendering loses precision in such a way that chunks become detached from each other.
+| [[File:Chunk rendering precision loss 1.png|64px]]
+| [[#Infdev 0227 chunk detaching issue|''→ Go to section'']]
+|-
+! {{tc|unknown|Likely from the start}}
+! [[Java Edition Infdev 20100313|Infdev 20100313]]<ref name="notch" />
+| {{tc|yes|Fixed}}
+| The world periodically stops rendering entirely when the player is at far distances.
+| [[File:Infdev Chunk Detaching.jpg|64px]]
+| [[#Infdev 0227 chunk detaching issue|''→ Go to section'']]
+|-
+! [[Java Edition Infdev 20100313|Infdev 20100313]]
+! [[Java Edition Infdev 20100316|Infdev 20100316]]
+| {{tc|yes|Fixed}}
+| [[Flower]]s, [[mushroom]]s, [[torch]]es, [[sapling]]s and [[wheat]] lose precision and appear 2D at high distances.
+| [[File:313 far items.png|64px]]
+| [[#Torches, crops and cross models|''→ Go to section'']]
+|-
+! {{tc|unknown|Likely Classic}}
+! [[Java Edition Infdev 20100327|Infdev 20100327]]
+| {{tc|yes|Fixed}}
+| Terrain is blockier at high distances.
+| [[File:Terrain_precision_loss.png|64px]]
+| May also affect newer versions if they are modded to generate terrain up to the 64-bit limit
+|-
+![[Java Edition Infdev 20100227-1414|Infdev 20100227-1414]]
+![[Java Edition Infdev 20100327|Infdev 20100327]]
+|{{tc|yes|Fixed}}
+|All generation beyond 2<sup>25</sup> is completely stone, up to the world height.
+|[[File:Farlandsnotchededge.png|width=64x64]]
+|
+|-
+! [[Java Edition Indev 0.31 20100128-2200|Indev 20100128-2200]]
+! [[Java Edition Alpha v1.0.1|Alpha v1.0.1]]<!--tested on _01-->
+| {{tc|planned|Feature<br>removed}}
+| [[Gear]]s appear visually stretched at high distances.
+| [[File:Gear model precision loss.png|64px]]
+| [[#Gears and ladders|''→ Go to section'']]
+|-
+! [[Java Edition Infdev 20100325-1545|Infdev 20100325-1545]]
+! [[Java Edition Infdev 20100624|Infdev 20100624]]
+| {{tc|planned|Feature<br>removed}}
+| Particles generated by stationary water blocks lose precision.
+| [[File:Water precision loss.png|64px]]
+| 
+|-
+! [[Java Edition Infdev 20100413|Infdev 20100413]]
+! {{tc|unknown|{{testingame|When they were removed?}}}}
+| {{tc|planned|Feature removed<br>(with regression)}}
+| Rain particles in third-person mode lose precision at high coordinates.
+| [[File:Rain particle grid.png|64px]]
+| The appearance of these particles in the first place is a bug, likely due to remaining F5 rain code.
+|-
+! [[Java Edition Alpha v1.0.4|Alpha v1.0.4]]
+! [[Java Edition Alpha v1.2.0|Alpha v1.2.0]]
+| {{tc|planned|Feature removed<br>(with regression)}}
+| Snow in worlds with [[winter mode]] appears stretched at high heights.
+| [[File:Weather rendering precision loss 2.png|64px]]
+| 
+|-
+! [[Java Edition Alpha v1.0.1|Alpha v1.0.1]]<!--tested on _01-->
+! [[Java Edition Beta 1.5|Beta 1.5]]
+| {{tc|partial|Changed}}
+| [[Redstone wire]] appears bugged at high distances when traveling up a block.
+| [[File:Vertical redstone model precision loss 1.png|64px]]
+| [[#Redstone wire|''→ Go to section'']]
+|-
+! [[Java Edition Infdev 20100607|Infdev 20100607]]
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+| {{tc|yes|Fixed}}
+| [[Ladder]]s appear visually stretched at high distances.
+| [[File:Ladder model precision loss.png|64px]]
+| [[#Gears and ladders|''→ Go to section'']]
+|-
+!{{tc|unknown|Likely Infdev}}
+![[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+|{{tc|yes|Fixed}}
+|Chunk duplication glitch occurs beyond 2<sup>18</sup> at every power of two as well as Spawn.
+|[[File:Farlands Trees.png|width=64x64]]
+|
+|-
+! [[Java Edition Infdev 20100616|Infdev 20100616]]
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+| {{tc|yes|Fixed}}
+| [[Water]] and [[lava]] side textures render incorrectly at high distances.
+| [[File:Fluid model precision loss.png|64px]]
+| [[#Flowing water and flowing lava|''→ Go to section'']]
+|-
+! [[Java Edition Infdev 20100618|Infdev 20100618]]
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+| {{tc|yes|Fixed}}
+| [[Rail]]s appear visually stretched at high distances.
+| [[File:Rail model precision loss.png|64px]]
+| [[#Rails, powered rails and detector rails|''→ Go to section'']]
+|-
+! [[Java Edition Infdev 20100624|Infdev 20100624]]
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+| {{tc|yes|Fixed}}
+| The terrain rendering appears offset and loses precision at high coordinates, giving way to the famous jitter of the Far Lands.
+| [[File:World rendering precision loss.gif|64px]]
+| [[#Infdev-Beta terrain rendering offset/jitter|''→ Go to section'']]
+|-
+! [[Java Edition Beta 1.3|Beta 1.3]]
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+| {{tc|yes|Fixed}}
+| The top faces of redstone repeaters lose precision at high coordinates.
+| [[File:Redstone repeater model precision loss.png|64px]]
+| [[#Rails, powered rails and detector rails|''→ Go to section'']]
+|-
+! [[Java Edition Beta 1.5|Beta 1.5]]
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+| {{tc|yes|Fixed}}
+| [[Powered rail]]s and [[detector rail]]s appear visually stretched at high distances.
+| [[File:Redstone rail model precision loss.png|64px]]
+| [[#Rails, powered rails and detector rails|''→ Go to section'']]
+|-
+! {{tc|unknown|Likely from the start}}
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+| {{tc|yes|Fixed}}
+| Chunk overflow and corruption at extreme distances, which cause crashes.
+|[[File:ChunkEndOverwrite.png|width=64x64]]
+|
+|-
+! [[Java Edition Beta 1.5|Beta 1.5]]
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+| {{tc|yes|Fixed}}
+| [[Redstone wire]] appears offset from its base block, although otherwise correctly sized, when traveling up a block.
+| [[File:Vertical redstone model precision loss 2.png|64px]]
+| [[#Redstone wire|''→ Go to section'']]
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease 4|Beta 1.9-pre4]])
+! [[Java Edition 1.3.1|1.3.1]]<br>([[Java Edition 12w18a|12w18a]])<!--Have to assume it's this, it doesn't let me join a singleplayer world on this version, but the particles still showing up due to the client server split anyway. "Fixed" in 19a.-->
+| {{tc|planned|Feature removed<br>(with regression)}}
+| Smoke from adding an [[eye of ender]] to an [[end portal frame]] loses precision.
+| [[File:End portal frame precision error old.png|64px]]
+| These particles would no longer display starting in 12w18a due to a change in that snapshot to make singleplayer use a multiplayer server. Later regression in 19w14a to 1.16-pre1 when they show up again.
+|-
+! [[Java Edition 1.4.2|1.4.2]]<br>([[Java Edition 12w34a|12w34a]])
+! [[Java Edition 1.4.4|1.4.4]]<br>([[Java Edition 1.4.3|1.4.3]])
+| {{tc|yes|Fixed}}
+| The [[wall]] collision box loses precision.
+| [[File:Wall collision box precision loss.png|64px]]
+| [[#Fences, fence gates and walls|''→ Go to section'']]
+|-
+! [[Java Edition Infdev 20100618|Infdev 20100618]]
+! [[Java Edition 1.4.6|1.4.6]]<br>([[Java Edition 12w49a|12w49a]])
+| {{tc|yes|Fixed}}
+| [[Falling Block|Gravity-affected block]]s at high distances can duplicate blocks and allow for infinite items, with natural configurations potentially autonomously generating thousands of item entities.
+|
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease 2|Beta 1.9-pre2]])
+! [[Java Edition 1.5|1.5]]<br>([[Java Edition 13w06a|13w06a]])
+| {{tc|yes|Fixed}}
+| [[Fence]] and [[nether brick fence]] collision boxes are broken at high distances.
+| [[File:Fence collision box precision loss.png|64px]]
+| [[#Fences, fence gates and walls|''→ Go to section'']]
+|-
+! [[Java Edition Indev 20100223|Indev 20100223]]
+! [[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w38a|13w38a]])
+| {{tc|partial|Changed}}
+| [[Painting]]s are placed at the incorrect positions when far from the origin.
+| [[File:Painting bug pre 38a.png|64px]]
+|
+|-
+! [[Java Edition 1.4.2|1.4.2]]<br>([[Java Edition 12w34a|12w34a]])
+! [[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w38a|13w38a]])<ref>Ticket is {{bug|MC-3493}}, although the fix version is incorrect</ref>
+| {{tc|partial|Changed}}
+| [[Item frame]] rendering breaks at high coordinates, with the frames following the player's position somewhat.
+| [[File:Item frame bug pre 38a.png|64px]]
+|
+|-
+! {{tc|rarely|[[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w38a|13w38a]])}}
+! {{tc|rarely|[[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w41a|13w41a]])<ref name="38a">Ticket is {{bug|MC-31653}}, but resolution snapshot is a week late</ref>}}
+| {{tc|partial|Changed}}
+| [[Item frame]] rendering is further broken at high coordinates, still following the player's position to an extent, but also erratically changing position depending on the camera angle.
+| [[File:1.7 dev frame.png|64px]]
+| Potentially fixed due to the fix for {{bug|MC-31619}}
+|-
+! {{tc|rarely|[[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w38a|13w38a]])}}
+! {{tc|rarely|[[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w41a|13w41a]])<ref name="38a"/>}}
+| {{tc|partial|Changed}}
+| [[Painting]] rendering breaks at high coordinates, now following the player's position to an extent and also erratically changing position depending on the camera angle.
+| [[File:1.7 dev painting.png|64px]]
+|
+|-
+! {{tc|rarely|[[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w38a|13w38a]])}}
+! {{tc|rarely|[[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w41a|13w41a]])<ref name="38a"/>}}
+| {{tc|yes|Fixed}}
+| Entities, tile entities, translucent blocks, and the wireframe hitbox seem desynced from the terrain itself, especially pronounced with View Bobbing active.
+| [[File:Hitbox too big.png|64px]]
+| Entities, block entities such as chests and signs, the wireframe hitbox shown around blocks, and ice and water are all in sync with each other. These become desynced from the terrain. The terrain is in sync with itself. The objects desynced from the terrain become very jittery on some hardware.
+|-
+! [[Java Edition Infdev 20100624|Infdev 20100624]]
+! {{tc|unknown|[[Java Edition 1.8|1.8]]?<br>{{checkthecode|May exist in 1.3.1 to 1.7.10, if modded.}}}}
+| {{tc|yes|Fixed}}
+| World rendering loses precision at high distances, resulting in chunks disappearing from the player's view even if the player is inside them.
+| [[File:Close chunks not rendering.png|64px]]
+|
+|-
+! {{tc|unknown|Likely Indev}}
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed<br>(with regression)}}
+| Lava ember particles lose precision.
+| [[File:Lava particle precision loss old.png|64px]]
+| There exists a later regression from 18w10c to 1.16-pre1.
+|-
+! [[Java Edition Beta 1.7|Beta 1.7]]
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed}}
+| The arms of [[piston]]s lose precision, causing them to stretch or even escape the block itself if far enough.
+| [[File:Piston model precision loss.png|64px]]
+| [[#Pistons|''→ Go to section'']]
+|-
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre1]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed<br>(with regression)}}
+| Underwater particles lose precision.
+| [[File:Water particle error early.png|64px]]
+| There exists a later regression from 18w10c to 1.15pre4.
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease|Beta 1.9-pre1]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed}}
+| Water dripping particles lose precision.
+| [[File:Water drip precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease|Beta 1.9-pre1]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed}}
+| Lava dripping particles lose precision.
+| [[File:Lava drip precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease 3|Beta 1.9-pre3]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed}}
+| The inside faces of [[cauldron]]s lose precision, and can escape the block itself if far enough.
+| [[File:Cauldron model precision loss.png|64px]]
+| [[#Cauldrons and hoppers|''→ Go to section'']]
+|-
+! [[Java Edition 1.3.1|1.3.1]]<br>([[Java Edition 12w22a|12w22a]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed}}
+| The [[tripwire]] model loses precision, causing it to disappear or stretch when far enough.
+| [[File:Tripwire model precision loss.png|64px]]
+| [[#Tripwire and tripwire hooks|''→ Go to section'']]
+|-
+! [[Java Edition 1.3.1|1.3.1]]<br>([[Java Edition 12w22a|12w22a]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed}}
+| The tripwire hook model when connected to tripwire loses precision.
+| [[File:Tripwire hook broken type 2.png|64px]]
+| [[#Tripwire and tripwire hooks|''→ Go to section'']]
+|-
+! [[Java Edition 1.4.2|1.4.2]]<br>([[Java Edition 12w34a|12w34a]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed}}
+| The inside faces of [[flower pot]]s lose precision, and can escape the block itself if far enough.
+| [[File:Flower pot model precision loss.png|64px]]
+| [[#Flower pots|''→ Go to section'']]
+|-
+! [[Java Edition 1.5|1.5]]<br>([[Java Edition 13w01a|13w01a]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w02a|14w02a]])
+| {{tc|yes|Fixed}}
+| The inside faces of [[hopper]]s lose precision, and can escape the block itself if far enough.
+| [[File:Hopper model precision loss.png|64px]]
+| [[#Cauldrons and hoppers|''→ Go to section'']]
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease|Beta 1.9-pre1]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w10a|14w10a]])
+| {{tc|yes|Fixed}}
+| [[Lily pad]]s appear glitched at 8388608 blocks out and are invisible from 8388609 blocks onward.
+| [[File:Lily pad model precision loss.png|64px]]
+|
+|-
+! [[Java Edition Indev 0.31 20100109-1939|Indev 20100109-1939]]
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w17a|14w17a]])
+| {{tc|yes|Fixed}}
+| [[Fire]]'s model (on a wall) breaks at high distances and can z-fight with its base or become very outstretched from it.
+| [[File:Fire model precision loss.png|64px]]
+| [[#Fire|''→ Go to section'']]
+|-
+! [[Java Edition Alpha v1.0.1|Alpha v1.0.1]]<!--tested on _01-->
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w17a|14w17a]])
+| {{tc|yes|Fixed}}
+| [[Redstone wire]] appears bugged at high distances.
+| [[File:Redstone model precision loss.png|64px]]
+| [[#Redstone wire|''→ Go to section'']]
+|-
+! [[Java Edition Infdev 20100618|Infdev 20100618]]
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w25a|14w25a]])
+| {{tc|yes|Fixed}}
+| Falling block spawning at high distances snaps to the corners of blocks.
+| [[File:Falling block creation precision loss.png|64px]]
+|
+|-
+! {{tc|unknown|Likely Indev}}
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w28a|14w28a]])
+| {{tc|yes|Fixed}}
+| When breaking a container, the contained items are dropped in the wrong area.
+| [[File:Furnace drop precision loss.png|64px]]
+|
+|-
+! {{tc|rarely|[[Java Edition 1.8|1.8]]<br>([[Java Edition 14w30a|14w30a]])}}
+! {{tc|rarely|[[Java Edition 1.8|1.8]]<br>([[Java Edition 14w30c|14w30c]])<ref>{{bug|MC-63333}}</ref>}}
+| {{tc|yes|Fixed}}
+| World rendering breaks at high distances, resulting in chunk borders being visible and chunks constantly jumping around in response to camera movement.
+| [[File:Chunk rendering precision loss 2.png|64px]]
+| [[#14w30a/b chunk detaching issue|''→ Go to section'']]
+|-
+! [[Java Edition Indev 0.31 20100125|Indev 20100125]]
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w32a|14w32a]])<ref name="jumboticket">{{bug|MC-3718}}</ref>
+| {{tc|yes|Fixed}}
+| [[Torch]] flame particles are formed at the wrong positions at high distances.
+| [[File:Torch precision loss.png|64px]]
+| Wall torch particles are offset further after losing precision, to account for wall torches not being centered on the block.
+|-
+! [[Java Edition Indev 0.31 20100125|Indev 20100125]]
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w32a|14w32a]])<ref name="jumboticket"/>
+| {{tc|yes|Fixed}}
+| [[Fire]] smoke particles are formed at the wrong positions at high distances.
+| [[File:Fire precision loss.png|64px]]
+|
+|-
+! [[Java Edition Indev 20100219|Indev 20100219]]
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w32a|14w32a]])<ref name="jumboticket"/>
+| {{tc|yes|Fixed}}
+| [[Furnace]] flame particles are formed at the wrong positions at high distances.
+| [[File:Furnace precision loss.png|64px]]
+|
+|-
+! [[Java Edition Infdev 20100618|Infdev 20100618]]
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w32a|14w32a]])
+| {{tc|yes|Fixed}}
+| [[Sand]], [[gravel]], [[dragon egg]]s and [[anvil]]s can become suspended in midair at high distances.
+| [[File:Physics precision loss.png|64px]]
+| Upon receiving a block update, they can create an entity for some frames before reverting to block form.
+|-
+! [[Java Edition Infdev 20100624|Infdev 20100624]]
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w32a|14w32a]])
+| {{tc|yes|Fixed}}
+| [[Minecart]]s are placed incorrectly at high distances. In some cases (usually stretches of rail), the minecart itself renders in the correct position but its shadow and rider are offset.
+| [[File:Minecart precision loss.png|64px]]
+|
+|-
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre1]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w34c|14w34c]])
+| {{tc|planned|Feature<br>removed}}
+| Void particles are formed incorrectly at high distances.
+| [[File:Void particle precision loss.png|64px]]
+| "Fixed" by removing them entirely.
+|-
+! [[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w41a|13w41a]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 1.8-pre2|pre2]])
+| {{tc|yes|Fixed}}
+| [[Painting]]s are placed at the incorrect positions when far from the origin.
+| [[File:Painting precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.4.2|1.4.2]] <br> ([[Java Edition 12w34a|12w34a]])
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 1.8-pre2|pre2]])<ref>{{bug|MC-56551}}</ref>
+| {{tc|yes|Fixed}}
+| There existed high-distance bugs with item frames clipping and not being interactable.
+| [[File:Frame clipping.png|64px]]
+|
+|-
+! [[Java Edition Beta 1.5|Beta 1.5]]
+! [[Java Edition 1.8.2|1.8.2]]<br>([[Java Edition 1.8.2-pre5|pre5]])
+| {{tc|yes|Fixed<br>(with regression)}}
+| Rain particles lose precision.
+| [[File:Rain precision loss old.png|64px]]
+| There exists a later regression from 20w06a to 1.16-pre1.
+|-
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre]])
+! [[Java Edition 1.8.2|1.8.2]]<br>([[Java Edition 1.8.2-pre5|pre5]])<ref>Has a bug tracker ticket at {{bug|MC-72562}}, although fix was not noticed immediately and is assigned to a much later version</ref>
+| {{tc|yes|Fixed}}
+| [[Rain]] rendering loses precision at high horizontal distances, becoming visible only sometimes beyond 2^23 and becoming completely invisible at 2^24.
+| [[File:High dist rain.png|64px]]
+|
+|-
+! [[Java Edition Beta 1.8|Beta 1.8]]<br>([[Java Edition Beta 1.8 Pre-release|pre1]])
+! [[Java Edition 1.8.2|1.8.2]]<br>([[Java Edition 1.8.2-pre5|pre5]])
+| {{tc|yes|Fixed<br>(with regression)}}
+| Smoke particles from rain hitting [[lava]] lose precision.
+| [[File:Lava rain precision loss old.png|64px]]
+| There exists a later regression from 20w06a to 1.16-pre1.
+|-
+! [[Java Edition Alpha v1.0.1|Alpha v1.0.1]]<!--tested on _01-->
+! [[Java Edition 1.8.2|1.8.2]]<br>([[Java Edition 1.8.2-pre5|pre5]])<ref>{{bug|MC-76747}}</ref>
+| {{tc|yes|Fixed}}
+| [[Redstone torch]] particles lose precision.
+| [[File:Redstone torch precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease 6|Beta 1.9-pre6]])
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w31a|15w31a]])
+| {{tc|yes|Fixed}}
+| [[End crystal]]s generated atop [[obsidian pillar]]s would be offset at high distances.
+| [[File:18CornerEnd.png|64px]]
+| Impossible to witness in vanilla, as End terrain does not generate this far out. However, with mods (such as those that re-enable the Far Lands), all End terrain would spawn obsidian pillars, allowing for this to be seen.<br>Potentially an early manifestation of {{bug|MC-92901}}
+|-
+! {{tc|rarely|[[Java Edition 1.9|1.9]]<br>([[Java Edition 15w31a|15w31a]])}}
+! {{tc|rarely|[[Java Edition 1.9|1.9]]<br>([[Java Edition 15w33a|15w33a]])}}
+| {{tc|yes|Fixed}}
+| The [[end gateway]] block's effect breaks when far from the origin.
+| [[File:End gateway precision loss.png|64px]]
+|
+|-
+! [[Java Edition Alpha v1.0.1|Alpha v1.0.1]]<!--tested on _01-->
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w37a|15w37a]])
+| {{tc|yes|Fixed}}
+| [[Pressure plate]]s detect activating entities wrongly when far from the origin.
+| [[File:Pressure plate precision loss.png|64px]]
+| Some pressure plates only recognize the player when stepping on a precision loss point, and others can preserve a signal even when the player is off them.
+|-
+! [[Java Edition Alpha v1.0.11|Alpha v1.0.11]]
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w38a|15w38a]])
+| {{tc|yes|Fixed}}
+| The [[cactus]] collision box loses precision.
+| [[File:Cactus collision box precision loss.png|64px]]
+| [[#Cakes and cacti|''→ Go to section'']]
+|-
+! [[Java Edition Beta 1.2|Beta 1.2]]
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w38a|15w38a]])
+| {{tc|yes|Fixed}}
+| The [[cake]] collision box loses precision.
+| [[File:Cake collision box precision loss.png|64px]]
+| [[#Cakes and cacti|''→ Go to section'']]
+|-
+! [[Java Edition Beta 1.2|Beta 1.2]]
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w38a|15w38a]])
+| {{tc|yes|Fixed}}
+| The cake outline box loses precision.
+| [[File:Cake outline box precision loss.png|64px]]
+| [[#Cakes and cacti|''→ Go to section'']]
+|-
+! [[Java Edition 1.1|1.1]]<br>([[Java Edition 12w01a|12w01a]])
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w38a|15w38a]])
+| {{tc|yes|Fixed}}
+| The [[fence gate]] collision box loses precision.
+| [[File:Fence gate collision box precision loss.png|64px]]
+| [[#Fences, fence gates and walls|''→ Go to section'']]
+|-
+! [[Java Edition Alpha v1.0.11|Alpha v1.0.11]]
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w49a|15w49a]])
+| {{tc|yes|Fixed}}
+| The cactus outline box loses precision.
+| [[File:Cactus outline box precision loss.png|64px]]
+| [[#Cakes and cacti|''→ Go to section'']]
+|-
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w32a|14w32a]])
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w49a|15w49a]])
+| {{tc|partial|Changed}}
+| Falling block rendering at high distances snaps to the corners of blocks.
+| [[File:Falling block older precision loss.png|64px]]
+|
+|-
+! [[Java Edition Alpha v1.0.6|Alpha v1.0.6]]
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 16w04a|16w04a]])
+| {{tc|yes|Fixed}}
+| [[Boat]]s are placed at the wrong position when far enough.
+| [[File:Boat precision loss.png|64px]]
+| Fix potentially related to {{bug|MC-90011}}
+|-
+! [[Java Edition 1.6|1.6]]<br>([[Java Edition 13w16a|13w16a]])
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 16w06a|16w06a]])
+| {{tc|yes|Fixed}}
+| [[Lead]] knots are placed at the wrong position when far enough.
+| [[File:Lead position precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.4.2|1.4.2]]<br>([[Java Edition 12w34a|12w34a]])
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 16w06a|16w06a]])
+| {{tc|yes|Fixed}}
+| [[Item frame]]s are placed at the incorrect positions when far from the origin.
+| [[File:Item frame position precision loss 1.7.png|64px]]
+| Hard to notice prior to 13w41a due to them not appearing at their actual position. Manifestation may differ across versions.
+|-
+! [[Java Edition Beta 1.2|Beta 1.2]]
+! [[Java Edition 1.11|1.11]]<br>([[Java Edition 16w40a|16w40a]])<ref>{{bug|MC-4132}}</ref>
+| {{tc|yes|Fixed}}
+| [[Piston]], [[command block]], [[dispenser]] and other blocks which can be placed in 6 directions approximate the player's position using a precision-losing 32-bit float.
+| [[File:Placement precision loss.png|64px]]
+|
+|-
+! [[Java Edition Beta 1.7|Beta 1.7]]
+! [[Java Edition 1.11|1.11]]<br>([[Java Edition 16w40a|16w40a]])<ref>{{bug|MC-98093}}</ref>
+| {{tc|yes|Fixed}}
+| The extension and contraction animations of [[piston]]s act oddly, somewhat following the player around at high distances.
+| [[File:Piston offset bug.png|64px]]
+| [[#Piston offset/jitter|''→ Go to section'']]
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease 3|Beta 1.9-pre3]])
+! [[Java Edition 1.11|1.11]]<br>([[Java Edition 16w40a|16w40a]])
+| {{tc|yes|Fixed}}
+| The rendering of the [[End Portal (block)|end portal block]] breaks and jitters intensely at high distances, giving way to complete blackness.
+| [[File:Black portal block.png|64px]]
+| In this version, the effect was made to remain static in respect to the screen, as opposed to moving with the player, a change made to end gateway blocks early in their development which also fixed high distance bugs.
+|-
+! {{tc|unknown|Likely Infdev<br>{{testingame}} }}
+! [[Java Edition 1.13|1.13]]<br>([[18w06a]])
+| {{tc|yes|Fixed}}
+| [[Terrain features]] seem to periodically "avoid" certain stripes of land at high distances on world generation.
+| 
+| 
+|-
+! [[Java Edition Alpha v1.0.2|Alpha v1.0.2]]<!--no particles on 1.0.1_01, particles on 1.0.2_01, and i doubt they would be added in a subsequent patch, they sure could though-->
+! [[Java Edition 1.13|1.13]]<br>([[Java Edition 17w47a|17w47a]])
+| {{tc|yes|Fixed}}
+| [[Redstone ore]] particles are formed wrongly when far from the origin.
+| [[File:Redstone ore precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w44a|15w44a]])
+! [[Java Edition 1.13|1.13]]<br>([[Java Edition 17w47a|17w47a]])<ref>{{bug|MC-92901}}</ref>
+| {{tc|yes|Fixed}}
+| [[End crystal]]s were placed at the wrong position when far from the origin.
+| [[File:End crystal precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.4.6|1.4.6]]<br>([[Java Edition 12w49a|12w49a]])
+! [[Java Edition 1.14|1.14]]<br>([[Java Edition 19w03a|19w03a]])
+| {{tc|yes|Fixed}}
+| [[Firework rocket]]s are placed at the wrong positions when far from the origin.
+| [[File:Firework precision loss.png|64px]]
+|
+|-
+! [[Java Edition Beta 1.3|Beta 1.3]]
+! [[Java Edition 1.14|1.14]]<br>([[Java Edition 19w08a|19w08a]])
+| {{tc|yes|Fixed}}
+| [[Bed]]s place the player at their edge when used far from the origin, and drop them off at a precision-losing point when far as well.
+| [[File:Bed precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w49a|15w49a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 19w39a|19w39a]])<ref>{{bug|MC-93810}}, {{bug|MC-98656}}</ref>
+| {{tc|yes|Fixed}}
+| Falling blocks render very oddly at high distances, constantly jumping around in response to camera movement, and jitter when falling even with a still camera.
+| [[File:Falling block precision loss.png|64px]]
+| [[#Falling block rendering issue|''→ Go to section'']]
+|-
+! {{tc|unknown|Classic or Indev}}
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 1|pre1]])
+| {{tc|planned|Feature<br>removed}}
+| Black smoke particles from [[TNT]] exploding are generated at the wrong place at far distances.
+| [[File:Explosion precision loss.png|64px]]
+| "Fixed" by removing these particles entirely, see {{bug|MC-165991}}
+|-
+! {{tc|unknown|Classic or Indev}}
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 1|pre1]])
+| {{tc|yes|Fixed}}
+| White smoke particles from [[TNT]] exploding are generated at the wrong place at far distances.
+| [[File:White Explosion precision loss.png|64px]]
+| "Fixed" by removing these particles entirely, see {{bug|MC-165991}}, despite them seemingly not even being removed at all{{verify}}
+|-
+! {{tc|unknown|Classic or Indev}}
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])<ref>{{bug|MC-125638}}</ref>
+| {{tc|yes|Fixed}}
+| When lit manually, [[TNT]] is generated at the wrong place at far distances.
+| [[File:TNT offset bug.png|64px]]
+|
+|-
+! [[Java Edition Infdev 20100625-1917|Infdev 20100625-1917]]
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| [[Monster Spawner]] particles lose precision.
+| [[File:Spawner precision loss.png|64px]]
+|
+|-
+! [[Java Edition Alpha v1.2.0|Alpha v1.2.0]]
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| The particles of the [[Nether Portal (block)|nether portal block]] form at the wrong place high distances.
+| [[File:Nether portal precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]] <br>([[Java Edition Beta 1.9 Prerelease|Beta 1.9-pre1]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| [[Mycelium]] particles lose precision.
+| [[File:Mycelium precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]] <br>([[Java Edition Beta 1.9 Prerelease 3|Beta 1.9-pre3]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| The particles of the [[End Portal (block)|end portal block]] form at the wrong place high distances.
+| [[File:End portal particle precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]] <br>([[Java Edition Beta 1.9 Prerelease 3|Beta 1.9-pre3]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| [[Brewing stand]] particles lose precision.
+| [[File:Brewing stand precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]] <br>([[Java Edition Beta 1.9 Prerelease 3|Beta 1.9-pre3]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])<ref>{{bug|MC-161888}}</ref>
+| {{tc|yes|Fixed}}
+| The book of the [[enchanting table]] faces the wrong direction when far enough from the origin.
+| [[File:Enchantment table angle precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.5|1.5]]<br>([[Java Edition 13w06a|13w06a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| Particles from [[minecart with spawner]]s lose precision.
+| [[File:Spawner cart precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w36a|13w36a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| Particles from falling from a height lose precision.
+| [[File:Fall precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w36a|13w36a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])<ref>{{bug|MC-161991}}</ref>
+| {{tc|yes|Fixed}}
+| Particles from [[fishing]] lose precision.
+| [[File:Fishing precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w04a|14w04a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| The {{cmd|particle}} command generates particles at the wrong place at far distances.
+| [[File:Particle command precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w06a|14w06a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| [[Barrier]] particles lose precision.
+| [[File:Barrier precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w33a|14w33a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| Particles from breaking an [[armor stand]] lose precision.
+| [[File:Armor stand precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w31a|15w31a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])<ref>{{bug|MC-161999}}</ref>
+| {{tc|yes|Fixed}}
+| [[End Gateway (block)|End gateway]] particles move to the wrong place.
+| [[File:End gateway particle precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w34b|15w34b]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| Dark heart particles from hurting mobs lose precision.
+| [[File:Damage heart precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 15w34c|15w34c]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| Particles from sweep attacks lose precision.
+| [[File:Sweep attack precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.10|1.10]]<br>([[Java Edition 16w20a|16w20a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| The particles of suspended gravity affected blocks form at the wrong place at high distances.
+| [[File:Physics particle precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.13|1.13]]<br>([[Java Edition 18w07a|18w07a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])<ref>{{bug|MC-161994}}</ref>
+| {{tc|yes|Fixed}}
+| [[Squid]] ink particles lose precision.
+| [[File:Squid precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.13|1.13]]<br>([[Java Edition 18w10c|18w10c]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])
+| {{tc|yes|Fixed}}
+| Underwater particles lose precision.
+| [[File:Underwater precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.13|1.13]]<br>([[Java Edition 18w15a|18w15a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 4|pre4]])<ref>{{bug|MC-161993}}</ref>
+| {{tc|yes|Fixed}}
+| [[Conduit]] particles move to the wrong place.
+| [[File:Conduit precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.5|1.5]]<br>([[Java Edition 13w04a|13w04a]])
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 20w12a|20w12a]])<ref>{{bug|MC-76810}}</ref>
+| {{tc|yes|Fixed}}
+| [[Bone meal]] particles lose precision.
+| [[File:Bone meal precision loss.png|64px]]
+|
+|-
+! {{tc|unknown|{{testingame|It doesn't take much to say that testing this will be a massive pain, but if you looking at the code of mob spawning itself would probably be a much better idea.}} }}
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-167103}}</ref>
+| {{tc|yes|Fixed}}
+| [[Mob]] spawning breaks at high distances.
+| [[File:Spawning and pathfinding precision loss.png|64px]]
+| May be related to a bug that caused naturally spawned passive mobs to suffocate in blocks when generated at high distances.<ref>{{bug|MC-123390}}</ref> Example shows before and after 268435456.
+|-
+! {{tc|unknown|Likely Indev}}
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-167047}}</ref>
+| {{tc|yes|Fixed}}
+| When set off by another explosion, [[TNT]] is generated at the wrong place at far distances.
+| [[File:Detonation offset.png|64px]]
+|
+|-
+! [[Java Edition Beta 1.3|Beta 1.3]]
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-167971}}</ref>
+| {{tc|yes|Fixed}}
+| Red smoke from [[redstone repeater]]s loses precision.
+| [[File:Repeater precision error.png|64px]]
+| The smoke is offset further after precision loss depending on the repeater's delay.
+|-
+! [[Java Edition Beta 1.5|Beta 1.5]]
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-183174}}</ref>
+| {{tc|yes|Fixed}}
+| [[Detector rail]]s do not detect the presence of minecarts properly.
+| [[File:Detector rail precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.0.0|1.0.0]]<br>([[Java Edition Beta 1.9 Prerelease 3|Beta 1.9-pre3]])
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-167044}}</ref>
+| {{tc|yes|Fixed}}
+| The book of the [[enchanting table]] sometimes does not open at all when far enough from the origin.
+| [[File:Enchantment table presence precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.3.1|1.3.1]]<br>([[Java Edition 12w22a|12w22a]])
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-167091}}</ref>
+| {{tc|yes|Fixed}}
+| Dripping particles from [[leaves]] lose precision.
+| [[File:Leaves precision error.png|64px]]
+|
+|-
+! [[Java Edition 1.5|1.5]]<br>([[Java Edition 13w02a|13w02a]])
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-182748}}</ref>
+| {{tc|yes|Fixed}}
+| [[Minecarts with chests]] that generate in [[mineshaft]]s appear at the wrong locations at high distances.
+| [[File:Minecart generation precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.13|1.13]]<br>([[Java Edition 18w10c|18w10c]])
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-167046}}</ref>
+| {{tc|yes|Fixed}}
+| Embers from [[lava]] lose precision.
+| [[File:Lava precision error.png|64px]]
+|
+|-
+! [[Java Edition 1.14|1.14]]<br>([[Java Edition 19w03a|19w03a]])
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-167042}}</ref>
+| {{tc|yes|Fixed}}
+| Embers from [[campfire]]s lose precision.
+| [[File:Campfire precision error.png|64px]]
+|
+|-
+! [[Java Edition 1.14|1.14]]<br>([[Java Edition 19w14a|19w14a]])
+! [[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-161969}}</ref>
+| {{tc|yes|Fixed}}
+| Smoke from adding an [[eye of ender]] to an [[end portal frame]] loses precision.
+| [[File:End portal frame precision error.png|64px]]
+| due to fix for {{bug|MC-10369}}
+|-
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 20w06a|20w06a]])}}
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-171035}}</ref>}}
+| {{tc|yes|Fixed}}
+| Rain particles lose precision.
+| [[File:New rain precision error.png|64px]]
+| {{tc|unknown|Likely from fix to {{bug|MC-131770}}}}
+|-
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 20w06a|20w06a]])}}
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-171037}}</ref>}}
+| {{tc|yes|Fixed}}
+| Smoke particles from rain hitting [[lava]] lose precision.
+| [[File:Rain lava precision error.png|64px]]
+| resurfaced due to {{bug|MC-164158}} and above ticket
+|-
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 20w06a|20w06a]])}}
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-185480}}</ref>}}
+| {{tc|yes|Fixed}}
+| Smoke particles from rain hitting [[campfire]]s lose precision.
+| [[File:Campfire smoke precision loss.png|64px]]
+| {{tc|unknown|Likely related to the very similar lava case}}
+|-
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 20w06a|20w06a]])}}
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-170872}}</ref>}}
+| {{tc|yes|Fixed}}
+| Ambient particles from the [[crimson forest]], [[soul sand valley]] and [[warped forest]] lose precision.
+| [[File:Warped forest precision loss.png|64px]]
+| The example to the left was taken at >2^30 blocks, as the effect, while reproducible, is hard to demonstrate in an image within vanilla bounds.
+|-
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 20w12a|20w12a]])}}
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-177723}}</ref>}}
+| {{tc|yes|Fixed}}
+| [[Mob#Behavior|Pathfinding]] of mobs breaks at high distances causing mobs to rotate in a humorous fashion.
+|
+|
+|-
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 20w15a|20w15a]])}}
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-185480}}</ref>}}
+| {{tc|yes|Fixed}}
+| Smoke particles from rain hitting [[soul campfire]]s lose precision.
+| [[File:Soul campfire smoke precision loss.png|64px]]
+|
+|-
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 20w15a|20w15a]])}}
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-170872}}</ref>}}
+| {{tc|yes|Fixed}}
+| Ambient particles from the [[basalt deltas]] lose precision.
+| [[File:Basalt deltas precision loss.png|64px]]
+|
+|-
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 20w19a|20w19a]])}}
+! {{tc|rarely|[[Java Edition 1.16|1.16]]<br>([[Java Edition 1.16 Pre-release 1|pre1]])<ref>{{bug|MC-182748}}</ref>}}
+| {{tc|yes|Fixed}}
+| Particles from active [[redstone wire]] lose precision.
+| [[File:Redstone dust precision error.png|64px]]
+| From the fix to {{bug|MC-181566}}
+|-
+! [[Java Edition Infdev 20100325-1545|Infdev 20100325-1545]]
+! [[Java Edition 1.16.2|1.16.2]]<br>([[Java Edition 20w28a|20w28a]])<ref>{{bug|MC-185925}}</ref>
+| {{tc|yes|Fixed}}
+| [[ore (feature)|Ore blob]]s generate more blocky at high distances.
+| [[File:Ore gen precision loss.png|64px]]
+| Between 67,108,864 and 134,217,728 blocks, this bug will cause the game to crash, as ore blobs end up being placed in adjacent chunks, resulting in a huge chain reaction of chunk loading.<ref>https://www.reddit.com/r/Minecraft/comments/9u9d4i/floats_minecraft_and_the_far_lands/</ref>
+|-
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w17a|14w17a]])
+! [[Java Edition 1.17|1.17]]<br>([[Java Edition 21w17a|21w17a]])
+| {{tc|yes|Fixed}}
+| The [[world border]]'s radius is controlled by a 32-bit float, making many world border sizes inaccessible.
+|
+|
+|-
+! [[Java Edition Infdev 20100327|Infdev 20100327]]
+! [[Java Edition 1.18|1.18]]
+| {{tc|yes|Fixed}}
+| The [[noise generator]] sampling loses precision at very high coordinates, resulting in blocky terrain.
+| Can only be seen by modifying the game, as this only starts becoming noticeable beyond 2^55 blocks.
+|
+|-
+! [[Java Edition 1.17|1.17]]<br>([[Java Edition 20w49a|20w49a]])
+! [[Java Edition 1.19|1.19]]<br>([[Java Edition 22w12a|22w12a]])<ref name="sculk">{{bug|MC-207260}}</ref>
+| {{tc|yes|Fixed}}
+| Vibrations for [[sculk sensor]]s are created at the wrong positions
+|
+| [[#Sculk vibration positioning errors|''→ Go to section'']]
+|-
+! [[Java Edition 1.17|1.17]]<br>([[Java Edition 21w20a|21w20a]])
+! [[Java Edition 1.19.4|1.19.4]]<br>([[Java Edition 1.19.4 Pre-release 2|pre2]])<ref name="drops">{{bug|MC-229293}}</ref>
+| {{tc|yes|Fixed}}
+| [[Item (entity)|Dropped items]] are created at the wrong positions
+| [[File:Item drop precision loss.png|64px]]
+|
+|-
+! [[Java Edition 1.7.2|1.7.2]]<br>([[Java Edition 13w41a|13w41a]])
+! [[Java Edition 1.21.2|1.21.2]]<br>([[Java Edition 24w36a|24w36a]])<ref name="ice">{{bug|MC-186362}}</ref>
+| {{tc|yes|Fixed}}
+| Translucent blocks (or translucent elements such as different parts of slime blocks and honey blocks) can sometimes erroneously stop different translucent blocks/elements behind them from rendering, likely due to it assuming they wouldn't be seen from the player's precision-deficient position.
+| [[File:Translucent rendering precision loss.png|64px]]
+| ''[[Java Edition distance effects/Historical effects#Translucent rendering|→ Go to section]]''
+|-
+! {{tc|rarely|[[Java Edition 1.7.2|1.21.5]]<br>([[Java Edition 25w06a|25w06a]])}}
+! {{tc|rarely|[[Java Edition 1.7.2|1.21.5]]<br>([[Java Edition 25w07a|25w07a]])<ref name="Worldborder">{{bug|MC-280133}}</ref>}}
+| {{tc|yes|Fixed}}
+|The world border jitters when near the world border.
+|
+|
+|-
+! {{tc|unknown|Likely from the start<br>{{check the code}}}}
+! Current<ref name="audio">{{bug|MC-191170}}</ref>
+| {{tc|no|Current}}
+| [[Sounds]] can come from the wrong places at high distances.
+| 
+| [[Java Edition distance effects#Sound positioning errors|''→ Go to original page's section'']]
+|-
+! [[Java Edition Beta 1.6.5|Beta 1.6.5]]
+! Current<ref name="rain">{{bug|MC-164352}}</ref>
+| {{tc|no|Current}}
+| [[Rain]] and [[snow]] appear stretched when the player is high up or low down enough.
+| [[File:Weather rendering precision loss 3.png|64px]]
+| [[Java Edition distance effects#Rain/snow rendering|''→ Go to original page's section'']]
+|-
+! [[Java Edition 1.9|1.9]]<br>([[Java Edition 16w02a|16w02a]])
+! Current<ref name="snow">{{bug|MC-192718}}</ref>
+| {{tc|no|Current}}
+| Temperature is blockier at high distances, resulting in blockier snow and ice generation and more.
+| [[File:Precision loss snow.png|64px]]
+| [[Java Edition distance effects#Temperature distribution breakdown|''→ Go to original page's section'']]
+|-
+! [[Java Edition 1.17|1.17]]<br>({{info needed|between 1.16.5 and 21w05b}})
+! Current<ref name="collisions">{{bug|MC-221892}}</ref>
+| {{tc|no|Current}}
+| Projectiles do not collide with players above 8,388,608 on the Y axis.
+|
+|
+|-
+! [[Java Edition 1.14|1.14]]<br>([[Java Edition 18w43a|18w48a]])
+! Current<ref name="Village">{{bug|MC-221892}}</ref>
+| {{tc|no|Current}}
+| Village are glitched at high distances.
+| [[File:Broken Village.png|width=64x64]]
+|
+|}
+
+=== High-time precision loss bugs ===
+{{info needed section|
+* Was {{bug|MC-227557}} a time issue?
+* How about {{bug|MC-130960}}?
+* Or {{bug|MC-255715}}?
+* {{bug|MC-303292}}?
+* Need images for the new sections}}
+While not strictly distance effects, these similarly concern precision loss issues with the floating-point arithmetic (especially for the 32-bit floats) casting that happen due to excessive time values, regardless of spatial position.
+{| class="wikitable" data-description="Time effect history"
+! Introduced
+! Fixed/changed
+! Change type
+! Error
+! Example
+! Notes
+|-
+! [[Java Edition 1.4.2|1.4.2]]<br>([[Java Edition 12w38a|12w38a]])
+! [[Java Edition 1.8.1|1.8.1]]<br>([[Java Edition 1.8.1-pre3|pre3]])<ref>{{bug|MC-1279}}</ref>
+| {{tc|yes|Fixed}}
+| The [[beacon]] beam becomes more jittery in rotation, eventually stopping rotating and its texture becomes visually broken at high time values.
+| [[File:Ancient beacon.png|64px]]
+|
+|-
+! [[Java Edition 1.8|1.8]]<br>([[Java Edition 14w30a|14w30a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 19w35a|19w35a]])<ref name="twicefix">{{bug|MC-63720}}</ref>
+| {{tc|yes|Fixed}}
+| [[Banner]]s stop moving in the wind after a certain amount of time.
+| [[File:Frozen banner.png|64px]]
+| The value is somewhere between 3m and 3.5m.
+|-
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 19w38a|19w38a]])
+! [[Java Edition 1.15|1.15]]<br>([[Java Edition 1.15 Pre-release 3|pre3]])<ref name="twicefix"/>
+| {{tc|yes|Fixed}}
+| [[Banner]]s stop moving in the wind after a certain amount of time.
+| [[File:Frozen banner again.png|64px]]
+|
+|-
+![[Java Edition 1.15|1.15]]
+([[Java Edition 19w40a|19w40a]]){{verify|Probably started when the guardian was introduced. Also check the elder guardian}}
+![[Java Edition 1.19.4|1.19.4]]
+([[Java Edition 23w03a|23w03a]])<ref>{{bug|MC-165595}}</ref>
+| {{tc|yes|Fixed}}
+|[[Guardian]] beam rendering stops working at a high enough time value.
+|
+|
+|-
+![[Java Edition 1.20.5|1.20.5]]
+([[Java Edition 24w13a|24w13a]]){{verify|It says that the bug started in 1.21, but I'm pretty sure it started when the ominous spawners were first introduced.}}
+![[Java Edition 1.21.2|1.21.2]]
+([[Java Edition 24w33a|24w33a]])<ref>{{bug|MC-273758}}</ref>
+| {{tc|yes|Fixed}}
+|The [[Ominous Trial Spawner|ominous spawner]] item ejection animation breaks after a certain amount of time passed (specifically 2^24 ticks, or 9.71 real-life days).
+|
+|
+|-
+![[Java Edition 1.21.3|1.21.3]]
+([[Java Edition 24w44a|24w44a]]){{verify|It says that the bug started in 1.21.3, but I'm pretty sure it started when bubble columns were first introduced.}}
+![[Java Edition 1.21.5|1.21.5]]
+([[Java Edition 25w02a|25w02a]])<ref>{{bug|MC-277865}}</ref>
+| {{tc|yes|Fixed}}
+|The animation of boats in bubble columns degrades over time (starts at 2^24 ticks, or 9.71 real-life days).
+|
+|
+|-
+![[Java Edition 1.4.2|1.4.2]]<br>([[Java Edition 12w38a|12w38a]]){{verify|It says that the bug started in 1.16.1, but I'm pretty sure it started when the bat was first introduced.}}
+!Current<ref>{{bug|MC-199467}}</ref>{{verify|did that not get fixed recently?}}
+| {{tc|no|Current}}
+|The animations of certain entities (specifically bees and bats) break after the entity has existed for too long.
+|
+|
+|}
+
+=== Other float precision loss issues ===
+{{empty section|
+* Rotation precision loss
+* Walking animation and view bobbing, stopping
+* Brightness breaking at 16777220 and above / -16777218 and below}}
+
+== Analysis ==
+=== Model issues ===
+Model issues were permanently fixed in [[Java Edition 1.8|1.8]], due to hardcoded [[Model|block models]] being replaced with standardized models using [[JSON]] files.
+==== Redstone wire ====
+''First affected version: [[Alpha v1.0.1]]<br />Last affected version: [[14w11b]]<br />Notable changes in [[Beta 1.5]], [[Beta 1.8 Pre-release]] and [[14w02a]]''
+
+; 262,144 - 1,048,575 blocks
+[[File:Redstone 262144 vertical.png|thumb|right]]
+Between Alpha v1.0.1 and [[Beta 1.7.3]] inclusive, the first distortions of [[redstone wire]] can be seen beyond 262,144 blocks. After this point, if redstone wire climbs a block face perpendicular to the direction 262,144 blocks are exceeded on, it will appear in the same plane as that block face, resulting in major z-fighting. This effect remains like this until 16,777,216 blocks, where error exceeds a full block.
+
+In Beta 1.8 Pre-release and later, vertically travelling redstone is no longer affected by precision loss.
+{{-}}
+
+; 1,048,576 - 4,194,303 blocks
+[[File:Redstone 1048576 dots.png|thumb|right]]
+Between Alpha v1.0.1 and release 1.8 snapshot 14w11b inclusive, redstone wire first begins to distort beyond 1,048,576 blocks. This distortion is rather subtle, and solely affects the dot - other connections are unaffected. In the screenshot, the redstone at the top (which is the smallest) is before 1,048,576 blocks on both axes, and thus appears at its normal size. The bottom redstone, which is beyond this position, appears bigger. The other two dots are beyond this position on only one axis each, and appear slightly rectangular as a result.
+{{-}}
+
+; 4,194,304 - 8,388,607 blocks
+[[File:Redstone 4194304.png|thumb|right]]
+Beyond 4,194,304 blocks, redstone starts to distort more significantly and in more ways. Notably, single dots are invisible - since at these coordinates, precision can only be half a block, this splits a block's top surface into a 2×2 grid with 9 possible vertices. As the redstone dot is centered on the block, the vertices of the model are presumably rounded to the center of the block, producing an invisible 0-dimensional result. Corner turns of redstone dust are now somewhat shrunken as to only cover a corner of the block face, and T-shapes are stretched to cover only half of the block's top face. Crosses and lines are unaffected.
+{{-}}
+
+; 8,388,608 - 16,777,215 blocks
+[[File:Redstone 8388608.png|thumb|right]]
+Redstone rendering degrades further upon another subsequent doubling of the distance. Redstone dots' model vertices are now rounded out to the corners of the block rather than the center, producing an again visible result which now covers the full block face. T-shapes and corner turns now also cover the full block top face. Lines and crosses remain unaffected at this point due to them covering the full top face in the first place.
+<gallery>
+File: Distant alpha redstone.png|Redstone after 8,388,608 blocks in Alpha. Since it assumes a cross shape by default, it needs to be connected to adjacent dust to show the stretching in action here.
+</gallery>
+{{-}}
+
+; 16,777,216 - 33,554,431 blocks
+[[File:Redstone 16777216.png|thumb|right]]
+Beyond 16,777,216 blocks, precision loss exceeds one full block, and redstone renders even more oddly as a result. For example, only half (if exceeded on one axis) / a quarter (both axes) of all redstone dust placed here will actually render - the rest, while it still exists, functions and influences the visual connections of redstone that does render, will remain entirely invisible. Of what does render, redstone will be stretched to visually occupy two blocks if over this distance on one axis, or a 2×2 space of blocks if beyond it on two.
+
+Beyond this distance on only one axis, the stretching on each block is as follows:
+
+* 4n: Invisible
+* 4n+1: Renders, stretched towards the negative direction
+* 4n+2: Renders, stretched towards the positive direction
+* 4n+3: Invisible
+
+For both axes, these effects mix, and therefore only redstone whose coordinates are both 4n+1 and 4n+2 can render.
+
+In versions 14w02a until this effect's fixing, the rendering is as follows:
+
+* 4n: Invisible
+* 4n+1: Invisible
+* 4n+2: Renders, stretched towards the positive direction
+* 4n+3: Invisible
+
+<gallery>
+Redstone 16777216 dots.png|At these distances and beyond, it is possible for dots to appear visually adjacent even though in reality they are disjoint.
+Redstone superflat 16777216.png|A superflat world with redstone at 16,777,216 blocks on both axes (before 14w02a).
+Redstone superflat 16777216 14w02a.png|A superflat world with redstone at 16,777,216 blocks on both axes (after 14w02a).
+</gallery>
+{{-}}
+[[File:Redstone 16777216 up.png|thumb|right|In Beta 1.8 Pre-release and later, vertically travelling redstone would render as normal regardless of distance, even though horizontally travelling redstone would appear as distorted as any other distorted planar block.]]
+For vertically travelling redstone, depending on the version, it can appear very distant from the block it is climbing. This ranges from the redstone line floating off of its supporting block by a full block, being flush with its surface and z-fighting, or being inside of the block and therefore invisible under usual circumstances (viewing would require x-raying in some capacity, as at the time redstone did not render from its rear). The possible vertically travelling arrangements are as follows:
+
+Going in the positive direction (would display on the negative face of the block it travels up if closer to spawn):
+* 4n: Displays a full block off of the face it climbs
+* 4n+1: Flush with the block face, causing z-fighting
+* 4n+2: Displays inside of the block it climbs - requires x-ray to see
+* 4n+3: Flush with the block face, causing z-fighting
+
+From Alpha v1.0.1 through [[Beta 1.4_01]] inclusive, vertically travelling redstone would also appear stretched. From [[Beta 1.5]] through to Beta 1.7.3 inclusive, it no longer appeared stretched, but still appeared disconnected from its supporting block as described previously. As vertically travelling redstone can only have a line appearance, it would not be able to appear stretched before 16,777,216 blocks, as it would already be taking up the full block face area and no precision would be able to be lost.
+<gallery>
+Broken redstone up.png|Vertically travelling redstone within the 16,777,216 - 33,554,431 bracket prior to Beta 1.3. The lower wire is in a spot where it is visible, but the upper wire is not.
+Redstone 16777216 vertical 1.png|Vertically travelling redstone from Beta 1.3 through 1.4_01, showcasing a combination of displacement and stretching. In this case, the upper redstone wire is in a position where it renders, where the lower wire is not.
+Redstone 16777216 vertical 2.png|Vertically travelling redstone from Beta 1.5 through 1.7.3, showcasing solely displacement.
+Redstone 16777216 vertical 3.png|Vertically travelling redstone from Beta 1.8 Pre-release through to 14w11b, which no longer appears distorted at all.
+</gallery>
+{{-}}
+
+; 33,554,432+ blocks
+Beyond every power of two, redstone dust will stretch more and more, and vertically travelling redstone will become more and more disjoint from its intended position in versions where such effects exist, both effects obviously doubling for each integer exponent of 2 surpassed. These effects can only be seen in modded versions, or (in Beta 1.7.3 and prior) via editing coordinates externally and exploiting the spawn chunk glitch (see [[Java Edition hard limits#Spawn chunk glitch (X/Z: ±524,288–X/Z: ±1,073,741,824)]]).
+
+Past X/Z: 536,870,912, a single unit of redstone dust renders large enough to cover four chunks at a time, and beyond X/Z: 1,073,741,824, will appear as large as 128 blocks wide. For a redstone dot, this would result in a single pixel being 128/6 = 64/3 = 21.3333333333333... blocks wide.
+
+Were worlds to theoretically function out to the 64-bit limit (X/Z: ±9,223,372,036,854,775,807), a single unit of redstone dust placed at the correct position would be 2.2 trillion blocks wide.
+
+<gallery>
+Redstone 1073741824 dot one axis.png|Redstone dust dot past X/Z 1,073,741,824 (halfway to X/Z 2,147,483,648), at a spot where it would render, on only one axis.
+Redstone 1073741824 dot.png|Giant redstone dust past X/Z 1,073,741,824 on both axes. It appears 128 blocks wide in both directions.
+Redstone superflat 1073741824 one axis.png|A superflat world with redstone past X/Z 1,073,741,824 blocks on one axis.
+</gallery>
+
+==== Tripwire and tripwire hooks ====
+{{info needed section|more details on mixing offsets}}
+''First affected version: [[12w22a]]<br />Last affected version: [[Java Edition 1.7.10|1.7.10]]''
+
+; 262,144 - 8,388,607 blocks
+Beyond 262,144 blocks on both axes, [[tripwire]] string simply stops rendering. Beyond this point on only one axis, it will only stop rendering in the direction perpendicular to the axis it is exceeded on. Of what remains, some subtle z-fighting can be seen.
+<gallery>
+Tripwire superflat 262144.png|A superflat world with tripwire at 262,144 blocks on both axes.
+</gallery>
+{{-}}
+
+; 8,388,608 - 16,777,215 blocks
+[[File:Tripwire 8388608.png|thumb|right]]
+Things become especially odd for tripwire specifically when precision loss is one full block. The texture ends up becoming ridiculously stretched to cover the entire block face and somewhat visually resembles a shag carpet.
+<gallery>
+Tripwire 8388608 close up.png|A close up of a 2×2 square of tripwire at this distance.
+Tripwire superflat 8388608.png|A superflat world with tripwire at 8,388,608 blocks on both axes.
+</gallery>
+{{-}}
+
+When attached to a [[tripwire hook]], the results vary visually depending on the version being played on. From 12w22a through [[13w01b]] inclusive, it appears effectively identical to the tripwire itself. However, from [[13w02a]] through to 1.7.10, the section attached to the hook has a very thick gray section. This is almost certaintly due to a model change that affected the brightness and shape of tripwire in that same snapshot, making that section of wire less dotty and more linear; stretching that line perpendicularly to itself would create a planar sheet, as opposed to stretching dots which would create lines.
+<gallery>
+Tripwire hook broken type 1.png|Prior to 13w02a
+Tripwire hook broken type 2.png|After 13w02a
+</gallery>
+{{-}}
+
+; 16,777,216+ blocks
+After this point, tripwire once again stops rendering perpendicular to the axis of travel.
+<gallery>
+Tripwire superflat 16777216.png|A superflat world with tripwire at 16,777,216 blocks on both axes.
+</gallery>
+{{-}}
+
+==== Pistons ====
+''First affected version: [[Beta 1.7]]<br />Last affected version: [[Java Edition 1.7.10|1.7.10]]<br />Note: this section deals with stationary pistons and does not include pistons in motion.''
+
+; 2,097,152 - 4,194,303 blocks
+The arm section of a [[piston]] begins to distort at this point. If the piston's direction is perpendicular to that of the direction of travel (including vertically facing), the arm will now appear completely flat on that axis. If beyond this point on both axes and extending in a vertical direction, this will result in the arm to appear completely 1-dimensional and therefore invisible.
+{{-}}
+
+; 4,194,304 - 8,388,607 blocks
+The above details still apply at this point. Pistons now gain an additional distortion at this point. If it is extending parallel to the direction of travel, it will now appear shorter, and detached from the piston body slightly. At 4,194,303 blocks exactly, the texture on the arm will appear slightly squished if facing in the negative direction (as tested on only one positive axis). Beyond this point, the texture mapping will no longer be squished, but part of the arm will be inside of the head (to compensate for its detachment), which can be seen by clipping inside of it.
+{{-}}
+
+; 8,388,608 - 16,777,215 blocks
+Piston arms now become extremely distorted after this point. Arms parallel to the direction of travel still look the same as their 4,194,304+ counterparts, but those which run perpendicularly are dramatically stretched to cover a full block's width. If on both axes, this can cause a vertically extended piston to appear like two stacked full blocks.
+<gallery>
+Sideways piston model precision loss.png|A powered sideways piston. It can be seen that it is at a far distance in both coordinates, due to the stretching and the detachment.
+Upwards piston model precision loss.png|A powered vertical piston on both axes, with notable stretching
+</gallery>
+{{-}}
+; 16,777,216 - 33,554,431 blocks
+The appearance of piston arms is now very dependent on the position of the block itself. If beyond this point on only one axis, pistons which extend parallel to the travel will usually have completely invisible arms (presumably these are reduced to 2D planes which have no texture on the faces anyway due to these parts of the piston arm never being normally visible). It seems that this is always the case for pistons extending in the positive direction. However, for pistons extending in the negative direction, one in every four will have the arm appear stretched to be two full blocks wide. Specifically, the piston must be placed such that the arm extends into block 4n+2.
+
+For arms extending in the two directions perpendicular, the arm will appear completely flat, and either at the very edge of the piston block, or offset from it by a whole block (occurs for pistons at 4n+1){{info needed|pistons themselves, or the poston head shoukd be there?}}.
+
+Effects can be mixed by exceeding this distance on both axes. Vertically facing pistons will obviously always have invisible arms due to them being compressed into being one-dimensional. Other effects can be seen, though - for example, a piston at a coordinate 4x-1 and 4z+1 made to extend towards the negative X direction will result in a thin piston arm stretched to be two blocks wide and offset from the piston by a full block.
+<gallery>
+Stretched piston arms.png|Two thin, non-stretched, perpendicularly-offset piston arms, on only one axis.
+Stretched piston arm cross.png|Two thin, offset, stretched piston arms meeting at a V shape beyond 16,777,216 blocks on both axes.
+</gallery>
+{{-}}
+
+==== Cauldrons and hoppers ====
+''First affected version: [[Beta 1.9 Prerelease 2]] (cauldron), [[13w01a]] (hopper)<br />Last affected version: [[1.7.10]]''
+
+; 2,097,152 - 16,777,215 blocks
+Between these points, [[cauldron]]s and [[hopper]]s become very slightly distorted, in that the inner face becomes coplanar with the outer face. This causes the inside of the block to appear slightly larger.
+
+; 16,777,216 - 33,554,431 blocks
+Cauldron and hopper inner face behavior becomes very interesting at this point onwards. Assuming one axis:
+
+* 4n: the internal faces are outright invisible
+* 4n+1: the inner face in the positive direction is missing
+* 4n+2: both inner faces will be offset outwards to adjacent blocks
+* 4n+3: the inner face in the positive direction is missing
+
+<gallery>
+High distance cauldron.png|This cauldron is beyond 16,777,216 blocks on both axes, specifically at a position where both the X and Z coordinates are even numbers which are not multiples of 4.
+High distance hopper.png|The previous example as shown with a hopper.
+</gallery>
+
+==== Flower pots ====
+''First affected version: [[12w34a]]<br />Last affected version: [[1.7.10]]''
+
+; 1,048,576 - 2,097,151 blocks
+Beyond this point is where [[flower pot]]s first become distorted. While not immediately obvious, paying attention to the dirt reveals that more of it is visible than previously. A flower pot at exactly 1,048,576 blocks will only be distorted on the positive half of the pot - the negative half will remain normal. Beyond this point, both the positive and negative halves on the applicable axes will be distorted.
+
+; 2,097,152 - 4,194,303 blocks
+Distortion on flower pots becomes more obvious beyond this point. The internal faces of the pot now are rounded to be closer to the center, rather than slightly farther from it like before. As a result, looking down into the pot allows the sides to be seen out through.
+
+Similar to the previous entry, a pot at exactly 2,097,152 blocks will have the old distortion in the negative half, and the new distortion in the positive half.
+
+It is worth noting for this entry and all subsequent flower pot entries that these internal faces are only rendered from the intended angle and are invisible from behind due to them never being normally seen from behind. This is intended design and is not a distance effect.
+
+; 4,194,304 - 8,388,607 blocks
+The flower pot's internal planes have now been completely ejected from the pot itself, such that there are now two full block pixels between the intended edge of the pot and the new position of the planes.
+
+Similar to the previous entry, a pot at exactly 4,194,304 blocks will have the old distortion in the negative half, and the new distortion in the positive half.
+
+; 8,388,608 - 16,777,215 blocks
+Interestingly, distortion beyond this point is now positionally dependent, despite the precision loss not being  greater than a full block at this point. Assuming only one axis exceeds this coordinate:
+
+* 2n: the internal planes simply appear absent. However, some faces now appear at full brightness  where they would usually not. This may mean that the internal faces are offset to coincide with the pot's faces in these cases, as the internal faces are always drawn at full brightness in these versions.
+* 2n+1: pots will have their internal planes outright offset into adjacent blocks.
+
+For mixing offsets, pots at double even coordinates have no inner faces and are fully bright, pots at an odd-even coordinate will have two fully bright faces and two offset faces, and double-odd pots will have all four faces offset (which can all be seen at once).
+
+; 16,777,216 - 33,554,431 blocks
+Distortion increases again beyond this point. Assuming only one axis:
+
+* 4n: have no visible inside faces and some fully bright outside faces
+* 4n+1: both of the inside faces will be offset in the negative direction
+* 4n+2: have no visible inside faces and some fully bright outside faces
+* 4n+3: both of the inside faces will be offset in the positive direction
+
+Mixing coordinates functions as follows: for pots at double even coordinates, internal faces will be absent and the pot will be completely unaffected by ambient occlusion. At an odd-even coordinate, two outside faces will be fully lit, two inner faces will be absent, and the other two inner faces will be offset to the nearest multiple of 4 block. At a double-odd coordinate, two faces will be offset to one of the two closest multiple of 4 blocks, and the other two will be offset to the other.
+
+<gallery>
+High distance cauldron.png|Four pots at double-odd coordinates with a cauldron for comparison.
+High distance hopper.png|The previous example as shown with a hopper.
+</gallery>
+
+==== Flowing water and flowing lava ====
+''First affected version: [[Java Edition Infdev 20100616-1808|Infdev 2010-06-16]]<br />Last affected version: [[Beta 1.7.3]]''
+
+; 16,777,216 - 33,554,431 blocks
+{{info needed section|Where the side planes show up and where they don't}}
+As a [[fluid]] block's "footprint" always stretches across an entire block face, the effects of precision loss here can only be seen once precision itself can no longer represent blocks (integers) individually.
+
+Interestingly, despite often having angular features, these are not actually lost with the precision loss as one may expect, and are somewhat preserved. However, the angle becomes clearly shallower.
+
+<gallery>
+Flowing water model precision loss.png|A stretched waterfall.
+Flowing lava model precision loss.png|A stretched lava fall.
+</gallery>
+{{-}}
+
+; 33,554,432+ blocks
+[[File:Distorted Lava.png|thumb|right|Lava can be seen here with a ridiculous width.]]
+As with other distance effects, exceeding each integer power of two will double the error systematically, allowing for fluid sides as long as 128 blocks to be witnessed in semi-vanilla bounds.
+{{-}}
+
+==== Rails, powered rails and detector rails ====
+''First affected version: [[Java Edition Infdev 20100618|Infdev 2010-06-18]] (rail), [[Beta 1.5]] (detector rail, powered rail)<br />Last affected version: [[Beta 1.7.3]]''
+
+; 16,777,216 - 33,554,431 blocks
+{{info needed section|
+* Where the rails show up and where they don't (assuming same as redstone)
+* Check to see if repeaters behave identically here}}
+As a rail block's "footprint" always stretches across an entire block face, the effects of precision loss here can only be seen once precision itself can no longer represent blocks (integers) individually.
+
+Beyond this point, a [[rail]] block will be stretched along the axes exceeded. Only half (a quarter if on both axes) of all rails placed will render,{{verify}} with the remaining half still being existent, but not visible.
+
+Sloped rails will become stretched in much the same way as flat rails. If stretched in the direction of vertical travel, this will also result in the angle the rail makes with the terrain becoming shallower, as can be seen in a screenshot below.
+
+<gallery>
+Distorted rails.png|Distorted rail, powered rail and detector rail from before Beta 1.8, with single blocks for comparison.
+Distorted rail circle.png|Stretched circle of rails from before Beta 1.8
+</gallery>
+
+; 33,554,432+ blocks
+Just like other precision loss issues, every power of two exceeded will cause rails to become even bigger, allowing rails up to 128 blocks big in vanilla bounds. These effects can only be seen by editing coordinates using map editors and exploiting the spawn chunk glitch ([[Java Edition hard limits|more details]]).
+
+==== Gears and ladders ====
+{{Info needed section|test if their models lose precision at coordinates lower than 16,777,216. My statement that they cover the entire block face may be wrong}}
+''First affected version: Indev 2010-01-?? (gears), [[Java Edition Infdev 20100616-1808|Infdev 2010-06-16]] (ladders)<br />Last affected version: [[Alpha v1.0.1]] (gears), [[Beta 1.7.3]] (ladders)''
+; 16,777,216 - 33,554,431 blocks
+Since [[gear]]s and [[ladder]]s cover the entire block face, the precision loss can only be noticed after this point, as blocks (integers) can no longer be represented individually after here.
+
+Beyond this point, gears and ladders will be stretched and become two blocks wide. Furthermore, only half of all gears and ladders placed here will render - the ones that are placed on "invalid" locations will not.
+
+; 33,554,432+ blocks
+Just like other distance effects, every power of two causes gears and ladders to become stretched even further. They are 32 blocks wide beyond 268,435,456 blocks, and 128 blocks wide beyond 1,073,428,854 blocks. (That is the maximum size that they can be, since blocks no longer render past 2,147,483,519 blocks in these versions).
+
+==== Fire ====
+{{info needed section|versions and positions}}
+In some Infdev versions, [[fire]] particles render strangely at very high distances.
+
+==== Torches, crops and cross models ====
+In [[Java Edition Infdev 20100313|Infdev 20100313]], beyond 8,388,608 blocks, torches, crops, flowers, saplings, and other cross models would lose precision, causing them to appear as 2D rectangles.
+
+==== Translucent rendering ====
+''First affected version: [[Java Edition 13w41a|13w41a]]''
+
+''Last affected version: [[1.21.2]]''
+
+; 8,388,608 - 16,777,215 blocks
+
+The effects of this can first be seen after this point. The preferred method of testing this involves stacking two translucent blocks, such as two different colors of stained glass, in a square shape, and then walking up against this square to slow movement. When crossing from one block into another, the top face of the bottom block should not render at all until a certain distance is covered, at which point it should pop into view as expected.
+
+; 16,777,216 - 33,554,431 blocks
+
+The buggy effect's precision is now halved, allowing for the tops of two blocks at a time to appear periodically invisible.
+
+; 33,554,432+ blocks
+
+The effect's intensity will again double for every power of two crossed beyond this point. It also becomes very obvious in natural generation at extreme distances, specifically in cold areas; as ice and water are both translucent blocks and are intended to be visible through each other, viewing them when at such far distances from the origin will make very exaggerated versions of this effect obvious.
+
+=== Hitbox issues ===
+
+==== Fences, fence gates and walls ====
+''First affected version: [[Beta 1.9 Prerelease 2]] (fences), [[12w01a]] (fence gates), [[12w34a]] (walls)<br />Last affected version: [[13w06a]] (fences), [[15w38a]] (fence gates), [[Java Edition 1.4.3|1.4.3]] (walls)''
+
+; 2,097,152 - 8,388,607 blocks
+At this point, the hitboxes for [[fence]]s, [[fence gate]]s and [[wall]]s begin to break. Before this point, pushing into a fence in the positive direction would allow the player to go as far as .07500 blocks into the space the fence occupies; beyond this point, the limit becomes .20000 blocks. It is also possible to easily see inside of walls due to this.
+<gallery>
+Fence 2097152 before.png|The fence's entity hitbox before 2,097,152 blocks
+Fence Gate 2097152 before.png|The fence gate's entity hitbox before 2,097,152 blocks
+Wall 2097152 before.png|The wall's entity hitbox before 2,097,152 blocks
+</gallery><gallery>
+Fence 2097152 after.png|The fence's entity hitbox after 2,097,152 blocks
+Fence Gate 2097152 after.png|The fence gate's entity hitbox after 2,097,152 blocks
+Wall 2097152 after.png|The wall's entity hitbox after 2,097,152 blocks
+</gallery>
+
+; 8,388,608 - 16,777,215 blocks
+In this bracket, fence and wall hitboxes expand to fill out the entire block they occupy, similarly to how fences and fence gates were prior to [[Beta 1.8 Pre-release]] and [[Java Edition 1.1|release 1.1]] respectively. This is obviously due to the integers being the only representable numbers with 32-bit floats beyond this point.
+<gallery>
+Fence 8388608 before.png|The fence's entity hitbox before 8,388,608 blocks
+Fence Gate 8388608 before.png|The fence gate's entity hitbox before 8,388,608 blocks
+Wall 8388608 before.png|The wall's entity hitbox before 8,388,608 blocks
+</gallery><gallery>
+Fence 8388608 after.png|The fence's entity hitbox after 8,388,608 blocks
+Fence Gate 8388608 after.png|The fence gate's entity hitbox after 8,388,608 blocks
+Wall 8388608 after.png|The wall's entity hitbox after 8,388,608 blocks
+</gallery>
+
+; 16,777,216 - 33,554,431 blocks
+[[File:Fence 16777216 solidplanes.png|thumb|right]]
+Hitboxes beyond this point become very strange, and virtually non-existent in some cases. Assuming this distance is exceeded on only one axis and in the positive direction, a fence at a 4n coordinate will have an extremely thin hitbox at the negative side of the fence. A fence at a coordinate 4n+1 will have no hitbox at all, one at a 4n+2 coordinate will again have a thin hitbox at the negative side, and one at a 4n+3 coordinate will have its thin hitbox at the positive side. The image to the right showcases the solid faces approximately marked by signs.
+
+==== Cakes and cacti ====
+''First affected version: [[Alpha v1.0.11]] (cacti), [[Beta 1.2]] (cakes)<br />Last affected version: [[15w38a]] (collision boxes), [[15w49a]] (outline boxes)<br />Fixing of cake outline box impossible to see due to {{bug|MC-106300}}''
+
+; 1,048,576 - 2,097,151 blocks
+After 1,048,576 blocks, the first breakdown of hitboxes can be witnessed for [[cake]]s and [[cacti]]. Previously, their hitboxes would perfectly fit their cuboidal shape, however any placed past this point would experience a minor distortion; the hitboxes would be stretched to a full block width on whatever axis this distance was surpassed on. This also affects their collision boxes - previously pressing against these on their negative-facing side would get a value of .76250, but after this point this value is now .70000, like a full block. Cacti can still cause damage with this expanded hitbox.
+<gallery>
+Cake 1048576 before.png
+Cactus 1048576 before.png
+</gallery>
+<gallery>
+Cake 1048576 after.png
+Cactus 1048576 after.png
+</gallery>
+{{-}}
+As cakes can also be eaten to change their hitbox, partially eaten cakes will also experience hitbox breakdowns. [[Java Edition removed blocks/Metadata variants#Overeaten cakes|Cakes with more than six slices taken out of them]] are affected in much the same way.
+
+Before:
+<gallery>
+Cake 1048576 0 before.png
+Cake 1048576 1 before.png
+Cake 1048576 2 before.png
+Cake 1048576 3 before.png
+Cake 1048576 4 before.png
+Cake 1048576 5 before.png
+Cake 1048576 6 before.png
+Cake 1048576 7 before.png
+Cake 1048576 8 before.png
+Cake 1048576 9 before.png
+Cake 1048576 10 before.png
+Cake 1048576 11 before.png
+Cake 1048576 12 before.png
+Cake 1048576 13 before.png
+Cake 1048576 14 before.png
+Cake 1048576 15 before.png
+</gallery>
+
+After:
+<gallery>
+Cake 1048576 0 after.png
+Cake 1048576 1 after.png
+Cake 1048576 2 after.png
+Cake 1048576 3 after.png
+Cake 1048576 4 after.png
+Cake 1048576 5 after.png
+Cake 1048576 6 after.png
+Cake 1048576 7 after.png
+Cake 1048576 8 after.png
+Cake 1048576 9 after.png
+Cake 1048576 10 after.png
+Cake 1048576 11 after.png
+Cake 1048576 12 after.png
+Cake 1048576 13 after.png
+Cake 1048576 14 after.png
+Cake 1048576 15 after.png
+</gallery>
+{{-}}
+
+; 2,097,152 - 4,194,303 blocks
+
+; 4,194,304 - 8,388,607 blocks
+
+; 8,388,608 - 16,777,215 blocks
+[[File:Cake 8388608 both axes.png|thumb|right]]
+
+; 16,777,215 - 33,554,431 blocks
+Beyond this point, the hitboxes of these blocks start to become quite strange. As a block's collision box cannot extend outside of the block space it occupies, it becomes very easy to outright clip through the blocks in several cases. On one axis, the hitbox will either be a plane or stretched to occupy two different blocks at once.
+
+=== Rendering bugs ===
+==== Infdev-Beta terrain rendering offset/jitter ====
+{{cleanup|section=1}}
+''First affected version: [[Java Edition Infdev 20100624|Infdev 2010-06-24]]<br />Last affected version: [[Beta 1.7.3]]''
+
+[[File:Brokenhitbox.png|thumb|right|Hitbox misalignment, one side effect of the classical trademark rendering offset bug]]
+Many effects are noticeable after traveling millions of blocks away from the center of the map. The first effect that becomes evident from Infdev 2010-06-24 to Beta 1.7.3 is the jumpy or stuttering movement of the map. In old versions of ''Minecraft'', when the game renders the map around the player, there are two different versions that are generated, the rendering of the blocks themselves (i.e. entities, how much the block generates) and the visual aspect to the blocks (e.g. the hitbox, block pixels etc.). In [[Beta 1.7]] and prior, the visual aspect of world rendering loses precision, resulting in the jumpy movement. The reason the world loses precision in the first place is that the rendering engine uses double-double precision, which determines the position of the world around the player. The rendering engine then uses a floating point integer to determine how far the already rendered blocks move around the player when they move. Unfortunately, this floating point integer cuts the double-double precision number in half, and thus the rendering engine doesn't have enough information to render the terrain correctly, and the information gets cut in half every time the player doubles their distance. Removing the floating text from the rendering engine fixes the stuttering movement.       
+
+This jumpy movement is notable even at an X/Z of ±16,384, becoming increasingly noticeable around ±524,288. The intensity of such glitches doubles every time the player passes a coordinate that is a power of two (e.g. 2,097,152 or 4,194,304). After about X/Z 16,777,216, the hitbox is a full [[block]] off, which makes placing and destroying blocks almost impossible. The floating point precision errors are no longer noticeable past X/Z 2,147,483,519, as surface textures stop rendering and blocks no longer generate. At the center of the world, the world would be off by only {{frac|1|4194304}} (0.000000238...) blocks. Past the 32-bit limit, the world would be off by 256 blocks. For any position between ''n'' and ''2n'', where n is a power of 2, the world is offset by {{frac|''n''|8388608}} blocks, or {{frac|''n''|524288}} block pixels.
+
+<gallery>
+Xraybug.png|X-ray bug with the movement.
+Itembug.png|An Item floating due to the bug
+</gallery>
+
+==== Piston offset/jitter ====
+''First affected version: [[Beta 1.7]]<br />Last affected version: [[Java Edition 1.10.2|1.10.2]]''
+
+At excessive X/Z positions, the rendering of moving [[piston]]s break, causing them to follow the player's position. Although affecting Beta 1.7.x versions, it is impossible to notice this in these versions due to the world rendering being broken there as well. While world rendering was fixed in [[Beta 1.8]], moving piston rendering was not fixed in this version and persisted until [[Java Edition 1.11|1.11]] when moving piston rendering was finally fixed.
+
+==== Infdev 20100227 chunk detaching issue ====
+{{cleanup|section=1}}
+* X/Z ±32,768: [[Chunk]]s begin to shake. This effect doubles for every power of two that the player walked away from the spawn point. 
+* X/Z: ±2,097,152: World stops rendering completely at certain angles.
+* X/Z: 268,435,456: Gaps between chunks become multiple blocks long, causing the world to look like either stripes or a grid (depending on the axes which exceed this distance).
+
+Note: This issue could have been present in game versions prior to [[Infdev 20100227]], but the world stopped rendering beyond 2560 blocks anyway in these versions, so this couldn't be noticed there. The world may also periodically stop rendering entirely at far distances.
+<br />A similar glitch occurred in snapshot 14w30a/b.
+
+==== 14w30a/b chunk detaching issue ====
+{{info needed section}}
+Whether or not this issue occurs appears to be tied to the VBOs setting - switching this on will cause the issue to go away, and disabling VBOs will cause it to happen.
+
+<gallery>
+Shaky terrain third person.png|A third person view of the shaky terrain.
+</gallery>
+
+==== World renderer precision loss ====
+{{cleanup|section=1}}
+
+''First affected version: [[Java Edition Infdev 20100624|Infdev 2010-06-24]]<br />Last affected version: [[Beta 1.7.3]]''
+
+At excessive X/Z positions (depends on the operating system and version, but usually occurs between X/Z: ±268,435,456 and ±2,147,483,647, and early versions such as Beta), world render glitches out, resulting in terrain that appears to flicker. This does happen at X/Z: <±268,435,456, but it becomes very noticeable at X/Z: >±268,435,456 and gets worse every power of 2 beyond that. This could most likely be that past X/Z: ±268,435,456 the ''Minecraft'' world is 32 blocks off, which is as large as 2 chunks, though it is unconfirmed.<gallery>
+File:Broken world rendering, b1.7.3.png|World rendering causes chunks to spontaneously appear and disappear depending on the player's viewing angle.
+</gallery>''First affected version: Beta 1.8<br />Last affected version: Release 1.7.10''
+
+World rendering would lose precision, resulting in chunks vanishing from the player's view.<gallery>
+File:Broken world rendering.png|World rendering breaks at high distances.
+</gallery>
+
+
+==== Indev/Infdev hitbox rendering issue ====
+{{cleanup|section=1}}
+* Every power of 2 that the player goes, the hitbox of the block that the player is facing becomes more and more distorted.
+* The hitbox becomes increasingly more corrupted and distorted until it disappears entirely at X/Z ±2,147,483,648.
+* X/Z ±2,048: Hitbox begins to flicker slightly around blocks.
+* X/Z ±131,072: The shape of the hitbox begins to deform.
+The shape of the hitbox distorting and becoming non-cubic is also possible on some GPUs.
+
+==== Falling block rendering issue ====
+{{empty section}}
+The shape of the block distorting and becoming non-cubic is also possible on some GPUs.
+[[File:Falling Block Glitch.png|alt=Shape of gravel distorting at high distances|thumb|376x376px|Falling block rendering issues at high distances]]
+
+=== Gameplay ===
+==== Indev entity movement ====
+{{cleanup|section=1}}
+* Every power of 2 that the player goes, it becomes harder and harder to walk along the axis the player is traveling on.
+* At X/Z ±4,194,304, the player falls through the blocks. However, if the player teleports beyond this point they can still stand on the blocks but cannot move along that axis.
+* At X/Z ±8,388,608, the player can no longer stand on the blocks and falls into the void.
+
+==== Infdev 0227 blocks solidness issue ====
+{{cleanup|section=1}}
+* X/Z ±16,777,216: Blocks are no longer solid; the player falls and hits a layer of lava.
+
+==== Sculk vibration positioning errors ====
+''First affected version: [[20w49a]]<br />Last affected version: [[22w11a]]''
+
+; 4,194,304 - 8,388,607 blocks
+Precision will be a factor of two times as accurate for every power of two crossed before this point. Beyond 4,194,304 blocks, [[vibration]]s will only be able to come from one of three lines on a block - one for each edge, and another through the center. Past this on both axes, precision loss will allow vibrations to only originate from nine points on a block: the center, the middle of each of the four edges, and the four corners.
+
+; 8,388,608 - 16,777,215 blocks
+After this point, precision will be half as precise again. Vibrations will lose the ability to come from the center of blocks, being relegated to one of two edges, or, if beyond this on both axes, one of the four corners.
+
+; 16,777,216 - 33,554,431 blocks
+Beyond 16,777,216 blocks, vibrations can come from completely separate positions than the actual source. If a button is placed at (4x+1,4z+1), the vibration will first appear at the center of the four blocks directly northwest of it. However, this does not appear to allow the sculk sensor to detect vibrations from any farther away than it should.
+
+==== Bed positioning ====
+''First affected version: [[Beta 1.3]]<br />Last affected version: [[Java Edition 1.13.2|1.13.2]]''
+; 8,388,608 - 16,777,215 blocks
+The effects of this can be first seen after this point. Sleeping on a [[bed]] beyond this point causes the player to be placed on the edge of the bed, as the center can no longer be represented due to precision errors.
+
+; 16,777,216 - 33,554,431 blocks
+The position of the player sleeping on a bed becomes interesting beyond this point. If exceeded on one axis, sleeping can sometimes place the player outside of the bed depending of the position of the bed block. If beyond this point on both axes, sleeping can sometimes place the player on the center of the bed, but at a lower position than usual.
+
+=== World generation ===
+==== Terrain features ====
+{{empty section}}
+{{info needed section|verify if they really lose precision}}
+; 16,777,216 - 33,554,431 blocks
+
+==== Blocky terrain ====
+''First affected version: Likely [[Pre-classic rd-20090515]]<br />Last affected version: [[Java Edition Infdev 20100325-1545|Infdev 2010-03-25]]''
+
+At very high distances, the terrain start to become distorted and form blocky shapes. This can be first be seen at 4,194,304 blocks. At 8,388,608 blocks it becomes more noticeable. At 16,777,216 blocks and beyond the terrain becomes very distorted, all the way to the Far Lands in these versions. This is presumably caused due to the noise coordinate losing precision at high distances, althrough this is yet to be confirmed.
+
+''First affected version: [[Java Edition Infdev 20100327|Infdev 2010-03-27]]<br />Last affected version: [[Java Edition 1.17.1|1.17.1]] (?)''
+
+Beyond 2<sup>55</sup> blocks especially, terrain starts to distort and form blocky shapes, due to gradient noise sampling losing precision.
+
+=== Table: ===
+{{stub|Add more information and images to this section.}}
+{| class="wikitable"
+!Coordinates
+!Effects
+!Image of Effect
+|-
+|X/Z ±2,048
+|
+* in Infdev version, hitbox begins to flicker slightly around blocks.
+|
+|-
+|X/Z ±16,384
+|
+* In older versions, jumpy movement is notable
+|
+|-
+|X/Z ±32,768
+|
+* In some versions, chunk begin to shake, this effect get more worse at higher coordinates.
+|
+|-
+|X/Z ±131,072
+|
+* In Infdev version, hitbox begin to distort.
+|
+|-
+|X/Z ±8,388,608
+|
+* Most particles begin to generate in the wrong places.
+|
+|-
+|X/Z ±25,769,803,764 (Beta 1.7.3 and earlier)
+|
+* Fancy clouds stop rendering (Varies between maps). Fast graphic clouds, however, can stop rendering or either become glitched stripe lines which also can disappear afterwards. Beyond this point, only the sky, sun, moon and void remain.
+* [[Cloud#Appearance|Fancy clouds]] are 12x12 and hit the 32-bit integer limit at 25,769,803,776 (or 2,147,483,647 * 12), so in cause of that they overflow after this point disappearing.
+|
+|-
+|X/Z ±34,359,738,368
+|
+* Biome fill noise overflows in older versions (Beta 1.7.3 and earlier), resulting in stripes of exposed stone in the terrain.
+* In older versions (Beta 1.7.3 and earlier), game crashes due to chunk overflowing.
+|<gallery mode="packed">
+File:Overflowing_biome_fill_noise.png
+</gallery>
+|}
+
+== Gallery ==
+=== Fixed bugs ===
+<gallery>
+Emeralds do not lose.png|[[Emerald ore]] is not affected by the ore blob generation precision loss.
+Assortment of precision loss bugs.png|Particles are offset. [[String]] and redstone appear to be stretched out.
+</gallery>
+
+==== Particle errors ====
+<gallery>
+Void particle error 1.png|The corner of the world in 1.5, with the void particles clearly losing precision.
+Void particle error 2.png|The corner of the world in Beta 1.8 Pre-release, with the grid pattern of particles clearly visible.
+Fake chunks void with particles.png|The void in 1.6.2 from within.
+Void particles in late 1.8 dev.png|Void particles near the end of their lifetime in 1.8's development, still not precisely generated.
+Torch disagreement.png|20 blocks short of the 30 million mark. Not only are the torches and their flames not lined up, but the flames each picked a different direction to bend.
+Void particles.png|Void particles in the world boundary appear in very specific patterns.
+Particle wrong position-1.7.10.png|Particles are in the wrong position and snapped into block corners.
+Solid chunks wall.png|A redstone torch hanging on solid boundary air in Release 1.7. There is a noticeable particle position desync.
+InvisibleWallTorch.jpg|Torches placed on glowstone next to the invisible wall, the particles emitted from them are also in the wrong place.
+Redstone ore precision loss 3 axes.png|Redstone ore lit beyond 2<sup>24</sup> on all three axes in 1.12.2 (as seen via the Cubic Chunks mod)
+Redstone ore four square 33554432.png|Four blocks of redstone ore lit beyond 2<sup>25</sup> blocks on both axes
+TNT explosion snapped.gif|A command-summoned TNT's explosion at 1,500,000,000 on both X and Z axis. The white and black smoke particles spawn in two different locations and different from the location of the TNT, due to floating-point precision errors.
+</gallery>
+
+== Mods and map editors ==
+{{disclaimer|section=1}}
+Up until 1.1, there existed a bug with the OptiFine mod<ref>{{ytl|jVSvf06rqBg}}</ref><ref>{{ytl|FR9xvH-u21k}}</ref><ref>{{ytl|a8CHopq3Tzw}}</ref> which would progressively break world rendering when traveling a far enough distance away, with effects manifesting as soon as 10,000 blocks. The effects would appear to get more intense continuously when moving far away from the center of the world, as opposed to having cutoffs every 2{{^|n}} blocks, due to this rendering bug also taking rotation into account (although if the rotation is kept constant and along one axis discrete jumps become noticeable). The bug existed due to the mod undoing vanilla's fix for said bug.
+
+=== Optifine ===
+<gallery>
+Optifine stripe lands.png|With the pre-1.1 optifine mod on GPUs that do not cause major geometrical distortion, block models would progressively distort with increased distance. After 16,777,216 blocks, with error reaching two blocks in magnitude, an effect analogous to the Stripe Lands can be seen on full blocks.
+</gallery>
+
+=== MCEdit ===
+When viewing the Far Lands in a 3D Minecraft map editor, the player encounters errors. In MCEdit, the selection cubes start to distort and the map distorts when viewing. In addition, when the player rotates their view around a selected area, blocks are not lined up right and change how poorly lined up they are at random, making the whole world seem to shake.
+
+<gallery>
+Mcimg1.png|The selection box being distorted in MCEdit.
+Mcing2.png|Twisting world and move player tool in MCEdit. 
+</gallery>
+
+== References ==
+<references />
+
+== External links ==
+* [https://www.youtube.com/watch?v=UXUV9Tae0vg Video showcasing several high distance effects present in Minecraft 1.0.0]{{dead link}}
+* [https://www.youtube.com/watch?v=jn5PRPWROsc Video showcasing several high distance effects present in Minecraft 1.4.2]{{dead link}}
+* [https://www.youtube.com/watch?v=cSGJNrT0lZc Video showcasing several high distance effects present in Minecraft 1.6.4]
+* [https://www.youtube.com/watch?v=noVqSnU_I0Q Video showcasing several high distance effects present in Minecraft 1.7.2]
+* [https://www.youtube.com/watch?v=YDLKZOyXGcI Video showcasing several high distance effects present in Minecraft 1.7.10]
+
+== Navigation ==
+{{Navbox environment}}
+[[zh:距离现象/Java版/历史现象]]
+[[Category:Analysis]]
+[[Category:History]]
+[[Category:Glitches]]

@@ -1,0 +1,48 @@
+{{exclusive|java}}
+
+'''Trial spawner configuration''' is used to configure a [[trial spawner]].
+
+== Definition ==
+
+Trial spawner configurations can be defined in [[data pack]]s, as part of the directory structure below.
+
+{{Data pack directory|trial_spawner|<nowiki><name>.json</nowiki>}}
+
+== JSON Format ==
+Trial spawner configurations are defined using the following format:
+<div class="treeview">
+* {{nbt|compound}} The root object.
+<section begin="json format"/>
+** {{nbt|int|spawn_range}}: Between 1 and 128. Defaults to 4 &mdash; Maximum distance in blocks that mobs can spawn.
+** {{nbt|float|total_mobs}}: Defaults to 6 &mdash; Total amount of mobs spawned before cooldown for a single player.
+** {{nbt|float|simultaneous_mobs}}: Defaults to 2 &mdash; The amount of spawned mobs from this spawner that are allowed to exist simultaneously.
+** {{nbt|float|total_mobs_added_per_player}}: Defaults to 2 &mdash; Amount of total mobs added for each additional player.
+** {{nbt|float|simultaneous_mobs_added_per_player}}: Defaults to 1 &mdash; Amount of simultaneous mobs added for each additional player.
+** {{nbt|int|ticks_between_spawn}}: Defaults to 40 &mdash; Time in ticks between spawn attempts.
+** {{nbt|list|spawn_potentials}}: Defaults to an empty list &mdash; List of possible entities to spawn.
+*** {{nbt|compound}}: A potential future spawn. ''After'' the spawner makes an attempt at spawning, it chooses one of these entries at random and uses it to prepare for the next spawn.
+**** {{nbt|int|weight}}: The chance that this spawn gets picked in comparison to other spawn weights. Must be positive and at least 1.
+**** {{nbt|compound|data}}
+***** {{nbt_inherit/spawn_data}}
+** {{nbt|list|loot_tables_to_eject}}: Defaults to a list of {{cd|minecraft:spawners/trial_chamber/consumables}} and {{cd|minecraft:spawners/trial_chamber/key}}, both with weight 1 &mdash; List of possible loot tables to give as reward.
+*** {{nbt|compound}}: A potential loot table.
+**** {{nbt|int|weight}}: The chance that this loot table gets picked in comparison to other loot table weights. Must be positive and at least 1.
+**** {{nbt|string|data}}: A resource location to a [[loot table]].
+** {{nbt|string|items_to_drop_when_ominous}}: Defaults to {{cd|minecraft:spawners/trial_chamber/items_to_drop_when_ominous}} &mdash; A resource location to a [[loot table]]. Determines the items used by [[ominous item spawner]]s spawned during the active phase when ominous. Ignored in normal mode. 
+<section end="json format"/>
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.2|dev=24w35a|Trial spawner configurations can now be defined in datapacks, instead of only in the [[Trial Spawner#Block_data|Trial spawner block entity]]}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Prüfungs-Spawner-Definition]]
+[[fr:Configuration de générateur des épreuves]]
+[[pt:Configuração do gerador de desafio]]
+[[uk:Конфігурація спавнера випробувань]]
+[[zh:试炼刷怪笼配置定义格式]]

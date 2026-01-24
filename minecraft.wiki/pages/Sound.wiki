@@ -1,0 +1,202 @@
+{{See also|Tutorial:Sound directory}}
+'''Sounds''' are auditory outputs of the game intended to communicate the happening of certain events, as well as create atmosphere. Different objects such as [[mob]]s, [[weapon]]s or [[block]]s have sounds.
+
+== Gameplay ==
+{{IN|java}}, up to 255 sounds can be played at once but general sounds can take only 247 slots, with mood sounds taking the remaining 8 slots. {{IN|bedrock}}, up to 32 sounds can be played at the same time.<ref>[https://learn.microsoft.com/en-us/minecraft/creator/documents/introductiontosound Introduction to Sounds | Microsoft Learn]</ref>
+
+Most sounds can be heard from up to 16 blocks away, with the exception of:
+* {{BlockLink|Note Block|Note Blocks}}, which can be heard up to 48 blocks away.
+* {{BlockLink|Jukebox|Jukeboxes}}, which can be heard up to 64 blocks away.
+* [[Goat Horn|Goat Horns]], which can be heard up to 256 blocks away, subject to server view distance.
+* Global sound events, which is played for every player at the same volume, regardless of distance. These include:
+** When an [[end portal]] opens
+** When the [[ender dragon]] dies
+** When a [[wither]] finishes charging up<ref>{{bug|MC-177741||Wither spawning sounds play for all players}}</ref>
+** When a [[guardian]] uses its laser attack{{only|java|short=1}}<ref>{{bug|MC-57057||Guardian laser attack sound ignores distance}}</ref>
+{{IN|java}}, these global sound events can be disabled by setting the [[game rule]] {{cd|globalSoundEvents}} to {{cd|false}}.
+
+=== Mood ===
+{{Main|Ambience}}
+Mood is a special group of sounds that play after an internal counter reaches 100%, visible on the [[debug screen]], activating only when the player is in [[light level]] 0.
+
+=== Commands ===
+Sounds can be played and stopped with the {{cmd|playsound}} and {{cmd|stopsound}} [[commands]].
+
+== Categories ==
+{| class="wikitable"
+|+
+!Sound Name
+!Technical name
+!Description
+!Default
+|-
+|Master Volume<wbr>{{Only|java|short=1}}<br>Global{{Only|bedrock|short=1}}
+|<code>master</code><wbr>{{only|je|short=1}}<br><code>main</code><wbr>{{only|be|short=1}}
+|Controls the overall volume of the entire game.
+| style="text-align:center;" | 
+50%
+|-
+|Music
+|<code>music</code>
+|Controls the volume of the in-game [[Music|soundtrack]].
+| style="text-align:center;" | 
+30%
+|-
+|Jukebox/Note Blocks{{Only|Java|short=1}}<br>Musical blocks{{Only|Bedrock|short=1}}
+|<code>record</code>
+|Controls the volume of [[Jukebox|jukeboxes]] and [[Note Block|note blocks]].
+| rowspan="9" |100%
+|-
+|Weather
+|<code>weather</code>
+|Contols the volume of [[rain]] and [[Thunderstorm|thunder]]. {{Note|A custom snow sound is also affected, but normally not noticeable because snow is silent by default.|name=Snow}}
+|-
+|Blocks
+|<code>block</code>
+|Controls the volume of ''block interaction'' and ''passive block sounds''.
+This includes [[Redstone components|redstone]], [[Fluid|fluids]], player interaction with blocks and [[Explosion|explosions]].
+|-
+|Hostile Mobs<!--"Hostile mobs" in BE-->
+|<code>hostile</code>
+|Controls the volume of all [[Monster|monsters]] and bosses.
+|-
+|Friendly Mobs<!--"Friendly mobs" in BE-->
+|<code>neutral</code>
+|Controls the volume of all non-[[monster]] entities; mostly [[Animal|animals]].
+|-
+|Players{{Only|java|short=1}}<br>Other players{{Only|bedrock|short=1}}
+|<code>player</code>
+|Controls the volume of player movement, throwing/shooting projectiles and interaction with ''[[Entity|entities]]''.
+|-
+|Ambient/Enviroment{{Only|java|short=1}}<br>Environmental audio{{Only|bedrock|short=1}}
+|<code>ambient</code>
+|Controls the volume of [[ambience]] and firework rockets going off.
+|-
+|Voice/Speech<wbr>{{Only|java|short=1}}<br>Text to speech<wbr>{{Only|bedrock|short=1}}
+|<code>voice</code>{{only|je|short=1}}<br><code>texttospeech</code>{{only|be|short=1}}
+|Controls the volume of the [[narrator]].
+|-
+|UI{{Only|java|short=1}}<br>Sound{{Only|Bedrock|short=1}}
+|<code>ui</code>{{Only|java|short=1}}<br><code>sound</code>{{only|be|short=1}}
+|Controls the volume for sounds played by UI elements, like button clicks, and in ''Bedrock Edition'' also certain special sounds or sounds with an invalid category. 
+|}
+{{Notelist}}
+
+=== Entity-dependent categories ===
+Some sounds choose their category based on the entity that performs the action. For example, if a [[vindicator]] steps on a block, the step sound is in the Hostile Creatures category, but if a [[player]] steps on a block, the step is in the Players category.
+
+== Accessibility ==
+{{See also|Narrator}}
+
+=== Subtitles ===
+{{Exclusive|java|section=1}}
+{{in development|bedrock||26.0|section=1}}
+{{Main|Subtitles}}
+Subtitles display text for in-game sounds in the bottom-right corner of the screen. They also add arrows next to the sounds that show the general direction that the sound came from. They allow deaf people to not be at an extreme disadvantage, as well as to aid other players in knowing where sounds came from. Subtitles can be toggled in the Music & Sounds and Accessibility Settings [[option]] menus.
+
+== Data values ==
+{{Main|Sound events}}
+All sound events have names, such as <code>block.stone.hit</code> {{only|java}} or <code>step.stone</code> {{only|bedrock}}.
+
+== Videos ==
+{{yt|4XmJPb4Qt5Y}}
+{{yt|QUfUeHRguPM}}
+
+== History ==
+{{See also|Java Edition history of sound events|Bedrock Edition history of sound events}}
+Due to a change in how ''Minecraft'' downloads its resources, [[Alpha v1.1.2_01]] is the oldest version in which sounds work using the modern ''[[Minecraft Launcher]]''.
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java classic}}
+|{{HistoryLine||June 4, 2009|link=https://web.archive.org/web/20210705014707/https://www.youtube.com/watch?v=UIFkQMEz9X8|C418 uploaded a mockup video on June 4, 2009, showcasing his sound design for the game dubbed over footage of this version. This is not a developer version; the video is edited.}}
+|{{HistoryLine||0.0.22a|Added sounds.<ref>[[#logs|IRC logs]]: "''P4:58:39 <08Notch> yeah, this is very basic sound''". (21:58:39 UTC)</ref><ref>[[#logs|IRC logs]]: "''P4:59:46 <akuryo> SOUND IS HERE''" (21:59:46 UTC)</ref><ref>[[#logs|IRC logs]]: "''P5:00:04 <AlLnAtuRalX> I hear music?''" [...] "''P5:00:59 <Quatroking> what the hell is this music''" [...] "''P5:03:36 <Lmaoboat> Lol, I heared the music after a while without it, and I was about to yell at my brother for playing the piano again''" (22:00:04 to 22:03:36 UTC)</ref><ref>[[#logs|IRC logs]]: "''P5:01:51 <C418> I should have made hard techno''" [...] "''P5:46:34 <08Notch> no, C418 did the music''" (22:01:51 & 22:46:34 UTC)</ref>}}
+|{{HistoryLine||0.0.23a|Added [[options]] for turning on/off sounds and music.}}
+|{{HistoryLine|java indev}}
+|{{HistoryLine||0.31|dev=20100104-2154|Added a new sound engine made by [https://web.archive.org/web/20140427013818/http://www.paulscode.com/ Paul Lamb].<ref>[[wordofnotch:316961243|New sound engine implemented]] – The Word of Notch, January 5, 2010</ref>}}
+|{{HistoryLine||20100207-1057|Switched sound system to use [[wikipedia:OpenAL|OpenAL]].<ref>[[wordofnotch:375896290|And software sound is now gone]] – The Word of Notch, February 7, 2010</ref>}}
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||v1.1.1|Added sliders for the volume of sounds and music.}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.4.2|dev=12w38b|Updated the sound engine.}}
+|{{HistoryLine||1.6.1|dev=release|Added {{cmd|playsound}}.}}
+|{{HistoryLine||1.7.2|dev=13w36a|Replaced the sounds volume slider with sliders for juke boxes and note blocks, hostile mobs, passive mobs, players, weather, blocks, ambient/environment, and the master volume.}}
+|{{HistoryLine|||dev=13w42a|Rewrote the sound system.|Added the ability for custom sounds using resource packs.}}
+|{{HistoryLine|||dev=1.7|Music now pauses while the game is paused.}}
+|{{HistoryLine||1.9|dev=15w43b|Added [[subtitles]].}}
+|{{HistoryLine|||dev=16w02a|Added the "Voice/Speech" volume slider.}}
+|{{HistoryLine||1.9.3|dev=pre2|Added {{cmd|stopsound}}.}}
+|{{HistoryLine||1.14|dev=19w12a|Rewrote the sound system.}}
+|{{HistoryLine|||dev=19w14a|Added a new sounds section to the debug screen.}}
+|{{HistoryLine||1.19|dev=22w11a|Added the "Directional Audio" option, which allows for more accurate 3D sound on HRTF-compatible software.}}
+|{{HistoryLine||1.19.3|dev=22w44a|Added the [[game rule]] {{cd|globalSoundEvents}}.}}
+|{{HistoryLine||1.20|dev=23w12a|Step sounds can now combine for blocks walked through and stepped on.}}
+|{{HistoryLine|||dev=23w18a|Walking on non-solid blocks with no collision no longer plays their walking sounds.<ref>{{bug|MC-2604||Walking on non-solid blocks with no collision plays their respective walking sounds|Fixed}}</ref>
+|Walking on the edge of a block now properly plays step sounds for that block.<ref>{{bug|MC-1133||Whether or not a player experiences some effect is calculated based on the block under the center of the player|Fixed}}</ref>}}
+|{{HistoryLine||1.21.5|dev=25w05a|[[Dead bush]] blocks have a chance of playing ambient sounds when placed on top of two blocks that are any color of terracotta, sand or red sand blocks in any biome.|[[Sand]], [[red sand]] and [[terracotta]] of any color have a chance of playing ambient sounds when surrounded by any one of them on at least 3 sides 8 blocks away.}}
+|{{HistoryLine|||dev=25w10a|Blocks that are broken by a [[piston]] now play their breaking sound.}}
+|{{HistoryLine||1.21.6|dev=25w15a|Rules for when ambient desert blocks sounds play have been tweaked.|Changed location on the sounds for [[glow squid]], [[squid]], [[guardian]], [[horse]], [[rabbit]] and [[pufferfish]] from the {{cd|entity}} folder to the {{cd|mob}} folder.}}
+|{{HistoryLine|||dev=Pre-Release 2|The following sound categories have been renamed: <code>Friendly Creatures</code> -> <code>Friendly Mobs</code>, <code>Hostile Creatures</code> -> <code>Hostile Mobs</code>.}}
+|{{HistoryLine|||dev=Pre-Release 3|Added the "UI" volume slider.}}
+|{{HistoryLine||1.21.9|dev=25w31a|Sounds for [[chest]]s now plays at a lower volume.|The volume at which a sound is played at now respects the sound source volume value.|The "Voice/Speech" sound source has been renamed to "Narrator/Voice".}}
+|{{HistoryLine||1.21.11|dev=25w41a|[[Anvil]] destroy, land, place and use sounds now play at a slightly lower volume.}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap2|Added new sound events for the baby [[cat]], baby [[pig]] (piglet), and baby [[wolf]].}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket edition alpha}}
+|{{HistoryLine||Pre-release|Added sounds.<ref>{{YouTube_link|jxfj84mdfl8}}</ref>}}
+|{{HistoryLine||v0.1.2|Added a toggle for sounds.}}
+|{{HistoryLine||v0.7.0|Added a volume slider.}}
+|{{HistoryLine||v0.12.1|dev=build 1|Changed the sound engine to allow for multiple sounds.}}
+|{{HistoryLine|pocket edition}}
+|{{HistoryLine||1.0.4|dev=alpha 1.0.4.1|Music and sounds can now be changed using resource packs.}}
+|{{HistoryLine||1.0.5|dev=alpha 1.0.5.0|Added {{cmd|playsound}} and {{cmd|stopsound}}.}}
+|{{HistoryLine|bedrock edition}}
+|{{HistoryLine||1.10.0|dev=beta 1.10.0.3|Added sound events to the scripting API.}}
+|{{HistoryLine||1.12.0|dev=beta 1.12.0.2|Sound effects can now be triggered by animation events.}}
+|{{HistoryLine||1.16.100|dev=beta 1.16.100.58|Added {{cmd|music}}.}}
+|{{HistoryLine||1.16.200|dev=beta 1.16.200.53|Added volume sliders for other sound categories.}}
+|{{HistoryLine||1.20.10|dev=Preview 1.20.10.20|Sound positioning is now based on the camera's position, rather than the player's position and rotation. This means that audio is flipped when in the third-person front view.}}
+|{{HistoryLine||1.21.100|dev=Preview 1.21.100.20|The following sound categories have been renamed: {{cd|Main}} -> {{cd|Master}}, {{cd|Sound}} -> {{cd|Sound effects}}, {{cd|Jukebox/Note Blocks}} -> {{cd|Musical blocks}}, {{cd|Hostile Creatures}} -> {{cd|Hostile mobs}}, {{cd|Friendly Creatures}} -> {{cd|Friendly mobs}}, {{cd|Players}} -> {{cd|Other players}}, {{cd|Ambient/Environment}} -> {{cd|Environmental audio}}, {{cd|Text to Speech}} -> {{cd|Text to speech}}.|Changed the default values for {{cd|Master}} to 50% and {{cd|Music}} to 30%.}}
+}}
+
+=== Legacy Console Edition ===
+{{HistoryTable
+|{{HistoryLine|console}}
+|{{HistoryLine||xbox=TU5|xbone=CU1|ps3=1.00|psvita=1.00|ps4=1.00|wiiu=patch 1|switch=1.0.1|The player hurting sound has been changed from deep "Ooh!" sound to a "tick" sound.|Updated some mob sounds{{verify|What sounds were updated?}}}}
+}}
+
+== Issues ==
+{{issue list}}
+
+== Trivia ==
+*{{IN|java}}, The "Oof" {{Sound||Hurt Old.ogg}} sound effect can be found at <code>[[.minecraft]]/assets/objects/9d/9d485556b89bf776042080774679c37300bc744b</code> if the player has used a version with that sound.
+
+== Gallery ==
+<gallery>
+Sound Settings 1.20.51.01.png|Audio settings in ''Bedrock Edition''
+Music & Sound Options.png|Audio settings in ''Java Edition''.
+New UI - Audio Settings Screen Menu (Bedrock Preview 1.21.100.20).png|The new audio settings menu in [[Bedrock Edition Preview 1.21.100.20]].
+</gallery>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox resource packs}}
+{{Navbox Java Edition technical|resourcepack}}
+
+[[Category:Sounds]]
+
+[[de:Geräusch]]
+[[es:Sonido]]
+[[fr:Son]]
+[[it:Suono]]
+[[ja:サウンド]]
+[[ko:소리]]
+[[pt:Sons]]
+[[ru:Звук]]
+[[zh:声音]]

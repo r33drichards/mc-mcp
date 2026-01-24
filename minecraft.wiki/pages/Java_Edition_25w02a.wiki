@@ -1,0 +1,435 @@
+{{Infobox version
+|title=Minecraft 25w02a
+|image=25w02a.jpg
+|image2=Java Edition 25w02a.png
+|edition=Java
+|type=Snapshot
+|date=January 8, 2025
+|jsonhash=02a2ae8e2c54cfc39402997bae1bbb2ccc956c84
+|clienthash=5dc770c10d3769f9f3437a2bd7029b10b9c0d780
+|clientmap=2a5d0ba89d8a9293c37821e4d9c192571a98ceda
+|serverhash=d9bf4ff75df54a19c19cb4fbc37f020a734904e5
+|servermap=fea3bf04f0775c6413e0283e4398c09c38d752fa
+|parent=1.21.5
+|prevparent=1.21.4
+|prev=
+|next=25w03a
+|nextparent=1.21.6
+}}<onlyinclude>
+
+'''25w02a''' is the first [[snapshot]] for [[Java Edition 1.21.5]] released on January 8, 2025,<ref>{{snap|25w02a|id=a|January 8, 2025}}</ref> which adds [[leaf litter]], [[wildflowers]], new pig variants and fixes bugs. This is the first snapshot released in 2025.
+
+== Additions ==
+=== Blocks ===
+'''{{animate|Leaf Litter 1 (S) JE1.png;Leaf Litter 2 (S) JE1.png;Leaf Litter 3 (S) JE1.png;Leaf Litter 4 (S) JE1.png|40px}} [[Leaf litter]]'''
+* A new type of decorative block which can be found in [[forest]]s, [[dark forest]]s and [[wooded badlands]].
+* Can have different amounts of leaves in one block space.
+** Up to four leaf litter pieces can be placed in the same block space like [[pink petals]].
+** Placing a leaf litter into an already placed leaf litter block increases the amount of leaves.
+* Can be placed in four orientations.
+* Can be created by smelting any type of Leaves block.
+* Can be used as fuel for smelting.
+* Has unique block sounds.
+{{Smelting
+  |Any leaves
+  |Leaf Litter
+  |ingredients=Any [[leaves]] block
+}}
+
+'''{{animate|Wildflowers 1 (S) JE1.png;Wildflowers 2 (S) JE1.png;Wildflowers 3 (S) JE1.png;Wildflowers 4 (S) JE1.png|40px}} [[Wildflowers]]'''
+* A new type of [[flower]] which grow in [[birch forest]]s, [[old growth birch forest]]s and [[meadow]]s.
+* Can have different amounts of flowers in one block space.
+** Up to four wildflowers can be placed in the same block space like [[pink petals]].
+** Placing a wildflower into an already placed wildflowers block increases the amount of flowers.
+** Using bone meal on wildflowers will produce more Wildflowers.
+* Can be placed in four orientations.
+* Can be crafted into [[yellow dye]].
+
+{{Crafting|Wildflowers
+|Output = Yellow Dye
+|shapeless = 1
+|ignoreusage = 1
+}}
+
+=== Mobs ===
+'''[[Pig]]'''
+*{{Animate|Warm Pig JE1 BE1.png;Cold Pig JE1 BE1.png|40px}} New [[pig]] variants have been added, the variant is determined by the biome they spawn in.
+**{{EntityLink|Pig|Temperate Pig}} - The pre-existing pig variant.
+*** Spawns by default where the cold and warm pig variants do not spawn.
+**{{EntityLink|Cold Pig}} - A variant that spawns in the following biomes:
+*** {{BiomeLink|Old Growth Pine Taiga}}
+*** {{BiomeLink|Old Growth Spruce Taiga}}
+*** {{BiomeLink|Taiga}}
+*** {{BiomeLink|Snowy Taiga}}
+*** {{BiomeLink|Windswept Hills}}
+*** {{BiomeLink|Windswept Gravelly Hills}}
+*** {{BiomeLink|Windswept Forest}}
+**{{EntityLink|Warm Pig}} - A variant that spawns in the following biomes:
+*** {{BiomeLink|Savanna}}
+*** {{BiomeLink|Savanna Plateau}}
+*** {{BiomeLink|Windswept Hills}}<ref>{{bug|MC-279280||windswept_hills is in both the warm and cold variant farm animal biome tags}}, and {{bug|MC-279315||Warm pigs do not spawn in windswept savannas|Fixed}}</ref>
+*** {{BiomeLink|Jungle}}
+*** {{BiomeLink|Sparse Jungle}}
+*** {{BiomeLink|Bamboo Jungle}}
+*** {{BiomeLink|Eroded Badlands}}
+*** {{BiomeLink|Wooded Badlands}}
+*** {{BiomeLink|Badlands}}
+* When bred by a [[player]], a baby pig variant will not be chosen by the current biome, but instead randomly selected from one of the parents' variants.
+
+=== General ===
+'''[[Data component format|Data components]]'''
+{{cd|minecraft:weapon}}
+:* When present, the 'Item Used' statistic will be incremented for each attack with the item.
+:* The specified amount of damage can be done to the item with each attack.
+:* Format: object with fields:
+:** {{cd|damage_per_attack}} - non-negative integer (default: {{cd|1}})
+:*** The amount to damage the weapon for each attack performed.
+:** {{cd|can_disable_blocking}} - boolean (default: {{cd|false}})
+:*** If true, will disable a blocking Shield on successful attack.
+:* e.g. <code>weapon={damage_per_attack:2}</code>
+
+{{cd|minecraft:potion_duration_scale}}
+:* When present, for items that have the {{cd|potion_contents}} component, the duration of the applied effects will be scaled by this factor.
+:* This also applies to {{cd|custom_effects}} in the {{cd|potion_contents}} component, unlike the previous hard-coded scaling factor.
+:* If not specified, defaults to {{cd|1.0}}.
+:* Format: non-negative float
+:* e.g. {{cd|potion_duration_scale{{=}}0.25}}
+
+'''[[Tags]]'''
+* Block Tags
+** Added {{cd|#replaceable_by_mushrooms}} - exhaustive list of all blocks that can be replaced as a mushroom is placed or grows.
+** Added {{cd|#sword_instantly_mines}} - blocks that are instantly mined by Swords.
+
+* Item Tags
+** Added {{cd|#book_cloning_target}} - item that can be crafted together with a Written Book to clone it.
+
+* Biome Tags
+** Added {{cd|#spawns_cold_variant_farm_animals}} - all biomes where cold variant of farm animals spawn.
+** Added {{cd|#spawns_warm_variant_farm_animals}} - all biomes where warm variants of farm animals spawn.
+
+== Changes ==
+=== Blocks ===
+'''[[Bubble column]]'''
+* Bubble columns produce less particles and sounds when entities that are unaffected by them are inside them.
+
+'''[[Creaking heart]]'''
+* Creaking hearts correctly placed between logs have a new dormant texture during the day.
+** Dormant creaking hearts cannot spawn new [[creaking]]s or [[resin clump]]s.
+* The transition between the awake and dormant states of creaking hearts is now based on the fixed day time.
+
+'''[[Eyeblossom]]'''
+* The transition between the states of eyeblossoms is now based on the fixed day time.
+
+'''[[Iron bars]], [[iron block]], [[iron trapdoor]], [[iron door]] and [[heavy weighted pressure plate]]'''
+* Added new break, place, step, fall and hit sounds.
+
+'''[[Leaves]]'''
+* The following blocks can now spawn falling leaf particles:
+** {{BlockLink|Oak Leaves}}
+** {{BlockLink|Spruce Leaves}}
+** {{BlockLink|Birch Leaves}}
+** {{BlockLink|Acacia Leaves}}
+** {{BlockLink|Jungle Leaves}}
+** {{BlockLink|Dark Oak Leaves}}
+** {{BlockLink|Mangrove Leaves}}
+** {{BlockLink|Azalea Leaves}}
+** {{BlockLink|Flowering Azalea Leaves}}
+
+'''[[Lodestone]]'''
+* Changed crafting recipe to require an [[iron ingot]] instead of a [[netherite ingot]], making them renewable.
+{{Crafting|
+|A1=Chiseled Stone Bricks
+|A2=Chiseled Stone Bricks
+|A3=Chiseled Stone Bricks
+|B1=Chiseled Stone Bricks
+|B2=Iron Ingot
+|B3=Chiseled Stone Bricks
+|C1=Chiseled Stone Bricks
+|C2=Chiseled Stone Bricks
+|C3=Chiseled Stone Bricks
+|Output=Lodestone
+|ignoreusage = 1
+}}
+* Can now be found in [[ruined portal]] chests.
+
+'''[[Pale oak leaves]] and [[pale oak sapling]]'''
+* Now have an updated map color.
+
+=== Items ===
+'''[[Elytra]]'''
+* Flight is now cancelled when gliding into climbable blocks like [[ladder]]s, [[scaffolding]], [[vines]] etc..
+
+=== Mobs ===
+''' General '''
+* Farm animals can now spawn in [[badlands]].
+
+'''[[Bee]]'''
+* Is now attracted to, and can be bred using [[wildflower]]s.
+
+'''[[Creaking]]'''
+* Can now be named using [[name tag]]s.
+** Named creakings will persist through the day.
+*** However, it will still be torn down if stuck with a player or if it is too far from its heart.
+** Named creakings are still resistant to all damage, and can communicate with their hearts via particles.
+
+'''[[Zombified piglin]]'''
+* Must now be killed by a [[player]] to drop its Player-specific loot.
+
+=== World generation ===
+'''[[Pale garden]]'''
+* Now occupies more space that was previously taken by [[dark forest]]s.
+* [[Woodland mansion]]s can now generate in Pale Garden biome.
+
+'''[[Short grass]]'''
+* Now generates slightly sparser in [[meadow]]s.
+
+=== Gameplay ===
+'''[[Narrator]]'''
+* The volume of the narrator is now affected by the game's configured volume in the 'Voice' category.
+
+'''[[Transportation|Player movement]]'''
+* Moving diagonally by holding down two movement keys no longer increases the player's speed.<ref>Was actually a bug: {{bug|MC-271065||Diagonal movement is not normalized when crouching or using certain items|Fixed}}</ref>
+
+=== Command format ===
+* Text components in commands such as {{cmd|tellraw}} or {{cmd|title}} are now specified with SNBT instead of JSON.
+* Text style in the {{cmd|scoreboard}} command when specifying the styled number format is now specified with SNBT instead of JSON.
+* The behavior of {{cmd|setblock}} and {{cmd|fill}} commands have changed in how they handle block entity data:
+** If the block entity data is not specified, and the existing block has data, the block entity data will be preserved.
+** If the block entity data is specified, the block entity data will be set to the specified value.
+** To clear the block entity data explicitly, the block entity data must be specified as {}.
+** The operation is now successful if either the block state changed or the block entity data changed.
+
+''' {{cmd|fill}} '''
+*  The replace option in the fill command is no longer terminal, and can be followed with additional options.
+
+''' {{cmd|fill}}, {{cmd|clone}}, {{cmd|setblock}} and {{cmd|place template}} '''
+* Accepts a new option: <code>strict</code>.
+** If specified, the command will place blocks as-is without triggering block updates and shape updates.
+* New syntax for commands to use the new strict option, and more flexible use of replace:
+** {{cd|fill|<from> <to> <block> keep}}
+** {{cd|fill|<nowiki><from> <to> <block> [replace <filter>] [strict|destroy|hollow|outline]</nowiki>}}
+** {{cd|clone|<nowiki>[from <sourceDimension>] <begin> <end> [to <targetDimension>] <destination> [strict] [[replace|masked|filtered <filter>] [force|move|normal]]</nowiki>}}
+** {{cd|setblock|<nowiki><pos> <block> [destroy|keep|replace|strict]</nowiki>}}
+** {{cd|place template <template> [<pos> [<rotation> [<mirror> [<integrity> [<seed> [strict]]]]]]}}
+
+=== General ===
+''' General '''
+* If the game detects that the last startup did not complete normally, the fullscreen option will now be reset.
+* Chunks loaded by a portal will now be re-loaded again automatically when the world is reopened.
+
+'''[[Data component format|Data components]]'''
+{{cd|minecraft:tool}}
+:* Added new optional field: {{cd|can_destroy_blocks_in_creative}} (bool)
+:** If false, players cannot break blocks while holding this tool in Creative Mode.
+:** If not specified, defaults to {{cd|true}}.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|62}}.
+
+'''[[Entity format]]'''
+* The {{cd|ArmorDropChances}}, {{cd|HandDropChances}}, and {{cd|body_armor_drop_chance}} fields have been merged into a {{cd|drop_chances}} field
+** Format: map between equipment slot type and chance value
+*** Valid equipment slots: {{cd|head}}, {{cd|chest}}, {{cd|legs}}, {{cd|feet}}, {{cd|mainhand}}, {{cd|offhand}}, {{cd|body}}.
+** If not specified or removed, chances will be assumed as default ({{cd|0.085f}}).
+** {{cd|e.g. drop_chances:{chest:0.1,feet:1.0}}}
+* Drop chances with a default value will no longer be stored, and the {{cd|drop_chances}} field is removed entirely if all defaults.
+* Area effect clouds have a new field: {{cd|potion_duration_scale}} (float).
+** If not specified, defaults to {{cd|1.0}}.
+** The duration of the potion effect applied is scaled by this factor.
+** Area effect clouds created by lingering potions will have a scale of {{cd|0.25}}.
+
+'''[[Realms]]'''
+* Uploading a world to Realms will now enable command blocks by default.
+* It's now possible to upload hardcore singleplayer worlds to Realms.
+
+'''[[Recipe]]s'''
+* {{cd|crafting_transmute}}
+** The result field now supports specifying a count and a components patch to apply to the result.
+** The components patch is applied to the final transmuted item.
+** The new format is an object with fields:
+*** {{cd|id}} - item id
+*** {{cd|count}} - positive integer (default: {{cd|1}})
+*** {{cd|components}} - a component patch object (default: empty)
+*** <code>e.g. "result": {"id": "minecraft:stick", "count": 3, "components": {"!minecraft:damage": {}, "minecraft:enchantment_glint_override": {}}}</code>
+** The field can still be defined as before as an inline item id {{cd|(e.g. "result": "minecraft:stick")}}
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now {{cd|47}}.
+* Added textures for new falling leaves particles.
+* Added textures for new wildflowers block.
+* Added break, place, step, fall and hit sounds for iron blocks, iron bars, iron Trapdoors, iron doors and heavy weighted pressure plates.
+* Added new textures for pig variants:
+** {{cd|cold_pig}}
+** {{cd|warm_pig}}
+* Changed the size of {{cd|pig}} texture.
+* Pig variants can be data-driven by adding entries to {{cd|data/<namespace>/pig_variant/<id>.json}}
+** This feature is experimental
+* Fields in file:
+** {{cd|model}} - one of: {{cd|normal}}, {{cd|cold}} .
+** {{cd|texture}} - texture id for this variant, resolves to {{cd|assets/<namespace>/textures/<path>.png}}.
+** {{cd|biome}} - single entry, list or a tag describing biomes in which this variant naturally spawns.
+*** If not specified, this variant will only be selected if no other variant matches the current biome.
+
+'''[[Tags]]'''
+* Added {{cd|wildflowers}} to the {{cd|#bee_attractive}}, and {{cd|#flowers}} block tags, and the {{cd|#bee_food}} item tag.
+* Added {{cd|wildflowers}}, and {{cd|leaf_litter}} to the {{cd|#inside_step_sound_blocks}} block tag.
+* Added {{cd|leaf_litter}} to the {{cd|#replaceable_by_trees}} block tag.
+* Changed the {{cd|#big_dripleaf_placeable}} block tag, effectively removing {{cd|pale_moss_block}} from the contents.
+* Added {{cd|pale_garden}} to the {{cd|#has_structure/woodland_mansion}} biome tag.
+
+'''[[Text component format]]'''
+* Text Components are no longer stored as JSON wrapped by a string.
+* The format itself is the same as before, but inlined directly into the outer structure.
+* For example, the item component <code>minecraft:custom_name="{"text":"Renamed item"}"</code> will become <code>minecraft:custom_name={text:'Renamed item'}</code>.
+* This includes Text Components passed as arguments to commands such as {{cmd|tellraw}} or {{cmd|title}}.
+** For example, {{cmd|tellraw @s '{"text":"Hello world"}'}} may become <code>tellraw @s {text:'Hello world'}}</code>.
+* Note: in the case where Text Components are embedded in NBT, no distinction exists between boolean and integer types.
+** To pass boolean arguments to translations, the string form must be used.
+* For Text Components with the NBT type and interpret set to true, Text Components will be parsed from the given NBT directly rather than converting to string and parsing as JSON.
+
+* Hover Events
+** The <code>hoverEvent</code> field has been renamed to <code>hover_event</code>.
+** The legacy <code>value</code> field (which was parsed from a rendered text component) is no longer supported.
+** For the <code>show_text</code> action:
+*** <code>contents</code> field has been renamed to <code>text</code>.
+*** e.g. <code>{action:'show_text',contents:'Hello world'} becomes {action:'show_text',text:'Hello world'}</code>
+** For the <code>show_item</code> action:
+*** The <code>contents</code> field has been inlined.
+*** e.g. <code>{action:'show_item',contents:{id:'minecraft:stick',count:2}} becomes {action:'show_item',id:'minecraft:stick',count:2}</code>
+*** If contents was specified only as an item id, it is replaced with the full format and inlined.
+*** e.g. <code>{action:'show_item',contents:'minecraft:stick'}</code> becomes <code>{action:'show_item',id:'minecraft:stick'}</code>
+** For the <code>show_entity</code> action:
+*** The <code>contents</code> field has been inlined.
+*** The <code>id</code> field has been renamed to <code>uuid</code>.
+*** The <code>type</code> field has been renamed to <code>id</code>.
+*** e.g. <code>{action:'show_entity',contents:{id:[I;0,0,0,0],type:'minecraft:pig'}} becomes {action:'show_entity',uuid:[I;0,0,0,0],id:'minecraft:pig'}</code>
+
+* Click Events
+** The <code>clickEvent</code> field has been renamed to <code>click_event</code>
+** For the <code>open_url</code> action:
+*** The <code>value</code> field has been renamed to <code>url</code>
+*** The click event will no longer parse if not a valid URI with either <code>https://</code> or <code>http://</code> schemes, instead of simply not working.
+*** e.g. <code>{action:'open_url',value:'https://minecraft.net'} becomes {action:'open_url',url:'https://minecraft.net'}</code>
+** For the <code>open_file</code> action:
+*** The <code>value</code> field has been renamed to <code>path</code>
+** For the <code>run_command</code> action:
+*** The <code>value</code> field has been renamed to <code>command</code>.
+*** The click event will no longer parse if the command contains disallowed characters, instead of simply not working.
+*** It is no longer required that the specified command field has a <code>/</code> prefix.
+*** e.g. <code>{action:'run_command',value:'/say Hi'} becomes {action:'run_command',command:'/say Hi'}</code>.
+** For the <code>suggest_command</code> action:
+*** The <code>value</code> field has been renamed to <code>command</code>.
+*** The click event will no longer parse if the command contains disallowed characters, instead of simply not working.
+*** e.g. <code>{action:'suggest_command',value:'/help'} becomes {action:'suggest_command',command:'/help'}</code>
+** For the <code>change_page</code> action:
+*** The <code>value</code> field has been renamed to <code>page</code>.
+*** The page value now requires a positive integer instead of a string.
+*** e.g. <code>{action:'change_page',value:'1'} becomes {action:'change_page',page:1}</code>
+** The <code>copy_to_clipboard</code> format is unchanged.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w02a
+|;From released versions before 1.21
+|7697|Tridents or arrows shot through lava sometimes don't catch fire.
+|55800|Successful "{{cmd|/fill air destroy}}" commands give error message and return 0 for result/success.
+|56653|Zombified Piglins drop XP and rare drops if killed by anything while in angered state.
+|90212|You cannot hang on to climbable blocks while gliding with elytra.
+|93185|The exit portal in the end generates at highest block at 0 0 which can make it generate incomplete.
+|97244|The "{{cd|minecraft:enchant.thorns.hit}}" sound event doesn't play when non-player entities are damaged by the thorns enchantment.
+|113878|Attribute modifiers description for chest is misleading / "When on body" instead of "When on chest".
+|117574|Using {{cmd|setblock}} or {{cmd|fill}} to re-place a block entity keeps old NBT (if no NBT specified) but clears inventories, even when the command fails.
+|118092|Crafting recipe unlock toast says "New Recipes Unlocked!" even when only one recipe was unlocked.
+|118470|Narrator plays at full volume when volume is off.
+|128079|Statistic for using shears doesn't increase when mining certain blocks.
+|135192|Boats are immediately sunken if there is a string on the surface of the water.
+|141297|You cannot set lit state of redstone torches using {{cmd|setblock}}, debug stick and {{cd|BlockStateTag}}, to be to opposite of the situation it would be in.
+|160304|Sneaking on ice can change direction of movement to lines along axis. 
+|167125|Rounding error on fall damage.
+|183329|Nether portal teleport overlay does not show up if the player has the nausea effect.
+|184530|Player movement at low speeds is biased towards cardinal directions.
+|183623|Hardcore worlds in the world menu have a comma after the red exclamation mark.
+|184681|Customized worlds still say "Buffet world customization" since 20w21a.
+|193404|Changing a powered or activator rail to powered using a debug stick or {{cmd|setblock}} does not work.
+|202226|{{cmd|recipe}} give or take for one recipe says "recipes".
+|220672|Inconsistent pluralization in customize world preset heading source string.
+|222876|"Buffet world customization" is incorrectly capitalized.
+|226772|Shulker box opening / closing subtitle shows "Shulker".
+|239705|Sprinting forward while facing a certain angle pushes the player either to the left or to the right.
+|241951|Player momentum on X and Z axis are cancelled separately at low values.
+|248099|Mob pathfinding breaks after falling into water accidentally while walking.
+|253721|Wrong logs when running {{cmd|op @a}}.
+|260440|Players can no longer activate swimming mode in water while flying with elytra.
+|261385|Bubble columns act differently at the surface depending on non-air blocks.
+|262928|The "{{cd|minecraft:entity.player.hurt}}" sound is no longer played when players receive thorns damage from guardians or elder guardians.
+|262939|Changing dimensions or respawning with nausea effect active displays nether portal overlay.
+|265514|HRTF stuck on even when directional audio is set to off in update 1.20.2.
+|267221|"{{cd|value}}" within "{{cd|change_page}}" {{cd|clickEvent}} json looks for a string instead of an integer.
+|267323|Items fields with old boolean JSON formatting are cleared upon world update.
+|268942|The swimming animation no longer displays when gliding with an elytra and swimming at the same time.
+|270220|Granting all advancements results in prolonged, disruptive and loud audio spam.
+|271065|Diagonal movement is not normalized when crouching or using certain items.
+|;From 1.21
+|273338|Flying boat glitch using string and rising bubble columns.
+|274187|The sweeping attack from a sword enchanted with Fire Aspect can ignite other players with PVP disabled.
+|;From 1.21.2
+|275994|Having the pie chart open while the window is unfocused spams the logs.
+|277403|Flaming arrows and tridents still don't extinguish when water is placed in their location.
+|277537|Pale moss carpets sometimes generate disjointed.
+|277780|Minecraft resaves all maps with every autosave even after the 1st patch.
+|277865|The animation of boats in bubble columns breaks when over a certain "Time" in {{cd|level.dat}}.
+|277922|Boats in 1 block high downward bubble column will continue to rock back and forth.
+|278040|Creaking swim pathfinding breaks after being submerged.
+|278639|Tripwire hooks are not activated by shulker bullets.
+|;From 1.21.3
+|277807|Teleporting the player's mount causes rotation de-sync, previously did not.
+|278375|Feeding wheat or hay bale to llama or trader llama with maximum Temper causes item stack to be desynced.
+|278376|Arrows and tridents act weirdly in one block deep bubble columns.
+|278455|Slow sideways movement in spectator mode is wrong at angles which aren't (close to) a multiple of 45°.
+|;From 1.21.4
+|278096|"Fabulous!" graphics and clouds disabled causes all particles to linger in frame buffer for one frame.
+|278140|The {{cmd|fill}} command doesn't work properly with the directional states of several blocks placed adjacent to one another.
+|278164|Click sound is played twice when you click a setting button and there's a slider under the mouse in the next screen.
+|278204|Blaze fireballs now cause TNT minecarts to explode instantly.
+|278249|Experience orb positions desync severely and abruptly correct themselves.
+|278422|Reloading the world after removing {{cd|Owner}} tag from a sitting tamed wolf with {{cmd|data remove}} makes the wolf moving and sitting at the same time.
+|278493|Tamed wolves which are angry at creakings remain angry when said creakings despawn.
+|278502|Weeping and twisting vines disconnect.
+|278552|{{cd|minecraft:entity.player.big_fall}} no longer plays the sound when falling from great height.
+|278585|Players can get stuck when landing on the edge of powder snow.
+|278591|Ender dragon spawn egg is no longer given when using pick block on the ender dragon entity.
+|278615|Reinforcement zombified piglins are angry at you even if you killed the "caller" in one hit.
+|278621|Client/server desync when placing powder snow while landing in it.
+|278627|Players wearing leather boots will take fall damage when landing on the edge of powder snow.
+|278634|Trying to {{cmd|setblock}} a '{{cd|waterlogged{{=}}true}}' state on ({{cd|glow_lichen}}, {{cd|resin_clump}}, {{cd|sculk_vein}}, etc.) produces an error.
+|278659|Attacking a natural stationary creaking does not trigger sculk sensors.
+|278683|Mobs spawned from spawners or {{cmd|summon}} never drop their equipment.
+|278708|Throwing ender pearls while mounted only dismounts you, without teleporting.
+|278728|{{cd|smithing_transform}} recipes can't set an item's components back to default.
+|278733|Breaking a double resin brick slab block only returns a single slab.
+|278734|Sheep's heads stutter when they look up or down.
+|278755|Teleporting far away while riding an entity softlocks the game.
+|278801|The closed eyeblossom to gray dye recipe is not grouped with the other gray dye recipe.
+|278841|Powder snow no longer slows down the player falling from a high place.
+|279145|Shulker bullets are no longer affected by bubble columns.
+|279152|Shulker bullets can't teleport through nether or end portals, end gateways.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|M6JCMZfgbI8|qzGkwt0S2kc}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w02a]]
+[[es:Java Edition 25w02a]]
+[[fr:Édition Java 25w02a]]
+[[ja:Java Edition 25w02a]]
+[[ko:Java Edition 25w02a]]
+[[lzh:二五週〇二甲]]
+[[pt:Edição Java 25w02a]]
+[[ru:25w02a (Java Edition)]]
+[[uk:25w02a (Java Edition)]]
+[[zh:Java版25w02a]]

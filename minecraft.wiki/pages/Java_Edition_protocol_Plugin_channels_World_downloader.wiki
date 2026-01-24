@@ -1,0 +1,414 @@
+Documentation of the [http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2520465 World Downloader mod]'s plugin channel configuration system.
+
+Implemented in-mod [https://github.com/Pokechu22/WorldDownloader/blob/v4/src/wdl/WDLPluginChannels.java here].  A bukkit implementation is available [https://github.com/Pokechu22/WorldDownloader-Serverside-Companion here].
+
+Regarding channel names: 1.13 has necessitated namespacing the channels, i.e. <code>wdl:init</code>, <code>wdl:control</code>, <code>wdl:request</code> instead of <code>WDL|INIT</code>, <code>WDL|CONTROL</code>, <code>WDL|REQUEST</code>.  Support for both channel names has been backported to 1.12, and it will automatically select whichever channels are supported.  If targetting older MC versions, make sure to listen and respond on both sets of channels.
+
+== A note before implementing these channels ==
+
+Please do ''not'' misuse these channels, and please ''do'' implement the full collection (including permission requests).  They only make sense when used completely.
+
+These channels have been designed in a very deliberate way, so that players should not need to circumvent the system for valid uses of the mod (and yes, there ''are'' valid uses (perhaps the majority are, even)... otherwise, these channels wouldn't exist!).  Implementing only a subset and neglecting permission requests means that players need to go through other channels, of which you don't have control over.  Implementing permission requests allows you to set specific ''policies'' for use of the mod, something that isn't possible any other way.
+
+These channels act as a guideline that governs how you wish the mod to be used on your server.  Obviously, it can't be a hard rule (that's very much technically impossible), so choose something granular and practical.
+
+== Data types ==
+
+All types here are as specified by Java's [http://docs.oracle.com/javase/7/docs/api/java/io/DataOutputStream.html <code>DataOutputStream</code>] and can be read using a [http://docs.oracle.com/javase/7/docs/api/java/io/DataInputStream.html <code>DataInputStream</code>], unless otherwise noted.  They do '''not''' use the [[Minecraft Wiki:Projects/wiki.vg merge/Data types|standard protocol data types]].  Additionally, the format is not directly compatible with some standard channel implementations - if you use forge or sponge's default indexed codecs, things won't work right (those use 1 byte; this uses 4 bytes).
+
+
+=== Chunk Overrides ===
+
+Chunk Overrides are areas that the player is allowed to download in even if the rest of the map is restricted.  As the name suggests, it is defined by a chunk's area.
+
+If the start and end x coordinates are the same, the chunk at that position can be saved (they are both inclusive).
+
+Implementations are encouraged to try and merge chunk overrides with the same tag before sending, but this is not required.
+
+A Chunk Override has the following structure:
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | Tag
+ | String
+ | A string describing this chunk override.  May be empty and does not need to be unique.  For instance, a World Guard region corresponding to the range.
+ |-
+ | x1
+ | Integer
+ | Start x chunk coordinate.  Should not be larger than x2.
+ |-
+ | z1
+ | Integer
+ | Start z chunk coordinate.  Should not be larger than z2.
+ |-
+ | x2
+ | Integer
+ | End x chunk coordinate.  Should not be smaller than x1.
+ |-
+ | z2
+ | Integer
+ | End z chunk coordinate.  Should not be smaller than z1.
+ |}
+
+== <code>wdl:init</code> ==
+
+<code>wdl:init</code> is sent to show that World Downloader is ready to receive new permissions.  Don't send permissions until this is received - it may still be saving from another part of the map or another sever where it has permission, and revoking permission in the middle of (allowed) saving is a Bad Thing&trade;.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="1" | <code>wdl:init</code>
+ | rowspan="1" | Server
+ | Content
+ | Byte array
+ | This is a byte array that takes up the entire length of the packet - there is no length prefixed to it.
+ |}
+
+Content is not present on very old versions of the mod.  In all versions where it is present, content is a UTF-8 string.  In older versions, it is a simple version number; in newer versions, it is a JSON blob that contains some information including the version; if it starts with a <code>{</code> then it MUST be a valid JSON blob.  The exact specification for the JSON blob has not been finalized, but it currently contains the following information fields:
+
+;<code>Version</code>
+:A version number.
+;<code>State</code>
+:Will include information about why the INIT packet is being sent, however values are unspecified at this time.
+
+Additionally there are fields starting with "X-", which are provided for information purposes only.
+
+;<code>X-RTFM</code>
+:A link to this documentation.
+;<code>X-UpdateNote</code>
+:Contains information about the state of this system; will include information about when the channels change.  Currently <code style="white-space: pre-wrap">The plugin message system will be changing shortly.  Please stay tuned.</code>.
+
+== <code>wdl:control</code> ==
+
+This channel is sent from the server to the client to specify various permissions.  It uses a 4-byte integer at the start to indicate a section.  There is no required order, but it is conventional to put them in numerical order.
+
+In all cases unless otherwise indicated, if a packet is not sent its values are treated as 'true'.
+
+=== Default values ===
+
+Specifies the default value used for permissions not sent.
+
+Note that sending this packet does not actually ''change'' the value for other packets; it instead specifies an internal fallback.  Thus, this packet can be sent at any time to change this default without needing to resend other packets.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="2" | <code>wdl:control</code>
+ | rowspan="2" | Client
+ | Discriminator
+ | Integer
+ | Set to 0 to indicate this packet.
+ |-
+ | Default value
+ | Boolean
+ | True to enable all functions not otherwise specified, false to disable them.
+ |}
+
+=== Basic data ===
+
+Sets some of the standard properties.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="7" | <code>wdl:control</code>
+ | rowspan="7" | Client
+ | Discriminator
+ | Integer
+ | Set to 1 to indicate this packet.
+ |-
+ | General download enabled
+ | Boolean
+ | True to enable all downloading in all chunks, false to disable it.
+ |-
+ | Save radius
+ | Integer
+ | The distance from the player chunks can be saved from.  -1 to allow all distances.  This is a square distance, not a circle or a diamond.  '''Only applies if chunk caching is disabled'''.
+ |-
+ | Chunk caching enabled
+ | Boolean
+ | Can chunks be saved as the player moves about.  If false, then they can only save within the area indicated by save radius; if true they can save everywhere.  However, regardless of this value, if general download is disabled, they cannot download.
+ |-
+ | Entity saving enabled
+ | Boolean
+ | True to allow the mod to save entities, false to force entities to be removed from the world.  This only applies to chunks that can be saved.
+ |-
+ | Tile entity saving enabled
+ | Boolean
+ | True to allow the mod to save tile entities, false to force tile entities to be removed from the world.  This only applies to chunks that can be saved.
+ |-
+ | Container saving enabled
+ | Boolean
+ | True to allow the mod to save containers (a subset of tile entities that require manual interaction to be saved, mainly chests).  This only applies if tile entities are allowed to be saved and only applies in chunks that can be saved.
+ |}
+
+=== Entity track distances ===
+
+Used to specify any custom entity track distances on the server, because they may change on spigot servers.  More info on why this is needed on [https://github.com/Pokechu22/WorldDownloader/wiki/Entities-GUI#what-are-track-distances the project wiki].
+
+The client is free to ignore these values, and will use sane defaults based off of whether the server's brand includes "spigot" if they are not sent.  However, by default these values are used.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! colspan="2" | Field Name
+ ! colspan="2" | Field Type
+ ! Notes
+ |-
+ | rowspan="4" | <code>wdl:control</code>
+ | rowspan="4" | Client
+ | colspan="2" | Discriminator
+ | colspan="2" | Integer
+ | Set to 2 to indicate this packet.
+ |-
+ | colspan="2" | Number of ranges
+ | colspan="2" | Integer
+ | Size of the following array.
+ |-
+ | rowspan="2" | Values
+ | Entity name
+ | rowspan="2" | Array
+ | String
+ | The name of the entity, as used in the savegame ID.
+ |-
+ | Track distance
+ | Integer
+ | The track distance of the entity, in blocks.
+ |}
+
+=== Permission request info ===
+
+Information used with permission requests.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound to
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="3" | <code>wdl:control</code>
+ | rowspan="3" | Client
+ | Discriminator
+ | Integer
+ | Set to 3 to indicate this packet.
+ |-
+ | Requests enabled
+ | Boolean
+ | Whether requests work on this server.  In '''all cases''' this should be true unless you have an out of date plugin... in which case you probably wouldn't be sending this anyways.
+ |-
+ | Request message
+ | String
+ | A message displayed to players on the permissions and permissions request screen.  You can use this to display rules relating to use of the mod, or explain how you want it to be used, or what info to include in the request, etc.
+ |}
+
+=== Set chunk overrides ===
+
+Sets the entire set of chunk overrides.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! colspan="2" | Field Name
+ ! colspan="2" | Field Type
+ ! Notes
+ |-
+ | rowspan="5" | <code>wdl:control</code>
+ | rowspan="5" | Client
+ | colspan="2" | Discriminator
+ | colspan="2" | Integer
+ | Set to 4 to indicate this packet
+ |-
+ | colspan="2" | Number of groups
+ | colspan="2" | Integer
+ | Size of the following array
+ |-
+ | rowspan="3" | Groups
+ | Group name
+ | rowspan="3" | Array
+ | String
+ | The name of this group.  Must be unique.
+ |-
+ | Number of overrides
+ | Integer
+ | Size of the following array
+ |-
+ | Overrides
+ | Array of [[#Chunk Overrides|Chunk Override]]
+ | Each override.  Tags may be different within the list and no order is required.
+ |}
+
+=== Modify group chunk overrides ===
+
+Add chunk overrides to a group or sets chunk overrides in that group.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! colspan="2" | Field Name
+ ! colspan="2" | Field Type
+ ! Notes
+ |-
+ | rowspan="6" | <code>wdl:control</code>
+ | rowspan="6" | Client
+ | colspan="2" | Discriminator
+ | colspan="2" | Integer
+ | Set to 5 to indicate this packet
+ |-
+ | colspan="2" | Group to edit
+ | colspan="2" | String
+ | Name of the group to edit.
+ |-
+ | colspan="2" | Replace mode
+ | colspan="2" | Boolean
+ | 'true' to set the group to this value and remove its old overrides, 'false' to add these to the existing ones.
+ |-
+ | rowspan="3" | Groups
+ | Group name
+ | rowspan="3" | Array
+ | String
+ | The name of this group.  Must be unique.
+ |-
+ | Number of overrides
+ | Integer
+ | Size of the following array
+ |-
+ | Overrides
+ | Array of Chunk Override
+ | Each override.  Tags may be different within the list and no order is required.
+ |}
+
+=== Remove chunk overrides by tag ===
+
+Removes chunk overrides with the given tag from a specific group.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="4" | <code>wdl:control</code>
+ | rowspan="4" | Client
+ | Discriminator
+ | Integer
+ | Set to 6 to indicate this packet.
+ |-
+ | Group
+ | String
+ | The group to remove ranges from.
+ |-
+ | Number of tags
+ | Integer
+ | Length of the following array.
+ |-
+ | Tags
+ | Array of String
+ | Each tag to remove.
+ |}
+
+=== Set chunk overrides by tag ===
+
+Sets all of the chunk overrides in a single with a specific tag to a new set.
+
+'''Note''': All of the new ranges should have the same tag as the tag that is being replaced.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="5" | <code>wdl:control</code>
+ | rowspan="5" | Client
+ | Discriminator
+ | Integer
+ | Set to 7 to indicate this packet.
+ |-
+ | Group
+ | String
+ | The group to remove ranges from.
+ |-
+ | Tag
+ | String
+ | The tag to replace
+ |-
+ | Number of new ranges
+ | Integer
+ | Length of the following array.
+ |-
+ | New ranges
+ | Array of Chunk Override
+ | The new ranges
+ |}
+
+== <code>wdl:request</code> ==
+
+Used for permission requests.  Sent from the client to the server.  On the server, a moderator/admin/whoever can approve or deny the request, and then other messages ([[#WDL.7CCONTROL|<code>wdl:control</code>]]) are sent to grant such permissions.
+
+{| class="wikitable"
+ ! Channel
+ ! Bound To
+ ! colspan="2" | Field Name
+ ! colspan="2" | Field Type
+ ! Notes
+ |-
+ | rowspan="6" | <code>wdl:request</code>
+ | rowspan="6" | Server
+ | colspan="2" | Request message
+ | colspan="2" | String
+ | A message explaining the reason for the request to the server owners (user-inputted).  The current version of the mod uses "REQUEST REASON WILL GO HERE" as the message, but it will be more useful in the future.
+ |-
+ | colspan="2" | Number of requests
+ | colspan="2" | Integer
+ | Length of the following array.
+ |-
+ | rowspan="2" | Requests
+ | Requested perm
+ | rowspan="2" | Array
+ | String
+ | Name of the permission (see list below).
+ |-
+ | Requested value
+ | String
+ | String representation of the requested value.
+ |-
+ | colspan="2" | Number of chunk override requests
+ | colspan="2" | Integer
+ | Length of the following array.
+ |-
+ | colspan="2" | Chunk override requests
+ | colspan="2" | Array of [[#Chunk Overrides|Chunk Override]]
+ | Requested overrides.  Note that the 'tag' value is still included but the server is ''allowed'' to discard it (or use it, at its digression).
+ |}
+
+
+Valid fields and their values:
+
+* <code>downloadInGeneral</code>: Whether or not chunks downloading in all terrain is allowed.  <code>true</code> if so, <code>false</code> otherwise.
+* <code>cacheChunks</code>: Whether chunks can be cached as the player moves about the world.  <code>true</code> if so, <code>false</code> otherwise.
+* <code>saveRadius</code>: Distance from the player chunks can be saved (in a square).  If -1, all distance is allowed.  Only applies when <code>cacheChunks</code> is not true; if that is true this is ignored and thus in most cases that should be done (since a value of -1 still only allows saving what can be seen).  The value is an integer as a string, potentially negative.
+* <code>saveEntities</code>: Whether or not entities can be saved.  <code>true</code> if so, <code>false</code> otherwise.
+* <code>saveTileEntities</code>: Whether tile entities can be saved as the player moves about the world.  <code>true</code> if so, <code>false</code> otherwise.
+* <code>saveContainers</code>: Whether chests and other tile entities that require manual interaction can be saved as the player moves about the world.  Requires <code>saveTileEntities</code> to also be true.  <code>true</code> if so, <code>false</code> otherwise.
+* <code>getEntityRanges</code>: Whether entity ranges should be sent to the player.  <code>true</code> if so, <code>false</code> otherwise, but if your server doesn't change entity ranges from the vanilla defaults this doesn't need to be sent.
+
+Not all fields need to be set.  No field should be specified more than once in a packet.  If the field isn't set but was sent on a previous packet, the field should still be unset - clear the last request before adding in the new one (however, if a request was accepted, the requested permissions should '''not''' be cleared).  A packet without any requests should clear the current request list.
+{{license wiki.vg}}

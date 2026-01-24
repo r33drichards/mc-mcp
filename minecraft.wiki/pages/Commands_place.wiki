@@ -1,0 +1,181 @@
+{{for|the removed command with the same name {{in|education}}|Commands/place (Education)}}
+{{for|the command that places a structure template {{in|bedrock}}|Commands/structure}}
+{{Infobox command
+|name=place
+|oplevel=2
+|others=[[Cheat]] only{{only|be|short=1}}
+}}
+
+Places a [[configured feature]], [[Structure/JSON format|structure]], [[structure template]], or [[template pool]] if possible.
+
+== Syntax ==
+=== ''Java Edition'' ===
+:<code>place feature <feature> [<pos>]</code>
+::Place the [[configured feature]].
+:<code>place jigsaw <pool> <target> <max_depth> [<position>]</code>
+::Place a [[jigsaw structure]] starting with the specified [[template pool]], starting [[jigsaw block]] and maximum depth.
+:<code>place structure <structure> [<pos>]</code>
+::Place the [[Structure/JSON format|structure]].
+
+:<code>place template <template> [<pos>] [<rotation>] [<mirror>] [<integrity>] [<seed>] [strict]</code>
+::Place the [[structure template]]. (Works like using the load button in the UI for a [[structure block]].)
+
+=== ''Bedrock Edition'' ===
+: <code>place feature <feature: features> [position: x y z]</code> 
+: <code>place featurerule <featurerule: featureRules> [position: x y z]</code> 
+::Place the [[feature]].
+
+:<code>place jigsaw <pool: filepath> <jigsawTarget: string> <maxDepth: int> [pos: x y z] [keepJigsaws: Boolean] [includeEntities: Bolean] [liquidSettings: LiquidSettings]</code>
+::Place a [[jigsaw structure]] starting with the specified [[template pool]], starting [[jigsaw block]] and maximum depth.
+
+:<code>place structure <structure: string> [pos: x y z] [ignoreStartHeight: Boolean] [keepJigsaws: Boolean] [includeEntities: Boolean] [liquidSettings: LiquidSettings]</code> 
+::Place the [[Structure/JSON format|structure]].
+:::Only {{EnvLink|Trail Ruins}} and {{EnvLink|Trial Chambers}} and custom jigsaw structures can be placed.
+
+== Arguments ==
+{{el|je|short=1}}: {{argument|feature|resource_key}}
+:Specifies the [[configured feature]] to place. See [[Feature]] for vanilla configured features.
+:{{arg desc|je=resource_key|registry=minecraft:worldgen/configured_feature}}
+
+{{argument|structure|resource_key|structure: string|basic_string}}
+:Specifies the [[Structure/JSON format|structure]]. See [[Structure]] for vanilla structures.
+:{{arg desc|je=resource_key|registry=minecraft:worldgen/structure}}
+
+{{argument|pool|resource_key|pool: filepath|CommandFilePath}}
+:Specifies the start [[template pool]] to start generating a jigsaw.
+:{{arg desc|je=resource_key|registry=minecraft:worldgen/template_pool}}
+
+{{argument|target|resource_location|jigsawTarget: string|basic_string}}
+:Specifies the [[jigsaw block]] that is connected to when generating the start structure pool.
+:{{arg desc|je=resource_location}}
+
+{{argument|max_depth|integer|maxDepth|int}}
+:Specifies the max depth of the jigsaw.
+:{{arg desc|je=integer|min=1|max=20}}
+
+{{el|be|short=1}}: {{argument|keepJigsaws: Boolean|enum}}
+:Specifies whether the jigsaws should be kept or not. If not specified, defaults to <code>false</code>.
+:{{arg desc|je=bool}}
+
+{{el|je|short=1}}: {{argument|template|resource_location}}
+:Specifies the [[structure template]] to place.
+:{{arg desc|je=resource_location}}
+
+{{el|je|short=1}}: {{argument|pos|block_pos}} and {{argument|position|block_pos}}<br>
+{{el|be|short=1}}: {{argument|pos: x y z|CommandPosition}}
+:Specifies the start position of the placement.
+:{{arg desc|je=block_pos}}
+
+{{el|be|short=1}}: {{argument|be=1|feature: features|enum}}
+:Specifies the feature.
+:{{arg desc|be=enum}}
+
+{{el|be|short=1}}: {{argument|be=1|featurerule: featureRules|enum}}
+:Specifies the feature rule.
+:{{arg desc|be=enum}}
+
+{{el|be|short=1}}: {{argument|ignoreStartHeight: Boolean|enum}}
+:Specifies whether the structure should start generating at the given Y coordinate or follow its set height placement rules. If not specified, defaults to <code>false</code>.
+:{{arg desc|je=bool}}
+
+{{el|be|short=1}}: {{argument|includeEntities: Boolean|enum}}
+:Specifies whether the structure will include the entities saved in it or not. If not specified, defaults to <code>false</code>.
+:{{arg desc|je=bool}}
+
+{{el|be|short=1}}: {{argument|liquidSettings: LiquidSettings|?}}
+:Specifies whether the structure will waterlog present blocks or not.
+:Must be either {{cd|ignore_waterlogging}}, or {{cd|apply_waterlogging}}. If omitted, defaults to {{cd|apply_waterlogging}}.
+
+{{el|je|short=1}}: {{argument|rotation|template_rotation}}
+:Specifies the rotation to apply to the placed template.
+:Must be either {{cd|none}}, {{cd|clockwise_90}}, {{cd|counterclockwise_90}}, or {{cd|180}}. If omitted, defaults to {{cd|none}}.
+
+{{el|je|short=1}}: {{argument|mirror|template_mirror}}
+:Specifies the mirroring to apply to the placed template.
+:Must be either {{cd|none}}, {{cd|front_back}}, or {{cd|left_right}}. If omitted, defaults to {{cd|none}}.
+
+{{el|je|short=1}}: {{argument|integrity|float}}
+:Specifies the integrity value to apply to the placed template (how complete the template that gets placed is). If omitted, defaults to 1.0.
+:{{arg desc|je=float|min=0.0|max=1.0}} 
+
+{{el|je|short=1}}: {{argument|seed|integer}}
+:Specifies the seed to use for randomized degradation of the placed template when integrity is less than 1. If omitted, defaults to 0.
+:{{arg desc|je=integer}}
+
+{{el|je|short=1}}: {{cd|strict}}
+:Makes the command place blocks as-is without triggering block updates and shape updates.
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/place feature ...|Any of 3×3 chunks around the start position is unloaded or out of the world.|fail}}
+{{Result table|cmd=/place template ...|Any of chunks that the template would be in before rotation is unloaded or out of the world.}}
+{{Result table|cmd=/place jigsaw ...|The start position is unloaded or out of the world.}}
+{{Result table|cmd=/place structure ...|Any of chunks to place in is unloaded or out of the world.<ref>{{bug|MC-274875}}</ref>|Failed or Error}}
+{{Result table|cmd=/place structure <structure> <pos>|The specified <code><pos></code> is unloaded or out of world.|fail}}
+{{Result table|cmd=/place feature ...|There's no configured feature with the provided ID.}}
+{{Result table|The configured feature could not generate - depends on the configured feature.}}
+{{Result table|cmd=/place jigsaw ...|There's no structure pool with the provided ID.}}
+{{Result table|The specified start pool has no element.<ref>{{bug|MC-259351}}</ref>|error}}
+{{Result table|Tries to generate an empty element (<code>empty_pool_element</code>) in the start pool.|fail}}
+{{Result table|Jigsaw block with the specified ID is not found in the start pool.}}
+{{Result table|cmd=/place structure ...|There is no structure with the provided ID.}}
+{{Result table|There is no valid position in this chunk to place the specified structure - depends on the structure.}}
+{{Result table|There is no valid biome in this chunk to place the specified structure - depends on the structure.}}
+{{Result table|cmd=/place template ...|There is no template with the provided ID.}}
+{{Result table|There's no block and entity in this template file.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|1}}
+{{Output table|On error|0|unchanged|unchanged}}
+{{Output table|edition=be|On fail|0|N/A|N/A}}
+{{Output table|On success|1|N/A|N/A}}
+{{Output table}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.19|dev=22w18a|Added {{cd|/place}}, replacing {{cmd|placefeature}}.}}
+|{{HistoryLine|||dev=22w19a|{{cd|/place}} can now place templates for structure blocks.}}
+|{{HistoryLine|||dev=Pre-release 1|{{cd|/place template}} can now be autocompleted.}}
+|{{HistoryLine||1.20.5|dev=24w07a|Now the limit of max depth in {{cd|/place}} is 20 instead of 7.<ref>{{bug|MC-267732|||fixed}}</ref>}}
+|{{HistoryLine|||dev=pre2|Now {{cmd|place jigsaw|link=none}} checks whether the position is unloaded or out of the world before placement.<ref>{{bug|MC-259355|||fixed}}</ref>}}
+|{{HistoryLine||1.21.5|dev=25w02a|Accepts a new option: <code>strict</code>.|New syntax for commands to use the new strict option.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.21.50|exp=Data-Driven Jigsaw Structures|dev=Preview 1.21.50.26|Added {{cd|/place}} behind the "Data-Driven Jigsaw Structures" [[experimental]] toggle.}}
+|{{HistoryLine||1.21.60|exp=Upcoming Creator Features|dev=Preview 1.21.60.23|Added {{cd|feature}} and {{cd|featurerule}} subcommands behind the "Upcoming Creator Features" [[experimental]] toggle.}}
+|{{HistoryLine||1.21.70|dev=Preview 1.21.70.22|Moved the {{cd|/place}} with the subcommands {{cd|feature}} and {{cd|featurerule}} out of the "Upcoming Creator Features" experiment.}}
+|{{HistoryLine||1.21.80|dev=Preview 1.21.80.22|Moved the subcommands {{cd|structure}} and {{cd|jigsaw}} out of the "Data-Driven Jigsaw Structures" experiment.}}
+|{{HistoryLine||1.21.90|dev=Preview 1.21.90.21|Added subfield {{cd|[liquidSettings: LiquidSettings]}} to {{cmd|place jigsaw|link=none}} and {{cmd|place structure|link=none}} which controls whether the structure will apply [[waterlogged]] or ignore.}}
+}}
+
+== Issues ==
+The check to ensure that the target position is loaded works by testing if blocks are placeable at Y=0 in the target chunk. If this check is made in a custom dimension where Y=0 is out of the world, it will always fail, preventing the command from ever succeeding.<ref>{{bug|MC-255097}}</ref>
+
+{{issue list}}
+
+== References ==
+{{Reflist}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/place?view=minecraft-bedrock-stable|title=<code>/place</code> Command|website=Microsoft Learn|date=January 30, 2025}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/place]]
+[[es:Comandos/place]]
+[[ja:コマンド/place]]
+[[pt:Comandos/place]]
+[[ru:Команды консоли/place]]
+[[zh:命令/place]]

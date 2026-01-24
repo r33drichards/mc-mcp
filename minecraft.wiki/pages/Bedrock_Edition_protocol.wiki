@@ -1,0 +1,5142 @@
+{{DISPLAYTITLE:''Bedrock Edition'' protocol}}
+{{for|the {{JE}} protocol|Java Edition protocol}}
+{{exclusive|bedrock}}
+
+This article documents the {{BE}} '''protocol''' for [[Minecraft Wiki:Projects/wiki.vg merge/Bedrock Protocol version numbers|1.16.220, protocol 431]].
+The ''Bedrock Edition'' protocol uses [[wikipedia:User Datagram Protocol|UDP]] instead of [[wikipedia:Transmission Control Protocol|TCP]] that is used for the ''[[Java Edition]]''.
+''Bedrock Edition'' uses [[RakNet]] as its protocol library.
+
+The default ''Bedrock Edition'' port is 19132.
+
+Information for this page was obtained from the [https://github.com/NukkitX/Protocol NukkitX Protocol library], [https://github.com/NiclasOlofsson/MiNET MiNET] and [https://github.com/Sandertv/gophertunnel gophertunnel].
+
+For more complete documentation, consider visiting the '''[https://github.com/Mojang/bedrock-protocol-docs Official Docs]'''.
+
+== Data types ==
+
+{| class="wikitable"
+ |-
+ !
+ ! Size (Bytes)
+ ! Range
+ ! Notes
+ |-
+ ! Byte
+ | 1
+ | 0 to 255
+ | Basically a unsigned byte
+ |-
+ ! Boolean
+ | 1
+ | 0 or 1
+ | A Byte treated as boolean, 0 is false but anything greater than that is true
+ |-
+ ! Short
+ | 2
+ | -32768 to 32767
+ |
+ |-
+ ! Unsigned Short
+ | 2
+ | 0 to 65535
+ |
+ |-
+ ! Int
+ | 4
+ | -2147483648 to 2147483647
+ | Signed little-endian 32-bit Integer
+ |-
+ ! Int (big endian)
+ | 4
+ | -2147483648 to 2147483647
+ | Signed big-endian 32-bit Integer
+ |-
+ ! Unsigned Int
+ | 4
+ | 0 to 4294967295
+ | Unsigned 32-bit Integer
+ |-
+ ! Long
+ | 8
+ | -2^63 to 2^63-1
+ | Signed 64-bit Integer
+ |-
+ ! Unsigned Long
+ | 8
+ | 2^64-1
+ | Unsigned 64-bit Integer
+ |-
+ ! Float
+ | 4
+ | 
+ | A [[wikipedia:Single-precision_Floating-poInt_format|single-precision 32-bit IEEE 754 Floating poInt number]]
+ |-
+ ! Double
+ | 8
+ | 
+ | A [[wikipedia:Double-precision_Floating-poInt_format|Double-precision 64-bit IEEE 754 Floating poInt number]]
+ |-
+ ! VarInt
+ | &ge; 1<br>&le; 5
+ | 0 to 4294967295
+ | 
+ |-
+ ! SignedVarInt
+ | &ge; 1<br>&le; 5
+ | -2147483648 and 2147483647
+ | 
+ |-
+ ! VarLong
+ | &ge; 1<br>&le; 10
+ | 
+ |
+ |-
+ ! SignedVarLong
+ | &ge; 1<br>&le; 10
+ | -2^63 and 2^63-1
+ |
+ |-
+ ! String
+ | 
+ | 
+ | [[wikipedia:UTF-8|UTF-8]] String prefixed with its size in Bytes as a VarInt. This has the same data structure as a ByteArray but it contains textual data.
+ |-
+ ! Vector3
+ | 12
+ | 
+ | Three Float values (X, Y and Z respectively)
+ |-
+ ! Vector2
+ | 8
+ | 
+ | Two Float values (X and Y respectively)
+ |-
+ ! NBT
+ | 
+ | 
+ | 
+ |-
+ ! ByteArray
+ | 
+ | 
+ | An arbitrary array of Bytes prefixed with its size in Bytes as a VarInt.
+ |-
+ ! BlockCoordinates
+ | &ge; 3<br>&le; 15
+ | 
+ | A SignedVarInt, a normal VarInt and another SignedVarInt (X, Y and Z respectively)
+ |-
+ ! PlayerLocation
+ | 15
+ | 
+ | Three Float values (X, Y and Z respectively), followed by three Bytes (pitch, head yaw and yaw respectively). To convert the Bytes to normal pitch and yaw values divide them by 0.71
+ |-
+ ! UUID
+ | 16
+ | A [[wikipedia:Universally_unique_identifier|UUID]]
+ | Encoded as two unsigned 64-bit Integers: the most significant 64 bits and the least significant 64 bits
+ |}
+
+
+
+== Types Table ==
+{| class="wikitable"
+ |-
+ ! Type Name
+ |-
+ ! ActorLink
+ |-
+ ! ActorRuntimeID
+ |-
+ ! ActorUniqueID
+ |-
+ ! AdventureSettings
+ |-
+ ! BaseDescription
+ |-
+ ! BaseGameVersion
+ |-
+ ! BlockPos
+ |-
+ ! CameraInstruction
+ |-
+ ! CameraPreset
+ |-
+ ! CameraPresets
+ |-
+ ! ChunkPos
+ |-
+ ! CommandOriginData
+ |-
+ ! CompoundTag
+ |-
+ ! ContainerMixDataEntry
+ |-
+ ! CraftingDataEntry
+ |-
+ ! DataItem
+ |-
+ ! DimensionDefinitionGroup
+ |-
+ ! DimensionDefinitionGroup::DimensionDefinition
+ |-
+ ! EduSharedUriResource
+ |-
+ ! EducationLevelSettings
+ |-
+ ! EntityNetId
+ |-
+ ! Experiments
+ |-
+ ! GameRulesChangedPacketData
+ |-
+ ! InventoryAction
+ |-
+ ! InventorySource
+ |-
+ ! InventoryTransaction
+ |-
+ ! ItemData
+ |-
+ ! ItemEnchants
+ |-
+ ! ItemInstanceUserData
+ |-
+ ! ItemStackNetIdVariant
+ |-
+ ! ItemStackRequestSlotInfo
+ |-
+ ! ItemStackResponseContainerInfo
+ |-
+ ! ItemStackResponseInfo
+ |-
+ ! ItemStackResponseSlotInfo
+ |-
+ ! LevelSettings
+ |-
+ ! MapDecoration
+ |-
+ ! MapItemTrackedActor::UniqueId
+ |-
+ ! MaterialReducerDataEntry
+ |-
+ ! MolangVariableMap
+ |-
+ ! MoveActorAbsoluteData
+ |-
+ ! MoveActorDeltaData
+ |-
+ ! NetworkBlockPosition
+ |-
+ ! NetworkItemInstanceDescriptor
+ |-
+ ! NetworkItemStackDescriptor
+ |-
+ ! NetworkPermissions
+ |-
+ ! PackedItemUseLegacyInventoryTransaction
+ |-
+ ! PlayerBlockActionData
+ |-
+ ! PlayerBlockActions
+ |-
+ ! PositionTrackingId
+ |-
+ ! PotionMixDataEntry
+ |-
+ ! PropertySyncData
+ |-
+ ! RecipeIngredient
+ |-
+ ! RecipeUnlockingRequirement
+ |-
+ ! ScoreboardId
+ |-
+ ! SerializedAbilitiesData
+ |-
+ ! SerializedAbilitiesData::SerializedLayer
+ |-
+ ! SerializedSkin
+ |-
+ ! ShapedChemistryRecipe
+ |-
+ ! ShapedRecipe
+ |-
+ ! ShapelessChemistryRecipe
+ |-
+ ! ShapelessRecipe
+ |-
+ ! ShulkerBoxRecipe
+ |-
+ ! SmithingTransformRecipe
+ |-
+ ! SmithingTrimRecipe
+ |-
+ ! SpawnSettings
+ |-
+ ! StructureEditorData
+ |-
+ ! StructureSettings
+ |-
+ ! SubChunkPacket::SubChunkPosOffset
+ |-
+ ! SubChunkPos
+ |-
+ ! SyncedPlayerMovementSettings
+ |-
+ ! TypedClientNetId
+ |-
+ ! TypedClientNetId
+ |-
+ ! TypedServerNetId
+ |
+ |}
+
+== Packet Format ==
+
+Bedrock Edition uses [[RakNet]] as its protocol library, so the packets are sent that way. The UDP protocol specifies packet length, so unlike Java Edition and TCP which deal with raw data streams packets are not length-prefixed. Packets seem to always use compression and can also use encryption. Multiple packets can also be batched into a single packet.
+Packet compression uses [https://zlib.net/ zlib], and it seems that packet data can be fed directly into zlib (after being decrypted if encryption is enabled).
+<br><br>
+Refer to [https://github.com/Sandertv/gophertunnel/blob/19c96251a36a39d9ffb938053410852e811755e3/minecraft/protocol/packet/decoder.go#L58 gophertunnel] for more information.
+
+== Login process ==
+The login process is as follows:
+# C→S: [[#Request Network Settings|Request Network Settings]]
+# S→C: [[#Network Settings|Network Settings]]
+# C→S: [[#Login|Login]]
+# S→C: [[#Server To Client Handshake|Server To Client Handshake]]
+# C→S: [[#Client To Server Handshake|Client To Server Handshake]]
+# S→C: [[#Play Status|Play Status]] (Login success)
+
+To spawn, the following packets should be sent, in order, after the ones above:
+# S→C: [[#Resource Packs Info|Resource Packs Info]]
+# C→S: [[#Resource Pack Client Response|Resource Pack Client Response]]
+# S→C: [[#Resource Pack Stack|Resource Pack Stack]]
+# C→S: [[#Resource Pack Client Response|Resource Pack Client Response]]
+# S→C: [[#Start Game|Start Game]]
+# S→C: [[#Creative Content|Creative Content]]
+# S→C: [[#Biome Definition List|Biome Definition List]]
+# S→C: [[#Level Chunk|Level Chunk]]
+# S→C: [[#Play Status|Play Status]] (Player spawn)
+
+If there are no resource packs being sent, a [[#Resource Pack Stack|Resource Pack Stack]] can be sent directly after [[#Resource Packs Info|Resource Packs Info]] to avoid the client responses.
+
+== Packets ==
+Please note that some packet ids are missing, so they don't line up.
+The following packet ids are missing:
+0x10, 0x74, 0x7F, 0x80
+(16, 116, 127, 128)
+
+
+==== Login ====
+
+Sent when the client initially tries to join the server. It is the first packet sent and contains information specific to the player.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x01
+ |rowspan="3"| Server
+ | Protocol version
+ | Int (big-endian)
+ | 
+ |-
+ | Chain data
+ | JSON array of JWT Data
+ | Contains the display name, UUID and XUID
+ |-
+ | Skin data
+ | JWT Data
+ | 
+ |}
+ 
+
+
+==== Play Status ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x02
+ |rowspan="1"| Client
+ | Status
+ | Int (big-endian)
+ | The current status of the connection.
+ |}
+
+The values for each status are as follows:
+{| class="wikitable"
+ ! Status
+ ! Name
+ ! Notes
+ |-
+ | 0
+ | Login success
+ | Sent after [[#Login|Login]] has been successfully decoded and the player has logged in
+ |-
+ | 1
+ | Failed client
+ | Displays "Could not connect: Outdated client!"
+ |-
+ | 2
+ | Failed server
+ | Displays "Could not connect: Outdated server!"
+ |-
+ | 3
+ | Player spawn
+ | Sent after world data to spawn the player
+ |-
+ | 4
+ | Failed invalid Tenant
+ | Displays "Unable to connect to world. Your school does not have access to this server."
+ |-
+ | 5
+ | Failed Vanilla Edu.
+ | Displays "The server is not running Minecraft: Education Edition. Failed to connect."
+ |-
+ | 6
+ | Failed incompatible
+ | Displays "The server is running an incompatible edition of Minecraft. Failed to connect."
+ |-
+ | 7
+ | Failed server full
+ | Displays "Wow this server is popular! Check back later to see if space opens up. Server Full"
+ |}
+
+==== Server To Client Handshake ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x03
+ |rowspan="1"| Client
+ | JWT data
+ | JWT String
+ | Contains the salt to complete the Diffie-Hellman key exchange
+ |}
+ 
+
+
+==== Client To Server Handshake ====
+
+Sent by the client in response to a [[#Server To Client Handshake|Server To Client Handshake]] packet sent by the server. It is the first encrypted packet in the login handshake and serves as a confirmation that encryption is correctly initialized client side. It has no fields.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x04
+ |rowspan="1"| Server
+ |colspan="3" | This packet has no data.
+ |}
+
+==== Disconnect ====
+
+Sent by the server to disconnect a client.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | rowspan="4" | 0x05
+ | rowspan="4" | Client
+ | Disconnect Reason 
+ | VarInt
+ | Specifies the disconnection reason.
+ |-
+ | skip Message
+ | Boolean
+ | set to false if have message, set to true if not given
+ |-
+|Message
+|String
+|(present if skipMessage is false)message for Disconnect
+|-
+|Filtered Message
+|String
+|(present if skipMessage is false) Filtered Message for disconnect
+|}
+
+
+
+==== Resource Packs Info ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x06
+ |rowspan="4"| Client
+ | Forced to Accept
+ | Boolean
+ | If the resource pack requires the client accept it.
+ |-
+ | Scripting Enabled
+ | Boolean
+ | If scripting is enabled.
+ |-
+ | BehahaviorPackInfos
+ | ResourcePackInfo[]
+ | A list of behavior packs that the client needs to download before joining the server. All of these behavior packs will be applied together.
+ |-
+ | ResourcePackInfos
+ | ResourcePackInfo[]
+ | A list of resource packs that the client needs to download before joining the server. The order of these resource packs is not relevant in this packet. It is however important in the Resource Pack Stack packet.
+ |}
+
+==== Resource Pack Stack ====
+
+{| class="wikitable"
+! Packet ID
+! Bound To
+! colspan="2" | Field Name
+! colspan="2" | Field Type
+! Notes
+|-
+| rowspan="11" | 0x07
+| rowspan="11" | Client
+| colspan="2" | Forced to Accept
+| colspan="2" | Boolean
+| If the resource pack must be accepted for the player to join the server.
+|-
+! Resource Pack Entry
+! Field Name
+! colspan="2" | 
+! 
+|-
+| rowspan="3" | Array
+| Pack ID
+| colspan="2" | String
+| The ID of the resource pack.
+|-
+| Pack Version
+| colspan="2" | String
+| The version of the resource pack.
+|-
+| Subpack Name
+| colspan="2" | String
+| The subpack name of the resource pack.
+|-
+! Behavior Pack Entry
+! Field Name
+! colspan="2" | 
+! 
+|-
+| rowspan="3" | Array
+| Pack ID
+| colspan="2" | String
+| The ID of the resource pack.
+|-
+| Pack Version
+| colspan="2" | String
+| The version of the resource pack.
+|-
+| Subpack Name
+| colspan="2" | String
+| The subpack name of the resource pack.
+|-
+| colspan="2" | Experimental
+| colspan="2" | Boolean
+| If the sent resource and behavior packs are experimental.
+|-
+| colspan="2" | Game Version
+| colspan="2" | String
+| The version of the game the sent resource and behavior packs were made for.
+|}
+
+
+
+==== Resource Pack Client Response ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x08
+ |rowspan="2"| Server
+ | Status
+ | Byte
+ | See below
+ |-
+ | Pack IDs
+ | ResourcePackIds
+ | All of the pack IDs.
+ |}
+
+The values for each status are as follows:
+{| class="wikitable"
+ ! Status
+ ! Name
+ ! Notes
+ |-
+ | 0
+ | None
+ | 
+ |-
+ | 1
+ | Refused
+ | 
+ |-
+ | 2
+ | Send packs
+ |
+ |-
+ | 3
+ | Have all packs
+ | 
+ |-
+ | 4
+ | Completed
+ |
+ |}
+
+==== Text ====
+
+Sent by the client to the server to send chat messages, and by the server to the client to forward or send messages, which may be chat, popups, tips etc.
+
+{| class="wikitable"
+! Packet ID
+! Bound To
+! colspan="2" | Field Name
+! Field Type
+! Notes
+|-
+| rowspan="9" | 0x09
+| rowspan="9" | Server &amp; Client
+| colspan="2" | Type
+| Byte
+| The type of chat message sent.
+|-
+| colspan="2" | Needs Translation
+| Boolean
+| If the message sent is a translation key and needs to be translated.
+|-
+! Chat Type ID
+! Text
+! 
+! Derived from above; values sent here change depending on that.
+|-
+| rowspan="1" | 0, 1, or 2
+| rowspan="1" | Source Name
+| rowspan="1" | String
+| rowspan="1" | The name of the source.
+|-
+|-
+|-
+| rowspan="1" | 3, 4, or 5
+| rowspan="1" | Message
+| rowspan="1" | String
+| rowspan="1" | The message sent with the packet.
+|-
+|-
+|-
+|-
+| rowspan="2" | 6, 7, or 8
+| Message
+| String
+| The message sent with the packet
+|-
+| Parameters
+| Array
+| The parameters sent with the packet. This usually includes translation parameters or similar types depending on what kind of chat type was sent.
+|-
+| colspan="2" | XUID
+| Optional String
+| The XUID of the player who sent this message.
+|-
+| colspan="2" | Platform Chat ID
+| Optional String
+| The platform chat ID of the sent message.
+|}
+
+{| class="wikitable"
+ ! ID
+ ! Chat Type
+ |-
+ | 0
+ | Raw
+ |-
+ | 1
+ | Chat
+ |-
+ | 2
+ | Translation
+ |-
+ | 3
+ | Popup
+ |-
+ | 4
+ | Jukebox Popup
+ |-
+ | 5
+ | Tip
+ |-
+ | 6
+ | System
+ |-
+ | 7
+ | Whisper
+ |-
+ | 8
+ | Announcement
+ |-
+ | 9
+ | Object
+ |-
+ | 10
+ | Object Whisper
+ |}
+
+For additional information and examples of all the chat types above, see here: https://imgur.com/a/KhcFscg
+
+
+
+==== Set Time ====
+
+Sent by the server to update the current time client-side. The client actually advances time client-side by itself, so this packet does not need to be sent each tick. It is merely a means of synchronizing time between server and client.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x0A
+ |rowspan="1"| Client
+ | Time
+ | SignedVarInt
+ | Time is the current time. The time is not limited to 24000 (time of day), but continues progressing after that.
+ |}
+
+
+
+==== Start Game ====
+
+Sent by the server to send information about the world the player will be spawned in.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="57"| 0x0B
+ |rowspan="57"| Client
+ | Entity ID Self
+ | SignedVarLong
+ | The unique ID of the player. The unique ID is a value that remains consistent across different sessions of the same world, but most unofficial servers simply fill the runtime ID of the entity out for this field.
+ |-
+ | Runtime Entity ID
+ | VarLong
+ | The runtime ID of the player. The runtime ID is unique for each world session, and entities are generally identified in packets using this runtime ID.
+ |-
+ | Player Gamemode
+ | SignedVarInt
+ |-
+ | Spawn
+ | Vector3
+ | The spawn position of the player in the world. In servers this is often the same as the world's spawn position found below.
+ |-
+ | Rotation
+ | Vector2
+ | The pitch and yaw of the player
+ |-
+ | Seed
+ | SignedVarInt
+ | The seed used to generate the world. Unlike in Java edition, the seed is a 32bit Integer here.
+ |-
+ | Spawn Biome Type
+ | Short
+ | 
+ |-
+ | Custom Biome Name
+ | String
+ | 
+ |-
+ | Dimension
+ | SignedVarInt
+ | Dimension is the ID of the dimension that the player spawns in. It is a value from 0-2, with 0 being the overworld, 1 being the nether and 2 being the end.
+ |-
+ | Generator
+ | SignedVarInt
+ | Generator is the generator used for the world. It is a value from 0-4, with 0 being old limited worlds, 1 being infinite worlds, 2 being flat worlds, 3 being nether worlds and 4 being end worlds. A value of 0 will actually make the client stop rendering chunks you send beyond the world limit.
+ |-
+ | World Gamemode
+ | SignedVarInt
+ | The game mode that a player gets when it first spawns in the world. It is shown in the settings and is used if the Player Gamemode is set to 5.
+ |-
+ | Difficulty
+ | SignedVarInt
+ | Difficulty is the difficulty of the world. It is a value from 0-3, with 0 being peaceful, 1 being easy, 2 being normal and 3 being hard.
+ |-
+ | World Spawn
+ | BlockCoordinates 
+ | The block on which the world spawn of the world. This coordinate has no effect on the place that the client spawns, but it does have an effect on the direction that a compass poInts.
+ |-
+ | Has achievements disabled
+ | Boolean
+ | Defines if achievements are disabled in the world. The client crashes if this value is set to true while the player's or the world's game mode is creative, and it's recommended to simply always set this to false as a server.
+ |-
+ | Day cycle stop time
+ | SignedVarInt
+ | The time at which the day cycle was locked if the day cycle is disabled using the respective game rule. The client will maIntain this time as Boolean as the day cycle is disabled.
+ |-
+ | EDU offer
+ | SignedVarInt
+ | Some Minecraft: Education Edition field that specifies what 'region' the world was from, with 0 being None, 1 being RestOfWorld, and 2 being China. The actual use of this field is unknown.
+ |-
+ | Has Education Edition features enabled
+ | Boolean
+ | Specifies if the world has education edition features enabled, such as the blocks or entities specific to education edition.
+ |-
+ | Education Production ID
+ | String
+ |
+ |-
+ | Rain level
+ | Float
+ | The level specifying the Intensity of the rain falling. When set to 0, no rain falls at all.
+ |-
+ | Lightning level
+ | Float
+ | The level specifying the Intensity of the thunder. This may actually be set independently from the rain level, meaning dark clouds can be produced without rain.
+ |-
+ | Has Confirmed Platform Locked Content
+ | Boolean
+ | 
+ |-
+ | Is Multiplayer
+ | Boolean
+ | Specifies if the world is a multi-player game. This should always be set to true for servers.
+ |-
+ | Broadcast To LAN
+ | Boolean
+ | Specifies if LAN broadcast was Intended to be enabled for the world.
+ |-
+ | Xbox Live Broadcast Mode
+ | VarInt
+ | The mode used to broadcast the joined game across XBOX Live.
+ |-
+ | Platform Broadcast Mode
+ | VarInt
+ | The mode used to broadcast the joined game across the platform.
+ |-
+ | Enable commands
+ | Boolean
+ | If commands are enabled for the player. It is recommended to always set this to true on the server, as setting it to false means the player cannot, under any circumstance, use a command.
+ |-
+ | Are texture packs required
+ | Boolean
+ | Specifies if the texture pack the world might hold is required, meaning the client was forced to download it before joining.
+ |-
+ | GameRules
+ | GameRules
+ | Defines game rules currently active with their respective values. The value of these game rules may be either 'bool', 'Int32' or 'Float32'. Some game rules are server side only, and don't necessarily need to be sent to the client.
+ |-
+ | Bonus Chest
+ | Boolean
+ | Specifies if the world had the bonus map setting enabled when generating it. It does not have any effect client-side.
+ |-
+ | Map Enabled
+ | Boolean
+ | Specifies if the world has the start with map setting enabled, meaning each joining player obtains a map. This should always be set to false, because the client obtains a map all on its own accord if this is set to true.
+ |-
+ | Permission Level
+ | SignedVarInt
+ | The permission level of the player. It is a value from 0-3, with 0 being visitor, 1 being member, 2 being operator and 3 being custom.
+ |-
+ | Server Chunk Tick Range
+ | Int
+ | The radius around the player in which chunks are ticked. Most servers set this value to a fixed number, as it does not necessarily affect anything client-side.
+ |-
+ | Has Locked Behavior Pack
+ | Boolean
+ | Specifies if the texture pack of the world is locked, meaning it cannot be disabled from the world. This is typically set for worlds on the marketplace that have a dedicated texture pack.
+ |-
+ | Has Locked Resource Pack
+ | Boolean
+ | Specifies if the texture pack of the world is locked, meaning it cannot be disabled from the world. This is typically set for worlds on the marketplace that have a dedicated texture pack.
+ |-
+ | Is From Locked World Template
+ | Boolean
+ | Specifies if the world from the server was from a locked world template. For servers this should always be set to false.
+ |-
+ | Use MSA Gamertags Only
+ | Boolean
+ | 
+ |-
+ | Is From World Template
+ | Boolean
+ | Specifies if the world from the server was from a locked world template. For servers this should always be set to false.
+ |-
+ | Is World Template Option Locked
+ | Boolean
+ | Specifies if the world was a template that locks all settings that change properties above in the settings GUI. It is recommended to set this to true for servers that do not allow things such as setting game rules through the GUI.
+ |-
+ | Only Spawn V1 Villagers
+ | Boolean
+ | A hack that Mojang put in place to preserve backwards compatibility with old villagers. The his never actually read though, so it has no functionality.
+ |-
+ | Game Version
+ | String
+ | The version of the game from which Vanilla features will be used. The exact function of this field isn't clear.
+ |-
+ | Limited World Width
+ | Int
+ |
+ |-
+ | Limited World Height
+ | Int
+ |
+ |-
+ | Is Nether Type
+ | Boolean
+ |
+ |-
+ | Is Force Experimental Gameplay
+ | Boolean
+ |
+ |-
+ | Level ID
+ | String
+ | A base64 encoded world ID that is used to identify the world.
+ |-
+ | World name
+ | String
+ | The name of the world that the player is joining. Note that this field shows up above the player list for the rest of the game session, and cannot be changed. Setting the server name to this field is recommended.
+ |-
+ | Premium World Template Id
+ | String
+ | A UUID specific to the premium world template that might have been used to generate the world. Servers should always fill out an empty String for this.
+ |-
+ | Is Trial
+ | Boolean
+ | Specifies if the world was a trial world, meaning features are limited and there is a time limit on the world.
+ |-
+ | Movement type
+ | VarInt
+ | Specifies the movement type as an ordinal - client authoritative (MovePlayerPacket), server authoritative (PlayerAuthInputPacket), or server authoritative with rewind
+ |-
+ | Movement rewind size
+ | Int
+ | Always present, but only relevant if the movement type is server authoritative with rewind.
+ |-
+ | Server authoritative block breaking
+ | Boolean
+ | 
+ |-
+ | Current Tick
+ | Long LE
+ | The total time in ticks that has elapsed since the start of the world.
+ |-
+ | Enchantment Seed
+ | SignedVarInt
+ | The seed used to seed the random used to produce enchantments in the enchantment table. Note that the exact correct random implementation must be used to produce the correct results both client- and server-side.
+ |-
+ | Block Properties
+ | Block Properties
+ | An array of string followed by tag for each custom block on the server.
+ |-
+ | Itemstates
+ | Itemstates
+ | A list of all items with their legacy IDs which are available in the game. Failing to send any of the items that are in the game will crash mobile clients. Each entry in the array consists of a string, followed by a Little Endian Short ID, followed by a boolean if the item is component based
+ |-
+ | Multiplayer Correlation ID
+ | String
+ | A unique ID specifying the multi-player session of the player. A random UUID should be filled out for this field.
+ |-
+ | Inventories server authoritative
+ | Boolean
+ | If true, the ItemStackRequestPacket is used to send inventory transactions. Otherwise, the InventoryTransactionPacket is used.
+ |}
+
+In order to use custom blocks, you must add <code>data_driven_items</code> as an <code>ExperimentData</code> in this packet with its value set to true [whether you need to add the experiment data to the resource pack process, like with items, has been untested]. A boilerplate representation of the NBT sent for a custom block is as follows:
+
+<syntaxhighlight lang="json">
+{
+  "components": {
+    "minecraft:entity_collision": {
+      "enabled": 0b,
+      "origin": [
+        -8.0f,
+        0.0f,
+        -8.0f
+      ],
+      "size": [
+        16.0f,
+        16.0f,
+        16.0f
+      ]
+    },
+    "minecraft:material_instances": {
+      "mappings": {},
+      "materials": {
+        "*": {
+          "ambient_occlusion": 1b,
+          "face_dimming": 1b,
+          "render_method": "opaque",
+          "texture": "snow"
+        }
+      }
+    },
+    "minecraft:unit_cube": {}
+  }
+}
+</syntaxhighlight>
+
+The block runtime ID is determined by the second part of the namespace, in alphabetical order. If the block is named <code>wikivg:aaa</code>, it will be placed at the beginning of the block runtime states. If the block is named <code>wikivg:zzz</code>, it will be placed at the end of the palette [most likely - naming a block "snow" caused other block states to shift].
+
+==== Add Player ====
+
+Sent by the server to make a player entity show up client-side. It is one of the few entities that cannot be sent using the [[#Add Entity|Add Entity]] packet.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="19"| 0x0C
+ |rowspan="19"| Client
+ | UUID
+ | UUID
+ | UUID is the UUID of the player. It is the same UUID that the client sent in the Login packet at the start of the session. A player with this UUID must exist in the player list (built up using the Player List packet) for it to show up in-game.
+ |-
+ | Username
+ | String
+ | Username is the name of the player. This username is the username that will be set as the initial name tag of the player.
+ |-
+ | Entity ID Self
+ | SignedVarLong
+ | The unique ID of the player. The unique ID is a value that remains consistent across different sessions of the same world, but most unoffical servers simply fill the runtime ID of the player out for this field.
+ |-
+ | Runtime Entity ID
+ | VarLong
+ | The runtime ID of the player. The runtime ID is unique for each world session, and entities are generally identified in packets using this runtime ID.
+ |-
+ | Platform Chat ID
+ | String
+ | An identifier only set for particular platforms when chatting (presumably only for Nintendo Switch). It is otherwise an empty string, and is used to decide which players are able to chat with each other.
+ |-
+ | Position
+ | Vector3
+ | The position to spawn the player at. If the player is at a distance that the viewer cannot see, the player will still show up if the viewer moves closer.
+ |-
+ | Velocity
+ | Vector3
+ | The initial velocity the player spawns with. This velocity will initiate client side movement of the player.
+ |-
+ | Rotation
+ | Float
+ | Pitch, yaw and head yaw
+ |-
+ | Held Item
+ | Item
+ | The item that the player is holding. The item is shown to the viewer as soon as the player itself shows up. Needless to say that this field is rather pointless, as additional packets still must be sent for armor to show up.
+ |-
+ | Metadata
+ | MetadataDictionary
+ | A map of entity metadata, which includes flags and data properties that alter in particular the way the player looks. Flags include ones such as 'on fire' and 'sprinting'. The metadata values are indexed by their property key.
+ |-
+ | Flags
+ | VarInt
+ | Flags is a set of flags that specify certain properties of the player, such as whether or not it can fly and/or move through blocks.
+ |-
+ | Command permission
+ | VarInt
+ | A set of permissions that specify what commands a player is allowed to execute.
+ |-
+ | Action Permissions
+ | VarInt
+ | Action Permissions is, much like Flags, a set of flags that specify actions that the player is allowed to undertake, such as whether it is allowed to edit blocks, open doors etc.
+ |-
+ | Permission Level
+ | VarInt
+ | The permission level of the player as it shows up in the player list built up using the PlayerList packet.
+ |-
+ | Custom stored permissions
+ | VarInt
+ | 
+ |-
+ | User Id
+ | Long
+ | A unique identifier of the player. It appears it is not required to fill this field out with a correct value. Simply writing 0 seems to work.
+ |-
+ | Links
+ | Links
+ | A list of entity links that are currently active on the player. These links alter the way the player shows up when first spawned in terms of it shown as riding an entity. Setting these links is important for new viewers to see the player is riding another entity.
+ |-
+ | Device ID
+ | String
+ | The device ID set in one of the files found in the storage of the device of the player. It may be changed freely, so it should not be relied on for anything.
+ |-
+ | Device OS
+ | Int
+ | The build platform/device OS of the player that is about to be added, as it sent in the Login packet when joining.
+ |}
+
+
+
+==== Add Entity ====
+
+Sent by the server to spawn an entity to the player. It is used for every entity except other players, paintings and items, for which the [[#Add Player|Add Player]], [[#Add Painting|Add Painting]] and [[#Add Item Entity|Add Item Entity]] packets are used.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="9"| 0x0D
+ |rowspan="9"| Client
+ | Entity ID Self
+ | SignedVarLong
+ | The unique ID of the entity. The unique ID is a value that remains consistent across different sessions of the same world, but most unofficial servers simply fill the runtime ID of the entity out for this field.
+ |-
+ | Runtime Entity ID
+ | VarLong
+ | The runtime ID of the entity. The runtime ID is unique for each world session, and entities are generally identified in packets using this runtime ID.
+ |-
+ | Entity Type
+ | String
+ | The string entity type of the entity, for example 'minecraft:skeleton'.
+ |-
+ | Position
+ | Vector3
+ | The position to spawn the entity at. If the entity is at a distance that the player cannot see, the entity will still show up if the player moves closer.
+ |-
+ | Velocity
+ | Vector3
+ | The initial velocity the entity spawns with. This velocity will initiate client side movement of the entity.
+ |-
+ | Rotation
+ | Vector3
+ | Pitch, yaw and head yaw
+ |-
+ | Attributes
+ | EntityAttributes
+ | A slice of attributes that the entity has. It includes attributes such as its health, movement speed, etc.
+ |-
+ | Metadata
+ | MetadataDictionary
+ | A map of entity metadata, which includes flags and data properties that alter in particular the way the entity looks. Flags include ones such as 'on fire' and 'sprinting'. The metadata values are indexed by their property key.
+ |-
+ | Links
+ | Links
+ | A list of entity links that are currently active on the entity. These links alter the way the entity shows up when first spawned in terms of it shown as riding an entity. Setting these links is important for new viewers to see the entity is riding another entity.
+ |}
+
+
+
+==== Remove Entity ====
+
+Sent by the server to remove an entity that currently exists in the world from the client-side. Sending this packet if the client cannot already see this entity will have no effect.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x0E
+ |rowspan="1"| Client
+ | Unique Entity Id
+ | SignedVarLong
+ | The unique ID of the entity to be removed. The unique ID is a value that remains consistent across different sessions of the same world, but most unofficial servers simply fill the runtime ID of the entity out for this field.
+ |}
+
+
+
+==== Add Item Entity ====
+
+Sent by the server to make an item entity show up. It is one of the few entities that cannot be sent using the [[#Add Entity|Add Entity]] packet.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="7"| 0x0F
+ |rowspan="7"| Client
+ | Entity ID Self
+ | SignedVarLong
+ | The unique ID of the entity. The unique ID is a value that remains consistent across different sessions of the same world, but most unofficial servers simply fill the runtime ID of the entity out for this field.
+ |-
+ | Runtime Entity ID
+ | VarLong
+ | The runtime ID of the entity. The runtime ID is unique for each world session, and entities are generally identified in packets using this runtime ID.
+ |-
+ | Item
+ | Item
+ | The item that is spawned. It must have a valid ID for it to show up client-side. If it is not a valid item, the client will crash when coming near.
+ |-
+ | Position
+ | Vector3
+ | The position to spawn the entity on. If the entity is at a distance that the player cannot see, the entity will still show up if the player moves closer.
+ |-
+ | Velocity
+ | Vector3
+ | The initial velocity the entity spawns with. This velocity will initiate client side movement of the entity.
+ |-
+ | Metadata
+ | MetadataDictionary
+ | A map of entity metadata, which includes flags and data properties that alter in particular the way the entity looks. Flags include ones such as 'on fire' and 'sprinting'. The metadata values are indexed by their property key.
+ |-
+ | Is From Fishing
+ | Boolean
+ | Specifies if the item was obtained by fishing it up using a fishing rod. It is not clear why the client needs to know this.
+ |}
+
+
+
+==== Take Item Entity ====
+
+Sent by the server when a player picks up an item entity. It makes the item entity disappear to viewers and shows the pick-up animation.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x11
+ |rowspan="2"| Client
+ | Item Runtime Entity Id
+ | VarLong
+ | the entity runtime ID of the item that is being taken by another entity. It will disappear to viewers after showing the pick-up animation.
+ |-
+ | Runtime Entity Id
+ | VarLong
+ | The runtime ID of the entity that took the item, which is usually a player, but could be another entity like a zombie too.
+ |}
+
+
+
+==== Move Entity Absolute ====
+
+Sent by the server to move an entity to an absolute position. It is typically used for movements where high accuracy isn't needed, such as for long range teleporting.
+This packet is also sent by the client when riding a horse/donkey.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x12
+ |rowspan="4"| Server & Client
+ | Runtime entity id
+ | VarLong
+ | The runtime ID of the entity. The runtime ID is unique for each world session, and entities are generally identified in packets using this runtime ID.
+ |-
+ | Flags
+ | byte
+ | A combination of flags that specify details of the movement. See below for more info.
+ |-
+ | Position
+ | PlayerLocation
+ | 
+ |}
+ 
+{| class="wikitable"
+ |-
+ ! Field
+ ! Bit
+ ! Notes
+ |-
+ | On ground
+ | 0x01
+ | If the entity is touching the ground
+ |-
+ | Telported
+ | 0x02
+ |
+ |}
+
+
+
+==== Move Player ====
+
+Sent by players to send their movement to the server, and by the server to update the movement of player entities to other players.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="8"| 0x13
+ |rowspan="8"| Server & Client
+ | Runtime entity id
+ | VarLong
+ | The runtime ID of the player. The runtime ID is unique for each world session, and entities are generally identified in packets using this runtime ID.
+ |-
+ | Position
+ | Vector3
+ | 
+ |-
+ | Rotation
+ | Vector3
+ | Pitch, yaw and head yaw
+ |-
+ | Mode
+ | Byte
+ | 
+ |-
+ | On ground
+ | Boolean
+ | Specifies if the player is considered on the ground. Note that proxies or hacked clients could fake this to always be true, so it should not be taken for granted.
+ |-
+ | Riding runtime entity id
+ | Float
+ | The runtime ID of the entity that the player might currently be riding. If not riding, this should be left 0.
+ |-
+ | Teleportation cause
+ | VarLong
+ | See below. Only needs to exist if Mode cause is 2 (teleport).
+ |-
+ | Entity type
+ | Byte
+ | Only needs to exist if Mode cause is 2 (teleport).
+ |}
+ 
+Modes:
+{| class="wikitable"
+ ! ID
+ ! Mode
+ |-
+ | 0
+ | Normal
+ |-
+ | 1
+ | Reset
+ |-
+ | 2
+ | Teleport
+ |-
+ | 3
+ | Rotation
+ |}
+
+Teleportation causes:
+{| class="wikitable"
+ ! ID
+ ! Cause
+ |-
+ | 0
+ | Unknown
+ |-
+ | 1
+ | Projectile
+ |-
+ | 2
+ | Chorus fruit
+ |-
+ | 3
+ | Command
+ |-
+ | 4
+ | Behavior
+ |}
+
+
+
+==== Rider Jump ====
+
+Sent by the client when it jumps while riding an entity that has the WASDControlled entity flag set, for example when riding a horse. According to MiNET this can also be sent from the server to the client, but details on this are unknown.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x14
+ |rowspan="1"| Server & Client
+ | Jump Strength
+ | SignedVarInt
+ | The strength of the jump, depending on how long the rider has held the jump button.
+ |}
+
+
+
+==== Update Block ====
+
+Sent by the server to update a block client-side, without resending the entire chunk that the block is located in. It is particularly useful for small modifications like block breaking/placing.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x15
+ |rowspan="4"| Client
+ | Coordinates
+ | BlockCoordinates
+ | The block position at which a block is updated.
+ |-
+ | Block Runtime ID
+ | VarInt
+ | The runtime ID of the block that is placed at Position after sending the packet to the client. The runtime ID must point to a block sent in the list in the Start Game packet.
+ |-
+ | Flags
+ | VarInt
+ | See below. Flags is a combination of flags that specify the way the block is updated client-side. It is a combination of the flags below, but typically sending only the Network flag is sufficient.
+ |-
+ | Layer
+ | VarInt
+ | The world layer on which the block is updated. In Bedrock, multiple blocks can be put in the same location using layers. The second layer is usually used for liquids, so blocks can be inside a liquid. For most blocks, this is the first layer, as that layer is the default layer to place blocks on, but for blocks inside of each other, this differs. As this system is designed with liquids, there may be bugs when using this to place blocks inside each other. For example, placing an interactable block such as an item frame on the second layer can cause a game crash if the player tries to interact with it.
+ |}
+ 
+{| class="wikitable"
+ |-
+ ! Field
+ ! Bit
+ ! Notes
+ |-
+ | Neighbors
+ | 0x01
+ | 
+ |-
+ | Network
+ | 0x02
+ |
+ |-
+ | No Graphic
+ | 0x04
+ |
+ |-
+ | Priority
+ | 0x08
+ |
+ |}
+
+
+
+==== Add Painting ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x16
+ |rowspan="5"| Client
+ | Unique Entity Id
+ | SignedVarLong
+ | The unique ID of the entity. The unique ID is a value that remains consistent across different sessions of the same world, but most unofficial servers simply fill the runtime ID of the entity out for this field.
+ |-
+ | Runtime Entity Id
+ | VarLong
+ | The runtime ID of the entity. The runtime ID is unique for each world session, and entities are generally identified in packets using this runtime ID.
+ |-
+ | Position
+ | Vector3
+ | The position to spawn the entity at. If the entity is at a distance that the player cannot see, the entity will still show up if the player moves closer.
+ |-
+ | Direction
+ | SignedVarInt
+ | The facing direction of the painting. See below.
+ |-
+ | Name
+ | String
+ | This is the name of the painting (e.g. BurningSkull). See below.
+ |}
+ 
+Valid facing values:
+* 0 - Facing toward positive Z (south)
+* 1 - Facing toward negative X (west)
+* 2 - Facing toward negative Z (north)
+* 3 - Facing toward positive X (east)
+ 
+Valid name values:
+* Kebab
+* Aztec
+* Alban
+* Aztec
+* Aztec2
+* Bomb
+* Plant
+* Wasteland
+* Wanderer
+* Graham
+* Pool
+* Courbet
+* Sunset
+* Sea
+* Creebet
+* Match
+* Bust
+* Stage
+* Void
+* SkullAndRoses
+* Wither
+* Fighters
+* Skeleton
+* DonkeyKong
+* PoInter
+* Pigscene
+* BurningSkull
+
+
+
+==== Tick Sync ====
+
+Sent by the client and the server to maintain a synchronized, server-authoritative tick between the client and the server. The client sends this packet first, and the server should reply with another one of these packets, including the response time.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x17
+ |rowspan="2"| Server & Client
+ | Request Timestamp
+ | Long
+ | 
+ |-
+ | Response Timestamp
+ | Long
+ | 
+ |}
+ 
+
+
+==== Level Sound Event (1) ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x18
+ |rowspan="6"| Server & Client
+ | Sound ID
+ | Byte
+ | 
+ |-
+ | Position
+ | Vector3
+ | 
+ |-
+ | Block Id
+ | SignedVarInt
+ | 
+ |-
+ | Entity Type
+ | SignedVarInt
+ | 
+ |-
+ | Is baby mob
+ | Boolean
+ | 
+ |-
+ | Is global
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Level Event ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x19
+ |rowspan="3"| Client
+ | Event ID
+ | SignedVarInt
+ | 
+ |-
+ | Position
+ | Vector3
+ | 
+ |-
+ | Data
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Block Event ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x1A
+ |rowspan="3"| Client
+ | Block Position
+ | BlockCoordinates
+ | 
+ |-
+ | Event Type
+ | SignedVarInt
+ | 
+ |-
+ | Event Data
+ | SignedVarInt
+ | 
+ |}
+
+
+
+==== Entity Event ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x1B
+ |rowspan="3"| Server & Client
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Event ID
+ | Byte
+ | See [[/Entity Events|Bedrock Protocol/Entity Events]]
+ |-
+ | Data
+ | SignedVarInt
+ | 
+ |}
+
+
+
+==== Mob Effect ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x1C
+ |rowspan="6"| Client
+ | Runtime entity id
+ | VarLong
+ | 
+ |-
+ | Event
+ | Byte
+ | 
+ |-
+ | Effect id
+ | SignedVarInt
+ | See the Bedrock Edition section of [[Status effect#Effect_IDs]]
+ |-
+ | Amplifier
+ | SignedVarInt
+ | 
+ |-
+ | Particles
+ | Boolean
+ | If true, effect particles are not shown
+ |-
+ | Duration
+ | SignedVarInt
+ | 
+ |}
+ 
+Events:
+* 0: None
+* 1: Add
+* 2: Modify
+* 3: Remove
+
+==== Update Attributes ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x1D
+ |rowspan="2"| Client
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Attributes
+ | PlayerAttributes
+ | 
+ |}
+ 
+
+
+==== Inventory Transaction ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x1E
+ |rowspan="1"| Server & Client
+ | Transaction
+ | Transaction
+ | 
+ |}
+ 
+
+
+==== Mob Equipment ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x1F
+ |rowspan="5"| Server & Client
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Item
+ | Item
+ | 
+ |-
+ | Slot
+ | Byte
+ | 
+ |-
+ | Selected Slot
+ | Byte
+ | 
+ |-
+ | Windows Id
+ | Byte
+ | 
+ |}
+ 
+
+
+==== Mob Armor Equipment ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x20
+ |rowspan="5"| Server & Client
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Helmet
+ | Item
+ | 
+ |-
+ | Chestplate
+ | Item
+ | 
+ |-
+ | Leggings
+ | Item
+ | 
+ |-
+ | Boots
+ | Item
+ | 
+ |}
+ 
+
+
+==== Interact ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x21
+ |rowspan="2"| Server & Client
+ | Action ID
+ | Byte
+ | 
+ |-
+ | Target Runtime Entity ID
+ | VarLong
+ | 
+ |}
+ 
+
+
+==== Block Pick Request ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x22
+ |rowspan="5"| Server
+ | Block Position X
+ | SignedVarInt
+ | 
+ |-
+ | Block Position Y
+ | SignedVarInt
+ | 
+ |-
+ | Block Position Z
+ | SignedVarInt
+ | 
+ |-
+ | Add User Data
+ | bool
+ | Whether there should be NBT data in the picked block (activated by pressing Ctrl on default keyboard controls)
+ |-
+ | Hotbar Slot
+ | Byte
+ | 
+ |}
+ 
+The Bedrock client sends the position of the block. It expects the server to decide the block to pick and add it to the inventory or switch the hotbar slot if needed.
+
+
+
+==== Entity Pick Request ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x23
+ |rowspan="2"| Server
+ | Runtime Entity ID
+ | Unsigned Long
+ | 
+ |-
+ | Hotbar Slot
+ | Byte
+ | The held hotbar slot of the player at the time of trying to pick the entity. If empty, the resulting spawn egg will be put into this slot.
+ |}
+
+
+
+==== Player Action ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x24
+ |rowspan="4"| Server
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Action ID
+ | SignedVarInt
+ | 
+ |-
+ | Coordinates
+ | BlockCoordinates
+ | 
+ |-
+ | Face
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Entity Fall ====
+
+Sent by the client when it falls from a distance onto a block that would damage the player.
+
+This packet should not be used at all by the server, as it can easily be spoofed using a proxy or custom client. Servers should implement fall damage using their own calculations.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x25
+ |rowspan="3"| Server
+ | Runtime Entity Id
+ | VarLong
+ | 
+ |-
+ | Fall Distance
+ | Float
+ | The distance that the entity fell until it hit the ground. The damage would otherwise be calculated using this field.
+ |-
+ | In Void
+ | Boolean
+ | Specifies if the fall was in the void. The player can't fall below roughly Y=-40.
+ |}
+
+
+
+==== Hurt Armor ====
+
+Sent by the server to damage the player's armor after being hit. 
+
+The packet should never be used by servers as it hands the responsibility over to the player completely, while the server can easily and reliably update the armor damage of players itself.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x26
+ |rowspan="1"| Client
+ | Health
+ | SignedVarInt
+ | 
+ |}
+
+
+
+==== Set Entity Data ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x27
+ |rowspan="2"| Server & Client
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Metadata
+ | MetadataDictionary
+ | 
+ |}
+ 
+
+
+==== Set Entity Motion ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x28
+ |rowspan="4"| Server & Client
+ | Runtime Entity Id
+ | VarLong
+ | 
+ |-
+ | Motion X
+ | Vector3
+ | 
+ |-
+ | Motion Y
+ | Float
+ | 
+ |-
+ | Motion Z
+ | Float
+ | 
+ |}
+ 
+
+
+==== Set Entity Link ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x29
+ |rowspan="4"| Client
+ | Ridden ID
+ | SignedVarLong
+ | 
+ |-
+ | Rider ID
+ | SignedVarLong
+ | 
+ |-
+ | Link Type
+ | Byte
+ | 
+ |-
+ | Unknown
+ | Byte
+ | 
+ |}
+ 
+
+
+==== Set Health ====
+
+Sent by the server to set the health of the player it is sent to.
+
+This packet should no longer be used. Instead, the health attribute should be used so that the health and maximum health may be changed directly.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x2A
+ |rowspan="1"| Client
+ | Health
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Set Spawn Position ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x2B
+ |rowspan="5"| Client
+ | Spawn Type
+ | SignedVarInt
+ | 
+ |-
+ | Block Position
+ | BlockCoordinates
+ | the new position of the spawn that was set. If spawnType is WORLD_SPAWN, compasses will point to this position. As of 1.16, blockPosition is always the position of the player.
+ |-
+ | Dimension ID
+ | Int
+ |
+ |-
+ | Spawn Position
+ | Vector3
+ | Default -2147483648, -2147483648, -2147483648
+ |-
+ | Forced
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Animate ====
+
+Sent by the server to send a player animation from one player to all viewers of that player. 
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x2C
+ |rowspan="2"| Server & Client
+ | Action ID
+ | SignedVarInt
+ | 
+ |-
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |}
+ 
+
+
+==== Respawn ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x2D
+ |rowspan="3"| Server & Client
+ | Position
+ | Vector3
+ | 
+ |-
+ | State
+ | Byte
+ | 
+ |-
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |}
+
+States:
+{| class="wikitable"
+ ! ID
+ ! Name
+ |-
+ | 0
+ | Server Searching
+ |-
+ | 1
+ | Server Ready
+ |-
+ | 2
+ | Client Ready
+ |}
+
+==== Container Open ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x2E
+ |rowspan="4"| Client
+ | Window Id
+ | Byte
+ | 
+ |-
+ | Type
+ | Byte
+ | 
+ |-
+ | Block Position
+ | BlockCoordinates
+ | 
+ |-
+ | Unique Entity Id
+ | SignedVarLong
+ | 
+ |}
+
+Bedrock needs either a valid block position, with an actual block at that position, or an entity ID for this to work. The entity must have CONTAINER_BASE_SIZE metadata, or the block must be a container. The entity ID is used for minecart chests etc. but any entity will work. If the entity has NAMETAG metadata this will be used as the container name.
+
+
+
+==== Container Close ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x2F
+ |rowspan="1"| Server & Client
+ | Window Id
+ | Byte
+ | 
+ |}
+ 
+
+
+==== Player Hotbar ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x30
+ |rowspan="3"| Server & Client
+ | Selected Hotbar Slot
+ | VarInt
+ | 
+ |-
+ | Container Id
+ | Byte
+ | 
+ |-
+ | Select Hotbar Slot
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Inventory Content ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x31
+ |rowspan="2"| Server & Client
+ | Inventory Id
+ | VarInt
+ | 
+ |-
+ | Input
+ | ItemStacks
+ | 
+ |}
+ 
+
+
+==== Inventory Slot ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x32
+ |rowspan="3"| Server & Client
+ | Inventory Id
+ | VarInt
+ | 
+ |-
+ | Slot
+ | VarInt
+ | 
+ |-
+ | Item
+ | Item
+ | 
+ |}
+ 
+
+
+==== Container Set Data ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x33
+ |rowspan="3"| Client
+ | Window Id
+ | Byte
+ | 
+ |-
+ | Property
+ | SignedVarInt
+ | 
+ |-
+ | Value
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Crafting Data ====
+
+Since 1.16.200, each recipe must have a unique network ID. Otherwise, the client will crash.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x34
+ |rowspan="4"| Client
+ | Recipes
+ | Recipes
+ | 
+ |-
+ | Potion type recipes
+ | PotionTypeRecipe[]
+ | 
+ |-
+ | potion container recipes
+ | PotionContainerChangeRecipe[]
+ | 
+ |-
+ | Is Clean
+ | Boolean
+ | 
+ |}
+
+==== Crafting Event ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x35
+ |rowspan="5"| Server & Client
+ | Window ID
+ | Byte
+ | 
+ |-
+ | Recipe Type
+ | SignedVarInt
+ | 
+ |-
+ | Recipe ID
+ | UUID
+ | 
+ |-
+ | Input
+ | ItemStacks
+ | 
+ |-
+ | Result
+ | ItemStacks
+ | 
+ |}
+ 
+
+
+==== GUI Data Pick Item ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x36
+ |rowspan="4"| Client
+ |-
+ | Item name
+ | String
+ | The name of the item that shows up in the top part of the popup that shows up when selecting an item. It is shown as if an item was selected by the player itself.
+ |-
+ | Item effects
+ | String
+ | The line under the Item name, where the effects of the item are usually situated.
+ |-
+ | Hotbar Slot
+ | int
+ | The hot bar slot to be selected/picked. This does not currently work, so it does not matter what number this is.
+ |}
+
+Sent by the server to make the client 'select' a hotbar slot. It currently appears to be broken however, and does not actually set the selected slot to the hotbar slot set in the packet.
+
+
+
+==== Adventure Settings ====
+
+Sent by the server to update gameplay related features, in particular permissions to access these features for the client.
+
+It includes allowing the player to fly, build, and mine and attack entities. Most of these flags should be checked server-side instead of using this packet only.
+
+The client my also send this packet to the server when it updates one of these settings through the in-game settings interface. The server should verify if the player actually has permission to update these settings.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x37
+ |rowspan="6"| Server & Client
+ | Flags
+ | VarInt
+ | 
+ |-
+ | Command permission
+ | VarInt
+ | 
+ |-
+ | Action permissions
+ | VarInt
+ | 
+ |-
+ | Permission level
+ | VarInt
+ | 
+ |-
+ | Custom stored permissions
+ | VarInt
+ | 
+ |-
+ | User Id
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Block Entity Data ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x38
+ |rowspan="2"| Server & Client
+ | Coordinates
+ | BlockCoordinates
+ | 
+ |-
+ | NamedTag
+ | NBT
+ | 
+ |}
+ 
+
+
+==== Player Input ====
+
+Sent by the client when the player is moving but the server does not allow it to update its movement using the [[#Move Player|Move Player]] packet. It includes situations where the player is riding an entity like a boat. If this is the case, the packet is sent roughly every tick.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x39
+ |rowspan="4"| Server
+ | Movement
+ | Vec2
+ | The movement vector of the input. It should be thought of in Pocket Edition controls, where specific arrows (or a combination of two, resulting in a diagonal arrow) decide the direction of movement. The movement vector typically has a length of 1: Either it has movement on one axis, or it has a combination, resulting in sqrt(2)/2 for both axes.
+ |-
+ | Jumping
+ | Boolean
+ | Indicates if the player was pressing the jump button or not. It does not define if the player was actually in the air or not.
+ |-
+ | Sneaking
+ | Boolean
+ | Indicates the player was sneaking during the input. Note that this may also be checked by keeping the sneaking state updated using the [[#Player Action|Player Action]] packet
+ |}
+ 
+
+
+==== Level Chunk ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x3A
+ |rowspan="5"| Client
+ | Chunk X
+ | SignedVarInt
+ | 
+ |-
+ | Chunk Z
+ | SignedVarInt
+ | 
+ |-
+ | Sub Chunk Count
+ | VarInt
+ | 
+ |-
+ | Cache Enabled
+ | Boolean
+ | 
+ |-
+ | Chunk Data
+ | ByteArray
+ | 
+ |}
+ 
+
+
+==== Set Commands Enabled ====
+
+This packet is sent to the client to enable or disable the ability to execute commands. If disabled, the client itself will stop the execution of commands.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x3B
+ |rowspan="1"| Client
+ | Commands enabled
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Set Difficulty ====
+
+Sent by the server to update the client-side difficulty pf the client. The actual effect of this packet on the client isn't very significant, as the difficulty is handled server-side.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x3C
+ |rowspan="1"| Client
+ | Difficulty
+ | VarInt
+ | 
+ |}
+ 
+
+
+==== Change Dimension ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x3D
+ |rowspan="5"| Client
+ | Dimension
+ | SignedVarInt
+ | 
+ |-
+ | Position X
+ | Float
+ | 
+ |-
+ | Position Y
+ | Float
+ | 
+ |-
+ | Position Z
+ | Float
+ | 
+ |-
+ | Respawn
+ | Boolean
+ | 
+ |}
+
+==== Set Player Game Type ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x3E
+ |rowspan="1"| Server & Client
+ | Game mode
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Player List ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x3F
+ |rowspan="1"| Client
+ | Records
+ | PlayerRecords
+ | 
+ |}
+ 
+
+
+==== Simple Event ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x40
+ |rowspan="1"| Client
+ | Event Type
+ | Unsigned Short
+ | 
+ |}
+ 
+
+
+==== Event ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x41
+ |rowspan="3"| Client
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Event data
+ | SignedVarInt
+ | 
+ |-
+ | Event type
+ | Byte
+ | 
+ |}
+ 
+
+
+==== Spawn Experience Orb ====
+
+Sent by the server to spawn an experience orb entity client-side. 
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x42
+ |rowspan="2"| Client
+ | Position
+ | Vector3
+ | 
+ |-
+ | Count
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Map Item Data ====
+
+Sent by the server to update the data of a map shown to the client. It is sent with a combination of flags that specify what data is updated.
+
+The packet may be used to update specific parts of the map only. It is not required to send the entire map each time when updating one part.
+
+TODO
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x43
+ |rowspan="1"| Client
+ | Map ID
+ | VarLong
+ | The unique identifier that represents the map that is updated over network. It remains consitent across sesions.
+ |}
+ 
+
+
+==== Map Info Request ====
+
+Sent by the client to request the server to deliver information of a certain map in the inventory of the player. The serve should respond with a [[#Map Item Data|Map Item Data]] packet.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x44
+ |rowspan="1"| Server & Client
+ | Unique Map Id
+ | SignedVarLong
+ | 
+ |}
+ 
+
+
+==== Request Chunk Radius ====
+
+Sent by the client to update the server on the chunk view radius that it has set in the settings. The server may respond with a [[#Chunk Radius Updated|Chunk Radius Updated]] packet with either the radius requested, or a different chunk radius if the server chooses so.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x45
+ |rowspan="1"| Server & Client
+ | Chunk radius
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Chunk Radius Updated ====
+
+Sent by the server in response to a [[#Request Chunk Radius|Request Chunk Radius]] packet. It defines the radius that the server allows the client to have. This may be lower than the chunk radius requested by the client.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x46
+ |rowspan="1"| Client
+ | Chunk radius
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== ItemFrame Drop Item ====
+
+Sent by the client in creative mode when it wants to remove an item from an item frame. For survival mode, the player action types of START_BREAK and ABORT_BREAK are instead sent.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x47
+ |rowspan="1"| Server & Client
+ | Block Position
+ | BlockCoordinates
+ |
+ |}
+
+==== Game Rules Changed ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x48
+ |rowspan="1"| Client
+ | Rules
+ | GameRules
+ | 
+ |}
+ 
+
+
+==== Camera ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x49
+ |rowspan="2"| Client
+ | Camera Unique Entity Id
+ | SignedVarLong
+ | 
+ |-
+ | Player Unique Entity Id
+ | SignedVarLong
+ | 
+ |}
+ 
+
+
+==== Boss Event ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x4A
+ |rowspan="2"| Client
+ | Boss Entity ID
+ | SignedVarLong
+ | 
+ |-
+ | Event Type
+ | VarInt
+ | 
+ |}
+ 
+
+
+==== Show Credits ====
+
+Sent by the server to show the Minecraft credits screen to the client. It is typically when the player beats the ender dragon and leaves the End.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x4B
+ |rowspan="2"| Client
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Status
+ | SignedVarInt
+ | 
+ |}
+ 
+Statuses:
+{| class="wikitable"
+ ! ID
+ ! Name
+ |-
+ | 0
+ | Start Credits
+ |-
+ | 1
+ | End Credits
+ |}
+
+
+==== Available Commands ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x4C
+ |rowspan="1"| Client
+
+ |}
+ 
+
+
+==== Command Request ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x4D
+ |rowspan="5"| Server
+ | Command
+ | String
+ | 
+ |-
+ | Command type
+ | VarInt
+ | 
+ |-
+ | Unknown UUID
+ | UUID
+ | 
+ |-
+ | Request ID
+ | String
+ | 
+ |-
+ | Unknown
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== CommandBlock Update ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x4E
+ |rowspan="1"| Server
+ | Is Block
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Command Output ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x4F
+ |rowspan="1"| Client
+
+ |}
+ 
+
+
+==== Update Trade ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="10"| 0x50
+ |rowspan="10"| Client
+ | Window ID
+ | Byte
+ | 
+ |-
+ | Window Type
+ | Byte
+ | 
+ |-
+ | Unknown0
+ | VarInt
+ | 
+ |-
+ | Unknown1
+ | VarInt
+ | 
+ |-
+ | Unknown2
+ | VarInt
+ | 
+ |-
+ | Is Willing
+ | Boolean
+ | 
+ |-
+ | Trader Entity ID
+ | SignedVarLong
+ | 
+ |-
+ | Player Entity ID
+ | SignedVarLong
+ | 
+ |-
+ | Display Name
+ | String
+ | 
+ |-
+ | NamedTag
+ | NBT
+ | 
+ |}
+ 
+
+
+==== Update Equip ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x51
+ |rowspan="5"| Client
+ | Window ID
+ | Byte
+ | 
+ |-
+ | Window Type
+ | Byte
+ | 
+ |-
+ | Unknown
+ | Byte
+ | 
+ |-
+ | Entity ID
+ | SignedVarLong
+ | 
+ |-
+ | NamedTag
+ | NBT
+ | 
+ |}
+ 
+
+
+==== Resource Pack Data Info ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="7"| 0x52
+ |rowspan="7"| Client
+ | Package ID
+ | String
+ | 
+ |-
+ | Max Chunk Size
+ | Unsigned Int
+ | 
+ |-
+ | Chunk Count
+ | Unsigned Int
+ | 
+ |-
+ | Compressed Package Size
+ | Unsigned Long
+ | 
+ |-
+ | Hash
+ | ByteArray
+ | 
+ |-
+ | Is Premium
+ | Boolean
+ | 
+ |-
+ | Pack Type
+ | Byte
+ | 
+ |}
+ 
+
+
+==== Resource Pack Chunk Data ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x53
+ |rowspan="4"| Client
+ | Package ID
+ | String
+ | 
+ |-
+ | Chunk Index
+ | Unsigned Int
+ | 
+ |-
+ | Progress
+ | Unsigned Long
+ | 
+ |-
+ | Payload
+ | ByteArray
+ | 
+ |}
+ 
+
+
+==== Resource Pack Chunk Request ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x54
+ |rowspan="2"| Server
+ | Package ID
+ | String
+ | 
+ |-
+ | Chunk Index
+ | Unsigned Int
+ | 
+ |}
+ 
+
+
+==== Transfer ====
+
+Sent by the server to transfer a player from the current server to another. Doing so will fully disconnect the client, bring it back to the main menu and make it connect to the next server.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x55
+ |rowspan="2"| Client
+ | Address
+ | String
+ | 
+ |-
+ | Port
+ | Unsigned Short
+ | 
+ |}
+ 
+
+
+==== Play Sound ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x56
+ |rowspan="4"| Client
+ | Sound name
+ | String
+ | 
+ |-
+ | Sound position
+ | Position
+ | 
+ |-
+ | Volume
+ | Float
+ | 
+ |-
+ | Pitch
+ | Float
+ | 
+ |}
+ 
+
+
+==== Stop Sound ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x57
+ |rowspan="2"| Client
+ | Sound Name
+ | String
+ | 
+ |-
+ | Stopping All Sound
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Set Title ====
+
+Sent by the server to make a title, subtitle or action bar shown to a player. It has several fields that allow setting the duration of the titles.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x58
+ |rowspan="5"| Client
+ | Type
+ | SignedVarInt
+ | 
+ |-
+ | Text
+ | String
+ | 
+ |-
+ | Fade In Time
+ | SignedVarInt
+ | 
+ |-
+ | Stay Time
+ | SignedVarInt
+ | 
+ |-
+ | Fade Out Time
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Add Behavior Tree ====
+
+Sent by the server. Its usage remains unknown, as behavior packs are typically all sent at the start of the game.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x59
+ |rowspan="1"| Client
+ | Behavior Tree JSON
+ | String
+ | 
+ |}
+ 
+
+
+==== Structure Block Update ====
+When client change the Structure Block Screen and close it, client will send it to server to update. 
+
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x5A
+ |rowspan="3"| Client
+ | Block Position
+ | Block Position
+ |
+ |-
+ | Structure Data
+ | Structure Editor Data
+ |
+ |-
+ | Trigger it?
+ | Boolean
+ |
+ |}
+
+Structure Editor Data
+
+{| class="wikitable"
+ ! Field Name
+ ! Field Type
+ ! Field Notes
+ |-
+ | Structure
+ | String
+ |
+ |-
+ | Data Field
+ | String
+ | Used in datga mode
+ |-
+ | Included players?
+ | Boolean
+ |
+ |-
+ | Show bounding box?
+ | Boolean
+ |
+ |-
+ |rowspan="7"| Block Type
+ |rowspan="7"| varint
+ | Data = 0
+ |-
+ | Save = 1
+ |-
+ | Load = 2
+ |-
+ | Corner = 3
+ |-
+ | Invalid = 4
+ |-
+ | Export = 5
+ |-
+ | Cound = 6
+ |-
+ |rowspan="23"| Settings
+ ! Field Name
+ ! Field Type
+ ! Field Notes
+ |-
+ | Palette Name
+ | String
+ | 
+ |-
+ | Ignore Entities?
+ | Boolean
+ |
+ |-
+ | Ignore Blocks?
+ | Boolean
+ |
+ |-
+ | Size
+ | Block Position
+ |
+ |-
+ | Offset
+ | Block Position
+ |
+ |-
+ | Last Editor
+ | Editor Unique ID
+ |
+ |-
+ |rowspan="5"| Rotation
+ |rowspan="5"| byte
+ | None = 0
+ |-
+ | 90 = 1
+ |-
+ | 180 = 2
+ |-
+ | 270 = 3
+ |-
+ | Total = 4
+ |-
+ |rowspan="4"| Mirror
+ |rowspan="4"| byte
+ | None = 0
+ |-
+ | X = 1
+ |-
+ | Z = 2
+ |-
+ | XZ = 3
+ |-
+ |rowspan="3"| Animation Mode
+ |rowspan="3"| byte
+ | None = 0
+ |-
+ | Layers = 1
+ |-
+ | Blocks = 2
+ |-
+ | Animation Seconds
+ | float
+ |
+ |-
+ | Integrity Value
+ | fload
+ |
+ |-
+ | Integrity Speed
+ | Unsigned int
+ |
+ |-
+ | Rotation Pivot
+ | Vector3
+ |
+ |-
+ |rowspan="2"| Save Mode
+ |rowspan="2"| varint
+ | Memory = 0
+ |-
+ | Disk = 1
+ |}
+
+==== Show Store Offer ====
+
+Sent by the server to show a Marketplace store offer to a player. It opens a window client-side that displays the item.
+
+The packet only works on partnered servers: Servers that are not partnered will not have a store button show up on the in-game pause menu and will, as a result, not be able to open store offers on the client side. Sending the packet does therefore not work when using a proxy that is connected to with the domain of one of the partnered servers.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x5B
+ |rowspan="2"| Client
+ | Offer Id
+ | String
+ | 
+ |-
+ | Shown To All
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Purchase Receipt ====
+
+Sent by the client to notify the server it purchased an item from the marketplace store that was offered by the server.
+
+The packet is only used for partnered servers.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x5C
+ |rowspan="1"| Server
+
+ |}
+ 
+
+
+==== Player Skin ====
+
+Sent by the client when it updates its own skin using the in-game skin picker. It is relayed by the server, or sent if the server changes the skin of a player on its own accord. 
+
+Note that the packet can only be sent for players that are in the player list at the time of sending.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x5D
+ |rowspan="4"| Server & Client
+ | UUID
+ | UUID
+ | 
+ |-
+ | Skin
+ | Skin
+ | 
+ |-
+ | Skin Name
+ | String
+ | 
+ |-
+ | Old Skin Name
+ | String
+ | 
+ |}
+ 
+
+
+==== Sub Client Login ====
+
+Sent when an additional player attempts to join from a split screen session. The contents of the chain data and skin data fields use the same format as the [[#Login|Login]] packet, and can be decoded the same way.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x5E
+ |rowspan="2"| Server
+ | Chain data
+ | JSON array of JWT Data
+ | Contains the display name, UUID and XUID
+ |-
+ | Skin data
+ | JWT Data
+ | 
+ |}
+
+
+
+==== Automation Client Connect ====
+
+Sent by the server to make the client connect to a websocket server. This websocket server has the ability to execute commands on the behalf of the client and it canlisten for certain events fired by the client.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x5F
+ |rowspan="1"| Client
+ | Address
+ | String
+ | 
+ |}
+ 
+
+
+==== Set Last Hurt By ====
+
+Sent by the server to let the client know what entity type it was last hurt by. At this moment, the packet is useless and should not be used. 
+There is no behavior that depends on if this packet is sent or not.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x60
+ |rowspan="1"| Client
+ | Entity Type Id
+ | VarInt
+ | 
+ |}
+ 
+
+
+==== Book Edit ====
+
+Sent by the client when it edits a book. It is sent each time a modification was made and the player stops its typing 'session', rather than simply after closing the book.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x61
+ |rowspan="1"| Client
+
+ |}
+ 
+
+
+==== NPC Request ====
+
+Sent by the client when it interacts with an NPC.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x62
+ |rowspan="6"| Server & Client
+ | Entity ID
+ | VarLong
+ | The entity must be in the render distance of the client
+ | 
+ |-
+ | Action type
+ | ActionTypes
+ | 
+ |-
+ | Dialogue
+ | String
+ | 
+ |-
+ | Screen name
+ | String
+ | The usage for this field is unknown. Vanilla server sends an empty field
+ | 
+ |-
+ | NPC name
+ | String
+ | 
+ |-
+ | Action JSON
+ | JSON
+ | 
+ |}
+
+
+
+==== Photo Transfer ====
+
+Sent by the server to transfer a photo (image) file to the client. It is typically used to transfer photos so that the client can display it in a portfolio in Education Edition.
+
+While previously usable in the base game, the displaying of photos in books was disabled and the packet has little use anymore.
+
+The packet is specifically for Education Edition. It has no use in the base game.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x63
+ |rowspan="3"| Server
+ | File name
+ | String
+ | 
+ |-
+ | Image data
+ | String
+ | 
+ |-
+ | Unknown2
+ | String
+ | 
+ |}
+ 
+
+
+==== Model Form Request ====
+
+Sent by the server to make the client open a form.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x64
+ |rowspan="2"| Client
+ | Form Id
+ | VarInt
+ | 
+ |-
+ | Form Data
+ | String
+ | 
+ |}
+ 
+
+
+==== Model Form Response ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x65
+ |rowspan="2"| Server
+ | Form Id
+ | VarInt
+ | 
+ |-
+ | Form Data
+ | String
+ | 
+ |}
+ 
+
+
+==== Server Settings Request ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x66
+ |rowspan="1"| Server
+
+ |}
+ 
+
+
+==== Server Settings Response ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x67
+ |rowspan="2"| Client
+ | Form Id
+ | VarLong
+ | 
+ |-
+ | Form Data
+ | String
+ | 
+ |}
+ 
+
+
+==== Show Profile ====
+
+Sent by the server to show the Xbox Live profile of one player to another.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x68
+ |rowspan="1"| Client
+ | Xuid
+ | String
+ | If the XUID is invalid, the client ignores the packet
+ |}
+ 
+
+
+==== Set Default Game Type ====
+
+Sent by the client when it toggles the default game type in the settings UI, and is sent by the server when it actually changes the default game type, resulting in the toggle being changed in the settings UI.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x69
+ |rowspan="1"| Client
+ | Game mode
+ | VarInt
+ | 
+ |}
+ 
+
+
+==== Remove Objective ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x6A
+ |rowspan="1"| Client
+ | Objective Id
+ | String
+ | 
+ |}
+ 
+
+
+==== Set Display Objective ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x6B
+ |rowspan="5"| Client
+ | Display Slot
+ | String
+ | 
+ |-
+ | Objective Id
+ | String
+ | 
+ |-
+ | Display Name
+ | String
+ | 
+ |-
+ | Criteria
+ | String
+ | 
+ |-
+ | Sort Order
+ | SignedVarInt
+ | 
+ |}
+ 
+
+
+==== Set Score ====
+
+Sent by the server to send the contents of a scoreboard to the player. It may be used to either add, remove or edit entries on the scoreboard.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x6C
+ |rowspan="2"| Client
+ | Action
+ | byte
+ | 0 (Add), 1 (Remove)
+ |-
+ | Entries
+ | ScoreEntries
+ | 
+ |}
+ 
+
+
+==== Lab Table ====
+
+Sent by the client to let the server know it started a chemical reaction in Education Edition, and is sent by the server to allow other clients to show the effects.
+
+This packet is only functional if Education features are enabled.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x6D
+ |rowspan="5"| Server & Client
+ | Unknown Byte 0
+ | Byte
+ | 
+ |-
+ | Block Entity Position X
+ | VarInt
+ | 
+ |-
+ | Block Entity Position Y
+ | VarInt
+ | 
+ |-
+ | Block Entity Position Z
+ | VarInt
+ | 
+ |-
+ | Reaction Type
+ | Byte
+ | 
+ |}
+ 
+
+
+==== Update Block Synced ====
+
+Sent by the server to synchronize the falling of a falling block entity with the transitioning back and forth from and to a solid block. It is used to prevent the entity from flickering, and is used in places such as the pushing of blocks with pistons.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x6E
+ |rowspan="6"| Client
+ | Coordinates
+ | BlockCoordinates
+ | 
+ |-
+ | Block Runtime ID
+ | VarInt
+ | 
+ |-
+ | Block Priority
+ | VarInt
+ | 
+ |-
+ | Data Layer ID
+ | VarInt
+ | 
+ |-
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Block Synced Type
+ | VarLong
+ | 0 - None, 1 - Create, 2 - Destroy
+ |}
+
+==== Move Entity Delta ====
+
+Sent by the server to move an entity by a given delta. The packet is specifically optimized to save as much space as possible, by only writing non-zero fields.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x6F
+ |rowspan="2"| Client
+ | Runtime Entity ID
+ | VarLong
+ | 
+ |-
+ | Flags
+ | Unsigned Short
+ | 
+ |}
+
+Flags
+{| class="wikitable"
+ ! Field
+ ! Bit
+ |-
+ | HAS_X
+ | 0x01
+ |-
+ | HAS_Y
+ | 0x02
+ |-
+ | HAS_Z
+ | 0x4
+ |-
+ | HAS_PITCH
+ | 0x8
+ |-
+ | HAS_YAW
+ | 0x10
+ |-
+ | HAS_ROLL
+ | 0x20
+ |}
+ 
+
+
+==== Set Scoreboard Identity ====
+
+Sent by the server to change the identity type of one of the entries on a scoreboard. This is used to change, for example, an entry pointing to a player, to a fake player when it leaves the server, and to change it back to a real player when it joins again.
+
+In non-vanilla situations, this packet is quite useless.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x70
+ |rowspan="2"| Client
+ | Action
+ | byte
+ | 0 (Add), 1 (Remove)
+ |-
+ | Entries
+ | ScoreboardIdentityEntries
+ | 
+ |}
+ 
+
+
+==== Set Local Player As Initialized ====
+
+Sent by the client in response to a [[#Play Status||Play Status]] with the status Player Spawn (3). The packet marks the moment at which the client is fully initialized and can receive any packet without discarding it.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x71
+ |rowspan="1"| Server
+ | Runtime Entity Id
+ | VarLong
+ | 
+ |}
+ 
+
+
+==== Update Soft Enum ====
+
+Sent by the server to update a soft enum, also known as a dynamic enum, previous sent in the [[#Available Commands|Available Commands]] packet. It is sent whenever the enum should get new options or when some of its options should be removed.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="3"| 0x72
+ |rowspan="3"| Client
+ |-
+ | Enum Data
+ | EnumData
+ | TODO
+ |-
+ | Action
+ | byte
+ | 0 (Add), 1 (Remove), 2 (Update)
+ |}
+ 
+
+
+==== Network Stack Latency ====
+
+Sent by the server (and the client, on development builds) to measure the latency over the entire Minecraft stack, rather than the RakNet latency. 
+
+It has over usages too, such as the ability to be used as some kind of acknowledgement packet, to know when the client has received a certain other packet.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x73
+ |rowspan="2"| Server & Client
+ | Timestamp
+ | Unsigned Long
+ | 
+ |-
+ | Send Back
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Script Custom Event ====
+
+Sent by both the client and server. It is a way to let scripts communicate with the server, so that the client can let the server know it triggered an event, or the other way around.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x75
+ |rowspan="2"| Server & Client
+ | Event Name
+ | String
+ | 
+ |-
+ | Data
+ | String
+ | Typically a JSON encoded string that the script is able to encode and decode too
+ |}
+ 
+
+
+==== Spawn Particle Effect ====
+
+Sent by the server to spawn a particle effect client-side. Unlike other packets that result in the appearing of particles, this packet can show particles that are not hardcoded in the client. They can be added and changed through behavior packs to implement custom particles.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x76
+ |rowspan="5"| Client
+ | Dimension Id
+ | Byte
+ | 
+ |-
+ | Unique Entity Id
+ | SignedVarLong
+ | 
+ |-
+ | Position
+ | Vector3
+ | 
+ |-
+ | Identifier
+ | String
+ | The name of the particle
+ |-
+ | molangVariablesJson
+ | String
+ | JSON data that sets initial Molang variables for particles, which the client can access. Must be set to empty if not used. See below for an example.
+ |}
+ 
+<syntaxhighlight lang="json">
+[
+  {
+    "name": "variable.color", // top level variable
+    "value": {
+      "type": "member_array", // type; use float for values and member_array for sub-variables
+      "value": [
+        {
+          "name": ".r",
+          "value": {
+            "type": "float",
+            "value": 1
+          }
+        },
+        {
+          "name": ".g",
+          "value": {
+            "type": "float",
+            "value": 0
+          }
+        },
+        {
+          "name": ".b",
+          "value": {
+            "type": "float",
+            "value": 0
+          }
+        },
+        {
+          "name": ".a",
+          "value": {
+            "type": "float",
+            "value": 1
+          }
+        }
+      ]
+    }
+  }
+]
+</syntaxhighlight>
+
+==== Available Entity Identifiers ====
+
+Sent by the server at the start of the game to let the client know all entities that are on the server.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x77
+ |rowspan="1"| Client
+ | NamedTag
+ | NBT
+ | 
+ |}
+ 
+
+
+==== Level Sound Event (2) ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x78
+ |rowspan="6"| Server & Client
+ | Sound ID
+ | Byte
+ | 
+ |-
+ | Position
+ | Vector3
+ | 
+ |-
+ | Block Id
+ | SignedVarInt
+ | 
+ |-
+ | Entity Type
+ | String
+ | 
+ |-
+ | Is baby mob
+ | Boolean
+ | 
+ |-
+ | Is global
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Network Chunk Publisher Update ====
+
+Sent by the server to change the point around which chunks are and remain loaded. 
+
+This is useful for minigame servers, where only one area is ever loaded, in which case the [[#Network Chunk Publisher|Network Chunk Publisher]] packet can be sent in the middle of it, so that no chunks ever need to be additionally sent during the course of the game.
+
+In reality, the packet is not extraordinarily useful, and most servers just sent it constantly at the position of the player. 
+
+If the packet is not sent at all, no chunk will be shown to the player, regardless of where they are sent.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x79
+ |rowspan="2"| Client
+ | Coordinates
+ | BlockCoordinates
+ | 
+ |-
+ | Radius
+ | VarInt
+ | 
+ |}
+ 
+
+
+==== Biome Definition List ====
+
+Sent by the server to let the client know all biomes that are available and implemented on the server side.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x7A
+ |rowspan="1"| Client
+ | NamedTag
+ | NBT
+ | 
+ |}
+ 
+
+
+==== Level Sound Event (3) ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x7B
+ |rowspan="6"| Server & Client
+ | Sound ID
+ | VarInt
+ | 
+ |-
+ | Position
+ | Vector3
+ | 
+ |-
+ | Block Id
+ | SignedVarInt
+ | 
+ |-
+ | Entity Type
+ | String
+ | 
+ |-
+ | Is baby mob
+ | Boolean
+ | 
+ |-
+ | Is global
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Level Event Generic ====
+
+Sent by the server to send a 'generic' level event to the client. This packet sends an NBT serialized object and may for that reason be used for any event holding additional data.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x7C
+ |rowspan="1"| Client
+
+ |}
+ 
+
+
+==== Lectern Update ====
+
+Sent by the client to update the server on which page was opened in a book on a lectern, or if the book should be removed from it.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x7D
+ |rowspan="4"| Client
+ | Page
+ | Byte
+ | 
+ |-
+ | Total Pages
+ | Byte
+ | 
+ |-
+ | Block Position
+ | Position
+ | 
+ |-
+ | Dropping Book
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== Video Stream Connect ====
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x7E
+ |rowspan="5"| Client
+ | Server URI
+ | String
+ | 
+ |-
+ | Frame Send Frequency
+ | Float
+ | 
+ |-
+ | Action
+ | Byte
+ | 
+ |-
+ | Resolution X
+ | Int
+ | 
+ |-
+ | Resolution Y
+ | Int
+ | 
+ |}
+ 
+
+
+==== Client Cache Status ====
+
+Sent by the client at the start of the game. It is sent to let the server know if it supports the client-side blob cache. Clients such as Nintendo Switch do not support the cache, and attempting to use it anyway will fail.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x81
+ |rowspan="1"| Server & Client
+ | Supported
+ | Boolean
+ | 
+ |}
+ 
+
+
+==== On Screen Texture Animation ====
+
+Sent by the server to show a certain animation on the screen of the player.
+The packet is used, for example, for when a raid is triggered and a raid a defeated.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x82
+ |rowspan="1"| Client
+ | Animation Type
+ | Int
+ |}
+ 
+
+
+==== Map Create Locked Copy ====
+
+Sent by the server to create a locked copy of a map into another map. It is used in the cartography table to create a map that is locked and cannot be modified.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x83
+ |rowspan="2"| Client
+ | Original Map Id
+ | VarLong
+ | 
+ |-
+ | New Map Id
+ | VarLong
+ | 
+ |}
+ 
+
+
+==== Structure Template Data Request ====
+
+Sent by the client to request data of a structure.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="4"| 0x84
+ |rowspan="4"| Client
+ | Structure Name
+ | String
+ |
+ |-
+ | Position
+ | Block Position
+ |
+ |-
+ | Settings
+ | Structure Settings 
+ | (see Structure Block Update -> Structure Editor Data -> Settings)
+ |-
+ | Reqiested Operation
+ | byte
+ | None = 0, Export From Save Mode = 1, Export From Load Mode = 2, Query Saved Structure = 3
+
+ |}
+
+==== Structure Template Data Response ====
+
+Sent by the server to send data of a structure to the client in response to a [[#Structure Template Data Export Request|Structure Template Data Export Request]] packet.
+
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="6"| 0x85
+ |rowspan="6"| Client
+ | Structure Name
+ | String
+ | This is the name used to export the structure to a file
+ |-
+ |rowspan="5"| Requested structure exists?
+ |rowspan="2"| if exists
+ | Failure
+ | Boolean
+ |-
+ | Response Type
+ | byte
+ |-
+ |rowspan="3"| if not exists
+ | Success
+ | Boolean
+ |-
+ | NBT
+ | Compound Tag
+ |-
+ | Response Type
+ | byte
+ |-
+ |}
+
+==== Update Block Properties ====
+
+Sent by the server to update the available block properties.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x86
+ |rowspan="2"| Client
+ | NamedTag
+ | NBT
+ | 
+ |}
+ 
+
+
+==== Client Cache Blob Status ====
+
+Sent by the client to let the server know what blobs it already has, in an ACK type system.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x87
+ |rowspan="1"| Client
+
+ |}
+ 
+
+
+==== Client Cache Miss Response ====
+
+Sent by the server in response to a [[#Client Cache Blob Status|Client Cache Blob Status]] and contains the blob data of all blobs that the client acknowledged not to have yet.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x88
+ |rowspan="1"| Client
+ | Blobs
+ | 
+ |
+ |}
+ 
+
+
+==== Network Settings ====
+
+Sent by the server to update a variety of network settings. These settings modify the way packets are sent over the network stack.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="5"| 0x8F
+ |rowspan="5"| Client
+ | Compression threshold
+ | Short
+ | The maximum size of a packet this is compressed when sent. If the size of the packet is under this value, it is not compressed. When set to 0, all packets will be uncompressed.
+ |-
+ | Compression method
+ | Short
+ | 0: ZLib 1: Snappy
+ |-
+ | Client throttle enabled
+ | Boolean
+ |
+ |-
+ | Client throttle threshold
+ | Byte
+ |
+ |-
+ | Client throttle scalar
+ | Float
+ |
+ |}
+
+==== Player Auth Input ====
+
+Sent by the client to allow for server authoratative movement. It is used to synchronize the player input with the position server-side.
+
+The client sends this packet when the 'Server Authoritive Movement' field in the [[#Start Game|Start Game]] packet is set to true, instead of the [[#Move Player|Move Player]] packet. The client will send this packet once every tick.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x90
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Creative Content ====
+
+Sent by the server to set the creative inventory's content for a player.
+
+Introduced in 1.16, this packet replaces the previous method of sending an [[#Inventory Content|Inventory Content]] packet with the creative inventory window ID. <b>This packet must be sent from a server after the StartGamePacket since 1.16.100. Otherwise, the client will crash!</b>
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x91
+ |rowspan="2"| Client
+ |}
+
+==== Player Enchant Options ====
+
+Sent by the server to update the enchantment options displayed when the user opens the enchantment table and puts an item in.
+
+This packet was added in 1.16 and allows the server to decide on the enchantment that can be selected by a player. The player should be sent once for every slot update of the enchantment table. The vanilla server sends an empty packet when the player first opens the enchantment table (air is is present in the enchantment table slot) and sends a packet with actual enchantments in it when items are put in that can have enchantments.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x92
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Item Stack Request ====
+
+Sent by the client to change item stacks in an inventory. 
+
+Added in 1.16, is essentially a replacement of the [[#Inventory Transaction|Inventory Transaction]] packet for inventory specific actions, such as moving items around or crafting.
+
+The [[#Inventory Transaction|Inventory Transaction]] packet is still used for actions such as placing blocks and interacting with entities.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x93
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Item Stack Response ====
+
+Sent by the server in response to an [[#Item Stack Request|Item Stack Request]] packet from the client.
+
+This packet is used to either approve or reject ItemStackRequests from the client. If a request is approved, the client will simply continue as normal. If rejected, the client will undo the actions so that the inventory should be in sync with the server again.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x94
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Player Armor Damage ====
+
+Sent by the server to damage the armor of a player. It is a very efficient packet, but generally it's much easier to just send a slot update for the damaged armor.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x95
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Code Builder ====
+
+Sent by the server to open the URL to a Code Builder (websocket) server.
+
+This packet is only used by Education Edition and have no affect on the base game.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x96
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Update Player Game Type ====
+
+Sent by the server to change the game mode of a player. It is functionally identical to the [[#Set Player Game Type|Set Player Game Type]] packet.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x97
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Emote List ====
+
+Sent by the client every time it joins the server and when it equips new emotes. It may be used by the server to find out which emotes the client has available. If the player has no emotes equipped, this packet is not sent.
+
+Under certain circumstances, this packet is also sent from the server to the client, but more testing is needed for this.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x98
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Position Tracking DB Server Broadcast ====
+
+Sent by the server in response to the [[#Position Tracking DB Client Request|Position Tracking DB Client Request]] packet. Thus packet is, as of 1.16, currently only for lodestones. The server maintains a database with tracking IDS and their position and dimension. The client will request these tracking IDs, (NBT tag set on the lodestone compass with the tracking ID?) and the server will respond with the status of those tracking IDs.
+
+What is actually done with the data sent depends on what the client chooses to do with it. For the lodestone compass, it is used to make the compass point toward lodestones and to make it spin if the lodestone at a position is no longer there.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x99
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Position Tracking DB Client Request ====
+
+Sent by the client to request the position and dimension of a 'tracking ID'. These IDs are tracked in a database by the server. In 1.16, this is used for lodestones.
+
+The client will sent this request to find the position a lodestone compass needs to point to. If found, it will point to the lodestone. If not, it will start spinning around.
+
+A [[#Position Tracking DB Server Broadcast|Position Tracking DB Server Broadcast]] packet should be sent in response to this packet.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x9a
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Debug Info ====
+
+Sent by the server. It does not seem to do anything when sent to the normal client in 1.16;
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0x9b
+ |rowspan="2"| Client
+ |}
+
+
+
+==== Packet Violation Warning ====
+
+Sent by the client when it receives an invalid packet from the server. It holds some information on the error that occurred.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="1"| 0x9c
+ |rowspan="1"| Client
+ |}
+
+==== Animate Entity ====
+
+Indicates that the client should play the specified animation on the selected entities. This is the packet used for the <code>/playanimation</code> command found on vanilla Bedrock (see [[Commands/playanimation|Minecraft Wiki]]).
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ !colspan="2"| Field Type
+ ! Notes
+ |-
+ |rowspan="7"| 0x9E
+ |rowspan="7"| Client
+ | Animation
+ |colspan="2"| String
+ | The animation to play on the specified entities. Produces no warnings if the animation is invalid for this entity.
+ |-
+ | Next State
+ |colspan="2"| String
+ | The entity state to move to when the animation has finished playing. Defaults to <code>default</code> on a normal Bedrock server.
+ |-
+ | Stop Expression
+ |colspan="2"| String
+ | A Molang expression of when to stop the animation. Defaults to <code>query.any_animation_finished</code> on a normal Bedrock server.
+ |-
+ | Controller
+ |colspan="2"| String
+ | Specifies the animation controller to use for this animation. Defaults to <code>__runtime_controller</code> on a normal Bedrock server.
+ |-
+ | Blend Out Time
+ |colspan="2"| Float LE
+ | How long to take to move from the specified animation to the next animation. Defaults to 0 on a normal Bedrock server.
+ |-
+ | Entity Array Size
+ |colspan="2"| Unsigned VarInt
+ | The size of the following array
+ |-
+ | Runtime Entity ID
+ | Array
+ | Unsigned VarLong
+ | A runtime entity ID to perform this animation on
+ |}
+
+==== Item Component ====
+
+Always sent by a vanilla Bedrock server after the StartGamePacket. Sent not empty for items with data driven information.
+
+In order for the information in this packet to be used, the experiment data titled <code>data_driven_items</code> must be set to <code>true</code> in the ResourcePackStackPacket (as of 1.16.100), and the item entry in StartGamePacket must have its component toggle set to <code>true</code>.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0xA2
+ |rowspan="2"| Client
+ | Items
+ | ComponentItemData[]
+ | A list of all item components.
+ |}
+
+ComponentItemData takes in a String identifier and an NBT CompoundTag containing item data. Valid, minimal NBT data looks like the following (Any comments are preceded with <code>//</code>):
+
+<syntaxhighlight lang="json">
+{
+  "components": {
+    "item_properties": {
+      "allow_off_hand": 1b,
+      "hand_equipped": 1b,
+      "max_stack_size": 1i
+    },
+    "minecraft:icon": {
+      "texture": "example_item" // Required even with a resource pack, or else the client complains about icon texture
+    }
+  },
+  "id": 1020i, // The runtime ID of the item
+  "name": "wikivg:example_item"
+}
+</syntaxhighlight>
+
+A list of all known valid item properties (and descriptions, if added):
+
+{| class="wikitable"
+ ! Property name
+ ! Property type
+ ! Property description
+ |-
+ | allow_off_hand
+ | boolean
+ | If the item is permitted in the offhand inventory slot.
+ |-
+ | animates_in_toolbar
+ | boolean
+ |
+ |-
+ | can_destroy_in_creative
+ | boolean
+ | the item can box the blocks in creative
+ |-
+ | creative_category
+ | integer
+ | 1 is the construction, 2 is the nature, 3 is the equipment, 4 is the items, the default value is 1
+ |-
+ | creative_group 
+ | string
+ | TODO
+ |-
+ | damage
+ | integer
+ | Shows the number of damage attacks
+ |-
+ | enchantable_slot
+ | string
+ |
+ |-
+ | enchantable_value
+ | integer
+ |
+ |-
+ | explodable
+ | boolean
+ |
+ |-
+ | foil
+ | boolean
+ | The maximum amount of this item that can be in an inventory slot.
+ |-
+ | frame_count
+ | integer
+ |
+ |-
+ | hand_equipped
+ | boolean
+ | If the item should be visually held like a tool.
+ |-
+ | ignores_permissions
+ | boolean
+ |
+ |-
+ | liquid_clipped
+ | boolean
+ | Gives the possibility to click on a liquid
+ |-
+ | max_stack_size
+ | integer
+ | The maximum amount of this item that can be in an inventory slot.
+ |-
+ | mining_speed
+ | float
+ |
+ |-
+ | mirrored_art
+ | boolean
+ |
+ |-
+ | requires_interact
+ | boolean
+ |
+ |-
+ | should_despawn
+ | boolean
+ |
+ |-
+ | stacked_by_data
+ | boolean
+ |
+ |-
+ | use_animation
+ | integer
+ |
+ |-
+ | use_duration
+ | integer
+ |
+ |-
+ |}
+
+Other item components can be found here: https://bedrock.dev/docs/stable/Item#Item%20Components (Add these in the same format as <code>minecraft:icon</code> shown above). Also see: https://wiki.bedrock.dev/concepts/items
+
+==== Filter Text ====
+
+Since 1.16.200, this packet is sent for to all anvil and cartography table rename inputs (I.E. typing a single character will send this packet). The client expects a response back, or else it will assume that the item cannot be renamed (which can be used to block renaming items).
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ |rowspan="2"| 0xA3
+ |rowspan="2"| Both
+ | Text
+ | String
+ | The string to be checked (if serverbound), or checked (if clientbound). If this packet is clientbound, then the client will use this text for the final output of the item - the input box itself will not be modified, but the item in the output box will show this 'filtered' text.
+ |-
+ | From Server
+ | Boolean
+ | True if sent from the server; otherwise false.
+ |}
+
+==== Request Network Settings ====
+
+Since v554, this is the first packet sent by the client.
+
+{| class="wikitable"
+ ! Packet ID
+ ! Bound To
+ ! Field Name
+ ! Field Type
+ ! Notes
+ |-
+ | 0xC1
+ | Server
+ | Protocol version
+ | Integer (Big Endian)
+ | The client's protocol version.
+|}
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Bedrock Edition]]
+{{license wiki.vg}}

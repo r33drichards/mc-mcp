@@ -1,0 +1,429 @@
+{{exclusive|java}}
+'''[[Tree]]s''' are features with a stem and leaves, and optionally roots and decorations. They are configured using [[configured feature]]s in [[data packs]].
+
+== JSON format ==
+<div class="treeview">
+<section begin="json_format" />
+* {{nbt|compound}}: Root object.
+** {{nbt|string|type}}: {{cd|minecraft:tree}}
+** {{nbt|compound|config}}
+***{{nbt|boolean|ignore_vines}} (optional, defaults to false) Allows the tree to generate even if there are vines blocking it.
+*** {{nbt|boolean|force_dirt}} (optional, defaults to false) If true, places the dirt provider even when the block below the tree is a valid dirt-like block.
+*** {{nbt|compound|dirt_provider}} The block to place below the trunk. Places only if <code>force_dirt</code> is true, or if there is not a valid dirt-like block below the trunk.
+**** {{nbt inherit/block_state_provider}}
+*** {{nbt|compound|trunk_provider}} The block to use for the trunk. Note that when the trunk placer is <code>fancy_trunk_placer</code>, the block must have <code>axis</code> property, such as logs.
+**** {{Nbt inherit/block state provider}}
+*** {{nbt|compound|foliage_provider}} The block to use for the foliage.
+**** {{Nbt inherit/block state provider}}
+*** {{nbt|compound|minimum_size}} Defines the width of the tree at different heights relative to the lowest trunk block, for the minimum size of the feature, see {{slink|Tree definition|Minimum size}}
+*** {{nbt|compound|trunk_placer}} Defines how the trunk is generated, see {{slink|Tree definition|Trunk placer}}
+*** {{nbt|compound|foliage_placer}} Defines how the foliage is generated, see {{slink|Tree definition|Foliage placer}}
+*** {{Nbt|compound|root_placer}} (optional) Controls how roots are generated, and which blocks to use, see {{slink|Tree definition|Root placer}}
+*** {{nbt|list|decorators}} (Required, but can be empty) Decorations to add to the tree apart from the trunk and leaves.
+**** {{nbt|compound}} A decorator, see {{slink|Tree definition|Decorator}}
+<section end="json_format" />
+</div>
+
+== Minimum size ==
+The minimum size determines how much space needs to be available for the tree to be able to place. This is done by checking a square area of varying widths at each vertical position of the tree. The available free height is calculated as the height until all square are free.
+
+<div class="treeview">
+* {{nbt|compound|minimum_size}}
+** {{nbt|string|type}} One of <code>two_layers_feature_size</code> or <code>three_layers_feature_size</code>
+** {{nbt|float|min_clipped_height}} (optional) Value between 0 and 80 (inclusive). If specified and lower than the trunk height, specifies the minimum free height required for the tree to generate. Otherwise the trunk height is used instead.
+** Additional fields depend on the value of {{Nbt|string|type}}, see below.
+</div>
+
+=== two_layers_feature_size ===
+Specifies 2 different width based on height. At heights lower than {{nbt|int|limit}}, {{nbt|int|lower_size}} is used, otherwise {{nbt|int|upper_size}}.
+
+<div class="treeview">
+* Additional fields:
+** {{nbt|int|limit}} (optional, defaults to 1) Value between 0 and 81 (inclusive). The limit between lower and upper layer.
+** {{nbt|int|lower_size}} (optional, defaults to 0) Value between 0 and 16 (inclusive). Minimum width of the tree at heights under {{nbt|int|limit}}.
+** {{nbt|int|upper_size}} (optional, defaults to 1) Value between 0 and 16 (inclusive). Minimum width of the tree at heights greater than or equals {{nbt|int|limit}}.
+</div>
+
+=== three_layers_feature_size ===
+Specifies 3 different width based on height. At heights lower than {{nbt|int|limit}}, the minimum width is {{nbt|int|lower_size}}, at the topmost {{nbt|int|upper_limit}} of the trunk {{nbt|int|upper_size}} is used, otherwise {{nbt|int|middle_size}} is used.
+
+<div class="treeview">
+* Additional fields:
+** {{nbt|int|limit}} (optional, defaults to 1) Value between 0 and 80 (inclusive). Height of the lower layer, calculated from the bottom of the trunk.
+** {{nbt|int|upper_limit}} (optional, defaults to 1) Value between 0 and 80 (inclusive). Height of the upper layer, calculated from the top of the trunk.
+** {{nbt|int|lower_size}} (optional. defaults to 0) Value between 0 and 16 (inclusive). Minimum width of the tree in the bottom layer (i.e. the bottom {{nbt|int|limit}} blocks of the trunk).
+** {{nbt|int|middle_size}} (optional, defaults to 1) Value between 0 and 16 (inclusive). Minimum width of the tree at the middle layer (i.e. between bottom and top layers).
+** {{nbt|int|upper_size}} (optional, defaults to 1) Value between 0 and 16 (inclusive). Minimum width of the tree in the upper layer (i.e. the topmost {{nbt|int|upper_limit}} blocks of the trunk).
+</div>
+
+== Trunk placer ==
+The trunk placer determines the shape trunk of the tree. 
+
+<div class="treeview">
+* {{nbt|compound|trunk_placer}}
+** {{nbt|string|type}} One of <code>straight_trunk_placer</code>, <code>forking_trunk_placer</code>, <code>giant_trunk_placer</code>, <code>mega_jungle_trunk_placer</code>, <code>dark_oak_trunk_placer</code>, <code>fancy_trunk_placer</code>, <code>bending_trunk_placer</code>, <code>upwards_branching_trunk_placer</code>, or <code>cherry_trunk_placer</code>.
+** {{nbt|int|base_height}} Value between 0 and 32 (inclusive). The base height of the trunk.
+** {{nbt|int|height_rand_a}} Value between 0 and 24 (inclusive). A random value between 0 and this value (inclusive) is added to the height of the trunk.
+** {{nbt|int|height_rand_b}} Value between 0 and 24 (inclusive). Another random value between 0 and this value (inclusive) is added to the height of the trunk.
+** Additional fields depend on the value of {{Nbt|string|type}}, see below.
+</div>
+
+{| class="wikitable"
+|+ Trunk placers
+|-
+! !! Name !! Description and Additional Fields
+|-
+| style="text-align: center; min-width: 100px;" |[[File:Straight trunk placer.png|x100px]] || <code>straight_trunk_placer</code>
+|| Places a straight trunk of specified height. Foliage is attached to be block above the highest trunk block.
+
+No additional fields
+|-
+| style="text-align: center;" |[[File:Forking_trunk placer.png|x100px]] || <code>forking_trunk_placer</code>
+|| Places a trunk with 1 or 2 branches, with an overhang of 1 to 3 blocks. Foliage is attached to the top of each branch.
+
+No additional fields
+|-
+| style="text-align: center;" |[[File:Giant_trunk placer.png|x100px]] || <code>giant_trunk_placer</code>
+|| Places a 2&times;2 trunk of the specified height, except the topmost block is only a single block. Foliage is attached to be block above the highest trunk block.
+
+No additional fields
+|-
+| style="text-align: center;" |[[File:Mega_jungle_trunk placer.png|x100px]] || <code>mega_jungle_trunk_placer</code>
+|| Extends the <code>giant_trunk_placer</code> with branches of length 5 in random directions in the top half of the trunk. Foliage is additionally attached to the end of each branch.
+
+No additional fields
+|-
+| style="text-align: center;" |[[File:Dark_oak_trunk placer.png|x100px]] || <code>dark_oak_trunk_placer</code>
+|| Places a 2&times;2 trunk of the specified height. Additionally places columns of branches in a 4&times;4 area around the stem in the topmost 5 blocks of the trunk. Foliage is attached to the top of the trunk as well as the top of each branch. 
+
+No additional fields
+|-
+| style="text-align: center;" |[[File:Fancy_trunk placer.png|x100px]] || <code>fancy_trunk_placer</code>
+|| Places a straight trunk of <code>(height + 2) * 0.618</code> and branches in random directions. Foliage is attached to the end of all branches that are at least 20% up the tree.
+
+No additional fields
+|-
+| style="text-align: center;" |[[File:Bending_trunk placer.png|x100px]] || <code>bending_trunk_placer</code>  
+|| Places a trunk of the specified height. The topmost 2 blocks have a chance to be moved by one block each. On top of the trunk a straight branch of length {{nbt|int}}{{nbt|compound|bend_length}} is generated. Foliage is attached to all block of the top branch and any trunk block that is higher than {{nbt|int|min_height_for_leaves}}.
+
+<div class="treeview">
+* Additional fields:
+** {{nbt|int}}{{nbt|compound|bend_length}} Value between 1 and 64 (inclusive).
+*** {{nbt inherit/int_provider}}
+** {{nbt|int|min_height_for_leaves}} (optional, defaults to 1) Must be a positive integer.
+</div>
+|-
+| style="text-align: center;" |[[File:Upwards_branching_trunk_placer.png|x100px]] || <code>upwards_branching_trunk_placer</code>  
+||{{info needed}}
+
+<div class="treeview">
+* Additional fields:
+** {{nbt|int}}{{nbt|compound|extra_branch_steps}} The number of steps to generate extra branches. Must be a positive integer.
+**** {{nbt inherit/int_provider}}
+** {{nbt|int}}{{nbt|compound|extra_branch_length}} Generates extra branch length. Must be a non-negative integer.
+*** {{nbt inherit/int_provider}}
+** {{nbt|float|place_branch_per_log_probability}} The probability of each log producing a branch. Value between 0.0 and 1.0 (inclusive).
+** {{nbt|string}}{{nbt|list|can_grow_through}} A block ID or a block tag, or a list of block IDs. Represents blocks that tree trunks can grow through.
+</div>
+|-
+| style="text-align: center;" |[[File:Cherry_trunk placer.png|x100px]] || <code>cherry_trunk_placer</code>
+||{{info needed}}
+
+<div class="treeview">
+* Additional fields:
+** {{nbt|int}}{{nbt|compound|branch_count}} Value between 1 and 3 (inclusive).
+*** {{nbt inherit/int_provider}}
+** {{nbt|int}}{{nbt|compound|branch_horizontal_length}} Value between 2 and 16 (inclusive).
+*** {{nbt inherit/int_provider}}
+** {{nbt|int}}{{nbt|compound|branch_start_offset_from_top}} A uniform int provider, which provides a number between two bounds with uniform distribution. Must between -16 and 0 (inclusive). And since it needs at least 2 blocks variation for the branch starts to fit both branches, {{cd|max_inclusive}} must be at least {{cd|min_inclusive + 1}}.
+*** {{nbt|int|min_inclusive}} The minimum possible value.
+*** {{nbt|int|max_inclusive}} The maximum possible value.
+** {{nbt|int}}{{nbt|compound|branch_end_offset_from_top}} Value between -16 and 16 (inclusive).
+*** {{nbt inherit/int_provider}}
+</div>
+|}
+
+== Foliage placer ==
+The foliage placer determines the placement and shape of the foliage of the tree.
+<div class="treeview">
+* {{nbt|compound|foliage_placer}}
+**{{nbt|string|type}} One of <code>blob_foliage_placer</code>, <code>spruce_foliage_placer</code>, <code>pine_foliage_placer</code>, <code>acacia_foliage_placer</code>, <code>bush_foliage_placer</code>, <code>fancy_foliage_placer</code>, <code>jungle_foliage_placer</code>, <code>mega_pine_foliage_placer</code>, <code>dark_oak_foliage_placer</code>, <code>random_spread_foliage_placer</code>, or <code>cherry_foliage_placer</code>.
+** {{nbt|int}}{{nbt|compound|radius}} The radius of the foliage.
+*** {{Nbt inherit/int provider}}
+**{{nbt|int}}{{nbt|compound|offset}} The vertical offset from the top of trunk to the top of the foliage.{{needs testing}}
+*** {{Nbt inherit/int provider}}
+** Additional fields depend on the value of {{Nbt|string|type}}, see below.
+</div>
+
+{| class="wikitable"
+|+ Foliage placers
+|-
+! !! Name !! Description and Additional Fields
+|-
+| style="text-align: center; min-width: 100px;" |[[File:Blob_foliage_placer.png|x100px]] || <code>blob_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int|height}} The foliage's height. Value between 0 and 16 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Bush_foliage_placer.png|x100px]] || <code>bush_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int|height}} The foliage's height. Value between 0 and 16 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Fancy_foliage_placer.png|x100px]] || <code>fancy_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int|height}} The foliage's height. Value between 0 and 16 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Jungle_foliage_placer.png|x100px]] || <code>jungle_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int|height}} The foliage's height. Value between 0 and 16 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Spruce_foliage_placer.png|x100px]] || <code>spruce_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int}}{{nbt|compound|trunk_height}} Value between 0 and 24 (inclusive).
+***{{nbt inherit/int_provider}}
+</div>
+|-
+| style="text-align: center;" |[[File:Pine_foliage_placer.png|x100px]] || <code>pine_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int}}{{nbt|compound|height}} Value between 0 and 24 (inclusive).
+***{{Nbt inherit/int provider}}
+</div>
+|-
+| style="text-align: center;" |[[File:Mega_pine_foliage_placer.png|x100px]] || <code>mega_pine_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int}}{{nbt|compound|crown_height}} Value between 0 and 24 (inclusive).
+***{{nbt inherit/int_provider}}
+</div>
+|-
+| style="text-align: center;" |[[File:Random_spread_foliage_placer.png|x100px]] || <code>random_spread_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int}}{{nbt|compound|foliage_height}} Value between 1 and 512 (inclusive).
+***{{nbt inherit/int_provider}}
+**{{nbt|int|leaf_placement_attempts}} Value between 0 and 256 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Cherry_foliage_placer.png|x100px]] || <code>cherry_foliage_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int}}{{nbt|compound|height}} Value between 4 and 16 (inclusive).
+***{{Nbt inherit/int provider}}
+**{{nbt|float|wide_bottom_layer_hole_chance}} Value between 0.0 and 1.0 (inclusive).
+**{{nbt|float|corner_hole_chance}} Value between 0.0 and 1.0 (inclusive).
+**{{nbt|float|hanging_leaves_chance}} Value between 0.0 and 1.0 (inclusive).
+**{{nbt|float|hanging_leaves_extension_chance}} Value between 0.0 and 1.0 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Acacia_foliage_placer.png|x100px]] || <code>acacia_foliage_placer</code>
+|| {{info needed}}
+
+No additional fields.
+|-
+| style="text-align: center;" |[[File:Dark_oak_foliage_placer.png|x100px]] || <code>dark_oak_foliage_placer</code>
+|| {{info needed}}
+
+No additional fields.
+|}
+
+== Root placer==
+The root placer is optional and controls the placement and shape of the roots, and moving the trunk upwards.
+
+<div class="treeview">
+* {{Nbt|compound|root_placer}}
+** {{Nbt|string|type}} Type of tree root placer, currently only {{cd|mangrove_root_placer}}.
+** {{Nbt|compound|root_provider}} The block used as the root of the tree.
+*** {{Nbt inherit/block state provider}}
+** {{Nbt|int}}{{Nbt|compound|trunk_offset_y}} Offset perpendicular to the trunk.
+*** {{Nbt inherit/int provider}}
+** {{Nbt|compound|above_root_placement}} (optional) The blocks above the root.
+*** {{Nbt|compound|above_root_provider}} The block above the root.
+**** {{Nbt inherit/block state provider}}
+*** {{Nbt|float|above_root_placement_chance}} The probability of generating the block. Value between 0.0 and 1.0 (inclusive).
+** Additional fields depend on the value of {{Nbt|string|type}}, see below.
+</div>
+
+{| class="wikitable"
+|+ Root placers
+|-
+! !! Name !! Description and Additional Fields
+|-
+| style="text-align: center; min-width: 100px;" |[[File:Mangrove root placer.png|x100px]] || <code>mangrove_root_placer</code>
+|| {{info needed}}
+
+<div class="treeview">
+* Additional fields:
+** {{Nbt|compound|mangrove_root_placement}} Mangrove root placement parameter.
+*** {{Nbt|int|max_root_width}} The maximum width of the root. Value between 1 and 12 (inclusive).
+*** {{Nbt|int|max_root_length}} The maximum length of the root. Value between 1 and 64 (inclusive).
+*** {{Nbt|float|random_skew_chance}} The probability of random skew. Value between 0.0 and 1.0 (inclusive).
+*** {{Nbt|string}}{{Nbt|list|can_grow_through}} A block ID or a block tag, or a list of block IDs. Blocks that roots can grow through.
+*** {{Nbt|string}}{{Nbt|list|muddy_roots_in}} A block ID or a block tag, or a list of block IDs. Roots in it turn into muddy root blocks.
+*** {{Nbt|compound|muddy_roots_provider}} Blocks used as muddy roots.
+**** {{Nbt inherit/block state provider}}
+</div>
+|}
+
+== Decorator ==
+Decorators are used to add additional blocks to various parts of the tree.
+
+<div class="treeview">
+* {{nbt|compound}}: A decorator.
+**{{nbt|string|type}} The type of decoration to add. One of <code>alter_ground</code>, <code>attached_to_leaves</code>, <code>attached_to_logs</code>, <code>beehive</code>, <code>cocoa</code>, <code>creaking_heart</code>, <code>leave_vine</code>, <code>pale_moss</code>, <code>place_on_ground</code>, or <code>trunk_vine</code>.
+** Additional fields depend on the value of {{Nbt|string|type}}, see below.
+</div>
+
+{| class="wikitable"
+|+ Tree decorators
+|-
+! !! Name !! Description and Additional Fields
+|-
+| style="text-align: center; min-width: 100px;" |[[File:Alter_ground tree decorator.png|x100px]] || <code>alter_ground</code>
+|| Replaces blocks in the {{tag link|block|minecraft:dirt}} tag around the tree with different blocks.
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|compound|provider}} The block to replace the ground with.
+***{{nbt inherit/block_state_provider}}
+</div>
+|-
+| style="text-align: center;" |[[File:Attached_to_leaves tree decorator.png|x100px]] || <code>attached_to_leaves</code>
+|| Attaches blocks to exposed faces of all foliage blocks in specified directions.
+
+<div class="treeview">
+* Additional fields:
+** {{Nbt|float|probability}} Value between 0.0 and 1.0 (inclusive).
+** {{Nbt|int|exclusion_radius_xz}} The minimum value of the horizontal distance between two decorations. Value between 0 and 16 (inclusive).
+** {{Nbt|int|exclusion_radius_y}} The minimum value of the vertical distance between two decorations. Value between 0 and 16 (inclusive).
+** {{Nbt|int|required_empty_blocks}} The number of empty blocks required by the decoration. Value between 0 and 16 (inclusive).
+** {{Nbt|compound|block_provider}} The block of the decoration.
+*** {{Nbt inherit/block state provider}}
+** {{Nbt|list|directions}} (Cannot be empty) Directions to generate.
+*** {{Nbt|string}} A direction. Must be {{cd|up}}, {{cd|down}}, {{cd|north}}, {{cd|south}} , {{cd|west}}, or {{cd|east}}.
+</div>
+|-
+| style="text-align: center;" |[[File:Attached_to_logs tree decorator.png|x100px]] || <code>attached_to_logs</code>
+|| Attaches blocks to exposed faces of all trunk blocks in specified directions.
+
+<div class="treeview">
+* Additional fields:
+** {{Nbt|float|probability}} Value between 0.0 and 1.0 (inclusive).
+** {{Nbt|compound|block_provider}} The block of the decoration.
+*** {{Nbt inherit/block state provider}}
+** {{Nbt|list|directions}} (Cannot be empty) Directions to generate.
+*** {{Nbt|string}} A direction. Must be {{cd|up}}, {{cd|down}}, {{cd|north}}, {{cd|south}} , {{cd|west}}, or {{cd|east}}.
+</div>
+|-
+| style="text-align: center;" |[[File:Beehive tree decorator.png|x100px]] || <code>beehive</code>
+|| Places a single [[beehive]] with the specified probability. The beehive is always located 1 block below the lowest leaves block, but possibly on a different branch.
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|float|probability}} Value between 0.0 and 1.0 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Cocoa tree decorator.png|x100px]] || <code>cocoa</code>
+|| Places [[cocoa beans]] on the bottom 3 blocks of the trunk with a probability of 25% for each face. The specified probability determines how often any cocoa beans are placed.
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|float|probability}} Value between 0.0 and 1.0 (inclusive). Probability that this feature places any cocoa beans.
+</div>
+|-
+| style="text-align: center;" |[[File:Creaking_heart tree decorator.png|x100px]] || <code>creaking_heart</code>
+|| Places a creaking heart, replacing a trunk block in a position where all 6 surrounding blocks are in the {{tag link|block|minecraft:logs}} tag.
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|float|probability}} Value between 0.0 and 1.0 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Leave_vine tree decorator.png|x100px]] || <code>leave_vine</code>
+|| Places [[vines]] attached to any foliage blocks. Each vine is extended by 4 blocks downwards if possible.
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|float|probability}} Value between 0.0 and 1.0 (inclusive). Probability of placing a vine at any given position.
+</div>
+|-
+| style="text-align: center;" |[[File:Pale_moss tree decorator.png|x100px]] || <code>pale_moss</code>
+|| Places the {{cd|minecraft:pale_moss_patch}} [[configured feature]] at the position of the lowest log with probability {{nbt|float|ground_probability}}.
+
+Adds [[hanging moss]] to the bottom of trunk and foliage blocks with probability {{nbt|float|trunk_probability}} and {{nbt|float|ground_probability}} respectively.
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|float|leaves_probability}} Value between 0.0 and 1.0 (inclusive). 
+**{{nbt|float|trunk_probability}} Value between 0.0 and 1.0 (inclusive).
+**{{nbt|float|ground_probability}} Value between 0.0 and 1.0 (inclusive).
+</div>
+|-
+| style="text-align: center;" |[[File:Place_on_ground tree decorator.png|x100px]] || <code>place_on_ground</code>
+|| Tries {{nbt|int|tries}} positions within the specified radius and height range to find a position that is at the height of the <code>MOTION_BLOCKING_NO_LEAVES</code> [[heightmap]], is solid, and has air above. Places the specified block on the block above any matching positions.
+
+<div class="treeview">
+* Additional fields:
+**{{nbt|int|tries}} Optional positive int. Defaults to 128.
+**{{nbt|int|radius}} Optional non-negative int. Defaults to 2.
+**{{nbt|int|height}} Optional non-negative int. Defaults to 1.
+** {{Nbt|compound|block_state_provider}} The block of the decoration.
+*** {{Nbt inherit/block state provider}}
+</div>
+|-
+| style="text-align: center;" |[[File:Trunk_vine tree decorator.png|x100px]] || <code>trunk_vine</code>
+|| Adds vines to each side of each trunk block with a probability of 75% each.
+
+No additional fields.
+|}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.16.2|dev=20w28a|Trees can now be configured using data packs.}}
+|{{HistoryLine||1.17|dev=21w10a|Removed {{nbt|int|max_water_depth}} and {{nbt|string|heightmap}} fields.
+|Added {{nbt|compound|dirt_provider}} and {{nbt|boolean|force_dirt}}
+|Renamed {{nbt|compound|leaves_provider}} to {{nbt|compound|foliage_provider}}
+|Added <code>random_spread_foliage_placer</code> and <code>bending_trunk_placer</code>.}}
+|{{HistoryLine|||dev=pre1|Added {{nbt|compound|sapling_provider}} field}}
+|{{HistoryLine||1.18|dev=21w38a|Removed {{nbt|compound|sapling_provider}} field}}
+|{{HistoryLine||1.19|dev=22w14a|Added {{nbt|compound|root_placer}} field and the <code>mangrove_root_placer</code>.
+|Added <code>attached_to_leaves</code> decorator.
+|Added {{nbt|float|probability}} field to the <code>leave_vine</code> decorator.
+|Added <code>upwards_branching_trunk_placer</code>.}}
+|{{HistoryLine|||dev=22w15a|Added {{nbt|int}}{{nbt|compound|trunk_offset_y}} and {{nbt|compound|above_root_placement}} fields to the root placer.
+|Removed the {{nbt|int|y_offset}} field of the <code>mangrove_root_placer</code>. Moved all other additional fields of <code>mangrove_root_placer</code> into an object {{nbt|compound|mangrove_root_placement}}.}}
+|{{HistoryLine||1.19.4|dev=23w07a|Added <code>cherry_foliage_placer</code> and <code>cherry_trunk_placer</code>.}}
+|{{HistoryLine||1.21.2|dev=24w40a|Added <code>pale_moss</code> and <code>creaking_heart</code> decorators.}}
+|{{HistoryLine||1.21.5|dev=25w02a|Added <code>place_on_ground</code> decorator.}}
+|{{HistoryLine|||dev=25w09a|Added <code>attached_to_logs</code> decorator.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}

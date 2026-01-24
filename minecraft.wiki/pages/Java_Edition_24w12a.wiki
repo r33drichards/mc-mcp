@@ -1,0 +1,308 @@
+{{Infobox version
+| title = Minecraft 24w12a
+| image = 24w12a.jpg
+| image2 = Java Edition 24w12a.png
+| edition = Java
+| type = Snapshot
+| date = March 20, 2024
+| jsonhash = 116d099e66d3ef191db658efe76ccfd3742a932d
+| clienthash = 7670c61bac7bbf1bb734233e434d367d3d232067
+| clientmap = d99485ba2acdb6e8b9d7c2785f0d9b9d69c13718
+| serverhash = 6f036460d361ce1e645bba365a72be2eed35ec01
+| servermap = 50203a07ba97b3ce9e61cbaa3cadb5b40ee8e160
+| parent = 1.20.5
+| prevparent = 1.20.4
+| prev = 24w11a
+| next = 24w13a
+| nextparent = 1.20.6
+}}<onlyinclude>
+
+'''24w12a''' is the thirteenth [[snapshot]] for [[Java Edition 1.20.5]], released on March 20, 2024,<ref>{{snap|24w12a|March 20, 2024}}</ref> which fixes bugs, changes the [[heavy core]], adds 7 new [[advancement]]s and adds the [[trial chambers map]].
+
+== Additions ==
+=== Command format ===
+'''[[Item stack component]]s'''
+* Added new item stack components.
+* Added <code>food</code> item stack component.
+** When present, this item behaves as if a food (can be eaten)
+** Format: object with fields:
+*** <code>nutrition</code>: non-negative integer, number of food points to restore when eaten.
+*** <code>saturation_modifier</code>: float, amount of saturation to restore when eaten.
+*** <code>can_always_eat</code>: boolean (default: <code>false</code>)
+**** If <code>true</code>, this food can be eaten even if not hungry.
+*** <code>eat_seconds</code>: float (default: <code>1.6</code>)
+**** The number of seconds that it takes to eat this food item.
+*** <code>effects</code>: list of effects to apply when eaten (default: <code>[]</code>)
+**** <code>effect</code>: effect instance (same format as <code>custom_effects</code> in <code>minecraft:potion_contents</code> component)
+**** <code>probability</code>: float between 0 and 1, chance for the effect to be applied (default: <code>1</code>)
+*** Example: <code>food={nutrition:4,saturation_modifier:0.1}</code>
+** On food items, has an implicit default value for that food type.
+* Added <code>max_stack_size</code>.
+** Controls the maximum stacking size of this item.
+** Format: integer between 1 and 99.
+*** Example: <code>max_stack_size=4</code>
+** Has an implicit default value according to the item type (usually <code>64</code> but can also be <code>16</code> and <code>1</code>)
+* Added <code>max_damage</code>.
+** Controls the maximum amount of damage than an item can take.
+** If not present, the item cannot be damaged.
+** Format: positive integer.
+*** Example: <code>max_damage=123</code>
+** Has an implicit default value for damageable items.
+* Added <code>fire_resistant</code>.
+** If present, this item doesn't burn in fire.
+** Format: empty object.
+*** Example: <code>fire_resistant={}</code>
+** Has an implicit default value for fire-resistant items, such as netherite tools.
+* Added <code>rarity</code>.
+** Controls the color of the item name.
+** Format: enumerated value, one of:
+*** <code>common</code> (default): white name, or aqua when enchanted.
+*** <code>uncommon</code>: yellow name, or aqua when enchanted.
+*** <code>rare</code>: aqua name, or light purple when enchanted.
+*** <code>epic</code>: light purple name.
+*** Example: <code>rarity=rare</code>.
+** Special items such as [[golden apple]]s have an implicit default value.
+* Added <code>tool</code>.
+** Controls the behavior of the item as a tool.
+** Format: object with fields.
+*** <code>rules</code>: list of rule entries.
+**** <code>blocks</code>: single block, list of blocks, or #-prefixed block tag to match.
+**** <code>speed</code> (optional): float, overrides the mining speed if present and matched.
+**** <code>correct_for_drops</code> (optional): boolean, overrides whether this tool is considered 'correct' if present and matched.
+***** <code>true</code> causes the block to mine at its most efficient speed, and drop items if the targeted block requires that.
+*** <code>default_mining_speed</code>: float, mining speed to use if no rules match and override mining speed (default: 1.0).
+*** <code>damage_per_block</code>: non-negative int, amount of durability to remove each time a block is mined with this tool.
+*** Example: <code>tool={rules:[{blocks:"#mineable/pickaxe",speed:4.0,correct_for_drops:true}]}</code>
+** Vanilla tool items have an implicit default value based on their tier and tool type.
+* Added <code>hide_tooltip</code>.
+** If present, it completely hides whole item tooltip (that includes item name).
+** Tooltip is still visible and searchable in Creative mode.
+** Format: empty object.
+*** Example: <code>hide_tooltip={}</code>
+
+'''[[Loot functions]]'''
+* Added <code>toggle_tooltips</code> loot function.
+** This function can be used to modify item component tooltip visiblity.
+** It works by setting fields like <code>show_in_tooltip</code> without changing other values.
+** Format: <code>toggles</code> - a map of supported item component type to boolean value.
+** Supported components: <code>trim</code>, <code>dyed_color</code>, <code>enchantments</code>, <code>stored_enchantments</code>, <code>unbreakable</code>, <code>can_break</code>, <code>can_place_on</code>, <code>attribute_modifiers</code>.
+** Example: <code>{function:"toggle_tooltips","toggles":{"enchantments":false}}</code> hides enchantments tooltip.
+
+'''[[Loot table]]s'''
+* Added <code>storage</code> loot number provider to access values from command storage.
+** This number provider is able to access numeric values from command storage directly.
+** If selected storage does not exist or tag selected by path is not numeric or does not exist, provider returns 0.
+** Fields:
+*** <code>storage</code>: namespaced id of command storage.
+*** <code>path</code>: NBT path to field.
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* Added a <code>crafter_recipe_crafted</code> trigger which is triggered when a [[crafter]] ejects a successfully crafted item into the world.
+** <code><player></code> an entity predicate matching the player who is nearby.
+** <code><recipe_id></code> is the ID of the recipe being crafted.
+** <code><ingredients></code> is a list of item predicates matching the ingredients that form the recipe being crafted.
+* Added a <code>fall_after_explosion</code> trigger which is triggered when a player begins falling after being knocked upwards by an explosion or wind burst.
+** <code><player></code> an entity predicate matching the player who is falling.
+** <code><start_position></code> a location predicate matching the position the player was at when they were hit by the explosion or burst.
+** <code><distance></code> a distance predicate matching how far the player must be from <code>start_position</code> to cause the trigger to activate.
+** <code><cause></code> an entity predicate matching the entity which caused the explosion or burst to happen.
+
+=== General ===
+'''[[Tag]]s'''
+* Added <code>incorrect_for_wooden_tool</code>, <code>incorrect_for_gold_tool</code>, <code>incorrect_for_stone_tool</code>, <code>incorrect_for_iron_tool</code>, <code>incorrect_for_diamond_tool</code>, <code>incorrect_for_netherite_tool</code> block tags.
+** These tags combine the existing <code>needs_diamond_tool</code>, <code>needs_iron_tool</code>, and <code>needs_stone_tool</code> tags for each specific tool tier.
+* Added <code>meat</code> collection item tag.
+** Contains {{cd|d=and|beef|chicken|cooked_beef|cooked_chicken|cooked_mutton|cooked_porkchop|cooked_rabbit|mutton|porkchop|rabbit|rotten_flesh}} 
+** This is not used by the game directly, but may be included by other tags.
+* Added {{cd|d=and|#armadillo_food|#bee_food|#camel_food|#cat_food|#chicken_food|#cow_food|#frog_food|#goat_food|#hoglin_food|#horse_food|#horse_tempt_items|#llama_food|#llama_tempt_items|#ocelot_food|#panda_food|#parrot_food|#parrot_poisonous_food|#pig_food|#rabbit_food|#sheep_food|#strider_food|#strider_tempt_items|#turtle_food|#wolf_food}} item tags to control which items can be fed to or tempt the corresponding mobs.
+* Added <code>sensitive_to_smite</code> entity type tag.
+** For entity types that take extra damage from the [[Smite]] enchantment.
+
+== Changes ==
+=== Command format ===
+'''General'''
+* Command arguments that previously accepted namespaced ids of loot tables, modifiers and predicates can now also accept inline definitions:
+** <code>loot</code>
+** <code>item</code>
+** <code>execute if predicate</code>
+** Values have same structure as matching JSON files, though they are encoded as SNBT. Example: <code>execute if predicate {condition:weather_check, raining:true}</code>
+
+'''[[Entity sub-predicates]]'''
+* <code>wolf</code>
+** New <code>wolf</code> sub-predicate has been added to match wolf variantsFields: <code>variant</code> - wolf variant to match (single entry, list of entries or tag)
+* <code>cat</code>, <code>frog</code>, <code>painting</code>
+** Field <code>variant</code> now accepts single entries, list of entries or tags.
+* <code>wolf</code>, <code>cat</code>, <code>frog</code> and <code>painting</code> entity sub-predicates now accept tags and plain lists instead of just single elements.
+
+'''[[Loot functions]]'''
+*<code>set_lore</code> function:
+** The <code>replace</code> field has been removed.
+** Now has <code>mode</code> like <code>set_fireworks</code> and <code>set_written_book_pages</code>.
+* <code>set_written_book_pages</code> function:
+** <code>pages</code> is now a JSON object rather than a string containing JSON.
+* Nested lists are no longer supported in function lists.
+
+'''[[Item predicate argument]]'''
+* The item predicate syntax (used in <code>execute if|unless items</code> and <code>clear</code> commands) has been significantly expanded.
+* The general syntax is: <code><type> [comma-separated list of <test>]</code>
+* <code><type></code> can be one of:
+** item id
+** item tag id prefixed with <code>#</code>
+** <code>*</code> to match any item.
+* <code><test></code> can have one of 3 forms:
+** <code><component_id>=<value></code> - match exact value of component (same as in previous format)
+*** <code><value></code> is a representation of component value in SNBT format (same as in <code>item give</code> argument)
+** <code><component_id></code> - check if component exists.
+** <code><predicate_id>~<value></code> - check item sub-predicate.
+*** <code><value></code> is a representation of item sub-predicate in SNBT format (but otherwise same as one used for advancement and loot table JSON files)
+*** Example: <code>*[damage~{durability:{min:3}}]</code> matches any stack with at least 3 uses left.
+* The special name <code>minecraft:count</code> can be used for matching the stack size.
+** <code>count=<positive int></code> passes only when the stack size equals the given value.
+** <code>count~<int range></code> passes when the stack size is in the specified range.
+*** Example: <code>*[count~{max:2}]</code> matches any stack with count <= 2.
+** <code>count</code> always passes.
+* Any <code><test></code> entry can be negated by prefixing with <code>!</code>
+** Example: <code>*[!count=1]</code> matches any stack that has count other than 1.
+* <code><test></code> elements can be also joined with | to check multiple alternatives.
+** Example: <code>*[!damage|damage=0]</code> looks for items without damage component or with 0 damage.
+* Removed redundant custom data section (<code>{...}</code>) from item arguments (it's fully replaced by <code>[custom_data={...}]</code>)
+** To make this transition easier, <code>custom_data</code> item sub-predicate has been changed to allow unquoted SNBT.
+* The syntax for custom data partial matching (<code>{}</code>) has been removed in favor of using <code>custom_data</code> predicates.
+** So <code>stick{a:2}</code> becomes <code>stick[custom_data~{a:2}]</code>
+
+'''[[Item sub-predicates]]'''
+* Predicate <code>minecraft:custom_data</code> now accepts both SNBT data written as a string (existing format) and unflattened tags.
+** That means that <code>*[custom_data~{a:1}]</code> and <code>*[custom_data~"{a:1}"]</code> are equivalent.
+** Flattened string format has been kept since NBT type information can't be expressed in JSON.
+
+=== General ===
+'''[[Data pack]]s'''
+* The data pack version is now <code>36</code>.
+
+'''[[Resource pack]]s'''
+* The resource pack version is now <code>30</code>.
+* Changed texture asset paths in <code>wolf_variant</code> to better match other formats.
+** Field <code>texture</code> has been renamed to <code>wild_texture</code>
+** <code>wild_texture</code>, <code>tame_texture</code> and <code>angry_texture</code> no longer require values to be prefixed with <code>textures/</code> and suffixed with <code>.png</code>.
+* Particle <code>entity_effect</code> takes color argument when spawned from command <code>/particle entity_effect {{cd|r}} {{cd|g}} {{cd|b}} {{cd|a}}</code>.
+** 4 float values ranging from 0.0 to 1.0 representing RGBA.
+* Removed <code>map_icons.png</code>{{more info}}
+** Map decoration icons have been split from the former <code>map_icons.png</code> to use an atlas loaded from the <code>textures/map/decorations/</code> directory.
+** The atlas is now generated upon loading resources: [[map_decorations.png-atlas]]
+* The process of upgrading a pack can be assisted by using an automated Slicer tool.<ref>https://github.com/Mojang/slicer/releases/tag/v1.1.4</ref>
+* Added <code>trial_chambers</code> map decoration icon.
+
+'''[[Tag]]s'''
+* <code>axolotl_tempt_items</code> has been renamed to <code>axolotl_food</code>.
+
+== Experimental ==
+=== Additions ===
+==== Items ====
+'''[[File:Trial Chambers Map JE1.png|32px]] [[Trial chambers map]]'''
+* Can be traded from journeyman cartographers.
+* Point to a nearby [[trial chamber]].
+
+==== Gameplay ====
+'''[[Advancement]]s'''
+* Added seven new advancements:
+** Minecraft: Trial(s) Edition 
+*** Step foot in a Trial Chamber
+** Under Lock & Key 
+*** Unlock a Vault using a Trial Key
+** Blowback
+*** Kill a Breeze with a deflected Wind Charge
+** Who Needs Rockets?
+*** Use a Wind Charge to launch yourself upward at least 8 blocks
+** Crafters Crafting Crafters
+*** Be near a Crafter when it crafts a Crafter
+** Lighten Up
+*** Scrape a Copper Bulb with an Axe to make it brighter
+** Over-Overkill
+*** Deal 50 hearts of damage in a single hit using the Mace
+
+==== General ====
+'''[[Tag]]s'''
+* Added the <code>#on_trial_chambers_maps</code> structure tag.
+** Contains <code>trial_chambers</code>.
+
+=== Changes ===
+==== Blocks ====
+'''[[Heavy core]]'''
+* Can now be waterlogged.
+* Can now survive lava flowing into them.
+* Adjusted destroy time and explosion resistance.
+** It now takes 15 seconds to mine (down from 45).
+** Blast resistance now matches the one from [[obsidian]].
+* Pushing a heavy core with a [[piston]] now moves the block, instead of popping it off.
+* [[Map]] color is now silver.
+* Removed the unused <code>orientation</code> block state.
+
+==== Items ====
+'''[[Mace]]'''
+* No longer counts as an efficient tool for breaking [[cobweb]]s.
+* Maces now have a unique sound when hitting an entity from a fall of more than five blocks.
+
+==== World generation ====
+'''[[Trial chambers]]'''
+* Now generate slightly more rarely and a bit more spaced out from each other.
+
+== Fixes ==
+{{fixes|fixedin=24w12a
+|;From released versions before 1.20
+|200947|Large amount of unused space in {{samp|map_icons.png}} texture file.
+|200987|Title in bossbar breaks HUD opacity.
+|251303|Transparent boss bars break when more than one is on screen.
+|;From 1.20.4
+|267747|Click and hover events don't work when viewing chat while {{key|F1}} is enabled.
+|269085|Experience bar and jump bar render translucent pixels as opaque.
+|;dev
+|267933|Silk Touch and Fortune enchanted books cannot be found in Creative inventory.
+|267943|Anvil exclusive enchantments can be obtained from enchanting tables.
+|268068|Pieces of text in the "Reset World" Realm menu can intersect when using some resolutions.
+|268171|Some GUI textures can no longer be transparent in Minecraft.
+|268311|Bane of arthropods enchantment uses {{cd|#arthropods}} tag instead of {{cd|#sensitive_to_bane_of_arthropods}}.
+|268312|Impaling enchantment uses {{cd|#aquatic}} tag instead of {{cd|#sensitive_to_impaling}}.
+|268343|Breeze charge has laggy unnatural flightpaths when punched.
+|268510|Items with "{{cd|Unbreakable:1b}}" NBT can no longer have the Unbreaking enchantment applied.
+|268556|Wind charges go through non-full blocks instead of colliding.
+|268562|Wind charges deal no knockback within non-solid blocks.
+|269169|Wolf variants not present in advancement criteria.
+|269268|Components don't work on the smithing table.
+|269280|The right side of incompatible resource or data packs isn't rendered correctly when the scroll bar is present.
+|269299|The red text within the "Experiments" menu cannot be narrated or selected.
+|269336|Crash with {{cd|set_enchantments}} item modifier above level 255.
+|;previous
+|269354|The subtitle for the "{{cd|minecraft:item.mace.smash_air}}" sound event displays as a raw translation string.
+|269356|Heavy core cannot be oriented despite its blockstates suggesting otherwise.
+|269361|Weird wind charge behavior when deflecting.
+|269373|{{cmd|datapack disable}} doesn't work.
+|269393|Game crashes when wind charge hits entity.
+|269401|The {{cd|minecraft:set_written_book_pages}} item modifier is inconsistent with {{cd|minecraft:set_name and minecraft:set_lore}}.
+|269403|Mace can mine any block at a higher speed than hand.
+|269409|Unable to execute {{cmd|particle entity_effect}}.
+|269419|Heavy core cannot be waterlogged.
+|269422|Carpet on powder snow no longer negates fall damage.
+|269452|Crash when using item modifier with {{cd|replace_section}} mode and very large size field.
+|269457|Crash with {{cd|set_lore}} item modifier setting more than 256 lores.
+|269513|Maces can break cobwebs.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|9sUYdxSc3CY|ScJc-kyBplI|557pYA_OPjM}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:24w12a]]
+[[es:Java Edition 24w12a]]
+[[fr:Édition Java 24w12a]]
+[[ja:Java Edition 24w12a]]
+[[lzh:二四週一二甲]]
+[[pt:Edição Java 24w12a]]
+[[ru:24w12a (Java Edition)]]
+[[uk:24w12a (Java Edition)]]
+[[zh:Java版24w12a]]

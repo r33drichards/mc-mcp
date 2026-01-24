@@ -1,0 +1,86 @@
+{{For||Stats}}
+{{Outdated feature|edition=java}}
+{{Infobox command
+|name=stats
+|oplevel=2
+}}
+
+Manages the updating of [[scoreboard]] objectives with the results of other [[commands]].
+
+Commands can be executed by blocks (specifically, [[command block]]s and [[sign]]s) or by entities (players can execute commands directly, and other [[entities]] can be the origin of commands indirectly with the {{cmd|execute}} command). When a command is executed, the command returns one or more "command stats": the success count, number of [[blocks]] affected, number of entities affected, number of [[items]] affected, and/or a query result (such as from {{cmd|time query daytime}}).
+
+The stats command allows "selectors" and "objectives" to be set (or cleared) for each of these command stats for specific blocks or entities. Selectors (for example, <code>@e</code>) are stored exactly as entered, and don't get evaluated immediately. When a command is later run by the block or entity, the stored selector is then used to target (other) entities and update their [[scoreboard]] objective with the value of the command stat. That value can then be displayed or operated on, just like any other scoreboard value.
+
+The success count from a command block can also be acquired with a [[redstone comparator]], but that is capped at a maximum value of 15, while scoreboard objectives can hold any value from -2,147,483,648 to 2,147,483,647. Success counts and query results are also usually displayed in the chat.
+
+== Syntax ==
+
+: <code>stats block <''x''> <''y''> <''z''> clear <''stat''></code>
+: <code>stats block <''x''> <''y''> <''z''> set <''stat''> <''selector''> <''objective''></code>
+: <code>stats entity <''selector2''> clear <''stat''></code>
+: <code>stats entity <''selector2''> set <''stat''> <''selector''> <''objective''></code>
+
+== Arguments ==
+
+<code>x y z</code> (<code>block</code> mode only)
+: Specifies the position of the block to post command stats from. ''x'' and ''z'' must be between [[World boundary|-30,000,000 and 30,000,000]] (inclusive, without the commas) and ''y'' must be between 0 and 255 (inclusive). May use [[tilde notation]] to specify a position relative to the command's execution.
+
+<code>selector2</code> (<code>entity</code> mode only)
+: Specifies the entity to post command stats from. Must be a player name or a [[target selector]].
+<!-- the in-game usage help currently names this argument "selector", which is identical to another argument in the same command. This argument name has been altered here for discussion clarity because the other argument is common to both stats block and stats entity. -->
+
+<code>stat</code>
+: Specifies the command stat whose selector and objective are to be cleared or set. Must be one of:
+:* <code>AffectedBlocks</code> — returns the number of blocks affected by a command
+:* <code>AffectedEntities</code> — returns the number of entities affected by a command
+:* <code>AffectedItems</code> — returns the number of items affected by a command
+:* <code>QueryResult</code> — returns the result of a command query
+:* <code>SuccessCount</code> — returns a command's success count
+
+<code>selector</code> (<code>set</code> mode only)
+: Specifies the selector to be evaluated when a command is run by the specified block or entity to determine which entity(ies) scoreboard objective is to be updated with the result returned by ''stat''. May be anything because it is not evaluated until a command is run by the specified block or entity, but only a player name or a [[target selector]] produces useful results (though player names can be fake, so even real players don't need to be online).
+
+<code>objective</code> (<code>set</code> mode only)
+: Specifies the name of the objective to be updated with the result returned by ''stat''. May be anything because it is not evaluated until a command is run by the specified block or entity, but only the name of a defined objective produces useful results.
+
+== Result ==
+
+* Fails if the arguments are not specified correctly, if the specified block cannot track stats (in other words, it fails if the specified block is not a command block or sign), or if ''selector2'' fails to evaluate to one or more valid entities (named players must be online).
+
+* On success, clears or sets the selector and objective to be updated with the result returned by ''stat''.
+
+== Examples ==
+
+* To set the block at (0,64,0) to update scoreboard objective MyObj of the nearest [[player]] with the value of any query result returned by the block:
+*: <code>stats block 0 64 0 set QueryResult @p MyObj</code>
+
+* To stop the block at (0,64,0) from updating any scoreboard obectives with the success count of commands it executes:
+*: <code>stats block 0 64 0 clear SuccessCount</code>
+
+* To have the nearest [[Wither#Wither Skull|wither skull]] update the scoreboard objective NumBlocks of fake player #FakePlayer with the number of blocks affected by commands executed by the wither skull:
+*: <code>stats entity @e[type=wither_skull,c=1] set AffectedBlocks #FakePlayer NumBlocks</code>
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w28a|Added {{cmd|stats|link=none}}.}}
+|{{HistoryLine|||dev=14w29a|Added <code>QueryResults</code> to {{cmd|stats|link=none}}.}}
+|{{HistoryLine||1.13|dev=17w45a|Removed {{cmd|stats|link=none}}.}}
+}}
+
+== See also ==
+
+* [[Tutorial:Command stats]]
+* {{cmd|blockdata}} — can also change the selector and objectives of blocks by altering data tags directly
+* {{cmd|entitydata}} — can also change the selector and objectives of entities by altering data tags directly
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/stats]]
+[[es:Comandos/stats]]
+[[ja:コマンド/stats]]
+[[pt:Comandos/stats]]
+[[ru:Команды консоли/stats]]
+[[zh:命令/stats]]

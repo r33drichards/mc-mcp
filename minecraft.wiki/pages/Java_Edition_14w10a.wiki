@@ -1,0 +1,158 @@
+{{dangerous version|type=crash|Attempting to render invalid melon stems with a data value of 12 or higher will crash the game.|version=development|edition=Java}}
+{{Infobox version
+|edition=Java
+|image=14w10a Banner.png
+|image2=Java Edition 14w10a.png
+|type=Snapshot
+|date=March 6, 2014
+|parent=1.8
+|clienthash=bc38e1cc8db9df50d0b5a1a68b74ec1d19450728
+|jsonhash=f857660a1be0a034e58e79bce8acfd846fd38cd2
+|serverhash=03503dc8c3f615bf8b65d8e1ebbf923e81162e3e
+|exehash=16c8aa300b49f7d4b41553e70f57e7cfa7366acf
+|prevparent=1.7.10
+|prev=14w08a
+|next=14w10b
+|nextparent=1.8.1
+}}<onlyinclude>
+
+'''14w10a''' is the fourteenth snapshot for [[Java Edition 1.8]], released on March 6, 2014,<ref>{{cite|url=https://web.archive.org/web/20140307083916/https://mojang.com/2014/03/minecraft-snapshot-14w10a/|title=Minecraft snapshot 14w10a|date=March 6, 2014|website=Mojang.com|author=[[Dinnerbone]]}}</ref> which adds the <code>showDeathMessages</code> [[game rule]].
+
+== Additions==
+=== Command format ===
+'''[[Gamerule]]'''
+* <code>showDeathMessages</code>
+** Toggles whether or not death messages are visible (in chat).
+
+=== General ===
+'''[[Splash]]es'''
+* Added "So sweet, like a nice bon bon!"
+* Added "Popping tags!"
+
+'''[[Statistics]]'''
+* <code>stat.crouchOneCm</code>
+** Detects how many centimeters (0.01 blocks) that the player has moved while crouching.
+* <code>stat.sprintOneCm</code>
+** Detects how many centimeters (0.01 blocks) the player has moved while sprinting.
+* <code>stat.timeSinceDeath</code>
+** Detects how much time has passed (in [[tick]]s) since the player's last death.
+
+== Changes ==
+=== Blocks ===
+'''Block models'''
+* Converted more blocks: repeaters, comparators, beds, hoppers, doors, melon/pumpkin stems, cake, and lily pads.
+* Changed trapdoor models.
+* Rotation can now be done in increments of 22.5 degrees on a single axis.
+* Being able to override not just a model, not just a block's model, but an individual block variant's model.
+* F3+T and F3+S now reload models.
+* The [[missing model]] has changed from [[File:Missing Model JE1.png|32px]] [[File:Missing Model (anisotropic filtering) JE1.png|32px]] to [[File:Missing Model JE2.png|32px]] [[File:Missing Model (anisotropic filtering) JE2.png|32px]], and is now much more widely used as many more blocks have been converted to use models.
+*[[Iron bars]] now render their top/bottom texture even when connected to other iron bars from above or below.<ref>{{bug|MC-50349||Iron Bars and glass panes are rendered incorrectly when connected}}</ref>
+
+'''[[Item frame]]s, [[painting]]s'''
+* Improved position handling.{{info needed|what does this mean?}}
+
+=== Mobs ===
+'''[[Cat]]s'''
+* Now display death messages in chat to their owner.
+
+'''[[Skeleton]]s'''
+* Flee when being attacked by wolves, instead of fighting back.
+
+'''[[Wolves]]'''
+* Now attack skeletons automatically, like how they attack [[sheep]] automatically.
+* Now display death messages in chat to their owner.
+
+=== Command format ===
+'''{{cmd|clone}}'''
+* Minor tweaks to make it more reliable.
+
+'''[[Scoreboard]]'''
+* Testing for scores now also works in <code>@e</code> entity selector.
+* Added scoreboard team property to disable death messages: {{cmd|scoreboard teams option <name> deathMessageVisibility}} with options <code>never</code>, <code>hideForOtherTeams</code>, <code>hideForOwnTeam</code>, <code>always</code>.
+* Command {{cmd|scoreboard players}} can now filter by NBT data.
+
+=== Gameplay ===
+'''[[Creative mode]]'''
+* Players in creative mode can now damage entities even if they are flagged invulnerable.
+
+'''Item tooltips'''
+* The NBT <code>HideFlags</code> now has a 5th bit (value of 32) that hides potion effects
+
+'''Villager [[trading]]'''
+* A new NBT <code>rewardExp</code>, which can be set to true or false, that controls villagers giving xp for trading.
+
+=== General ===
+'''[[Twitch]] broadcasting'''
+* Now requires a confirmation before starting.
+
+'''UUID'''
+* All player lists now are converted to be UUID-based automatically.
+
+== Removals ==
+=== General ===
+'''[[Java Edition distance effects/Historical effects|Distance effects]]'''
+* Almost certaintly as a result of the block model conversion, lily pads no longer appear glitched at exactly 8,388,608 blocks out and invisible from 8,388,609 blocks and beyond.
+
+== Fixes ==
+{{fixes|fixedin=14w10a|prefix=Minecraft
+|;old
+|208|Paintings & item frames can overlap / Z-fighting when overlapping.
+|3450|While lying in bed nearby mobs will look above the player.
+|3493|Item frames "jumping" (actually fixed in 1.7)
+|6095|There is a very small gap at the hopper block model.
+|10387|The bottom of a Hopper becomes dark while being broken.
+|11681|Players' nameplates are too low while sleeping in beds.
+|31047|Use item stat corresponds to left-click, not right-click.
+|45375|Improper cake texture.
+|;dev
+|44851|Wither cant be killed with {{cmd|kill}} while invulnerable.
+|46207|Phantom floating mobs are generated by any spawner (including natural dungeon spawners).
+|46223|<code>@a</code>, <code>@p</code>, <code>@e</code> or <code>@r</code> doesn't include dead player.
+|46426|Held items in spectator mode are visible in third-person.
+|46428|Armor doesn't hide for the player, themself, in spectator mode.
+|46430|Spectator mode can throw item in every place, but can't take them.
+|46596|In spectator mode, mobs can still follow the player.
+|47028|<code>@e</code> selector does not accept scoreboard parameters in non-player entities.
+|47431|Hand shifts to the side when crouching/sneaking.
+|47571|Fishing line casts below the player.
+|47646|Player 2 blocks higher when sleeping in bed and noclip.
+|47656|Other player's arms aren't moving when watching them mining/placing blocks.
+|47696|Block sounds are distorted if walking with left and right keys.
+|47736|When in spectator mode, items in your hand are misplaced.
+|47744|Cannot disable experience from villager trades.
+|47967|Workbench destroying animation is bugged.
+|48160|Cannot hide potion effect tooltips using <code>HideFlags</code>.
+|48476|Falling sand doesn't display when summoned.
+|48503|Placing a sign with NBT tags doesn't apply the tags to sign.
+|48512|Vines no longer have a back face texture.
+|48544|Baby cow eye height is misplaced and causes them to suffocate in 1-high areas.
+|49057|Command block T flip flop (command crash game).
+|;prev
+|49142|{{cmd|fill}} wrong comparator output.
+|49375|Brewing stand {{key|ctrl}}+middle click copy derp.
+}}
+
+'''Other fixes'''
+* Fixed <code>stat.useItem</code> for many items.
+** Foods, milk, potions, bows, carrots on a stick, fishing rods work with <code>stat.useItem</code>.
+** Empty buckets augment <code>stat.useItem</code> when used to pick up water or lava, but not when milking a cow.
+** Armors, leads, saddles, taming, breeding, lava and water buckets, and wooden bowls still don't work with <code>stat.useItem</code>.
+* Fixed debug rendering of bounding boxes for many entities.
+* Fixed potential "infinite" recursion issue with the {{cmd|blockdata}} command in command blocks.</onlyinclude>
+
+== Trivia ==
+* 14w10a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:14w10a]]
+[[es:Java Edition 14w10a]]
+[[fr:Édition Java 14w10a]]
+[[ja:Java Edition 14w10a]]
+[[pt:Edição Java 14w10a]]
+[[ru:14w10a (Java Edition)]]
+[[zh:Java版14w10a]]

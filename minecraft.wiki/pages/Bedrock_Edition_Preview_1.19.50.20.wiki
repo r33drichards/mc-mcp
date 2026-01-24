@@ -1,0 +1,136 @@
+{{Infobox version
+| image = Bedrock 1.19.50.20 PatchNotes.jpg
+| image2 = Bedrock 1.19.50.20.png
+| edition = Bedrock 
+| type = Preview
+| date = '''Windows, Android, iOS, iPadOS, Xbox''' - October 13, 2022
+| internal = '''Windows''': 1.19.5020.0<br>'''Xbox''': 1.19.5020.70<br>'''Android, iOS, iPadOS''': 1.19.50.20
+| parent = 1.19.50
+| prevparent = 1.19.41
+| prev =
+| next = Preview 1.19.50.21
+| nextparent = 1.19.51
+}}<onlyinclude>
+
+'''Beta 1.19.50.20''' (Android) or '''Preview 1.19.50.20''' (Windows, iOS, iPadOS, Xbox) is the first beta/''Preview'' version for [[Bedrock Edition 1.19.50]], released on October 13, 2022,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/9857822954765|title=Minecraft Beta & Preview - 1.19.50.20|website=Minecraft Feedback|date=October 13, 2022}}</ref> which fixes bugs.
+
+== Changes ==
+=== Gameplay ===
+'''[[Spectator]] mode'''
+* Moved from an experimental toggle into the base game.
+
+=== General ===
+'''[[Experimental Gameplay|Experiment]]s'''
+* Removed the 'Spectator Mode' toggle.
+
+=== Technical ===
+'''General'''
+* Min/Max distance values in sound events now only affect the sound event and not all events using the same sound. ({{bug|MCPE-154376}})
+* Added client-side-chunk-generation-enabled toggle to <code>server.properties</code>.
+'''Networking'''
+* Added server property 'enable-lan-visibility' to disable the explicit LAN discovery by clients. This will prevent unexpected port conflicts when running multiple dedicated servers on a single host. Clarified port use in server logs and made error messaging more clear. ({{bug|BDS-1094}})
+'''Stability and Performance'''
+* Fixed a crash that would occur if the ''texture_index'' of a spawn egg was out of bounds. Now a content log error will be presented instead.
+* Added null ptr check when retrieving actor ref in CameraAPI to prevent crashing.
+* Fixed an issue where game would crash when Ender Dragon breath attack hadn't hit blocks or fell into the void. ({{bug|MCPE-161204}})
+* Fixed a crash that could occur when navigating down in the Villager screen with the keyboard.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Upcoming Creator Features" and "Beta APIs" experimental toggle.
+=== Changes ===
+==== Technical ====
+'''General'''
+* Crafting Table UI updates when a block changes to a permutation with a different <code>minecraft:crafting_table</code> block component.
+'''Scripting, APIs, and GameTest Framework'''
+* Fixed wireframes still rendering after using the {{cmd|gametest clearall}} for distant gametest structures command.
+* Entity
+** Removed function ''runCommand''. Consider ''runCommandAsync'' as an alternative.
+* Dimension
+** Removed function ''runCommand''. Consider ''runCommandAsync'' as an alternative.
+* Converted <code>BlockRaycastOptions</code> to an interface.
+* Converted <code>EntityEventOptions</code> to an interface.
+* Converted <code>ScoreboardObjectiveDisplayOptions</code> to an interface.
+** Location type updated to IVec3
+* Vector
+** add - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+** cross - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+** distance - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+** divide - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+** lerp - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+** max - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+** min - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+** multiply - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+** slerp - updated ''a'' and ''b'' arguments to accept an IVec3 interface type.
+
+== Fixes ==
+'''Spectator Mode'''
+* Players can go in and out of Spectator Mode using the Personal game mode in the Settings Menu or the {{cmd|gamemode spectator}} command, if cheats are enabled. ({{bug|MCPE-156688}})
+* Open container, Command Block or Structure Block screens now close when players enter. Spectator Mode
+* Spectator Mode now appears on the list of Personal Game Modes in Settings. ({{bug|MCPE-156688}})
+'''Blocks'''
+* Dirt Path and Farmland collision are now one pixel lower. ({{bug|MCPE-12109}})
+* Players swimming above Mud will not have their screen covered. ({{bug|MCPE-153737}})
+* Projectiles landing on Mud will not repeatedly shake. ({{bug|MCPE-153744}})
+* Amphibious mobs no longer have trouble pathfinding around Mud Blocks. ({{bug|MCPE-153961}})
+* Mud and Soul Sand Block bounding boxes now matches their visual bounding boxes for when a player places the blocks. ({{bug|MCPE-162252}})
+* Sugar Cane will break on next random tick when its water source is removed. ({{bug|MCPE-162351}})
+* Fixed a bug where placed Light Blocks were invisible even while selecting a Light Block.
+'''Gameplay'''
+* Fixed blocks flickering when moved by Pistons.
+* Fixed an issue where breeding mobs with applied effects would result in the offspring having the effect bonuses permanently applied. ({{bug|MCPE-81890}})
+* Piston's arm now extends more smoothly. ({{bug|MCPE-155987}})
+* Blocks attached to Pistons now move more smoothly. ({{bug|MCPE-146597}})
+* Fixed a bug that could cause the player to teleport back to a portal after exiting it. ({{bug|MCPE-157494}})
+* Fixed an issue where signs would not play a placement sound when placed.
+* Maps corrupted by black pixels can now be repaired by revisiting corrupted areas. Previously affected maps can now be repaired by holding in main or off hand. ({{bug|MCPE-162421}})
+'''General'''
+* Fixed Bat resting location being offset when at negative world height.
+* Fixed a bug where fully charged items were lost when going through a portal. ({{bug|MCPE-55279}})
+* Bubble columns are now properly generated above underwater Magma Blocks.
+'''Graphical'''
+* Applied ambient light to blocks moved by Pistons. ({{bug|MCPE-136928}})
+* Fixed the brightness of the night sky when enabling RTX. ({{bug|MCPE-162445}})
+'''Items'''
+* Freshly crafted tools and armor now work the first time they are used. ({{bug|MCPE-161151}})
+* Weapons, tools, and armor can now be dropped from the players inventory the first time after being renamed. ({{bug|MCPE-162132}})
+* Fixed an issue where an entity at coordinate 0,0,0 prevented Pressure Plates from being placed. ({{bug|MCPE-161377}})
+'''Mob Effects'''
+* Jump Boost now consistently affects mobs ridden by players. ({{bug|MCPE-45823}})
+* Slow Falling now consistently affects mobs ridden by players. ({{bug|MCPE-126604}})
+'''Mobile Data'''
+* Added a new Mobile Data Blocked screen on Android/iOS/iPadOS/Fire when mobile data is available but disabled in-game and Wi-Fi is not connected.
+'''Mobs'''
+* Increased Enderman follow range from 32 to 64. ({{bug|MCPE-35306}})
+'''Touch Controls'''
+* "Split Control" option will only appear in Classic control mode and only affect the Classic control scheme.
+* Fixed an issue where hotbar slots could not be touched in Crosshair and Touch control schemes in certain situations.
+* Scrolling the inventory screen is easier as the dwell time has been increased to 180 milliseconds (was 120 previously). The dwell time is the length of time an item must be held before a drag action begins.
+* Untangled the connections between "Lock Joystick", "Joystick Always Visible", and "Joystick Visible When Unused".
+* Added toggle "Delayed Block Breaking (Creative Only)" in Touch Settings to control this functionality.
+* Fixed an issue where double tapping touch control buttons can be difficult on high refresh rate screens. ({{bug|MCPE-156351}})
+* Improved the way that button presses and camera movements work in tandem in the new Touch Controls.
+* Action buttons now show up when in a Boat while using Crosshair mode. ({{bug|MCPE-159376}})
+'''User Interface'''
+* Fixed a bug where the boss bar name would not update when the boss's name changed. until the bar was reloaded by the player.
+* A warning now appears when the player is about to lose changes when moving away from the Create New World screen.
+* Changed the error handling of copying worlds to display a modal pop-up instead of a toast notification.
+* Fixed a bug causing the HUD to not rotate with the player's direction while riding in a Boat in VR.
+* Changed the color of the description text for the “Allow mobile data for online play” option to be more readable. ({{bug|MCPE-162459}})
+* Hotbar item text background is now affected by the Text Background Opacity slider. ({{bug|MCPE-79331}})
+'''Commands'''
+* Using the {{cmd|enchant}} command to apply the same level of enchantment no longer results in a higher level being applied. ({{bug|MCPE-153204}})
+* Fixed an issue where <code>hasItem</code> wouldn't correctly detect an item with a data value if hasItem wasn't provided a data value. ({{bug|MCPE-162460}})
+</onlyinclude>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[Category:Bedrock Edition 1.19.50 betas]]
+[[de:Bedrock Edition beta 1.19.50.20]]
+[[es:Bedrock Edition beta 1.19.50.20]]
+[[ja:Bedrock Edition Preview 1.19.50.20]]
+[[pt:Edição Bedrock Preview 1.19.50.20]]
+[[zh:基岩版1.19.50.20]]

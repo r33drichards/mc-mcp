@@ -1,0 +1,44 @@
+{{lowercase}}
+{{About|the <code>version.json</code> file in ''Minecraft'' [[client.jar]] and [[server.jar]]|the <code>''<game version>''.json</code> used by the launcher|client.json}}
+{{exclusive|java}}
+
+<code>'''version.json'''</code> is embedded within <code>[[client.jar]]</code> in <code>[[.minecraft]]/versions/''<version>''</code> and <code>[[server.jar]]</code> since [[18w47b]]. It offers some basic information about the version's attributes.
+
+The {{cmd|version}} command also presents the same information on the [[server]] side, and the {{keys|F3+V}} [[debug hotkey]] on the client side.
+
+== JSON format ==
+This is the JSON format for <code>version.json</code>.
+
+<div class=treeview>
+* {{nbt|compound}} The root object.
+** {{nbt|string|id}}: The version's unique identifier. May sometimes display the build hash as well, separated from the name by a slash.
+** {{nbt|string|name}}: The version's user-friendly name. Usually identical to {{cd|id}}.
+** {{nbt|int|world_version}}: The [[data version]] of this version.
+** {{nbt|string|series_id}}: Identifies which branch the version is from, the default value is "main" and other values are used when a version isn't from the main branch. "deep_dark_preview" was used for [[Java_Edition_Deep_Dark_Experimental_Snapshot_1|Deep Dark Experimental Snapshot 1]] and "april<YYYY>" is used for [[April Fools' Day jokes|April Fools' Day joke]] versions released in 2022 or after. This is also used as a secondary way from the data version (<code>world_version</code>) to check for incompatibility.
+** {{nbt|int|protocol_version}}: The [[protocol version]] of this version.
+** {{nbt|compound|pack_version}}: The resource and data [[pack format]]s of this version.
+*** {{nbt|int|resource}}: The resource pack format number.
+*** {{nbt|int|data}}: The data pack format number.
+** {{nbt|string|build_time}}: The release time of this version in [[wikipedia:ISO 8601|ISO 8601]] format.
+** {{nbt|bool|stable}}: Whether this version is a release version ({{cd|true}}) or a development version ({{cd|false}}).
+** {{Nbt|bool|use_editor}}: Unknown use.
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.14|dev=18w47b|Added <code>version.json</code>.}}
+|{{HistoryLine||1.17|dev=20w45a|Changed '''pack_version''' from a single {{nbt|int}} integer value to an {{nbt|compound}} object value.
+|The data and resource pack versions are [[Java Edition 20w45a#General_2|now updated separately]].}}
+|{{HistoryLine||1.19.3|dev=22w42a|Removed {{nbt|string|release_target}} from {{nbt|compound}}root. This stored the major release a version is being developed for (identical to the name, for release versions).}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:version.json]]
+[[fr:Version.json]]
+[[pt:Version.json]]
+[[zh:Version.json]]

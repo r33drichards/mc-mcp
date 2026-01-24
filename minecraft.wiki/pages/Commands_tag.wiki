@@ -1,0 +1,90 @@
+{{for||Tag}}
+{{Infobox command
+| name = tag
+| oplevel = 
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+| others = [[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Controls [[scoreboard tag]]s on individual [[entities]]. {{IN|java}}, the number of tags owned by an entity cannot exceed 1024.
+
+{{el|je}} note: This is distinct from [[tags|entity type tags]], which are applied to [[Entity#Types of entities|entity types]] and can't be changed by commands.
+
+== Syntax ==
+* '''Java Edition'''
+: <code>tag <targets> add <name></code>
+:: Adds a tag to the targets.
+: <code>tag <targets> remove <name></code>
+:: Removes a tag from the targets.
+: <code>tag <targets> list</code>
+:: Lists all tags on the targets.
+
+* '''Bedrock Edition'''
+: <code>tag <entity: targets> add <name: string></code>
+:: Adds a tag to the targets.
+: <code>tag <entity: targets> remove <name: string></code>
+:: Removes a tag from the targets.
+: <code>tag <entity: targets> list</code>
+:: Lists all tags on the targets.
+
+== Arguments ==
+{{argument|targets|entity|entity: target|WildcardCommandSelector<Actor>}}
+: Specifies the command's target.
+: {{IN|java}}, {{lcfirst:{{arg desc|je=entity|amount=multiple|type=entities}}}}
+: {{IN|bedrock}}, must be either a [[Commands#Target_selectors|target selector]], a player name, or <code>*</code> for all score holders.
+
+{{argument|name|string|name: string|basic_string}}
+: Specifies the name of the tag to be added into or removed from the targets.
+: {{arg desc|je=string|type=word|be=string}}
+
+== Result ==
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more entities (named players must be online).|fail|fail}}
+{{Result table|cmd=/tag ... add ...|All selected entities meet one or more of the following conditions:
+* It already has the specified tag.
+* It already has 1024 tags{{only|java}}.}}
+{{Result table|cmd=/tag ... remove ...|There's no entity whose tag is removed.}}
+{{Result table|cmd=/tag ... list ...|There's no entity that has any tag.||success}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/tag ... add ...|On success|1|1|the number of entities who get a new tag}}
+{{Output table|cmd=/tag ... remove ...|On success|1|1|the number of entities whose tag is remove}}
+{{Output table|cmd=/tag ... list|On success|1|1|the number of all tags the specified entities have}}
+{{Output table|cmd=|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=17w45a|Added {{cmd|tag|link=none}}.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.9|dev=beta 1.9.0.2|Added {{cmd|tag|link=none}}.}}
+}}
+
+== See also ==
+* {{cmd|function}}
+* {{cmd|team}}
+
+== External links ==
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/tag?view=minecraft-bedrock-stable|title=<code>/tag</code> Command|website=Microsoft Learn|date=September 18, 2024}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/tag]]
+[[ja:コマンド/tag]]
+[[pt:Comandos/tag]]
+[[ru:Команды консоли/tag]]
+[[zh:命令/tag]]

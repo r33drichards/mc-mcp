@@ -1,0 +1,115 @@
+{{For||Item (disambiguation)}}
+{{exclusive|Bedrock|Education}}
+{{outdated|edition=java|This command was superseded by the {{cmd|item}} command in [[Java Edition 1.17]].}}
+{{Infobox command
+|name=replaceitem
+|oplevel=1
+|cheat=y
+}}
+Replaces the [[item]]s in a specified slot of either a [[block|block']]s ([[chest]], [[furnace]]s, etc.) or [[Entity|entity's]] ([[players]] or [[mobs]]) [[inventory]], with a specified item.
+
+== Syntax ==
+: <code>replaceitem block <position: x y z> slot.container <slotId: int> <itemName: Item> [amount: int] [data: int] [components: json]</code>
+: <code>replaceitem entity <target: target> <slotType: EntityEquipmentSlot> <slotId: int> <itemName: Item> [amount: int] [data: int] [components: json]</code>
+: <code>replaceitem block <position: x y z> slot.container <slotId: int> <oldItemHandling: ReplaceMode> <itemName: Item> [amount: int] [data: int] [components: json]</code>
+: <code>replaceitem entity <target: target> <slotType: EntityEquipmentSlot> <slotId: int> <oldItemHandling: ReplaceMode> <itemName: Item> [amount: int] [data: int] [components: json]</code>
+
+== Arguments ==
+{{argument|be=1|position: x y z|CommandPosition}}
+: Specifies the position of the block to be modified.
+: {{arg desc|be=CommandPosition}}
+
+{{argument|be=1|target: target|CommandSelector<Actor>}}
+: Specifies one or more entities to modify.
+: {{arg desc|be=actor}}
+
+{{argument|be=1|slotType: EntityEquipmentSlot|enum}}, <code>slot.container</code> and {{argument|slotId: int|int}}
+: Specifies the inventory slot to be modified. Valid values depend on whether a block or an entity is being modified. See [[Slot]] for details.
+:  <code>slotId: int</code> {{lcfirst:{{arg desc|be=int}}}} And it must be between -2147483648 and 2147483647 (inclusive).
+
+{{argument|be=1|itemName: Item|enum}}
+: Specifies the item to be placed in the block or entity's inventory slot.
+
+{{argument|be=1|amount: int|int}}
+: Specifies the number of items to be placed in the block or entity's inventory slot.
+: {{arg desc|be=int}} And it should be between 1 and 64 (inclusive).
+
+{{argument|be=1|data: int|int}}
+: Specifies the item data for the item(s) to be placed in the block or entity's inventory slot. Values which are invalid for the specified item id defaults to 0. If not specified, defaults to 0.
+: {{arg desc|be=int}} It must be between -2147483648 and 2147483647 (inclusive).
+
+{{argument|be=1|components: json|Json::Value}}
+: Specifies the [[item components]]. Like data tags but supports only <code>minecraft:can_place_on</code>, <code>minecraft:can_destroy</code>, <code>minecraft:item_lock</code>, and <code>minecraft:keep_on_death</code> functions (see [[Commands/give#Examples]])
+: {{arg desc|be=Json::Value}}
+
+{{argument|be=1|oldItemHandling: ReplaceMode|enum}}
+: Must be one of: 
+:: <code>destroy</code> - Directly replaces items ignoring the original items in the specified slot.
+:: <code>keep</code> - Does not replace items if an item occupies that slot.
+
+== Result ==
+
+{{Result table|onlybe=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.||unparseable}}<!--
+{{Result table|<code><count></code> exceeds the stack limit of the specified item|fail|success}}-->
+{{Result table|<code>amount: int</code> is lower than 1 or higher than 64.||fail}}
+{{Result table|cmd=/replaceitem block ...|The specified block is not a container.}}
+{{Result table|The specified block does not have the specified slot.}}
+{{Result table|cmd=/replaceitem entity ...|<code><targets></code> or <code>target: target</code> fails to resolve to one or more entities (named players must be online).}}
+{{Result table|All selected entities meet one or more of the following conditions:
+* It doesn't have the specified slot (for example, zombies don't have <code>horse.armor</code>).
+* Specified item cannot be place into the specified slot of its (for example, place a stone into armor.chest of a player).}}
+{{Result table|cmd=/replaceitem ... keep|An item occupies the specified slot in <code>keep</code> mode.|N/A}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table|onlybe=1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|cmd=/replaceitem block ...|On success|1}}
+{{Output table|cmd=/replaceitem entity ...|On success|the number of entities whose items are successfully replaced}}
+{{Output table}}
+
+==Examples==
+* To replace the items in the bottom-right slot of a single chest two block above with four spruce saplings:
+** <code>replaceitem block ~ ~2 ~ slot.container 26 sapling 4 1</code>
+* To replace the items in the rightmost hotbar slot of the nearest player with four spruce saplings:
+** <code>replaceitem entity @p slot.hotbar 8 sapling 4 1</code>
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w26a|Added {{cmd|replaceitem|link=none}}.}}
+|{{HistoryLine||1.14|dev=18w43a|{{cmd|replaceitem|link=none}} can now be used on [[item frame]]s.}}
+|{{HistoryLine||1.17|dev=20w46a|Removed {{cmd|replaceitem|link=none}}. Replaced with {{cmd|item replace}}.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|pocket}}
+|{{HistoryLine||1.0.5|dev=alpha 1.0.5.0|Added {{cmd|replaceitem|link=none}}.}}
+|{{HistoryLine||1.1.0|dev=alpha 1.1.0.0|<code>CanPlaceOn</code> and <code>CanDestroy</code> functions are now supported for {{cmd|replaceitem|link=none}}.}}
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.0|dev=beta 1.16.0.55| Added new overload for {{cmd|replaceitem|link=none}} with an option for destroy or keep.}}
+}}
+
+== See also ==
+* {{cmd|item}} — the {{el|je}} equivalent
+* {{cmd|give}} — give items to players without specifying specific inventory slots or overwriting other items
+* {{cmd|setfixedinvslot}} (''outdated'') — can replace a slot of a mob's inventory 
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/replaceitem?view=minecraft-bedrock-stable|title=<code>/replaceitem</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/replaceitem]]
+[[ja:コマンド/replaceitem]]
+[[pt:Comandos/replaceitem]]
+[[ru:Команды консоли/replaceitem]]
+[[uk:Команди консолі/replaceitem]]
+[[zh:命令/replaceitem]]

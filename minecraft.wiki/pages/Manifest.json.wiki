@@ -1,0 +1,215 @@
+{{DISPLAYTITLE:<samp>manifest.json</samp>}}
+{{exclusive|bedrock}}
+<code>'''manifest.json'''</code> is a {{w|manifest file}} that contains metadata information for the ''Minecraft'' package format. It is required by [[resource pack]]s, [[behavior pack]]s, [[skin pack]]s, and [[world template]]s in order to be successfully imported into the game.
+
+== JSON format ==
+=== Version 3 ===
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|int|format_version}}: The syntax version used in the manifest file. In this section, it is version {{cd|3}}.
+** {{nbt|compound|header}}: External information about the pack.
+*** {{nbt|bool|allow_random_seed}}: Specific to world templates. Whether a random seed should be generated on world creation.
+*** {{nbt|int-array|base_game_version}}: Specific to world templates. A vector {{cd|[A,B,C]}} representing the version of the vanilla resource and behavior packs to apply.
+*** {{nbt|string|description}}: A description of the pack. Can be text or a translation key.
+*** {{nbt|bool|platform_locked}}: Locks the pack from being used as a global pack, rendering it impossible to use on other player's worlds or servers.
+*** {{nbt|bool|lock_template_options}}: Specific to world templates. If enabled, the player can not modify the world options.
+*** {{nbt|int-array|min_engine_version}}: A vector {{cd|[A,B,C]}} representing the minimum version of the game the pack can run on.
+*** {{nbt|string|name}}: The name of the pack. Can be text or a translation key.
+*** {{nbt|string|pack_scope}}: Specific to resource packs. Represents at which level the pack can be applied. {{cd|"world"}} packs can be applied to a world, {{cd|"global"}} in global resources and {{cd|"any"}} anywhere. Defaults to {{cd|"any"}}.
+*** {{nbt|string|uuid}}: A unique identifier for the pack. Must be of the form {{cd|"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}}, where x in a hexadecimal number (0-9 or a-f). 
+*** {{nbt|string|version}}: A string of the form {{cd|"A.B.C"}} or vector {{cd|[A,B,C]}} representing the current version of pack. Used to handle updates to the pack.
+**** {{nbt|string|buildMeta}}: Name in front of preRelease.
+**** {{nbt|int|major}}: First version number, for [[Marketplace]] packages this value always needs to be greater than 0.
+**** {{nbt|int|minor}}: Second version number.
+**** {{nbt|int|patch}}: Third version number.
+**** {{nbt|string|preRelease}}: Name in front of version.
+** {{nbt|list|modules}}: Describes modules which are content types that the pack may contain.
+*** {{nbt|compound}}: A module object in the list.
+**** {{nbt|string|description}}: An internal description of the module.
+**** {{nbt|string|type}}: The type of the module, can be: {{cd|"resource"}} ([[resource pack]]), {{cd|"data"}} ([[behavior pack]]),{{cd|"persona_piece"}} ([[Character Creator]] item or [[cape]]), {{cd|"[[Skin pack|skin_pack]]"}}, {{cd|"[[World template|world_template]]"}}, or {{cd|"script"}} ([[scripting]]).
+**** {{nbt|string|uuid}}: An identifier unique to the module. Must be of the form {{cd|"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}}, where x in a hexadecimal number (0-9 or a-f). 
+**** {{nbt|string|version}}: A string of the form {{cd|"A.B.C"}} or vector {{cd|[A,B,C]}} representing the current version of pack. Used to handle updates to the pack.
+***** {{nbt|string|buildMeta}}: Name in front of preRelease.
+***** {{nbt|int|major}}: First version number.
+***** {{nbt|int|minor}}: Second version number.
+***** {{nbt|int|patch}}: Third version number.
+***** {{nbt|string|preRelease}}: Name in front of version.
+**** {{nbt|string|language}}: Specific to script modules. The language the scripts are written in. Only supports {{cd|"javascript"}}.
+**** {{nbt|string|entry}}: Specific to script modules. Relative path to the main script file.
+** {{nbt|list|dependencies}}: Describes external dependencies that the pack requires. The dependency may be another pack, or a script module.
+*** {{nbt|compound}}: Describes a pack dependency.
+**** {{nbt|string|uuid}}: {{cd|uuid}} of the pack dependency.
+**** {{nbt|string|name}}: The name of the pack. Can be text or a translation key.
+**** {{nbt|int-array}}{{nbt|string|version}}: {{cd|version}} of the dependency to use.
+*** {{nbt|compound}}: Describes a script module dependency.
+**** {{nbt|string|uuid}}: {{cd|uuid}} of the script module. ''Optional''
+**** {{nbt|string|module_name}}: Name of the script module, used for importing the [[Script API]].
+**** {{nbt|int-array}}{{nbt|string|version}}: {{cd|version}} of the dependency to use.
+** {{nbt|list|capabilities}}: Optional features that can be enabled.
+*** {{nbt|string}}: A capability to enable, can be:
+**** {{cd|"chemistry"}} &ndash; specific to ''[[Minecraft Education]]'' [[chemistry]] features.
+**** {{cd|"editorExtension"}} &ndash; used internally in the game in the vanilla [[Bedrock Editor]] resource pack, and for importing <code>@minecraft/server-editor</code> script module.<ref>https://wiki.bedrock.dev/scripting/api-modules</ref>
+**** {{cd|"experimental_custom_ui"}} &ndash; experimental custom UI based on HTML and JavaScript. Unsupported since [[1.18.10.28]].<ref>https://bedrock.dev/docs/1.18.0.0/1.18.10.28/UI</ref>
+**** {{cd|"script_eval"}} &ndash; enables dynamic code execution in [[scripting]] via <code>eval()</code> function or <code>Function()</code> constructor.<ref>https://wiki.bedrock.dev/scripting/api-environment</ref>
+**** {{cd|"raytraced"}} &ndash; enables PBR features specific to [[ray tracing]], which only supports MER subset. Compatible with Vibrant Visuals.
+**** {{cd|"pbr"}} &ndash; enables PBR features specific to [[Vibrant Visuals]] with full MERS support.
+** {{nbt|compound|metadata}}: Metadata on the pack, currently mandatory in this version.
+*** {{nbt|list|authors}}: List of creators of the pack, currently mandatory in this version.
+**** {{nbt|string}}: The name of a creator of the pack.
+*** {{nbt|string|license}}: License the pack is distributed under.
+*** {{nbt|compound|generated_with}}: Tools used to generate the manifest.
+**** {{nbt|list}}: The name of the list element should be the name of a tool used to generate the manifest. It must be made of simple characters and can be up to 32 characters long.
+***** {{nbt|string}}: A string of the form {{cd|"A.B.C"}} representing a version of the tool used to modify the manifest.
+*** {{nbt|string|product_type}}: If set to {{cd|"addon"}}, indicates the pack is meant as part of an [[add-on]]. This allows the add-on to not disable achievements when activated.
+*** {{nbt|string|url}}: URL to a website.
+**{{nbt|list|subpacks}}: List of sub-packs used in the pack, which can be enabled and disabled individually.
+***{{nbt|compound}}: A sub-pack in the list
+****{{nbt|string|folder_name}}: Name of the folder where the sub-pack is located.
+****{{nbt|string|name}}: In-game display name of the sub-pack
+****{{nbt|int|memory_tier}}: Designates the minimum amount of RAM required to run the sub-pack (each tier represents 250 MB)
+****{{nbt|int|memory_performance_tier}}: Denotes the optimal platform for a subpack (values range 1–5).
+** {{nbt|list|settings}}: Order-dependent list of settings the player can modify in the game's UI.
+*** {{nbt|compound}}: A read-only label, used for describing or breaking up the sections of the settings area.
+**** {{nbt|string|type}}: {{cd|"label"}}
+**** {{nbt|string|text}}: Text value of the label. 
+*** {{nbt|compound}}: A binary toggle.
+**** {{nbt|string|type}}: {{cd|"toggle"}}
+**** {{nbt|string|text}}: Textual, user-visible label for the toggle.
+**** {{nbt|string|name}}: Programmatic identifier for the value of this toggle.
+**** {{nbt|bool|default}}: Default value of this setting.
+*** {{nbt|compound}}: A sliding that allows for setting of a number within a range.
+**** {{nbt|string|type}}: {{cd|"slider"}}
+**** {{nbt|string|text}}: Textual, user-visible label for the slider.
+**** {{nbt|string|name}}: Programmatic identifier for the value of this slider.
+**** {{nbt|double|min}}: Minimum value for the slider.
+**** {{nbt|double|max}}: Maximum value for the slider.
+**** {{nbt|double|step}}: Incremental "notches" for the slider.
+**** {{nbt|double|default}}: Default value of the slider.
+</div>
+
+=== Version 2 ===
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|int|format_version}}: The syntax version used in the manifest file. In this section, it is version {{cd|2}}.
+** {{nbt|compound|header}}: External information about the pack.
+*** {{nbt|bool|allow_random_seed}}: Specific to world templates. Whether a random seed should be generated on world creation.
+*** {{nbt|int-array|base_game_version}}: Specific to world templates. A vector {{cd|[A,B,C]}} representing the version of the vanilla resource and behavior packs to apply.
+*** {{nbt|string|description}}: A description of the pack. Can be text or a translation key.
+*** {{nbt|bool|platform_locked}}: Locks the pack from being used as a global pack, rendering it impossible to use on other player's worlds or servers.
+*** {{nbt|bool|lock_template_options}}: Specific to world templates. If enabled, the player can not modify the world options.
+*** {{nbt|int-array|min_engine_version}}: A vector {{cd|[A,B,C]}} representing the minimum version of the game the pack can run on.
+*** {{nbt|string|name}}: The name of the pack. Can be text or a translation key.
+*** {{nbt|string|pack_scope}}: Specific to resource packs. Represents at which level the pack can be applied. {{cd|"world"}} packs can be applied to a world, {{cd|"global"}} in global resources and {{cd|"any"}} anywhere. Defaults to {{cd|"any"}}.
+*** {{nbt|string|uuid}}: A unique identifier for the pack. Must be of the form {{cd|"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}}, where x in a hexadecimal number (0-9 or a-f). 
+*** {{nbt|int-array}}{{nbt|string|version}}: A string of the form {{cd|"A.B.C"}} or vector {{cd|[A,B,C]}} representing the current version of pack. Used to handle updates to the pack.
+** {{nbt|list|modules}}: Describes modules which are content types that the pack may contain.
+*** {{nbt|compound}}: A module object in the list.
+**** {{nbt|string|description}}: An internal description of the module.
+**** {{nbt|string|type}}: The type of the module, can be: {{cd|"resource"}} ([[resource pack]]), {{cd|"data"}} ([[behavior pack]]), {{cd|"persona_piece"}} ([[Character Creator]] item or [[cape]]), {{cd|"[[Skin pack|skin_pack]]"}}, {{cd|"[[World template|world_template]]"}}, or {{cd|"script"}} ([[scripting]]).
+**** {{nbt|string|uuid}}: An identifier unique to the module. Must be of the form {{cd|"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}}, where x in a hexadecimal number (0-9 or a-f). 
+**** {{nbt|int-array}}{{nbt|string|version}}: A string of the form {{cd|"A.B.C"}} or vector {{cd|[A,B,C]}} representing the current version of pack. Used to handle updates to the pack.
+**** {{nbt|string|language}}: Specific to script modules. The language the scripts are written in. Only supports {{cd|"javascript"}}.
+**** {{nbt|string|entry}}: Specific to script modules. Relative path to the main script file.
+** {{nbt|list|dependencies}}: Describes external dependencies that the pack requires. The dependency may be another pack, or a script module.
+*** {{nbt|compound}}: Describes a pack dependency.
+**** {{nbt|string|uuid}}: {{cd|uuid}} of the pack dependency.
+**** {{nbt|string|name}}: The name of the pack. Can be text or a translation key.
+**** {{nbt|int-array}}{{nbt|string|version}}: {{cd|version}} of the dependency to use.
+*** {{nbt|compound}}: Describes a script module dependency.
+**** {{nbt|string|uuid}}: {{cd|uuid}} of the script module. ''Optional''
+**** {{nbt|string|module_name}}: Name of the script module, used for importing the [[Script API]].
+**** {{nbt|int-array}}{{nbt|string|version}}: {{cd|version}} of the dependency to use.
+** {{nbt|list|capabilities}}: Optional features that can be enabled.
+*** {{nbt|string}}: A capability to enable, can be:
+**** {{cd|"chemistry"}} &ndash; specific to ''[[Minecraft Education]]'' [[chemistry]] features.
+**** {{cd|"editorExtension"}} &ndash; used internally in the game in the vanilla [[Bedrock Editor]] resource pack, and for importing <code>@minecraft/server-editor</code> script module.<ref>https://wiki.bedrock.dev/scripting/api-modules</ref>
+**** {{cd|"experimental_custom_ui"}} &ndash; experimental custom UI based on HTML and JavaScript. Unsupported since [[1.18.10.28]].<ref>https://bedrock.dev/docs/1.18.0.0/1.18.10.28/UI</ref>
+**** {{cd|"script_eval"}} &ndash; enables dynamic code execution in [[scripting]] via <code>eval()</code> function or <code>Function()</code> constructor.<ref>https://wiki.bedrock.dev/scripting/api-environment</ref>
+**** {{cd|"raytraced"}} &ndash; enables PBR features specific to [[ray tracing]], which only supports MER subset. Compatible with Vibrant Visuals.
+**** {{cd|"pbr"}} &ndash; enables PBR features specific to [[Vibrant Visuals]] with full MERS support.
+** {{nbt|compound|metadata}}: Metadata on the pack.
+*** {{nbt|list|authors}}: List of creators of the pack.
+**** {{nbt|string}}: The name of a creator of the pack.
+*** {{nbt|string|license}}: License the pack is distributed under.
+*** {{nbt|compound|generated_with}}: Tools used to generate the manifest.
+**** {{nbt|list}}: The name of the list element should be the name of a tool used to generate the manifest. It must be made of simple characters and can be up to 32 characters long.
+***** {{nbt|string}}: A string of the form {{cd|"A.B.C"}} representing a version of the tool used to modify the manifest.
+*** {{nbt|string|product_type}}: If set to {{cd|"addon"}}, indicates the pack is meant as part of an [[add-on]], this also allows the addon to not disable achievements when activated.
+*** {{nbt|string|url}}: URL to a website.
+</div>
+
+== Old versions ==
+
+=== Version 1 ===
+The previous iteration of <code>manifest.json</code> only ever contains few basic information about the package, such as <code>header</code>, <code>modules</code>, and <code>dependencies</code>, being very similar to version 2 without the modern features.
+
+These manifest files are documented from multiple built-in resource packs, which are found in the [[Microsoft.MinecraftUWP|game's directory]]:
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|int|format_version}}: The syntax version used in the manifest file, version 1.
+** {{nbt|compound|header}}: The pack's display information.
+*** {{nbt|string|description}}: A description of the pack. Can be text or a translation key.
+*** {{nbt|string|name}}: The name of the pack. Can be text or a translation key.
+*** {{nbt|string|uuid}}: A unique identifier for the pack. Must be of the form {{cd|"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}}, where x in a hexadecimal number (0-9 or a-f). 
+*** {{nbt|int-array|version}}: An array consist of three integer numbers representing the current version of pack.
+*** {{nbt|int-array|min_engine_version}}: An array consist of three integer numbers representing the minimum version of the game the pack can run on.
+** {{nbt|list|modules}}: Describes modules which are content types that the pack may contain.
+*** {{nbt|compound}}: A module object in the list.
+**** {{nbt|string|description}}: An internal description of the module.
+**** {{nbt|string|type}}: The type of the module, can be: {{cd|"resource"}} ([[resource pack]]), {{cd|"data"}} ([[behavior pack]]), and {{cd|"skin_pack"}}.
+**** {{nbt|string|uuid}}: An identifier unique to the module. Must be of the form {{cd|"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}}, where x in a hexadecimal number (0-9 or a-f). 
+**** {{nbt|int-array|version}}: An array consist of three integer numbers representing the version of the pack.
+** {{nbt|list|dependencies}}: Describes external dependencies that the pack requires.
+*** {{nbt|compound}}: Describes a pack dependency.
+**** {{nbt|string|uuid}}: {{cd|uuid}} of the pack dependency.
+**** {{nbt|string|name}}: The name of the pack. Can be text or a translation key.
+**** {{nbt|int-array|version}}: An array consist of three integer numbers representing the version of the pack.
+</div>
+
+=== Version 0 ===
+The very first version of <code>manifest.json</code>, at the time was named <code>pack_manifest.json</code>, is used back in the [[v0.16.0 alpha]] versions. Its syntax is very different from version 1, containing the <code>header</code> object with different properties that would be renamed in the next iteration. Notably, <code>modules</code> and <code>dependencies</code> are contained inside the <code>header</code> object.
+
+It is retroactively called version 0 in the [https://learn.microsoft.com/en-us/minecraft/creator/reference/content/versiondisambiguation?view=minecraft-bedrock-stable Creator Documentation]. Additionally, when the pack containing this manifest is loaded in later versions, it would get converted to version 1 with the new <code>manifest.json</code>, while the old <code>pack_manifest.json</code> would get backed up as <code>pack_manifest.json.old</code>.<ref>https://learn.microsoft.com/en-us/minecraft/creator/reference/content/versiondisambiguation?view=minecraft-bedrock-stable</ref>
+
+Version 0 resource packs are seperated into the ''client'' and ''server'' packs, both serve very similar purposes to the modern resource pack (client) and behavior pack (server).
+
+These manifest files are documented from multiple built-in resource packs, which are found in the [[Microsoft.MinecraftUWP|game's directory]]:
+<div class="treeview">
+* {{nbt|compound}}: The root tag.
+** {{nbt|compound|header}}: The pack's display information.
+*** {{nbt|string|pack_id}}: A unique identifier for the pack. Must be of the form {{cd|"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}}, where x in a hexadecimal number (0-9 or a-f). 
+*** {{nbt|string|name}}: The name of the pack. Can be text or a translation key.
+*** {{nbt|int-array|packs_version}}: An array consist of three integer numbers representing the current version of pack.
+*** {{nbt|string|description}}: A description of the pack. Can be text or a translation key.
+*** {{nbt|list|modules}}: Describes modules which are content types that the pack may contain.
+**** {{nbt|compound}}: A module object in the list.
+***** {{nbt|string|description}}: An internal description of the module.
+***** {{nbt|string|type}}: The type of the module, can be: {{cd|"resource"}} (client) and {{cd|"data"}} (server).
+***** {{nbt|string|uuid}}: An identifier unique to the module. Must be of the form {{cd|"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"}}, where x in a hexadecimal number (0-9 or a-f). 
+***** {{nbt|string|version}}: A string formatted like <code>X.Y.Z</code> representing the version of the pack.
+*** {{nbt|list|dependencies}}: Describes external dependencies that the pack requires.
+**** {{nbt|compound}}: Describes a pack dependency.
+***** {{nbt|string|uuid}}: {{cd|uuid}} of the pack dependency.
+***** {{nbt|string|name}}: The name of the pack. Can be text or a translation key.
+***** {{nbt|string|version}}: A string formatted like <code>X.Y.Z</code> representing the version of the pack.
+</div>
+
+== History ==
+{{empty section}}
+
+== External links ==
+* {{Cite|title=manifest.json for Behavior/Resource/Skin Packs and World Templates|url=https://learn.microsoft.com/en-us/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable|website=Microsoft Learn}}
+* Manifest file examples in the <code>bedrock-samples</code> provided by Mojang:
+** {{Cite|title=behavior_pack/manifest.json|url=https://github.com/Mojang/bedrock-samples/blob/main/behavior_pack/manifest.json|author=Mojang|website=GitHub}}
+** {{Cite|title=resource_pack/manifest.json|url=https://github.com/Mojang/bedrock-samples/blob/main/resource_pack/manifest.json|author=Mojang|website=GitHub}}
+
+
+== References ==
+<references/>
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+[[Category:Development]]
+
+[[pt:Manifest.json]]
+[[uk:Manifest.json]]

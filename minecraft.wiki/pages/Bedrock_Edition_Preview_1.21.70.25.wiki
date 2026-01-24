@@ -1,0 +1,156 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.7025.0<br>'''Android''': 1.21.70.25
+| image = Bedrock 1.21.70.25.png
+| build = 31345669
+| editorver = 0.9.0
+| versioncode = '''Android''':<br />
+952107025 (armeabi-v7a, 34)<br />
+962107025 (x86, 34)<br />
+972107025 (arm64-v8a, 34)<br />
+982107025 (x86_64, 34)
+| date = February 26, 2025
+| server = 1.21.70.25
+| serverdl = '''Server''' <br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.70.25.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.70.25.zip Linux]<br>
+| parent = 1.21.70
+| prevparent = 1.21.62
+| prev = Preview 1.21.70.24
+| next = Preview 1.21.70.26
+| nextparent = 1.21.71
+}}
+<onlyinclude>
+
+'''Beta 1.21.70.25''' (ChromeOS, Android) or '''Preview 1.21.70.25''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fifth beta/''Preview'' version for [[Bedrock Edition 1.21.70]], released on February 26, 2025<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/34570334565901-Minecraft-Beta-Preview-1-21-70-25|title=Minecraft Beta & Preview - 1.21.70.25|website=Minecraft Feedback|date=February 26, 2025}}</ref>, which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Leaf Litter]]'''
+*Add biome based tinting to leaf litter.
+
+=== Mobs ===
+'''[[Sheep]]'''
+*Reverted the change from [[Bedrock Edition Preview 1.21.70.23|Preview 1.21.70.23]] that allowed blue, light blue, cyan, yellow, orange and red sheep to spawn naturally in different biomes.
+*Black sheep will still be the most common type to spawn in cold biomes, and brown Sheep will be the most common type in warm biomes.
+*Pink sheep will still be very rare and able to spawn anywhere where sheep can spawn.
+*Sheep wool texture has been tweaked to remove stark line at the back.
+
+'''[[Wandering Trader]]'''
+*Wandering traders' buying trades can now be used twice before they lock instead of only once.
+
+=== Gameplay ===
+'''[[Achievements]]'''
+*Enabled earning achievements while playing in a world with [[add-on]]s applied.
+
+=== General ===
+'''[[Settings]]'''
+*Enabled Filter Profanity toggle on mobile platforms.
+
+'''[[UI]]'''
+*Touch controls: camera perspective can now be changed from a HUD button., enable this in the touch settings.
+
+=== Technical ===
+'''[[Biome]]s'''
+:Client Biome Components
+*Add {{cd|minecraft:dry_foliage_color}} component to override color for {{cd|dry_foliage}} tint method.
+
+'''[[Block]]s'''
+*Add {{cd|dry_foliage}} tint method which uses the {{cd|textures/colormap/dry_foliage.png}} color map.
+*Exposed the block component {{cd|minecraft:destruction_particles}} as a JSON object. This represents the particles used when the block is destroyed.
+**There is two fields for it:
+***{{cd|texture}} is a required string field to set the texture used by the particles.
+***{{cd|tint_method}} is an optional string field that multiplies the texture color with a predefined tint. Default to {{cd|none}}. Supported values are {{cd|none}}, {{cd|default_foliage}}, {{cd|birch_foliage}}, {{cd|evergreen_foliage}}, {{cd|dry_foliage}}, {{cd|grass}} and {{cd|water}}.
+**Block format before 1.21.70 will be upgraded to have the component added using the texture from the {{cd|down}} or {{cd|*}} of the {{cd|minecraft:material_instances}} component if present and {{cd|none}} for {{cd|tint_method}}. This was the old behavior.
+**Block format from 1.21.70 without the component will not be upgraded and uses the invalid texture. Examples:
+<syntaxhighlight lang="c++">
+ "minecraft:destruction_particles": {
+  "texture": "my_particles_texture",
+  "tint_method": "grass"
+ }
+</syntaxhighlight>
+or
+<syntaxhighlight lang="c++">
+"minecraft:destruction_particles": {
+ "texture": "my_particles_texture"
+}
+</syntaxhighlight>
+
+'''[[Commands]]'''
+*Removed {{cd|set_movement_authority}} command.
+
+'''[[Dedicated Server]]'''
+*Exposed a new parameter for dedicated server. This will make the server more strict on entity interactions. Look in {{cd|[[server.properties]]}} for more information on what these do.
+**{{cd|server-authoritative-entity-interactions-strict}} default to {{cd|false}} and can be set to {{cd|true}}. Will affect entity interaction acceptance.
+*Removed {{cd|server-authoritative-movement}} parameter. It will now always use {{cd|server-auth-with-rewind}}.
+
+'''General'''
+*Server Authoritative movement is now turned on by default.
+
+'''[[Particles]]'''
+*Multiple controllers transitioning out of a state at the same time will now properly expire all intended particles instead of just the last one.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" experimental toggle.
+=== Changes ===
+==== Technical ====
+'''API'''
+*{{cd|BlockMapColorComponent}} scripting API is now read-only.
+*{{cd|BlockMapColorComponent}} scripting API fields {{cd|color}} and {{cd|tintMethod}} are now properties instead of methods.
+*Deprecated {{cd|ItemUseOnBeforeEvent}} in {{cd|@minecraft/server 2.0.0-beta}}. Use {{cd|PlayerInteractWithBlockBeforeEvent}} instead.
+*Deprecated {{cd|ItemUseOnAfterEvent}} in {{cd|@minecraft/server 2.0.0-beta}}. Use {{cd|PlayerInteractWithBlockAfterEvent}} instead.
+*{{cd|BlockDestructionParticlesComponent}} API has been added to {{cd|@minecraft/server 2.0.0-beta}}.
+*{{cd|EntityScaleComponent}} has been changed to read-only in version {{cd|2.0.0-beta}}.
+
+'''Graphical'''
+*Reduced emissive intensity by a factor of 15 in the Deferred Technical Preview, creators will likely need to adjust their emissive texture values.
+*Adjusted air and fog densities for volumetric scattering for more visible light rays in Deferred Technical Preview.
+*Made slight adjustments to auto exposure and eye adaptation in the Deferred Technical Preview.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.70.25 Preview
+|;old
+|189501|Attacking a mob while sprint jumping randomly removes all of the player's momentum, sometimes even teleporting the player backwards
+|190418|Outdated Enchanting Table name still used in Minecraft Encyclopedia and Achievements
+|190550|Crafting a Bundle consumes materials but does not create a new Bundle if holding one in Survival
+|190552|New bedrock pvp is broken after update
+|190604|Sleeping in a bed causes the player's collision to break
+|190606|Hover Note is broken on bedrock
+|;prev
+|190209|Wildflowers item have an misplaced transparent pixel
+|190291|Mooshroom mushrooms flicker
+|190404|Cactus flower's hitbox is slightly larger than it should be
+|190422|Flower pot flowers are stretched twice as much as normal flowers
+|otherissuescount=16}}
+'''Other'''
+*Potted plants are no longer clipping through flower pots.
+*Fixed wildflower item texture being slightly offset compared to Java.
+*Temperate cows no longer have harsh borders on their legs.
+*Red and brown mooshrooms no longer have harsh borders on their legs.
+*Fixed iron golem cracked texture not appearing at appropriate damage levels.
+*Fixed texture on the sides of a cold cow's head to be mirrored correctly.
+*Fixed a bug where using items with a use duration (fishing rods, food, potions, etc.) and changing slots would force your slot back to the original slot.
+*Stacks are now correctly splitting across slots when moving cursor and holding the button to split stack.
+*Fixed a potential crash that could occur when splitting stacks of items in the creative inventory.
+*Fixed an issue which prevented some users from accessing the Create New World screen in iOS Preview and PlayStation Preview.
+*Empty bell blocks no longer crash the game when moved by a sticky piston.
+*Fixed a bug where {{cmd|fill}}, {{cmd|clear}} and {{cmd|testforblock}} commands would recognize IDs of some flattened blocks as block group names and affect all variants under those groups.
+*Fixed an issue that occurs when cancelling world resource pack download.
+*Fixed a crash that occurs when initializing {{cd|minecraft:decorated_pot}} renderer.
+*Fixed mirroring and rotation of crafter blocks when part of a structure that is being placed.
+*Fixed an issue where native constructors were not properly checking privileges when being called. Constructors now check privileges properly and produce correct errors when being used in Early Execution privilege.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.70 betas]]
+
+[[de:Bedrock Edition beta 1.21.70.25]]
+[[es:Bedrock Edition Preview 1.21.70.25]]
+[[ja:Bedrock Edition Preview 1.21.70.25]]
+[[pt:Edição Bedrock Preview 1.21.70.25]]
+[[ru:Preview 1.21.70.25 (Bedrock Edition)]]
+[[uk:Preview 1.21.70.25 (Bedrock Edition)]]
+[[zh:基岩版1.21.70.25]]

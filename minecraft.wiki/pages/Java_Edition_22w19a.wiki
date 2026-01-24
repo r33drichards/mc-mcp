@@ -1,0 +1,156 @@
+{{Infobox version
+|title=Minecraft 22w19a
+|image=22w19a.jpg
+|image2=Java Edition 22w19a.png
+|edition=Java
+|type=Snapshot
+|date=May 12, 2022
+|jsonhash=c7a98d0634a35e212276ce2e47c2ed8064e605bb
+|clienthash=b6f17935359d3a7bc8022eb48e5f3643ede72fd3
+|clientmap=5b76b821c9adfd58612afeababaabe95ffe27e59
+|serverhash=c354ac562b44fe5857535935125942ff89616cab
+|servermap=b4c5ef273e65f0df3da75378402ef00d638ef4cc
+|parent=1.19
+|prevparent=1.18.2
+|prev=22w18a
+|next=1.19 Pre-release 1
+|nextparent=1.19.1
+}}<onlyinclude>
+
+'''22w19a''' is the tenth and final [[snapshot]] for [[Java Edition 1.19]], released on May 12, 2022,<ref>{{snap|22w19a|May 12, 2022}}</ref> which introduces chat preview, merges {{cmd|locate}} and {{cmd|locatebiome}} into the new {{cmd|locate|link=none}}, adds the ability to locate a POI (Point of Interest), the ability to place a template, and fixes bugs.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|locate}}'''
+* Added {{cmd|locate poi|link=none}}, can locate a POI (Point of Interest), with following syntax:
+** {{cmd|locate poi <poi>|link=none}}
+*** <code>poi</code>: The namespaced ID of a POI, or a POI tag.
+
+'''{{cmd|place}}'''
+* Added {{cmd|place template|link=none}}, can place templates at a given location, with following syntax:
+** {{cmd|place template <template> [<pos>] [<rotation>] [<mirror>] [<integrity>] [<seed>]|link=none}}
+*** Works like using the load button in the UI for a [[structure block]].
+*** <code>template</code>: The namespaced ID of a template ("structure block file") to load and place.
+*** <code>pos</code>: The position to use as the origin for the generation. (if omitted, <code>~ ~ ~</code> is used)
+*** <code>rotation</code>: The rotation to apply. (if omitted, <code>none</code> is used)
+*** <code>mirror</code>: The mirroring to apply. (if omitted, <code>none</code> is used)
+*** <code>integrity</code>: The structure integrity value between 0 and 1.
+*** <code>seed</code>: The seed to use for the randomized degradation when integrity is less than 1.
+
+=== General ===
+'''[[Chat]]'''
+* Servers can now enable chat preview, which displays a server-controlled preview above the chat edit box, showing how the message appears when sent.
+** Can be used by servers to preview messages with styling applied, such as emojis or chat coloring.
+** Chat preview sends chat messages to the server as they are typed, even before they're sent.
+*** The server then sends back the styled preview in real time.
+*** This allows servers to apply dynamic message stylings while still allowing chat to be securely signed.
+** A warning toast message is shown on the client when joining a server with chat preview, and it can be globally disabled in chat settings.
+** Dynamic chat styling can also be controlled by the server, although this is only signed when chat preview is enabled.
+*** Clients can prefer to always show the original, signed message by enabling "Only Show Signed Chat" in chat settings.
+
+'''[[Options]]'''
+* Added "Chat Preview" chat option, for enabling chat preview. Toggled on by default.
+* Added "Only Show Signed Chat" chat option, for clients who prefers to always show the original, signed message. Toggled off by default.
+
+'''{{samp|[[options.txt]]}}'''
+* Added <code>chatPreview</code> and <code>onlyShowSignedChat</code>.
+
+'''Protocol'''
+* Servers now also send an additional icon and MOTD packet after a player has connected.
+** This allows servers with <code>enable-status=false</code> to set an icon and MOTD for players that successfully connect.
+
+'''{{samp|[[server.properties]]}}'''
+* Added server property <code>previews-chat</code> to enable chat preview.
+** Defaults to <code>false</code>.
+* Added temporary server property <code>test-rainbow-chat</code>, for this snapshot only.
+
+'''[[Tags]]'''
+* Added following <code>point_of_interest_type</code> tags (new type):
+** <code>#acquirable_job_site</code>: {{cd|d=and|armorer|butcher|cartographer|cleric|farmer|fisherman|fletcher|leatherworker|librarian|mason|shepherd|toolsmith|weaponsmith}}.
+*** This tag defines job sites sought by [[villager]]s with <code>none</code> profession.
+** <code>#bee_home</code>: <code>beehive</code> and <code>bee_nest</code>.
+*** This tag defines POIs that [[bee]]s target.
+** <code>#village</code>: {{cd|d=and|#acquirable_job_site|home|meeting}}.
+*** This tag defines POIs that belongs to [[village]]s.
+
+== Changes ==
+=== Mobs ===
+'''[[Iron golem]]'''
+* Now make sure to spawn above something solid, so they can now spawn on top of [[glass]] and [[leaves]] and are no longer blocked by things like [[string]].
+
+'''[[Tadpole]]'''
+* Hitbox is now reduced from 0.5×0.4 to 0.4×0.3.
+
+'''[[Warden]]'''
+* Now make sure to spawn above something solid, so they can now spawn on top of [[glass]] and [[leaves]] and are no longer blocked by things like [[string]].
+* Ranged attack damage is now affected by difficulty.
+
+=== World generation ===
+'''[[Mineshaft]]s'''
+* No longer intersect with [[ancient cities]].
+
+=== Command format ===
+'''{{cmd|locate}} and {{cmd|locatebiome}}'''
+* Merged into the new {{cmd|locate|link=none}} command:
+** {{cmd|locate|link=none}} -> {{cmd|locate structure|link=none}}
+** {{cmd|locatebiome|link=none}} -> {{cmd|locate biome|link=none}}
+
+=== General ===
+'''Point of Interest types'''
+* Removed <code>unemployed</code> and <code>nitwit</code> types.
+
+== Fixes ==
+{{fixes|fixedin=22w19a
+|;old
+|197647|Players cannot jump off the edge of blocks when sneaking if they have a block above.
+|199326|Unable to escape block bound box when you have levitation and holding shift.
+|200282|Players with knockback resistance cannot be knocked off of edges when sneaking.
+|231600|Sculk sensor continuously receives vibrations when next to a powered big dripleaf.
+|;dev
+|249130|Tadpoles hatch inside of adjacent blocks, causing them to suffocate and die.
+|249434|The warden indefinitely roars when attacked by multiple entities.
+|249634|Warden's sniffing behavior continues after being distracted.
+|249664|Warden despawns when far away.
+|249780|Blocks that require support can generate floating in ancient cities.
+|249833|Right-clicking certain items in the off-hand can generate vibrations.
+|249888|Warden is not angered when hit by a blaze fireball.
+|249910|Warden "Nearby Closest" sound is unused.
+|249966|Warden can stop chasing a target it just roared at.
+|250172|Warden doesn't turn toward the direction it is firing the Sonic Boom attack.
+|250233|A warden summoned from a spawn egg suddenly losing its AI.
+|250272|Warden spawns in blocks that have no collision.
+|250292|Wardens can sometimes freeze when overwhelmed with enemies/attacks/sounds.
+|250319|Warden approaches sounds still plays, despite the doWardenSpawning gamerule is disabled.
+|250353|Warden cannot spawn on a single snow layer like other mobs.
+|250357|Sculk sensors and Wardens detect when a player holds up a shield.
+|250948|Warden's ranged attack is no longer affected by the game's difficulty.
+|250966|Dying to the warden's sonic boom doesn't count as the warden's kill.
+|251029|Warden froze and stopped being hostile toward the player.
+|251263|"Invalid signature for profile public key" when trying to open a singleplayer world.
+|;previous
+|251316|The game crashes when loading chunks that consist of jigsaw blocks.
+|251321|Warden can be pushed by explosions while emerging.
+|251350|{{cmd|give @s goat_horn}} gives an unregistered goat horn.
+|251396|{{cd|java.lang.IllegalArgumentException: Name and ID cannot both be blank}}.
+|251464|When passive mobs take damage from warden's sonic boom, they don't flee in panic.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|h-VR1ssE7Xo}}
+
+== Trivia ==
+* This snapshot was released on a Thursday instead of Wednesday, just like snapshots before [[14w26a]]. This was due to an unrelated delay due to a workshop about development that week's Wednesday.<ref>{{tweet|CagilMartin1|1536257811688361984|Just a workshop about development, not a big deal - JAPPA}}</ref>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:22w19a]]
+[[es:Java Edition 22w19a]]
+[[fr:Édition Java 22w19a]]
+[[ja:Java Edition 22w19a]]
+[[pt:Edição Java 22w19a]]
+[[ru:22w19a (Java Edition)]]
+[[zh:Java版22w19a]]

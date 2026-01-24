@@ -1,0 +1,141 @@
+{{Infobox version
+|title=15w38a
+|edition=Java
+|image=Java Edition 15w38a.png
+|type=Snapshot
+|date=September 16, 2015
+|parent=1.9
+|clienthash=befc74213863009297e81873644a48c52d94fde2
+|jsonhash=f6ca23e9ea8a6ba939eba48c9c38bbffdb3c2bd8
+|serverhash=9b14cce8545a6f03f16ef52ef8a2725afaea5c1c
+|exehash=e1ace2bb0e1f7684f73d67ca43addb4ad0540c8c
+|prevparent=1.8.9
+|prev=15w37a
+|next=15w38b
+|nextparent=1.9.1
+}}<onlyinclude>
+
+'''15w38a''' is the twenty-fourth [[snapshot]] for [[Java Edition 1.9]], released on September 16, 2015,<ref name="mojangblog">https://www.mojang.com/2015/09/minecraft-snapshot-15w38a/</ref> which adds skeleton horsemen.
+
+== Additions ==
+=== Mobs ===
+'''[[File:Skeleton Trap Revision 1.png|36px]] [[Skeleton horsemen]]'''
+* Added "skeleton trap" horses. When a player approaches to within 10 blocks, the following happens:
+** The <code>SkeletonTrap</code> flag is cleared.
+** [[Lightning]] strikes the horse.
+** The horse becomes skeletal if it isn't already.
+** The horse becomes tamed.
+** The horse becomes fully grown (if a baby) and the breeding cooldown is reset.
+** A skeleton is spawned riding the horse.
+*** If on Peaceful, the skeleton doesn't spawn, while the horse does.
+*** The skeleton has [[Damage#Damage immunity|damage immunity]] for 3 seconds.
+*** The skeleton doesn't despawn, since it has the tag <code>PersistenceRequired</code> set to true.
+*** The skeleton is wearing an iron helmet, unless it randomly spawned with some other headgear.
+*** The skeleton's bow and helmet are [[enchanted]] as if on an enchantment table at level 5–22.
+**** The level is higher depending on [[regional difficulty]]; on Easy it is always a level-5 enchantment.
+** Three additional skeletal horses with riders are spawned in the vicinity.
+
+=== Command format ===
+'''[[NBT format]]'''
+* <code>SkeletonTrap</code> (byte): Indicates whether the horse is a skeleton trap (i.e. whether or not the horse will spawn 4 undead horsemen in its place when a player gets within 10 blocks of it).
+** <code>/summon EntityHorse ~ ~1 ~10 {SkeletonTrap:1b}</code>.
+* <code>SkeletonTrapTime</code> (integer), incremented each tick when <code>SkeletonTrap</code> is set to 1. The mob automatically de-spawns when it reaches 18000 (15 minutes). This will prevent the hostile horses from overflowing the world, similar to chicken jockeys.
+** <code>/summon EntityHorse ~ ~1 ~10 {SkeletonTrap:1b,SkeletonTrapTime:17980}</code>.
+
+'''[[Statistics]]'''
+* Added "Times Slept in a Bed" (<code>stat.sleepInBed</code>) to track the amount of times a player has used a [[bed]].
+
+== Changes ==
+=== Blocks ===
+'''All sloped [[rail]] types'''
+* Hitbox heights are decreased from 10 pixels of block to about 2.5 pixels of a block.
+
+'''Crops'''
+* Improved drop chances for [[Wheat Seeds|seeds]] (average {{frac|1|5|7}} per crop harvested instead of {{frac|1|3|5}}), [[potato]]es and [[carrot]]s (average {{frac|2|5|7}} per crop harvested instead of {{frac|2|3|5}}), and [[beetroot seeds]] (average 2 per crop harvested instead of {{frac|4|5}}).
+
+'''[[End rod]]'''
+* The player can no longer step up onto an end rod as if it was a [[slab]] or [[stairs]].
+
+'''[[Fire]]'''
+* Goes out less often under the rain.
+** The chance of going out each fire tick is reduced from 100% to 0–45%, depending on the <code>age</code> property.
+
+=== Mobs ===
+'''General'''
+* Improvements to mob AI.
+
+'''[[Skeleton]]s'''
+* Have new idle sounds.
+* Skeletons can now walk, strafe and shoot at the same time.
+** They walk away from players that are too close and towards players that are too far.
+*** They also sprint towards the player when very far away.
+* Now can spawn riding "skeletal horses" through the new "skeleton trap" horse.
+
+'''Tamed [[ocelot]]s & [[wolves]]'''
+* Deaths (and killers) are now announced to their owners on [[chat]], even if unnamed.
+
+'''[[Villager]]s'''
+* Now pick up and plant [[beetroot seeds]].
+* Now pick up [[beetroot]] and use it in the same way as they do [[carrot]]s and [[potato]]es.
+
+=== Non-mob [[entities]] ===
+'''[[Lightning]]'''
+* Natural lightning strikes may spawn a "skeleton trap" style skeletal horses.
+** Chance is calculated from the [[regional difficulty]] score: 5% * raw regional difficulty score.
+*** 3.75–7.5% chance on Easy, 7.5–20% chance on Normal, 11.25–33.75% chance on Hard.
+
+== Fixes ==
+{{fixes|fixedin=15w38a|prefix=Minecraft
+|;old
+|1230|Players and mobs can fall through extending/retracting pistons.
+|1635|Hitboxes for some blocks are broken.
+|1720|Dropped items bounce on stairs, cauldrons, carpets, and full/locked hoppers.
+|32850|Server GUI text box is empty (.exe only).
+|69652|Mobs de-aggro after punching them.
+|73302|Block collision box issues (mobs glitch through blocks and more).
+|77972|No large red mushrooms in mushroom biomes 1.8.2 onwards.
+|78759|Hopper splitting items into "Minecart with chest"s next to each other.
+|79995|Too many banners items (in chests) will become invisible after 6-7 chests.
+|81738|Crash: <code>IndexOutOfBoundsException</code> on Tesselating block in world.
+|88101|Retracting blocks don't move/bounce entities correctly.
+|88480|Minecarts accept items from hopper 2 blocks above.
+|;dev
+|83002|Villagers don't pick up beetroots or beetroot seeds.
+|83266|Beetroot farming non-sustainable.
+|86253|In multiplayer, when a player is blocking with a shield, other players see the shield as the normal state.
+|86845|Minecart command blocks kick players from servers.
+|87802|Excessive banners (as blocks) do not render.
+|87946|Monsters can see the player through walls.
+|;previous
+|88357|Crash when going outside height limit or into the void with F3.
+|88365|Shift-clicking combined shields+banners moves the whole banner stack to the inventory, but only removes one banner from the crafting grid, duplicating the rest.
+|88377|Crash when crafting an empty shield with a banner.
+|88396|Pistons do not move unextended pistons.
+|88428|Pistons can push obsidian.
+|88438|Vines cannot be placed on blocks in Creative or Survival mode.
+|88446|Unconditional impulse command blocks interact unexpectedly with <code>conditionMet</code>.
+|88470|Joining a multiplayer game within render distance of player causes "invisibility".
+|88499|Breaking top vine growing ON jungle tree stem removes all lower vines.
+|88812|Hopper: <code>java.lang.NullPointerException: Rendering screen</code>.
+|88815|Can't place paintings bigger than 2x2.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|z5okeX626H4}}
+
+== Trivia ==
+* 15w38a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:15w38a]]
+[[es:Java Edition 15w38a]]
+[[fr:Édition Java 15w38a]]
+[[ja:Java Edition 15w38a]]
+[[pt:Edição Java 15w38a]]
+[[ru:15w38a (Java Edition)]]
+[[zh:Java版15w38a]]

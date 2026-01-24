@@ -1,0 +1,232 @@
+A '''processor list''' is used to transform blocks of a [[structure template]] during generation. They contain a list of processors. Processor lists are configured using [[JSON]] files stored within a [[data pack]] in the folder {{cd|data/<namespace>/worldgen/processor_list}} or an [[add-on]] in the folder {{cd|<root BP>/worldgen/processors}}.
+
+== JSON format ==
+A processor list can be a list, or an object that contains a list.
+{{el|java}}:
+A list:
+<div class="treeview">
+* {{nbt|list}}: A list of processors.
+** {{nbt|compound}}: A processor object (see below)
+</div>
+
+Or an object:
+<div class="treeview">
+* {{nbt|compound}}: An object of processor list.
+** {{nbt|list|processors}}: A list of processors.
+*** {{nbt|compound}}: A processor object  (see below)
+</div>
+
+{{el|bedrock}}:
+<div class="treeview"><section begin="json format" />
+*{{nbt|compound}} The root tag.
+**{{nbt|string|format_version}}: The game version to run the file as. Versions above 1.21.20 can be used.
+**{{nbt|compound|minecraft:processor_list}}
+*** {{nbt|compound|description}}
+**** {{nbt|string|identifier}}: The identifier used for referencing this processor.
+*** {{nbt|list|processors}}: A list of processors.
+**** {{nbt|compound|processor_type}}: A processor. The type of processor determines the format of the rest of the processor.
+<section end="json format" />
+</div>
+
+== Processors ==
+
+===rule===
+Replaces blocks with custom rules
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:rule}}
+** {{Nbt|list|rules}}: (Required, but can be empty) A list of rules. Only the first rule that all conditions are met takes effect. This is decided anew for each block.
+*** {{Nbt|compound}}: A rule.
+**** {{Nbt|compound|position_predicate}}: (Optional, defaults to an "always_true" test) A {{slink||Position rule test}} to apply to the distance from the structure start to this block.
+**** {{Nbt|compound|input_predicate}}: A {{slink||Rule test}} to apply to the block placed by the structure.
+**** {{Nbt|compound|location_predicate}}: A {{slink||Rule test}} to apply to the block in the world that is replaced by the structure.
+**** {{Nbt|compound|output_state}}: The block that is placed when all conditions are met. Omitting block states use default values (e.g. the replacement of stairs with stairs without changing states need 40 rules to check for all facing combinations).
+***** {{nbt inherit/block state}}
+**** {{Nbt|compound|block_entity_modifier}}: (optional) Modifies nbt data of the block entity if all conditions are met.
+***** {{Nbt|string|type}}: Can be {{cd|minecraft:append_loot}}(Appends <code>LootTable</code> field and <code>LootTableSeed</code> field to the block entity. The <code>LootTableSeed</code> uses a random number seeded by the block position.), {{cd|minecraft:append_static}}{{only|je|short=1}}(Merges specified data into the block entity.), {{cd|minecraft:clear}}{{only|je|short=1}}(Resets any existing fields on the block entity.) or {{cd|minecraft:passthrough}}(Do nothing).
+*****; If {{cd|type}} is {{cd|minecraft:append_loot}}, additional field is as follows<nowiki>:</nowiki>
+***** {{Nbt|string|loot_table}}: The resource location of a loot table.
+*****; If {{cd|type}} is {{cd|minecraft:append_static}}, additional field is as follows<nowiki>:</nowiki>
+***** {{Nbt|compound|data}}: The nbt data to be merged into the block entity. Needs to be in JSON form, see [[NBT format#JSON and NBT]].
+</div>
+===block_rot===
+{{exclusive|java|section=1}}
+Randomly removes blocks. The removed blocks are not replaced by air, but keep the old blocks before the structure being generated
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:block_rot}}
+** {{Nbt|float|integrity}}: The probability of randomly removing blocks in the structure. Value between 0 and 1.
+** {{Nbt|string}}{{nbt|list|rottable_blocks}}: (optional) Blocks that can be removed. A block ID or a block tag, or a list of block IDs.
+</div>
+===block_age===
+{{exclusive|java|section=1}}
+Makes blocks aged. A stone, stone bricks, or cracked stone bricks block has a chance of 0.5 to be replaced with one of cracked stone bricks, stone brick stairs, mossy stone bricks, and mossy stone brick stairs. All variants of stairs have a 0.5 chance to become one of stone slab, stone brick slab, mossy stone brick stairs, and mossy stone brick slab. All variants of slabs and walls may remain unchanged or become mossy stone brick variants. Obsidian also has a 0.15 chance to be replaced with crying obsidian.
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:block_age}}
+** {{Nbt|float|mossiness}}: Values below 0.0 is treated as 0.0; values above 1.0 is treated as 1.0. The probability of using mossy variants when making a block aged.
+</div>
+
+===block_ignore===
+Removes specified blocks. The removed blocks are not replaced by air, but keep the old blocks before the structure being generated.
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:block_ignore}}
+** {{Nbt|list|blocks}}: (Required, but can be empty) IDs of blocks to ignore. Specifying block states has no effect.
+*** {{Nbt|compound}}: A block.
+**** {{nbt inherit/block state}}
+</div>
+===gravity===
+{{exclusive|java|section=1}}
+Change the Y-level of blocks' positions to fit the terrain like a village road. Note that this is not used to make floating gravity blocks fall down. This processor is hardcoded to be used on a structure template if its "projection" field in its [[template pool]] is "terrain_matching"
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:gravity}}
+** {{Nbt|string|heightmap}}: (optional, defaults to WORLD_SURFACE_WG) Must be one of <code>"WORLD_SURFACE_WG"</code>(if not during world generation, fallbacks to <code>WORLD_SURFACE</code>), <code>"WORLD_SURFACE"</code>, <code>"OCEAN_FLOOR_WG"</code>(if not during world generation, fallbacks to <code>OCEAN_FLOOR</code>), <code>"OCEAN_FLOOR"</code>, <code>"MOTION_BLOCKING"</code>, or <code>"MOTION_BLOCKING_NO_LEAVES"</code>.
+** {{Nbt|int|offset}}: (optional, defaults to 0) The offset relative to the terrain. For example: 0 is to place the structure on the ground, -1 is to sink one block into the ground. When this processor is used on a structure template by hardcoding (when the template's "projection" field in its [[template pool]] is "terrain_matching"), {{Nbt|int|offset}} is -1.
+</div>
+===protected_blocks===
+Specifies which blocks in the world cannot be overridden by this structure
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:protected_blocks}}
+** {{Nbt|string|value}}: A block tag with <code>#</code>.
+</div>
+===blackstone_replace===
+{{exclusive|java|section=1}}
+Replaces all stone-variant blocks with blackstone variants and all iron bars with chains.
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:blackstone_replace}}
+</div>
+===jigsaw_replacement===
+{{exclusive|java|section=1}}
+Replaces [[jigsaw block]]s with the specified final state. This processor is hardcoded to be used unless generated in the jigsaw block GUI.
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:jigsaw_replacement}}
+</div>
+===lava_submerged_block===
+{{exclusive|java|section=1}}
+Blocks with incomplete outline shapes cannot override the lava in the world
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:lava_submerged_block}}
+</div>
+===capped===
+Applies a processor to some random blocks instead of applying it to all blocks.
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:capped}}
+** {{Nbt|int}}{{Nbt|compound|value}}: The number of blocks on which the processor is applied. Must be greater than 0. If it is greater than or equal to the total number of blocks in the structure template, all blocks are processed as if the processer is not capped.
+*** {{nbt inherit/int provider}}
+** {{Nbt|compound|delegate}}: Another processor object
+</div>
+
+===nop===
+{{exclusive|java|section=1}}
+Does nothing
+<div class="treeview">
+* {{Nbt|compound}}: A processor object
+** {{Nbt|string|processor_type}}: {{cd|minecraft:nop}}
+</div>
+
+== Rule test ==
+Rule tests are used to test if a block matches specific conditions.
+
+=== always_true ===
+Matches any block
+<div class="treeview">
+*{{Nbt|compound}}: a rule test
+**{{Nbt|string|predicate_type}}: <code>always_true</code>
+</div>
+
+=== block_match ===
+Tests is the block is the specified block.
+<div class="treeview">
+*{{Nbt|compound}}: a rule test
+**{{Nbt|string|predicate_type}}: <code>block_match</code>
+** {{Nbt|string|block}}: A block ID.
+</div>
+
+=== blockstate_match ===
+Tests is the block for the specified [[block state]].
+<div class="treeview">
+*{{Nbt|compound}}: a rule test
+**{{Nbt|string|predicate_type}}: <code>blockstate_match</code>
+** {{Nbt|compound|block_state}}: A block state.
+*** {{Nbt inherit/block state}}
+</div>
+
+=== random_block_match ===
+Tests is the block is the specified block. Then only matches with a given probability.
+<div class="treeview">
+*{{Nbt|compound}}: a rule test
+**{{Nbt|string|predicate_type}}: <code>random_block_match</code>
+** {{Nbt|string|block}}: A block ID.
+** {{Nbt|float|probability}}: The probability of the predicate to pass if the block is found. Values below 0.0 is treated as 0.0; values above 1.0 is treated as 1.0.
+</div>
+
+=== random_blockstate_match ===
+Tests is the block for the specified [[block state]]. Then only matches with a given probability.
+<div class="treeview">
+*{{Nbt|compound}}: a rule test
+**{{Nbt|string|predicate_type}}: <code>random_blockstate_match</code>
+** {{Nbt|compound|block_state}}: A block state.
+*** {{Nbt inherit/block state}}
+** {{Nbt|float|probability}}: The probability of the predicate to pass if the block state is found. Values below 0.0 is treated as 0.0; values above 1.0 is treated as 1.0.
+</div>
+
+=== tag_match ===
+Tests if the block is in the specified [[block tag (Java Edition)|block tag]].
+<div class="treeview">
+*{{Nbt|compound}}: a rule test
+**{{Nbt|string|predicate_type}}: <code>tag_match</code>
+** {{Nbt|string|tag}}: A [[block tag (Java Edition)|block tag]] without <code>#</code>.
+</div>
+
+== Position rule test ==
+Position rule tests are used to test if a position matches specific conditions.
+
+=== always_true ===
+Matches any position.
+<div class="treeview">
+*{{Nbt|compound}}: a position rule test
+**{{Nbt|string|predicate_type}}: <code>always_true</code>
+</div>
+
+=== linear_pos ===
+Passes with a random probability, the probability is based on the 3D Manhattan distance to the structure start.
+
+<div class="treeview">
+*{{Nbt|compound}}: a position rule test
+**{{Nbt|string|predicate_type}}: <code>linear_pos</code>
+** {{Nbt|float|min_chance}}: (optional, default is 0.0) The probability (probability less than 0 is treated as 0, greater than 1 is treated as 1) for the predicate to pass when the distance of a block to the structure start is equal to or less than {{cd|min_dist}}. 
+** {{Nbt|float|max_chance}}: (optional, default is 0.0) The probability (probability less than 0 is treated as 0, greater than 1 is treated as 1) for the predicate to pass when the distance of a block to the structure start is equal to or greater than {{cd|max_dist}}. If a block's distance is between {{cd|min_dist}} and {{cd|max_dist}}, probability is obtained by linear interpolation between the values of {{cd|min_dist}} and {{cd|max_dist}}, that is, the probability is {{cd|(distance - min_dist ) / ( max_dist - min_dist ) * ( max_chance - min_chance ) + min_chance}}, and probability less than 0 is treated as 0, greater than 1 is treated as 1.
+** {{Nbt|int|min_dist}}: (optional, defaults to 0) the distance when the minimum probability is used. Must be less than {{Nbt|int|max_dist}}.
+** {{Nbt|int|max_dist}}: (optional, defaults to 0) the distance when the maximum probability is used. Must be greater than {{Nbt|int|min_dist}}.
+</div>
+
+=== axis_aligned_linear_pos ===
+Passes with a random probability, the probability is based on the distance to the structure start along the specified axis.
+
+<div class="treeview">
+*{{Nbt|compound}}: a position rule test
+**{{Nbt|string|predicate_type}}: <code>axis_aligned_linear_pos</code>
+** {{Nbt|string|axis}}: (optional, defaults to {{cd|y}}) can be {{cd|x}}, {{cd|y}} or {{cd|z}}.
+** {{Nbt|float|min_chance}}: (optional, default is 0.0) The probability (probability less than 0 is treated as 0, greater than 1 is treated as 1) for the predicate to pass when the distance of a block to the structure start is equal to or less than {{cd|min_dist}}. 
+** {{Nbt|float|max_chance}}: (optional, default is 0.0) The probability (probability less than 0 is treated as 0, greater than 1 is treated as 1) for the predicate to pass when the distance of a block to the structure start is equal to or greater than {{cd|max_dist}}. If a block's distance is between {{cd|min_dist}} and {{cd|max_dist}}, probability is obtained by linear interpolation between the values of {{cd|min_dist}} and {{cd|max_dist}}, that is, the probability is {{cd|(distance - min_dist ) / ( max_dist - min_dist ) * ( max_chance - min_chance ) + min_chance}}, and probability less than 0 is treated as 0, greater than 1 is treated as 1.
+** {{Nbt|int|min_dist}}: (optional, defaults to 0) the distance when the minimum probability is used. Must be less than {{Nbt|int|max_dist}}.
+** {{Nbt|int|max_dist}}: (optional, defaults to 0) the distance when the maximum probability is used. Must be greater than {{Nbt|int|min_dist}}.
+</div>
+
+== External links ==
+* [https://misode.github.io/worldgen/processor-list/ Processor list Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Prozessorliste]]
+[[fr:Liste de processeurs]]
+[[pt:Lista de processadores]]
+[[zh:处理器列表]]

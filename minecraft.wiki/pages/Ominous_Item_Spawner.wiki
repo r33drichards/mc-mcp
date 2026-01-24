@@ -1,0 +1,156 @@
+{{distinguish|Ominous Trial Spawner}}
+{{Infobox entity
+| image = Ominous_Item_Spawner.png
+| imagesize = 300px
+| health = None
+| size = Height: 0.25 blocks<br>Width: 0.25 blocks
+}}
+'''Ominous item spawners''' are [[entities]] spawned by [[ominous trial spawners]] that display an item for 3 to 6 seconds before dispensing it downwards.
+
+== Spawning ==
+{{Main|Ominous Trial Spawner#Projectile spawning}}
+When an ominous trial spawner detects at least one player within its activation range, every 8 seconds it spawns an ominous item spawner above any such player or any mob that was spawned by this ominous trial spawner. The location where it should spawn is determined by first performing a raycast from the feet of the entity to a random height between 2 and 6 blocks above the entity. If it hits a block, this block is used, otherwise the end of the line is used. Which block can be hit is determined by the same algorithm as the [[third-person view]]. The item spawns in the center of the block below it, unless the block has a collision box. 
+
+== Behavior ==
+An ominous item spawner displays an item rotating in the air for a specified amount of time. When spawned by an ominous trial spawner, that time varies between 3 and 6 seconds. After that time, the item is dispensed downwards. If the item is a projectile, it is shot as an entity. Otherwise the item is dropped.
+
+== Sounds ==
+{{JE}}:
+{{SoundTable
+| type = java
+| {{SoundLine
+|sound =Trial Spawner about to spawn item.ogg
+|subtitle=Ominous item prepares
+|source=neutral
+|description=When a trial spawner is about to spawn an ominous item spawner
+|id=block.trial_spawner.about_to_spawn_item
+|translationkey=subtitles.block.trial_spawner.about_to_spawn_item
+|volume=1.0
+|pitch=1.0
+|distance=16}}
+| {{SoundLine
+|sound=Trial Spawner spawn item1.ogg
+|sound2=Trial Spawner spawn item2.ogg
+|sound3=Trial Spawner spawn item3.ogg
+|subtitle=Ominous item drops
+|source=block
+|description=When an ominous item spawner summons an item
+|id=block.trial_spawner.spawn_item
+|translationkey=subtitles.block.trial_spawner.spawn_item
+|volume=1.0
+|pitch=0.8-1.2
+|distance=16}}
+| {{SoundLine
+|sound=Trial Spawner spawn item begin1.ogg
+|sound2=Trial Spawner spawn item begin2.ogg
+|sound3=Trial Spawner spawn item begin3.ogg
+|subtitle=Ominous item appears
+|source=block
+|description=When an ominous item spawner is summoned
+|id=block.trial_spawner.spawn_item_begin
+|translationkey=subtitles.block.trial_spawner.spawn_item_begin
+|volume=1.0
+|pitch=0.8-1.2
+| distance = 16
+}}
+}}
+
+{{BE}}:
+{{SoundTable
+| type = bedrock
+| {{SoundLine
+| sound =Trial Spawner about to spawn item.ogg
+|source=block
+|description=When a trial spawner is about to spawn an ominous item spawner
+|id=ominous_item_spawner.about_to_spawn_item
+|volume=1.0
+|pitch=0.8-1.1}}
+| {{SoundLine
+|sound=Trial Spawner spawn item1.ogg
+|sound2=Trial Spawner spawn item2.ogg
+|sound3=Trial Spawner spawn item3.ogg
+|source=block
+|description=When an ominous item spawner summons an item
+|id=ominous_item_spawner.spawn_item
+|volume=1.0
+|pitch=0.8-1.1}}
+| {{SoundLine
+|sound=Trial Spawner spawn item begin1.ogg
+|sound2=Trial Spawner spawn item begin2.ogg
+|sound3=Trial Spawner spawn item begin3.ogg
+|source=block
+|description=When an ominous item spawner is summoned
+|id=ominous_item_spawner.spawn_item_begin
+|volume=1.0
+| pitch = 0.8-1.1
+}}
+}}
+
+== Data values ==
+=== ID ===
+{{JE}}:
+{{ID table
+|edition=java
+|generatetranslationkeys=y
+|displayname=Ominous Item Spawner
+|spritetype=entity
+|nameid=ominous_item_spawner
+|foot=1}}
+
+{{BE}}:
+{{ID table
+|edition=bedrock
+|shownumericids=y
+|generatetranslationkeys=y
+|displayname=Ominous Item Spawner
+|spritetype=entity
+|nameid=ominous_item_spawner
+|id=145
+|translationkey=-
+|foot=1}}
+
+=== Entity data ===
+Ominous item spawners have entity data associated with them that contain various properties.
+
+{{el|java}}:
+{{main|Entity format}}
+<section begin="entity data"/><div class="treeview">
+* {{nbt|compound}} Entity data
+** {{nbt inherit/entity}}
+** {{nbt|compound|item}}: The item to display and dispense.
+*** {{nbt inherit/itemnoslot}}
+** {{nbt|long|spawn_item_after_ticks}}: Total time in ticks to display the item, before dispensing it.
+</div><section end="entity data"/>
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20.5|exp=Update 1.21|dev=24w13a|Added ominous item spawners.}}
+|{{HistoryLine||1.21|dev=24w18a|Ominous item spawners are now available without using the "Update 1.21" experimental data pack.}}
+|{{HistoryLine|||dev=24w21a|{{cd|spawn_item_after_ticks}} is now read from nbt.<ref>{{bug|MC-269964||Ominous item spawners are missing an NBT load for spawn_item_after_ticks|Fixed}}</ref>}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.21.0|exp=Update 1.21|dev=Preview 1.21.0.21|Added ominous item spawners.}}
+|{{HistoryLine||1.21.0|dev=Preview 1.21.0.22|Ominous item spawners are now available without using the "Update 1.21" experimental toggle.}}
+}}
+
+== Issues ==
+{{issue list}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox entities|Other}}
+
+[[de:Unheilvoller Gegenstands-Spawner]]
+[[es:Generador de objetos ominoso]]
+[[fr:Générateur d'objets funeste]]
+[[ja:不吉なアイテムスポナー]]
+[[pt:Gerador de Item Sombrio]]
+[[ru:Зловещий спаунер предметов]]
+[[zh:不祥之物生成器]]

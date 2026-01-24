@@ -1,0 +1,134 @@
+{{outdated|This was replaced by the [[Region file format]] in [[Beta 1.3]] and the [[Anvil file format]] in current versions.|edition=java}}
+{{exclusive|java}}
+[[Infdev]] introduced a new data storage challenge while under development: terrain generated in Infdev has the potential to be almost 235 petabytes (240,640 terabytes) in size when stored in memory, due to the sheer size of the map (several times the surface area of the Earth). Therefore, to reduce file size and memory usage, Notch decided to split the terrain into 16×128×16 chunks and store them on disk when not visible. In addition, terrain is only generated when it is within the drawing distance of the player's camera, significantly reducing save size, since most players are only able to search a tiny fraction of the map in a reasonable time frame. [[Java Edition Alpha|Alpha]] uses this technique, and both [[Java Edition Beta|Beta]] and [[Java Edition|newer versions]] still use the general concept because of its success.
+
+The first version to use this format was [[Java Edition Infdev 20100327|Infdev 20100327]].
+
+In ''Minecraft'' [[Beta 1.3]], this format was superseded by the [[Region file format]], where chunks are stored in groups of 32×32 in region files.
+
+The save format was used for all versions between [[Infdev 20100327]] and [[Beta 1.2_02]] inclusive, with the important exception of [[Java Edition Infdev 20100624|Infdev 20100624]], which used the new  [[Zone file format]] which was immediately scrapped afterwards due to creating massive world files.
+
+== World folder structure ==
+An Alpha level is actually a single folder containing at least one file named '''level.dat'''. There is also a [[#session.lock Format|session.lock]] file to make sure only one Minecraft opens the level at once.
+
+The level folder may have up to 64 subfolders, each with up to 64 additional subfolders each. These folders contain the chunk files that hold the level's terrain and entities. Each chunk file is identified by its chunk position xPos and zPos. The varying parts of the chunk file's name are obtained by taking the [[wikipedia:Base 36|base36]] representation of the xPos and zPos. The names of the folders that the chunk file is placed in are found by taking xPos and zPos, modulo 64 (or bitwise ANDing with 63), and converting to base36. Negative coordinates must be interpreted as positive numbers, bitwise, via [[wikipedia:Signed number representations#Two.27s complement|two's complement]]. So, -13 is treated as 243 (if its size is a byte).
+
+As an example, to find the chunk at position (-13, 44):
+* The first folder name is base36(-13 % 64). This is base36(243 % 64 = 51) which is "1f".
+* The second folder name is base36(44 % 64). This is base36(44) which is "18".
+* The chunk file's name is "c." + base36(-13) + "." + base36(44) + ".dat". This evaluates to "c.-d.18.dat"
+* Thus, the chunk at (-13, 44) is stored in "1f/18/c.-d.18.dat"
+Each chunk remembers its position independently of the file and folder names. See [[#Chunk format|below]] to find out how to read a chunk's position from the file data.
+
+=== Dimensions ===
+Dimensions are saved in the same way normal worlds are, but instead of mixing the world files inside the save folder, the files are stored in an additional sub-folders with their own region and chunk data. Their names start with <code>DIM</code>, followed by the dimension ID.
+
+These dimension IDs were used in Alpha:
+{| class="wikitable" data-description="Dimension IDs"
+! ID !! Folder !! Dimension
+|-
+| 0 || <code>saves/[World]/</code> || Normal world (Overworld), always stored in the world folder without <code>DIM</code>
+|-
+| -1 || <code>saves/[World]/DIM-1/</code> || [[The Nether]], added with the [[Halloween Update]]
+|}
+
+=== <samp>session.lock</samp> format ===
+<samp>session.lock</samp> contains the timestamp of when the world was last touched. The file is eight bytes long, and contains a single 64-bit signed integer in big endian format. The value of this integer is the timestamp, stored as the number of milliseconds elapsed since 1970, in UTC.
+
+Unlike typical lock files, <samp>session.lock</samp> ensures that the LAST program to open a world is that one that owns it. The process goes something like this:
+
+# program opens <samp>session.lock</samp>
+# program writes timestamp to <samp>session.lock</samp>
+# program monitors <samp>session.lock</samp> for changes
+# if the contents of <samp>session.lock</samp> change, program aborts and gives up its lock on the world.
+
+=== <samp>level.dat</samp> format ===
+The <samp>[[Java Edition level format#level.dat format|level.dat]]</samp> file is a GZip'd [[NBT]] file that stores global level data (time of day, player health, inventory, velocity, and position within the map, etc.). Most importantly, it stores the Random Seed that the terrain generator uses to seamlessly generate more terrain on the fly.
+
+This file has this structure:
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|compound|Data}}: Global level data.
+*** {{nbt|long|LastPlayed}}: Stores the Unix time stamp (in milliseconds) when the player saved the game.
+*** {{nbt|long|SizeOnDisk}}: Estimated size of the entire world in bytes.
+*** {{nbt|long|RandomSeed}}: Random number providing the random seed for the terrain.
+*** {{nbt|int|SpawnX}}: X coordinate of the level's spawn position.
+*** {{nbt|int|SpawnY}}: Y coordinate of the level's spawn position.
+*** {{nbt|int|SpawnZ}}: Z coordinate of the level's spawn position.
+*** {{nbt|long|Time}}: Stores the current "time of day" in ticks. There are 20 ticks per real-life second, and 24000 ticks per Minecraft [[day/night cycle]], making the full cycle length 20 minutes. 0 is the start of [[Day/night cycle#Daytime|daytime]], 12000 is the start of [[Day/night cycle#Sunset/Dusk|sunset]], 13800 is the start of [[Day/night cycle#Nighttime|nighttime]], 22200 is the start of [[Day/night cycle#Sunrise/Dawn|sunrise]], and 24000 is daytime again. The value stored in level.dat is always increasing and can be larger than 24000, but the "time of day" is always modulo 24000 of the "Time" field value.
+*** {{nbt|compound|Player}}: The [[Singleplayer]] player for the level.
+**** {{nbt|int|Dimension}}: The dimension the player is in. 0 is the [[Overworld]], and -1 is [[The Nether]].
+**** {{nbt|list|Pos}}: List of 3 TAG_Doubles for the X, Y, and Z position of the player.
+**** {{nbt|list|Rotation}}: List of 2 TAG_Floats for the yaw and pitch of the player's view.
+**** {{nbt|list|Motion}}: List of 3 TAG_Doubles for the X, Y, and Z motion in meters per tick.
+**** {{nbt|byte|OnGround}}: 1 or 0 (true/false) - true if the player is on the ground.
+**** {{nbt|float|FallDistance}}: How far the player has fallen.
+**** {{nbt|short|Health}}: The number of hit points the player has. 20 is 10 hearts.
+**** {{nbt|short|AttackTime}}: Number of ticks the player is immune to attacks.
+**** {{nbt|short|HurtTime}}: Number of ticks the player is red from being attacked.
+**** {{nbt|short|DeathTime}}: Number of ticks the player has been dead for - used for controlling the death animation.
+**** {{nbt|short|Air}}: The number of ticks before the player starts to drown. Starts at 300.
+**** {{nbt|short|Fire}}: When negative, the number of ticks before the player can catch on fire. When positive, the number of ticks before the fire is extinguished.
+**** {{nbt|int|Score}}: The player's score. The score was never utilized in Alpha or even beta, so this value is irrelevant.
+**** {{nbt|list|Inventory}}: List of TAG_Compounds representing the items in the player's inventory.
+***** {{nbt|compound}} An inventory item.
+****** {{nbt|byte|Slot}}: The slot the item is in.
+****** {{nbt|short|id}}: The item [[Java Edition data values#IDs|ID]].
+****** {{nbt|short|Damage}}: The item's [[Java Edition data values#Data|data]] value, or damage value for tools.
+****** {{nbt|byte|Count}}: The number of this item in the stack. Range -128 to 127. Values less than 2 are not displayed in-game.
+</div>
+
+=== Chunk format ===
+Chunk files, as described above, are GZip'd [[NBT format|NBT]] files. They have this structure:
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|compound|Level}}: The level data in this chunk.
+*** {{nbt|int|xPos}}: The X chunk coordinate.
+*** {{nbt|int|zPos}}: The Z chunk coordinate.
+*** {{nbt|byte|TerrainPopulated}}: 1 or 0 (true/false) - true if Minecraft has generated special features in this chunk such as trees, flowers, ores, dungeons.
+*** {{nbt|long|LastUpdate}}: The tick when the chunk was last updated.
+*** {{nbt|byte-array|Blocks}}: 32768 bytes of block IDs, 8 bits per block.
+*** {{nbt|byte-array|Data}}: 16384 bytes of block data, 4 bits per block.
+*** {{nbt|byte-array|BlockLight}}: 16384 bytes of block light, 4 bits per block.
+*** {{nbt|byte-array|SkyLight}}: 16384 bytes of sky light, 4 bits per block.
+*** {{nbt|byte-array|HeightMap}}: 256 bytes of height map information, 8 bits per XZ column. Used for speeding up sky light calculations.
+*** {{nbt|list|Entities}}: List of TAG_Compounds, one for each entity in the chunk.
+**** {{nbt|compound}} An entity.
+***** See [[Entity format]] - not all information is applicable to Minecraft Alpha.
+*** {{nbt|list|TileEntities}}: List of TAG_Compounds, one for each tile entity in the chunk.
+**** {{nbt|compound}} A tile entity.
+***** See [[Block entity format]] - not all information is applicable to Minecraft Alpha.
+</div>
+
+==== Block Format ====
+Blocks are laid out in sets of vertical columns, with the rows going east-west through the chunk, and columns going north-south. Blocks in each chunk are accessed via the following method:
+
+<code>byte BlockID = Blocks[y + (z * ChunkSizeY(=128) + (x * ChunkSizeY(=128) * ChunkSizeZ(=16) ) ) ];</code>
+
+The coordinate system is as follows:
+* '''X''' increases South, decreases North
+* '''Y''' increases upwards, decreases downwards
+* '''Z''' increases West, decreases East
+
+All array indices are ordered YZX - the Y coordinate varies fastest. '''Note''': The height map array is the only exception which has its indexes ordered ZX instead.
+
+== See also ==
+* [[Java Edition Indev level format|Indev level format]]
+* [[Zone file format]]
+* [[Region file format]]
+* [[Anvil file format]]
+** [[Chunk format]]
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:Spielstand-Speicherung/Alpha Level Format]]
+[[es:Formato de mundo de Java Edition Alpha]]
+[[fr:Format de niveau de l'édition Java Alpha]]
+[[ja:Alphaレベルフォーマット]]
+[[nl:Alpha level formaat]]
+[[pt:Formato de nível da Edição Java Alpha]]
+[[ru:Alpha (формат карты)]]
+[[zh:Alpha世界格式]]

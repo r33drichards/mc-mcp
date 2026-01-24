@@ -1,0 +1,80 @@
+This interactive tool calculates the velocity and damage given to an entity by an [[explosion]].
+<onlyinclude>
+{| class="wikitable calculator-container calculatorgadget-enabled"
+! colspan=4 | Positions
+|-
+! Explosion X
+| {{Simplecalc|type=number|id=ex|size=20|default=0.0}}
+! Entity X
+| {{Simplecalc|type=number|id=px|size=20|default=1.0}}
+|-
+! Explosion Y
+| {{Simplecalc|type=number|id=ey|size=20|default=0.061250001192092896}}
+! Entity Y
+| {{Simplecalc|type=number|id=py|size=20|default=0.0}}
+|-
+! Explosion Z
+| {{Simplecalc|type=number|id=ez|size=20|default=0.0}}
+! Entity Z
+| {{Simplecalc|type=number|id=pz|size=20|default=0.0}}
+{{Simplecalc|type=hidden|id=dx|formula=px-ex|default=1.0}}
+{{Simplecalc|type=hidden|id=dy|formula=py-ey|default=-0.061250001192092896}}
+{{Simplecalc|type=hidden|id=dz|formula=pz-ez|default=0.0}}
+{{Simplecalc|type=hidden|id=distance|formula=sqrt(dx*dx + dy*dy + dz*dz)|default=1.001874025337533}}
+|-
+! colspan=4 | Exposure
+|-
+! Entity [[Hitbox|width]]
+| {{Simplecalc|type=number|id=w|size=20|default=0.9800000190734863}}
+! Entity [[Hitbox|height]]
+| {{Simplecalc|type=number|id=h|size=20|default=0.9800000190734863}}
+|-
+! Layout
+| <code>{{Simplecalc|type=plain|id=expx|formula=ceil(2*w+1)|default=3}}×{{Simplecalc|type=plain|id=expy|formula=ceil(2*h+1)|default=3}}×{{Simplecalc|type=plain|id=expz|formula=ceil(2*w+1)|default=3}}</code>
+! Spacing
+| <code>{{Simplecalc|type=plain|id=expxs|formula=w/(2*w+1)|default=0.33108108325802205}}</code> × <code>{{Simplecalc|type=plain|id=expys|formula=h/(2*h+1)|default=0.33108108325802205}}</code> × <code>{{Simplecalc|type=plain|id=expzs|formula=w/(2*w+1)|default=0.33108108325802205}}</code>
+|-
+! Negative corner
+| <code>{{Simplecalc|type=plain|id=expxn|formula=(1-floor(2*w+1)/(2*w+1))/2|default=0.1621621665160441}}</code>, <code>0</code>, <code>{{Simplecalc|type=plain|id=expzn|formula=(1-floor(2*w+1)/(2*w+1))/2|default=0.1621621665160441}}</code>
+! Positive corner
+| <code>{{Simplecalc|type=plain|id=expxp|formula=expxn+expxs*(expx-1)|default=0.8243243330320882}}</code>, <code>{{Simplecalc|type=plain|id=expyp|formula=expys*(expy-1)|default=0.6621621665160441}}</code>, <code>{{Simplecalc|type=plain|id=expzp|formula=expzn+expzs*(expz-1)|default=0.8243243330320882}}</code>
+|-
+! colspan=4 | Effect on the entity
+|-
+! Power
+| {{Simplecalc|type=number|id=power|size=20|default=4.0}}
+! Exposure
+| {{Simplecalc|type=number|id=exposureNumerator|size=9|default=27}} / {{Simplecalc|type=plain|id=etotal|formula=expx*expy*expz|default=27}} {{Simplecalc|type=hidden|id=exposure|formula=exposureNumerator/(expx*expy*expz)|default=1.0}}
+|-
+! Knockback multiplier
+| {{Simplecalc|type=number|id=knockbackmult|size=20|default=1.0}}
+! [[Hitbox|Eye height]]
+| {{Simplecalc|type=number|id=eyeheight|size=20|default=0.0}}
+{{Simplecalc|type=hidden|id=diry|formula=(py+eyeheight)-ey|default=-0.061250001192092896}}
+{{Simplecalc|type=hidden|id=dirmag|formula=sqrt(dx*dx + diry*diry + dz*dz)|default=1.001874025337533}}
+|-
+! [[Attribute|Knockback resistance]]
+| {{Simplecalc|type=number|id=knockbackres|size=20|default=0.0}}
+! Velocity X
+| {{Simplecalc|type=plain|id=vx|formula=dx/dirmag*speed|default=0.8731294800642211}} blocks/tick
+|-
+! Speed
+| {{Simplecalc|type=plain|id=speed|formula=(1-distance/(2*power))*exposure*knockbackmult*(1-knockbackres)|default=0.8747657468328084}} blocks/tick
+! Velocity Y
+| {{Simplecalc|type=plain|id=vy|formula=diry/dirmag*speed|default=-0.053479181694784994}} blocks/tick
+|-
+! [[Damage]]
+| {{Simplecalc|type=plain|id=damage|formula=(speed*speed + speed)/2 * 7*(2*power) + 1|default=46.9375}}
+! Velocity Z
+| {{Simplecalc|type=plain|id=vz|formula=dz/dirmag*speed|default=0.0}} blocks/tick
+|}
+</onlyinclude>
+
+== Navigation ==
+{{Navbox calculators}}
+
+[[es:Calculadoras/Efecto de explosión sobre entidades]]
+[[ko:계산기/폭발에 의한 개체 영향]]
+[[pt:Calculadoras/Efeito da explosão sobre entidades]]
+[[uk:Калькулятори/Вплив вибуху на сутність]]
+[[zh:计算器/爆炸实体影响]]

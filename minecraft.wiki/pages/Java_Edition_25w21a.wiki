@@ -1,0 +1,134 @@
+{{Infobox version
+|title=Minecraft 25w21a
+|image=25w21a.jpg
+|image2=Java Edition 25w21a.png
+|edition=Java
+|type=Snapshot
+|date=May 20, 2025
+|jsonhash=ec6b54caf3f3d79865d360fdf04b9d0b3eaa6ed2
+|clienthash=cc1841deb726892f1e1be6fd59f870eba4ba5761
+|clientmap=ea047a77e9fb8fb92ec399ffc6a39ba5f498905a
+|serverhash=a5f7be5d2f05250abfc49639a26f399b8a8ebb61
+|servermap=e2b7179bf376b18ad5cbcd77301f1f610da97480
+|parent=1.21.6
+|prevparent=1.21.5
+|prev=25w20a
+|next=1.21.6 Pre-Release 1
+|nextparent=1.21.7
+}}<onlyinclude>
+'''25w21a''' is the seventh and final [[snapshot]] for [[Java Edition 1.21.6]], released on May 20, 2025.<ref>{{snap|25w21a|id=a|May 20, 2025}}</ref>
+
+== Additions ==
+=== Gameplay ===
+'''[[Sound]]s'''
+* Added <code>entity/leashknot/break</code> for when a [[lead]] snaps.
+* The following sounds have been added for [[shear]]ing [[saddle]]s, [[horse armor]], and [[carpet]]s from [[llama]]s.
+** <code>mob/horse/armor_unequip</code>
+** <code>mob/horse/saddle_unequip</code>
+** <code>mob/llama/unequip</code>
+
+== Changes ==
+=== Mobs ===
+'''[[Horse]], [[donkey]], and [[mule]]'''
+* Can now be fed [[carrot]]s to heal, grow, and improve their temper, with the same effect as [[apple]]s.
+
+=== Gameplay ===
+'''[[Sound]]s'''
+* The following sounds have been renamed:
+** <code>entity/leashknot/break1</code> -> <code>entity/leashknot/unleash1</code>
+** <code>entity/leashknot/break2</code> -> <code>entity/leashknot/unleash2</code>
+** <code>entity/leashknot/break3</code> -> <code>entity/leashknot/unleash3</code>
+** <code>entity/leashknot/place1</code> -> <code>entity/leashknot/leash1</code>
+** <code>entity/leashknot/place2</code> -> <code>entity/leashknot/leash2</code>
+** <code>entity/leashknot/place3</code> -> <code>entity/leashknot/leash3</code>
+
+=== General ===
+'''[[Clouds]]'''
+* The pattern of clouds has been changed.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|78}}.
+
+'''[[Dialog]]s'''
+* {{cd|run_command}} click actions will now correctly close dialogs and book screens even if the command does not require elevated permissions.
+* Dialogs should now correctly return to the previous non-dialog screen on close in all cases.
+* If a new dialog is received by the client while warning screen is visible, it will not replace it, but when user clicks the "Back" button, the new dialog will be restored instead.
+* The sizes of elements in dialogs are now restricted:
+** buttons - between {{cd|1}} and {{cd|1024}} (inclusive).
+** {{cd|minecraft:plain_message}} dialog body - between {{cd|1}} and {{cd|1024}} (inclusive).
+** {{cd|minecraft:item}} dialog body
+*** {{cd|width}} of {{cd|description}} - between {{cd|1}} and {{cd|1024}} (inclusive).
+*** {{cd|width}} - between {{cd|1}} and {{cd|256}} (inclusive).
+*** {{cd|height}} - between {{cd|1}} and {{cd|256}} (inclusive).
+** {{cd|minecraft:text}} input control - between {{cd|1}} and {{cd|1024}} (inclusive).
+** {{cd|minecraft:single_option}} input control - between {{cd|1}} and {{cd|1024}} (inclusive).
+** {{cd|minecraft:number_range}} input control - between {{cd|1}} and {{cd|1024}} (inclusive).
+* {{cd|minecraft:text}} input control
+** {{cd|max_length}} - maximum length of input, positive integer with default of {{cd|32}}.
+** {{cd|multiline}} - if present, allows users to input multiple lines, optional object with fields:
+*** {{cd|max_lines}} - if present, limits maximum lines, optional positive integer.
+*** {{cd|height}} - height of input, optional integer in range {{cd|1}} to {{cd|512}}.
+**** If this field is omitted, but {{cd|max_lines}} is present, the height will be chosen to fit the maximum number of lines.
+**** If this and {{cd|max_lines}} are both omitted, it will default to a height that fits 4 lines.
+* {{cd|minecraft:number_range}} input control
+** The {{cd|steps}} field has been replaced with a new field:
+*** {{cd|step}} - step size, optional positive float.
+**** If present, only values of {{cd|initial + <any integer> * step}} will be allowed.
+**** If absent, any value from range the is allowed.
+** {{cd|initial}} - if not specified, now defaults to the middle of the range.
+* {{cd|minecraft:multi_action_input_form}} dialog type.
+** Added new field {{cd|columns}} - positive integer describing number of columns, default: {{cd|2}}.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|62}}.
+
+'''[[Tags]]'''
+* Added {{cd|carrot}} to {{cd|#horse_food}} item tag.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w21a
+|;From released versions before 1.21
+|36696|Clicking on the statistics button on the menu screen advances the game by 1 tick.
+|112730|Beacon beam and structure block render twice per frame.
+|236464|Beacon beams emitted from below the player are invisible after reloading chunks.
+|239701|Rendering issue when breaking ice and flying with "Chunk Builder" set to Threaded.
+|258336|Frost Walker causes frequent visual corruption near chunk borders on Threaded and Semi-Blocking Chunk Builder.
+|;From 1.21.5
+|296337|Minecarts cause memory usage increases and crashes.
+|297264|Cat breeds are not seed based anymore.
+|;dev
+|297336|Experience orbs from thrown bottles o' enchanting are very prone to getting stuck inside blocks when thrown against a corner.
+|297615|Untranslatable error message when trying to join a closed Realm.
+|;prev
+|297803|The string {{cd|menu.custom_screen_info.contents}} misspells "personal" as "pesonal".
+|297806|{{cd|music.game.swamp.labyrinthine}} misspells the song's title.
+|297808|{{cd|music.game.oxygene}} is missing the grave accent sign.
+|297812|Bold text is rendered differently than in previous versions.
+|297813|Amos Roddy is not listed in the credits.
+|297823|{{cd|music.game.mice_on_venus}} is using wrong capitalization.
+|297845|Clicking the Statistics button in Singleplayer does not play the button click sound until you resume playing.
+|297846|The music toast flashes in the pause menu when the Music slider is set to zero.
+|297875|Text shadow from underlined text overlaps the text below it in chat messages.
+|297888|Text no longer renders in a consistent order across different fonts.
+|297917|The client stops responding when showing a dialog with an extremely wide button.
+|297977|Dialog columns layout has extra spacing between the grid and the overflow linear layout.
+}}
+</onlyinclude>
+
+== Videos ==
+{{slicedlime|dOjkGA3HTAc|kmKyzcSV-7U}}
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w21a]]
+[[fr:Édition Java 25w21a]]
+[[it:Java Edition 25w21a]]
+[[ja:Java Edition 25w21a]]
+[[ko:Java Edition 25w21a]]
+[[pt:Edição Java 25w21a]]
+[[ru:25w21a (Java Edition)]]
+[[uk:25w21a (Java Edition)]]
+[[zh:Java版25w21a]]

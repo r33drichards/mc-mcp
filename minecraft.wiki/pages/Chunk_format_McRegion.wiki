@@ -1,0 +1,268 @@
+{{outdated|edition=java|McRegion has been deprecated since [[Java Edition 1.2.1]].}}
+
+[[Chunk]]s store the terrain and entities within a 16x16x128 area. They also store precomputed lighting, heightmap data for Minecraft's performance and other meta information.
+
+Chunks were first introduced in Minecraft [[Infdev]]. Before the addition of the [[region file format]] in Beta 1.3, chunks were stored as individual chunk files. The file names contained the chunk's position encoded in Base36 and the extension ".dat".
+
+The Data, SkyLight, and BlockLight are arrays of 4-bit values.  The low bits of the first byte of one of these corresponds to the first block in the Blocks array.
+
+Prior to 1.2, chunk sizes changed to '''16x16x256''', for higher building.
+
+== NBT Structure ==
+<div class="treeview">
+* {{nbt|compound|Level}} Chunk data
+** {{nbt|byte-array|Blocks}} 32768 bytes of [[Data values#Block IDs|block IDs]] defining the terrain. 8 bits per block. See [[#Block Format|Block Format]] below for byte ordering.
+** {{nbt|byte-array|Data}} 16384 bytes of [[Data values#Data|block data]] additionally defining parts of the terrain. 4 bits per block.
+** {{nbt|byte-array|SkyLight}} 16384 bytes recording the amount of sun or moonlight hitting each block. 4 bits per block. Makes day/night transitions smoother compared to recomputing per level change.
+** {{nbt|byte-array|BlockLight}} 16384 bytes recording the amount of block-emitted light in each block. 4 bits per block. Makes load times faster compared to recomputing at load time.
+** {{nbt|byte-array|HeightMap}} 256 bytes of heightmap data. 16 x 16. Each byte records the lowest level in each column where the light from the sky is at full strength. Speeds computing of the SkyLight. '''Note:''' This array's indexes are ordered Z,X whereas the other array indexes are ordered X,Z,Y.
+** {{nbt|list|Entities}} Each TAG_Compound in this list defines an entity in the chunk. See [[#Entity Format|Entity Format]] below.
+** {{nbt|list|TileEntities}} Each TAG_Compound in this list defines a tile entity in the chunk. See [[#Tile Entity Format|Tile Entity Format]] below.
+** {{nbt|list|TileTicks}} Each TAG_Compound in this list is an "active" block in this chunk waiting to be updated. These are used to save the state of redstone machines, falling sand or water, and other activity. See [[#Tile Tick Format|Tile Tick Format]] below.
+** {{nbt|long|LastUpdate}} Tick when the chunk was last saved.
+** {{nbt|int|xPos}} X position of the chunk. Should match the file name.
+** {{nbt|int|zPos}} Z position of the chunk. Should match the file name.
+** {{nbt|byte|TerrainPopulated}} 1 or not present (true/false) indicate whether the terrain in this chunk was populated with special things. (Ores, special blocks, trees, dungeons, flowers, waterfalls, etc.) If set to zero then minecraft will regenerate the chunk.
+</div>
+
+== Block Format ==
+
+Blocks are laid out in sets of vertical columns, with the rows going east-west through chunk, and columns going north-south. Blocks in each chunk are accessed via the following method:
+
+unsigned char BlockID = Blocks[ y + z * ChunkSizeY(=128) + x * ChunkSizeY(=128) * ChunkSizeZ(=16) ];
+
+The coordinate system is as follows:
+* '''X''' increases East, decreases West
+* '''Y''' increases upwards, decreases downwards
+* '''Z''' increases South, decreases North
+
+The Data, BlockLight, and SkyLight arrays have four bits (a nibble) for each byte of the Blocks array. Note that these arrays use a kind of 'little endian' nibble order: e.g. the least significant four bits of the first byte of the Data, BlockLight, or SkyLight arrays correspond to the first byte of the Blocks array, and the most significant four bits correspond to the second byte, etc.
+
+== Tile Tick Format ==
+(added in version RC2)
+<div class="treeview">
+* {{nbt|compound}} Tile Tick data
+** {{nbt|int|i}} Block ID 
+** {{nbt|int|t}} Number of ticks until processing. May be negative when processing is overdue.
+** {{nbt|int|x}} Position
+** {{nbt|int|y}} Position
+** {{nbt|int|z}} Position
+</div>
+
+== Entity Format ==
+Every entity is an unnamed TAG_Compound contained in the Entities list of a chunk file. The sole exception is the Player entity, stored in level.dat.
+
+All entities share this base:
+<div class="treeview">
+* {{nbt|compound}} Entity data
+** {{nbt|string|id}} Entity ID
+** {{nbt|list|Pos}} 3 TAG_Doubles describing the current X,Y,Z position of the entity.
+** {{nbt|list|Motion}} 3 TAG_Doubles describing the current dX,dY,dZ velocity of the entity. (Note: Falling into the [[Void]] appears to set this to ridiculously high speeds. 0,0,0 is no motion.)
+** {{nbt|list|Rotation}} Two TAG_Floats representing rotation in degrees.
+*** {{nbt|float|[0]}} The entity's rotation clockwise around the Y axis (called yaw). Due west is 0. Can have large values because it accumulates all of the entity's lateral rotation throughout the game.
+*** {{nbt|float|[1]}} The entity's declination from the horizon (called pitch). Horizontal is 0. Positive values look downward. Does not exceed positive or negative 90 degrees.
+** {{nbt|float|FallDistance}} Distance the entity has fallen. Larger values cause more damage when the entity lands.
+** {{nbt|short|Fire}} Number of ticks until the fire is put out. Negative values reflect how long the entity can stand in fire before burning.
+** {{nbt|short|Air}} How much air the entity has, in ticks. Fills to a maximum of 200 in air, giving 10 seconds submerged before the entity starts to drown, and a total of up to 20 seconds before the entity dies. Decreases while underwater. If 0 while underwater, the entity loses 1 health per second.
+** {{nbt|byte|OnGround}} 1 if the entity is touching the ground.
+</div>
+
+=== [[File:SkeletonFace.png|16px]] Mobs ===
+
+Known Mob Entity ids: '''Blaze, CaveSpider, Chicken, Cow, Creeper, EnderDragon, Enderman, Ghast, Giant, LavaSlime, Mob, Monster, MushroomCow, Ozelot, Pig, Sheep, Silverfish, Skeleton, Slime, SnowMan, Spider, Squid, Villager, Wolf, Zombie, and PigZombie'''
+
+Additional fields for mobs:
+<div class="treeview">
+* {{nbt|short|AttackTime}} Number of ticks the entity's "invincibility shield" is lasting after the entity was last struck.
+* {{nbt|short|DeathTime}} Number of ticks the entity has been dead for. Controls death animations.
+* {{nbt|short|Health}} Amount of health the entity has. Players and enemies normally have up to 20 health. Livestock has up to 10 health.
+* {{nbt|short|HurtTime}} Unknown, maybe time invincible after being hit
+</div>
+[[File:PigFace.png|16px]] '''Pig''' has one additional field: 
+<div class="treeview">
+* {{nbt|byte|Saddle}} 1 or 0 (true/false) - true if there is a [[saddle]] on the pig.
+</div>
+[[File:SheepFace.png|16px]] '''Sheep''' has two additional fields:
+<div class="treeview">
+* {{nbt|byte|Sheared}} 1 or 0 (true/false) - true if the sheep has been shorn.
+* {{nbt|byte|Color}} 0 to 15 - see [[Data_values#Wool|wool data values]] for a mapping to colors.
+</div>
+[[File:CreeperFace.png|16px]] '''Creeper''' has one additional/optional field:
+<div class="treeview">
+* {{nbt|byte|powered}} 1 or 0 (true/false) - true if the creeper was struck by lightning (doubles the explosive power). This tag is only written if value is 1 (true).
+</div>
+[[File:SlimeFace.png|16px]] '''Slime''' has one additional field, and it can't be used as the Entity ID of a Monster Spawner:
+<div class="treeview">
+* {{nbt|int|Size}} The size of the slime
+</div>
+[[File:WolfFace.png|16px]] '''Wolf''' has three additional fields:
+<div class="treeview">
+* {{nbt|string|Owner}} Name of the player that owns this wolf. Empty string if no owner.
+* {{nbt|byte|Sitting}} 1 or 0 (true/false) - true if the wolf is sitting.
+* {{nbt|byte|Angry}} 1 or 0 (true/false) - true if the wolf is angry.
+</div>
+[[File:ZombiePigmanFace.png|16px]] '''PigZombie''' has one additional field:
+<div class="treeview">
+* {{nbt|short|Anger}} Anger level. Determines the agressivity of the creature towards players.
+</div>
+[[File:EndermanFace.png|16px]] '''Enderman''' has two additional fields:
+<div class="treeview">
+* {{nbt|short|carried}} Id of the block carried by the Enderman.
+* {{nbt|short|carriedData}} [[Data_values#Data|Additional data]] about the block carried by the Enderman.
+</div>
+=== [[File:Arrow.png|16px]] Projectiles ===
+
+Known Projectile Entity ids: '''Arrow, Snowball, Egg, Fireball, SmallFireball, ThrownEnderpearl'''
+
+[[File:Arrow.png|16px]] [[File:Snowball.png|16px]] [[File:Egg.png|16px]] [[File:Fire_Charge_JE2_BE2.png|16px]] [[File:Ender Pearl.png|16px]] Additional fields for '''Arrow''', '''Snowball''', '''Egg''', '''Fireball''' (from [[Ghast]]s), '''SmallFireball''' (from [[Blaze]]s), and '''ThrownEnderpearl''':
+<div class="treeview">
+* {{nbt|short|xTile}} X coordinate of the item's position in the chunk.
+* {{nbt|short|yTile}} Y coordinate of the item's position in the chunk.
+* {{nbt|short|zTile}} Z coordinate of the item's position in the chunk.
+* {{nbt|byte|inTile}} For arrows being stuck into blocks.
+* {{nbt|byte|shake}} The "shake" when arrows hit a block.
+* {{nbt|byte|inGround}} 1 or 0 (true/false) - Unknown
+</div>
+=== [[File:Stone.png|16px]] Items ===
+
+Known Item Entity ids: '''Item,  Painting, XPOrb'''
+
+[[File:Cobblestone.png|16px]] Additional fields for '''Item''':
+<div class="treeview">
+* {{nbt|short|Health}} Starts at 5, and currently only decreases as the item takes fire damage. When health reaches 0, the item is destroyed.
+* {{nbt|short|Age}} The amount of time an item has been "untouched" on the ground. After 6000 'ticks' (5 minutes <ref>[https://x.com/notch/status/12167659458134017 '''Items decay after 5 minutes:''' https://x.com/notch/status/121676594581340177]</ref>) the item is destroyed.
+* {{nbt|compound|Item}} Item data
+** {{nbt|short|id}} [[Data values|Item or Block ID.]]
+** {{nbt|short|Damage}} The amount of wear each item has suffered. 0 means undamaged. When the Damage exceeds the item's durability, it breaks and disappears. Only tools and armor accumulate damage normally.
+** {{nbt|byte|Count}} Number of [[item]]s stacked in this inventory slot. Any item can be stacked, including tools, armor, and vehicles. Range is 1-255. Values above 127 are not displayed in-game.
+** {{nbt|compound|tag}}
+*** {{nbt|list|ench}} Contains [[enchantment]]s for this item
+**** {{nbt|compound}} Make one of these for each [[enchantment]]
+***** {{nbt|short|id}} Id of the [[Enchantment]]
+***** {{nbt|short|lvl}} Level of the [[Enchantment]]
+</div>
+[[File:Painting.png|16px]] Additional fields for '''Painting''':
+<div class="treeview">
+* {{nbt|byte|Dir}} Direction the painting faces:  0 is east, 1 is north, 2 is west, and 3 is south.
+* {{nbt|string|Motive}} The name of this [[Painting]]'s art.
+* {{nbt|int|TileX}} X coordinate of the block the painting is hanging on.
+* {{nbt|int|TileY}} Y coordinate of the block the painting is hanging on.
+* {{nbt|int|TileZ}} Z coordinate of the block the painting is hanging on.
+</div>
+[[File:Experience_Orb_Value_3-6.png|16px]] Additional fields for '''XPOrb''':
+<div class="treeview">
+* {{nbt|short|Health}} Starts at 5, and currently only decreases as the item takes fire damage. When health reaches 0, the item is destroyed.
+* {{nbt|short|Age}} The amount of time an orb has been "untouched" on the ground. After a certain amount of ticks, the orb is destroyed.
+* {{nbt|short|Value}} The amount of experience the orb gives when picked up.
+</div>
+=== [[File:Oak_Boat.png|16px]] Vehicles  ===
+
+Known Vehicle Entity ids: '''Minecart, Boat'''
+
+[[File:Minecart.png|16px]] Additional fields for '''Minecart''':
+<div class="treeview">
+* {{nbt|int|Type}} The type of the cart: 0 - empty, 1 - with a chest, 2 - with a furnace.
+</div>
+[[File:Minecart with_Furnace.png|16px]] For a minecart with a furnace there are three additional fields:
+<div class="treeview">
+* {{nbt|double|PushX}} Unknown
+* {{nbt|double|PushZ}} Unknown
+* {{nbt|short|Fuel}} Unknown, but probably number of ticks until fuel runs out.<sup><nowiki>[</nowiki>{{wikipedia|WP:A|assumption}}<nowiki>]</nowiki></sup>
+</div>
+[[File:Minecart with_Chest.png|16px]] For a minecart with a chest there is one additional field:
+<div class="treeview">
+* {{nbt|list|Items}} List of items in the slots, same as for a chest.
+</div>
+=== Dynamic Tiles ===
+
+Known Dynamic Tile Entity ids: '''PrimedTnt, FallingSand'''
+
+[[File:TNT.png|16px]] Additional fields for '''PrimedTnt'''
+<div class="treeview">
+* {{nbt|byte|Fuse}} Ticks until explosion.
+</div>
+[[File:Sand.png|16px]] Additional fields for '''FallingSand''':
+<div class="treeview">
+* {{nbt|byte|Tile}} [[Data values#Blocks|Block ID]].
+</div>
+== Tile Entity Format ==
+Known TileEntity ids: '''[[#Furnace|Furnace]], [[#Sign|Sign]], [[#MobSpawner|MobSpawner]], [[#Chest|Chest]], [[Music]], [[#Trap|Trap]], [[#RecordPlayer|RecordPlayer]], [[#Piston|Piston]], [[#Cauldron|Cauldron]], [[#EnchantTable|EnchantTable]], and [[#End_Portal|End portal]]'''
+
+All tile entities share this base:
+<div class="treeview">
+* {{nbt|compound}} Tile entity data
+** {{nbt|string|id}} Tile entity ID
+** {{nbt|int|x}}
+** {{nbt|int|y}}
+** {{nbt|int|z}} Coordinates of the TileEntity.
+</div>
+=== Unique Tile Entity fields ===
+=== [[File:Furnace.png|16px]]  Furnace ===
+<div class="treeview">
+* {{nbt|short|BurnTime}} Fuel time
+* {{nbt|short|CookTime}} Cooking time
+* {{nbt|list|Items}} List of items in the furnace slots. Each item is a TAG_Compound identical to the ones in the [[Alpha_Level_Format#level.dat_Format|Inventory list]]. The first entry corresponds to the burning item, the second one is for the fuel and the last one for the result. The list may be empty.
+</div>
+=== [[File:Oak_Sign.png|16px]] Sign  ===
+<div class="treeview">
+* {{nbt|string|Text1}} First row of text
+* {{nbt|string|Text2}} Second row of text
+* {{nbt|string|Text3}} Third row of text
+* {{nbt|string|Text4}} Fourth row of text
+</div>
+=== [[File:Monster Spawner.png|16px]] MobSpawner ===
+<div class="treeview">
+* {{nbt|string|EntityId}} The id of the [[#Mobs|mob]].
+* {{nbt|short|Delay}} Ticks until next spawn.
+</div>
+=== [[File:Chest.png|16px]] Chest ===
+<div class="treeview">
+* {{nbt|list|Items}} List of items in the chest. Each item is a TAG_Compound identical to the ones in the Inventory list. Chest slots are numbered 0-26 with 0 in the top left corner.
+</div>
+=== [[File:Note Block.png|16px]] Music ===
+<div class="treeview">
+* {{nbt|byte|note}} Pitch (number of right-clicks)
+</div>
+=== [[File:Dispenser.png|16px]] Trap ===
+<div class="treeview">
+* {{nbt|list|Items}} List of items in the dispenser, numbered 0-8.
+</div>
+=== [[File:Jukebox.png|16px]] RecordPlayer ===
+<div class="treeview">
+* {{nbt|int|Record}} Record currently playing. 0 is no record. Max value currently used is 2.
+</div>
+=== [[File:Piston.png|16px]] Piston ===
+This tile entity is that of [[Technical_blocks#Block_36|Block 36]], not any part of the piston itself.
+<div class="treeview">
+* {{nbt|int|blockId}} [[Data Values|ID]] of the block being moved
+* {{nbt|int|blockData}} [[Data_values#Data|Additional data]] about the block being moved
+* {{nbt|int|facing}} Direction in which the block is being pushed
+* {{nbt|float|progress}} How far the block as been pushed
+* {{nbt|byte|extending}} Boolean value indicating if the piston is extending (1) or contracting (0).
+</div>
+=== [[File:Brewing Stand.png|16px]] Cauldron ===
+
+Note that despite being called "Cauldron", this Tile Entity only appears on [[Brewing Stand]]s as of 1.9pre3.
+<div class="treeview">
+* {{nbt|list|Items}} List of items in the brewing stand. Each item is a TAG_Compound identical to the ones in the Inventory list. The slots are numbered from 0-3.
+* {{nbt|int|BrewTime}} Time brewing in ticks.
+</div>
+
+=== [[File:Enchanting Table.png|16px]] EnchantTable ===
+
+The enchantment table has no extra tags besides the base ones. It is used for the rotation and opening/closing of the floating book.
+
+=== [[File:End Portal.png|16px]] End Portal ===
+
+This is the tile entity associated with the enterable [[End Portal]] (not the [[End Portal Frame]]). It has no extra tags.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+[[Category:Java Edition technical]]
+
+[[fr:Format de carte Alpha/Format de fichier de tronçon]]

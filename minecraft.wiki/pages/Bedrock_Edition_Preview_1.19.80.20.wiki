@@ -1,0 +1,319 @@
+{{Infobox version
+| image = Bedrock 1.19.80.20 PatchNotes.jpg
+| image2 = Bedrock 1.19.80.20.png
+| edition = Bedrock
+| type = Preview
+| server = 1.19.80.20
+| build = 14327931
+| editorver = 0.3
+| versioncode = '''Android''':<br>
+951908020 (armeabi-v7a, 31)<br>
+961908020 (x86, 31)<br>
+971908020 (arm64-v8a, 31)<br>
+981908020 (x86_64, 31)<br>
+| date = '''Windows, iOS, iPadOS, Xbox''' - March 8, 2023<br>'''Android''' - March 14, 2023
+| internal = '''Windows''': 1.19.8020.0<br>'''Android, iOS, iPadOS''': 1.19.80.20<br>'''Xbox''': 1.19.8020.70
+| serverdl = '''Server'''<br>
+[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.19.80.20.zip Windows]
+[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.19.80.20.zip Linux]
+| parent = 1.19.80
+| prevparent = 1.19.73
+| prev =
+| next = Preview 1.19.80.21
+| nextparent = 1.19.81
+}}<onlyinclude>
+
+'''Beta 1.19.80.20''' (Android) or '''Preview 1.19.80.20''' (Windows, iOS, iPadOS, Xbox) is the first beta/''Preview'' version for [[Bedrock Edition 1.19.80]], released on March 8–14, 2023,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/13817573176461|title=Minecraft Beta & Preview - 1.19.80.20|website=Minecraft Feedback|date=March 8, 2023}}</ref> which adds the [[cherry grove]] biome behind experimental gameplay and fixes bugs.
+
+== Additions ==
+=== Command format ===
+'''[[Block states]]'''
+* Provide auto-complete support for block states in [[commands]]. 
+
+'''{{cmd|summon}}'''
+* Added a new syntax for summoning entities facing at a target or to the specified coordinates:
+** For facing an entity: {{cmd|summon <entityType: EntityType> [spawnPos: x y z] facing <lookAtEntity: target> [spawnEvent: string] [nameTag: string]}}
+** For facing to the specified coordinates: {{cmd|summon <entityType: EntityType> [spawnPos: x y z] facing <lookAtPosition: x y z> [spawnEvent: string] [nameTag: string]}}
+
+=== General ===
+'''[[Experiments]]'''
+* Added the "Short Sneaking" experimental toggle.
+** Enables the ability to sneak under 1.5 blocks of height.
+
+'''[[Settings]]'''
+* Added "Glint Speed" and "Glint Strength" accessibility option for adjusting the speed and transparency of enchantment glints.
+* Added "New 'You Died' Screen (Experimental)" video option to disable/enable the new death screen.
+
+=== Technical ===
+'''JSON'''
+* Added <code>lose_target</code> field to projectile data to specify if an entity should unselect its target after shooting the projectile
+* Added a new <code>Transformation</code> component for blocks to support rotation, scaling and translation. The component can be added to the whole block, and/or to individual block permutations. Eg.
+** <syntaxhighlight lang="json">
+"minecraft:transformation": {
+                "translation": [0.0, 0.1, -0.1],
+                "scale": [0.5, 1, 1.5],
+      "rotation": [90, 180, 0]
+}
+</syntaxhighlight>
+* Transformed geometries still have the same restrictions that non-transformed geometries have, eg. a maximum size of 30/16 units.
+
+== Changes ==
+=== Blocks ===
+'''[[Log]]'''
+* The ID's of the logs (<code>log</code> and <code>log2</code>) have now been split up into their own ID's.
+
+'''[[Melon]] and [[Pumpkin]]'''
+* Can now grow in [[mud]], [[podzol]], [[rooted dirt]], and [[muddy mangrove roots]].
+
+'''[[Pressure Plate]]'''
+* Changed the sound of the weighted pressure plates to match {{el|java}}.
+
+'''[[Sculk Sensor]]'''
+* <code>item_interact_finish</code> game event now has a vibration frequency of 2 instead of 14.
+* <code>item_interact_start</code> is no longer considered a detectable vibration.
+* Reeling a fishing rod now emits <code>projectile_shoot</code> vibration.
+
+=== General ===
+'''[[Death messages]]'''
+* Renamed and enchanted weapons are now displayed in respawn and chat windows with color when a player is killed by an entity using it.
+
+'''[[Death screen]]'''
+* Enabled the new version of the Death Screen. The user can opt-in or opt-out using a feature toggle under Settings-Video Tab. (''Preview'' only)
+* Has been revamped.
+[[File:New UI - Death Screen Menu - Efe Died (Bedrock Preview 1.19.80.20).png|380px|thumb|New Death Screen in Efe Died]]
+
+'''[[Controls]]'''
+* Added a header and title for the inventory tab in inventory screen while using Pocket UI.
+* Increased the spacing between headers in the settings screen to increase readability.
+* Touchpad scrolling now matches the operating system's scroll direction.
+
+=== Items ===
+'''[[Map]]'''
+* Mangrove, bamboo, and polished blackstone buttons are no longer visible.
+
+=== Mobs ===
+'''[[Boat]] and [[Boat with Chest]]'''
+* [[Turtle]]s can now enter.
+* [[Hoglin]]s, [[polar bear]]s, and [[spider]]s can no longer enter.
+
+'''[[Panda]]'''
+* Slightly decreased collision box to match {{el|java}}.
+
+'''[[Polar Bear]]'''
+* Slightly increased collision box to match {{el|java}}.
+
+'''[[Villager]]'''
+* Now generate green particles when a successful trade is completed.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Short Sneaking", "Next Major Update", and "Beta APIs" experimental toggle.
+=== Additions ===
+==== Blocks ====
+'''[[Cherry Leaves]]'''
+* A new type of leaves.
+* Have pink particles falling underneath.
+
+'''[[Cherry Log]]'''
+* A new type of log, as well as a stripped variant.
+* Can be used to craft cherry woods and planks.
+* The stripped variant can be used to craft [[cherry hanging sign]].
+
+'''[[Cherry Planks]]'''
+* A new type of plank.
+* Can be used to craft cherry [[button]]s, [[door]]s, [[fence]]s, [[fence gate]]s, [[pressure plate]]s, [[sign]]s, [[slab]]s, [[stair]]s, and [[trapdoor]]s.
+
+'''[[Cherry Sapling]]'''
+* A new type of sapling.
+* Can be placed in [[flower pot]]s.
+
+'''[[Cherry Wood]]'''
+* A new type of wood, as well as a stripped variant.
+* Can be used to craft cherry planks.
+
+'''[[Pink Petals]]'''
+* A new type of block, which generates naturally in cherry groves.
+* Renewable when applying a bone meal to an existing one or to the ground of cherry groves.
+* Similar to [[sea pickle]], can be placed up to 4 in one dirt-related block.
+* Can be placed directional.
+* Can be crafted into a [[pink dye]].
+
+==== World generation ====
+'''[[Cherry blossom tree]]s'''
+* A new type of tree which can be grown from cherry saplings.
+* Occasionally generated with a [[bee nest]].
+* Tree trunks fork or bend high up, and are then covered up in large, round canopies of cherry leaves.
+
+'''[[Cherry Grove]]'''
+* A new biome which contains pretty cherry blossom trees.
+* Located in the mountains, like meadows.
+* [[Pig]]s, [[rabbit]]s, [[sheep]]s, and [[bee]]s can spawn here.
+
+=== Changes ===
+==== Blocks ====
+'''[[Decorated Pot]]'''
+* Updated the neck of the model.
+** The pot's neck now clip with blocks.
+** Now uses the new and more complex block model.
+* No longer provides support for blocks wanting to attach to its side faces.
+* Is no longer stackable in the inventory.
+* Base recipe now shows up in the [[recipe book]].
+* Particles is now based on the default side texture.
+
+'''[[Suspicious Sand]]'''
+* Is no longer waterloggable. ({{bug|MCPE-167222}})
+* Now connects to Fence blocks.
+* Now turns into regular Sand after it's been destroyed with a Brush. ({{bug|MCPE-167166}})
+* Now emits particles when broken by Pistons.
+* Fixed an issue that caused the item inside suspicious sand to flicker while brushing. ({{bug|MCPE-167180}})
+
+==== Items ====
+'''[[Brush]]'''
+* Crafting recipe now uses a [[feather]], [[copper ingot]] and [[stick]] in a vertical line.
+* Added a slight cooldown for particles and sounds.
+
+'''[[Pottery Shard]]'''
+* Updated archer pottery shard texture.
+
+==== Mobs ====
+'''[[Camel]]'''
+* Now stop dashing when entering a rideable entity. ({{bug|MCPE-164065}})
+
+==== Gameplay ====
+'''[[Sneaking]]'''
+* Player’s hitbox height now reduces to 1.5 blocks while sneaking.
+* Sneaking will automatically be initiated while stuck in a gap of less than 1.8 blocks.
+* Sneaking now requires enough space to stand in order to exit sneaking.
+* Players will transition from swimming to sneaking if they are unable to stand up but would be able to sneak.
+
+==== Technical ====
+'''API'''
+* Updated versions to add new APIs to stable:
+** Added version "1.1.0" of <code>@minecraft/server</code>.
+** Added version "1.2.0-beta" of <code>@minecraft/server</code>.
+** Removed version "1.1.0-beta" of <code>@minecraft/server</code>.
+** Moved the following to <code>@minecraft/server</code> stable (1.1.0):
+*** <code>runTimeout</code>
+*** <code>runInterval</code>
+*** <code>clearRun</code>
+*** <code>currentTick</code>
+*** <code>Vector3</code>
+*** <code>BlockPermutation</code>  (only a subset of functionality)
+*** <code>Block</code>
+*** <code>getBlock</code>
+*** <code>sendMessage</code>
+*** <code>sendMessage</code>
+** Minecraft runtime errors are now fired as JavaScript Error objects instead of strings.
+** Fixed a number of base class inheritance issues and added several new base classes to certain class types.
+** {{cmd|reload}} works if a script pack references a client RP.
+** Fixed a bug where the <code>BeforeItemUseOnEvent</code> function <code>getBlockLocation</code> would return undefined. ({{bug|MCPE-166945}})
+** The <code>BeforeItemUseOnEvent</code> class now inherits from <code>ItemUseOnEvent</code>.
+** Moved the following to <code>@minecraft/serverstable</code> (1.0).
+** Fixed a bug where <code>sendMessage</code> would fail when the message contains Unicode quotation marks.
+** ''Signs''.
+*** Added <code>setText</code> to set the text on a sign with a regular string, a <code>RawMessage</code>, or a <code>RawText</code>.
+*** Added <code>getText</code> to get the string on a sign, will return undefined if <code>setText</code> was called with a <code>RawMessage</code> or a <code>RawText</code>.
+*** Added <code>getRawText</code> to get the <code>RawText</code> on a sign, will return undefined if <code>setText</code> was called with a string.
+*** Added <code>getTextDyeColor</code> and <code>setTextDyeColor</code> to read/write the dye of the sign text.
+** ''Dyes''
+*** Added <code>DyeColor</code> enum.
+** <code>sendMessage</code>
+*** ''rawtext'' is now <code>RawMessage[]</code> instead of <code>(string | RawMessage)[]</code>.
+** <code>RawMessage</code>
+*** ''rawtext'' property on <code>RawMessage</code> is no longer <code>(string | RawMessage)[]</code> and is instead <code>RawMessage[]</code>.
+** <code>RawText</code>
+*** Added a <code>RawTextclass</code> for reading <code>RawMessage</code> like on signs.
+** ''Riding''
+*** Added <code>getRiders</code> to <code>EntityRideableComponent</code> which returns an array of all the entities currently riding this entity.
+*** Added <code>EntityRidingComponent-</code> this component is only on entities that are currently riding on another entity.
+**** Has an <code>entityRidingOn</code> property that returns the entity this entity is currently riding on.
+*** Added function <code>getEntity(id: string): Entity | undefined-</code> Gets an entity. Returns undefined for entities that don't exist or aren't loaded.
+** ''Dimension''
+*** <code>getEntities</code>
+**** Modified return type to <code>Entity[]</code>.
+**** Modified parameter name <code>getEntities</code> to options.
+**** New signature: <code>getEntities(options?: EntityQueryOptions): Entity[]</code>.
+*** <code>getPlayers</code>
+**** Modified return type to <code>Player[]</code>.
+**** Modified parameter name <code>getPlayers</code> to options.
+**** New signature: <code>getPlayers(options?: EntityQueryOptions): Player[];</code>.
+** <code>@minecraft/server-ui</code>
+*** When building forms, all ''read-only'' user-facing strings (e.g., text labels, dropdown options etc.) now accept <code>RawMessage</code> This affects the following classes:
+**** <code>ActionFormData</code>.
+**** <code>ModalFormData</code>.
+**** <code>MessageFormData</code>.
+*** Added function <code>getItemStack(amount?: number, withData?: boolean): ItemStack-</code> Gets an item stack of the block. Returns undefined for blocks that don't have a corresponding item (e.g. air).
+** <code>BlockPermutation</code>
+*** Added function <code>getItemStack(amount?: number): ItemStack–</code> Creates an item stack of the block permutation. Returns undefined for blocks that don't have a corresponding item (e.g. air).
+*** Removed <code>data</code> property.
+** <code>BlockComponent</code>
+*** Added ''read-only'' property block- Gets the block that the component is attached to.
+** Renamed <code>IEntityComponent</code> to <code>EntityComponent</code>
+** ''Container''.
+*** Replaced classes 
+**** <code>BlockInventoryComponentContainer</code>, <code>InventoryComponentContainer</code>, and <code>PlayerInventoryComponentContainerwith</code> Container
+*** Function <code>addItem</code> now returns the remainder of the added item stack if the container is full, else undefined
+*** Function <code>transferItem</code> no longer takes a destination slot and will now place the given item in the first available slot. The function now returns the remainder of the item stack if the container is full, else undefined.
+*** Added function <code>moveItem(fromSlot: number, toSlot: number, toContainer: Container): void-</code> Moves an item from one container to another, replacing any item in the destination slot.
+*** Function <code>swapItems</code> can now swap empty slots.
+*** Removed function <code>clearItem -</code> Please use <code>setItem(undefined)</code> instead.
+
+== Fixes ==
+'''Gameplay'''
+* Fixed the player moving in the wrong direction after exiting a container screen while using a gamepad. ({{bug|MCPE-121565}})
+* Players can no longer sneak while flying. ({{bug|MCPE-166834}})
+* Fixed an issue where unnecessary black boxes appeared in VR while around partial blocks.
+* Fixed animation transition between swimming and walking. ({{bug|MCPE-166769}})
+* Fixed a bug where command blocks could cause actors within a level chunk to freeze. ({{bug|MCPE-162011}})
+* The health boost effect will no longer fully replenish the player's health after the effect runs out. ({{bug|MCPE-165434}})
+
+'''General'''
+* Fixed ambient cave sounds to no longer play when the player enters or loads into the end. ({{bug|MCPE-141493}})
+* Cooking Chorus Fruit in a Furnace will now generate experience. ({{bug|MCPE-68127}})
+* Nether portals can now replace blocks other than just air when being generated. This includes blocks such as grass and snow layers. ({{bug|MCPE-162272}})
+* Light blocks can no longer have their light levels changed in survival or adventure modes. ({{bug|MCPE-138868}})
+* Campfire sounds are now louder and more clear. ({{bug|MCPE-122296}})
+* Nylium blocks are now grouped with Netherrack in the creative inventory. ({{bug|MCPE-163587}})
+* Flowers are once again displayed immediately when placed inside a flower pot.
+
+'''Graphical'''
+* Fixed the issue where multiple light sources (such as torches) were incorrectly emitting white light in RTX. ({{bug|MCPE-166947}})
+* Boots do not z-fight anymore when worn by player.
+* The "leg" and "belt" parts of leggings do not z-fight anymore when worn by player.
+* Capes no longer flash red when getting damaged. ({{bug|MCPE-105347}})
+* Fixed a visible gap in Hopper model. ({{bug|MCPE-55122}})
+* Fixed alignment of the output slot of crafting table. ({{bug|MCPE-143255}})
+* Halved the default visibility of the glint on enchanted items, which can now be modified in the accessibility settings. ({{bug|MCPE-167814}})
+
+'''Stability and Performance'''
+* Fixed a bug where invalid banner patterns were causing players in render distance to crash. ({{bug|MCPE-164478}})
+
+'''Touch controls'''
+* Fixed an issue where items could get stuck in the crafting table when using touch input.
+* If the player is underwater and auto-jump is enabled, as they approach a block that is 1 level higher than the current level, they will rise. This also allows auto-jumping out of water onto land.
+
+'''Marketplace'''
+* In the map WDW Magic Kingdom, the carts on the Big Thunder Mountain, Snow White and the Seven Dwarves, and Space Mountain rides now properly align with the invisible Minecart they are attached to.
+
+'''Mobs'''
+* Mobs no longer play the player eat sound when fed breeding materials.
+
+'''Commands'''
+* Fixed an issue where the paste button in the command block UI would remember extra presses from failed pastes. ({{bug|MCPE-163705}})
+* Armor stands now vanish with no sound effects when killed with the {{cmd|kill}} command. ({{bug|MCPE-159136}})
+* Removed the character limit for scoreboard objective names and objective display names. ({{bug|MCPE-165064}})
+
+'''User Interface'''
+* Feedback button on the pause menu will now prompt the user with a modal before redirecting to the browser.
+</onlyinclude>
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[Category:Bedrock Edition 1.19.80 betas]]
+[[de:Bedrock Edition beta 1.19.80.20]]
+[[es:Bedrock Edition beta 1.19.80.20]]
+[[pt:Edição Bedrock Preview 1.19.80.20]]
+[[zh:基岩版1.19.80.20]]

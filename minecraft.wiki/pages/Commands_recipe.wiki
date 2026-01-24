@@ -1,0 +1,93 @@
+{{Infobox command
+| name = recipe
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+|others=[[Cheat]] only
+}}
+
+Gives or takes (unlocks or locks) [[recipes]] for players.
+
+== Syntax == 
+
+:<code>recipe give <targets> *</code> ({{el|je}})
+:<code>recipe give <player: target> *</code> ({{el|be}})
+:<code>recipe give <player: target> "*"</code> ({{el|be}})
+::Gives (unlocks) all recipes to the player.
+:<code>recipe take <targets> *</code> ({{el|je}})
+:<code>recipe take <player: target> *</code> ({{el|be}})
+:<code>recipe take <player: target> "*"</code> ({{el|be}})
+::Takes (locks) all recipes from the player.
+:<code>recipe give <targets> <recipe></code> ({{el|je}})
+:<code>recipe give <player: target> <recipe: string></code> ({{el|be}})
+::Gives (unlocks) a specified recipe to the player.
+:<code>recipe take <targets> <recipe></code> ({{el|je}})
+:<code>recipe take <player: target> <recipe: string></code> ({{el|be}})
+::Takes (locks) a specified recipe from the player.
+
+== Arguments ==
+
+{{argument|target|entity|player: target|CommandSelector<Player>}}
+:Specifies the player(s) to give or take the recipe from.
+:{{arg desc|je=entity|amount=multiple|type=players|be=player}}
+
+{{argument|recipe|resource_location|recipe: string|basic_string}} 
+:Specifies a recipe to give or take.
+:{{arg desc|je=resource_location}} {{IN|be}}, must be the ID of a recipe (namespace cannot be omitted or added), see [https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/recipe?view=minecraft-bedrock-stable#values the official document].
+
+== Result ==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code><target></code> or <code>player: target</code> fails to resolve to one or more online players.|fail|fail}}
+{{Result table|<code>player: target</code> is a target selector that is not in [[Target selectors#Player type and single type|player type]].|N/A|fail}}
+{{Result table|cmd=/recipe ... *<br>/recipe ... "*"{{only|be|short=1}}|There's no player being newly unlocked or locked any recipe.|fail|success}}
+{{Result table|cmd=/recipe ... <recipe><br>/recipe ... <recipe: string>|There's no recipe with the specified ID.||fail}}
+{{Result table|There's no player being newly unlocked or locked any recipe.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the total number of recipes given to/taken from each player.}}
+{{Output table|cmd=|edition=be|On fail|0}}
+{{Output table|cmd=/recipe ... <*{{!}}"*">|On success|the number of specified players.}}
+{{Output table|cmd=/recipe ... <recipe: string>|On success|the number of players whose recipe is newly unlocked/locked.}}
+{{Output table}}
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.12|dev=17w13a|Added {{cmd|recipe|link=none}}.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.20.10|exp=Recipe Unlocking|dev=Preview 1.20.10.21|Added {{cmd|recipe|link=none}} behind the "Recipe Unlocking" [[experimental]] toggle.}}
+|{{HistoryLine||1.20.30|exp=Recipe Unlocking|dev=Preview 1.20.20.20|Updated the syntax to match {{JE}}.|The recipes are now suggested by the [[command]] auto-complete.|Now an output message appears after the command is executed.}}
+|{{HistoryLine||1.20.30|dev=Preview 1.20.20.21|{{cmd|recipe|link=none}} is no longer behind the "Recipe Unlocking" experimental toggle.}}
+|{{HistoryLine|||dev=Preview 1.20.20.22|Renamed the <code>''victim'': target</code> argument to <code>''player'': target</code>.}}
+}}
+
+== See also ==
+
+*[[Knowledge Book]]
+*{{cmd|gamerule doLimitedCrafting}} – Whether players should only be able to [[craft]] recipes that they have unlocked first.
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/recipe?view=minecraft-bedrock-stable|title=<code>/recipe</code> Command|website=Microsoft Learn|date=April 3, 2025}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/recipe]]
+[[es:Comandos/recipe]]
+[[ja:コマンド/recipe]]
+[[pt:Comandos/recipe]]
+[[ru:Команды консоли/recipe]]
+[[zh:命令/recipe]]

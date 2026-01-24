@@ -1,0 +1,136 @@
+{{dangerous version|Breaking blocks can cause the game to crash.<ref>{{bug|MC-161268||{{cd|java.lang.IndexOutOfBoundsException}} while tesselating block model; game crashes when breaking a block.|Fixed}}</ref>|version=development|edition=java|type=crash}}
+{{Infobox version
+|title=Minecraft 19w38a
+|image=19w38a.png
+|image2=Java Edition 19w38a.png
+|edition=Java
+|type=Snapshot
+|date=September 18, 2019
+|clienthash=33e153dbada31777c9344d3e21398f825bd92064
+|jsonhash=9aa2357a825b659714762aeef4062d19d6617677
+|serverhash=e40184002fa2e183de5fda0229d0709cfd6bfe8a
+|clientmap=8182cb6c4e9acd17c8865368e70955f6ca3e6d8e
+|servermap=62537e90eeb6de46c4d14c5ab2ed4c952fb5b3ea
+|parent=1.15
+|prevparent=1.14.4
+|prev=19w37a
+|next=19w38b
+|nextparent=1.15.1
+}}<onlyinclude>
+
+'''19w38a''' is the fifth [[snapshot]] for [[Java Edition 1.15]], released on September 18, 2019, which makes some technical changes such as adding new parameters to existing [[commands]] and makes changes to the rendering system.<ref name="19w38a">{{snap|19w38a|September 18, 2019}}</ref> However, due to a game crashing bug caused by breaking [[block]]s, it was replaced by [[19w38b]] later that day.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|data}}'''
+* Can now use [[command storage|<code>storage</code>]] as a source or target, which is general purpose, key/value storage.
+** Each storage is identified by a distinct [[resource location]].
+** Storage is shared between all [[dimension]]s in a world.
+** Data in storage persists between on world close.
+
+'''{{cmd|execute}}'''
+* Added subcommand {{cmd|execute if predicate}}
+** Evaluates custom predicates, defined in the <code>predicates</code> directory of a [[data pack]].
+* Added subcommand {{cmd|execute store storage}}
+** Stores the command result to the [[command storage|storage]] target for the {{cmd|data}} command.
+
+'''{{cmd|schedule}}'''
+* Added new optional syntax {{cmd|schedule ... [append{{!}}replace]}}.
+** Defaults to <code>replace</code>.
+* Added new syntax {{cmd|schedule clear <''id''>}} to remove existing schedules.
+** Returns the number of removed schedules.
+* Extended {{cmd|schedule}} to allow scheduling the same function multiple times.
+
+'''[[Target selectors]]'''
+* New selector parameter <code>predicate</code> allows applying custom predicates, defined in the <code>predicates</code> directory of a [[data pack]].
+
+'''[[Loot table]]s'''
+* Loot table predicates can now be defined in separate files and used for entity selectors and in execute if command.
+* Added new parameters to the <code>location_check</code> condition.
+** {{nbt|int|offsetX}}, {{nbt|int|offsetY}}, {{nbt|int|offsetZ}} – optional offsets to location.
+* Added <code>reference</code>.
+** Includes condition defined in predicates directory of data pack, selected with name parameter.
+* Added <code>time_check</code> condition.
+** Checks [[time of day]].
+*** {{nbt|int|value}} – range of accepted values.
+*** {{nbt|int|period}} – if present, time is [[Wikipedia:Modulo|modulo]]-divided by this value (for example, if set to 24000, value operates on a time period of days).
+
+=== General ===
+'''[[Predicate]]s'''
+* Added custom predicates.
+** The condition part of [[loot table]]s can now be defined as separate data pack resource in <code>predicates</code> directory.
+
+'''Entity predicate'''
+* Now accepts <code>player</code> field, which checks player properties.
+** Fails when entity is not [[player]].
+** Fields:
+*** <code>level</code> – range of allowed player levels.
+*** <code>gamemode</code> – same values as {{cmd|gamemode}} command.
+*** <code>stats</code> – list of statistics to match. Entry fields: {{nbt|string|type}} (like <code>minecraft:custom</code>), {{nbt|string|stat}} (like <code>minecraft:sneak_time</code>) and {{nbt|int|value}} (an integer range).
+**** For example, <code>{"stats":[{"type":"minecraft:used","stat":"minecraft:fishing_rod","value":{"min":2,"max":10}}]}</code> succeeds if the player has used fishing rods a total of 2 through 10 times; more or less fails.
+*** <code>recipes</code> – map of recipe IDs. Boolean value tells if it should or should not be known to player.
+*** <code>advancements</code> – map of advancement IDs. If value is a boolean, checks if advancement is done. If value is an object, checks completion of criterions.
+* Entity predicate now accepts <code>team</code> field, which matches team name.
+
+'''Location predicate'''
+* Predicate now accepts <code>block</code> and <code>fluid</code> sub-predicate.
+** Fields:
+*** <code>block</code> – exact [[block]] ID to match.
+*** <code>fluid</code> – exact [[fluid]] ID to match.
+*** <code>tag</code> – block/fluid ID to match.
+*** <code>nbt</code> – matcher for block entity NBT (only for blocks).
+*** <code>state</code> – map of name/value properties. Value can be integer, boolean or string or object with optional min and max properties.
+* Predicate now accepts the <code>light</code> sub-predicate.
+** Object has one integer range – <code>light</code> – that matches visible light (maximum value of sky-darkening and block light).
+
+== Changes ==
+=== Blocks ===
+'''General'''
+* The outline around [[block]]s (which appears when a block is looked at) is now thicker.
+
+=== Command format ===
+'''{{cmd|gamerule}}'''
+* Setting game rule <code>fireDamage</code> to <code>false</code> now prevents damage from [[magma block]]s.
+
+'''{{cmd|kill}}'''
+* The first parameter now defaults to <code>@s</code> if no <code>target</code> argument is given.
+
+=== General ===
+'''[[Debug screen]]'''
+* The "chunk updates" counter on the second line no longer appears.
+
+== Fixes ==
+{{fixes|fixedin=19w38a
+|;old
+|70111|When a thrown ender pearl is in the air, it disappears after relogging and the player does not get teleported.
+|96207|Boats breaking lily pads creates too many particles.
+|101247|Horses, donkeys, mules, and boats sometimes disappear after dismounting.
+|136367|When exiting a boat it will put the player on top of the boat.
+|138465|Ender pearls forget their owner after reload (of game or chunks).
+|145275|Reloading a resource pack messes up all textures for an instant.
+|157697|Unplayable conditions when pillagers loaded: extreme lag spikes.
+|158373|Raid horn sounds play globally in all villages.
+|158414|When riding an entity, players appear to be at the location they mounted it at as soon as they are out of range.
+|160367|Pillagers do not despawn.
+|;previous
+|160919|Disabling fire damage does not disable magma block damage.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|0eVFS4LuPkU}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[cs:19w38a]]
+[[de:19w38a]]
+[[es:Java Edition 19w38a]]
+[[fr:Édition Java 19w38a]]
+[[it:Java Edition 19w38a]]
+[[ja:Java Edition 19w38a]]
+[[pt:Edição Java 19w38a]]
+[[ru:19w38a (Java Edition)]]
+[[zh:Java版19w38a]]

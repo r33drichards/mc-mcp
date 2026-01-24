@@ -1,0 +1,738 @@
+{{wip}}
+{{exclusive|java}}
+'''Minecraft Server Management Protocol''' is a server management API (JSON-RPC over WebSocket) for dedicated servers.
+
+== Access ==
+
+The API is disabled by default and can be enabled in the <code>[[server.properties]]</code> file. A server-specific secret can be configured using the <code>management-server-secret</code> property. Clients must authenticate to access the API by providing this secret in one of two ways: 
+
+* In the <code>Authorization</code> header as a bearer token containing the secret (ex. <code>Authorization: Bearer ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmo</code>)
+* In the <code>Sec-WebSocket-Protocol</code> header following the string <code>minecraft-v1,</code> (ex. <code>Sec-WebSocket-Protocol: minecraft-v1,ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmo</code>). This enables use via the web as this header is populated by the JavaScript WebSocket constructor.
+
+{| class="wikitable"
+|+
+!server.properties name
+!Default
+!Description
+|-
+|<code>management-server-tls-allowed-origins</code>
+|None
+|Comma separated list of the origins allowed to connect to the server. Requests will be rejected with a 401 Unauthorized error if they do not contain an <code>Origin</code> HTTP header with a value in this list. If left empty, no clients will be able to connect. The origins provided do not have to be valid URLs/domains.
+|-
+|<code>management-server-enabled</code>
+|<code>false</code>
+|Set to <code>true</code> to enable the API
+|-
+|<code>management-server-host</code>
+|<code>localhost</code>
+|Host of the API endpoint
+|-
+|<code>management-server-port</code>
+|<code>0</code>
+|Port of the API endpoint. Defaults to 0, assigning a random port on startup. Can be changed to a static port.
+|-
+|<code>management-server-secret</code>
+|If empty on startup a value is generated and written to <code>[[server.properties]]</code> 
+|The secret should be exactly 40 alphanumeric characters (A-Z, a-z, 0-9). The secret will be automatically generated if the server property is empty. Unauthorized requests are rejected with 401 Unauthorized.
+|-
+|<code>management-server-tls-enabled</code>
+|<code>true</code>
+|Can be set to <code>false</code> to disable TLS. Requires a keystore file to be configured, see <code>management-server-tls-keystore</code>
+|-
+|<code>management-server-tls-keystore</code>
+|None
+|The keystore file must be in PKCS12 format
+|-
+|<code>management-server-tls-keystore-password</code>
+|None
+|Keystore password can be set in the following ways, in order of priority
+
+* Environment variable: <code>MINECRAFT_MANAGEMENT_TLS_KEYSTORE_PASSWORD</code>
+* JVM argument: <code>-Dmanagement.tls.keystore.password=</code>
+* Server property: <code>management-server-tls-keystore-password=</code>
+|}
+The API is accessible at <code>ws://<management-server-host>:<management-server-port></code> when enabled. It uses the [[wikipedia:WebSocket|WebSocket]] protocol and adheres to [http://jsonrpc.org/spec JSON-RPC 2.0 specification].
+
+An example command for creating a compatible keystore: <code>keytool -genkeypair -alias testkey -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore test-keystore.p12 -validity 3650</code>
+
+== Methods ==
+
+=== Allowlist ===
+Endpoints are accessible at <code>minecraft:allowlist</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+! Result
+|-
+! <code>/</code>
+| Get the allowlist
+| None
+| allowlist: Array<[[Minecraft Server Management Protocol#Player|Player]]> 
+|-
+! <code>/set</code>
+| Set the allowlist to the provided list of players
+| players: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+| allowlist: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+|-
+! <code>/add</code>
+| Add players to the allowlist
+| add: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+| allowlist: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+|-
+! <code>/remove</code>
+| Remove players from allowlist
+| remove: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+| allowlist: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+|-
+! <code>/clear</code>
+| Clear all players in allowlist
+| None
+| allowlist: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+|}
+=== Bans ===
+Endpoints are accessible at <code>minecraft:bans</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+! Result
+|-
+! <code>/</code>
+| Get the ban list
+| None
+| banlist: Array<[[Minecraft Server Management Protocol#User Ban|User Ban]]> 
+|-
+! <code>/set</code>
+| Set the banlist
+| bans: Array<[[Minecraft Server Management Protocol#User Ban|User Ban]]>
+| banlist: Array<[[Minecraft Server Management Protocol#User Ban|User Ban]]>
+|-
+! <code>/add</code>
+| Add players to the ban list
+| add: Array<[[Minecraft Server Management Protocol#User Ban|User Ban]]>
+| banlist: Array<[[Minecraft Server Management Protocol#User Ban|User Ban]]>
+|-
+! <code>/remove</code>
+| Remove players from ban list
+| remove: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+| banlist: Array<[[Minecraft Server Management Protocol#User Ban|User Ban]]>
+|-
+! <code>/clear</code>
+| Clear all players in ban list
+| None
+| banlist: Array<[[Minecraft Server Management Protocol#User Ban|User Ban]]>
+|}
+
+=== IP Bans ===
+Endpoints are accessible at <code>minecraft:ip_bans</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+! Result
+|-
+! <code>/</code>
+| Get the ip ban list
+| None
+| banlist: Array<[[Minecraft Server Management Protocol#IP Ban|IP Ban]]> 
+|-
+! <code>/set</code>
+| Set the ip banlist
+| banlist: Array<[[Minecraft Server Management Protocol#IP Ban|IP Ban]]>
+| banlist: Array<[[Minecraft Server Management Protocol#IP Ban|IP Ban]]>
+|-
+! <code>/add</code>
+| Add ip to ban list
+| add: Array<[[Minecraft Server Management Protocol#Incoming IP Ban|Incoming IP Ban]]>
+| banlist: Array<[[Minecraft Server Management Protocol#IP Ban|IP Ban]]>
+|-
+! <code>/remove</code>
+| Remove ip from ban list
+| ip: Array<string>
+| banlist: Array<[[Minecraft Server Management Protocol#IP Ban|IP Ban]]>
+|-
+! <code>/clear</code>
+| Clear all ips in ban list
+| None
+| banlist: Array<[[Minecraft Server Management Protocol#IP Ban|IP Ban]]>
+|}
+
+=== Players ===
+Endpoints are accessible at <code>minecraft:players</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+! Result
+|-
+! <code>/</code>
+| Get all connected players
+| None
+| players: Array<[[Minecraft Server Management Protocol#Player|Player]]> 
+|-
+! <code>/kick</code>
+| Kick players
+| kick: Array<[[Minecraft Server Management Protocol#Kick Player|Kick Player]]>
+| kicked: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+|}
+
+=== Operators ===
+Endpoints are accessible at <code>minecraft:operators</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+! Result
+|-
+! <code>/</code>
+| Get all oped players
+| None
+| operators: Array<[[Minecraft Server Management Protocol#Operator|Operator]]> 
+|-
+! <code>/set</code>
+| Set all oped players
+| operators: Array<[[Minecraft Server Management Protocol#Operator|Operator]]>
+| operators: Array<[[Minecraft Server Management Protocol#Operator|Operator]]>
+|-
+! <code>/add</code>
+| Op players
+| add: Array<[[Minecraft Server Management Protocol#Operator|Operator]]>
+| operators: Array<[[Minecraft Server Management Protocol#Operator|Operator]]>
+|-
+! <code>/remove</code>
+| Deop players
+| remove: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+| operators: Array<[[Minecraft Server Management Protocol#Operator|Operator]]>
+|-
+! <code>/clear</code>
+| Deop all players
+| None
+| operators: Array<[[Minecraft Server Management Protocol#Operator|Operator]]>
+|}
+
+=== Server ===
+Endpoints are accessible at <code>minecraft:server</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+! Result
+|-
+! <code>/status</code>
+| Get server status
+| None
+| status: [[Minecraft Server Management Protocol#Server State|Server State]]
+|-
+! <code>/save</code>
+| Save server state
+| flush: boolean
+| saving: boolean
+|-
+! <code>/stop</code>
+| Stop server
+| None
+| stopping: boolean
+|-
+! <code>/system_message</code>
+| Send a system message
+| message: [[Minecraft Server Management Protocol#System Message|System Message]]
+| sent: boolean
+|}
+
+=== Server Settings ===
+Endpoints are accessible at <code>minecraft:serversettings</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+! Result
+|-
+! <code>/autosave</code>
+| Get whether automatic world saving is enabled on the server
+| None
+| enabled: boolean
+|-
+! <code>/autosave/set</code>
+| Enable or disable automatic world saving on the server
+| enable: boolean
+| enabled: boolean
+|-
+! <code>/difficulty</code>
+| Get the current difficulty level of the server
+| None
+| difficulty: string
+|-
+! <code>/difficulty/set</code>
+| Set the difficulty level of the server
+| difficulty: string
+| difficulty: string
+|-
+! <code>/enforce_allowlist</code>
+| Get whether allowlist enforcement is enabled (kicks players immediately when removed from allowlist)
+| None
+| enforced: boolean
+|-
+! <code>/enforce_allowlist/set</code>
+| Enable or disable allowlist enforcement (when enabled, players are kicked immediately upon removal from allowlist)
+| enforce: boolean
+| enforced: boolean
+|-
+! <code>/use_allowlist</code>
+| Get whether the allowlist is enabled on the server
+| None
+| used: boolean
+|-
+! <code>/use_allowlist/set</code>
+| Enable or disable the allowlist on the server (controls whether only allowlisted players can join)
+| use: boolean
+| used: boolean
+|-
+! <code>/max_players</code>
+| Get the maximum number of players allowed to connect to the server
+| None
+| max: integer
+|-
+! <code>/max_players/set</code>
+| Set the maximum number of players allowed to connect to the server
+| max: integer
+| max: integer
+|-
+! <code>/pause_when_empty_seconds</code>
+| Get the number of seconds before the game is automatically paused when no players are online
+| None
+| seconds: integer
+|-
+! <code>/pause_when_empty_seconds/set</code>
+| Set the number of seconds before the game is automatically paused when no players are online
+| seconds: integer
+| seconds: integer
+|-
+! <code>/player_idle_timeout</code>
+| Get the number of seconds before idle players are automatically kicked from the server
+| None
+| seconds: integer
+|-
+! <code>/player_idle_timeout/set</code>
+| Set the number of seconds before idle players are automatically kicked from the server
+| seconds: integer
+| seconds: integer
+|-
+! <code>/allow_flight</code>
+| Get whether flight is allowed for players in Survival mode
+| None
+| allowed: boolean
+|-
+! <code>/allow_flight/set</code>
+| Set whether flight is allowed for players in Survival mode
+| allowed: boolean
+| allowed: boolean
+|-
+! <code>/motd</code>
+| Get the server's message of the day displayed to players
+| None
+| message: string
+|-
+! <code>/motd/set</code>
+| Set the server's message of the day displayed to players
+| message: string
+| message: string
+|-
+! <code>/spawn_protection_radius</code>
+| Get the spawn protection radius in blocks (only operators can edit within this area)
+| None
+| radius: integer
+|-
+! <code>/spawn_protection_radius/set</code>
+| Set the spawn protection radius in blocks (only operators can edit within this area)
+| radius: integer
+| radius: integer
+|-
+! <code>/force_game_mode</code>
+| Get whether players are forced to use the server's default game mode
+| None
+| forced: boolean
+|-
+! <code>/force_game_mode/set</code>
+| Set whether players are forced to use the server's default game mode
+| force: boolean
+| forced: boolean
+|-
+! <code>/game_mode</code>
+| Get the server's default game mode
+| None
+| mode: string
+|-
+! <code>/game_mode/set</code>
+| Set the server's default game mode
+| mode: string
+| mode: string
+|-
+! <code>/view_distance</code>
+| Get the server's view distance in chunks
+| None
+| distance: integer
+|-
+! <code>/view_distance/set</code>
+| Set the server's view distance in chunks
+| distance: integer
+| distance: integer
+|-
+! <code>/simulation_distance</code>
+| Get the server's simulation distance in chunks
+| None
+| distance: integer
+|-
+! <code>/simulation_distance/set</code>
+| Set the server's simulation distance in chunks
+| distance: integer
+| distance: integer
+|-
+! <code>/accept_transfers</code>
+| Get whether the server accepts player transfers from other servers
+| None
+| accepted: boolean
+|-
+! <code>/accept_transfers/set</code>
+| Set whether the server accepts player transfers from other servers
+| accept: boolean
+| accepted: boolean
+|-
+! <code>/status_heartbeat_interval</code>
+| Get the interval in seconds between server status heartbeats
+| None
+| seconds: integer
+|-
+! <code>/status_heartbeat_interval/set</code>
+| Set the interval in seconds between server status heartbeats
+| seconds: integer
+| seconds: integer
+|-
+! <code>/operator_user_permission_level</code>
+| Get the permission level required for operator commands
+| None
+| level: integer
+|-
+! <code>/operator_user_permission_level/set</code>
+| Set the permission level required for operator commands
+| level: integer
+| level: integer
+|-
+! <code>/hide_online_players</code>
+| Get whether the server hides online player information from status queries
+| None
+| hidden: boolean
+|-
+! <code>/hide_online_players/set</code>
+| Set whether the server hides online player information from status queries
+| hide: boolean
+| hidden: boolean
+|-
+! <code>/status_replies</code>
+| Get whether the server responds to connection status requests
+| None
+| enabled: boolean
+|-
+! <code>/status_replies/set</code>
+| Set whether the server responds to connection status requests
+| enable: boolean
+| enabled: boolean
+|-
+! <code>/entity_broadcast_range</code>
+| Get the entity broadcast range as a percentage
+| None
+| percentage_points: integer
+|-
+! <code>/entity_broadcast_range/set</code>
+| Set the entity broadcast range as a percentage
+| percentage_points: integer
+| percentage_points: integer
+|}
+
+=== Gamerules ===
+Endpoints are accessible at <code>minecraft:gamerules</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+! Result
+|-
+! <code>/</code>
+| Get the available game rule keys and their current values
+| None
+| gamerules: Array<[[Minecraft Server Management Protocol#Typed Game Rule|Typed Game Rule]]> 
+|-
+! <code>/update</code>
+| Update game rule value
+| gamerule: [[Minecraft Server Management Protocol#Untyped Game Rule|Untyped Game Rule]]
+| gamerule: [[Minecraft Server Management Protocol#Typed Game Rule|Typed Game Rule]]
+|}
+
+== Notifications ==
+
+=== Server ===
+Endpoints are accessible at <code>minecraft:notification/server</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+|-
+! <code>/started</code>
+| Server started
+| None
+|-
+! <code>/stopping</code>
+| Server shutting down
+| None
+|-
+! <code>/saving</code>
+| Server save started
+| None
+|-
+! <code>/saved</code>
+| Server save completed
+| None
+|-
+! <code>/status</code>
+| Server status heartbeat
+| status: [[Minecraft Server Management Protocol#Server State|Server State]]
+|-
+! <code>/activity</code>
+| Network connection initialized
+| None
+|}
+
+=== Players ===
+Endpoints are accessible at <code>minecraft:notification/players</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+|-
+! <code>/joined</code>
+| Player joined
+| player: [[Minecraft Server Management Protocol#Player|Player]]
+|-
+! <code>/left</code>
+| Player left
+| player: [[Minecraft Server Management Protocol#Player|Player]]
+|}
+
+=== Operators ===
+Endpoints are accessible at <code>minecraft:notification/operators</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+|-
+! <code>/added</code>
+| Player was oped
+| player: [[Minecraft Server Management Protocol#Operator|Operator]]
+|-
+! <code>/removed</code>
+| Player was deoped
+| player: [[Minecraft Server Management Protocol#Operator|Operator]]
+|}
+
+=== Allowlist ===
+Endpoints are accessible at <code>minecraft:notification/allowlist</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+|-
+! <code>/added</code>
+| Player was added to the allowlist
+| player: [[Minecraft Server Management Protocol#Player|Player]]
+|-
+! <code>/removed</code>
+| Player was removed from allowlist
+| player: [[Minecraft Server Management Protocol#Player|Player]]
+|}
+
+=== IP Bans ===
+Endpoints are accessible at <code>minecraft:notification/ip_bans</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+|-
+! <code>/added</code>
+| Ip was added to ip ban list
+| player: [[Minecraft Server Management Protocol#IP Ban|IP Ban]]
+|-
+! <code>/removed</code>
+| Ip was removed from ip ban list
+| player: string
+|}
+
+=== Bans ===
+Endpoints are accessible at <code>minecraft:notification/bans</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+|-
+! <code>/added</code>
+| Player was added to the ban list
+| player: [[Minecraft Server Management Protocol#Operator|Operator]]
+|-
+! <code>/removed</code>
+| Player was removed from the ban list
+| player: [[Minecraft Server Management Protocol#Operator|Operator]]
+|}
+
+=== Gamerules ===
+Endpoints are accessible at <code>minecraft:notification/gamerules</code>
+{| class="wikitable" style="text-align:center"
+! Path
+! Description
+! Parameters
+|-
+! <code>/updated</code>
+| Gamerule was changed
+| gamerule: [[Minecraft Server Management Protocol#Typed Game Rule|Typed Game Rule]]
+|}
+
+== Schemas ==
+
+=== Untyped Game Rule ===
+
+Properties:
+
+* value: string
+* key: string
+
+=== Incoming IP Ban ===
+
+Properties:
+
+* reason: string
+* expires: string
+* ip: string
+* source: string
+* player: [[Minecraft Server Management Protocol#Player|Player]]
+
+=== System Message ===
+
+Properties:
+
+* receivingPlayers: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+* overlay: boolean
+* message: [[Minecraft Server Management Protocol#Message|Message]]
+
+=== Kick Player ===
+
+Properties:
+
+* player: [[Minecraft Server Management Protocol#Player|Player]]
+* message: [[Minecraft Server Management Protocol#Message|Message]]
+
+=== IP Ban ===
+
+Properties:
+
+* reason: string
+* expires: string
+* ip: string
+* source: string
+
+=== Typed Game Rule ===
+
+Properties:
+
+* type: string ("integer", "boolean")
+* value: string
+* key: string
+
+=== User Ban ===
+
+Properties:
+
+* reason: string
+* expires: string
+* source: string
+* player: [[Minecraft Server Management Protocol#Player|Player]]
+
+=== Message ===
+
+Properties:
+
+* translatable: string
+* translatableParams: Array<string>
+* literal: string
+
+=== Version ===
+
+Properties:
+
+* protocol: integer
+* name: string
+
+=== Server State ===
+
+Properties:
+
+* players: Array<[[Minecraft Server Management Protocol#Player|Player]]>
+* started: boolean
+* version: [[Minecraft Server Management Protocol#Version|Version]]
+
+=== Operator ===
+
+Properties:
+
+* permissionLevel: integer
+* bypassesPlayerLimit: boolean
+* player: [[Minecraft Server Management Protocol#Player|Player]]
+
+=== Player ===
+
+Properties:
+
+* name: string
+* id: string
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.9|dev=25w35a|Added the Minecraft Server Management Protocol.}}
+|{{HistoryLine|||dev=25w37a|Clients must authenticate to access the API.|TLS is enabled by default.}}
+|{{HistoryLine|||dev=Pre-Release 1|Notifications now use {{cd|minecraft:notification/}} prefix instead of {{cd|notification:}}.}}
+|{{HistoryLine||1.21.11|dev=25w41a|Is now {{cd|1.1.0}}.|Added a new notification server/activity.}}
+|{{HistoryLine|||dev=25w42a|Enable authentication from web browsers.|Added the {{cd|management-server-allowed-origins}} field to [[Server.properties|server.properties]].}}
+|{{HistoryLine|||dev=25w44a|The version is now 2.0.0.|In the {{cd|typed_game_rule}} and {{cd|untyped_game_rule}} schemas, the type of the value field has been changed from string to take either a boolean or an integer.}}
+}}
+
+== Issues ==
+{{issue list||projects=MC}}
+
+== Notes ==
+
+* Supports querying and updating of server state (players, allowlist, operators, settings, game rules).
+* Sends notifications on state changes (e.g. player joins, game rule updates).
+* Calling <code>{"jsonrpc":"2.0","method":"rpc.discover","id":1}</code> returns an API schema containing supported methods and notifications of the currently running server.
+* The Data Generator produces an API schema (<code>json-rpc-api-schema.json</code>) in the reports output folder mirroring the contents returned by the <code>rpc.discover</code> method.
+* The API adheres to the JSON-RPC 2.0 specification.
+* Uses namespaced methods and the reserved namespaces are <code>minecraft</code> (e.g. <code>minecraft:players</code>, <code>minecraft:allowlist/add</code>) and notification (e.g. <code>notification:players/joined</code>).
+** Extensible via custom namespaces for additional methods and events.
+* Core method groups: players, allowlist, operators, server (save, stop), server settings, game rules.
+* Example method call:
+** Request: <code>{"method":"minecraft:allowlist/add","id":1,"params":[[{"name":"jeb_"}]]}</code>
+** Response: <code>{"jsonrpc":"2.0","id":1,"result":[{"id":"853c80ef-3c37-49fd-aa49-938b674adae6","name":"jeb_"}]}</code>
+* Example notification:
+** <code>{"jsonrpc":"2.0","method":"minecraft:notification/players/joined","params":[{"id":"853c80ef-3c37-49fd-aa49-938b674adae6","name":"jeb_"}]}</code>
+* Example error:
+** Request: <code>{"method": "minecraft:foo/bar","id": 1}</code>
+** Response: <code>{"jsonrpc":"2.0","id":1,"result":{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found","data":"Method not found: minecraft:foo/bar"}}}</code>
+** Errors and error codes follow JSON-RPC 2.0 error object format.
+
+== Example implementations ==
+
+* https://github.com/Aliorpse/mcutils (client, Kotlin Multiplatform)
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[de:Minecraft-Server-Verwaltungsprotokoll]]
+[[pt:Protocolo de Gerenciamento de Servidor do Minecraft]]
+[[zh:服务端管理协议]]

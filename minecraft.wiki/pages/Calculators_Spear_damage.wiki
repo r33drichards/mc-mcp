@@ -1,0 +1,53 @@
+This interactive tool calculates how much damage a [[spear]]'s charge attack would do at a given speed, tier, and [[Sharpness]] level, measured in blocks per second.
+
+<onlyinclude><div style="border: 1px solid #ccc; border-radius: 4px; display: block; width: 100%; padding: 1em; box-sizing: border-box;" class="calculator-container">
+'''Calculate spear charge attack damage'''
+<div style="display: flex; flex-flow: wrap; justify-content: space-between; align-items: center; gap: 1rem;>
+<div style="gap: .25rem;flex-direction: column;display: flex;">
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+{{simplecalc label|{{tooltip|Edition|Affects Sharpness damage}}:|for=edition}} <div class="cdx-text-input">{{simplecalc|id=edition|type=select|class=cdx-select|mapping={
+  "Java": 1,
+  "Bedrock": 0
+} |default=1}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+{{simplecalc label|Tier:|for=tier}} <div class="cdx-text-input">{{simplecalc|id=tier|type=select|class=cdx-select|mapping={
+  "Wooden Spear": 1,
+  "Golden Spear": 2,
+  "Stone Spear": 3,
+  "Copper Spear": 4,
+  "Iron Spear": 5,
+  "Diamond Spear": 6,
+  "Netherite Spear": 7
+} |default=5}}{{simplecalc|id=multiplier|type=hidden|formula=switch(tier, 1,0.7, 2,0.7, 3,0.82, 4,0.82, 5,0.95, 6,1.075, 7,1.2)|default=0.95}}{{simplecalc|id=base|type=hidden|default=1}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+{{simplecalc label|{{tooltip|Speed|Due to the speed calculation order within a tick and the dot product of velocity and view vector, the value used by the game may be slightly different from the actual speed, causing the result to be off-by-one.}} (m/s):|for=speed}} <div class="cdx-text-input">{{simplecalc|id=speed|type=number|default=5.612|min=4.6|step=0.1|decimals=2|class-live=cdx-text-input__input|formula=speedp}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+{{simplecalc label|[[Sharpness]] level:|for=sharpness}} <div class="cdx-text-input">{{simplecalc|id=sharpness|type=number|default=0|min=0|max=5|class-live=cdx-text-input__input}}{{simplecalc|id=sharpbonus|type=hidden|formula=(edition*(sign(sharpness)+sharpness)/2)+((1-edition)*floor(1.25*sharpness))}}</div>
+</div>
+<div style="display: flex; flex-direction: row; align-items: center; gap: 1rem;">
+{{simplecalc label|Damage done:|for=damage}} <div class="cdx-text-input">{{simplecalc|id=damage|type=number|default=6|min=0|class-live=cdx-text-input__input|formula=ifgreaterorequal(speed, 4.2, base+sharpbonus+floor(speed*multiplier), 0)}}{{simplecalc|id=speedp|type=hidden|formula=ifequal(damage, base+sharpbonus+floor((speed+0.01)*multiplier), speed, max(ceil(damage-base)/multiplier, 4.6))}}</div>
+</div>
+</div>
+{{simplecalc-hideifzero|starthidden=1|formula=ifequal(tier, 1)|[[File:Wooden Spear.png|64x64px|class=pixel-image|link=]]}}
+{{simplecalc-hideifzero|starthidden=1|formula=ifequal(tier, 2)|[[File:Golden Spear.png|64x64px|class=pixel-image|link=]]}}
+{{simplecalc-hideifzero|starthidden=1|formula=ifequal(tier, 3)|[[File:Stone Spear.png|64x64px|class=pixel-image|link=]]}}
+{{simplecalc-hideifzero|starthidden=1|formula=ifequal(tier, 4)|[[File:Copper Spear.png|64x64px|class=pixel-image]]}}
+{{simplecalc-hideifzero|formula=ifequal(tier, 5)|[[File:Iron Spear.png|64x64px|class=pixel-image|link=]]}}
+{{simplecalc-hideifzero|starthidden=1|formula=ifequal(tier, 6)|[[File:Diamond Spear.png|64x64px|class=pixel-image|link=]]}}
+{{simplecalc-hideifzero|starthidden=1|formula=ifequal(tier, 7)|[[File:Netherite Spear.png|64x64px|class=pixel-image|link=]]}}
+</div>
+</div></onlyinclude>
+
+== Navigation ==
+{{Navbox calculators}}
+
+[[fr:Calculateurs/Dégâts de la lance]]
+[[ja:計算機/槍]]
+[[ko:계산기/창 피해]]
+[[lzh:算械/槊所傷]]
+[[pt:Calculadoras/Dano da lança]]
+[[ru:Калькуляторы/Урон копьём]]
+[[zh:计算器/矛伤害]]

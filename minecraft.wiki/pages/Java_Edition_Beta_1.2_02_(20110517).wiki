@@ -1,0 +1,104 @@
+{{DISPLAYTITLE:Java Edition Beta 1.2_02 (20110517)}}
+{{Unreleased version|available=yes}}
+{{Infobox version
+| title = Minecraft Beta 1.2_02
+| subtitle = (20110517)
+| image = Minfcraft.png
+| image2 = Beta 1.2_02 (20110517).png
+| edition = Java
+| unreleased = true
+| date = May 17, 2011
+| type = Developer version
+| java_manual = 6
+| clientdl = [https://vault.omniarchive.uk/archive/java/misc/b1.2_02-20110517.jar Client]
+| prevparent = Beta 1.2
+| prev = Beta 1.2_02
+}}
+
+A special development version forked from [[Java Edition Beta 1.2_02]] was compiled on May 17, 2011, about 4 months after the original version was released. It shares the same version number as the original, being likewise '''Beta 1.2_02''' in-game. This version was not released or publicized at the time, however the <samp>JAR</samp> was otherwise made available later.
+
+This build is an earlier version of what would eventually be used to create the time lapse in the promotional video for ''[[Minecraft: Pocket Edition]]''<nowiki/>'s release on the Xperia Play.<ref>{{ytl|sW6GM6g3un0|Minecraft -- Pocket Edition Available on Xperia PLAY|Minecraft|August 16, 2011}}</ref>
+
+This version is unique in that it launches into a "secret" game mode in which special builder NPCs can build structures.
+
+== Additions ==
+[[File:XperiaSchematicBeta.png|thumb|200px|The structure the NPCs try to build.<ref><code>net/minecraft/client/gamemode/secret/Schematic.class</code></ref>]]
+
+'''[[Game mode]]s'''
+* Secret mode<ref><code>net/minecraft/client/gamemode/secret/SecretMode.class</code></ref>
+** Enabled by default.
+** Bypasses the title screen on game load.
+** Enables builder NPCs.
+*** They spawn only when player is online.
+
+'''[[Builder]]s'''
+* Builders are Steve-skinned entities holding [[iron pickaxe]]s that can break and place blocks.<ref><code>net/minecraft/client/gamemode/secret/Builder.class</code></ref> They also seem to explode and respawn after a couple of minutes.
+
+== Changes ==
+'''[[Inventory]]'''
+* Can no longer be accessed normally, except for the hotbar.
+* The keybind to access it has been removed from the controls menu.
+
+== Unused features ==
+These are not available in this version in-game but are however present in the game's code.
+* There are two types of unused "Secret Builder" entities, different from the regular Builder. Both crash the game when enabled, unless modified to fix the crash.
+** The first one holds a [[golden pickaxe]] that does not render in-game. It appears to have similar behavior to the [[Monster (entity)|monster]] entity, where it walks around and attacks the player.<ref><code>net/minecraft/client/gamemode/SecretBuilder.class</code></ref>
+** The second roams around while holding an [[iron pickaxe]], but is not programmed to build a schematic or follow waypoints like the regular Builder.<ref><code>net/minecraft/client/gamemode/secret/SecretBuilder.class</code></ref>
+* There is a second unused Secret mode that is meant to spawn one of the Secret Builders, but it does not seem to work.<ref><code>net/minecraft/client/gamemode/SecretMode.class</code></ref>
+* Xperia mode<ref><code>net/minecraft/client/gamemode/XperiaMode.class</code></ref>
+** Sets the position of the player to (-30.75, 75.69, 0.9) on login and is otherwise identical to regular [[Survival]] mode.
+* Unused code for [[coral block]]s<ref><code>net/minecraft/world/level/tile/CoralTile.class</code></ref>
+** Applies a tint depending on the block coordinates.<ref>{{ytl|RsvFXR6ofHE|t=12m11s|Omniarchive Special Event (Beta 1.2_02 2011-05-17)|Omniarchive|June 27, 2024}}</ref>
+** All sides of the block are about 1.6% larger due to each face being 12.5% longer in height and length.
+*** Due to the bounding box having negative points, as the added size extends outwards and overlaps with nearby blocks, this block has weird collisions.
+* Brick house{{more info|generation size etc}}
+** A hollow and empty brick box between 5 and 8 blocks wide and long, and between 3 and 5 blocks tall.<ref><code>net/minecraft/world/level/levelgen/feature/HouseFeature.class</code></ref>
+* [[Canyon]]s
+** Generate both on and under the ground.
+* Unused code for [[water spawner]]s and [[lava spawner]]s from [[Indev]] can be found in <code><code>SpringTile.class</code></code><ref><code>net/minecraft/world/level/tile/SpringTile.class</code></ref>
+* An empty "TownFeature" piece of code, which shares the same code as all other structure/feature generators.
+* Code for generating image sequences for the flyby videos posted on Notch's [[YouTube]] channel.
+** The game generates a new world for the flyby named <code>flyby</code>.
+** The code generates TGA files the size of the games window in the <code>.minecraft/flyby</code> directory.
+** The code generates about 21120 frames which equals to 5 minutes and 52 seconds at 60FPS. This is the length of an early version of the Biome Fest song.
+** The code is somewhat broken.
+*** Screenshots generated are broken as the way the pixels are retrieved from the GPU produces wrong color channel information.
+*** Day time cycle is nonfunctional when generating a flyby.
+*** Chunks still get updated one by one, as it was controlled by a variable that got folded during compilation.
+* [[File:Minfcraft logo.png|x40px]] Changed game logo on the main menu to "Minfcraft" (only visible when the game is edited to load the main menu on start up).
+* Code for drawing a biome map similar to the one showcased in the [[Java Edition Alpha v1.2.0 (preview)|PC Gamer preview]] of the [[Halloween Update]].<ref><code>net/minecraft/client/map/Map.class</code></ref><ref>{{ytl|RsvFXR6ofHE|t=14m15s|Omniarchive Special Event (Beta 1.2_02 2011-05-17)|Omniarchive|June 27, 2024}}</ref>
+* There is unused code for the inf-20100624 level format.<ref><code>net/minecraft/world/level/chunk/storage/ZonedChunkStorage.class</code></ref>
+
+== Trivia ==
+* This is the only publicly available Beta version of {{JE}} to have fully unobfuscated code, and the first overall unobfuscated version since [[Classic 0.0.13a]] (and until [[Java Edition 25w45a]]).
+** Because of this, a lot of unused code that would normally be automatically removed during the obfuscation process is left in here. Several features unavailable in shipped releases have been found in the code, as described above.
+** Versions prior to Minecraft Indev had certain class files unobfuscated due to the fact the game used the built-in Java serialization system. Mob AI created with inline classes had to have their compile-time class path specified manually to be saved/loaded properly as a workaround.
+* Notch mentioned adding coral in a blog post from June 28, 2010<ref>{{citation|url=http://notch.tumblr.com/post/746938105/the-server-is-back-up|archive-url=https://web.archive.org/web/20130104104219/http://notch.tumblr.com/post/746938105/the-server-is-back-up|website=The Word of Notch|title=The server is back up!|date=June 28, 2010|author=Markus Persson|quote=I tried adding corals, but it’s really hard to draw a single block that looks like corals, since it’s really more about crazy amounts of variation and diversity. But I do know that the corals will have tiny fish particles around them.}}</ref>. An [[Media:Coral Block (texture) JE0.png|unused coral block texture]] was included in the <samp>[[terrain.png]]</samp> of the [[Java Edition Infdev 20100629|June 29, 2010]] version of Infdev. The code present in this build is likely the same code Notch originally wrote for the scrapped coral blocks during Infdev.
+* This version has a [[Protocol_version|PVN]] of 8, unchanged from its base of Beta 1.2_02, which is shared with [[14w04b]], [[Beta 1.1_01]], [[Beta 1.1]], [[Beta 1.0.2]], [[Beta 1.0_01]], and [[Beta 1.0]].
+* Despite the world code being built for Java 5, the client code was built for Java 6, which is what this build requires.<ref>https://gist.github.com/PhoenixVX/78e363177329db1773351657ee472e9c#class-file-version-discrepancy</ref>
+* The name of the world loaded in this version is called <samp>secretLevel</samp>.
+**If a world named <samp>secretLevel</samp> is pasted in while the world is loading, the world will be loaded, but entering block GUIs such as chests and crafting tables will cause the game to freeze and crash.
+
+== Gallery ==
+<gallery>
+1.2 02 secret coral.png|Various colors of [[coral block]]s (unused in-game).
+1.2 02 secret canyon.png|Canyons (unused in-game).
+1.2 02 secret brick house.png|Brick house (unused in-game).
+Minfcraft.png|What the main menu of this version looks like when the menu is re-enabled via jar editing. Note that the Minecraft logo is displayed as "MINFCRAFT".
+</gallery>
+
+== References ==
+{{reflist}}
+
+== External links ==
+* [{{ytl|px3jI0Obqxs}} Gameplay footage of the builder NPCs in-game]
+* [{{ytl|W-s3uJkPD_w}} Footage of restored flyby mode code]
+
+== Navigation ==
+{{Navbox Java Edition versions|Beta}}
+
+[[es:Java Edition Beta 1.2 02 (20110517)]]
+[[ja:Java Edition Beta 1.2_02 (20110517)]]
+[[pt:Edição Java Beta 1.2_02 (20110517)]]
+[[ru:Beta 1.2 02 (20110517) (Java Edition)]]
+[[zh:Java版Beta 1.2 02 (20110517)]]

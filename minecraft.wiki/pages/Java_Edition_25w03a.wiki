@@ -1,0 +1,455 @@
+{{Infobox version
+|title=Minecraft 25w03a
+|image=25w03a.jpg
+|image2=Java Edition 25w03a.png
+|edition=Java
+|type=Snapshot
+|date=January 15, 2025
+|jsonhash=355a00a8bd037d18e80110a4536d0e8b0ea73270
+|clienthash=9acca901e3564a91250b941cd2c55a55d0b71bca
+|clientmap=94b753018a4683ec7c25a33c9048d46fbf9a5db0
+|serverhash=e003d151668a0eff64c1191972707655e341f8f5
+|servermap=ad7bb6cf9bdb85fd561981e2c4634a9d3292592d
+|parent=1.21.5
+|prevparent=1.21.4
+|prev=25w02a
+|next=25w04a
+|nextparent=1.21.6
+}}
+
+<onlyinclude>'''25w03a''' is the second [[snapshot]] for [[Java Edition 1.21.5]] released on January 15, 2025,<ref>{{snap|25w03a|id=a|January 15, 2025}}</ref> which adds [[Test Block|test block]], [[Test Instance Block|test instance block]] and fixes bugs.
+
+== Additions ==
+=== Blocks ===
+'''{{animate|Test Block start JE1.png;Test Block log JE1.png;Test Block fail JE1.png;Test Block accept JE1.png|32px}} [[Test block]]'''
+* A technical block used in game test.
+* Can be obtained by {{cmd|setblock}}, {{cmd|fill}}, or {{cmd|give}} commands, or through the [[Operator Items Tab]].
+* The test block is a block used for implementing block-based tests. It has four modes:
+** {{cd|start}}: Triggers a redstone pulse when the test starts
+** {{cd|log}}: Logs a message to the server log file when powered by redstone (prints twice, due to a bug<ref name="youtube-6elLSg0y7X4">{{Citation|url=https://www.youtube.com/watch?v=6elLSg0y7X4|title=Mojang just added some WEIRD new blocks. Here's how they work.|author=Conure [@conure512]|website=YouTube|date=2025-01-15|archive-url=https://preservetube.com/watch?v=6elLSg0y7X4}}</ref><!-- 9:10 - 9:30 -->)
+** {{cd|fail}}: Fails the test when powered by redstone
+** {{cd|accept}}: Completes the test when powered by redstone
+* Block-based tests are required to have at least one start block and one accept block in the structure.
+
+'''[[File:Test Instance Block JE1.png|32px]] [[Test instance block]]'''
+* A technical block used in game test.
+* Can be obtained by {{cmd|setblock}}, {{cmd|fill}}, or {{cmd|give}} commands, or through the [[Operator Items Tab]].
+* To run a test in a world, a test instance block is used. This type of block represents the test as placed in the world and is used to interact with that test, to save the structure, reset or run the test.
+* Using the {{cmd|test}} command to run or create a test will also place a test instance block to control that test.
+
+=== Command format ===
+'''{{cmd|test}}'''
+* A new command used to create and run tests.
+** Syntax:
+*** {{cmd|test clearall [<radius>]}}
+*** {{cmd|test clearthat}}
+*** {{cmd|test clearthese}}
+*** {{cmd|test create <test> [<width>] [<height> <depth>]}}
+*** {{cmd|test locate <selector>}}
+*** {{cmd|test resetclosest}}
+*** {{cmd|test resetthese}}
+*** {{cmd|test resetthat}}
+*** {{cmd|test pos [<variable>]}}
+*** {{cmd|test run <selector> [<numberOfTimes>] [<untilFailed>] [<rotationSteps>] [<testsPerRow>]}}
+*** {{cmd|test runclosest [<numberOfTimes>] [<untilFailed>]}}
+*** {{cmd|test runfailed [<numberOfTimes>] [<untilFailed>] [<rotationSteps>] [<testsPerRow>]}}
+*** {{cmd|test runmultiple <selector> [<amount>]}}
+*** {{cmd|test runthat [<numberOfTimes>] [<untilFailed>]}}
+*** {{cmd|test runthese [<numberOfTimes>] [<untilFailed>]}}
+*** {{cmd|test stop}}
+*** {{cmd|test verify <tests>}}
+** Parameters:
+*** {{cd|radius}}:
+**** The radius to clear tests within.
+*** {{cd|test}}: 
+**** The namespaced ID of a test.
+*** {{cd|selector}}: 
+**** A wildcard-enabled selector for test IDs
+**** Supports * and ? for matching namespaced IDs
+**** If namespace is not supplied, defaults to minecraft
+**** Examples:
+***** {{cd|*:*}} 
+****** Matches all IDs
+***** {{cd|*}}
+****** Matches everything in the minecraft namespace
+***** {{cd|custom:folder/*_test_?}} 
+****** Matches IDs in the folder folder of the custom namespace, with a prefix followed by _test_ followed by a single valid character
+*** {{cd|width}}: 
+**** The width of the test structure.
+***** If omitted, {{cd|5}} is used.
+*** {{cd|height}}: 
+**** The height of the test structure .
+***** If omitted, the {{cd|width}} is used.
+*** {{cd|depth}}: 
+**** The depth of the test structure.
+***** If omitted, the {{cd|width}} is used.
+*** {{cd|variable}}: 
+**** The variable name to include in the copied code snippet.
+*** {{cd|numberOfTimes}}: 
+**** The number of times to repeat each test.
+***** If omitted, {{cd|1}} is used.
+*** {{cd|untilFailed}}: 
+**** Boolean (default false) noting that the test should be stopped as soon as one iteration fails.
+*** {{cd|rotationSteps}}: 
+**** Number of extra 90 degree steps to apply to the test.
+***** If omitted, {{cd|0}} is used.
+*** {{cd|testsPerRow}}: 
+**** Number of tests to place per row in a grid layout.
+***** If omitted, {{cd|8}} is used.
+* {{cmd|test clear*}}
+** These subcommands clear the structures and blocks associated with the selected tests.
+* {{cmd|test create}}
+** This subcommand creates a test setup in the current location for the given test, preparing for a structure of the given size. 
+** This gives a starting point for creating the structure for the test.
+* {{cmd|test locate}}
+** Attempts to locate the given test. 
+*** Note that only loaded chunks are searched.
+* {{cmd|test reset*}}
+** These subcommands reset the structures for the selected tests, removing any surrounding barriers and placing the structure in from scatch.
+* {{cmd|test pos}}
+** Shows the local coordinates to the block pointed at in the test. 
+** If the optional variable name is specified, this variable name is used in a code fragment obtained by clicking on the coordinates in the output message.
+* {{cmd|test run*}}
+** Runs one or more tests. 
+*** If multiple tests are run at once, they are placed in a grid and run in parallel, although only up to a certain limit. Beyond that limit, tests are run in rounds where each round completes before any tests from the next round are started.
+*** For each test, loads the given structure and runs the associated test. Each test location will have a beacon beam showcasing the test status.
+**** Gray beacon = in progress
+**** Red = fail (required test)
+**** Orange = fail (optional test)
+**** Green = success
+*** If a test fails, the error is shown on a lectern book and an overlay.
+* {{cmd|test stop}}
+** Stops all running tests. 
+*** Note that gameplay events triggered by tests may still remain.
+* {{cmd|test verify*}}
+** Verifies one or more tests by running multiple instances of the same test.
+
+=== General ===
+'''[[Block-based test]]s'''
+* Use [[test block]]s in the test structure to run the test and indicate success or failure.
+
+'''[[Function test]]s'''
+* Rely on built-in functions to run a test and indicate success or failure. 
+** They have one additional field:
+*** {{cd|function}}: 
+**** The namespaced ID of the Test Function to run.
+
+'''[[Game tests]]'''
+* The Game Tests system is a new integrated system for testing aspects of the game.
+* Each test is an asset defining some parameters for how the test gets executed, combined with a saved structure file containing a base setup.
+* Generally, the test framework expects to run tests in a separate superflat world.
+
+'''[[Items model definition]]'''
+* Select Property
+** {{cd|minecraft:component}}
+*** New data source has been added to select item model: {{cd|component}}.
+*** Returns value of component on item, if any.
+*** Fields:
+**** {{cd|component}} - namespaced ID of component type.
+*** Possible values: depends on component type.
+
+'''[[Tag]]s'''
+* Added the {{cd|#can_equip_saddle}} entity tag.
+** Contains entities that can be equipped with a saddle.
+** This does not mean that the Saddle will function, just that it can be equipped into the saddle slot.
+
+'''[[Test environment definition|Test environments]]'''
+* Test Environments are a way to group up tests and give them the right preconditions to run. 
+* A test environment is an asset in the {{cd|test_environment}} registry. 
+* Each test environment definition has a {{cd|type}} field that determines its setup:
+** {{cd|all_of}} definitions 
+*** Apply the setup from several sub-definitions in the {{cd|definitions}} field.
+** {{cd|function}} definitions 
+*** Use mcfunction files as setup and teardown.
+*** {{cd|setup}}: 
+**** Optional namespaced ID of the mcfunction to use for setup, if any.
+*** {{cd|teardown}}: 
+**** Optional namespaced ID of the mcfunction to use for teardown, if any.
+** {{cd|game_rules}}: definitions 
+*** Set any number of game rules.
+*** {{cd|bool_rules}}: 
+**** A list of boolean game rules to set and the value to set.
+*** {{cd|int_rules}}: 
+**** A list of integer game rules to set and the value to set.
+*** Each rule is an object with two fields:
+**** {{cd|rule}}: 
+***** The exact name of the rule to set.
+**** {{cd|value}}: 
+***** The value to set
+*** Game rules are reset to their default values after the test environment has completed.
+** {{cd|weather}} definitions (not working in this snapshot<ref name="youtube-6elLSg0y7X4" /><!-- 7:45 - 8:00 -->)
+*** Sets the weather state
+*** {{cd|weather}}: 
+**** The weather to set.
+**** One of {{cd|clear}}, {{cd|rain}} and {{cd|thunder}}.
+** {{cd|time_of_day}} definitions 
+*** Set a given time of day.
+*** {{cd|time}}: 
+**** The time of day to set in number of ticks, as a non-negative integer.
+* The game provides a single, empty test environment by default: {{cd|minecraft:default}}.
+
+'''[[Test instance definition|Test instances]]'''
+* Test instances are defined in the registry {{cd|test_instance}}. 
+** They're small assets defining a test to run.
+** Fields:
+*** {{cd|batch}} (wrongly called <s>{{cd|environment}}</s> in the changelog<ref name="youtube-6elLSg0y7X4" /><!-- 5:40 - 6:20 -->):
+**** Namespaced ID of the test environment to run this test as part of.
+*** {{cd|structure}}: 
+**** Namespaced ID of the structure to use for the test.
+*** {{cd|max_ticks}}:
+**** A positive integer representing the maximum number of ticks allowed to pass before the test is considered timed out.
+*** {{cd|setup_ticks}}: 
+**** Optional non-negative integer.
+**** Default: {{cd|0}}
+**** Represents a number of ticks to wait after placing the structure before starting the test.
+*** {{cd|required}}: 
+**** Optional boolean.
+**** Default {{cd|true}}
+**** Whether the test is considered required to pass for the full test suite to pass.
+*** {{cd|rotation}}: 
+**** Optional rotation to apply to the test structure.
+**** One of {{cd|none}} (default), {{cd|clockwise_90}}, {{cd|180}} and {{cd|counterclockwise_90}}.
+*** {{cd|manual_only}}:
+**** Optional boolean.
+**** Default {{cd|false}}
+**** Set to {{cd|true}} for tests that are not included as part of automated test runs.
+*** {{cd|sky_access}}: 
+**** Whether the test needs clear access to the sky.
+**** Default: {{cd|false}}
+**** Tests are enclosed in barrier blocks.
+**** If set to {{cd|true}}, the top is left open.
+*** {{cd|max_attempts}}: 
+**** Number of attempts to run the test.
+**** Default: {{cd|1}}
+*** {{cd|required_successes}}: 
+**** Number of attempts that must succeed for the test to be considered successful .
+**** Default: {{cd|1}}
+*** {{cd|type}}: 
+**** The type of test.
+**** One of {{cd|block_based}} and {{cd|function}}.
+
+== Changes ==
+=== Blocks ===
+'''[[Leaf litter]] '''
+* Can be used in a [[composter]].
+
+=== Items ===
+'''[[Saddle]]'''
+* Saddles equipped onto [[pig]]s or [[strider]]s will now maintain properties such as custom name when dropped.
+* Saddles equipped onto [[camel]]s and equines ([[horse]]s, [[donkey]]s, [[mule]]s) now remain visible if the mob equipped with them is inflicted with [[Invisibility]].
+* Saddles equipped onto camels and equines no longer turn red when the mob wearing it takes damage.
+* When enchanted now show the [[enchantment]] glint on mobs wearing it.
+* [[Thorns]] and [[Curse of Binding]] enchantments now work on mobs that are wearing it.
+
+=== Command format ===
+'''Item slots'''
+* The {{cd|horse.saddle}} item slot has been renamed to {{cd|saddle}}, and now supports any entity that can equip a Saddle.
+** Driven by the {{cd|equippable}} component.
+** Only mobs that normally support saddles will support riding and rendering of the saddle.
+** Items in the {{cd|saddle}} slot can apply attribute modifiers as with other equipment.
+
+=== Gameplay ===
+'''[[End portal]] and [[exit portal]]'''
+* When changing state, any blocks that are in its radius will be dropped as items and also make breaking sounds, rather than outright overwritten.<ref>{{Citation|url=https://cdn.skye.lol/diffs/25w02a_to_25w03a.html|title=25w02a to 25w03a|website=cdn.skye.lol|archive-url=https://web.archive.org/web/20250116170725/https://cdn.skye.lol/diffs/25w02a_to_25w03a.html|section=<code>EndPodiumFeature</code>}}</ref>
+
+=== General ===
+'''[[Data component format]]'''
+* {{cd|weapon}} component
+** {{cd|damage_per_attack}} field was renamed to {{cd|item_damage_per_attack}}
+
+* {{cd|equippable}} component
+** Can now apply to saddle slot.
+** Any mob can now have equipment added in the {{cd|body}} slot as long as the component allows it ({{cd|allowed_entities}}).
+** Added new optional field: {{cd|equip_on_interact}} (boolean).
+*** If {{cd|true}}, players can equip this item onto a target mob by right-clicking it (as long as this item can be equipped on the target at all).
+*** The item will not be equipped if the target already has an item in the relevant slot.
+*** If not specified, defaults to {{cd|false}}.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|63}}.
+
+'''[[Entity format]]'''
+* The {{cd|ArmorItems}}, {{cd|HandItems}}, and {{cd|body_armor_item}} fields have been merged into an {{cd|equipment}} field.
+** Format: 
+*** Map between equipment slot type and item stack.
+**** Valid equipment slots: {{cd|head}}, {{cd|chest}}, {{cd|legs}}, {{cd|feet}}, {{cd|mainhand}}, {{cd|offhand}}, {{cd|body}}, {{cd|saddle}}.
+*** If not specified or removed, the entity will have no equipment.
+*** e.g. {{cd|equipment:{chest:{id:'minecraft:diamond_chestplate'}}}}.
+*** This affects all mobs and armor stands, but players are unaffected.
+** The data format of saddles has been unified between mobs such as horses and pigs, becoming a new kind of equipment slot (and stored in the {{cd|equipment.saddle}} field)
+*** This also replaces the boolean {{cd|Saddle}} flag from pigs and striders.
+*** The Saddle dropping on death is now affected by the {{cd|drop_chances}} field, as with other equipment slots.
+** The {{cd|FallDistance}} field has been changed from float to double and is now called {{cd|fall_distance}}.
+
+'''Entity variant components'''
+* Entities now have a set of components for configuring variants and other aspects of apperance.
+* If those components are present on spawning item (like spawn eggs, mob buckets, minecraft:painting, minecraft:item_frame), they will be applied to new entity
+* Components are currently not restored when spawn egg is picked from existing entity
+* Added components:
+** {{cd|villager/variant}} - one of {{cd|desert}}, {{cd|jungle}}, {{cd|plains}}, {{cd|savanna}}, {{cd|snow}}, {{cd|swamp}}, {{cd|taiga}}
+** {{cd|wolf/variant}} - namespaced id from {{cd|wolf_variant}} registry
+** {{cd|wolf/collar}} - one of 16 dye colors
+** {{cd|fox/variant}} - one of {{cd|red}}, {{cd|snow}}
+** {{cd|salmon/size}} - one of {{cd|small}}, {{cd|medium}}, {{cd|large}}
+** {{cd|parrot/variant}} - one of {{cd|red_blue}}, {{cd|blue}}, {{cd|green}}, {{cd|yellow_blue}}, {{cd|gray}}
+** {{cd|tropical_fish/pattern}} - one of {{cd|kob}}, {{cd|sunstreak}}, {{cd|snooper}}, {{cd|dasher}}, {{cd|brinely}}, {{cd|spotty}}, {{cd|flopper}}, {{cd|stripey}}, {{cd|glitter}}, {{cd|blockfish}}, {{cd|betty}}, {{cd|clayfish}}
+** {{cd|tropical_fish/base_color}} - one of 16 dye colors
+** {{cd|tropical_fish/pattern_color}} - one of 16 dye colors
+** {{cd|mooshroom/variant}} - one of {{cd|red}}, {{cd|brown}}
+** {{cd|rabbit/variant}} - one of brown, {{cd|white}}, {{cd|black}}, {{cd|white_splotched}}, {{cd|gold}}, {{cd|salt}}, {{cd|evil}}
+** {{cd|pig/variant}} - namespaced id from {{cd|pig_variant}} registry
+** {{cd|frog/variant}} - namespaced id from {{cd|frog_variant}} registry
+** {{cd|horse/variant}} - one of {{cd|white}}, {{cd|creamy}}, {{cd|chestnut}}, {{cd|brown}}, {{cd|black}}, {{cd|gray}}, {{cd|dark_brown}}
+** {{cd|painting/variant}} - namespaced id from {{cd|painting_variant}} registry
+** {{cd|llama/variant}} - one of {{cd|creamy}}, {{cd|white}}, {{cd|brown}}, {{cd|gray}}
+** {{cd|axolotl/variant}} - one of {{cd|lucy}}, {{cd|wild}}, {{cd|gold}}, {{cd|cyan}}, {{cd|blue}}
+** {{cd|cat/variant}} - namespaced id from {{cd|cat_variant}} registry
+** {{cd|cat/collar}} - one of 16 dye colors
+** {{cd|sheep/color}} - one of 16 dye colors
+** {{cd|shulker/color}} - one of 16 dye colors
+* Mob buckets and paintings available in creative menu will now use new variants instead of {{cd|minecraft:entity_data}} component.
+* Custom tooltips for [[bucket of tropical fish]] and [[painting]] items are now based on new components instead of {{cd|minecraft:bucket_entity_data}} and {{cd|minecraft:entity_data}}.
+
+'''Equipment assets'''
+* Equipment assets may now define new layer types:
+** {{cd|pig_saddle}} - equipment layer for Pig saddles
+** {{cd|strider_saddle}} - equipment layer for Strider saddles
+** {{cd|camel_saddle}} - equipment layer for Camel saddles
+** {{cd|horse_saddle}} - equipment layer for Horse saddles
+** {{cd|donkey_saddle}} - equipment layer for Donkey saddles
+** {{cd|mule_saddle}} - equipment layer for Mule saddles
+** {{cd|skeleton_horse_saddle}} - equipment layer for Skeleton Horse saddles
+** {{cd|zombie_horse_saddle}} - equipment layer for Zombie Horse saddles
+* The following textures have been moved to support the use of equipment assets for saddles:
+** {{cd|entity/pig/pig_saddle.png}} -> {{cd|entity/equipment/pig_saddle/saddle.png}}
+** {{cd|entity/strider/strider_saddle.png}} -> {{cd|entity/equipment/strider_saddle/saddle.png}}
+* The following textures have been split from their base entity texture to support the use of equipment assets for saddles:
+** {{cd|entity/camel/camel.png}} -> {{cd|entity/equipment/camel_saddle/saddle.png}}
+** {{cd|entity/horse/horse_<variant>.png}} -> {{cd|entity/equipment/horse_saddle/saddle.png}}
+** {{cd|entity/horse/donkey.png}} -> {{cd|entity/equipment/donkey_saddle/saddle.png}}
+** {{cd|entity/horse/mule.png}} -> {{cd|entity/equipment/mule_saddle/saddle.png}}
+** {{cd|entity/horse/horse_skeleton.png}} -> {{cd|entity/equipment/skeleton_horse_saddle/saddle.png}}
+** {{cd|entity/horse/horse_zombie.png}} -> {{cd|entity/equipment/zombie_horse_saddle/saddle.png}}
+
+'''[[Predicate]]s'''
+* Entity predicates
+** A new optional field was added to entity predicate: {{cd|components}}.
+*** When present, predicate will match contents of entity components.
+*** Format: 
+**** Map of component type key to matching component values.
+** The following entity sub-predicates have been removed and replaced with combination of {{cd|components}} predicate and variant entity components:
+*** {{cd|minecraft:axolotl}}
+*** {{cd|minecraft:fox}}
+*** {{cd|minecraft:mooshroom}}
+*** {{cd|minecraft:rabbit}}
+*** {{cd|minecraft:horse}}
+*** {{cd|minecraft:llama}}
+*** {{cd|minecraft:villager}}
+*** {{cd|minecraft:parrot}}
+*** {{cd|minecraft:salmon}}
+*** {{cd|minecraft:tropical_fish}}
+*** {{cd|minecraft:painting}}
+*** {{cd|minecraft:cat}}
+*** {{cd|minecraft:frog}}
+*** {{cd|minecraft:wolf}}
+*** {{cd|minecraft:pig}}
+** The field {{cd|color}} has been removed from {{cd|minecraft:sheep}} sub-predicate.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now {{cd|48}}.
+* Added new equipment asset layer type for Pigs and Striders, and moved saddle textures.
+* Changed the size of {{cd|pig_saddle}} texture.
+
+'''[[Server.jar]]'''
+* Added the entry point {{cd|net.minecraft.gametest.Main}}.
+** Automatically starts a server, runs all available game tests and then exits.
+** Options:
+*** {{cd|--help}} - Shows usage information
+*** {{cd|--packs <path>}} - Set a folder of datapacks to include in the world
+**** Any zip file or folder with a {{cd|pack.mcmeta}} file is included
+*** {{cd|--report <path>}} - Exports results in a junit-like XML report at the given path
+*** {{cd|--tests <selection>}} - Specify which tests to run with a selection - a wildcard expression matching namespace test instance IDs
+**** If omitted, or used with an empty ID, runs all tests
+*** {{cd|--universe <path>}} - The path to where the test server world will be created
+**** Any existing folder will be replaced
+**** Default: {{cd|gametestserver}}
+*** {{cd|--verify <boolean>}} - Enables test verification
+**** Runs the tests specified with {{cd|test}} or {{cd|testNamespace}} 100 times for each 90 degree rotation step
+**** Default: {{cd|false}}
+** Example usage: {{cd|java -DbundlerMainClass{{=}}"net.minecraft.gametest.Main" -jar server.jar --packs mytestpacks}}
+
+'''[[Tag]]s'''
+* Added {{cd|leaf_litter}} to the {{cd|#replaceable_by_mushrooms}} block tag.
+* Fixed the {{cd|#is_overworld}}, and {{cd|#has_structure/trial_chambers}} biome tags to contain all required biomes.
+
+'''[[Text component format]]'''
+* Hover Events
+** {{cd|show_text}} action:
+*** The {{cd|text}} field has been renamed to {{cd|value}}.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=25w03a
+|;From released versions before 1.21
+|13738|Invisible saddle when using invisibility potion on a horse, donkey or mule.
+|80243|Saddles don't apply attribute modifiers when worn by entities.
+|189525|Armored entities from pre-1.9 worlds upgrade to dual wielding armor.
+|190000|Saddles equipped on horses cannot be replaced without removing them first.
+|227097|End portals delete blocks that are inside of the portal.
+|256469|Invisible camels don't show their saddles.
+|266912|Saddle equipping sounds aren't played when saddles are equipped on horses, donkeys, mules, or camels shortly after the said entity is summoned.
+|269637|Horses can wear multiple saddles but not multiple horse armor.
+|270192|The saddles of some entities stay visible through their death animation.
+|270197|The saddle on pigs and striders stays visible through their death animation.
+|272100|Unused palette pixels in horse textures ({{cd|horse_[brown/chestnut/creamy/white].png}}).
+|272790|Shulker boxes and other blocks in the end exit portal when it changes state are not dropped as items.
+|;From 1.21
+|274258|All horse textures contain an unused chest bag texture.
+|;From 1.21.2
+|279340|Baby polar bears are too small.
+|;From 1.21.4
+|278673|The x-rotation of {{cmd|teleport}} is limited to ±90 degrees relative to the entity's original angle.
+|;prev
+|279206|Leaf Litter cannot be composted.
+|279208|Players can no longer begin sprinting when pressing a sideways movement key first.
+|279211|Shulker boxes both keep and drop their contents upon being broken via certain methods causing item duplication.
+|279213|Mushroom Blocks can't replace Leaf Litter.
+|279221|Leaf Litter replaces leaves in world gen.
+|279224|Using bone meal in meadows doesn't generate wildflowers.
+|279226|Experience orbs of any value all render as the smallest value.
+|279233|Shulker boxes drop their contents when broken.
+|279234|The {{cd|minecraft:entity.generic.extinguish_fire}} sound does not play when the fire on an entity is extinguished.
+|279238|Dying to a minecart with TNT ignited by a blaze fireball doesn't count as the blaze's kill.
+|279239|The motion of primed TNT is choppy and jittery.
+|279245|Most hostile mobs aren't spawning even under the right conditions.
+|279248|Lava collision is too high.
+|279281|Fall damage occurs from jumping from 2 blocks up.
+|279282|Parrots with non-player owner UUID cause crash upon spawning.
+|279301|Player dies by falling from 22.00001 blocks instead of 23 blocks.
+|279313|The motion of item entities is choppy and jittery under certain circumstances.
+|279314|Projectiles twitch up and down slightly while flying through the air.
+|279316|The motion of fishing bobbers is choppy and jittery.
+|279326|Lit observers no longer send block updates when moved by a piston.
+|279339|Update order for sloped rails is incorrect.
+|279345|Pink petals and Wildflowers can no longer be grown by bone meal.
+|279357|Player can fall off edges while sneaking.
+|279459|{{cmd|setblock}} and other fills don't properly update block entities.
+}}</onlyinclude>
+
+== Videos ==
+{{Slicedlime|v6f1AEBrJHI|J-jM1Zw3_R0}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:25w03a]]
+[[es:Java Edition 25w03a]]
+[[fr:Édition Java 25w03a]]
+[[ja:Java Edition 25w03a]]
+[[lzh:二五週〇三甲]]
+[[pt:Edição Java 25w03a]]
+[[ru:25w03a (Java Edition)]]
+[[uk:25w03a (Java Edition)]]
+[[zh:Java版25w03a]]

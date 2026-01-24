@@ -1,0 +1,85 @@
+{{exclusive|bedrock|education}}
+{{Infobox command
+|name=music
+|oplevel=1
+|cheat=1
+}}
+
+Plays, queues, stops the [[music]], or adjusts the music volume.
+
+== Syntax ==
+: <code>music play <trackName: string> [volume: float] [fadeSeconds: float] [repeatMode: MusicRepeatMode]</code>
+:: Plays the music track.
+: <code>music queue <trackName: string> [volume: float] [fadeSeconds: float] [repeatMode: MusicRepeatMode]</code>
+:: Adds the music track to the queue.
+: <code>music stop [fadeSeconds: float]</code>
+:: Stops the music.
+: <code>music volume <volume: float></code>
+:: Adjusts the music volume.
+
+== Arguments ==
+{{argument|be=1|trackName: string|basic_string}}
+: Specifies a music track to play.
+: {{arg desc|be=basic_string}}
+: Must be a music track name (e.g. <code>record.cat</code>), or a music track defined under the Json path <code>"record.<music_name>"</code> or <code>"music.game.<music_name>"</code> in the <samp><a_resource_pack>/sounds/sound_definitions.json</samp> file (e.g. <code>cat</code> to play "Cat" music disc).
+
+{{argument|be=1|volume: float|float}}
+: Specifies the volume of the music track.
+: {{arg desc|be=float}} Should be between 0 and 1 (inclusive).
+
+{{argument|be=1|fadeSeconds: float|float}}
+: Specifies the duration the music track fades in/out.
+: {{arg desc|be=float}} Should be between 0 and 10 (inclusive).
+
+{{argument|be=1|repeatMode: MusicRepeatMode|enum}}
+: Specifies whether the music track repeats or not. If unspecified, defaults to <code>play_once</code>.
+: Must be one of <code>loop</code> and <code>play_once</code>.
+
+== Result ==
+
+{{Result table|onlybe=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.||unparseable}}
+{{Result table|cmd=/music play ...|The fade seconds are higher than 10 or lower than 0.||fail}}
+{{Result table|The volume is higher than 1 or lower than 0.}}
+{{Result table|cmd=/music queue ...|The current playing music is set to <code>loop</code>.}}
+{{Result table|The volume is higher than 1 or lower than 0.}}
+{{Result table|The fade seconds are higher than 10 or lower than 0.}}
+{{Result table|cmd=/music stop ...|No music is playing.}}
+{{Result table|The fade seconds are higher than 10 or lower than 0.}}
+{{Result table|cmd=/music volume ...|The volume is higher than 1 or lower than 0.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+==Output==
+
+{{Output table|onlybe=1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== Example ==
+Play the Pigstep music disc on repeat.
+*<code>/music play record.pigstep 0.5 0 loop</code>
+
+Queue the Stal music disc.
+*<code>/music queue record.stal 0.5 0 play_once</code>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.16.100|dev=beta 1.16.100.58|Added {{cmd|music|link=none}}.}}
+}}
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/music?view=minecraft-bedrock-stable|title=<code>/music</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/music]]
+[[ja:コマンド/music]]
+[[lzh:令/music]]
+[[pt:Comandos/music]]
+[[ru:Команды консоли/music]]
+[[zh:命令/music]]

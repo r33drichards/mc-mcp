@@ -1,0 +1,53 @@
+{{exclusive|java}}
+{{debug warning}}
+{{Infobox command
+|name=chase
+|oplevel=0
+|others=<code>-DMC_DEBUG_CHASE_<br />COMMAND</code> [[debug property]]
+}}
+
+'''/chase''' is a command that can be enabled with the [[debug property]] <code>-DMC_DEBUG_CHASE_COMMAND</code>. It teleports a following player to the same position and rotation angle as a leading player whenever that leading player moves. This works even between different worlds and when the following player's Singleplayer game is paused.
+
+== Syntax ==
+<code>chase lead [<bind_address>] [<port>]</code>
+: Starts a server that can be accessed on this IP address and port. It transmits the player's position whenever that player's position or facing angle changes.
+: By default, prints "Chase server is now running on port ''<port>''. Clients can follow you using /chase follow <ip> <port>.". The default host is <code>localhost</code> and the default port 10000. If <code>chase follow</code> or <code>chase lead</code> has already been used without <code>chase stop</code> afterwards, prints the error "Chase server is already running. Stop it using /chase stop."
+<code>chase follow [<host>] [<port>]</code>
+: Starts following the movements transmitted by the server and printing the coordinates to chat. The following player can still move independently, but gets teleported back whenever position information is received.
+: By default, prints "You are now chasing ''<host>'':''<port>''". If that server does '/chase lead', then you will automatically go to the same position. Use `/chase stop` to stop chasing.". The default host is <code>localhost</code> and the default port 10000. If <code>chase follow</code> or <code>chase lead</code> has already been used without <code>chase stop</code> afterwards, prints the error "You are already chasing someone. Stop it using /chase stop.".
+<code>chase stop</code>
+: Stops transmitting or receiving positions, depending on which sub-command was used before. Prints "You have now stopped chasing" or "You are no longer being chased" respectively. If no chase is active, does nothing and prints nothing.
+
+== Arguments ==
+{{argument|bind_address|string}}
+: A hostname or IP address, to be used for transmitting locations. E.g. "<code>localhost</code>" and "<code>127.0.0.1</code>" are equivalent.
+: {{arg desc|je=string|type=string}}
+{{argument|host|string}}
+: Same as <code>bind_address</code>, except for receiving. Also called "<code>ip</code>" in the <code>/chase lead</code> chat output.
+: {{arg desc|je=string|type=string}}
+{{argument|port|integer}}
+: Network port, to be used for transmitting or receiving locations.
+: {{arg desc|je=integer|min=1 (for {{cd|chase follow}}), or 1024 (for {{cd|chase lead}})|max=65535}}
+
+== Result ==
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|succeed}}<!-- even though there are failure messages in the code, the command actually succeeds when sending them -->
+{{Result table}}
+
+== Output ==
+{{Output table}}
+{{Output table|edition=je|On success|1|1|0}}
+{{Output table}}
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.9|dev=25w37a|Added [[debug property]] <code>-DMC_DEBUG_CHASE_COMMAND</code>, making the command accessible in the vanilla game.}}
+}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/chase]]
+[[zh:命令/chase]]

@@ -1,0 +1,91 @@
+{{Infobox version
+|title=Minecraft 1.21.5 Pre-Release 1
+|image=1.21.5-pre1.jpg
+|image2=Java Edition 1.21.5 Pre-Release 1.png
+|edition=Java
+|type=Pre-release
+|date=March 11, 2025
+|jsonhash=95d86e05c61b1b8fbaa589aecd909a28f5563629 |jsonfile=1.21.5-pre1
+|clienthash=8b708817d1997e46bcdd03bdf106533d05ff1bfa
+|clientmap=bbbdc77f9732e640f6a6d91de87a3836a93ce1b9
+|serverhash=b663ce11b5951546a74947c1896e0d4713188833
+|servermap=cdfaeb62e5d35aeeaa0c648fdd8dc28309791377
+|parent=1.21.5
+|prevparent=1.21.4
+|prev=25w10a
+|next=1.21.5 Pre-release 2
+|nextparent=1.21.6
+}}<onlyinclude>
+
+'''1.21.5 Pre-Release 1''' (known as '''1.21.5-pre1''' in the [[launcher]]) is the first pre-release for [[Java Edition 1.21.5]], released on March 11, 2025.<ref>{{Mcnet|minecraft-1-21-5-pre-release-1|Minecraft 1.21.5 Pre-Release 1|March 11, 2025}}</ref> This is the first pre-release released in 2025.
+
+== Changes ==
+
+=== Items ===
+'''[[Spawn eggs]]'''
+* Added textures for [[Programmer Art]] resource pack.
+
+=== World generation ===
+'''[[Fallen tree]]s'''
+* The longer versions of fallen birch trees now generate properly.
+** This version is up to 15 blocks long, as opposed to the shorter version which can only reach 8 blocks at most.
+
+=== Command format ===
+'''General'''
+* Arguments in commands that accept inline values like loot tables, predicates, modifiers, data components, formatted text ({{cmd|loot}}, {{cmd|give}}, {{cmd|tellraw}}, {{cmd|execute if predicate}}, data components in {{cmd|execute if items}}, etc.) have been reverted to accept numbers in place of booleans.
+
+=== General ===
+'''Network protocol'''
+* The client-bound {{cd|player_chat}} packet now contains an index increasing for every message sent to the client.
+** The index starts at 0 when logging in (or is reset by configuration phase and the {{cd|login}} packet).
+** For every message, the server should increment this value by 1.
+** If this value updates in an unexpected way, the client will disconnect.
+** As the protocol requires that every chat packet reaches the client in produced order, the goal is to enable faster detection of missed/reordered chat messages for custom server developers.
+* The server-bound {{cd|chat}} and {{cd|chat_command_signed}} packets now contain a checksum byte along with the 'last seen' update.
+** This is a simple hash of the 'last seen' signatures which should be reconstructed by the server, allowing quicker detection of desynchronized state.
+** This can be passed as {{cd|0}} to disable the check, for compatibility with protocol translation.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|55}}.
+* Tweaked [[leaf litter]] block models.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=1.21.5 Pre-release 1
+|;From released versions before 1.21
+|170134|Minecraft uses several times more VRAM than needed after exploring terrain for a while.
+|;From the 1.21.5 development versions
+|279350|Leaf litter multipart model system is unoptimized, causing render lag.
+|280141|Baby farm animals from spawn eggs with a variant differing from the parent flash the wrong variant initially.
+|280241|Cold Cows have improperly mirrored and incorrectly aligned ear textures.
+|280249|Spawn eggs don't use their old textures with the Programmer Art resource pack enabled.
+|280278|Sheep wool uses 1.14 texture with Programmer Art resource pack enabled.
+|280326|When teleporting across dimensions an error is often thrown.
+|280361|When a fallen tree replaces the bottom half of tall vegetation, the top part of the vegetation still generates.
+|;From the previous development version
+|280474|TNT minecarts explode regardless of {{cd|tntExplodes}} gamerule.
+|280477|TNT still explodes when summoned or dispensed while {{cd|tntExplodes}} gamerule is false.
+|280479|TNT is completely deleted when attempting to ignite it using redstone pulses when the "{{cd|tntExplodes}}" gamerule is disabled.
+|280480|No flint and steel clicking sound when attempting to ignite. TNT with a flint and steel when the "{{cd|tntExplodes}}" gamerule is disabled.
+|280493|If the {{cd|tntExplodes}} game rule is changed to false while primed TNT already exists in the world, the primed TNT explodes as normal.
+|280501|The "Fire extinguishes" sound plays every game tick while on fire in rain.
+|280520|{{cd|ItemDropChance}} on an item frame is not serialized when there is no item anymore, leading to inconsistencies.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|DIUd4fWkm3Y}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:1.21.5-pre1]]
+[[es:Java Edition 1.21.5 Pre-Release 1]]
+[[fr:Édition Java 1.21.5 Pre-Release 1]]
+[[ja:Java_Edition_1.21.5_Pre-Release_1]]
+[[ko:Java Edition 1.21.5 프리릴리스 1]]
+[[pt:Edição Java 1.21.5 Pre-Release 1]]
+[[ru:1.21.5 Pre-Release 1 (Java Edition)]]
+[[uk:1.21.5 Pre-Release 1 (Java Edition)]]
+[[zh:Java版1.21.5-pre1]]

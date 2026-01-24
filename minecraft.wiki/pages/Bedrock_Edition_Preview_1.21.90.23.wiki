@@ -1,0 +1,193 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.9023.0<br>'''Android''': 1.21.90.23
+| image = Bedrock 1.21.90.23 PatchNotes.jpeg
+| image2 = Bedrock 1.21.90.23.png
+| build = 33126055
+| editorver = 0.9.8
+| versioncode = '''Android''':<br />
+952109023 (armeabi-v7a, 34)<br />
+962109023 (x86, 34)<br />
+972109023 (arm64-v8a, 34)<br />
+982109023 (x86_64, 34)
+| date = May 7, 2025
+| server = 1.21.90.23
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.90.23.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.90.23.zip Linux]
+| parent = 1.21.90
+| prevparent = 1.21.84
+| prev = Preview 1.21.90.21
+| next = Preview 1.21.90.25
+| nextparent = 1.21.91
+}}
+<onlyinclude>
+
+'''Beta 1.21.90.23''' (ChromeOS, Android), or '''Preview 1.21.90.23''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the third beta/''Preview'' version for [[Bedrock Edition 1.21.90]], released on May 7, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/36415388784909-Minecraft-Beta-Preview-1-21-90-23|title=Minecraft Beta & Preview - 1.21.90.23|website=Minecraft Feedback|date=May 7, 2025}}</ref> which fixes bugs.
+
+== Changes ==
+=== Gameplay ===
+'''[[Vibrant Visuals]]'''
+*Updated a variety of MERS textures in Vibrant Visuals:
+**Made Glass Blocks more reflective
+**Tweaked metallics on Cauldrons and Ancient Debris
+**Tweaked emissives on Eyeblossom
+**Added emissive to the Ender Crystal Block to match item icon
+**Added MERS textures for Happy Ghast and Harnesses
+**Adjusted the Glow Lichen block emissive
+*Improved Snell's window effect when looking up from underwater in Vibrant Visuals.
+*The End flash is now visible again in the End in Vibrant Visuals.
+
+=== General ===
+'''[[Locator Bar]]'''
+*The Locator Bar has been de-experimentified and is now available in non-experimental worlds.
+
+'''[[UI]]'''
+*Chat background opacity can now be controlled with a new accessibility setting.
+
+=== Technical ===
+'''[[API]]'''
+:{{cd|@minecraft/server 2.0.0}}
+*Released {{cd|getBlockBelow}} and {{cd|getBlockAbove}} on {{cd|Dimension}} to {{cd|2.0.0}}.
+*Changed {{cd|players}} property on {{cd|PlayAnimationOptions}} to an array of {{cd|Player}} objects, instead of string names in {{cd|2.0.0}}.
+*Released error {{cd|ContainerRulesError}} to {{cd|2.0.0}}.
+*Removed {{cd|CameraDefaultOptions}} for {{cd|V2.0}}.
+**Added {{cd|setDefaultCamera(cameraPreset: string, easeOptions?: CameraEaseOptions): void}} to {{cd|V2.0}}. This will replace passing the {{cd|CameraDefaultOptions}} into the {{cd|Camera.setCamera}} function. Will also now reset the position and rotation of third-person cameras back to the values defined in the JSON.
+
+'''Components'''
+*Added validation for asset references in particle effect Json:
+**texture reference in {{cd|basic_render_parameters}}
+**block references in {{cd|minecraft:particle_expire_if_in_blocks}}
+**block references in {{cd|minecraft:particle_expire_if_not_in_blocks}}
+
+'''Goals'''
+*{{cd|minecraft:rideable}} component's {{cd|dismount_mode}} is now correctly applied when passengers are forced to dismount by the {{cd|minecraft:behavior.float}} goal.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Upcoming Creator Features" experimental toggles.
+
+=== Additions ===
+==== Technical ====
+'''[[API]]'''
+:{{cd|@minecraft/server 2.1.0-beta}}
+*Added enum {{cd|ContainerRulesErrorReason}} to {{cd|beta}}. Contains the reasons that {{cd|ContainerRulesError}} can fail.
+*Added interface {{cd|ContainerRules}} to {{cd|beta}}. Contains rules that if broken on container operations will throw a {{cd|ContainerRulesError}}.
+*{{cd|Container}}
+**Added optional property{{cd|readonly containerRules?: ContainerRules}} to {{cd|beta}}. If the rules of the container are broken will throw a {{cd|ContainerRulesError}}.
+**Added property {{cd|readonly weight: number}} to {{cd|beta}}. The total weight of all {{cd|ItemStacks}} in the container.
+*{{cd|ItemStack}}
+**Added property {{cd|readonly weight: number}} to {{cd|beta}}. The total weight all the items in the {{cd|ItemStack}}.
+*Added class {{cd|ItemInventoryComponent}} to {{cd|beta}}. This component will be on all items that contain a {{cd|minecraft:storage_item}} component and will allow access to its container.
+
+'''[[Block]]s'''
+*Added {{cd|minecraft:random_offset}} component under the Upcoming Creator Features toggle. This allows for blocks to randomly offset like foliage does in the Vanilla game. Example:
+<syntaxhighlight lang="c++">
+{  
+    "format_version": "1.21.80",
+    "minecraft:block": {
+       "description": {
+          "identifier": "test:test_block"
+       },
+       "components": {
+          "minecraft:collision_box": {
+             "origin": [-4.0, 4.0, -4.0],
+             "size": [8, 8, 8]
+          },
+          "minecraft:random_offset": {
+             "x": {
+                // This is the range of possible values we can pick from
+                "range": {
+                   "min": -4,
+                   "max": 4
+                },
+                // This is the equally spaced steps across the given range 
+                // Provide 0 for all possible values in the range
+                "steps": 16
+             },
+             "y": {
+                "range": {
+                   "min": -4,
+                   "max": 4
+                },
+                "steps": 16
+             },
+             "z": {
+                "range": {
+                   "min": -4,
+                   "max": 4
+                },
+                "steps": 16
+             }
+          }
+       }
+    }
+</syntaxhighlight>
+
+=== Changes ===
+==== Technical ====
+'''[[API]]'''
+*Updated error messaging when imports can't be found.
+*Removed content warning when a custom component was registered without closures for custom components V2:
+**This allows {{cd|data-only}} components to be registered in script and added to blocks and items that only contain parameters without functionality.
+
+'''[[Experiment]]al'''
+*The {{cmd|controlscheme}} command no longer requires the "Experimental Creator Camera" toggle.
+**The {{cd|camera_relative_strafe}} control scheme remains experimental and still requires the toggle.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.90.23 Preview
+|;old
+|79331|Text Background Opacity doesn't work for most text
+|80319|Parrots imitate mobs way too often
+|114701|Magma cubes and slimes jump when changing goals
+|166394|Slime and Magma Cube can still attack player during death animation
+|174857|Some Wither Skeleton related sounds still outdated
+|188353|Unable to put specific amount of items inside of a bundle using touch controls
+|189501|Attacking a mob or player while sprint jumping randomly removes all of the player's momentum, sometimes even teleporting the player backwards
+|200698|Vibrant Visuals: Textures turn pink after suspend and resume, opening Settings, or exiting world
+|201604|Ghasts and Happy Ghasts are not affected by splash potions that hit their top
+|201832|Hitting blocks while swimming will slow you down
+|201849|Ghast stays completely still when shooting fireballs with the Drop 2 2025 experiment enabled
+|206642|Vibrant Visuals: Static water looks clearer than flowing water
+|206924|Vibrant Visuals: Reflections flicker severely on higher than default FOV
+|212409|Vibrant Visuals: Artifacts on clouds when viewing them up close
+|216825|The {{cd|faceLocation}} property of custom component player interact events is not relative to the block
+|;previous
+|217768|Particles with material {{cd|particles_blend}} do not render correctly with Vibrant Visuals
+|otherissuescount=22}}
+'''Other'''
+*Harness is no longer invisible on a Happy Ghast when equipped by a Dispenser.
+*Empty open Bundle icon now renders correctly when Bundles are tapped with Touch Controls.
+*Marking read only structures for deletion along with editable ones no longer disables the delete button.
+*Saving a large structure from a selection on the Structure Panel no longer makes the game unresponsive.
+*Fixed projectiles not being fired in the correct direction when using custom cameras and touch input.
+*Using a custom equippable block item in creative mode will no longer duplicate the item and equip it; it will simply place the block in the world.
+*Fixed an issue with Leather armor having a stripe of emissive across the texture.
+*Fixed a z-fighting issue between water and leaf blocks in Vibrant Visuals.
+*Fixed an issue where Vibrant Visuals would sometimes apply to worlds that do not correctly support it.
+*Fixed Enderman held blocks not being shaded correctly in Vibrant Visuals.
+*Fixed an issue with moving blocks (e.g. blocks held by Endermen, TNT inside of minecarts) not casting shadows in Vibrant Visuals.
+*Fixed a crash happening on PS5 when loading a world with leashed entities.
+*Fixed a bug where Parrots imitating a Drowned used Zombie sounds.
+*Fixed a bug where sliders move super fast when using gamepad. Added a timeout to avoid this problem.
+*Fixed a crash when blocks that specify non-existent textures as {{cd|carried_textures}} are held in hand.
+*Fix for incorrect normals and/or crashes when holding certain items in hand with Vibrant Visuals enabled.
+*Fixed an issue where entities are rendering and animating twice.
+*Fixed a crash with the Debug Drawing system after using the {{cmd|reload}} command.
+*Fixed an issue where Debug Drawing primitives wouldn't be visible after using the {{cmd|reload}} command.
+*Fixed an issue where Debug Drawing primitives wouldn't be visible for new players joining the world.
+*Fixed the {{cd|minecraft:follow_orbit}} camera not having the correct control scheme in its allow list.
+*The touch screen d-pad control now shows the correct buttons when using camera relative control schemes.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.90 betas]]
+
+[[de:Bedrock Edition beta 1.21.90.23]]
+[[pt:Edição Bedrock Preview 1.21.90.23]]
+[[ru:Preview 1.21.90.23 (Bedrock Edition)]]
+[[uk:Preview 1.21.90.23 (Bedrock Edition)]]
+[[zh:基岩版1.21.90.23]]

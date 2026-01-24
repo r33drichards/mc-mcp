@@ -1,0 +1,2624 @@
+{{DISPLAYTITLE:Legacy ''Pocket Edition'' protocol}}
+{{about|outdated information for ''[[Pocket Edition]]''|a newer ''Pocket Edition'' protocol|Pocket Edition protocol|the protocol documentation for the latest version of {{BE}}|Bedrock Edition protocol}}
+{{outdated|edition=bedrock}}
+
+This article documents the '''protocol''' which ''[[Pocket Edition]]'' used before it was replaced by a [[Pocket Edition protocol|newer ''Pocket Edition'' protocol]].{{when}}
+
+Unlike the {{JE}} protocol, this protocol uses UDP with (so far observed, at least) one message per packet. This makes the protocol easier to work with when it comes to packet serialization, and might offer latency improvements, but will inevitably have the usual UDP issues (packets lost, truncated, duplicated, out-of-order, etc.).
+
+As of [[v0.9.0 alpha]], clients appear to search for servers on only port 19132.
+
+Clients don't pick any specific port to listen on.
+
+Please note that even where packet field names are written in this page, these are still largely hypothetical and could well be incorrect guesses. Some packets are fixed to the [[RakNet|RakNet protocol]], and will be marked as "RakNet Packet", which means that these packets will not change on future versions.
+
+It has been determined that PM uses RakNet for its networking library, [http://www.jenkinssoftware.com/raknet/manual/networkmessages.html some documentation that seems relevant].
+
+== Terminology ==
+
+;PM:Pocket Minecraft (aka Minecraft PE or Minecraft Pocket Edition)
+
+== Types ==
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" |
+! class="col1" | Size
+! class="col2" | Range
+! class="col3" | Notes
+|- class="row1"
+! class="col0 centeralign" | byte
+| class="col1 centeralign" | 1
+| class="col2" | -128 to 127
+| class="col3" | Signed, two's complement
+|- class="row2"
+! class="col0 centeralign" | short
+| class="col1 centeralign" | 2
+| class="col2" | -32768 to 32767
+| class="col3" | Signed, two's complement
+|- class="row3"
+! class="col0 centeralign" | int32
+| class="col1 centeralign" | 4
+| class="col2" | -2147483648 to 2147483647
+| class="col3" | Signed, two's complement
+|- class="row4"
+! class="col0 centeralign" | int64
+| class="col1 centeralign" | 8
+| class="col2" | 
+| class="col3" | Maybe a double?
+|- class="row5"
+! class="col0 centeralign" | MAGIC
+| class="col1 centeralign" | 16
+| class="col2" | <code>0x00ffff00fefefefefdfdfdfd12345678</code>
+| class="col3" | always those hex bytes, corresponding to RakNet's default OFFLINE_MESSAGE_DATA_ID
+|- class="row6"
+! class="col0 centeralign" | string
+| class="col1 centeralign" | = 1
+| class="col2" | N/A
+| class="col3" | Prefixed by a short containing the length of the string in characters. It appears that only the following ASCII characters can be displayed: !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+|}
+
+== Login Packets ==
+
+All packets start with a single byte that identifies the packet type, the rest of the packet follows it.
+Please note that packets 0x09 through 0x13 are not documented (yet).
+
+{{anchor|0x01}}
+=== ID_CONNECTED_PING_OPEN_CONNECTIONS (0x01) ===
+
+''Client to Broadcast''
+
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="2" | 0x01
+| class="col1 centeralign" | Ping ID
+| class="col2 centeralign" | int64
+| class="col3 centeralign" | <code>0x00000000003c6d0d</code>
+| class="col4" | Time since start in Milliseconds
+|- class="row2"
+| class="col0 centeralign" | MAGIC
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | 
+| class="col3" |
+|- class="row3"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 25 Bytes
+|}
+
+Clients start out by sending this packet to the IP broadcast address on port 19132 repeatedly (approx once per second) when joining a server was chosen on the main screen, and stops when the user selects a server (or leaves the screen). The ping ID from the client increases over time, and appears to be the number of milliseconds since the client program was started (might be used to measure server response latency).
+
+{{anchor|0x02}}
+=== ID_UNCONNECTED_PING_OPEN_CONNECTIONS (0x02) ===
+
+''Client to Broadcast''
+
+'''NOTE: THIS PACKET APPEARS TO BE UNUSED. Use a 0x01 packet instead'''
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="2" | 0x02
+| class="col1 centeralign" | Ping ID
+| class="col2 centeralign" | int64
+| class="col3 centeralign" | <code>0x00000000003c6d0d</code>
+| class="col4" | Time since start in Milliseconds
+|- class="row2"
+| class="col0 centeralign" | MAGIC
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | 
+| class="col3" |
+|- class="row3"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 25 Bytes
+|}
+
+Same as [[#0x01|ID_CONNECTED_PING_OPEN_CONNECTIONS (0x01)]], but with the Packet ID changed.
+
+{{anchor|0x05}}
+
+=== ID_OPEN_CONNECTION_REQUEST_1 (0x05) ===
+
+''Client to Server''
+
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="3" | 0x05
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | MAGIC
+| class="col3 centeralign" | 
+| class="col4" | 
+|- class="row2"
+| class="col0 centeralign" | RakNet Protocol Version
+| class="col1 centeralign" | byte
+| class="col2 centeralign" | <code>5</code>
+| class="col3" | Check the Data Packet section for the current version
+|- class="row2"
+| class="col0 centeralign" | Null Payload
+| class="col1 centeralign" | many 0x00 bytes
+| class="col2 centeralign" | <code>0x00 * 1447</code>
+| class="col3" | MTU (Maximum Transport Unit)
+|- class="row4"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 18 Bytes + length of Null Payload
+|}
+If the version is different than yours, reply with a 
+[[#0x1A|ID_INCOMPATIBLE_PROTOCOL_VERSION (0x1A)]]
+
+Sent from the client after the player taps on the server in the world list The client will repeatedly send this with reducing sizes until it successfully receives a reply. Observed behavior is that the client will send packets ~0.5s apart in the following way, until it gets a 0x06 response packet, or reaches the end of these:
+* 4 packets of Null Payload length of 1447
+* 4 packets of Null Payload length of 1155
+* 5 packets of Null Payload length of 531
+If the server doesnt't reply the client, the client will display a "Connect Error" window
+
+
+{{anchor|0x06}}
+
+=== ID_OPEN_CONNECTION_REPLY_1 (0x06) ===
+
+''Server to Client''
+
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="4" | 0x06
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | MAGIC
+| class="col3 centeralign" | 
+| class="col4" | 
+|- class="row2"
+| class="col0 centeralign" | Server ID
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code>0x00000000372cdc9e</code>
+| class="col3" | This value seems to be constant for an installation of PM, or differs between the demo and full version.
+|- class="row3"
+| class="col0 centeralign" | Server Security
+| class="col1 centeralign" | byte
+| class="col2 centeralign" | <code>0</code>
+| class="col3" | Always 0
+|- class="row4"
+| class="col0 centeralign" | MTU Size
+| class="col1 centeralign" | short
+| class="col2 centeralign" | <code>1447</code>
+| class="col3" | length of 0x05. Used to determine packet loss and max UDP packet size (MTU)
+|- class="row5"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 28 Bytes
+|}
+
+Sent from server after it receives packet 0x05.
+
+
+{{anchor|0x07}}
+
+=== ID_OPEN_CONNECTION_REQUEST_2 (0x07) ===
+
+''Client to Server''
+
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="5" | 0x07
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | MAGIC
+| class="col3 centeralign" | 
+| class="col4" | 
+|- class="row2"
+| class="col0 centeralign" | Server Address
+| class="col1 centeralign" | 1 + 4 bytes
+| class="col2 centeralign" | <code>0x043f57fefd</code>
+| class="col3" | 0x4 for IPv4 and the twos complement of each byte of the servers ip address,
+|- class="row3"
+| class="col0 centeralign" | Server UDP Port
+| class="col1 centeralign" | short
+| class="col2 centeralign" | <code>19132</code>
+| class="col3" | 
+|- class="row4"
+| class="col0 centeralign" | MTU Size
+| class="col1 centeralign" | short
+| class="col2 centeralign" | <code>1464</code>
+| class="col3" | 
+|- class="row5"
+| class="col0 centeralign" | Client ID
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code>0x00000000372cdc9e</code>
+| class="col3" | The Client / Server ID will be the same for a given device
+|- class="row6"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 34 Bytes
+|}
+
+Sent from client in response to packet 0x06.
+
+{{anchor|0x08}}
+
+=== ID_OPEN_CONNECTION_REPLY_2 (0x08) ===
+
+''Server to Client''
+
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="5" | 0x08
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | MAGIC
+| class="col3 centeralign" | 
+| class="col4" | 
+|- class="row2"
+| class="col0 centeralign" | Server ID
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code>0x00000000372cdc9e</code>
+| class="col3" |
+|- class="row3"
+| class="col0 centeralign" | Client UDP Port
+| class="col1 centeralign" | short
+| class="col2 centeralign" | <code>46946</code>
+| class="col3" | 
+|- class="row4"
+| class="col0 centeralign" | MTU Size
+| class="col1 centeralign" | short
+| class="col2 centeralign" | <code>1464</code>
+| class="col3" |
+|- class="row5"
+| class="col0 centeralign" | Security
+| class="col1 centeralign" | byte
+| class="col2 centeralign" | <code>0</code>
+| class="col3" | Always 0
+|- class="row6"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 30 Bytes
+|}
+
+Sent from server in response to packet 0x07.
+
+
+{{anchor|0x1A}}
+=== ID_INCOMPATIBLE_PROTOCOL_VERSION (0x1A) ===
+
+''Server to Client''
+
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="3" | 0x1A
+| class="col1 centeralign" | Protocol Version
+| class="col2 centeralign" | byte
+| class="col3 centeralign" | <code>5</code>
+| class="col4" | 
+|- class="row2"
+| class="col0 centeralign" | MAGIC
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | 
+| class="col3" |
+|- class="row2"
+| class="col0 centeralign" | Server ID
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code>0x00000000372cdc9e</code>
+| class="col3" | 
+|- class="row3"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 26 Bytes
+|}
+
+Sent when the server doesn't support the RakNet protocol specified in 0x05.
+
+{{anchor|0x1C}}
+
+=== ID_UNCONNECTED_PING_OPEN_CONNECTIONS (0x1C) ===
+
+''Server to Client''
+
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="4" | 0x1C
+| class="col1 centeralign" | Ping ID
+| class="col2 centeralign" | int64
+| class="col3 centeralign" | <code>0x00000000003c6d0d</code>
+| class="col4" | Time since start in Milliseconds
+|- class="row2"
+| class="col0 centeralign" | Server ID
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code>0x00000000372cdc9e</code>
+| class="col3" |
+|- class="row3"
+| class="col0 centeralign" | MAGIC
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | 
+| class="col3" |
+|-class="row4"
+| class="col0 centeralign" | Identifier
+| class="col1 centeralign" | string
+| class="col2 centeralign" | "MCPE;Steve;2 7;0.11.0;0;20"
+| class="col3" | Used to send the username, format: <code>MCPE;<Server name>;<Protocol version>;<MCPE Version>;<Players>;<Max Players></code>
+|- class="row6"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 35 Bytes + Server name length
+|}
+
+Server sends this packet in response to a 0x01 packet.
+If the Server is invisible, this packet will be sent without username
+
+<s>In order for the server to show up in the world list, the server name must have "MCCPP;MINECON;" in front of it.</s>
+<b>Since MCPE 0.11.0, the server name has a different format.</b>
+
+{{anchor|0x1D}}
+
+=== ID_ADVERTISE_SYSTEM (0x1D) ===
+
+''Server to Client''
+
+
+'''RakNet Packet'''
+
+'''THIS PACKET IS UNUSED, Use a 0x1c packet instead.'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="4" | 0x1D
+| class="col1 centeralign" | Ping ID
+| class="col2 centeralign" | int64
+| class="col3 centeralign" | <code>0x00000000003c6d0d</code>
+| class="col4" | Time since start in Milliseconds
+|- class="row2"
+| class="col0 centeralign" | Server ID
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code>0x00000000372cdc9e</code>
+| class="col3" |
+|- class="row4"
+| class="col0 centeralign" | MAGIC
+| class="col1 centeralign" | MAGIC
+| class="col2 centeralign" | 
+| class="col3" |
+|- class="row2"
+| class="col0 centeralign" | Data
+| class="col1 centeralign" | string
+| class="col2 centeralign" | <code>MCPE;Steve;2 7;0.11.0;0;20</code>
+| class="col3" | Used to send the username, format: MCPE;<Server name>;<Protocol version>;<MCPE Version>;<Players>;<Max Players>
+|- class="row3"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 35 Bytes + length of string
+|}
+
+Same as [[#0x1C|ID_UNCONNECTED_PING_OPEN_CONNECTIONS (0x1C)]], but with the Packet ID changed. Depends of the version to send a 0x1D or a 0x1C
+
+=== Custom Packet (0x80-0x8F) ===
+
+''Two-Way''
+
+'''This packet is part of the real Minecraft PE implementation. The structure can change anytime.'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="2" | 0x80-0x8F
+| class="col1 centeralign" | Count
+| class="col2 centeralign" | 3 bytes
+| class="col3 centeralign" | <code>0</code>
+| class="col4" | Increments once every packet. 
+|- class="row2"
+| class="col2 centeralign" | Data payload
+| class="col1 centeralign" |
+| class="col2 centeralign" | <code>0x40009000000009...</code>
+| class="col3" | Uses [[#Packet_Encapsulation|Packet Encapsulation format]]
+
+|- class="row3"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 4 Bytes + payload
+|}
+
+The receiver will use the Packet number in the 0xC0 packet and send it back.
+
+{{anchor|0xA0}}
+
+=== NAK (0xA0) ===
+
+''Two-Way''
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="4" | 0xA0
+| class="col1 centeralign" | Count
+| class="col2 centeralign" | short
+| class="col3 centeralign" | <code>1</code>
+| class="col4" | 
+|- class="row2"
+| class="col1 centeralign" | MinEqualsMax
+| class="col2 centeralign" | boolean
+| class="col3 centeralign" | <code>''true''</code>
+| class="col4" | ''true'' if the following range contains only one number
+|- class="row3"
+| class="col1 centeralign" | Packet Number (Min)
+| class="col2 centeralign" | 3 bytes
+| class="col3 centeralign" | <code>0x000000</code>
+| class="col4" | Range of packet to resend
+|- class="row4"
+| class="col1 centeralign" | Packet Number (Max)
+| class="col2 centeralign" | 3 bytes
+| class="col3 centeralign" | <code>0x000004</code>
+| class="col4" | Range of packet to resend (only if ''false'')
+|- class="row5"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 7 or 10 Bytes
+|}
+
+Send these when a packet was lost, or reply to this resending the lost packet.
+
+=== ACK (0xC0) ===
+
+''Two-Way''
+
+'''RakNet Packet'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="4" | 0xC0
+| class="col1 centeralign" | Count
+| class="col2 centeralign" | short
+| class="col3 centeralign" | <code>1</code>
+| class="col4" | 
+|- class="row2"
+| class="col1 centeralign" | MinEqualsMax
+| class="col2 centeralign" | boolean
+| class="col3 centeralign" | <code>''true''</code>
+| class="col4" | ''true'' if the following range contains only one number
+|- class="row3"
+| class="col1 centeralign" | Packet Number (Min)
+| class="col2 centeralign" | 3 bytes
+| class="col3 centeralign" | <code>0x000000</code>
+| class="col4" | Received packet number from field Count in 0x84 and 0x8C
+|- class="row4"
+| class="col1 centeralign" | Packet Number (Max)
+| class="col2 centeralign" | 3 bytes
+| class="col3 centeralign" | <code>0x000004</code>
+| class="col4" | Received Packet Number (only when ''false'')
+|- class="row5"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 7 or 10 Bytes
+|}
+
+Sent after a 0x8X. It's used to ACK recieval of packets.
+The second packet number is optional and only there when bool is false.
+
+{{anchor|Packet_Encapsulation}}
+
+== Packet Encapsulation format ==
+The payload in 0x80-0x8F packets is encoded using different schemes.
+To decode them, you've to use the Encapsulation ID to check wich type you should use.
+The Encapsulation ID is the first byte of the payload.
+
+Multiple Data Encapsulation packets could be present in one packet. If you want to send data, use 0x00.
+
+<code>Length</code> field is in bits, not bytes. To get the length in bytes, use <code>length_in_bytes = length / 8</code>. The <code>length</code> field is '''excluding''' the header -- both the 0x8X packet header, as well as the encapsulated packet header.
+
+
+=== 0x00 ===
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Encapsulation ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="2" | 0x00
+| class="col1 centeralign" | length
+| class="col2 centeralign" | short
+| class="col3 centeralign" | <code>0x0090</code>
+| class="col4" | Length of Packet in bits
+|- class="row2"
+| class="col2 centeralign" | Packet
+| class="col1 centeralign" | Data Packet
+| class="col2 centeralign" | <code>0x09d92145...</code>
+| class="col3" | 
+|- class="row3"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 3 Bytes + Packet Data length
+|}
+
+=== 0x40 ===
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Encapsulation ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="3" | 0x40
+| class="col1 centeralign" | length
+| class="col2 centeralign" | short
+| class="col3 centeralign" | <code>0x0090</code>
+| class="col4" | Length of Packet in bits
+|- class="row2"
+| class="col2 centeralign" | Count
+| class="col1 centeralign" | 3 bytes
+| class="col2 centeralign" | <code>0x000000</code>
+| class="col3" | Unknown use
+|- class="row3"
+| class="col2 centeralign" | Packet
+| class="col1 centeralign" | Data Packet
+| class="col2 centeralign" | <code>0x09d92145...</code>
+| class="col3" | 
+|- class="row4"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 6 Bytes + Packet Data length
+|}
+
+=== 0x60 ===
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Encapsulation ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="4" | 0x60
+| class="col1 centeralign" | length
+| class="col2 centeralign" | short
+| class="col3 centeralign" | <code>0x0090</code>
+| class="col4" | Length of Packet in bits
+|- class="row2"
+| class="col2 centeralign" | Count
+| class="col1 centeralign" | 3 bytes
+| class="col2 centeralign" | <code>0x000000</code>
+| class="col3" | Unknown use
+|- class="row3"
+| class="col2 centeralign" | Unknown
+| class="col1 centeralign" | 4 bytes
+| class="col2 centeralign" | <code>0x00000000</code>
+| class="col3" | Only sent on first iteration
+|- class="row4"
+| class="col2 centeralign" | Packet
+| class="col1 centeralign" | Data Packet
+| class="col2 centeralign" | <code>0x09d92145...</code>
+| class="col3" |
+|- class="row6"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 12 Bytes + Packet Data length
+|}
+
+
+{{anchor|Encapsulated_Login_packets}}
+
+== Encapsulated Login packets ==
+
+After packets 0x05 through 0x08 are sent, the client will send the first encapsulated packets (0x09 through 0x13). After 0x13 the game begins. You can check the login sequence [[Pocket_Editon_Login|here]].
+
+=== Client Connect (0x09) ===
+
+''Client to Server''
+
+'''This is a Data Packet. It is encoded using [[#Packet_Encapsulation|packet encapsulation format]].'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="3" | 0x09
+| class="col1 centeralign" | clientID
+| class="col2 centeralign" | int64
+| class="col3 centeralign" | <code></code>
+| class="col4" | The mojang client's clientID. 
+|- class="row2"
+| class="col2 centeralign" | session
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code></code>
+| class="col3" | A long that is sent back to the client in 0x10.
+|- class="row3"
+| class="col2 centeralign" | unknown
+| class="col1 centeralign" | byte
+| class="col2 centeralign" | <code></code>
+| class="col3" | Unknown use. Constant value.
+
+|- class="row4"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 18 Bytes
+|} 
+
+=== Server Handshake (0x10) ===
+
+''Server to Client''
+
+'''This is a Data Packet. It is encoded using [[#Packet_Encapsulation|packet encapsulation format]]..'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="8" | 0x10
+| class="col1 centeralign" | Cookie
+| class="col2 centeralign" | 4 bytes
+| class="col3 centeralign" | <code>043f57fe</code>
+| class="col4" | Unknown use, constant value. 
+|- class="row2"
+| class="col2 centeralign" | Security flags
+| class="col1 centeralign" | 1 byte
+| class="col2 centeralign" | <code>0xcd</code>
+| class="col3" | Unknown use, constant value.
+|- class="row3"
+| class="col2 centeralign" | Server port
+| class="col1 centeralign" | short
+| class="col2 centeralign" | <code>19132</code>
+| class="col3" | Unknown use.
+|- class="row4"
+| class="col2 centeralign" | Data Array
+| class="col1 centeralign" | 70 bytes
+| class="col2 centeralign" | <code></code>
+| class="col3" | Unknown use, constant value (see below).
+|- class="row5"
+| class="col2 centeralign" | Unknown
+| class="col1 centeralign" | 2 bytes
+| class="col2 centeralign" | <code>0x00 0x00</code>
+| class="col3" | Unknown use, constant value.
+|- class="row6"
+| class="col2 centeralign" | Session
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code></code>
+| class="col3" | Session long received in 0x09.
+|- class="row7"
+| class="col2 centeralign" | Unknown
+| class="col1 centeralign" | 8 bytes
+| class="col2 centeralign" | <code>0x00, 0x00, 0x00, 0x00, 0x04, 0x44, 0x0b, 0xa9</code>
+| class="col3" | Unknown use, constant value.
+
+|- class="row8"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 96 Bytes
+|}
+
+'''Data Array'''
+
+The data array section is unknown, but we do know how to get it right. Below is some code on how to create the array (C#).
+
+   public void putDataArray()
+        {
+            byte[] unknown1 = new byte[] { 0xf5, 0xff, 0xff, 0xf5 };
+            byte[] unknown2 = new byte[] { 0xff, 0xff, 0xff, 0xff };
+            this.putTriad(unknown1.Length);
+            this.putBytes(unknown1);
+            for (int i = 0; i < 9; i++)
+            {
+                this.putTriad(unknown2.Length);
+                this.putBytes(unknown2);
+            }
+        }
+
+A triad is a 3 byte integer.
+
+Credit goes to InusualZ (https://github.com/InusualZ/CraftMine/blob/master/src/Network/Packets/Minecraft/ServerHandshake.cs).
+
+=== Client Handshake (0x13) ===
+
+''Client to Server''
+
+'''This is a Data Packet. It is encoded using [[#Packet_Encapsulation|packet encapsulation format]]..'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="8" | 0x13
+| class="col1 centeralign" | cookie
+| class="col2 centeralign" | int32
+| class="col3 centeralign" | <code>0x43f57fe</code>
+| class="col4" | Unknown use, same cookie as in 0x10.
+|- class="row2"
+| class="col2 centeralign" | Security flags
+| class="col1 centeralign" | 1 byte
+| class="col2 centeralign" | <code>0xcd</code>
+| class="col3" | Unknown use, constant value.
+|- class="row3"
+| class="col2 centeralign" | Server port
+| class="col1 centeralign" | short
+| class="col2 centeralign" | <code>19132</code>
+| class="col3" | Unknown use.
+|- class="row4"
+| class="col2 centeralign" | Data Array 1 Length + Data Array 1
+| class="col1 centeralign" | 1 + ? bytes
+| class="col2 centeralign" | <code></code>
+| class="col3" | Unknown use (see below).
+|- class="row5"
+| class="col2 centeralign" | Data Array 2
+| class="col1 centeralign" | ? bytes
+| class="col2 centeralign" | <code></code>
+| class="col3" | Unknown use, constant value (see below).
+|- class="row6"
+| class="col2 centeralign" | Timestamp
+| class="col1 centeralign" | short
+| class="col2 centeralign" | <code></code>
+| class="col3" | Unknown use.
+|- class="row7"
+| class="col2 centeralign" | session
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code></code>
+| class="col3" | Unknown use.
+|- class="row8"
+| class="col2 centeralign" | session2
+| class="col1 centeralign" | int64
+| class="col2 centeralign" | <code></code>
+| class="col3" | Unknown use.
+
+|- class="row9"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 94 Bytes
+|}
+
+'''Data Arrays'''
+
+''Array 1''
+
+The first array is just a series of bytes, starting with the first byte which has the length of the rest of the array. This can be decoded as follows (Java):
+
+
+   buffer.get(new byte[(int) buffer.get()]);
+
+
+The buffer variable is really a <code>ByteBuffer</code> object found in the package java.nio.
+
+''Array 2''
+
+The second array is a little more complicated. The first section is a triad (3 bytes) which specifies how many bytes to read next. This is repeated 9 times. An example is below (Java):
+
+
+        for(int i = 0; i < 9; i++){
+        
+        	int l = NetworkUtils.getTriad(buf);
+        
+        	buf.get(new byte[l]);
+        
+        }
+
+
+Again, the buf object is a <code>ByteBuffer</code> object.
+
+
+=== Client Cancel Connect (0x15) ===
+
+''Client to Server''
+
+'''This is a Data Packet. It is encoded using [[#Packet_Encapsulation|packet encapsulation format]].'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="1" | 0x15
+| class="col1" | Only the packet ID is sent. 
+
+|- class="row2"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="2" | 1 Byte
+|}
+
+This appears to be sent whenever the user clicks the "cancel" button when connecting.
+
+== Ping/Pong ==
+The client will repeatedly send ping packets to the server each containing an identifier (long). The server then must reply with a pong packet containing the identifier found in the ping. This is observed to happen sometime during the encapsulation login.
+
+=== Ping Packet (0x00) ===
+
+''Client to Server''
+
+'''This is a Data Packet. It is encoded using packet encapsulation.'''
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="2" | 0x00
+| class="col1 centeralign" | identifier
+| class="col2 centeralign" | int64
+| class="col3 centeralign" | <code>0000000000000b3d</code>
+| class="col4" | An identifer sent back by a Pong packet (0x03). 
+
+|- class="row2"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 9 Bytes
+|}
+
+=== Pong Packet (0x03) ===
+
+''Server to Client''
+
+'''This is a Data Packet. It is encoded using packet encapsulation.''' 
+
+{| class="wikitable"
+|- class="row0"
+| class="col0" | Packet ID
+| class="col1" | Field Name
+| class="col2" | Field Type
+| class="col3" | Example
+| class="col4" | Notes
+|- class="row1"
+| class="col0 centeralign" rowspan="2" | 0x03
+| class="col1 centeralign" | identifier
+| class="col2 centeralign" | int64
+| class="col3 centeralign" | <code>0000000000000b3d</code>
+| class="col4" | The identifier found in the ping packet (0x00).
+
+|- class="row2"
+| class="col0" | Total Size:
+| class="col1 rightalign" colspan="4" | 9 Bytes
+|} 
+
+
+== Data Packets ==
+
+This information has been generated using [https://github.com/PocketMine/PocketBurger PocketBurger], then edited manually.
+
+'''This information was generated based on:'''
+
+'''Minecraft: Pocket Edition v0.7.3, protocol #11'''
+
+'''RakNet Protocol version #5'''
+
+However, these packets seem to be unchanged since then, and will (most likely) work with the current version.
+
+'''Current Version:'''
+
+'''Minecraft: Pocket Edition v0.10.4, protocol #20'''
+
+'''RakNet Protocol version #5'''
+
+=== LoginPacket (0x82) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0x82
+| Username
+| string8
+| 
+|-
+| Protocol #1
+| int
+| 
+|-
+| Protocol #2
+| int
+| 
+|-
+| ClientID
+| int
+| 
+|-
+| Realms Data
+| string8
+| 
+|-
+
+|}
+
+=== LoginStatusPacket (0x83) ===
+
+''Server to Client''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0x83
+| Status
+| int
+| 
+|-
+
+|}
+
+The three type of status are:
+
+0: Everything is good.
+
+1: If the server is outdated.
+ 
+2. If the game is outdated. 
+
+If everything is good you need to send StartGamePacket.
+
+=== ReadyPacket (0x84) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0x84
+| bits[8] Status
+| byte
+| 
+|-
+
+|}
+
+=== MessagePacket (0x85) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0x85
+| Message
+| string8
+| 
+|-
+
+|}
+
+=== SetTimePacket (0x86) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0x86
+| Time
+| int
+| 
+|-
+
+|}
+
+=== StartGamePacket (0x87) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="7" | 0x87
+| level seed
+| int
+| 
+|-
+| Unknown
+| int
+| 
+|-
+| Gamemode
+| int
+| 
+|-
+| Entity ID
+| int
+| 
+|-
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+
+|}
+
+=== AddMobPacket (0x88) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="8" | 0x88
+| Entity ID
+| int
+| 
+|-
+| Type
+| int
+| 
+|-
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+| yaw
+| byte
+| 
+|-
+| pitch
+| byte
+| 
+|-
+| Metadata
+| byte[]
+| 
+|-
+
+|}
+
+=== AddPlayerPacket (0x89) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="11" | 0x89
+| (unsigned) Client ID
+| long
+| 
+|-
+| Username
+| string8
+| 
+|-
+| Entity ID
+| int
+| 
+|-
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+| Yaw
+| byte
+| 
+|-
+| Pitch
+| byte
+| 
+|-
+| Unknown
+| short
+| 
+|-
+| Unknown
+| short
+| 
+|-
+| Metadata
+| byte[]
+| 
+|-
+
+|}
+
+=== RemovePlayerPacket (0x8a) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="2" | 0x8a
+| entity ID
+| int
+| 
+|-
+| (unsigned) Client ID
+| long
+| 
+|-
+
+|}
+
+=== AddEntityPacket (0x8c) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="9" | 0x8c
+| Entity ID
+| int
+| 
+|-
+| Type
+| byte
+| 
+|-
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+| Did?
+| int
+| If this int > 0 you can send the next parameter
+|-
+| SpeedX
+| short
+| 
+|-
+| SpeedY
+| short
+| 
+|-
+| SpeedZ
+| short
+| 
+|-
+
+|}
+
+=== RemoveEntityPacket (0x8d) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0x8d
+| Entity ID
+| int
+| 
+|-
+
+|}
+
+=== AddItemEntityPacket (0x8e) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="10" | 0x8e
+| Enity ID
+| int
+| 
+|-
+| Block
+| short
+| 
+|-
+| Stack
+| byte
+| 
+|-
+| Meta
+| short
+| 
+|-
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+| Yaw
+| byte
+| 
+|-
+| Pitch
+| byte
+| 
+|-
+| Roll
+| byte
+| 
+|-
+
+|}
+
+=== TakeItemEntityPacket (0x8f) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="2" | 0x8f
+| Target
+| int
+| 
+|-
+| Entity ID
+| int
+| 
+|-
+
+|}
+
+=== MoveEntityPacket (0x90) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="4" | 0x90
+| Entity ID
+| int
+|
+|-
+| X
+| float
+|
+|-
+| Y
+| float
+|
+|-
+| Z
+| float
+|
+|-
+
+|}
+
+=== MoveEntityPacket_PosRot (0x93) ===
+
+''None''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="6" | 0x93
+| Entity ID
+| int
+| 
+|-
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+| Yaw
+| float
+| 
+|-
+| Pitch
+| float
+| 
+|-
+
+|}
+
+=== MovePlayerPacket (0x94) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="6" | 0x94
+| Entity ID
+| int
+| 
+|-
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+| Yaw
+| float
+| 
+|-
+| Pitch
+| float
+| 
+|-
+
+|}
+
+=== PlaceBlockPacket (0x95) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="7" | 0x95
+| Entity iD
+| int
+| 
+|-
+| X
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+| Y
+| byte
+| 
+|-
+| Block
+| byte
+| 
+|-
+| Meta
+| byte
+| 
+|-
+| Face
+| byte
+| 
+|-
+
+|}
+
+=== RemoveBlockPacket (0x96) ===
+
+''Server to Client''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="4" | 0x96
+| Entity ID
+| int
+| 
+|-
+| X
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+| Y
+| byte
+| 
+|-
+
+|}
+
+=== UpdateBlockPacket (0x97) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="6" | 0x97
+| Entiy ID
+| int
+| 
+|-
+| X
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+| Y
+| byte
+| 
+|-
+| Block
+| byte
+| 
+|-
+| Meta
+| byte
+|
+|-
+
+|}
+
+=== AddPaintingPacket (0x98) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="6" | 0x98
+| Entity ID
+| int
+| 
+|-
+| X
+| int
+| 
+|-
+| Y
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+| Direction
+| int
+| 
+|-
+| Title
+| string8
+| 
+|-
+
+|}
+
+=== ExplodePacket (0x99) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="8" | 0x99
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+| Radius
+| float
+| 
+|-
+| Count
+| int
+| 
+|-
+| Records
+| byte
+| 
+|-
+| Counts?
+| byte
+| 
+|-
+| Records?
+| byte
+| 
+|-
+
+|}
+
+=== LevelEventPacket (0x9a) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0x9a
+| Unknown?
+| short
+| 
+|-
+| Unknown?
+| short
+| 
+|-
+| Unknown?
+| short
+| 
+|-
+| Unknown?
+| short
+| 
+|-
+| Unknown?
+| int
+| 
+|-
+
+|}
+
+=== TileEventPacket (0x9b) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0x9b
+| X
+| int
+| 
+|-
+| Y
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+| Case 1
+| int
+| 
+|-
+| Case 2
+| int
+| 
+|-
+
+|}
+
+=== EntityEventPacket (0x9c) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="2" | 0x9c
+| Entity ID
+| int
+| 
+|-
+| Event
+| byte
+| 
+|-
+
+|}
+
+=== RequestChunkPacket (0x9d) ===
+
+''Server to Client''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="2" | 0x9d
+| X
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+
+|}
+
+=== ChunkDataPacket (0x9e) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0x9e
+| X
+| int
+| 
+|-
+| Z
+| int
+| 
+|-Data?
+| byte
+| 
+|-
+| Data?
+| byte[]
+| 
+|-
+| Data?
+| byte[]
+| 
+|-
+
+|}
+
+=== PlayerEquipmentPacket (0x9f) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="4" | 0x9f
+| Entity ID
+| int
+| 
+|-
+| Block
+| short
+| 
+|-
+| Meta
+| short
+| 
+|-
+| Slot
+| byte
+| 
+|-
+
+|}
+
+=== PlayerArmorEquipmentPacket (0xa0) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0xa0
+| Entity ID
+| int
+| 
+|-
+| Slot 1
+| byte
+| 
+|-
+| Slot 2
+| byte
+| 
+|-
+| Slot 3
+| byte
+| 
+|-
+| Slot 4
+| byte
+| 
+|-
+
+|}
+
+=== InteractPacket (0xa1) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="3" | 0xa1
+| Action
+| byte[]
+| 
+|-
+| entity ID
+| int
+| 
+|-
+| Target
+| int
+| 
+|-
+
+|}
+
+=== UseItemPacket (0xa2) ===
+
+''Server to Client''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="13" | 0xa2
+| X
+| int
+| 
+|-
+| Y
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+| Face
+| int
+| 
+|-
+| Block
+| byte[]
+| 
+|-
+| Meta
+| byte
+| 
+|-
+| Entity ID
+| int
+| 
+|-
+| Fx
+| float
+| 
+|-
+| Fy
+| float
+| 
+|-
+| Fz
+| float
+| 
+|-
+| PosX
+| float
+| 
+|-
+| PosY
+| float
+| 
+|-
+| PosZ
+| float
+| 
+|-
+
+|}
+
+=== PlayerActionPacket (0xa3) ===
+
+''Server to Client''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="6" | 0xa3
+| Action
+| int
+| 
+|-
+| X
+| int
+| 
+|-
+| Y
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+| Face
+| int
+| 
+|-
+| Entity ID
+| int
+| 
+|-
+
+|}
+
+=== HurtArmorPacket (0xa5) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0xa5
+| Health
+| byte
+| 
+|-
+
+|}
+
+=== SetEntityDataPacket (0xa6) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="2" | 0xa6
+| Entity ID
+| int
+| 
+|-
+| Metadata
+| byte[]
+| 
+|-
+
+|}
+
+=== SetEntityMotionPacket (0xa7) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0xa7
+| Unknown?
+| byte
+| 
+|-
+| Entity ID
+| int
+| 
+|-
+| X
+| short
+| 
+|-
+| Y
+| short
+| 
+|-
+| Z
+| short
+| 
+|-
+
+|}
+
+=== SetRidingPacket (0xa8) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="2" | 0xa8
+| a
+| int
+| 
+|-
+| b
+| int
+| 
+|-
+
+|}
+
+=== SetHealthPacket (0xa9) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0xa9
+| Health
+| byte
+| 
+|-
+
+|}
+
+=== SetSpawnPositionPacket (0xaa) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="3" | 0xaa
+| X
+| int
+| 
+|-
+| Z
+| int
+| 
+|-
+| Y
+| byte
+| 
+|-
+
+|}
+
+=== AnimatePacket (0xab) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="2" | 0xab
+| Action
+| byte
+| 
+|-
+| Entity ID
+| int
+| 
+|-
+
+|}
+
+=== RespawnPacket (0xac) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="4" | 0xac
+| Entity ID
+| int
+| 
+|-
+| X
+| float
+| 
+|-
+| Y
+| float
+| 
+|-
+| Z
+| float
+| 
+|-
+
+|}
+
+=== SendInventoryPacket (0xad) ===
+
+''None''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0xad
+| Entity ID
+| int
+| 
+|-
+| Windows ID
+| byte
+| 
+|-
+| Count
+| short
+| 
+|-
+| Slots
+| byte[]
+| 
+|-
+| Items
+| byte[]
+| 
+|-
+
+|}
+
+=== DropItemPacket (0xae) ===
+
+''Server to Client''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0xae
+| Entity ID
+| int
+| 
+|-
+| Unknown?
+| byte
+| 
+|-
+| Block
+| short
+| 
+|-
+| Stack
+| byte
+|
+|-
+| Meta
+| short
+| 
+|-
+ 
+|}
+
+=== ContainerOpenPacket (0xaf) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="4" | 0xaf
+| Window ID
+| byte
+| 
+|-
+| Type
+| byte
+| 
+|-
+| Slot
+| byte
+| 
+|-
+| Title
+| string8
+| 
+|-
+
+|}
+
+=== ContainerClosePacket (0xb0) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0xb0
+| Window ID
+| byte
+| 
+|-
+
+|}
+
+=== ContainerSetSlotPacket (0xb1) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="5" | 0xb1
+| Window ID
+| byte
+| 
+|-
+| Slot
+| short
+| 
+|-
+| Block
+| short
+| 
+|-
+| Stack
+| byte
+| 
+|-
+| Meta
+| short
+| 
+|-
+
+|}
+
+=== ContainerSetDataPacket (0xb2) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="3" | 0xb2
+| Window ID
+| byte
+| 
+|-
+| Property
+| short
+| 
+|-
+| Value
+| short
+| 
+|-
+
+|}
+
+=== ContainerSetContentPacket (0xb3) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="3" | 0xb3
+| Window ID
+| byte
+| 
+|-
+| Count
+| short
+| 
+|-
+| Items
+| byte[]
+| 
+|-
+
+|}
+
+=== ContainerAckPacket (0xb4) ===
+
+''None''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="2" | 0xb4
+| Window ID
+| byte
+| 
+|-
+| Unknown?
+| short
+| 
+|-
+
+|}
+
+=== ChatPacket (0xb5) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0xb5
+| Message
+| string8
+| 
+|-
+
+|}
+
+=== SignUpdatePacket (0xb6) ===
+
+''Two-Way''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="4" | 0xb6
+| X
+| short
+| 
+|-
+| Y
+| byte
+| 
+|-
+| Z
+| short
+| 
+|-
+| Lines
+| string8
+| 
+|-
+
+|}
+
+=== AdventureSettingsPacket (0xb7) ===
+
+''Client to Server''
+
+
+{| class="wikitable"
+|-
+| Packet ID
+| Field Name
+| Field Type
+| Notes
+|-
+| rowspan="1" | 0xb7
+| Flags
+| byte[]
+| 
+|-
+
+|}
+
+== Navigation ==
+{{Navbox Bedrock Edition}}
+
+[[Category:Pocket Edition]]
+{{license wiki.vg}}

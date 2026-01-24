@@ -1,0 +1,2230 @@
+Custom [[advancement]]s in [[data pack]]s of a ''Minecraft'' world store the advancement data for that world as separate JSON files.
+{{TOC|none|limit=2}}
+
+== File format ==
+All advancement JSON files are structured according to the following format.
+
+=== Legend ===
+* <span style="color:red;">*</span>: If parent field is written, this field is required.
+
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+** {{nbt|string|parent}}: The parent advancement directory of this advancement. If absent, this advancement is a root advancement. Circular references cause a loading failure.
+** {{nbt|compound|display}}: Data related to the advancement's display.
+*** {{nbt|compound|icon}}<span style="color:red;">*</span>: Object containing data for the advancement's icon.
+**** {{nbt|string|id}}<span style="color:red;">*</span>: An [[Java Edition data values#Items|item ID]].
+**** {{nbt|int|count}}: Optional. The amount of the item. Falls back to 1 if the field is absent.
+**** {{nbt|compound|components}}: Optional. Additional information about the item. See [[Item format/1.20.5|item components]].
+*** {{nbt|string}}{{nbt|compound}}{{nbt|list|title}}<span style="color:red;">*</span>: A [[Raw JSON text format|JSON text component]] for the title of this advancement.
+*** {{nbt|string}}{{nbt|compound}}{{nbt|list|description}}<span style="color:red;">*</span>: A [[Raw JSON text format|JSON text component]] for the description text of this advancement.
+*** {{nbt|string|frame}}: Type of frame for the icon. {{code|challenge}} for [[File:Advancement-fancy-raw.png|25px|alt=fancy frame]], {{code|goal}} for [[File:Advancement-oval-raw.png|25px|alt=oval frame]], {{code|task}} for [[File:Advancement-plain-raw.png|25px|alt=plain frame]]. Defaults to {{cd|task}}.
+*** {{nbt|string|background}}: The directory for the background to use in this advancement tab (used only for the root advancement).
+*** {{nbt|boolean|show_toast}}: Whether to show a toast to the player when this advancement has been completed. Defaults to {{cd|true}}.
+*** {{nbt|boolean|announce_to_chat}}: Whether to announce in the chat when this advancement has been completed. Defaults to {{cd|true}}.
+*** {{nbt|boolean|hidden}}: Whether to hide this advancement and all its children from the advancement screen until this advancement have been completed. Has no effect on root advancements themselves, but still affects all their children. Defaults to {{cd|false}}.
+** {{nbt|compound|criteria}}<span style="color:red;">*</span>: The criteria to be tracked by this advancement.
+*** {{nbt|compound|<criterionName>}}: The key is a unique name given to the criterion. Can be any valid text.
+**** See [[#Criteria|below]] for details.
+** {{nbt|list|requirements}}: Defines how these criteria above are completed to grant the advancement. Contains sublists, which in turn contain names of criteria from this advancement (all the {{cd|<criterionName>}}s). When a criterion is newly completed or revoked, the advancement is granted if all sublists have at least one criterion within them completed. Optional, defaults to requiring all criteria completed.
+*** {{nbt|list}} Sublist within {{nbt|list|requirements}}, contains strings of {{cd|<criterionName>}}s. If a sublist is empty, the advancement is unachievable without cheats.
+**** {{nbt|string}} A criterion name.
+** {{nbt|compound|rewards}}: An object representing the rewards provided when this advancement is obtained.
+*** {{nbt|int|experience}}: To give an amount of [[experience]]. Defaults to 0.
+*** {{nbt|list|recipes}}: To unlock [[recipe]]s.
+**** {{nbt|string}} The [[resource location]] of a recipe.
+*** {{nbt|list|loot}}: To give items from [[loot table]]s to the player.
+**** {{nbt|string}} The [[resource location]] of a loot table.
+*** {{nbt|string|function}}: To run a [[Function (Java Edition)|function]]. [[Tag#Function Tags|Function tags]] are not allowed.
+** {{nbt|boolean|sends_telemetry_event}}: Determines whether [[telemetry]] data should be collected when this advancement is achieved or not. Defaults to false.
+</div>
+
+== Display ==
+Within the root tag of an advancement JSON object, the {{nbt|compound|display}} object and the {{nbt|string|parent}} string, both optional, are related to the display of the advancement.
+
+If the {{nbt|compound|display}} tag is present, it must have the {{nbt|string}}{{nbt|compound|title}}, {{nbt|string}}{{nbt|compound|description}} and {{nbt|compound|icon}} fields present in order to be considered as valid advancement display data.
+
+The {{nbt|string|parent}} field, albeit not directly associated with the display data of an advancement, affects only the display data effectively. When an advancement does not have a display data and none of its children has a display data, the parent of the advancement affects only {{cmd|advancement ... through{{!}}from{{!}}until}} usage.
+
+=== Advancement tabs ===
+Creating a root advancement (no {{nbt|string|parent}}) with valid {{nbt|compound|display}} data automatically creates a tab in the [[Advancements#Interface|advancement menu]]. When loaded, the root advancement shows as a tab in the menu when any advancement in its advancement tree is granted to the player viewing the menu.
+
+The [[missing texture]] displays on the tab's background if the root advancement does not have a background.
+
+If a root advancement successfully creates a tab, child advancements of the root appear inside of that tab, provided they also have valid {{nbt|compound|display}} data.
+
+=== Positioning ===
+The game automatically arranges advancements, positions them when it loads advancements from data packs, and sends the arrangement to the client. Each advancement has an arrow from its closest visible ancestor (i.e. if its parent does not have a display, it has a link from its grandparent, and so on). The root advancement appears on the leftmost column while each arrow points to an advancement in the next column. The arrangement of advancements within a column is chosen at random upon the player joining the world or server.
+
+=== Lack of display ===
+Some advancements, such as the vanilla recipe unlocking advancements, may lack a display so that they can utilize [[#List of triggers|triggers]] and rewards instead of excessive [[commands]] or [[Function (Java Edition)|functions]] for more functionalities and a more flexible control. These advancements should not have the {{nbt|compound|display}} field defined in order to hide from users and enjoy a better loading performance.
+
+==Criteria==
+* <span style="color:red;">*</span>: If parent field is written, this field is required.
+
+The format of a criterion:
+<div class="treeview">
+* {{nbt|compound|<criterionName>}}: Root object. The key can be any valid text.
+** {{nbt|string|trigger}}<span style="color:red;">*</span>: The [[#List of triggers|trigger]] for this criterion.
+** {{nbt|compound|conditions}}: Object containing conditions that need to be met when the trigger gets activated. The criterion is marked completed when the trigger activates and all conditions passed.
+*** {{nbt|compound|player}}: Checks properties of the player that would get the advancement. Not available for <code>minecraft:impossible</code> trigger.
+****{{nbt inherit/conditions/entity}}
+*** {{nbt|list|player}}: Another format for "player". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. Not available for <code>minecraft:impossible</code> trigger.
+**** {{nbt|compound}}: A single [[predicate]].
+*** Extra contents depend on selected {{nbt|string|trigger}}.
+</div>
+
+== List of triggers ==
+All JSON fields in the conditions are <u>optional</u> unless marked with "<span style="color:red;">*</span>".
+
+The possible values for {{nbt|string|trigger}} and associated extra contents in {{nbt|compound|conditions}}:
+
+{{columns-list|colwidth=16em|
+* {{EntityLink|allay|allay_drop_item_on_block|link=#minecraft:allay_drop_item_on_block}}
+* {{ItemLink|oak-door|any_block_use|link=#minecraft:any_block_use}}
+* {{BlockLink|sculk-sensor|avoid_vibration|link=#minecraft:avoid_vibration}}
+* {{BlockLink|bee-nest|bee_nest_destroyed|link=#minecraft:bee_nest_destroyed}}
+* {{ItemLink|wheat|bred_animals|link=#minecraft:bred_animals}}
+* {{BlockLink|brewing-stand|brewed_potion|link=#minecraft:brewed_potion}}
+* {{BlockLink|nether-portal|changed_dimension|link=#minecraft:changed_dimension}}
+* {{ItemLink|trident|channeled_lightning|link=#minecraft:channeled_lightning}}
+* {{BlockLink|beacon|construct_beacon|link=#minecraft:construct_beacon}}
+* {{ItemLink|steak|consume_item|link=#minecraft:consume_item}}
+* {{BlockLink|crafter|crafter_recipe_crafted|link=#minecraft:crafter_recipe_crafted}}
+* {{EntityLink|zombie-villager|cured_zombie_villager|link=#minecraft:cured_zombie_villager}}
+* {{ItemLink|oak-door|default_block_use|link=#minecraft:default_block_use}}
+* {{EffectLink|particle-invisibility|effects_changed|link=#minecraft:effects_changed}}
+* {{BlockLink|enchanting-table|enchanted_item|link=#minecraft:enchanted_item}}
+* {{BlockLink|water|enter_block|link=#minecraft:enter_block}}
+* {{ItemLink|iron-sword|entity_hurt_player|link=#minecraft:entity_hurt_player}}
+* {{ItemLink|diamond-sword|entity_killed_player|link=#minecraft:entity_killed_player}}
+* {{ItemLink|wind-charge|fall_after_explosion|link=#minecraft:fall_after_explosion}}
+* {{ItemLink|diamond-boots|fall_from_height|link=#minecraft:fall_from_height}}
+* {{ItemLink|bucket-of-tropical-fish|filled_bucket|link=#minecraft:filled_bucket}}
+* {{ItemLink|fishing-rod|fishing_rod_hooked|link=#minecraft:fishing_rod_hooked}}
+* {{EffectLink|hero-of-the-village|hero_of_the_village|link=#minecraft:hero_of_the_village}}
+* {{BlockLink|barrier|impossible|link=#minecraft:impossible}}
+* {{ItemLink|bundle|inventory_changed|link=#minecraft:inventory_changed}}
+* {{ItemLink|iron-pickaxe|item_durability_changed|link=#minecraft:item_durability_changed}}
+* {{ItemLink|honeycomb|item_used_on_block|link=#minecraft:item_used_on_block}}
+* {{BlockLink|sculk-catalyst|kill_mob_near_sculk_catalyst|link=#minecraft:kill_mob_near_sculk_catalyst}}
+* {{ItemLink|arrow|killed_by_arrow|link=#minecraft:killed_by_arrow}}
+* {{EffectLink|levitation|levitation|link=#minecraft:levitation}}
+* {{BlockLink|lightning-rod|lightning_strike|link=#minecraft:lightning_strike}}
+* {{ItemLink|compass|location|link=#minecraft:location}}
+* {{BlockLink|nether-portal|nether_travel|link=#minecraft:nether_travel}}
+* {{BlockLink|cobblestone|placed_block|link=#minecraft:placed_block}}
+* {{BlockLink|chest|player_generates_container_loot|link=#minecraft:player_generates_container_loot}}
+* {{ItemLink|iron-sword|player_hurt_entity|link=#minecraft:player_hurt_entity}}
+* {{ItemLink|shears|player_interacted_with_entity|link=#minecraft:player_interacted_with_entity}}
+* {{ItemLink|diamond-sword|player_killed_entity|link=#minecraft:player_killed_entity}}
+* {{ItemLink|shears|player_sheared_equipment|link=#minecraft:player_sheared_equipment}}
+* {{BlockLink|crafting-table|recipe_crafted|link=#minecraft:recipe_crafted}}
+* {{ItemLink|knowledge-book|recipe_unlocked|link=#minecraft:recipe_unlocked}}
+* {{EntityLink|strider|ride_entity_in_lava|link=#minecraft:ride_entity_in_lava}}
+* {{ItemLink|crossbow|shot_crossbow|link=#minecraft:shot_crossbow}}
+* {{BlockLink|red-bed|slept_in_bed|link=#minecraft:slept_in_bed}}
+* {{BlockLink|honey-block|slide_down_block|link=#minecraft:slide_down_block}}
+* {{ItemLink|saddle|started_riding|link=#minecraft:started_riding}}
+* {{BlockLink|pumpkin|summoned_entity|link=#minecraft:summoned_entity}}
+* {{ItemLink|bone|tame_animal|link=#minecraft:tame_animal}}
+* {{BlockLink|target-block|target_hit|link=#minecraft:target_hit}}
+* {{ItemLink|gold-ingot|thrown_item_picked_up_by_entity|link=#minecraft:thrown_item_picked_up_by_entity}}
+* {{ItemLink|diamond|thrown_item_picked_up_by_player|link=#minecraft:thrown_item_picked_up_by_player}}
+* {{ItemLink|clock|tick|link=#minecraft:tick}}
+* {{ItemLink|eye-of-ender|used_ender_eye|link=#minecraft:used_ender_eye}}
+* {{ItemLink|totem-of-undying|used_totem|link=#minecraft:used_totem}}
+* {{ItemLink|spyglass|using_item|link=#minecraft:using_item}}
+* {{EntityLink|villager|villager_trade|link=#minecraft:villager_trade}}
+* {{EffectLink|bad-omen|voluntary_exile|link=#minecraft:voluntary_exile}}
+}}
+
+=== minecraft:allay_drop_item_on_block ===
+Triggers when an allay drops an item on a block. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|list|location}}: Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin is the location of the block the item was dropped on, the block state belongs to that block, and the tool is the item dropped on the block. The {{cd|this}} entity is the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:allay_drop_item_on_block",
+      "conditions": {
+        "location": {
+          "biome": "minecraft:meadow",
+          "block": {
+            "blocks": [
+              "minecraft:note_block"
+            ]
+          }
+        },
+        "item": {
+          "items": [
+            "minecraft:cookie"
+          ]
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+=== minecraft:any_block_use ===
+Triggers under the same conditions as both minecraft:default_block_use and minecraft:item_used_on_block. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|list|location}}: Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin is the location of the block that was interacted with, the block state belongs to that block, and the tool is either the item used on the block (for the item_used_on_block case) or simply the item in the player's main hand (for the default_block_use case). The {{cd|this}} entity is the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:any_block_use",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "minecraft:grass_block"
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": "minecraft:iron_shovel"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+
+</syntaxhighlight></div></div>
+
+=== minecraft:avoid_vibration ===
+Triggers when a vibration event is ignored because the source player is crouching. No extra conditions.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:avoid_vibration",
+      "conditions": {
+        "player": {
+          "location": {
+            "biome": "minecraft:deep_dark"
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:bee_nest_destroyed ===
+Triggers when the player breaks a [[Bee Nest|bee nest]] or [[Beehive|beehive]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|block}}: Checks the block that was destroyed. Accepts block IDs.
+** {{nbt|compound|item}}: The item used to break the block.
+*** {{Nbt inherit/conditions/item}}
+** {{nbt|int|num_bees_inside}}: The number of bees that were inside the bee nest/beehive before it was broken.
+** {{nbt|compound|num_bees_inside}}: Another form for {{nbt|int|num_bees_inside}}.
+*** {{nbt|int|max}}: The maximum value.
+*** {{nbt|int|min}}: The minimum value.
+</div>
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:bee_nest_destroyed",
+      "conditions": {
+        "block": "minecraft:beehive",
+        "item": {
+          "items": [
+            "minecraft:wooden_axe"
+          ]
+        },
+        "num_bees_inside": 3
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:bred_animals ===
+Triggers after the player breeds 2 [[animal]]s. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|child}}: Checks properties of the child that results from the breeding.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|child}}: Another format for "child". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin of the predicate is the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+** {{nbt|compound|parent}}: The parent.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|parent}}: Another format for "parent". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin of the predicate is the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+** {{nbt|compound|partner}}: The partner (The entity the parent was bred with).
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|partner}}: Another format for "partner". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin of the predicate is the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:bred_animals",
+      "conditions": {
+        "child": {
+          "type": "minecraft:mule"
+        },
+        "parent": {
+          "location": {
+            "biome": "minecraft:beach"
+          }
+        },
+        "partner": {
+          "effects": {
+            "minecraft:speed": {
+              "amplifier": {
+                "min": 2
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:brewed_potion ===
+Triggers after the player takes any item out of a [[brewing stand]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|potion}}: A [[Potion#Item data|brewed potion ID]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:brewed_potion",
+      "conditions": {
+        "potion": "minecraft:strong_swiftness"
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:changed_dimension ===
+Triggers after the player travels between two [[dimensions]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|from}}: The dimension the entity traveled from. This tag is a [[resource location]] for a dimension (only {{tooltip|these|overworld, the_end, the_nether}} in vanilla; more can be added with data packs).
+** {{nbt|string|to}}: The dimension the entity traveled to. Same accepted values as above.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "from": "minecraft:the_end",
+        "to": "minecraft:overworld"
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:channeled_lightning ===
+Triggers after the player successfully uses the Channeling enchantment on an entity or a lightning rod. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|list|victims}}: The victims hit by the lightning summoned by the Channeling enchantment. All entities in this list must be hit.
+*** {{nbt|compound}}: A victim.
+**** {{nbt inherit/conditions/entity}}
+*** {{nbt|list}}: Another format for the victim. Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the victim hit by the lighting, with the origin being the position of the player that would get the advancement.
+**** {{nbt|compound}}: A single [[predicate]].
+</div>
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:channeled_lightning",
+      "conditions": {
+        "victims": [
+          {
+            "type": "minecraft:skeleton_horse",
+            "nbt": "{SkeletonTrap: true}"
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:construct_beacon ===
+Triggers after the player changes the structure of a [[beacon]]. (When the beacon updates itself). Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|int|level}}: The level of the updated beacon structure.
+** {{nbt|compound|level}}: Another format.
+*** {{nbt|int|max}}: The maximum value.
+*** {{nbt|int|min}}: The minimum value.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:construct_beacon",
+      "conditions": {
+        "level": {
+          "min": 3
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:consume_item ===
+Triggers when the player consumes an item. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item that was consumed.
+*** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:enchanted_golden_apple"
+          ],
+          "nbt": "{display:{Name:\"Example\"}}"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:crafter_recipe_crafted ===
+Triggers when the player is ±8 blocks on any axis of a [[crafter]] when it crafts a recipe. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|recipe_id}}<span style="color:red;">'''*'''</span>: The recipe that was crafted.
+** {{nbt|list|ingredients}}: An array of item predicates for the recipe ingredients. Each item can match only one predicate, and every predicate needs to pass for the criterion to be granted.
+*** {{nbt|compound}}: A single predicate.
+**** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:crafter_recipe_crafted",
+      "conditions": {
+        "recipe_id": "minecraft:furnace",
+        "ingredients": [
+          {
+            "items": [
+              "minecraft:cobblestone"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:blackstone"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:cobbled_deepslate"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:cured_zombie_villager ===
+Triggers when the player cures a [[zombie villager]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|villager}}: The villager that is the result of the conversion. The 'type' tag is redundant since it is always "villager".
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|villager}}: Another format for "villager". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the villager, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+** {{nbt|compound|zombie}}: The zombie villager right before the conversion is complete (not when it is initiated). The 'type' tag is redundant since it is always "zombie_villager".
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|zombie}}: Another format for "zombie". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the zombie villager, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:cured_zombie_villager",
+      "conditions": {
+        "villager": {
+          "location": {
+            "biome": "minecraft:plains"
+          }
+        },
+        "zombie": {
+          "distance": {
+            "horizontal": {
+              "max": 10
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:default_block_use ===
+Triggers when the player activates a block's default {{control|use}} action (opening a door, pushing a button, opening a crafting grid, etc). Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|list|location}}: Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin is the location of the block that was interacted with and the block state belongs to that block. Note that for this trigger, a "tool" is not provided. The {{cd|this}} entity is the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:default_block_use",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "minecraft:oak_door"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+
+</syntaxhighlight></div></div>
+
+=== minecraft:effects_changed ===
+Triggers after the player gets a [[status effect]] applied or taken from them. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|effects}}: A list of active status effects the player currently has.
+*** {{nbt|compound|<minecraft:effect_name>}}: The key name is a [[Java Edition data values|status effect]] name.
+**** {{nbt|bool|ambient}}: Whether the effect is from a beacon.
+**** {{nbt|int|amplifier}}: The effect amplifier.
+**** {{nbt|compound|amplifier}}: Another format.
+***** {{nbt|int|max}}: The maximum value.
+***** {{nbt|int|min}}: The minimum value.
+**** {{nbt|int|duration}}: The effect duration in ticks.
+**** {{nbt|compound|duration}}: Another format.
+***** {{nbt|int|max}}: The maximum value.
+***** {{nbt|int|min}}: The minimum value.
+**** {{nbt|bool|visible}}: Whether the effect has visible particles.
+** {{nbt|compound|source}}: The entity that was the source of the status effect. When there is no entity or when the effect was self-applied or removed, the test passes only if the source is not specified.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|source}}: Another format for "source". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the source, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "minecraft:weakness": {},
+          "minecraft:slowness": {
+            "amplifier": 2,
+            "duration": {
+              "min": 100,
+              "max": 500
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:enchanted_item ===
+Triggers after the player enchants an item through an [[enchanting table]] (does not get triggered through an [[anvil]], or through [[command]]s). Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item after it has been enchanted.
+*** {{nbt inherit/conditions/item}}
+** {{nbt|int|levels}}: The levels spent by the player on the enchantment.
+** {{nbt|compound|levels}}: Another format.
+*** {{nbt|int|max}}: The maximum value.
+*** {{nbt|int|min}}: The minimum value.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:enchanted_item",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:wooden_sword"
+          ],
+          "enchantments": [
+            {
+              "enchantment": "minecraft:sharpness",
+              "levels": {
+                "min": 2
+              }
+            }
+          ]
+        },
+        "levels": {
+          "min": 3
+        } 
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:enter_block ===
+Triggers once for each block the player's hitbox is inside (up to 12 blocks, the maximum number of blocks the player can stand in), twice per tick plus once more for every time the player moves or looks around during the same tick. This results in the trigger activating tens of times per tick, and in extreme cases, even hundreds of times per tick. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|block}}: The block that the player is standing in. Accepts [[Data values#Block IDs|block ID]]s.
+** {{nbt|compound|state}}: A map of [[Block states|block property]] names to values. Errors if the block doesn't have these properties.
+*** {{nbt|string|''key''}}: Block property key and value pair.
+*** {{nbt|compound|''key''}}: Another format.
+**** {{nbt|string|max}}: A maximum value.
+**** {{nbt|string|min}}: A minimum value.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:enter_block",
+      "conditions": {
+        "block": "minecraft:rose_bush",
+        "state": {
+          "half": "lower"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:entity_hurt_player ===
+Triggers after a player gets hurt (even when it's not caused by an entity)<ref>{{bug|MC-116922}}</ref>. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|damage}}: Checks the damage done to the player.
+*** {{nbt inherit/conditions/damage}}
+</div>
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:entity_hurt_player",
+      "conditions": {
+        "damage": {
+          "type": {
+            "source_entity": {
+              "type": "minecraft:skeleton"
+            },
+            "direct_entity": {
+              "type": "minecraft:arrow"
+            }
+          },
+          "taken": {
+            "min": 4.0
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:entity_killed_player ===
+Triggers after a living [[entity]] kills a player. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|entity}}: Checks the entity that was the source of the damage that killed the player (for example: The skeleton that shot the arrow).
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity that kills the player, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+** {{nbt|compound|killing_blow}}: Checks the type of damage that killed the player.
+*** {{nbt inherit/conditions/damage_type}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:entity_killed_player",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:skeleton"
+        },
+        "killing_blow": {
+          "is_projectile": true
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:fall_after_explosion ===
+Triggers when a player lands after being launched upward by an explosion or wind burst. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|start_position}}: A location predicate for the last position before the falling started.
+*** {{nbt inherit/conditions/location}}
+** {{nbt|compound|distance}}: The distance between the start position and the player's position.
+*** {{nbt inherit/conditions/distance}}
+** {{nbt|compound|source}}: Checks the entity that was the source of the explosion or wind burst that launched the player upward.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|source}}: Another format for "source". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity that kills the player, with the origin being the position of the player that would get the advancement.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:fall_after_explosion",
+      "conditions": {
+        "distance": {
+          "y": {
+            "min": 10
+          }
+        },
+        "cause": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:tnt"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+
+</syntaxhighlight></div></div>
+
+=== minecraft:fall_from_height ===
+Triggers when a player lands after falling. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|start_position}}: A location predicate for the last position before the falling started.
+*** {{nbt inherit/conditions/location}}
+** {{nbt|compound|distance}}: The distance between the start position and the player's position.
+*** {{nbt inherit/conditions/distance}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:fall_from_height",
+      "conditions": {
+        "start_position": {
+          "position": {
+            "y": {
+              "min": -13,
+              "max": 256
+            }
+          }
+        },
+        "distance": {
+          "y": {
+            "min": 50,
+            "max": 320
+          }
+        }
+      }
+    }
+  }
+}
+
+</syntaxhighlight></div></div>
+
+=== minecraft:filled_bucket ===
+Triggers after the player fills a bucket. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item resulting from filling the bucket.
+*** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:filled_bucket",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:lava_bucket"
+          ]
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:fishing_rod_hooked ===
+Triggers after the player successfully catches an item with a fishing rod or pulls an entity with a fishing rod. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|entity}}: The entity that was pulled, or the fishing bobber if no entity is pulled.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity pulled or the bobber, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+** {{nbt|compound|item}}: The item that was caught.
+*** {{nbt inherit/conditions/item}}
+** {{nbt|compound|rod}}: The fishing rod used.
+*** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:fishing_rod_hooked",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:bamboo"
+          ]
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:hero_of_the_village ===
+Triggers when a [[raid]] ends in victory and the player has attacked at least one raider from that raid. No extra conditions.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:hero_of_the_village",
+      "conditions": {
+        "player":{
+          "location": {
+            "biome": "minecraft:plains",
+            "dimension": "minecraft:overworld",
+            "position": {
+              "z": {
+                "min": -10,
+                "max": 10
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:impossible ===
+Never triggers.<!--Commands don't trigger triggers, they grant criteria.--> No available conditions.
+
+Criteria with this trigger can only be granted from commands.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:inventory_changed ===
+Triggers after any changes happen to the player's [[inventory]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|list|items}}: A list of items to be checked against the item(s) that were ''added'' to the player's inventory when the advancement was triggered. For the trigger to pass, each item predicate in this list must match at least one item that was added.
+*** {{nbt|compound}}: An item stack.
+***{{nbt inherit/conditions/item}}
+** {{nbt|compound|slots}}:
+*** {{nbt|int|empty}}: The amount of slots empty in the inventory.
+*** {{nbt|compound|empty}}: Another format.
+**** {{nbt|int|max}}: The maximum value.
+**** {{nbt|int|min}}: The minimum value.
+*** {{nbt|int|full}}: The amount of slots completely filled (stacksize) in the inventory.
+*** {{nbt|compound|full}}: Another format.
+**** {{nbt|int|max}}: The maximum value.
+**** {{nbt|int|min}}: The minimum value.
+*** {{nbt|int|occupied}}: The amount of slots occupied in the inventory.
+*** {{nbt|compound|occupied}}: Another format.
+**** {{nbt|int|max}}: The maximum value.
+**** {{nbt|int|min}}: The minimum value.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:polished_granite"
+            ],
+            "count": {
+              "min": 5,
+              "max": 10
+            }
+          },
+          {
+            "items": [
+              "minecraft:lime_wool"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:wooden_sword"
+            ],
+            "durability": {
+              "min": 50
+            },
+            "components": {
+                "minecraft:custom_name": "Example"
+            }
+          }
+        ],
+        "slots": {
+          "occupied": 3
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:item_durability_changed ===
+Triggers after any item in the inventory has been damaged in any form. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+**{{nbt|int|delta}}: The change in durability (negative numbers are used to indicate a decrease in durability).
+** {{nbt|compound|delta}}: Another format.
+*** {{nbt|int|max}}: The maximum value.
+*** {{nbt|int|min}}: The minimum value.
+** {{nbt|int|durability}}: The remaining durability of the item.
+** {{nbt|compound|durability}}: Another format.
+*** {{nbt|int|max}}: The maximum value.
+*** {{nbt|int|min}}: The minimum value.
+** {{nbt|compound|item}}: The item before it was damaged, allows you to check the durability before the item was damaged.
+*** {{nbt inherit/conditions/item}}
+</div>
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:item_durability_changed",
+      "conditions": {
+        "delta": -2,
+        "item": {
+          "items": [
+            "minecraft:wooden_axe"
+          ],
+          "durability": {
+            "max": 1
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:item_used_on_block ===
+Triggers when the player {{control|uses}} their hand or an item on a block. Note that the item (or lack thereof) ''must'' be able to interact with the block, e.g. an item cannot be "used" on a [[campfire]] if there isn't a [[recipe]] that allows the item to be cooked on a campfire (however, placing a ''block'' by using on the campfire does count as an interaction). See also [[Advancement definition#minecraft:default block use|minecraft:default_block_use]] for detecting non-item-specific uses.
+
+Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|list|location}}: Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin is the location of the block the item was used on, the block state belongs to that block, and the tool is the item used on the block. The {{cd|this}} entity is the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": [
+                "minecraft:glow_ink_sac"
+              ]
+            }
+          },
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "tag": "minecraft:all_signs"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:kill_mob_near_sculk_catalyst ===
+Triggers after a player is the source of a [[mob]] or player being killed within the range of a [[sculk catalyst]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|entity}}: The entity that was killed.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the mob, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+** {{nbt|compound|killing_blow}}: The type of damage that killed an entity.
+*** {{nbt inherit/conditions/damage_type}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:kill_mob_near_sculk_catalyst",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:creeper",
+          "nbt": "{powered:1b}",
+          "location": {
+            "biome": "minecraft:the_void"
+          },
+          "effects": {
+            "minecraft:slowness": {},
+            "minecraft:weakness": {
+              "amplifier": {
+                "min": 2
+              }
+            }
+          }
+        },
+        "killing_blow": {
+          "source_entity": {
+            "nbt": "{SelectedItem:{id:\"minecraft:wooden_sword\"}}"
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:killed_by_arrow ===
+Triggers after the player kills a [[mob]] or player using a arrow in ranged combat. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|fired_from_weapon}}: The weapon that fired the arrow.
+*** {{nbt inherit/conditions/item}}
+** {{nbt|int|unique_entity_types}}: The exact count of types of entities killed.
+** {{nbt|compound|unique_entity_types}}: Another format. The acceptable range of count of types of entities killed.
+*** {{nbt|int|max}}: The maximum value.
+*** {{nbt|int|min}}: The minimum value.
+** {{nbt|list|victims}}: A list of victims. All of the entries must be matched, and one killed entity may match only one entry.
+*** {{nbt|compound}}: A killed entities.
+**** {{nbt inherit/conditions/entity}}
+*** {{nbt|list}}: Another format for the victim. Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the victim, with the origin being the position of the player that would get the advancement.
+**** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:killed_by_crossbow",
+      "conditions": {
+        "victims": [
+          {
+            "type": "minecraft:phantom"
+          },
+          {
+            "type": "minecraft:phantom"
+          }
+        ],
+        "unique_entity_types": 5
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:levitation ===
+Triggers when the player has the levitation [[status effect]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|distance}}: The distance between the position where the player started levitating and the player's current position.
+*** {{nbt inherit/conditions/distance}}
+** {{nbt|int|duration}}: The duration of the levitation in ticks.
+** {{nbt|compound|duration}}: Another format.
+*** {{nbt|int|max}}: The maximum value.
+*** {{nbt|int|min}}: The minimum value.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:levitation",
+      "conditions": {
+        "distance": {
+          "horizontal": {
+            "min": 5
+          },
+          "y": {
+            "min": 2
+          }
+        },
+        "duration": {
+          "min": 100
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:lightning_strike ===
+Triggers when a lightning bolt disappears from the world, only for players within a 256 block radius of the lightning bolt. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|lightning}}: The lightning bolt that disappeared.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|lightning}}: Another format for "lightning". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the lightning, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+** {{nbt|compound|bystander}}: An entity not hurt by the lightning strike but in a certain area around it.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|bystander}}: Another format for "bystander". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the bystander, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:lightning_strike",
+      "conditions": {
+        "lightning": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "lightning_bolt": {
+                "entity_struck": {
+                  "type": "minecraft:creeper"
+                }
+              }
+            }
+          }
+        ],
+        "bystander": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:pig"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:location ===
+Triggers every 20 [[tick]]s (1 second). No extra conditions.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "location": {
+            "position": {
+              "x": {
+                "min": -10,
+                "max": 10
+              }
+            },
+            "biomes": "minecraft:jungle",
+            "structures": "minecraft:jungle_pyramid",
+            "dimension": "minecraft:overworld"
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:nether_travel ===
+Triggers when the player travels to the [[Nether]] and then returns to the [[Overworld]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|start_position}}: A location predicate for the last position before the player teleported to the Nether.
+*** {{nbt inherit/conditions/location}}
+** {{nbt|compound|distance}}: The distance between the position where the player teleported to the Nether and the player's position when they returned.
+*** {{nbt inherit/conditions/distance}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:nether_travel",
+      "conditions": {
+        "distance": {
+          "horizontal": {
+            "min": 1000
+          },
+          "absolute": {
+            "min": 1100
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:placed_block ===
+Triggers when the player places a block. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|list|location}}: Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin is the location of the block placed, the block state belongs to that block, and the tool is the item used to place the block. The {{cd|this}} entity is the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "location_check",
+            "predicate": {
+              "block": {
+                "blocks": "wall_torch",
+                "state": {
+                  "facing": "west"
+                }
+              },
+              "position": {
+                "x": 10,
+                "z": 14
+              },
+              "biome": "minecraft:plains"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:player_generates_container_loot ===
+Triggers when the player generates the contents of a container with a loot table set. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|loot_table}}<span style="color:red;">'''*'''</span>: The resource location of the generated loot table.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:player_generates_container_loot",
+      "conditions": {
+        "loot_table": "minecraft:chests/jungle_temple_dispenser"
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:player_hurt_entity ===
+Triggers after the player hurts a [[mob]] or player. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|damage}}: The damage that was dealt.
+*** {{nbt inherit/conditions/damage}}
+** {{nbt|compound|entity}}: The entity that was damaged.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:player_hurt_entity",
+      "conditions": {
+        "damage": {
+          "blocked": true,
+          "type": {
+            "direct_entity": {
+              "type": "minecraft:arrow"
+            }
+          }
+        },
+        "entity": {
+          "type": "minecraft:player",
+          "nbt": "{Tags:[\"example\"]}"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:player_interacted_with_entity ===
+Triggers when the player interacts with an entity. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item that was in the player's hand during interaction.
+*** {{nbt inherit/conditions/item}}
+** {{nbt|compound|entity}}: The entity that was interacted with.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:player_interacted_with_entity",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:iron_ingot"
+          ]
+        },
+        "entity": {
+          "type": "minecraft:iron_golem"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:player_killed_entity ===
+Triggers after a player is the source of a [[mob]] or player being killed. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|entity}}: The entity that was killed.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+** {{nbt|compound|killing_blow}}: The type of damage that killed an entity.
+*** {{nbt inherit/conditions/damage_type}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:creeper",
+          "nbt": "{powered:1b}",
+          "location": {
+            "biome": "minecraft:the_void"
+          },
+          "effects": {
+            "minecraft:slowness": {},
+            "minecraft:weakness": {
+              "amplifier": {
+                "min": 2
+              }
+            }
+          }
+        },
+        "killing_blow": {
+          "source_entity": {
+            "equipment": {
+              "mainhand": {
+                "items": "minecraft:wooden_sword"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:player_sheared_equipment ===
+Triggers after a player shears equipment off of a mob, such as [[wolf armor]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|entity}}: The entity whose equipment was sheared.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity, with the origin being the position of the player that would get the advancement.
+** {{nbt|compound|item}}: The item of equipment that was sheared off.
+*** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:player_sheared_equipment",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:pig",
+          "location": {
+            "biome": "minecraft:forest"
+          },
+        },
+        "item": {
+          "items": "minecraft:saddle"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:recipe_crafted ===
+Triggers when the player crafts a recipe in a crafting table, stonecutter or smithing table. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|recipe_id}}<span style="color:red;">'''*'''</span>: The recipe that was crafted.
+** {{nbt|list|ingredients}}: An array of item predicates for the recipe ingredients. Each item can match only one predicate, and every predicate needs to pass for the criterion to be granted.
+*** {{nbt|compound}}: A single predicate.
+**** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "minecraft:furnace",
+        "ingredients": [
+          {
+            "items": [
+              "minecraft:cobblestone"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:blackstone"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:cobbled_deepslate"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+<!-- please ignore my weird imagination, I just thought that an advancement for crafting a furnace with at least one piece of cobblestone, one piece of blackstone and one piece of cobbled deepslate would get the idea across --ManosSef -->
+
+=== minecraft:recipe_unlocked ===
+Triggers after the player unlocks a [[Crafting#Complete recipe list|recipe]] (using a [[knowledge book]] for example). Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|recipe}}<span style="color:red;">'''*'''</span>: The recipe that was unlocked.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecraft:wooden_sword"
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:ride_entity_in_lava ===
+Triggers when a player mounts an entity walking on lava and while the entity moves with them. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|start_position}}: A location predicate for the last position before the player mounted the entity.
+*** {{nbt inherit/conditions/location}}
+** {{nbt|compound|distance}}: The distance between the start position and the player's position.
+*** {{nbt inherit/conditions/distance}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:ride_entity_in_lava",
+      "conditions": {
+        "distance": {
+          "horizontal": {
+            "min": 10,
+            "max": 100
+          }
+        }
+      }
+    }
+  }
+}
+
+</syntaxhighlight></div></div>
+
+=== minecraft:shot_crossbow ===
+Triggers when the player shoots a crossbow. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The crossbow that is used. 
+*** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:shot_crossbow",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:crossbow"
+          ]
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:slept_in_bed ===
+Triggers when the player enters a [[bed]]. No extra conditions.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:slept_in_bed",
+      "conditions": {
+        "player": {
+          "location": {
+            "position": {
+              "x": {
+                "min": -10,
+                "max": 10
+              }
+            },
+            "biome": "minecraft:jungle",
+            "structure": "minecraft:jungle_pyramid",
+            "dimension": "minecraft:overworld"
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:slide_down_block ===
+Triggers when the player slides down a block. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|string|block}}: The block that the player slid on.
+** {{nbt|compound|state}}: A map of [[Block states|block property]] names to values. Errors if the block doesn't have these properties.
+*** {{nbt|string|''key''}}: Block property key and value pair.
+*** {{nbt|compound|''key''}}: Another format.
+**** {{nbt|string|max}}: A maximum value.
+**** {{nbt|string|min}}: A minimum value.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:slide_down_block",
+      "conditions": {
+        "block": "minecraft:honey_block"
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:started_riding ===
+Triggers when the player starts riding a vehicle or an entity starts riding a vehicle currently ridden by the player. No extra conditions.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:started_riding",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "vehicle": {
+                "type": "minecraft:strider"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:summoned_entity ===
+Triggers after an [[entity]] has been summoned. Works with [[iron golem]]s (pumpkin and iron blocks), [[snow golem]]s (pumpkin and snow blocks), the [[ender dragon]] (end crystals) and the [[wither]] (wither skulls and soul sand/soul soil). Using [[dispenser]]s, commands, or [[piston]]s to place the wither skulls or pumpkins still activate this trigger. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|entity}}: The summoned entity.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:summoned_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:snow_golem"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:tame_animal ===
+Triggers after the player tames an [[Mob#Tameable mobs|animal]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|entity}}: Checks the entity that was tamed.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:parrot",
+          "nbt": "{Variant:2}"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:target_hit ===
+Triggers when the player shoots a [[target]] block. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|int|signal_strength}}: The redstone signal that the target block emits.
+** {{nbt|compound|signal_strength}}: Another format.
+*** {{nbt|int|max}}: The maximum value.
+*** {{nbt|int|min}}: The minimum value.
+** {{nbt|compound|projectile}}: The projectile hit the target block.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|projectile}}: Another format for "projectile". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the projectile, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:target_hit",
+      "conditions": {
+        "signal_strength": 15,
+        "projectile": [
+		  {
+		    "condition": "minecraft:entity_properties",
+		    "predicate": {
+			  "type": "minecraft:snowball"
+			},
+			"entity": "this"
+		  }
+		]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:thrown_item_picked_up_by_entity ===
+Triggers after the player throws an item and another entity picks it up. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The thrown item that was picked up.
+*** {{nbt inherit/conditions/item}}
+** {{nbt|compound|entity}}: The entity that picked up the item.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:thrown_item_picked_up_by_entity",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:diamond"
+          ]
+        },
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "type": "minecraft:player"
+            },
+            "entity": "this"
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+<!-- "Diamonds to you!" is back? -->
+
+=== minecraft:thrown_item_picked_up_by_player ===
+Triggers when a player picks up an item thrown by another entity. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item thrown.
+*** {{nbt inherit/conditions/item}}
+** {{nbt|compound|entity}}: The entity that threw the item.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|entity}}: Another format for "entity". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the entity, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:thrown_item_picked_up_by_player",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:cookie"
+          ]
+        },
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "type": "minecraft:allay"
+            },
+            "entity": "this"
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:tick ===
+Triggers every [[tick]] (20 times a second). No extra conditions.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "team": "red"
+            },
+            "entity": "this"
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:used_ender_eye ===
+Triggers when the player uses an [[eye of ender]] (in a world where [[stronghold]]s generate). Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|double|distance}}: The horizontal distance between the player and the stronghold.
+** {{nbt|compound|distance}}: Another format.
+*** {{nbt|double|max}}: A maximum value.
+*** {{nbt|double|min}}: A minimum value.
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:used_ender_eye",
+      "conditions": {
+        "distance": {
+          "min": 100,
+          "max": 200
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:used_totem ===
+Triggers when the player uses a totem. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item, works only with totem items.
+*** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:used_totem",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:totem_of_undying"
+          ]
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:using_item ===
+Triggers for every tick that the player uses an item that is used continuously. It is known to trigger for [[bow]]s, [[crossbow]]s, [[honey bottle]]s, [[milk bucket]]s, [[potion]]s, [[shield]]s, [[spyglass]]es, [[trident]]s, [[food|food items]], [[eye of ender|eyes of ender]], etc. Most items that activate from a single click, such as [[fishing rod]]s, do not affect this trigger. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item that is used.
+*** {{nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:using_item",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:enchanted_golden_apple"
+          ],
+          "components": {
+            "minecraft:item_name": "Example"
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:villager_trade ===
+Triggers after the player trades with a [[villager]] or a [[wandering trader]]. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item that was purchased. The "count" tag checks the count from one trade, not multiple.
+*** {{nbt inherit/conditions/item}}
+** {{nbt|compound|villager}}: The villager the item was purchased from.
+*** {{nbt inherit/conditions/entity}}
+** {{nbt|list|villager}}: Another format for "villager". Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The checks are applied to the villager, with the origin being the position of the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:villager_trade",
+      "conditions": {
+        "item": {
+          "items": [
+            "minecraft:emerald"
+          ],
+          "count": {
+            "min": 1
+          }
+        },
+        "villager": {
+          "nbt": "{VillagerData:{profession:\"minecraft:librarian\"}}"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+=== minecraft:voluntary_exile ===
+Triggers when the player causes a [[raid]]. No extra conditions.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:voluntary_exile",
+      "conditions": {
+        "player":{
+          "location": {
+            "biome": "minecraft:savanna",
+            "dimension": "minecraft:overworld",
+            "position": {
+              "z": {
+                "min": -10,
+                "max": 10
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+== Removed triggers ==
+=== minecraft:arbitrary_player_tick ===
+Triggers every tick for one player only. No available conditions.
+
+Only exists in [[Java Edition 17w18b|17w18b]].
+
+=== minecraft:item_delivered_to_player ===
+Triggers when an allay delivers an item to the player. No extra conditions.
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:item_delivered_to_player",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "predicate": {
+              "location": {
+                "dimension": "minecraft:the_nether"
+              }
+            },
+            "entity": "this"
+          }
+        ]
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+Only exists in [[Java Edition 22w14a|22w14a]].
+
+=== minecraft:player_damaged ===
+Triggers when the player receives damage. Available conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|damage}}: Damage predicate.
+*** {{nbt inherit/conditions/damage}}
+</div>
+
+Removed in [[Java Edition 17w14a|17w14a]].
+
+=== minecraft:safely_harvest_honey ===
+Triggers when the player harvests honey from a bee nest/beehive with a campfire below it. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|block}}: The block that the player harvested the honey from.
+*** {{nbt|string|block}}: A block ID.
+*** {{nbt|string|tag}}: A block tag.
+** {{nbt|compound|item}}: The item that the player used to harvest the honey.
+*** {{Nbt inherit/conditions/item}}
+</div>
+<div class="collapsible collapsed collapsetoggle-inline" data-expandtext="show" data-collapsetext="hide">
+An example
+<div class="collapsible-content"><syntaxhighlight lang="json">
+{
+  "criteria": {
+    "example": {
+      "trigger": "minecraft:safely_harvest_honey",
+      "conditions": {
+        "block": {
+          "tag": "minecraft:beehives"
+        },
+        "item": {
+          "item": "minecraft:shears"
+        }
+      }
+    }
+  }
+}
+</syntaxhighlight></div></div>
+
+This trigger was made redundant by the <code>item_used_on_block</code> trigger. Removed in [[Java Edition 20w20a|20w20a]].
+
+== Temporary triggers ==
+=== [[23w13a_or_b]] ===
+==== minecraft:voted ====
+Triggers when the player casts a vote. No extra conditions.
+
+=== [[24w14potato]] ===
+==== minecraft:bring_home_corruption ====
+Triggers when the player uses corrupted potato peels on the top side of terre de pomme placed in the Overworld. No extra conditions.
+
+==== minecraft:compost_staff ====
+Triggers when the player uses a ''Potatiesh, Greatstaff of the Peasant'' on a composter. No extra conditions.
+
+==== minecraft:eat_armor ====
+Triggers when the player eats a part of an equipped poisonous potato chestplate. No extra conditions.
+
+==== minecraft:get_peeled ====
+Triggers when the player is peeled by another player while wearing a poisonous potato chestplate. No extra conditions.
+
+==== minecraft:peel_block ====
+Triggers when the player uses a potato peeler on a block that can be peeled. No extra conditions.
+
+==== minecraft:peel_potato_armor ====
+Triggers when the player uses a potato peeler on an entity wearing a poisonous potato chestplate. No extra conditions.
+
+==== minecraft:peel_potato_sheep ====
+Triggers when the player uses a potato peeler on a sheep in the Potato dimension. No extra conditions.
+
+==== minecraft:potato_refined ====
+Triggers when the player takes an item out of the output slot of a potato refinery. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|result_predicate}}<span style="color:red;">'''*'''</span>: The result of the refining recipe.
+*** {{nbt|string|type}}<span style="color:red;">'''*'''</span>: The type of refining recipe. Must be either <code>standard</code> for a recipe that outputs a different item than the input, or <code>lubrication</code> for a recipe that increments the lubrication factor of an item.
+*** {{nbt|compound|item_predicate}}<span style="color:red;">'''*'''</span>: The output item.
+**** {{Nbt inherit/conditions/item}}
+*** {{nbt|int|min_lubrication}}: The minimum lubrication factor the output item must have. Must exist if {{nbt|string|type}} is <code>lubrication</code> and has no effect otherwise.
+</div>
+
+==== minecraft:rumble_plant ====
+Triggers when the player equips a poisonous potato plant on their head. No extra conditions.
+
+==== minecraft:said_potato ====
+Triggers when the player sends a chat message containing "potato" (case-sensitive). No extra conditions.
+
+==== minecraft:throw_lubricated ====
+Triggers when the player throws a lubricated item. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|int|min_lubrication}}<span style="color:red;">'''*'''</span>: The minimum lubrication factor the thrown item must have. This condition does not support a min-max range.
+</div>
+
+=== [[25w14craftmine]] ===
+==== minecraft:consume_poisonous_potatoes ====
+Triggers when the player consumes a poisonous potato that causes their {{cd|minecraft.used:minecraft.poisonous_potato}} statistic to increase to 100. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|compound|item}}: The item that was consumed.
+*** {{nbt inherit/conditions/item}}
+</div>
+
+==== minecraft:inventory_cashed_in ====
+Triggers when the player cashes in an item by returning to the hub from a successful mine. Available extra conditions:
+<div class="treeview">
+* {{nbt|compound|conditions}}:
+** {{nbt|list|location}}: Specifies a list of [[predicate]]s that must pass in order for the criterion to be granted. The origin is the location of the mine crafter, the block state belongs to that block, and the tool is the item that was cashed in. The {{cd|this}} entity is the player that would get the advancement.
+*** {{nbt|compound}}: A single [[predicate]].
+</div>
+
+==== minecraft:level_completed ====
+Triggers when the player returns to the hub after successfully exiting a mine. No extra conditions.
+
+==== minecraft:level_failed ====
+Triggers when the player returns to the hub after failing a mine. No extra conditions.
+
+==== minecraft:mine_crafter_upgraded ====
+Triggers when the player upgrades a mine crafter using experience. No extra conditions.
+
+==== minecraft:mine_revisitor_activated ====
+Triggers when the player places a mine on a mine revisitor. No extra conditions.
+
+==== minecraft:player_unlock_bought ====
+Triggers when the player buys an unlock. No extra conditions.
+
+==== minecraft:player_unlock_unlocked ====
+Triggers when the player gets the ability to buy a new unlock by buying its parent unlock. No extra conditions.
+
+==== minecraft:special_mine_completed ====
+Triggers when the player returns to the hub after successfully exiting a special mine. No extra conditions.
+
+== External links ==
+* [https://misode.github.io/advancement/ Advancement Generator on misode.github.io]
+
+== References ==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+{{Navbox Java Edition}}
+
+[[de:Fortschrittsdefinition]]
+[[fr:Définition de progrès]]
+[[ja:進捗/JSONフォーマット]]
+[[pt:Definição de progressos]]
+[[ru:Достижение (Java Edition)/Формат JSON]]
+[[zh:进度定义格式]]

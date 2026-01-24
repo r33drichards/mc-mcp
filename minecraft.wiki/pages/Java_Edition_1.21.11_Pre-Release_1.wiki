@@ -1,0 +1,185 @@
+{{Dangerous version|This version crashes on startup if the [[options.txt]] file does not already exist.<ref>{{Bug|MC-304369||Crash when loading the game without an existing options.txt file|Fixed in 1.21.11 Pre-Release 2}}</ref>|type=crash|edition=java|version=pre-release}}
+{{Infobox version
+|title=Minecraft 1.21.11 Pre-Release 1
+|group1=Obfuscated 
+|1-1=1.21.11-pre1.jpg
+|1-2=Java Edition 1.21.11-pre1.png
+|group2=Unobfuscated
+|2-1=1.21.11-pre1.jpg
+|2-2=Java Edition 1.21.11-pre1 Unobfuscated.png
+|imagesize=250px
+|edition=java
+|type=Pre-release
+|date=November 19, 2025
+| clientdl=
+'''Client'''<br>
+{{dl|e9b472f991278db704df8ce3eb803af57f26ed07 |client|title=Obfuscated}} ({{dl|9696c8840e4a9f6783e154bf6b67ba049ace5d3d |json|name=1.21.11-pre1}})<br>{{dl|37e6d1aa9d8ae06f3ea1d186b30d2abed784ab3f |client|title=Unobfuscated}} ({{dl|f98a0c053a8246cce12f8f29f2ba4ce00872fd53 |custom|name=1_21_11-pre1_unobfuscated.zip|title=.zip}})<ref group="note" name="zipfile">The contents of the [[w:ZIP file|ZIP file]] should be extracted to the {{File|directory|[[.minecraft]]/versions|inline=1}} directory in order to install this version.</ref>
+|serverdl=
+'''Server'''<br>{{dl|1087f90b4d73209318d87aa8deecfaae24861004 |server|title=Obfuscated}}<br>{{dl|ffd25fe7eb268ec94a70ca0a672cadf7f62d20c9 |server|title=Unobfuscated}}
+|clientmap=dbda7a8747caf92e948ff44d0ed01cf0fb3e5854
+|servermap=e434a6854aa28c14f9103695485be4ab417fbae2
+|parent=1.21.11
+|prevparent=1.21.10
+|prev=25w46a
+|next=1.21.11 Pre-Release 2
+|nextparent=26.1
+}}
+<onlyinclude>
+
+'''1.21.11 Pre-Release 1''' (known as '''1.21.11-pre1''' in the launcher) is the first pre-release for [[Java Edition 1.21.11]], released on November 19, 2025.<ref>{{Mcnet|minecraft-1-21-11-pre-release-1|Minecraft 1.21.11 Pre-Release 1|November 19, 2025}}</ref>
+
+A separate [[unobfuscated version]] of 1.21.11 Pre-Release 1 was released, titled '''1.21.11 Pre-Release 1 Unobfuscated''' (or '''1.21.11-pre1_unobfuscated''' when in the launcher). This is an experimental version released in preparation for obfuscation being removed from {{JE}} clients and servers.<ref>{{Mcnet|removing-obfuscation-in-java-edition|Removing obfuscation in Java Edition|October 29, 2025}}</ref>
+
+== Additions ==
+=== General ===
+'''[[Data component format]]'''
+* Added {{cd|minecraft:attack_range}}
+** Enables a custom attack range when using the item.
+** Overrides the normal entity interaction range for player.
+** Regular melee attack range is computed for mobs based on the distance of the target hitbox to their hitbox. This component modifies that distance check by adjusting minimum and maximum padding for the attack hitbox.
+** Mobs using {{cd|minecraft:kinetic_weapon}} will have their attack range applied in the same way it applies to players.
+** Format: object with fields
+*** {{cd|min_reach}}: float, the minimum distance in blocks from the attacker to the target to be considered valid.
+**** Default value: {{cd|0.0}}, valid from {{cd|0.0}} to {{cd|64.0}}
+*** {{cd|max_reach}}: float, the maximum distance in blocks from the attacker to the target to be considered valid.
+**** Default value: {{cd|3.0}}, valid from {{cd|0.0}} to {{cd|64.0}}
+*** {{cd|hitbox_margin}}: float, the margin applied to the target bounding box when checking for valid hitbox collision.
+**** Default value: {{cd|0.3}}, valid from {{cd|0.0}} to {{cd|1.0}}
+*** {{cd|mob_factor}}: float, the multiplier applied to the {{cd|min_range}} and {{cd|max_range}} when checking for valid distance when item is used by a mob.
+**** Default value: {{cd|1.0}}, valid from {{cd|0.0}} to {{cd|2.0}}
+
+'''[[Settings]]'''
+[[File:1.21.11-pre1 VV Java Tech changelog.png|300px|thumb|An announcement on Rotated Grid Super Sampling.]]
+* Added texture filtering in video settings.
+** Controls the method used to sample textures when they are viewed at an angle or from a distance.
+** Available values are "None", "RGSS", and "Anisotropic".
+** The default depends on the selected graphics preset as well as the computer's graphics card capabilities.{{note|AMD GPUs use "RGSS" on the "Fabulous!" preset instead of "Anisotropic" as using "Anisotropic" on AMD GPUs does not perform well.<ref>{{Cite Discord
+ | url = https://discord.com/channels/1138536747932864532/1424838127800942662/1440656198822133782
+ | channel = dev-updates
+ | server = Minecraft Feedback
+ | invite = https://discord.gg/minecraftfeedback
+ | user = timur6030
+ | date = November 18, 2025
+ | ss = 1.21.11-pre1_VV_Java_Tech_changelog.png
+}}</ref>}}
+** "RGSS" (Rotated Grid Super Sampling) is a shader-based filtering method that improves texture clarity at a moderate performance cost.
+*** This is available on all hardware.
+** "Anisotropic" is a hardware-based filtering method that improves texture clarity even further.
+*** The maximum anisotropy may be "2x", "4x", and "8x", controllable by a separate slider.
+*** If the graphics card does not support it, anisotropic filtering will do nothing.
+*** This significantly impacts [[w:Video random-access memory|VRAM]] usage (especially combined with a high mipmap count).
+
+'''[[Splash]]'''
+* Added "Music by [[Hyper Potions]]!"
+
+== Changes ==
+=== Items ===
+'''[[Leather horse armor]]'''
+* The texture is now the same as in {{BE}}.
+* Both the item and the equipment assets have been split into a tinted base layer and an overlay layer.
+
+'''[[Spear]]s'''
+* Changed the swap animation scale of all spears from {{cd|1.9}} to {{cd|1.95}}.{{source code ref|Before:<code>"swap_animation_scale": 1.9"</code><br/>After:<code>"swap_animation_scale": 1.95"</code>}}
+* The player can now continue to deal damage to the target if they keep charging at it after the initial hit, and mobs can do the same.
+* Golden spears are now a [[piglin]]-preferred weapon.
+* [[Skeleton variants]] and [[drowned]] no longer pick them up.
+* [[Zombified piglin]]s can now charge with the spear and not just jab with it.
+* Spears are now placed after [[sword]]s in the [[Creative]] inventory.
+
+=== Mobs ===
+'''[[Camel Husk]]'''
+* No longer sink in water while ridden by a player.
+
+'''[[Nautilus]] and [[zombie nautilus]]'''
+* The heads of the Nautilus and Zombie Nautilus now clip less through their shells.
+* Baby Nautilus now uses nautilus swimming sounds instead of fish swimming sounds ({{cd|entity.fish.swim}}).
+* The [[nautilus shell]] drop is now affected by [[Looting]].
+
+=== Gameplay ===
+'''[[Advancements]]'''
+* The "[[Mob Kabob]]" advancement is now a goal advancement instead of a challenge advancement.
+
+=== General ===
+'''[[Data component format]]'''
+* {{cd|min_reach}}, {{cd|max_reach}} and {{cd|hitbox_margin}} have been moved from {{cd|minecraft:piercing_weapon}} and {{cd|minecraft:kinetic_weapon}} into a new component {{cd|minecraft:attack_range}} to allow all melee weapon types to use them.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|94.0}}.
+
+'''[[Resource pack]]'''
+* The version is now {{cd|75.0}}.
+
+'''[[Tag (Java Edition)|Tags]]'''
+* Entity Type Tags
+** Added {{cd|camel_husk}} to {{cd|#can_float_while_ridden}} tag.
+* Item Tags
+** Added {{cd|golden_spear}} to {{cd|#piglin_preferred_weapons}} tag.
+
+'''[[Textures]]'''
+* {{cd|texture}} section of {{cd|*.mcmeta}} files has a new {{cd|alpha_cutoff_bias}} field that controls alpha bias for cutout textures.
+** There is no limit for this value technically, it can be negative as well, but it does not make sense to set this higher than {{cd|1.0}} or lower than {{cd|-1.0}} since the texture will become either fully opaque or fully transparent.
+** Default value for this field is {{cd|0.0}}, and it can be increased for textures that can become too transparent/thin at distance, or decreased if it's too "opaque".
+** Only used for lower mips of cutout textures, does not change the alpha of first mip level, and has no effect on other textures.
+
+== Fixes ==
+{{fixes|project=MC|fixedin=1.21.11-pre1
+|;From 1.21.1
+|276382|Leather horse armor leggings & helmet parts are untextured.
+|;From 1.21.7
+|299136|Hyper Potions (Ian Tsuchiura) is not mentioned in the credits and splash texts.
+|;From 1.21.9
+|302209|Debug renderers stop working when changing dimensions.
+|;dev
+|302677|The attack indicator does not respect spears' reach.
+|302836|The texture of zombie horses' heads is not symmetrical.
+|302840|The saddle texture on zombie horses is missing some parts.
+|302882|Piglins do not perform charge attacks when holding spears, unlike in Bedrock Edition.
+|303052|Cobwebs and sweet berry bushes prevent players from lunging using spears.
+|303174|Nautilus shell drop chance from nautiluses is unaffected by Looting.
+|303467|Zombified piglins that spawn holding golden spears and can pick up loot swap their spear for any other item.
+|303476|Dashing on a nautilus plays an underwater sound even on land.
+|303524|Piglins that spawn holding a golden spear swap their spear with any golden item.
+|303657|Camel husks only sink when ridden.
+|303664|Black outlines render on flat-textured blocks when mipmap levels are disabled.
+|303812|Zombies that spawn holding spears and can pick up loot swap their spear for any other item.
+|303838|The rain overlay renders in the end while the ender dragon fog is present.
+|303846|{{cmd|gamerule}} does not accept full resource locations of game rules.
+|303919|Lunge wastes durability and hunger by using it while on a ladder.
+|303942|The Mob Kabob advancement doesn't reward the player with experience.
+|303950|Velocity no longer properly increases spear damage.
+|304029|Undead mobs no longer burn in sunlight in biomes without rain while it's raining.
+|304042|You can get the Mob Kabob advancement by hitting an ender dragon five times in a row with the same charge attack.
+|304058|Lower {{cd|fog_end_distance}} environment attribute values cause rain to drastically increase fog effect.
+|304095|Holding a spear prevents attack interactions with interaction entities.
+|304116|Entities and block entities do not fade correctly when the chunk fade setting is active.
+|304127|The float ranges of Cubic Bézier curve arguments don't match the changelog.
+|;prev
+|304163|Shift-left-clicking an entity's name with advanced tooltips enabled no longer inserts the entity's UUID in the chat.
+|304170|Setting the "Music Toast" option to "Pause Menu and Toast" while music is disabled shows a music toast.
+|304190|Fish buckets have a dysfunctional consumable component now.
+|304191|Foxes can now eat fish buckets, deleting the bucket and skipping special effects.
+|304196|The recipe for waxed chiseled copper made from waxed copper slabs now yields two items instead of one.
+|304212|Zombie nautiluses being ridden by mobs can still be leashed, unlike zombie horses and camel husks.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|CH_mI68_Ljk}}
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+{{source code ref list}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:1.21.11-pre1]]
+[[es:Java Edition 1.21.11 Pre-Release 1]]
+[[fr:Édition Java 1.21.11 Pre-Release 1]]
+[[ja:Java Edition 1.21.11 Pre-Release 1]]
+[[lzh:爪哇版一點二一點一一之預一]]
+[[pt:Edição Java 1.21.11 Pre-Release 1]]
+[[ru:1.21.11 Pre-Release 1 (Java Edition)]]
+[[zh:Java版1.21.11-pre1]]

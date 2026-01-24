@@ -1,0 +1,185 @@
+{{Infobox version
+| image = Bedrock 1.19.60.20 PatchNotes.jpg
+| image2 = Bedrock 1.19.60.20.png
+| edition = Bedrock
+| type = Preview
+| date = '''Windows, Android, Xbox''' - November 23, 2022
+| internal = '''Windows''': 1.19.6020.0<br>'''Xbox One''': 1.19.6020.70<br>'''Android''': 1.19.60.20
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.19.60.20.zip Windows] [https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.19.60.20.zip Linux]
+| parent = 1.19.60
+| prevparent = 1.19.51
+| prev = 
+| next = Preview 1.19.60.22
+| nextparent = 1.19.62
+}}<onlyinclude>
+'''Beta 1.19.60.20''' (Android) or '''Preview 1.19.60.20''' (Windows, Xbox) is the first beta/''Preview'' version for [[Bedrock Edition 1.19.60]], released on November 23, 2022,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/10828527738893|title=Minecraft Beta & Preview - 1.19.60.20|website=Minecraft Feedback|date=November 23, 2022}}</ref> which adds new [[spawn eggs]], [[piglin head]]s, [[Block of Bamboo|blocks of bamboo]], and fixes bugs.
+
+== Additions ==
+=== Items ===
+'''[[Spawn Eggs]]'''
+* Added new spawn egg items for ender dragon, iron golem, snow golem, and wither mobs in Creative mode.
+** Ender dragon and wither spawn eggs will only be available through commands to prevent accidental destruction of player builds.
+*** These are currently in the Creative inventory but will be removed at a later stage.
+
+=== General ===
+'''[[Particles|Particle Effects]]'''
+* Added support for mixed color blending on particle effects.
+
+== Changes ==
+=== Items ===
+'''[[Spawn Eggs]]'''
+* Polar bear spawn egg colors have changed to distinguish it from the ghast spawn egg.
+
+=== Technical ===
+'''Actor Filters'''
+* Created new actor filters <code>on_fire</code>, <code>on_hot_block</code>, <code>target_distance</code>, and <code>actor_health</code>.
+'''Molang'''
+* Added new Molang <code>is_local_player</code> to allow detection of the current player.
+'''AI Goals'''
+* The <code>celebrate_survive</code> AI behavior will now consider the highest rain passable block in addition to sky visibility before firing fireworks.
+* The <code>move_outdoors</code> AI behavior will now consider the highest rain passable block in addition to sky visibility when searching for a place to consider as being outdoors.
+* Exposed new data parameters for the <code>trade_with_player</code> AI behavior to specify such things as the conditions that need to be met for the goal to start and the max distance the mob can be from its trading player before exiting the goal.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs" and "Next Major Update" experimental toggle.
+
+=== Additions ===
+==== Blocks ====
+'''[[Block of bamboo]] and [[Block of Bamboo|Stripped Block of Bamboo]]'''
+* Added block of bamboo, which can be crafted from 9 bamboo.
+* Added stripped block of bamboo, which can be obtained by using an axe on a block of bamboo.
+** Both block of bamboo and stripped block of bamboo can be crafted into 2 bamboo planks.
+'''[[Head|Piglin Mob Head]]'''
+* Piglins will now drop their heads when killed by a charged creeper.
+** Placing the piglin head on a note block will play one of the piglin's ambient sounds.
+** The piglin head will flap its ears when powered by redstone on worn by a player.
+
+=== Changes ===
+==== Blocks ====
+'''[[Fence|Bamboo Fence]]'''
+* Now shows in the correct color on the map.
+'''[[Bamboo Planks]]'''
+* Rotated the texture of bamboo planks to better match the style of other planks blocks.
+'''[[Chiseled Bookshelf]]'''
+* Unique sounds added for the chiseled bookshelf.
+* Introduced the tag <code>minecraft:bookshelf_books</code> to filter what type of items are storable in the chiseled bookshelf.
+* Chiseled bookshelf now fills when dropping books into a connected hopper. ({{bug|MCPE-164023}})
+* When a chiseled bookshelf is connected to a hopper, only books are transferred.
+'''[[Hanging Sign]]s'''
+* Bamboo hanging sign is now crafted out of 6 stripped blocks of bamboo and 2 chains.
+* Hanging sign map colors now match sign map colors.
+* Fixed an issue where hanging signs and other blocks could not be placed under chests, enchanting tables, candles, brewing stands, mob heads (when aligned to the bottom of the block), or end portal frames.
+* Jungle hanging sign iron chain added in texture.
+'''[[Note Block]]'''
+* When placing a mob head on a note block, that note block will now play one of the ambient sounds of that mob when played by a player or powered by redstone.
+'''[[Scaffolding]]'''
+* Recolored the scaffolding texture to match bamboo woodset colors.
+
+==== Mobs ====
+'''[[Camel]]'''
+* Camel texture is up to parity with the {{el|je}} texture. ({{bug|MCPE-163350}})
+* Sitting camel with lead attached now stands up and follows the player when moving away from it.
+* The player can now sprint when riding a camel, even if they have low hunger.
+* Players riding a camel while it does its standing up animation do not sink into it anymore.
+* Players riding a camel now sit in the correct position.
+* Camels now have a smaller collision when sitting.
+* Baby camels are now slightly smaller.
+* Changed the colors of the dash cooldown bar to match {{el|je}}.
+* Sculk sensors can now detect camels sitting down or standing up.
+
+==== Non-mob entities ====
+'''[[Boat]]s and [[boat with chest]]s'''
+* Updated bamboo raft and bamboo raft with chest item icons to match {{el|je}}.
+
+==== Technical ====
+'''API'''
+* Container
+** Added function <code>clearItem(slot: number): void-</code> Clears the item at the given slot index.
+** Added function <code>clearAll(): void-</code> Clears all items in the container.
+** Made the <code>itemStack</code> argument of function setItem optional - If not provided, the slot is cleared.
+** Added event ''events.playerSpawn-'' Fires when a player spawns in the world.
+** Renamed event ''events.entityCreateto world.events.entitySpawn''. This event no longer fires for players.
+* PlayerJoinEvent
+** Added read-only property ''playerId-'' The unique ID of the player that joined the world.
+** Added read-only property ''playerName-'' The name of the player that joined the world.
+** Removed property player.
+* PlayerLeaveEvent
+** Added read-only property ''playerId-'' The unique ID of the player that left the world.
+* SimulatedPlayer
+** Added function <code>respawn()-</code> Respawns the ''SimulatedPlayer'' if it's dead.
+** Added function <code>disconnect()-</code> Removes the SimulatedPlayer from the world.
+** Added function <code>getSlot(slot: number): ContainerSlot-</code> Returns the slot at the given container slot index.
+* ContainerSlot
+** Added class ''ContainerSlot-'' Used to directly manipulate items stored within a container.
+** Renamed entity property ''viewVector'' to ''viewDirection'' and now returns ''Vector3''.
+** Renamed entity function ''getEntitiesFromViewVector'' to ''getEntitiesFromViewDirection''.
+** Renamed entity function ''getBlockFromViewVector'' to ''getBlockFromViewDirection''.
+* Renamed <code>IRawMessage</code> to <code>RawMessage</code> for naming consistency.
+'''JSON'''
+* Release <code>BlockSelectionBoxComponent</code> outside of experimental toggle in json formats 1.19.60 and higher.
+* Release <code>BlockDisplayNameComponent</code> outside of experimental toggle in json formats 1.19.60 and higher.
+* Ensure Block Permutation Conditions can only use ''query.block_property'' Molang Query.
+'''Synchronization'''
+* Chiseled Bookshelf ''BlockActor'' inherit from Container to take advantage and ensure synchronization when exiting/importing worlds is correct and not losing any Books.
+
+== Fixes ==
+'''Android'''
+* Device screen will no longer automatically turn off while a world is loaded.
+* Updated splash screen to be consistent between Android 12+ devices and older devices. ({{bug|MCPE-151413}})
+* Fixed controller input sometimes getting stuck when a controller disconnected.
+'''Blocks'''
+* Entities no longer get pushed out by doors activated by redstone signals. ({{bug|MCPE-158971}})
+* Using the pick block functionality on fern and grass now selects the correct item in the inventory instead of the first one between them.
+* Using the pick block functionality on acacia and dark oak leaves now selects the correct item in the inventory instead of the first one between them.
+'''Gameplay'''
+* Bamboo plant placements now behave the same way as in {{el|je}}; it will no longer grow by clicking on the side of a bamboo plant with a bamboo item in hands. ({{bug|MCPE-99587}})
+* All mobs are now able to path through wither roses. ({{bug|MCPE-159212}})
+* Stone walls are now placed correctly in a line when continuously placing them.
+* When teleporting a group of leashed mobs using {{cmd|tp @e}} a far enough distance away to unleash them, all mobs get properly unleashed. ({{bug|MCPE-159617}})
+'''Graphical'''
+* Fixed albedo color arrays in texture sets. ({{bug|MCPE-163622}})
+'''Mobs'''
+* Axolotls no longer tick their dry out timer when unloaded. ({{bug|MCPE-131041}})
+* Tropical fish no longer use surface density limit when spawning underground. ({{bug|MCPE-157485}})
+* Husks can now fit in a two blocks high space and baby husks in a one-high space. ({{bug|MCPE-105369}})
+'''Villager'''
+* Villagers will now take damage from lightning bolts on peaceful difficulty, like other mobs.
+* Villagers will now ensure that rain can pass through the block above them before launching fireworks when celebrating after a raid victory. ({{bug|MCPE-152386}})
+'''Particle Effects'''
+* Fixed bug causing particles with collision and <code>expire_on_contact</code> to not expire when collided.
+'''Player'''
+* Fixed a bug causing players to desync from multiplayer games if they save and quit after dying and then rejoin.
+'''Stability and Performance'''
+* Fixed a crash on Xbox when the Edit World Button on the Select World Screen has quick successive selections.
+* Fixed multiple crashes that could occur when players died while affected with withering.
+'''Text Fields'''
+* Text fields are no longer deselected with second click on them once they are selected.
+'''Touch Controls'''
+* The pressing direction of the build button in touch controls will now be visually clicked down instead of up when being pressed.
+* Fixed an issue where players could not remove items by clicking on the inventory items in classic profile.
+* The touch focus circle has been reactivated with the new touch controls (not in crosshair mode).
+'''User Interface'''
+* Added a missing error screen that displays when attempting to create a world with too little available disk space.
+* Fixed the quality of the Mojang Studios logo loading screen on Xbox. ({{bug|MCPE-163036}})
+* Removed extra space around the "open chat" message that appears when entering a world. ({{bug|MCPE-162700}})
+* Fixed an issue that caused the wandering trader's trade window to show a profession. ({{bug|MCPE-162576}})
+'''Vanilla Parity'''
+* Pumpkins and melons can now grow on mycelium and moss blocks. ({{bug|MCPE-125932}})
+'''Graphical'''
+* Beacon effect particles are now transparent. ({{bug|MCPE-17679}})
+* Conduit effect particles are now transparent. ({{bug|MCPE-93728}})
+'''Commands'''
+* Executing the {{cmd|say}} command via the new execute syntax now displays the entity’s name that produced the message. ({{bug|MCPE-161450}})
+</onlyinclude>
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.1x}}
+
+[[Category:Bedrock Edition 1.19.60 betas]]
+[[de:Bedrock Edition beta 1.19.60.20]]
+[[es:Bedrock Edition beta 1.19.60.20]]
+[[ja:Bedrock Edition Preview 1.19.60.20]]
+[[pt:Edição Bedrock Preview 1.19.60.20]]
+[[zh:基岩版1.19.60.20]]

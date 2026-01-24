@@ -1,0 +1,118 @@
+{{lowercase}}
+{{exclusive|java}}
+
+{{mono|'''client.json'''}} is the file that accompanies {{mono|[[client.jar]]}} in <samp>[[.minecraft]]/versions/''<version>''</samp> and lists the version's attributes. When using the latest version of the ''[[Minecraft Launcher]]'', it is named {{mono|''<game version>''.json}} (e.g., {{mono|1.21.7.json}}). The JSON file for specific versions is located in the {{mono|[[version_manifest.json]]}} file.
+
+== JSON format ==
+This is the JSON format for {{mono|client.json}}.
+
+<div class="treeview">
+* {{nbt|compound}} The root tag.
+**{{nbt|compound|arguments}}:
+*** {{nbt|list|game}}: Contains arguments supplied to the game, such as information about the username and the version.
+**** {{nbt|string}} An argument.
+**** {{nbt|compound}} A conditional argument.
+***** {{nbt|list|rules}}: A list of rules.
+****** {{nbt|compound}} A rule.
+******* {{nbt|string|action}}: One of "allow" or "disallow".
+******* {{nbt|compound|features}}: Includes a set of features that can be checked.
+******** {{nbt|boolean|is_demo_user}}: Appears only in the first appearance of the compound tag.
+******** {{nbt|boolean|has_custom_resolution}}: Appears only in the second appearance of the compound tag.
+******** {{nbt|boolean|has_quick_plays_support}}: Appears only in the third appearance of the compound tag.
+******** {{nbt|boolean|is_quick_play_singleplayer}}: Appears only in the fourth appearance of the compound tag.
+******** {{nbt|boolean|is_quick_play_multiplayer}}: Appears only in the fifth appearance of the compound tag.
+******** {{nbt|boolean|is_quick_play_realms}}: Appears only in the sixth appearance of the compound tag.
+***** {{nbt|string}}{{nbt|list|value}}: An argument or a list of arguments that is added when the condition is matched.
+*** {{nbt|list|jvm}}: Contains JVM arguments, such as information about memory allocation, garbage collector selection, or environment variables.
+**** {{nbt|compound}}: A conditional argument.
+***** {{nbt|list|rules}}: A list of rules.
+****** {{nbt|compound}}: A rule.
+******* {{nbt|string|action}}: One of "allow" or "disallow".
+******* {{nbt|compound|features}}: The launcher can detect this, but it's currently unused.
+******* {{nbt|compound|os}}:
+******** {{nbt|string|name}}: One of "windows", "osx" or "linux".
+******** {{nbt|string|version}}: Contains a regex<ref group="note">{{cite|url=https://en.wikipedia.org/wiki/Regular_expression|title=Regular expression|website=Wikipedia}}</ref> intended to be checked against <code>System.getProperty("os.version")</code>.
+******** {{nbt|string|arch}}: Appears only in the fourth appearance of the compound tag. Its value is "x86".
+***** {{nbt|string}}{{nbt|list|value}}: An argument or a list of arguments that is added when the condition is matched.
+** {{nbt|compound|assetIndex}}:
+*** {{nbt|string|id}}: The assets version.
+*** {{nbt|string|sha1}}: The SHA1 hash of the assets file.
+*** {{nbt|int|size}}: The size of the version.
+*** {{nbt|int|totalSize}}: The total size of the version.
+*** {{nbt|string|url}}: The URL that the game should visit to download the assets.
+** {{nbt|string|assets}}: The assets version.
+** {{nbt|int|complianceLevel}}: 0 until [[1.16.4-pre2]], and 1 for all versions after. A value of 0 causes the official launcher to warn the player about missing player safety features when this version is selected.
+** {{nbt|compound|downloads}}:
+*** {{nbt|compound|client}}: The [[client.jar]] download information.
+**** {{nbt|string|sha1}}: The SHA1 hash of the jar.
+**** {{nbt|int|size}}: The size of the jar in bytes.
+**** {{nbt|string|url}}: The URL the launcher should visit to download the file.
+*** {{nbt|compound|client_mappings}}: The obfuscation maps for this client version. Added in [[Java Edition 19w36a]] but got included in 1.14.4 also. Repeats the structure of the client download information.
+*** {{nbt|compound|server}}: The server download information. Repeats the structure of the client download information.
+*** {{nbt|compound|server_mappings}}: The obfuscation maps for this server version. Added in [[Java Edition 19w36a]] but got included in 1.14.4 also. Repeats the structure of the client download information.
+*** {{nbt|compound|windows_server}}: The Windows server download information. Removed in [[Java Edition 16w05a]], but is still present in prior versions. Repeats the structure of the client download information.
+** {{nbt|string|id}}: The name of this version client (e.g. 1.14.4).
+** {{nbt|compound|javaVersion}}: The version of the Java Runtime Environment to use.
+*** {{nbt|string|component}}: Its value is "jre-legacy" until [[21w18a]], "java-runtime-alpha" until [[1.18-pre1]], "java-runtime-beta" until [[22w17a]], "java-runtime-gamma" until [[24w13a]], and "java-runtime-delta" since [[24w14a]].
+*** {{nbt|int|majorVersion}}: Its value is 8 until [[21w18a]], 16 until [[1.18-pre1]], 17 until [[24w13a]], and 21 since [[24w14a]].
+** {{nbt|list|libraries}}: A list of libraries.
+***{{nbt|compound}}: A library.
+****{{nbt|compound|downloads}}: The library's download information.
+***** {{nbt|compound|artifact}}: Info about the artifact.
+****** {{nbt|string|path}}: Path to store the downloaded artifact, relative to the "libraries" directory in [[.minecraft]].
+****** {{nbt|string|sha1}}: The SHA1 hash of the file.
+****** {{nbt|int|size}}: The size of the file in bytes.
+****** {{nbt|string|url}}: The URL that the game should visit to download the file.
+***** {{nbt|compound|classifiers}}: Appears only for some libraries.
+****** {{nbt|compound|<classifier>}}: Specifies the artifact information for the artifact with this specific classifier. Repeats the artifact structure above.
+**** {{nbt|string|name}}: A [https://maven.apache.org/guides/mini/guide-naming-conventions.html maven name] for the library, in the form of "''groupId'':''artifactId'':''version''".
+**** {{nbt|string|url}}: The URL of the [https://maven.apache.org Maven] repository (used by [[Mods/Forge|Forge]]).
+**** {{nbt|compound|natives}}: Information about native libraries (in C) bundled with this library. Appears only when there are classifiers for natives.
+***** {{nbt|string}}: This tag's name depends on the natives that appear in the classifiers, it will be one of "windows", "osx" or "linux".
+**** {{nbt|compound|extract}}: Rules to follow when extracting natives from a library.
+***** {{nbt|list|exclude}}: Paths to exclude.
+****** {{nbt|string}}: Its value is "META-INF/".
+**** {{nbt|list|rules}}: Contains a compound with the tags "action" and "os", as shown above.
+** {{nbt|compound|logging}}: Information about Log4j log configuration.
+*** {{nbt|compound|client}}:
+**** {{nbt|string|argument}}: The JVM argument for adding the log configuration. Its value is "-Dlog4j.configurationFile=${path}".
+**** {{nbt|compound|file}}: The [https://logging.apache.org/log4j/2.x/manual/configuration.html#XML Log4j2 XML configuration] used by this version for the launcher for launcher's log screen.
+***** {{nbt|string|id}}: Its value is "client-1.12.xml", but may differ for older versions.<ref group=note>For instance, for [[Java Edition 1.10.2]], the value is "client-1.7.xml".</ref>
+***** {{nbt|string|sha1}}: The SHA1 hash for this file.
+***** {{nbt|int|size}}: The size of this file in bytes.
+***** {{nbt|string|url}}: The URL the launcher should visit to download the file.
+**** {{nbt|string|type}}: Its value is "log4j2-xml".
+** {{nbt|string|mainClass}}: The main game class; for modern versions, it is <code>net.minecraft.client.main.Main</code>, but it may differ for older or ancient versions.<ref group=note>For instance, for [[rd-132211]], the value is <code>com.mojang.rubydung.RubyDung</code>.</ref>
+** {{nbt|int|minimumLauncherVersion}}: The minimum Launcher version that can run this version of the game.
+** {{nbt|string|releaseTime}}: The release date-time in ISO-8601<ref group="note">https://www.iso.org/iso-8601-date-and-time-format.html</ref> extended offset format.
+** {{nbt|string|time}}: Same as "releaseTime".
+** {{nbt|string|type}}: The type of this game version. One of "release", "snapshot", "unobfuscated", "old_beta" or "old_alpha"
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.6.1|dev=13w16a|With the new launcher, versions are now stored in <samp>[[.minecraft]]/versions</samp> and each version has its own folder with a {{mono|[[client.jar|minecraft.jar]]}} (which is now called {{mono|[[client.jar]]}}) and a {{mono|<''client''>.json}} file.}}
+|{{HistoryLine||1.7.2|dev=13w39a|Added the {{nbt|compound|logging}} tag in the root tag.}}
+|{{HistoryLine||1.9|dev=16w05a|Removed the {{nbt|compound|windows_server}} tag, however, it remains present for versions that already have it.}}
+|{{HistoryLine||1.13|dev=17w43a|The {{nbt|compound|arguments}} tag replaced the old {{nbt|string|minecraftArguments}} tag.}}
+|{{HistoryLine||1.15|dev=19w36a|Obfuscation mappings are now listed in the {{nbt|compound|downloads}} tag. They are implemented in 1.14.4 also.}}
+|{{HistoryLine||1.16|dev=20w21a|Added two new arguments: {{cd|disableChat}}, which disables the chat in-game, and {{cd|disableMultiplayer}}, which disables the "Multiplayer" and "Minecraft Realms" buttons.}}
+|{{HistoryLine||1.17|dev=20w45a|Added the {{nbt|compound|javaVersion}} tag with all its children.}}
+|{{HistoryLine||1.20|dev=23w14a|In {{nbt|list|game}}, added {{nbt|boolean|has_quick_plays_support}}, {{nbt|boolean|is_quick_play_singleplayer}}, {{nbt|boolean|is_quick_play_multiplayer}}, and {{nbt|boolean|is_quick_play_realms}} to {{nbt|list|rules}}.}}
+}}
+
+== Notes ==
+{{notelist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:Client.json]]
+[[es:Client.json]]
+[[fr:Client.json]]
+[[ja:Client.json]]
+[[pt:Client.json]]
+[[zh:Client.json]]

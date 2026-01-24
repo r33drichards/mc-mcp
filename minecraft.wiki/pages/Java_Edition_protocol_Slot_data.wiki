@@ -1,0 +1,2163 @@
+The '''Slot''' data structure defines how an item is represented when inside an inventory window of any kind, such as a chest or furnace.
+
+This page presents the new Slot data structure, using structured components. You can find the documentation of the old structure, that utilizes raw NBT data, [[Special:Permalink/2768623|here]].
+
+= Format =
+
+{| class="wikitable"
+ ! colspan="2"| Name
+ ! colspan="2"| Type
+ ! Meaning
+ |-
+ | colspan="2"| Item Count
+ | colspan="2"| {{Type|VarInt}}
+ | The item count. Every following field is only present if this value is greater than zero.
+ |-
+ | colspan="2"| Item ID
+ | colspan="2"| {{Type|Optional}} {{Type|VarInt}}
+ | The [[Java Edition data values#Blocks|item ID]]. Item IDs are distinct from block IDs; see [[Minecraft Wiki:Projects/wiki.vg merge/Data Generators|Data Generators]] for more information.
+ |-
+ | colspan="2"| Number of components to add
+ | colspan="2"| {{Type|Optional}} {{Type|VarInt}}
+ | Number of elements present in the first data component array
+ |-
+ | colspan="2"| Number of components to remove
+ | colspan="2"| {{Type|Optional}} {{Type|VarInt}}
+ | Number of elements present in the second data component array. This serve as a way to remove the default component values that are present on some items.
+ |-
+ | rowspan="2"| Components to add
+ | Component type
+ | rowspan="2"| {{Type|Optional}} {{Type|Array}}
+ | {{Type|VarInt}} {{Type|Enum}}
+ | colspan="2"| The type of component. See [[#Structured_components|Structured components]] for more detail.
+ |-
+ | Component data
+ | Varies
+ | colspan="1"| The component-dependent data. See [[#Structured_components|Structured components]] for more detail.
+ |-
+ | rowspan="1"| Components to remove
+ | Component type
+ | rowspan="1"| {{Type|Optional}} {{Type|Array}}
+ | {{Type|VarInt}} {{Type|Enum}}
+ | colspan="2"| The type of component. See [[#Structured_components|Structured components]] for more detail.
+ |-
+ |}
+
+
+= Hashed Format =
+
+Similar to [[#Format|the usual slot format]], but with the notable difference that data component values are encoded as CRC32C (note: CRC32C is not the same thing as CRC32) checksums. The way the checksum is generated is currently undocumented. It's currently only used in the [[Java_Edition_protocol/Packets#Click_Container|click container]] packet.
+
+{| class="wikitable"
+ ! colspan="2"| Name
+ ! colspan="2"| Type
+ ! Meaning
+ |-
+ | colspan="2"| Has Item
+ | colspan="2"| {{Type|Boolean}}
+ | Every following field is only present if this value is true.
+ |-
+ | colspan="2"| Item ID
+ | colspan="2"| {{Type|Optional}} {{Type|VarInt}}
+ | The [[Java Edition data values#Blocks|item ID]]. Item IDs are distinct from block IDs; see [[Minecraft Wiki:Projects/wiki.vg merge/Data Generators|Data Generators]] for more information.
+ |-
+ | colspan="2"| Item Count
+ | colspan="2"| {{Type|Optional}} {{Type|VarInt}}
+ | The item count.
+ |-
+ | rowspan="2"| Components to add
+ | Component type
+ | rowspan="2"| {{Type|Optional}} {{Type|Prefixed Array}}
+ | {{Type|VarInt}} {{Type|Enum}}
+ | colspan="2"| The type of component. See [[#Structured_components|Structured components]] for more detail.
+ |-
+ | Component data hash
+ | {{Type|Int}}
+ | colspan="1"| A CRC32C (note: CRC32C is not the same thing as CRC32) checksum of the component data. Currently undocumented.
+ |-
+ | rowspan="1"| Components to remove
+ | Component type
+ | rowspan="1"| {{Type|Optional}} {{Type|Prefixed Array}}
+ | {{Type|VarInt}} {{Type|Enum}}
+ | colspan="2"| The type of component. See [[#Structured_components|Structured components]] for more detail.
+ |-
+ |}
+
+= Structured components =
+
+The complete list of available components is described below.
+
+For a more in-depth description, and information on how the items below are encoded with the NBT format, check [https://minecraft.wiki/w/Data_component_format here].
+
+{| class="wikitable"
+ ! Type
+ ! Name
+ ! Description
+ ! style="width: 50%" | Data
+ |-
+ | 0
+ | <code>minecraft:custom_data</code>
+ | Customizable data that doesn't fit any specific component.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Data
+    | {{Type|NBT}}
+    | Always a Compound Tag.
+    |}
+ |-
+ | 1
+ | <code>minecraft:max_stack_size</code>
+ | Maximum stack size for the item.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Max Stack Size
+    | {{Type|VarInt}}
+    | Ranges from 1 to 99.
+    |}
+ |-
+ | 2
+ | <code>minecraft:max_damage</code>
+ | The maximum damage the item can take before breaking.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Max Damage
+    | {{Type|VarInt}}
+    |
+    |}
+ |-
+ | 3
+ | <code>minecraft:damage</code>
+ | The current damage of the item.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Damage
+    | {{Type|VarInt}}
+    |
+    |}
+ |-
+ | 4
+ | <code>minecraft:unbreakable</code>
+ | Marks the item as unbreakable.
+ | ''no fields''
+ |-
+ | 5
+ | <code>minecraft:custom_name</code>
+ | Item's custom name.<br>Normally shown in italic, and changeable at an anvil.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Name
+    | {{Type|Text Component}}
+    |
+    |}
+ |-
+ | 6
+ | <code>minecraft:item_name</code>
+ | Override for the item's default name.<br>Shown when the item has no custom name.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Name
+    | {{Type|Text Component}}
+    |
+    |}
+ |-
+ | 7
+ | <code>minecraft:item_model</code>
+ | Item's model.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Model
+    | {{Type|Identifier}}
+    | 
+    |}
+ |-
+ | 8
+ | <code>minecraft:lore</code>
+ | Item's lore.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Lines
+    | {{Type|Prefixed Array}} of {{Type|Text Component}}
+    |
+    |}
+ |-
+ | 9
+ | <code>minecraft:rarity</code>
+ | Item's rarity.<br>This affects the default color of the item's name.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Rarity
+    | {{Type|VarInt}} {{Type|Enum}}
+    | Can be one of the following:
+* 0 - Common (white)
+* 1 - Uncommon (yellow)
+* 2 - Rare (aqua)
+* 3 - Epic (pink)
+ |}
+ |-
+ | 10
+ | <code>minecraft:enchantments</code>
+ | The enchantments of the item.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | rowspan="2"| Enchantment
+    | Type ID
+    | rowspan="2"| {{Type|Prefixed Array}}
+    | {{Type|VarInt}} {{Type|Enum}}
+    | The ID of the enchantment in the <code>minecraft:enchantment</code> registry.
+    |-
+    | Level
+    | {{Type|VarInt}}
+    | The level of the enchantment.
+    |}
+ |-
+ | 11
+ | <code>minecraft:can_place_on</code>
+ | List of blocks this block can be placed on when in adventure mode.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Block Predicates
+    | {{Type|Prefixed Array}} of [[#Block_Predicate|Block Predicate]]
+    | See [[#Block_Predicate|Block Predicate]].
+    |}
+ |-
+ | 12
+ | <code>minecraft:can_break</code>
+ | List of blocks this item can break when in adventure mode.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Block Predicates
+    | {{Type|Prefixed Array}} of [[#Block_Predicate|Block Predicate]]
+    | See [[#Block_Predicate|Block Predicate]].
+    |}
+ |-
+ | 13
+ | <code>minecraft:attribute_modifiers</code>
+ | The attribute modifiers of the item.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | rowspan="5"| Attribute Modifier
+    | Attribute ID
+    | rowspan="5"| {{Type|Prefixed Array}}
+    | {{Type|VarInt}}
+    | The attribute to be modified (ID in the <code>minecraft:attribute</code> registry).
+    |-
+    | Modifier ID
+    | {{Type|Identifier}}
+    | The modifier's unique ID.
+    |-
+    | Value
+    | {{Type|Double}}
+    | The modifier's value.
+    |-
+    | Operation
+    | {{Type|VarInt}} {{Type|Enum}}
+    | The operation to be applied upon the value. Can be one of the following:
+* 0 - Add
+* 1 - Multiply base
+* 2 - Multiply total
+    |-
+    | Slot
+    | {{Type|VarInt}} {{Type|Enum}}
+    | The item slot placement required for the modifier to have effect.<br>Can be one of the following:
+* 0 - Any
+* 1 - Main hand
+* 2 - Off hand
+* 3 - Hand
+* 4 - Feet
+* 5 - Legs
+* 6 - Chest
+* 7 - Head
+* 8 - Armor
+* 9 - Body
+    |}
+ |-
+ | 14
+ | <code>minecraft:custom_model_data</code>
+ | Value for the item predicate when using custom item models.<br>More info can be found [https://minecraft.wiki/w/Tutorials/Models#Item_predicates here].
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Floats
+    | {{Type|Prefixed Array}} of {{Type|Float}}
+    | 
+    |-
+    | Flags
+    | {{Type|Prefixed Array}} of {{Type|Boolean}}
+    |
+    |-
+    | Strings
+    | {{Type|Prefixed Array}} of {{Type|String}}
+    | 
+    |-
+    | Colors
+    | {{Type|Prefixed Array}} of {{Type|Int}}
+    |
+    |}
+ |-
+ | 15
+ | <code>minecraft:tooltip_display</code>
+ | Allows you to hide all or parts of the item tooltip.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Hide tooltip
+    | {{Type|Boolean}}
+    | Whether to hide the tooltip entirely.
+    |-
+    | Hidden components
+    | {{Type|Prefixed Array}} of {{Type|VarInt}} {{Type|Enum}}
+    | The IDs of data components in the <code>minecraft:data_component_type</code> registry to hide.
+    |}
+ |-
+ | 16
+ | <code>minecraft:repair_cost</code>
+ | Accumulated anvil usage cost. The client displays "Too Expensive" if the value is greater than 40 and the player is not in creative mode (more specifically, if they don't have the [[Minecraft Wiki:Projects/wiki.vg merge/Protocol#Player_Abilities_(clientbound)|insta-build flag enabled]]).<br>This behavior can be overridden by setting the level with the [[Minecraft Wiki:Projects/wiki.vg merge/Protocol#Set_Container_Property|Set Container Property]] packet.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Cost
+    | {{Type|VarInt}}
+    | 
+    |}
+ |-
+ | 17
+ | <code>minecraft:creative_slot_lock</code>
+ | Marks the item as non-interactive on the creative inventory (the first 5 rows of items).<br>This is used internally by the client on the paper icon in the saved hot-bars tab.
+ | ''no fields''
+ |-
+ | 18
+ | <code>minecraft:enchantment_glint_override</code>
+ | Overrides the item glint resulted from enchantments
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Has Glint
+    | {{Type|Boolean}}
+    |
+    |}
+ |-
+ | 19
+ | <code>minecraft:intangible_projectile</code>
+ | Marks the projectile as intangible (cannot be picked-up).
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Empty
+    | {{Type|NBT}}
+    | Always an empty Compound Tag.
+    |}
+ |-
+ | 20
+ | <code>minecraft:food</code>
+ | Makes the item restore the player's hunger bar when consumed.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | colspan="2"| Nutrition
+    | colspan="2"| {{Type|VarInt}}
+    | Non-negative
+    |-
+    | colspan="2"| Saturation Modifier
+    | colspan="2"| {{Type|Float}}
+    | How much saturation will be given after consuming the item.
+    |-
+    | colspan="2"| Can Always Eat
+    | colspan="2"| {{Type|Boolean}}
+    | Whether the item can always be eaten, even at full hunger.
+    |}
+ |-
+ | 21
+ | <code>minecraft:consumable</code>
+ | Makes the item consumable.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Consume seconds
+    | {{Type|Float}}
+    | How long it takes to consume the item.
+    |-
+    | Animation
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: none, 1: eat, 2: drink, 3: block, 4: bow, 5: spear, 6: crossbow, 7: spyglass, 8: toot_horn, 9: brush
+    |-
+    | Sound
+    | {{Type|ID or}} {{Type|Sound Event}}
+    | ID in the <code>minecraft:sound_event</code> registry, or an inline definition.
+    |-
+    | Has consume particles
+    | {{Type|Boolean}}
+    | 
+    |-
+    | Effects
+    | {{Type|Prefixed Array}} of [[#Consume Effect|Consume Effect]]
+    | Effects to apply on consumption. See [[#Consume Effect|Consume Effect]].
+    |}
+ |-
+ | 22
+ | <code>minecraft:use_remainder</code>
+ | This specifies the item produced after using the current item. In the Notchian server, this is used for stews, which turn into bowls.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Remainder
+    | {{Type|Slot}}
+    |
+    |}
+ |-
+ | 23
+ | <code>minecraft:use_cooldown</code>
+ | Cooldown to apply on use of the item.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Seconds
+    | {{Type|Float}}
+    | 
+    |-
+    | Cooldown group
+    | {{Type|Prefixed Optional}} {{Type|Identifier}}
+    | Group of items to apply the cooldown to. If absent defaults to the item's identifier.
+    |}
+ |-
+ | 24
+ | <code>minecraft:damage_resistant</code>
+ | Marks this item as damage resistant.<br>The client won't render the item as being on-fire if this component is present.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Types
+    | {{Type|Identifier}}
+    | Tag specifying damage types the item is immune to. Not prefixed by '#'!.
+    |}
+ |-
+ | 25
+ | <code>minecraft:tool</code>
+ | Alters the speed at which this item breaks certain blocks
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | rowspan="3"| Rule
+    | Blocks
+    | rowspan="3"| {{Type|Prefixed Array}}
+    | {{Type|ID Set}}
+    | The blocks this rule applies to (IDs in the <code>minecraft:block</code> registry).
+    |-
+    | Speed
+    | {{Type|Prefixed Optional}} {{Type|Float}}
+    | The speed at which the tool breaks this rules' blocks.
+    |-
+    | Correct Drop For Blocks
+    | {{Type|Prefixed Optional}} {{Type|Boolean}}
+    | Whether items should drop only if this is the correct tool.
+    |-
+    | colspan="2"| Default Mining Speed
+    | colspan="2"| {{Type|Float}}
+    | The mining speed in case none of the previous rule were matched.
+    |-
+    | colspan="2"| Damage Per Block
+    | colspan="2"| {{Type|VarInt}}
+    | The amount of damage the item takes per block break.
+    |-
+    | colspan="2"| Can Destroy Blocks In Creative
+    | colspan="2"| {{Type|Boolean}}
+    | If false, this tool prevents the player from breaking blocks in creative mode.
+    |}
+ |-
+ | 26
+ | <code>minecraft:weapon</code>
+ | Item treated as a weapon
+  | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Damage Per Attack
+    | {{Type|VarInt}}
+    |-
+    | Disable Blocking For
+    | {{Type|Float}}
+    | In Seconds
+    |}
+ |-
+ | 27
+ | <code>minecraft:enchantable</code>
+ | Allows the item to be enchanted by an enchanting table.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Value
+    | {{Type|VarInt}}
+    | Opaque internal value controlling how expensive enchantments may be offered.
+    |}
+ |-
+ | 28
+ | <code>minecraft:equippable</code>
+ | Allows the item to be equipped by the player.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Slot
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: mainhand, 1: feet, 2: legs, 3: chest, 4: head, 5: offhand, 6: body
+    |-
+    | Equip sound
+    | {{Type|ID or}} {{Type|Sound Event}}
+    | ID in the <code>minecraft:sound_event</code> registry, or an inline definition.
+    |-
+    | Model
+    | {{Type|Prefixed Optional}} {{Type|Identifier}}
+    |
+    |-
+    | Camera overlay
+    | {{Type|Prefixed Optional}} {{Type|Identifier}}
+    |
+    |-
+    | Allowed entities
+    | {{Type|Prefixed Optional}} {{Type|ID Set}}
+    | IDs in the <code>minecraft:entity_type</code> registry.
+    |-
+    | Dispensable
+    | {{Type|Boolean}}
+    |
+    |-
+    | Swappable
+    | {{Type|Boolean}}
+    |
+    |-
+    | Damage on hurt
+    | {{Type|Boolean}}
+    |
+    |}
+ |-
+ | 29
+ | <code>minecraft:repairable</code>
+ | Items that can be combined with this item in an anvil to repair it.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Items
+    | {{Type|ID Set}}
+    | IDs in the <code>minecraft:item</code> registry.
+    |}
+ |-
+ | 30
+ | <code>minecraft:glider</code>
+ | Makes the item function like elytra.
+ | ''no fields''
+ |-
+ | 31
+ | <code>minecraft:tooltip_style</code>
+ | Custom textures for the item tooltip.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Style
+    | {{Type|Identifier}}
+    |
+    |}
+ |-
+ | 32
+ | <code>minecraft:death_protection</code>
+ | Makes the item function like a totem of undying.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Effects
+    | {{Type|Prefixed Array}} of [[#Consume Effect|Consume Effect]]
+    | Effects to apply on consumption. See [[#Consume Effect|Consume Effect]].
+    |}
+ |-
+ | 33
+ | <code>minecraft:blocks_attacks</code>
+ | Makes the item act like a shield.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | colspan="2"| Block delay seconds
+    | colspan="2"| {{Type|Float}}
+    |
+    |-
+    | colspan="2"| Disable cooldown scale
+    | colspan="2"| {{Type|Float}}
+    |
+    |-
+    | rowspan="4"| Damage reductions
+    | Horizontal blocking angle
+    | rowspan="4"| {{Type|Prefixed Array}}
+    | {{Type|Float}}
+    |
+    |-
+    | Type
+    | {{Type|Prefixed Optional}} {{Type|ID Set}}
+    | IDs in the <code>minecraft:damage_type</code> registry.
+    |-
+    | Base
+    | {{Type|Float}}
+    |
+    |-
+    | Factor
+    | {{Type|Float}}
+    |
+    |-
+    | colspan="2"| Item damage threshold
+    | colspan="2"| {{Type|Float}}
+    |
+    |-
+    | colspan="2"| Item damage base
+    | colspan="2"| {{Type|Float}}
+    |
+    |-
+    | colspan="2"| Item damage factor
+    | colspan="2"| {{Type|Float}}
+    |
+    |-
+    | colspan="2"| Bypassed by
+    | colspan="2"| {{Type|Prefixed Optional}} {{Type|Identifier}}
+    |
+    |-
+    | colspan="2"| Block sound
+    | colspan="2"| {{Type|Prefixed Optional}} {{Type|ID Or}} {{Type|Sound Event}}
+    |
+    |-
+    | colspan="2"| Disable sound
+    | colspan="2"| {{Type|Prefixed Optional}} {{Type|ID Or}} {{Type|Sound Event}}
+    |
+    |}
+ |-
+ | 34
+ | <code>minecraft:stored_enchantments</code>
+ | The enchantments stored in this enchanted book.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | rowspan="2"| Enchantment
+    | Type ID
+    | rowspan="2"| {{Type|Prefixed Array}}
+    | {{Type|VarInt}} {{Type|Enum}}
+    | The ID of the enchantment in the <code>minecraft:enchantment</code> registry.
+    |-
+    | Level
+    | {{Type|VarInt}}
+    | The level of the enchantment.
+    |}
+ |-
+ | 35
+ | <code>minecraft:dyed_color</code>
+ | Color of dyed leather armor.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Color
+    | {{Type|Int}}
+    | The RGB components of the color, encoded as an integer.
+    |}
+ |-
+ | 36
+ | <code>minecraft:map_color</code>
+ | Color of the markings on the map item model.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Color
+    | {{Type|Int}}
+    | The RGB components of the color, encoded as an integer.
+    |}
+ |-
+ | 37
+ | <code>minecraft:map_id</code>
+ | The ID of the map.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | ID
+    | {{Type|VarInt}}
+    | 
+    |}
+ |-
+ | 38
+ | <code>minecraft:map_decorations</code>
+ | Icons present on a map.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Data
+    | {{Type|NBT}}
+    | Always a Compound Tag.
+    |}
+ |-
+ | 39
+ | <code>minecraft:map_post_processing</code>
+ | Used internally by the client when expanding or locking a map. Display extra information on the item's tooltip when the component is present.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Type
+    | {{Type|VarInt}} {{Type|Enum}}
+    | Type of post processing. Can be either:
+* 0 - Lock
+* 1 - Scale
+    |}
+ |-
+ | 40
+ | <code>minecraft:charged_projectiles</code>
+ | Projectiles loaded into a charged crossbow.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Projectiles
+    | {{Type|Prefixed Array}} of {{Type|Slot}}
+    | The projectiles.
+    |}
+ |-
+ | 41
+ | <code>minecraft:bundle_contents</code>
+ | Contents of a bundle.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Items
+    | {{Type|Prefixed Array}} of {{Type|Slot}}
+    | The projectiles.
+    |}
+ |-
+ | 42
+ | <code>minecraft:potion_contents</code>
+ | Visual and effects of a potion item.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+
+    | Potion ID
+    | {{Type|Prefixed Optional}} {{Type|VarInt}}
+    | The ID of the potion type in the <code>minecraft:potion</code> registry. If present, the potion has the default effects associated with the potion type.
+    |-
+    | Custom Color
+    | {{Type|Prefixed Optional}} {{Type|Int}}
+    | The RGB components of the color, encoded as an integer. If absent, it uses the default color associated with the potion type.
+    |-
+    | Custom Effects
+    | {{Type|Prefixed Array}} of [[#Potion_Effect|Potion Effect]]
+    | Any custom effects the potion might have. See [[#Potion_Effect|Potion Effect]].
+    |-
+    | Custom Name
+    | {{Type|String}}
+    |
+    |}
+ |-
+ | 43
+ | <code>minecraft:potion_duration_scale</code>
+ | A duration multiplier for items that also have the <code>minecraft:potion_contents</code> component.
+ | As follows:
+  {| class="wikitable"
+    ! Name
+    ! Type
+    |-
+    | Effect Multiplier
+    | {{Type|Float}}
+    |}
+ |-
+ | 44
+ | <code>minecraft:suspicious_stew_effects</code>
+ | Effects granted by a suspicious stew.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | rowspan="2"| Effect
+    | Type ID
+    | rowspan="2"| {{Type|Prefixed Array}}
+    | {{Type|VarInt}} {{Type|Enum}}
+    | The ID of the effect in the <code>minecraft:mob_effect</code> registry.
+    |-
+    | Duration
+    | {{Type|VarInt}}
+    | The duration of the effect.
+    |}
+ |-
+ | 45
+ | <code>minecraft:writable_book_content</code>
+ | Content of a writable book.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+
+    | rowspan="2"| Page
+    | Raw Content
+    | rowspan="2"| {{Type|Prefixed Array}} (100)
+    | {{Type|String}} (1024)
+    | The raw text of the page.
+    |-
+    | Filtered Content
+    | {{Type|Prefixed Optional}} {{Type|String}} (1024)
+    | The content after passing through chat filters.
+    |}
+ |-
+ | 46
+ | <code>minecraft:written_book_content</code>
+ | Content of a written and signed book.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | colspan="2"| Raw Title
+    | colspan="2"| {{Type|String}} (32)
+    | The raw title of the book.
+    |-
+    | colspan="2"| Filtered Title
+    | colspan="2"| {{Type|Prefixed Optional}} {{Type|String}} (32)
+    | The title after going through chat filters.
+    |-
+    | colspan="2"| Author
+    | colspan="2"| {{Type|String}}
+    |
+    |-
+    | colspan="2"| Generation
+    | colspan="2"| {{Type|VarInt}}
+    |
+    |-
+    | rowspan="2"| Page
+    | Raw Content
+    | rowspan="2"| {{Type|Prefixed Array}} (100)
+    | {{Type|TextComponent}} (1024)
+    | The raw text of the page.
+    |-
+    | Filtered Content
+    | {{Type|Prefixed Optional}} {{Type|Text Component}} (1024)
+    | The content after passing through chat filters.
+    |-
+    | colspan="2"| Resolved
+    | colspan="2"| {{Type|Boolean}}
+    | Whether entity selectors have already been resolved.
+    |}
+ |-
+ | 47
+ | <code>minecraft:trim</code>
+ | Armor's trim pattern and color
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Trim Material
+    | {{Type|ID or}} [[#Trim Material|Trim Material]]
+    | ID in the <code>minecraft:trim_material</code> registry, or an inline definition.
+    |-
+    | Trim Pattern
+    | {{Type|ID or}} [[#Trim Pattern|Trim Pattern]]
+    | ID in the <code>minecraft:trim_pattern</code> registry, or an inline definition.
+    |}
+ |-
+ | 48
+ | <code>minecraft:debug_stick_state</code>
+ | State of the debug stick
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Data
+    | {{Type|NBT}}
+    | States of previously interacted blocks. Always a Compound Tag.
+    |}
+ |-
+ | 49
+ | <code>minecraft:entity_data</code>
+ | Data for the entity to be created from this item.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Entity Type
+    | {{Type|VarInt}}
+    | ID in the <code>minecraft:entity_type</code> registry.
+    |-
+    | Data
+    | {{Type|NBT}}
+    | Always a Compound Tag.
+    |}
+ |-
+ | 50
+ | <code>minecraft:bucket_entity_data</code>
+ | Data of the entity contained in this bucket.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Data
+    | {{Type|NBT}}
+    | Always a Compound Tag.
+    |}
+ |-
+ | 51
+ | <code>minecraft:block_entity_data</code>
+ | Data of the block entity to be created from this item.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Block Entity Type
+    | {{Type|VarInt}}
+    | ID in the <code>minecraft:block_entity_type</code> registry.
+    |-
+    | Data
+    | {{Type|NBT}}
+    | Always a Compound Tag.
+    |}
+ |-
+ | 52
+ | <code>minecraft:instrument</code>
+ | The sound played when using a goat horn.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Instrument
+    | {{Type|ID or}} [[#Instrument|Instrument]]
+    | ID in the <code>minecraft:instrument</code> registry, or an inline definition.
+    |}
+ |-
+ | 53
+ | <code>minecraft:provides_trim_material</code>
+ | Used to make an item into a valid armor trim material.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Mode
+    | {{Type|Byte}} {{Type|Enum}}
+    | Defines how the following field is read, either referenced or direct.
+    |-
+    | Material
+    | Varies
+    |
+     {| class="wikitable"
+      ! Mode
+      ! Data
+      ! Description
+      |-
+      | 0
+      | {{Type|Identifier}}
+      | The name of a material. 
+      |-
+      | 1
+      | {{Type|ID or}} [[#Trim Material|Trim Material]]
+      | An ID in the <code>minecraft:trim_material</code> registry or a direct trim material definition.
+      |}
+    |}
+ |-
+ | 54
+ | <code>minecraft:ominous_bottle_amplifier</code>
+ | Amplifier for the effect of an ominous bottle.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Amplifier
+    | {{Type|VarInt}}
+    | Between 0 and 4.
+    |}
+ |-
+ | 55
+ | <code>minecraft:jukebox_playable</code>
+ | The song this item will play when inserted into a jukebox.<br>{{warning|The Notchian client assumes that the server will always represent the jukebox song either by name, or reference an entry on its respective registry. Trying to directly specify a jukebox song (when <code>Jukebox Song Type</code> is 0) will cause the client to fail to parse it and subsequently disconnect, which is likely an unintended bug.}}
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Mode
+    | {{Type|Byte}} {{Type|Enum}}
+    | Whether the jukebox song is specified directly, or just referenced by name. This defines how the following field is read.
+    |-
+    | Jukebox Song
+    | Varies
+    |
+     {| class="wikitable"
+      ! Mode
+      ! Data
+      ! Description
+      |-
+      | 0
+      | {{Type|Identifier}}
+      | The name of a jukebox song in its respective registry.
+      |-
+      | 1
+      | {{Type|ID or}} [[#Jukebox Song|Jukebox Song]]
+      | ID in the <code>minecraft:jukebox_song</code> registry or a direct jukebox song.
+      |}
+    |}
+ |-
+ | 56
+ | <code>minecraft:provides_banner_patterns</code>
+ | Used to make an item into a valid banner pattern material. 
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Key
+    | {{Type|Identifier}}
+    | A pattern identifier like <code>#minecraft:pattern_item/globe</code>.
+    |}
+ |-
+ | 57
+ | <code>minecraft:recipes</code>
+ | The recipes this knowledge book unlocks.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Data
+    | {{Type|NBT}}
+    | Always a Compound Tag.
+    |}
+ |-
+ | 58
+ | <code>minecraft:lodestone_tracker</code>
+ | The lodestone this compass points to.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Has Global Position
+    | {{Type|Boolean}}
+    | Whether this lodestone points to a position, otherwise it spins randomly.
+    |-
+    | Dimension
+    | {{Type|Identifier}}
+    | The dimension the compass points to. Only present if Has Global Position is true.
+    |-
+    | Position
+    | {{Type|Position}}
+    | The position the compass points to. Only present if Has Global Position is true.
+    |-
+    | Tracked
+    | {{Type|Boolean}}
+    | Whether the component is removed when the associated lodestone is broken.
+    |}
+ |-
+ | 59
+ | <code>minecraft:firework_explosion</code>
+ | Properties of a firework star.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Explosion
+    | [[#Firework_Explosion|Firework Explosion]]
+    | See [[#Firework_Explosion|Firework Explosion]].
+    |}
+ |-
+ | 60
+ | <code>minecraft:fireworks</code>
+ | Properties of a firework.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Flight Duration
+    | {{Type|VarInt}}
+    |
+    |-
+    | Explosions
+    | {{Type|Prefixed Array}} of [[#Firework_Explosion|Firework Explosion]]
+    | See [[#Firework_Explosion|Firework Explosion]].
+    |}
+ |-
+ | 61
+ | <code>minecraft:profile</code>
+ | Game Profile of a player's head.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Profile
+    | {{Type|Resolvable Profile}}
+    | 
+    |}
+ |-
+ | 62
+ | <code>minecraft:note_block_sound</code>
+ | Sound played by a note block when this player's head is placed on top of it.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Sound
+    | {{Type|Identifier}}
+    |
+    |}
+ |-
+ | 63
+ | <code>minecraft:banner_patterns</code>
+ | Patterns of a banner or banner applied to a shield.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | rowspan="2"| Layer
+    | Pattern Type
+    | rowspan="2"| {{Type|Prefixed Array}}
+    | {{Type|ID or}} [[#Banner Pattern|Banner Pattern]]
+    | An ID in the <code>minecraft:banner_pattern</code> registry, or an inline definition.
+    |-
+    | Color
+    | [[#Dye_Color|Dye Color]]
+    | See [[#Dye_Color|Dye Color]].
+    |}
+ |-
+ | 64
+ | <code>minecraft:base_color</code>
+ | Base color of the banner applied to a shield.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Color
+    | [[#Dye_Color|Dye Color]]
+    | See [[#Dye_Color|Dye Color]].
+    |}
+ |-
+ | 65
+ | <code>minecraft:pot_decorations</code>
+ | Decorations on the four sides of a pot.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Decorations
+    | {{Type|Prefixed Array}} (4) of {{Type|VarInt}} {{Type|Enum}}
+    | The ID of the items in the <code>minecraft:item</code> registry.
+    |}
+ |-
+ | 66
+ | <code>minecraft:container</code>
+ | Items inside a container of any type.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Items
+    | {{Type|Prefixed Array}} (256) of {{Type|Slot}}
+    |
+    |}
+ |-
+ | 67
+ | <code>minecraft:block_state</code>
+ | State of a block.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | rowspan="2"| Property
+    | Name
+    | rowspan="2"| {{Type|Prefixed Array}}
+    | {{Type|String}}
+    |
+    |-
+    | Value
+    | {{Type|String}}
+    |
+    |}
+ |-
+ | 68
+ | <code>minecraft:bees</code>
+ | Bees inside a hive.
+ | As follows:
+   {| class="wikitable"
+    ! colspan="2"| Name
+    ! colspan="2"| Type
+    ! Description
+    |-
+    | rowspan="4"| Bee
+    | Entity Type
+    | rowspan="4"| {{Type|Prefixed Array}}
+    | {{Type|VarInt}}
+    | ID in the <code>minecraft:entity_type</code> registry.
+    |-
+    | Entity Data
+    | {{Type|NBT}}
+    | Custom data for the entity, always a Compound Tag. Same structure as the <code>minecraft:custom_data</code> component.
+    |-
+    | Ticks In Hive
+    | {{Type|VarInt}}
+    |
+    |-
+    | Min Ticks In Hive
+    | {{Type|VarInt}}
+    |
+    |}
+ |-
+ | 69
+ | <code>minecraft:lock</code>
+ | Name of the necessary key to open this container.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Key
+    | {{Type|NBT}}
+    | Always a String Tag.
+    |}
+ |-
+ | 70
+ | <code>minecraft:container_loot</code>
+ | Loot table for an unopened container.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Data
+    | {{Type|NBT}}
+    | Always a Compound Tag.
+    |}
+ |-
+ | 71
+ | <code>minecraft:break_sound</code>
+ | Changes the sound that plays when the item breaks. 
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Sound Event
+    | {{Type|ID or}} {{Type|Sound Event}}
+    | ID in the <code>minecraft:sound_event</code> registry, or an inline definition.
+    |}
+ |-
+ | 72
+ | <code>minecraft:villager/variant</code>
+ | The biome variant of a villager.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | An ID in the <code>minecraft:villager_type</code> registry.
+    |}
+ |-
+ | 73
+ | <code>minecraft:wolf/variant</code>
+ | The variant of a wolf.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | An ID in the <code>minecraft:wolf_variant</code> registry.
+    |}
+ |-
+ | 74
+ | <code>minecraft:wolf/sound_variant</code>
+ | The type of sounds that a wolf makes.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | An ID in the <code>minecraft:wolf_sound_variant</code> registry.
+    |}
+ |-
+ | 75
+ | <code>minecraft:wolf/collar</code>
+ | The dye color of the wolf's collar.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    |-
+    | Color
+    | [[#Dye_Color|Dye Color]]
+    |}
+ |-
+ | 76
+ | <code>minecraft:fox/variant</code>
+ | The variant of a fox.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: red, 1: snow.
+    |}
+ |-
+ | 77
+ | <code>minecraft:salmon/size</code>
+ | The size of a salmon.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Type
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: small, 1: medium, 2: large.
+    |}
+ |-
+ | 78
+ | <code>minecraft:parrot/variant</code>
+ | The variant of a parrot.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: red_blue, 1: blue, 2: green, 3: yellow_blue, 4: gray
+    |}
+ |-
+ | 79
+ | <code>minecraft:tropical_fish/pattern</code>
+ | The pattern of a tropical fish.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Pattern
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: kob, 1: sunstreak, 2: snooper, 3: dasher, 4: brinely, 5: spotty, 6: flopper, 7: stripey, 8: glitter, 9: blockfish, 10: betty, 11: clayfish.
+    |}
+ |-
+ | 80
+ | <code>minecraft:tropical_fish/base_color</code>
+ | The base color of a tropical fish.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    |-
+    | Color
+    | {{Type|Dye Color}}
+    |}
+ |-
+ | 81
+ | <code>minecraft:tropical_fish/pattern_color</code>
+ | The pattern color of a tropical fish.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    |-
+    | Color
+    | {{Type|Dye Color}}
+    |}
+ |-
+ | 82
+ | <code>minecraft:mooshroom/variant</code>
+ | The variant of a mooshroom.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: red, 1: brown.
+    |}
+ |-
+ | 83
+ | <code>minecraft:rabbit/variant</code>
+ | The variant of a rabbit.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: brown, 1: white, 2: black, 3: white splotched, 4: gold, 5: salt, 6: evil.
+    |}
+ |-
+ | 84
+ | <code>minecraft:pig/variant</code>
+ | The variant of a pig.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | An ID in the <code>minecraft:pig_variant</code> registry.
+    |}
+ |-
+ | 85
+ | <code>minecraft:cow/variant</code>
+ | The variant of a cow.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | An ID in the <code>minecraft:cow_variant</code> registry.
+    |}
+ |-
+ | 86
+ | <code>minecraft:chicken/variant</code>
+ | The variant of a chicken.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Mode
+    | {{Type|Byte}} {{Type|Enum}}
+    | Defines how the following field is read.
+    |-
+    | Variant
+    | Varies
+    |
+     {| class="wikitable"
+      ! Mode
+      ! Data
+      ! Description
+      |-
+      | 0
+      | {{Type|Identifier}}
+      | The name of a chicken variant.
+      |-
+      | 1
+      | {{Type|VarInt}}
+      | An ID in the <code>minecraft:chicken_variant</code> registry.
+      |}
+    |}
+ |-
+ | 87
+ | <code>minecraft:frog/variant</code>
+ | The variant of a frog.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | An ID in the <code>minecraft:frog_variant</code> registry.
+    |}
+ |-
+ | 88
+ | <code>minecraft:horse/variant</code>
+ | The variant of a horse.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: white, 1: creamy, 2: chestnut, 3: brown, 4: black, 5: gray, 6: dark brown.
+    |}
+ |-
+ | 89
+ | <code>minecraft:painting/variant</code>
+ | The variant of a painting.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    |-
+    | Variant
+    | [[Java Edition protocol/Entity_metadata#Painting_Variant|Painting Variant]]
+    |}
+ |-
+ | 90
+ | <code>minecraft:llama/variant</code>
+ | The variant of a llama.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: creamy, 1: white, 2: brown, 3: gray.
+    |}
+ |-
+ | 91
+ | <code>minecraft:axolotl/variant</code>
+ | The variant of an axolotl.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | 0: lucy, 1: wild, 2: gold, 3: cyan, 4: blue.
+    |}
+ |-
+ | 92
+ | <code>minecraft:cat/variant</code>
+ | The variant of a cat.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    ! Description
+    |-
+    | Variant
+    | {{Type|VarInt}} {{Type|Enum}}
+    | An ID in the <code>minecraft:cat_variant</code> registry.
+    |}
+ |-
+ | 93
+ | <code>minecraft:cat/collar</code>
+ | The dye color of the cat's collar.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    |-
+    | Color
+    | [[#Dye_Color|Dye Color]]
+    |}
+ |-
+ | 94
+ | <code>minecraft:sheep/color</code>
+ | The color of a sheep.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    |-
+    | Color
+    | [[#Dye_Color|Dye Color]]
+    |}
+ |-
+ | 95
+ | <code>minecraft:shulker/color</code>
+ | The color of a shulker.
+ | As follows:
+   {| class="wikitable"
+    ! Name
+    ! Type
+    |-
+    | Color
+    | [[#Dye_Color|Dye Color]]
+    |}
+ |}
+
+== Other types ==
+
+Common types used in multiple components are described below.
+
+=== Block Predicate ===
+
+Describes a predicate used when block filtering is necessary. It can be parameterized to account for any combination of the type of block, the values of specific block state properties, or block entities' NBT data or data components.
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Blocks
+ | {{Type|Prefixed Optional}} {{Type|ID Set}}
+ | IDs in the <code>minecraft:block</code> registry. Present only when tied to specific types of blocks.
+ |-
+ | Properties
+ | {{Type|Prefixed Optional}} {{Type|Prefixed Array}} of [[Java Edition protocol/Slot data#Property|Property]]
+ | See Property structure below. Present only when tied to specific properties of blocks.
+ |-
+ | NBT
+ | {{Type|Prefixed Optional}} {{Type|NBT}}
+ | 
+ 
+|-
+|Data Components
+|{{Type|Prefixed Array}} of [[Java Edition protocol/Slot data#Exact Data Component Matcher|Exact Data Component Matcher]]
+|A list of [[Data component format|data components]] which must exactly match the target block.
+|-
+|Partial Data Component Predicates
+|{{Type|Prefixed Array}} of [[Java Edition protocol/Slot data#Partial Data Component Matcher|Partial Data Component Matcher]]
+|A list of predicates to match the block's data components. Max length = 64.
+|}
+
+==== Property ====
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Name
+ | {{Type|String}}
+ | Name of the block state property.
+ |-
+ | Is Exact Match
+ | {{Type|Boolean}}
+ | Whether this is an exact value match, as opposed to ranged.
+ |-
+ | Exact Value
+ | {{Type|Optional}} {{Type|String}}
+ | Value of the block state property. Only present in exact match mode.
+ |-
+ | Min Value
+ | {{Type|Optional}} {{Type|String}}
+ | Minimum value of the block state property range. Only present in ranged match mode.
+ |-
+ | Max Value
+ | {{Type|Optional}} {{Type|String}}
+ | Maximum value of the block state property range. Only present in ranged match mode.
+ |}
+
+==== Exact Data Component Matcher ====
+{| class="wikitable"
+|+
+!Name
+!Type
+!Description
+|-
+|Type
+|{{Type|VarInt}} {{Type|Enum}}
+|ID of the data component as listed in the table of data component types above.
+|-
+|Value
+|[[Java Edition protocol/Slot data#Structured components|Structured Component]]
+|Value of the data component. 
+|}
+
+==== Partial Data Component Matcher ====
+{| class="wikitable"
+|+
+!Name
+!Type
+!Description
+|-
+|Type
+|{{Type|VarInt}} {{Type|Enum}}
+|Type of predicate. 0: damage, 1: enchantments, 2: stored_enchantments, 3: potion_contents, 4: custom_data, 5: container, 6: bundle_contents, 7: firework_explosion, 8: fireworks, 9: writable_book_content, 10: written_book_content, 11: attribute_modifiers, 12: trim, 13: jukebox_playable.
+|-
+|Predicate
+|{{Type|NBT}} Compound
+|[[Data component predicate]] encoded as an NBT compound tag.
+|}
+
+=== Dye Color ===
+
+A color from one of the 16 dye types.
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Color
+ | {{Type|VarInt}} {{Type|Enum}}
+ | Can be one of the following:
+* 0 - White
+* 1 - Orange
+* 2 - Magenta
+* 3 - Light Blue
+* 4 - Yellow
+* 5 - Lime
+* 6 - Pink
+* 7 - Gray
+* 8 - Light Gray
+* 9 - Cyan
+* 10 - Purple
+* 11 - Blue
+* 12 - Brown
+* 13 - Green
+* 14 - Red
+* 15 - Black
+ |}
+
+=== Firework Explosion ===
+
+Represents a firework explosion, consisting of a shape, colors, and extra details.
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Shape
+ | {{Type|VarInt}} {{Type|Enum}}
+ | Can be one of the following:
+* 0 - Small ball
+* 1 - Large ball
+* 2 - Star
+* 3 - Creeper
+* 4 - Burst
+ |-
+ | Colors
+ | {{Type|Prefixed Array}} of {{Type|Int}}
+ | The RGB components of the color, encoded as an integer.
+ |-
+ | Fade Colors
+ | {{Type|Prefixed Array}} of {{Type|Int}}
+ | The RGB components of the color, encoded as an integer.
+ |-
+ | Has Trail
+ | {{Type|Boolean}}
+ |
+ |-
+ | Has Twinkle
+ | {{Type|Boolean}}
+ |
+ |}
+
+=== Potion Effect ===
+
+Describes all the aspects of a potion effect.
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Type ID
+ | {{Type|VarInt}} {{Type|Enum}}
+ | The ID of the effect in the <code>minecraft:mob_effect</code> registry.
+ |-
+ | Details
+ | Detail
+ | See Detail structure below.
+ |}
+
+The Detail structure is defined as follows:
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Amplifier
+ | {{Type|VarInt}}
+ |
+ |-
+ | Duration
+ | {{Type|VarInt}}
+ | -1 for infinite.
+ |-
+ | Ambient
+ | {{Type|Boolean}}
+ | Produces more translucent particle effects if true.
+ |-
+ | Show Particles
+ | {{Type|Boolean}}
+ | Completely hides effect particles if false.
+ |-
+ | Show Icon
+ | {{Type|Boolean}}
+ | Shows the potion icon in the inventory screen if true.
+ |-
+ | Hidden Effect
+ | {{Type|Prefixed Optional}} Detail
+ | Used to store the state of the previous potion effect when a stronger one is applied. This guarantees that the weaker one will persist, in case it lasts longer.
+{{missing info|section|This behavior seems to be entirely server-sided. Does the presence of this field actually has any noticeable impact on the client?}}
+ |}
+
+=== Trim Material ===
+
+{{See also|Minecraft Wiki:Projects/wiki.vg merge/Registry Data#Armor Trim Material}}
+
+{| class="wikitable"
+ ! colspan="2"| Name
+ ! colspan="2"| Type
+ ! Description
+ |-
+ | colspan="2"| Suffix
+ | colspan="2"| {{Type|String}}
+ |
+ |-
+ | rowspan="2"| Overrides
+ | Armor Material Type
+ | rowspan="2"| {{Type|Prefixed Array}}
+ | {{Type|Identifier}}
+ |
+ |-
+ | Overriden Asset Name
+ | {{Type|String}}
+ |
+ |-
+ | colspan="2"| Description
+ | colspan="2"| {{Type|Text Component}}
+ |}
+
+=== Trim Pattern ===
+
+{{See also|Minecraft Wiki:Projects/wiki.vg merge/Registry Data#Armor Trim Pattern}}
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Asset Name
+ | {{Type|String}}
+ |
+ |-
+ | Template Item
+ | {{Type|VarInt}}
+ |
+ |-
+ | Description
+ | {{Type|Text Component}}
+ |
+ |-
+ | Decal
+ | {{Type|Boolean}}
+ |
+ |}
+
+=== Consume Effect ===
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Type
+ | {{Type|VarInt}}
+ | The ID of the effect in the <code>minecraft:consume_effect_type</code> registry.
+ |-
+ | Data
+ | Varies
+ | See below
+ |}
+
+{| class="wikitable"
+ ! Type
+ ! Name
+ ! Data
+ |-
+ | 0
+ | <code>minecraft:apply_effects</code>
+ |
+  {| class="wikitable"
+   ! Name
+   ! Type
+   ! Description
+   |-
+   | Effects
+   | {{Type|Prefixed Array}} of [[#Potion_Effect|Potion Effect]]
+   |
+   |-
+   | Probability
+   | {{Type|Float}}
+   |
+   |}
+ |-
+ | 1
+ | <code>minecraft:remove_effects</code>
+ |
+  {| class="wikitable"
+   ! Name
+   ! Type
+   ! Description
+   |-
+   | Effects
+   | {{Type|ID Set}}
+   |
+   |}
+ |-
+ | 2
+ | <code>minecraft:clear_all_effects</code>
+ | ''no fields''
+ |-
+ | 3
+ | <code>minecraft:teleport_randomly</code>
+ |
+  {| class="wikitable"
+   ! Name
+   ! Type
+   ! Description
+   |-
+   | Diameter
+   | {{Type|Float}}
+   |
+   |}
+
+ |-
+ | 4
+ | <code>minecraft:play_sound</code>
+ |
+  {| class="wikitable"
+   ! Name
+   ! Type
+   ! Description
+   |-
+   | Sound
+   | {{Type|Sound Event}}
+   |
+   |}
+ |}
+
+
+=== Instrument ===
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Sound Event
+ | {{Type|ID or}} {{Type|Sound Event}}
+ | The sound to be played.
+ |-
+ | Use Duration
+ | {{Type|Float}}
+ | The time it takes to use the instrument.
+ |-
+ | Range
+ | {{Type|Float}}
+ | The sound range of the instrument.
+ |-
+ | Description
+ | {{Type|Text Component}}
+ | Description shown in the item tooltip.
+ |}
+
+=== Jukebox Song ===
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Sound Event
+ | {{Type|ID or}} {{Type|Sound Event}}
+ | The sound to be played.
+ |-
+ | Description
+ | {{Type|Text Component}}
+ | The description shown in the item lore.
+ |-
+ | Duration
+ | {{Type|Float}}
+ | The duration the songs should play for, in seconds.
+ |-
+ | Output
+ | {{Type|VarInt}}
+ | The output strength given by a comparator. Between 0 and 15.
+ |-
+|}
+
+=== Banner Pattern ===
+
+{| class="wikitable"
+ ! Name
+ ! Type
+ ! Description
+ |-
+ | Asset ID
+ | {{Type|Identifier}}
+ | Identifier of the asset.
+ |-
+ | Translation Key
+ | {{Type|String}}
+ |
+ |}
+
+[[Category:Protocol Details]]
+[[Category:Java Edition protocol]]
+{{license wiki.vg}}

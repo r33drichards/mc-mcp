@@ -1,0 +1,34 @@
+{{for|sounds that make noise|Sound}}
+{{Exclusive|java}}
+[[File:Continentalness noise map.png|thumb|An example sample of the minecraft:continentalness noise]]
+
+A '''noise''' is a technical [[JSON]] file that can be referenced by a [[density function]] and [[surface rule]]. They are stored within a [[data pack]] in the folder {{cd|data/<namespace>/worldgen/noise}}.
+
+In addition to being called by density functions and surface rules, there are also some noises with hard-coded usage:
+* {{code|minecraft:surface}}: Affects the surface layer thickness in surface rules.
+* {{code|minecraft:surface_secondary}}: Used as the thickness of additional surface layer in surface rules.
+* {{code|minecraft:clay_bands_offset}}: Used to generate badland terracotta bands in {{code|bandlands}} surface rules.
+* {{code|minecraft:badlands_pillar}}, {{code|minecraft:badlands_pillar_roof}}, {{code|minecraft:badlands_surface}}: Used when generating badland [[Terrain_features#Hoodoo|hoodoo]]s in {{cd|minecraft:eroded_badlands}} biome.
+* {{code|minecraft:iceberg_pillar}}, {{code|minecraft:iceberg_pillar_roof}}, {{code|minecraft:iceberg_surface}}: Used when generating iceberg [[terrain feature]] in {{cd|minecraft:frozen_ocean}} and {{cd|minecraft:deep_frozen_ocean}} biomes.
+
+== JSON format ==
+
+<div class="treeview">
+* {{nbt|compound}}: Root object.
+** {{Nbt|int|firstOctave}}: First octave. If {{nbt|bool|legacy_random_source}} in the noise settings is true, it must be an integer less than or equal to 1, otherwise the value range is not unlimited.
+** {{Nbt|list|amplitudes}}: Amplitudes of sub-noise. The frequency of a sub-noise at <code>index</code> (from 0) in the list is <code>2^(- firstOctave + index)</code>, and the amplitude (the value of the sub-noise ranges from <code>-amplitude</code> to <code>+amplitude</code>) of this sub-noise is about <code>1.04 * doubleValueAtIndex * 2^(sizeOfThisList - index - 1) / (2^sizeOfThisList - 1)</code> (assuming the range of 3D Improved Perlin Noise is ±1.04). For each sub-noise, two 3D improved perlin noises are created and their average is taken. The final range of this noise value is <code>± 10 * sumOfSubNoises / ( 3 * ( 1 + 1 / m ) )</code>, where m is the number of elements in the list after removing the leading and trailing zero elements. If {{nbt|bool|legacy_random_source}} in the noise settings is true, the length must be less than or equal to <code>1-firstOctave</code>. If false, the length is unlimited.
+*** {{Nbt|double}}: A double value for a sub-noise. 
+</div>
+
+== History ==
+{{empty section}}
+
+== External links ==
+* [https://misode.github.io/worldgen/noise/ Noise Generator on misode.github.io]
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Rauschdefinition]]
+[[fr:Bruit]]
+[[zh:噪声]]

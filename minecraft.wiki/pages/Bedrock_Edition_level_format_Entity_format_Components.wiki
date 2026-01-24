@@ -1,0 +1,220 @@
+{{exclusive|bedrock}}
+
+This page lists the unique NBT tags for entities that have a certain component.
+__TOC__
+<div class="treeview">
+== economy_trade_table ==
+This component is used by villagers and wandering traders.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|int|Riches}}: Unknown.
+**{{nbt|compound|Offers}}: (May not exist) The trade info.
+***{{nbt|list|Recipes}}: The list of trade recipes.
+****{{nbt|compound}}: A recipe.
+*****{{nbt|compound|buyA}}: The first 'cost' item.
+******{{bedrock nbt|Item Stack|item}}
+*****{{nbt|compound|buyB}}: (May not exist) The second 'cost' item
+******{{bedrock nbt|Item Stack|item}}
+*****{{nbt|compound|sell}}: The item being sold for each set of cost items.
+******{{bedrock nbt|Item Stack|item}}
+*****{{nbt|int|tier}}: The tier that the trader needs to reach to access this recipe.
+*****{{nbt|int|uses}}: The number of times this trade has been used. The trade becomes disabled when this is greater or equal to maxUses.
+*****{{nbt|int|maxUses}}: The maximum number of times this trade can be used before it is disabled. Increases by a random amount from 2 to 12 when offers are refreshed.{{needs testing}}
+*****{{nbt|int|traderExp}}: The trade experiences to be rewarded to this trader entity.
+*****{{nbt|byte|rewardExp}}: 1 or 0 (true/false) - true if this trade provides XP orb drops.
+*****{{nbt|int|demand}}: The price adjuster of the first 'cost' item based on demand. Updated when a villager resupply.
+*****{{nbt|int|buyCountA}}: The count needed for the first 'cost' item.
+*****{{nbt|int|buyCountB}}: The count needed for the second 'cost' item.
+*****{{nbt|float|priceMultiplierA}}: The multiplier on the demand and discount price adjuster; the final adjusted price is added to the first 'cost' item's price.
+*****{{nbt|float|priceMultiplierB}}: The multiplier on the demand and discount price adjuster; the final adjusted price is added to the second 'cost' item's price.
+***{{nbt|list|TierExpRequirements}}: Trade experiences required to become each trade tier.
+****{{nbt|compound}}: A tier.
+*****{{nbt|int|<''tier_level_num''>}}: Trade xperiences required to become this tier.
+**{{nbt|byte|ConvertedFromVillagerV1}}: (May not exist) Unknown.
+**{{nbt|string|TradeTablePath}}: (May not exist) The path of the json file of the trade table.
+**{{nbt|int|LowTierCuredDiscount}}: (May not exist) The discount price adjuster gained by curing zombie villagers
+**{{nbt|int|HighTierCuredDiscount}}: (May not exist) The discount price adjuster gained by curing zombie villagers
+**{{nbt|int|NearbyCuredDiscount}}: (May not exist) The discount price adjuster gained by curing nearby zombie villagers
+**{{nbt|int|NearbyCuredDiscountTimeStamp}}: (May not exist) The discount price adjuster gained by curing nearby zombie villagers
+
+== ageable ==
+This component is used by axolotls, bees, cats, chickens, cows, dolphins, donkeys, foxes, goats, hoglins, horses, llamas, mooshrooms, mules, ocelots, pandas, pigs, polar bears, rabbits, sheep, skeleton horses, sniffers, striders, tadpoles, turtles, villagers, wolves, and zombie horses.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|int|Age}}: Represents the age of the entity in ticks; when negative, the entity is a baby. When 0, the entity becomes an adult.
+
+== balloon ==
+This component is used by allays, bees, chickens, cows, donkeys, foxes, glow squids, horses, iron golems, llamas, mooshrooms, mules, pandas, pigs, rabbits, sheep, skeleton horses, snow golems, and zombie horses.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|long|ballon_attached}}: The Unique ID of the attached entity.
+**{{nbt|float|ballon_max_height}}: Max height.
+**{{nbt|byte|ballon_should_drop}}: Unknown
+
+== breathable ==
+This component is used by axolotls, bats, bees, cats, cave spiders, chickens, cows, creepers, dolphins, donkeys, drowned, elder guardians, endermen, endermites, evokers, fish, foxes, frogs, ghasts, glow squids, goats, guardians, hoglins, horses, husks, llamas, magma cubes, mooshrooms, mules, ocelots, pandas, parrots, phantoms, piglins, piglin brutes, pillagers, pigs, players, polar bears, pufferfish, rabbits, ravagers, salmon, sheep, shulkers, silverfish, skeletons, skeleton horses, slimes, sniffers, snow golems, tropical fish, spiders, squids, sea turtles, strays, villagers, vindicators, wardens, wandering traders, withers, wither skeletons, tadpoles, witches, wolves, zombies, zoglins, zombie horses, zombified piglins, and zombie villagers.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|short|Air}}: How much air the living entity has, in ticks.
+
+== breedable ==
+This component is used by axolotls, bees, cats, chickens, cows, dolphins, donkeys, foxes, goats, hoglins, horses, llamas, mooshrooms, mules, ocelots, pandas, pigs, polar bears, rabbits, sheep, skeleton horses, sniffers, striders, tadpoles, turtles, villagers, wolves, and zombie horses.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|int|InLove}}: Number of ticks until the entity loses its breeding hearts and stops searching for a mate. 0 when not searching for a mate{{needs testing}}.
+**{{nbt|long|LoveCause}}: The Unique ID of the entity that caused this animal to breed.
+**{{nbt|int|BreedCooldown}}: Unknown
+
+== bribeable ==
+This component is only used by dolphins.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|int|BribeTime}}: Unknown<!--Time in ticks before the Entity can be bribed again.{{needs testing}}-->
+
+== inventory ==
+This component is used by minecarts with chest, minecarts with command block, minecarts with hopper, horses, donkeys, llamas, mules, pandas, and villagers.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|list|ChestItems}}:
+*** {{nbt|compound}}: An item in the inventory, including the slot tag.
+**** {{nbt|byte|Slot}}: The slot the item is in.
+**** {{bedrock nbt|Item Stack|item}}
+**{{nbt|string|InventoryVersion}}: e.g. 1.17.20-beta23
+**{{nbt|string|LootTable}}: Loot table to be used to fill the inventory when it is next opened, or the items are otherwise interacted with.
+**{{nbt|int|LootTableSeed}}: Seed for generating the loot table. 0 or omitted uses a random seed{{needs testing}}.
+
+== damage_over_time ==
+This component is used by axolotls and dolphins.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|short|DamageTime}}: Unknown
+
+== drying_out_timer ==
+This component is used by axolotls and dolphins.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|long|CompleteTick}}: The time when this entity completely dries out.
+**{{nbt|int|State}}: Must be a boolean. 1 if it already dried out.
+
+== dweller ==
+This component is used by cats, iron golems, villagers, evokers, pillagers, ravagers, vindicators, and witches. These mobs are classified into "roles" in the component, with cats being "passive", iron golems being "defenders", evokers, pillagers, ravagers, vindicators, and witches being "hostile", and villagers being "inhabitants".
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|string|DwellingUniqueID}}: Unknown
+**{{nbt|byte|RewardPlayersOnFirstFounding}}: Unknown
+**{{nbt|string|PreferredProfession}}: (May not exist) Unknown
+
+== explode ==
+This component is used by TNT, minecarts with TNT, creepers, ghast fireballs, end crystals, and wither skulls.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|byte|Fuse}}: (May not exist)  Number of ticks before the explosion
+**{{nbt|byte|IsFuseLit}}: (May not exist)  Does the time before the explosion started decreasing
+**{{nbt|byte|AllowUnderwater}}: (May not exist)  Explosion will cause damage to territory even underwater
+
+== genetics ==
+This component is used by goat and pandas.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|list|GeneArray}}
+***{{nbt|compound}}: A gene pair
+****{{nbt|int|HiddenAllele}}: the hidden allele.{{more info}}
+****{{nbt|int|MainAllele}}: the main allele.{{more info}}
+
+== home ==
+This component is used by bees, elder guardians, guardians, piglin brutes, and turtles.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|list|HomePos}}: The position of the entity's home.
+***{{nbt|float}}: X
+***{{nbt|float}}: Y
+***{{nbt|float}}: Z
+**{{nbt|int|HomeDimensionId}}: The dimension where the entity's home is.
+
+== insomnia ==
+This component is only used by players.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|int|TimeSinceRest}}: The time in ticks since last rest.
+
+== trade_table ==
+This component is used by old villagers.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|int|sizeOfTradeFirstTimeVector}}: Unknown
+**{{nbt|int|FirstTimeTrade}}: (May not exist) Unknown
+**{{nbt|int|TradeTier}}: Unknown
+**{{nbt|int|Riches}}: Unknown
+**{{nbt|byte|Willing}}: Unknown
+**{{nbt|list|Offers}}: (May not exist) Unknown
+
+== tamemount ==
+This component is used by horses, donkeys, mules, and llamas.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|int|Temper}}: Random number that ranges from 0 to 100; increases with feeding or trying to tame it. Higher values make a horse easier to tame.
+
+== npc ==
+This component is only used by NPCs.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|string|RawtextName}}: (May not exist) The name.{{more info}}
+**{{nbt|string|InteractiveText}}: (May not exist) The interactive text.{{more info}}
+**{{nbt|string|Actions}}: (May not exist) The actions.{{more info}}
+**{{nbt|list|PlayerSceneMapping}}: (May not exist) Unknown
+***{{nbt|compound}}: A key-value pair.
+****{{nbt|long|PlayerID}}: A player's Unique ID.
+****{{nbt|string|SceneName}}: Unknown
+
+== projectile ==
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|long|TargetID}}: Optional. The {{nbt|long|UniqueID}} of the entity which the projectile was launched to.
+**{{nbt|list|StuckToBlockPos}}: Unknown.
+***{{nbt|int}}: X
+***{{nbt|int}}: Y
+***{{nbt|int}}: Z
+**{{nbt|list|CollisionPos}}: Unknown.
+***{{nbt|float}}: X
+***{{nbt|float}}: Y
+***{{nbt|float}}: Z
+
+== spawn_entity ==
+This component is used by chickens and wandering traders.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|list|entries}}
+***{{nbt|compound}}: An entry.
+****{{nbt|int|SpawnTimer}}: Unknown
+****{{nbt|byte|StopSpawning}}: Unknown
+
+== timer ==
+This component is used by bees, boats, guardians, hoglins, husks, piglins, piglin brutes, players, pufferfish, ravagers, skeletons, wandering traders, and zombies.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|long|TimeStamp}}: Unknown
+**{{nbt|byte|HasExecuted}}: Unknown
+**{{nbt|int|CountTime}}: Deprecated. Unknown
+
+== trade_resupply ==
+This component is only used by villagers.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|byte|HasResupplied}}: Unknown
+
+== trust ==
+This component is only used by foxes.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|int|TrustedPlayersAmount}}: The number of players who are trusted by this entity.
+**{{nbt|long|TrustedPlayer<''num''>}}: A player's Unique ID. Note that <num> counts from 0.
+
+== CommandBlockComponent ==
+This component may be not accessable with [[Add-on|Behavior Pack]]. But it is used by activated [[Minecart with Command Block]]
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|byte|Ticking}}: Unknown
+**{{nbt|int|CurrentTickCount}}: Number of ticks until it executes the command again.
+
+== FogCommandComponent ==
+This component may be not accessable with [[Add-on|Behavior Pack]]. But it is used by player entity.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|list|fogCommandStack}}: Unknown.
+***{{nbt|string}}: Unknown.
+
+== FreezingComponent ==
+This component may be not accessable with [[Add-on|Behavior Pack]].<!-- But it is used by idk-->
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|float|FreezingEffectStrength}}: (May not exist) Unknown
+
+==PropertyComponent==
+This component may be not accessable with [[Add-on|Behavior Pack]].<!-- But it is used by idk-->
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|compound|properties}}: (May not exist) The entity <code>properties</code>.
+
+== hide ==
+This component is only used by villagers.
+* {{nbt|compound}}: The entity's root tag.
+**{{nbt|byte|IsInRaid}}: Unknown
+**{{nbt|byte|ReactToBell}}: Unknown
+</div>
+
+[[pt:Formato de nível da Edição Bedrock/Formato de entidade/Componentes]]
+[[zh:基岩版存档格式/实体格式/组件]]

@@ -1,0 +1,228 @@
+{{DISPLAYTITLE:<samp>.minecraft</samp>}}
+{{For|the {{BE}} directory|com.mojang}}
+{{distinguish|Minecraft}}
+{{exclusive|java}}
+
+{{File|directory|'''.minecraft'''|inline=1}} (or simply {{File|directory|'''minecraft'''|inline=1}} on macOS) is the game directory of ''[[Minecraft: Java Edition]]'' and the launcher directory of the ''[[Minecraft Launcher]]''.
+
+The game directory stores data managed by the game client, such as [[Options|game configuration]], [[world]]s and [[resource pack]]s. The launcher directory stores data managed by the launcher, such as its own configuration, the [[client.jar|game client program]], game libraries and assets. Those two directories, while technically distinct, are normally unified (in the default layout) into {{File|directory|'''.minecraft'''|inline=1}}.
+
+== Location ==
+
+{{/path}}
+
+Locating the {{File|directory|.minecraft|inline=1}} directory may be necessary in order to load a [[resource pack]] for use in the game, or to locate any made [[screenshot]]s.
+
+The path in the table above is the default configuration. Launchers can place {{File|directory|.minecraft|inline=1}} at any path.
+
+On a Windows computer, the {{File|directory|%APPDATA%|inline=1}} directory may be accessed by using the ''Run'' command (accessed with the {{key|Windows + R}} keyboard shortcut, or from the Start menu). It can also be accessed from Windows Explorer, by typing {{code|%APPDATA%}} into the address bar and pressing {{key|Enter}}.
+
+On macOS, the game directory may be accessed by opening Finder, pressing {{key|Shift + Command + G}}, typing {{code|~/Library/Application Support/minecraft}} and pressing {{key|Enter}}. It can also be accessed via Spotlight.
+
+On Linux or macOS, the {{code|~}} in the path refers to the home directory. Files starting with {{code|.}} are hidden by default. In most file managers, pressing {{key|Ctrl + H}} toggles viewing hidden files. In macOS specifically, since version 10.12 (Sierra), pressing {{key|Command + Shift + .}} toggles viewing hidden files.
+
+== Changing location ==
+
+Changing the game directory path can be done per installation in the ''Minecraft Launcher''. Changing the launcher directory path can be done by using the {{code|--workDir}} command-line parameter (see [[Tutorial:Custom Minecraft directory]]).
+
+The default location of the game directory is the launcher directory, so changing the launcher directory is sufficient if it is desirable for both of them to be moved to another place.
+
+== Directory structure ==
+
+The complete directory structure is a combination of the game directory and the launcher directory.
+
+=== Game directory ===
+
+<div class="treeview">
+* {{File|directory|.minecraft}}
+** {{File|directory|[[Commands/debug|debug]]}}
+*** {{File|archive|''year''-''month''-''day''_''hour''.''minute''.''second''.zip}}
+**** {{File|directory|deviations}}
+***** {{File|file|<tick_number>@''year''-''month''-''day''_''hour''.''minute''.''second''.txt}}
+**** {{File|directory|metrics}}
+***** {{File|file|eventloops.csv}}
+***** {{File|file|frame_times_ms_.csv}}
+***** {{File|file|jvm.csv}}
+***** {{File|file|mailboxes.csv}}
+***** {{File|file|rendering_chunk_dispatching.csv}}
+***** {{File|file|rendering_chunk_stats.csv}}
+***** {{File|file|task_total_duration_ms.csv}}
+**** {{File|file|profiling.txt}}
+** {{File|directory|logs}}
+*** {{File|file|''year''-''month''-''day''-''sessionNumber''.log.gz}}
+*** {{File|file|latest.log}}
+** {{File|directory|[[Resource pack|resourcepacks]]}}
+** {{File|directory|saves}}
+*** {{File|directory|[[Java Edition level format|''worldName'']]}}
+**** {{File|directory|advancements}}
+***** {{File|file|''uuid''.json}}
+**** {{File|directory|data}}
+***** {{File|file|[[Commands/forceload|chunks.dat]]}}
+***** {{File|file|[[Command storage format|command_storage_''namespace''.dat]]}}
+***** {{File|file|[[idcounts.dat]]}}
+***** {{File|file|[[Map item format#map_<#>.dat format|map_''id''.dat]]}}
+***** {{File|file|[[raids.dat]]}}
+***** {{File|file|[[Commands/random|random_sequences.dat]]}}
+***** {{File|file|[[scoreboard.dat]]}}
+**** {{File|directory|[[Data pack|datapacks]]}}
+**** {{File|directory|DIM1}}
+***** {{File|directory|data}}
+****** {{File|file|[[raids.dat|raids_end.dat]]}}
+***** {{File|directory|{{Tooltip|poi|Villager identified beds, job sites, and bells}}}}
+****** {{File|file|[[Java Edition level format#poi format|r.''x''.''z''.mca]]}}
+***** {{File|directory|region}}
+****** {{File|file|[[Chunk format|r.''x''.''z''.mca]]}}
+**** {{File|directory|DIM-1}}
+***** {{File|directory|data}}
+****** {{File|file|[[raids.dat|raids_nether.dat]]}}
+***** {{File|directory|{{Tooltip|poi|Villager identified beds, job sites, and bells}}}}
+****** {{File|file|[[Java Edition level format#poi format|r.''x''.''z''.mca]]}}
+***** {{File|directory|region}}
+****** {{File|file|[[Chunk format|r.''x''.''z''.mca]]}}
+**** {{File|directory|generated}}
+***** {{File|directory|''namespace''}}
+****** {{File|directory|structures}}
+******* {{File|file|[[Structure file|''name''.nbt]]}}
+**** {{File|directory|playerdata}}
+***** {{File|file|[[Player.dat format|''uuid''.dat]]}}
+**** {{File|directory|{{Tooltip|poi|Villager identified beds, job sites, and bells}}}}
+***** {{File|file|[[Java Edition level format#poi format|r.''x''.''z''.mca]]}}
+**** {{File|directory|region}}
+***** {{File|file|[[Chunk format|r.''x''.''z''.mca]]}}
+**** {{File|directory|stats}}
+***** {{File|file|''uuid''.json}}
+**** {{File|file|icon.png}}
+**** {{File|file|[[Java Edition level format#level.dat format|level.dat]]}}
+**** {{File|file|level.dat_mcr}}
+**** {{File|file|level.dat_old}}
+**** {{File|file|[[20w14infinity|special_level.dat]]}}
+**** {{File|file|special_level.dat_old}}
+**** {{File|archive|resources.zip}}
+**** {{File|file|[[session.lock]]}}
+** {{File|directory|[[screenshots]]}}
+*** {{File|file|''year''-''month''-''day''_''hour''.''minute''.''second''.png}} (or, ...{{code|''second''_''instance''.png}})
+** {{File|directory|stats}}
+*** {{File|file|stats_''player''_unsent.dat}}
+*** {{File|file|stats_''player''_unsent.old}}
+** {{File|directory|[[Texture pack|texturepacks]]}}
+** {{File|directory|texturepacks-mp-cache}}
+** {{File|file|[[command_history.txt]]}}
+** {{File|file|debug.stitched_items.png}}
+** {{File|file|debug.stitched_terrain.png}}
+** {{File|file|[[hotbar.nbt format|hotbar.nbt]]}}
+** {{File|file|[[options.txt]]}}
+** {{File|file|realms_persistence.json}}
+** {{File|file|[[servers.dat]]}}
+** {{File|file|textures_0.png}}
+** {{File|file|textures_1.png}}
+** {{File|file|textures_2.png}}
+** {{File|file|textures_3.png}}
+** {{File|file|textures_4.png}}
+** {{File|file|usercache.json}}
+</div>
+
+Use of a resource pack can be forced by renaming its ZIP file to {{cd|resources.zip}} and placing it in the root directory of the world save.<ref>[https://web.archive.org/web/20140221073128/https://www.mojang.com/2014/02/minecraft-snapshot-14w07a/ Minecraft snapshot 14w07a] – Dinnerbone on mojang.com; February 14, 2014</ref> This feature is single-player only;<ref>{{Cite bug|MC|73716|Resources.zip doesn't work for servers (and possibly LAN worlds)|date=October 27, 2014}}</ref> however, there is another way for servers to ask or force clients to use the server resource pack.
+
+=== Launcher directory ===
+
+<div class="treeview">
+* {{File|directory|.minecraft}}
+** {{File|directory|[[Resource pack#Asset object store|assets]]}}: Contains game assets, provided to the game using the <code>--assetsDir</code> command line parameter.
+*** {{File|directory|indexes}}
+**** {{File|file|''asset-id''.json}}: The asset index, provided to the game using the <code>--assetIndex</code> command line parameter as the ''asset-id'' value only (it is not provided as a full path to the file, and the <code>.json</code> suffix is left out).
+*** {{File|directory|log_configs}}
+**** {{File|file|client-''version''.xml}}
+*** {{File|directory|objects}}
+**** {{File|directory|00}} .. {{File|directory|ff}}: subdirectories containing the actual asset files: mainly sounds, music and language translations
+*** {{File|directory|skinpacks}}
+**** {{File|directory|00}} .. {{File|directory|ff}}: subdirectories containing the actual asset files: skin images
+*** {{File|directory|virtual}}
+**** {{File|directory|legacy}}: legacy assets; used by pre-1.6 versions
+**** {{File|directory|pre-1.6}}: additional legacy assets; used by pre-1.6 versions
+** {{File|directory|bin}}
+*** {{File|archive|jinput.jar}}
+*** {{File|archive|lwjgl.jar}}
+*** {{File|archive|lwjgl_util.jar}}
+*** {{File|archive|[[minecraft.jar]]}}: [[client.jar]] for launchers of [[Java Edition 1.5.2|1.5.2]] and older. The current launcher uses the {{File|directory|versions|inline=1}} directory instead.
+*** {{File|directory|natives}}
+**** (native libraries)
+*** {{File|directory|''random ID''}}
+**** (native libraries)
+** {{File|directory|libraries}}: Various Java libraries packaged per [[wikipedia:Apache Maven|Maven]] convention (without POM files). Libraries appropriate for the launched version are picked by the launcher and provided to the game.
+** {{File|directory|versions}}
+*** {{File|directory|''version''}}
+**** {{File|archive|[[client.jar|''version''.jar]]}}
+**** {{File|file|[[client.json|''version''.json]]}}
+** {{File|directory|webcache}}
+*** {{File|directory|Cache}}
+**** {{File|file|data_0}}
+**** {{File|file|data_1}}
+**** {{File|file|data_2}}
+**** {{File|file|data_3}}
+**** {{File|file|f_<hexa>}}
+*** {{File|file|Cookies}}
+*** {{File|file|Cookies-journal}}
+*** {{File|directory|GPUCache}}
+**** {{File|file|data_0}}
+**** {{File|file|data_1}}
+**** {{File|file|data_2}}
+**** {{File|file|data_3}}
+**** {{File|file|index}}
+*** {{File|directory|Visited Links}}
+** {{File|file|launcher_cef_log.txt}}
+** {{File|file|launcher_entitlements.json}}
+** {{File|file|launcher_gamer_pics.json}}
+** {{File|file|launcher_msa_credentials.json}}
+** {{File|file|[[launcher_profiles.json]]}}
+** {{File|file|[[Quick Play#JSON format|launcher_quick_play.json]]}}
+** {{File|file|launcher_settings.json}}
+** {{File|file|launcher_skins.json}}
+** {{File|file|launcher_ui_state.json}}
+** {{File|file|nativelog.txt}} (macOS only)
+** {{File|file|nativeUpdaterLog.txt}} (macOS only)
+** {{File|file|output-client.log}}
+** {{File|file|output-server.log}}
+</div>
+
+For Windows and Linux, the contents of {{File|file|nativelog.txt|inline=1}} and {{File|file|nativeUpdaterLog.txt|inline=1}} can be found within {{File|file|launcher_log.txt|inline=1}} when applicable (i.e. the contents of {{File|file|nativeUpdaterLog.txt|inline=1}} is present only in {{File|file|latest_log.txt|inline=1}} after the launcher is updated or launched for the first time).
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|java infdev}}
+|{{HistoryLine||20100629|Added {{File|file|level.dat_old|inline=1}}}}
+|{{HistoryLine|java alpha}}
+|{{HistoryLine||v1.0.11|Added {{File|file|session.lock|inline=1}}}}
+|{{HistoryLine|java}}
+|{{HistoryLine||1.6|Removed {{File|file|lastlogin|inline=1}}}}
+|{{HistoryLine||1.6.1|dev=13w16a|Introduced the modern {{File|directory|.minecraft|inline=1}} directory structure, initially only containing: {{File|directory|assets|inline=1}}, {{File|directory|library|inline=1}} and {{File|directory|versions|inline=1}}.}}
+|{{HistoryLine||1.13|dev=17w43a|Removed structure data.
+|Added datapacks directory.}}
+|{{HistoryLine||1.14|dev=18w47a|Added {{File|file|raids.dat|inline=1}}}}
+|{{HistoryLine|||dev=19w13a|Removed {{File|file|villages.dat|inline=1}} and added {{File|directory|poi|inline=1}} region files.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Added {{file|file|command_history.txt|inline=1}} to persist command history between worlds.}}
+}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[Category:Development]]
+
+[[de:.minecraft]]
+[[es:.minecraft]]
+[[fr:.minecraft]]
+[[it:.minecraft]]
+[[ja:.minecraft]]
+[[ko:.minecraft]]
+[[lzh:.minecraft]]
+[[nl:.minecraft]]
+[[pl:.minecraft]]
+[[pt:.minecraft]]
+[[ru:.minecraft]]
+[[th:.minecraft]]
+[[tr:.minecraft]]
+[[uk:.minecraft]]
+[[zh:.minecraft]]

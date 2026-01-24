@@ -1,0 +1,150 @@
+{{exclusive|java}}
+{{Infobox command
+|name=team
+|oplevel=2
+}}
+
+Controls teams.
+
+==Syntax==
+
+: <code>team list [<team>]</code>
+:: Lists all teams, with their display names and the amount of entities in them. The optional <code><team></code> can be used to specify a particular team.
+: <code>team add <team> [<displayName>]</code>
+:: Creates a team with the given name and optional display name. <code><displayName></code> defaults to <code><team></code> when unspecified.
+: <code>team remove <team></code>
+:: Deletes the specified team.
+: <code>team empty <team></code>
+:: Removes all members from the named team.
+: <code>team join <team> [<members>]</code>
+:: Assigns the specified entities to the specified team. If no entities are specified, makes the command executor join the team.
+: <code>team leave <members></code>
+:: Makes the specified entities leave their teams.
+: <code>team modify <team> <''option''> <''value''></code>
+:: Modifies the options of the specified team.
+
+==Arguments==
+
+{{argument|team|team}} (in <code>list</code>, <code>remove</code>, <code>empty</code>, <code>join</code>, and <code>modify</code> mode)
+: Specifies the name of a team.
+: {{arg desc|je=team}}
+
+{{argument|team|string}} (in <code>add</code> mode)
+: Specifies the name for a new team.
+: {{arg desc|je=string|type=word}}
+
+{{argument|displayName|component}}
+: Specifies the team name to be displayed.
+: {{arg desc|je=component}}
+
+{{argument|members|score_holder}}
+: Specifies the entities to join or leave the team. 
+: {{arg desc|je=score_holder|amount=multiple}}
+
+<code><''option''></code>
+:: A specific option to change.
+:: Must be one of the following:
+::*<code>displayName</code>: Sets the display name of the team.
+::*<code>color</code>: Decides the color of the team and players in chat, above their head, on the Tab menu, and on the sidebar. Also changes the color of the outline of the entities caused by the [[Glowing]] effect.
+::*<code>friendlyFire</code>: Enables/Disables players inflicting damage to each other when on the same team. (Note: players can still inflict status effects on each other.) Does not affect some non-player entities in a team.
+::*<code>seeFriendlyInvisibles</code>: Decides whether invisible players are semi-transparent or completely invisible to other players on their team.
+::*<code>nametagVisibility</code>: Decides whose name tags above their heads can be seen.
+::*<code>deathMessageVisibility</code>: Controls the visibility of death messages for players.
+::*<code>collisionRule</code>: Controls the way entities on the team collide with other entities.
+::*<code>prefix</code>: Modifies the prefix that displays at the beginning of players' names.
+::*<code>suffix</code>: Modifies the suffix that displays at the end of players' names.
+
+<code><''value''></code>
+: Specifies the value to set <code><''option''></code> to.
+: Shown below are valid values for each option.
+:*For <code>displayName</code>:
+:**{{argument|displayName|component}} - Specifies the team name to be displayed. {{arg desc|je=component}}
+:*For <code>color</code>:
+:** {{argument|value|color}} - {{arg desc|je=component}}
+:*** Defaults to <code>reset</code>. If <code>reset</code>, names are shown in default color and formatting.
+:*For <code>friendlyFire</code>:
+:** {{argument|allowed|boolean}} - {{arg desc|je=component}}
+:***<code>true</code> - (Default) Enable players inflicting damage on each other when in the same team.
+:***<code>false</code> - Disable players inflicting damage on each other when in the same team.
+:*For <code>seeFriendlyInvisibles</code>:
+:** {{argument|allowed|boolean}} - {{arg desc|je=component}}
+:***<code>true</code> - (Default) Can see invisible players on the same team semi-transparently.
+:***<code>false</code> - Cannot see invisible players on the same team.
+:*For <code>nametagVisibility</code>:
+:**<code>never</code> - Name above player's head cannot be seen by any players.
+:**<code>hideForOtherTeams</code> - Name above player's head can be seen only by players in the same team.
+:**<code>hideForOwnTeam</code> - Name above player's head cannot be seen by all the players in the same team.
+:**<code>always</code> - (Default) Name above player's head can be seen by all the players.
+:*For <code>deathMessageVisibility</code>:
+:**<code>never</code> - Hide death message for all the players.
+:**<code>hideForOtherTeams</code> - Hide death message to all the players who are not in the same team.
+:**<code>hideForOwnTeam</code> - Hide death message to players in the same team.
+:**<code>always</code> - (Default) Make death message visible to all the players.
+:*For <code>collisionRule</code>:
+:**<code>always</code> - (Default) Normal collision.
+:**<code>never</code> - No entities can push the entities in this team.
+:**<code>pushOtherTeams</code> - Entities in this team can be pushed only by other entities in the same team. (Contrary to the literal meaning.<ref name="bug">[[bugtracker:MC-87984|MC-87984]]</ref>)
+:**<code>pushOwnTeam</code> - Entities in this team cannot be pushed by another entity in this team. (Contrary to the literal meaning.<ref name="bug"></ref>)
+:*For <code>prefix</code>:
+:**{{argument|prefix|component}} - Specifies the prefix to display. {{arg desc|je=component}}
+:*For <code>suffix</code>:
+:**{{argument|suffix|component}} - Specifies the suffix to display. {{arg desc|je=component}}
+
+== Result ==
+
+{{Result table|onlyje=1}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable}}
+{{Result table|cmd=/team list <team><br>/team remove ...<br>/team empty ...<br>/team join ...<br>/team modify ...|<code><team></code> doesn't exist.|fail}}
+{{Result table|cmd=/team add ...|The named <code><team></code> already exists.}}
+{{Result table|cmd=/team empty ...|The <code><team></code> is already empty.}}
+{{Result table|cmd=/team join ...|<code><members></code> is not specified when the command's executor is not an entity.}}
+{{Result table|<code><members></code> fails to resolve to one or more entities.}}
+{{Result table|cmd=/team leave ...|<code><members></code> fails to resolve to one or more entities.|fail}}
+{{Result table|cmd=/team modify displayName ...<br>/team modify color ...<br>/team modify friendlyFire ...<br>/team modify seeFriendlyInvisibles ...<br>/team modify nametagVisibility ...<br>/team modify deathMessageVisibility ...<br>/team modify collisionRule ...|The specified value is the same as current value.}}
+{{Result table|cmd=|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|cmd=/team list|On success|1|1|the number of existing teams}}
+{{Output table|cmd=/team list <team>|On success|1|1|the number of members in the <code><team></code>}}
+{{Output table|cmd=/team add ...<br>/team remove ...|On success|1|1|the number of existing teams after execution}}
+{{Output table|cmd=/team empty ...|On success|1|1|the number of members in the team before execution}}
+{{Output table|cmd=/team join|On success|1|1|1}}
+{{Output table|cmd=/team join <members>|On success|1|1|the number of specified entities}}
+{{Output table|cmd=/team leave ...|On success|1|1|the number of specified entities}}
+{{Output table|cmd=/team modify displayName ...<br>/team modify color ...<br>/team modify friendlyFire ...<br>/team modify seeFriendlyInvisibles ...<br>/team modify nametagVisibility ...<br>/team modify deathMessageVisibility ...<br>/team modify collisionRule ...|On success|1|1|0}}
+{{Output table|cmd=/team modify prefix ...<br>/team modify suffix ...|On success|1|1|1}}
+{{Output table}}
+
+== History ==
+
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.13|dev=17w45a|Added {{cmd|team|link=none}}.}}
+|{{HistoryLine|||dev=18w20a|Added {{cmd|team option <team> prefix <prefix>|link=none}}.
+|Added {{cmd|team option <team> suffix <suffix>|link=none}}.}}
+|{{HistoryLine|||dev=pre8|{{cmd|team option|link=none}} is now {{cmd|team modify|link=none}}
+|Added {{cmd|team modify <teamName> displayName|link=none}}.
+|Team names are now text components, not raw strings.}}
+|{{HistoryLine||1.18|dev=21w37a|Removed 16 characters limit for the name of a team, and 40 characters limit for the name of members.}}
+|{{HistoryLine||1.21.5|dev=25w05a|Text component arguments are now resolved before use in context of entity held in {{cd|@s}}.}}
+}}
+
+== See also ==
+*{{cmd|scoreboard}} – manages scoreboard objectives, players and displays
+*{{cmd|tag}} – tags players with a certain string
+
+==References==
+{{Reflist}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/team]]
+[[ja:コマンド/team]]
+[[pt:Comandos/team]]
+[[ru:Команды консоли/team]]
+[[zh:命令/team]]

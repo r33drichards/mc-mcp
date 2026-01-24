@@ -1,0 +1,1667 @@
+The tables shows all blocks and items with their associated metadata or damage values respectively in the current ''[[Bedrock Edition]]'' version.
+
+=== [[Planks]] ===
+Alias IDs only.
+{{dvt|spritetype=block|sprite=oak-planks|Oak Planks}}
+{{dvt|sprite=spruce-planks|Spruce Planks}}
+{{dvt|sprite=birch-planks|Birch Planks}}
+{{dvt|sprite=jungle-planks|Jungle Planks}}
+{{dvt|sprite=acacia-planks|Acacia Planks}}
+{{dvt|sprite=dark-oak-planks|Dark Oak Planks|foot=1}}
+
+=== [[Stone]] ===
+Alias IDs only.
+{{dvt|spritetype=block|sprite=stone|[[Stone]]}}
+{{dvt|sprite=granite|[[Granite]]}}
+{{dvt|sprite=polished-granite|[[Polished Granite]]}}
+{{dvt|sprite=diorite|[[Diorite]]}}
+{{dvt|sprite=polished-diorite|[[Polished Diorite]]}}
+{{dvt|sprite=andesite|[[Andesite]]}}
+{{dvt|sprite=polished-andesite|[[Polished Andesite]]|foot=1}}
+
+=== [[Dirt]] ===
+Alias IDs only.
+{{dvt|sprite=dirt|[[Dirt]]}}
+{{dvt|sprite=coarse-dirt|[[Coarse Dirt]]|foot=1}}
+
+=== [[Sapling]]s ===
+Alias IDs only.
+The data value is split in half. The bottom three bits determine the type of sapling (and thus the eventual tree type), according to the following table:
+
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value of 0 to 5 specifying the type of sapling:
+*0: {{BlockSprite|Oak Sapling}} Oak Sapling
+*1: {{BlockSprite|Spruce Sapling}} Spruce Sapling
+*2: {{BlockSprite|Birch Sapling}} Birch Sapling
+*3: {{BlockSprite|Jungle Sapling}} Jungle Sapling
+*4: {{BlockSprite|Acacia Sapling}} Acacia Sapling
+*5: {{BlockSprite|Dark Oak Sapling}} Dark Oak Sapling
+|-
+| 0x8 || Set if sapling is ready to grow into a tree.
+|}
+
+The 0x8 bit functions as the counter. The counter is cleared when a sapling is dropped as an item.
+
+=== [[Water]] and [[Lava]] ===
+If bit 0x8 is set, this liquid is "falling" and only spreads downward. At this level, the lower bits are essentially ignored, since this block is then at its highest fluid level.
+
+The lower three bits are the fluid block's level. 0x0 is the highest fluid level (not necessarily filling the block - this depends on the neighboring fluid blocks above each upper corner of the block). Data values increase as the fluid level of the block drops: 0x1 is next highest, 0x2 lower, on through 0x7, the lowest fluid level. Along a line on a flat plane, water drops one level per meter from the source, lava drops one in the nether and two everywhere else.
+
+The stationary versions of each fluid are "stable" and currently not being checked by the engine for further level changes. Oddly the in-code names for stationary water and lava are "water" and "lava" and the regular versions are "flowing_water" and "flowing_lava".
+
+=== [[Sand]] ===
+Alias IDs only.
+{{dvt|spritetype=block|sprite=sand|Sand}}
+{{dvt|sprite=red-sand|Red sand|foot=1}}
+
+=== [[Log]]s ===
+Alias IDs only.
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2 || A two-bit field storing a value of 0 to 3 specifying the type of log:
+*0: {{BlockSprite|Oak Log}} Oak Log
+*1: {{BlockSprite|Spruce Log}} Spruce Log
+*2: {{BlockSprite|Birch Log}} Birch Log
+*3: {{BlockSprite|Jungle Log}} Jungle Log
+|-
+| 0x4<br>0x8 || A two-bit field storing a value of 0 to 2 specifying the orientation of the log:
+*0: {{BlockSprite|Oak Log}} Facing Up/Down
+*1: {{BlockSprite|Oak Log Horizontal}} Facing East/West
+*2: {{BlockSprite|Oak Log Top}} Facing North/South
+|}
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2 || A two-bit field storing a value of 0 to 1 specifying the type of log:
+*0: {{BlockSprite|Acacia Log}} Acacia Log
+*1: {{BlockSprite|Dark Oak Log}} Dark Oak Log
+|-
+| 0x4<br>0x8 || A two-bit field storing a value of 0 to 2 specifying the orientation of the log:
+*0: {{BlockSprite|Acacia Log}} Facing Up/Down
+*1: {{BlockSprite|Acacia Log Horizontal}} Facing East/West
+*2: {{BlockSprite|Acacia Log Top}} Facing North/South
+|}
+
+=== [[Leaves]] ===
+If bit 0x4 is set, the leaves are permanent and will never decay. This bit is set on player-placed leaf blocks and overrides the meaning of bit 0x8.
+
+If bit 0x8 is set, the leaves will be checked for decay. The bit will be cleared after the check if the leaves do not decay. The bit will be set again whenever a block adjacent to the leaves is changed.
+{{dvt|sprite=oak-leaves|Oak Leaves}}
+{{dvt|sprite=spruce-leaves|Spruce Leaves}}
+{{dvt|sprite=birch-leaves|Birch Leaves}}
+{{dvt|sprite=jungle-leaves|Jungle Leaves}}
+{{dvt|sprite=oak-leaves|Oak Leaves (no decay)}}
+{{dvt|sprite=spruce-leaves|Spruce Leaves (no decay)}}
+{{dvt|sprite=birch-leaves|Birch Leaves (no decay)}}
+{{dvt|sprite=jungle-leaves|Jungle Leaves (no decay)}}
+{{dvt|sprite=oak-leaves|Oak Leaves (check decay)}}
+{{dvt|sprite=spruce-leaves|Spruce Leaves (check decay)}}
+{{dvt|sprite=birch-leaves|Birch Leaves (check decay)}}
+{{dvt|sprite=jungle-leaves|Jungle Leaves (check decay)}}
+{{dvt|sprite=oak-leaves|Oak Leaves (no decay and check decay)}}
+{{dvt|sprite=spruce-leaves|Spruce Leaves (no decay and check decay)}}
+{{dvt|sprite=birch-leaves|Birch Leaves (no decay and check decay)}}
+{{dvt|sprite=jungle-leaves|Jungle Leaves (no decay and check decay)|foot=1}}
+
+{{dvt|sprite=acacia-leaves|Acacia Leaves}}
+{{dvt|sprite=dark-oak-leaves|Dark Oak Leaves}}
+{{dvt|dv=4|sprite=acacia-leaves|Acacia Leaves (no decay)}}
+{{dvt|sprite=dark-oak-leaves|Dark Oak Leaves (no decay)}}
+{{dvt|dv=8|sprite=acacia-leaves|Acacia Leaves (check decay)}}
+{{dvt|sprite=dark-oak-leaves|Dark Oak Leaves (check decay)}}
+{{dvt|dv=12|sprite=acacia-leaves|Acacia Leaves (no decay and check decay)}}
+{{dvt|sprite=dark-oak-leaves|Dark Oak Leaves (no decay and check decay)|foot=1}}
+
+=== [[Fire]] ===
+0x0 is a placed or spread fire. Once it reaches 0xF the eternal fire-trick will work since there will be no further updates of the block.
+
+=== [[Sandstone]] ===
+Alias IDs only.
+For normal sandstone the bottom has a cracked pattern. The other types of sandstone have bottom faces
+same as the tops.
+
+{{dvt|spritetype=block|sprite=sandstone|Sandstone}}
+{{dvt|sprite=chiseled-sandstone|Chiseled Sandstone}}
+{{dvt|sprite=smooth-sandstone|Smooth Sandstone}}
+{{dvt|sprite=cut-sandstone|Cut Sandstone|foot=1}}
+
+=== [[Red Sandstone]] ===
+Alias IDs only.
+{{dvt|spritetype=block|sprite=red-sandstone|Red Sandstone}}
+{{dvt|sprite=chiseled-red-sandstone|Chiseled Red Sandstone}}
+{{dvt|sprite=smooth-red-sandstone|Smooth Red Sandstone}}
+{{dvt|sprite=cut-red-sandstone|Cut Red Sandstone|foot=1}}
+
+=== [[Bed]]s ===
+{| class="wikitable" data-description="Block data"
+! Lowest two bits value !! Facing
+|-
+| 0 || Head facing South
+|-
+| 1 || Head facing West
+|-
+| 2 || Head facing North
+|-
+| 3 || Head facing East
+|-
+! Bit flag !! Meaning
+|-
+| 0x4 || When 0, the bed is empty<br>When 1, the bed is occupied 
+|-
+| 0x8 || When 0, the foot of the bed<br>When 1, the head of the bed
+|}
+
+=== [[Grass]] ===
+Alias IDs only.
+{{dvt|sprite=short-grass|Fern (Unused/removed variant which looks identical to grass, but turned into a large fern when bone meal is used)}}
+{{dvt|sprite=short-grass|Short Grass}}
+{{dvt|sprite=fern|Fern}}
+{{dvt|sprite=fern|Fern (Unused/removed looks identical to actual fern, but turns into tall grass when bone meal is used)|foot=1}}
+
+=== [[Flower]]s ===
+Alias IDs only.
+{{dvt|sprite=poppy|Poppy}}
+{{dvt|sprite=blue-orchid|Blue Orchid}}
+{{dvt|sprite=allium|Allium}}
+{{dvt|sprite=azure-bluet|Azure Bluet}}
+{{dvt|sprite=red-tulip|Red Tulip}}
+{{dvt|sprite=orange-tulip|Orange Tulip}}
+{{dvt|sprite=white-tulip|White Tulip}}
+{{dvt|sprite=pink-tulip|Pink Tulip}}
+{{dvt|sprite=oxeye-daisy|Oxeye Daisy}}
+{{dvt|sprite=cornflower|Cornflower}}
+{{dvt|sprite=lily-of-the-valley|Lily of the Valley|foot=1}}
+
+=== [[Plant|Double Plants]] ===
+Large flowers take up two vertical blocks. The bottom block defines the type, while the top defines the direction it faces (unused). When the most significant bit (0x8) is set, the flower is the top.
+
+{{dvt|sprite=sunflower|[[Sunflower]] (bottom)}}
+{{dvt|sprite=lilac|[[Lilac]] (bottom)}}
+{{dvt|sprite=tall-grass|[[Tall Grass]] (bottom)}}
+{{dvt|sprite=large-fern|[[Large Fern]] (bottom)}}
+{{dvt|sprite=rose-bush|[[Rose Bush]] (bottom)}}
+{{dvt|sprite=peony|[[Peony]] (bottom)}}
+{{dvt|dv=8|sprite=air|Double Plant (top)|foot=1}}
+
+=== [[Piston Head]]/[[Sticky Piston Head]] ===
+The bottom three bits are a value from 0 to 5, indicating the direction of the piston ''(the direction the piston head is pointing)''.
+* 0: Down
+* 1: Up
+* 2: north
+* 3: south
+* 4: west
+* 5: east
+
+=== [[Stairs]] ===
+{| class="wikitable"
+! Bits !! Description
+|-
+| 0x1<br>0x2 || A two-bit field containing a value from 0 to 3 specifying the direction of the stairs' full-block side:
+* 0: East
+* 1: West
+* 2: South
+* 3: North
+|-
+| 0x4 || Set if stairs are upside-down
+|-
+| 0x8
+| style="color:silver" | (unused)
+|}
+
+=== [[Redstone Wire]] ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4<br>0x8 || A four-bit field storing a value from 0 to 15 specifying the redstone dust's current redstone power level.
+|}
+
+=== [[Daylight Detector]] ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4<br>0x8 || Four bits storing a value from 0 to 15 representing the daylight detector's current redstone power level.
+|}
+
+=== [[Crops]] ===
+Crops grow from values 0 to 7. Carrots, beetroot and potatoes appear to have 4 stages, but actually grow identically to wheat, merely using the same texture for multiple stages.
+
+;Wheat
+{| class="wikitable"
+! Icon !! Value
+|-
+|{{BlockSprite|wheat-1}}|| 0
+|-
+|{{BlockSprite|wheat-2}}|| 1
+|-
+|{{BlockSprite|wheat-3}}|| 2
+|-
+|{{BlockSprite|wheat-4}}|| 3
+|-
+|{{BlockSprite|wheat-5}}|| 4
+|-
+|{{BlockSprite|wheat-6}}|| 5
+|-
+|{{BlockSprite|wheat-7}}|| 6
+|-
+|{{BlockSprite|wheat-8}}|| 7
+|}
+;Carrots
+{| class="wikitable"
+! Icon !! Value
+|-
+|{{BlockSprite|carrots-1}}|| 0, 1
+|-
+|{{BlockSprite|carrots-2}}|| 2, 3
+|-
+|{{BlockSprite|carrots-3}}|| 4, 5, 6
+|-
+|{{BlockSprite|carrots-4}}|| 7
+|}
+;Potatoes
+{| class="wikitable"
+! Icon !! Value
+|-
+|{{BlockSprite|potatoes-1}}|| 0, 1
+|-
+|{{BlockSprite|potatoes-2}}|| 2, 3
+|-
+|{{BlockSprite|potatoes-3}}|| 4, 5, 6
+|-
+|{{BlockSprite|potatoes-4}}|| 7
+|}
+;Beetroot
+{| class="wikitable"
+! Icon !! Value
+|-
+|{{BlockSprite|beetroots-1}}|| 0, 1
+|-
+|{{BlockSprite|beetroots-2}}|| 2, 3
+|-
+|{{BlockSprite|beetroots-3}}|| 4, 5, 6
+|-
+|{{BlockSprite|beetroots-4}}|| 7
+|}
+
+=== [[Farmland]] ===
+{| class="wikitable"
+! Value !! Meaning
+|-
+| 0 || Dry land
+|-
+| 1 to 7 || Increasing levels of wetness.<br>The wetness value counts down to 0 while the farmland<br>does not have access to water. The wet texture is only used on level 7.
+|}
+
+=== [[Banner]] ===
+==== Standing ====
+{| class="wikitable"
+! Bits !! Description
+|-
+| 0x1<br>0x2<br>0x4<br>0x8 || A four-bit field storing a value from 0 to 15 specifying the block's orientation:
+* 0: south
+* 1: south-southwest
+* 2: southwest
+* 3: west-southwest
+* 4: west
+* 5: west-northwest
+* 6: northwest
+* 7: north-northwest
+* 8: north
+* 9: north-northeast
+* 10: northeast
+* 11: east-northeast
+* 12: east
+* 13: east-southeast
+* 14: southeast
+* 15: south-southeast
+|}
+
+==== Wall ====
+{| class="wikitable"
+! Bits !! Description
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 2 to 5 specifying the block's orientation:
+* 2: north
+* 3: south
+* 4: west
+* 5: east
+|-
+| 0x8 || Unused.
+|}
+
+=== [[Rail]]s ===
+{| class="wikitable"
+! Value !! Description
+|-
+| 0 || Straight rail connecting to the north and south.
+|-
+| 1 || Straight rail connecting to the east and west.
+|-
+| 2 || Sloped rail ascending to the east.
+|-
+| 3 || Sloped rail ascending to the west.
+|-
+| 4 || Sloped rail ascending to the north.
+|-
+| 5 || Sloped rail ascending to the south.
+|-
+| 6 || Curved rail connecting to the south and east.
+|-
+| 7 || Curved rail connecting to the south and west.
+|-
+| 8 || Curved rail connecting to the north and west.
+|-
+| 9 || Curved rail connecting to the north and east.
+|}
+
+==== [[Activator Rail]]s, [[Detector Rail]]s, and [[Powered Rail]]s ====
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 0 to 5:
+*0: flat track going north-south
+*1: flat track going west-east
+*2: sloped track ascending to the east
+*3: sloped track ascending to the west
+*4: sloped track ascending to the north
+*5: sloped track ascending to the south
+|-
+| 0x8 || Set if rail is active.
+|}
+
+=== [[Ladder]]s, [[Furnace]]s, [[Chest]]s, [[Trapped Chest]]s [[Ender Chest]]s ===
+;Ladder
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 2 to 5:
+* 2: Ladder facing north
+* 3: Ladder facing south
+* 4: Ladder facing west
+* 5: Ladder facing east
+Invalid values default to 2.
+|-
+| 0x8 || Unused.
+|}
+;Furnace
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4
+| A three-bit field storing a value from 2 to 5:
+* 2: Furnace facing north
+* 3: Furnace facing south
+* 4: Furnace facing west
+* 5: Furnace facing east
+Invalid values default to 2.
+|-
+| 0x8 || Unused.
+|}
+;Chest
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 2 to 5:
+* 2: Chest facing north
+* 3: Chest facing south
+* 4: Chest facing west
+* 5: Chest facing east
+Invalid values default to 2.
+|-
+| 0x8 || Unused.
+|}
+;Trapped Chest
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 2 to 5:
+* 2: Trapped chest facing north
+* 3: Trapped chest facing south
+* 4: Trapped chest facing west
+* 5: Trapped chest facing east
+Invalid values default to 2.
+|-
+| 0x8 || Unused.
+|}
+;Ender Chest
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 2 to 5:
+* 2: Ender chest facing north
+* 3: Ender chest facing south
+* 4: Ender chest facing west
+* 5: Ender chest facing east
+Invalid values default to 2.
+|-
+| 0x8 || Unused.
+|}
+
+=== [[Sign]] ===
+==== Standing ====
+{| class="wikitable"
+! Bits !! Description
+|-
+| 0x1<br>0x2<br>0x4<br>0x8 || A four-bit field storing a value from 0 to 15 specifying the block's orientation:
+* 0: south
+* 1: south-southwest
+* 2: southwest
+* 3: west-southwest
+* 4: west
+* 5: west-northwest
+* 6: northwest
+* 7: north-northwest
+* 8: north
+* 9: north-northeast
+* 10: northeast
+* 11: east-northeast
+* 12: east
+* 13: east-southeast
+* 14: southeast
+* 15: south-southeast
+|}
+
+==== Wall ====
+{| class="wikitable"
+! Bits !! Description
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 2 to 5 specifying the block's orientation:
+* 2: north
+* 3: south
+* 4: west
+* 5: east
+|}
+
+=== [[Dispenser]] and [[Dropper]] ===
+;Dropper
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 0 to 5 specifying which direction the dropper is facing:
+* 0: Dropper facing down
+* 1: Dropper facing up
+* 2: Dropper facing north
+* 3: Dropper facing south
+* 4: Dropper facing west
+* 5: Dropper facing east
+|-
+| 0x8 || Set if dropper is activated.
+|}
+;Dispenser
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || Three bits storing a value from 0 to 5:
+* 0: Dispenser facing down
+* 1: Dispenser facing up
+* 2: Dispenser facing north
+* 3: Dispenser facing south
+* 4: Dispenser facing west
+* 5: Dispenser facing east
+|-
+| 0x8 || If set, the dispenser is activated.
+|}
+
+=== [[Hopper]] ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 0 to 5:
+* 0: Output facing down
+* 1: <span style="color:silver">(unused)</span>
+* 2: Output facing north
+* 3: Output facing south
+* 4: Output facing west
+* 5: Output facing east
+|-
+| 0x8 || Set if activated/disabled.
+|}
+
+=== [[Lever]]s ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || A three-bit field storing a value from 0 to 7:
+* 0: Lever on block bottom points east when off.
+* 1: Lever on block side facing east
+* 2: Lever on block side facing west
+* 3: Lever on block side facing south
+* 4: Lever on block side facing north
+* 5: Lever on block top points south when off.
+* 6: Lever on block top points east when off.
+* 7: Lever on block bottom points south when off.
+|-
+| 0x8 || If this bit is set, the lever is active.
+|}
+
+=== [[Pressure Plate]]s ===
+; Stone or wooden pressure plate
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1 || If this bit is set, the pressure plate is active.
+|-
+| 0x2<br>0x4<br>0x8 || Unused.
+|}
+; Weighted pressure plate
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4<br>0x8 || A four-bit field storing a value from 0 to 15 representing the weighted pressure plate's current redstone power level.
+|}
+
+=== [[Button]]s ===
+{| class="wikitable" data-description="Block data"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || Three bits storing a value from 0 to 5:
+* 0: Button on block bottom facing down
+* 1: Button on block side facing east
+* 2: Button on block side facing west
+* 3: Button on block side facing south
+* 4: Button on block side facing north
+* 5: Button on block top facing up
+|-
+| 0x8 || If this bit is set, the button is currently active.
+|}
+
+=== [[Snow]] ===
+[[File:Snow heights.png|right|thumb|Heights of snow from 0-7, going from left to right]]
+{{dvt|spritetype=block|sprite=Snow|One layer, 2 pixels thick}}
+{{dvt|sprite=Snow|Two layers, 4 pixels thick}}
+{{dvt|sprite=Snow|Three layers, 6 pixels thick}}
+{{dvt|sprite=Snow|Four layers, 8 pixels thick}}
+{{dvt|sprite=Snow|Five layers, 10 pixels thick}}
+{{dvt|sprite=Snow|Six layers, 12 pixels thick}}
+{{dvt|sprite=Snow|Seven layers, 14 pixels thick}}
+{{dvt|sprite=Snow|Eight layers, 16 pixels thick}}
+{{dvt|sprite=Snow|Snowlogging|foot=1}}
+
+{{anchor|Cactus}}{{anchor|Sugar Cane}}
+=== [[Cactus|Cacti]] and [[Sugar Cane]] ===
+;Cactus
+{| class="wikitable" data-description="Block data"
+! Value !! Meaning
+|-
+| 0 || Freshly planted cactus.
+|-
+| 1 to 15 || The data value is incremented at random intervals.<br>When it becomes 15, a new cactus block is created on top as long as the total height does not exceed 3.
+|}
+;Sugar Cane
+{| class="wikitable"
+! Value !! Meaning
+|-
+| 0 || Freshly planted sugar cane.
+|-
+| 1 to 15 || The data value is incremented at random intervals.<br>When it becomes 15, a new sugar cane block is created on top as long as the total height does not exceed 3.
+|}
+
+=== [[Cake]] ===
+{| class="wikitable"
+! Value !! Stage
+|-
+| 0 || Whole intact cake
+|-
+| 1 || 1 piece eaten
+|-
+| 2 || 2 pieces eaten
+|-
+| 3 || 3 pieces eaten
+|-
+| 4 || 4 pieces eaten
+|-
+| 5 || 5 pieces eaten
+|-
+| 6 || 6 pieces eaten
+|}
+
+=== [[Redstone Repeater]] ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2 || A two-bit field storing a value from 0 to 3 specifying the direction the redstone repeater is facing:
+*0: Facing north.
+*1: Facing east.
+*2: Facing south.
+*3: Facing west.
+|-
+| 0x4<br>0x8 || A two-bit field storing a value from 0 to 3 specifying the redstone repeater's delay:
+*0: Delay of 1 redstone tick.
+*1: Delay of 2 redstone tick.
+*2: Delay of 3 redstone tick.
+*3: Delay of 4 redstone tick.
+|}
+
+Effectively, add the repeater's facing value (0 to 3) to 4×(delay-1). For example, a repeater facing west with a delay of 3 redstone ticks would have a block data value of 3 + 4×(3-1) = 11.
+
+=== [[Redstone Comparator]] ===
+A redstone comparator's block data specifies its orientation, mode, and powered status.
+
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2 || A two-bit field storing a value from 0 to 3 specifying the redstone comparator's orientation:
+*0: Facing north.
+*1: Facing east.
+*2: Facing south.
+*3: Facing west.
+|-
+| 0x4 || Set if in subtraction mode (front torch up and powered).
+|-
+| 0x8 || Set if powered (at any power level).
+|}
+
+=== [[Trapdoor]]s ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2 || A two-bit field storing a value from 0 to 3:
+* 0: Trapdoor on the south side of a block
+* 1: Trapdoor on the north side of a block
+* 2: Trapdoor on the east side of a block
+* 3: Trapdoor on the west side of a block
+|-
+| 0x4 || If this bit is set, the trapdoor is open.
+|-
+| 0x8 || If this bit is set, the trapdoor is on the top half of a block. Otherwise, it is on the bottom half.
+|}
+
+=== [[Infested Block]] ===
+Alias IDs only.
+{{dvt|spritetype=block|sprite=stone|Infested Stone}}
+{{dvt|sprite=cobblestone|Infested Cobblestone}}
+{{dvt|sprite=stone-bricks|Infested Stone Bricks}}
+{{dvt|sprite=mossy-stone-bricks|Infested Mossy Stone Brick}}
+{{dvt|sprite=cracked-stone-bricks|Infested Cracked Stone Brick}}
+{{dvt|sprite=chiseled-stone-bricks|Infested Chiseled Stone Brick|foot=1}}
+
+=== [[Stone Bricks]] ===
+Alias IDs only.
+{{dvt|spritetype=block|sprite=stone-bricks|Stone bricks}}
+{{dvt|sprite=mossy-stone-bricks|Mossy stone bricks}}
+{{dvt|sprite=cracked-stone-bricks|Cracked stone bricks}}
+{{dvt|sprite=chiseled-stone-bricks|Chiseled stone bricks}}
+{{dvt|sprite=stone-bricks|Smooth stone bricks (removed, converts to normal stone bricks)|foot=1}}
+
+=== [[Prismarine]] ===
+Alias IDs only.
+{{dvt|sprite=prismarine|Prismarine}}
+{{dvt|sprite=prismarine-bricks|Prismarine Bricks}}
+{{dvt|sprite=dark-prismarine|Dark Prismarine|foot=1}}
+
+=== [[Sponge]] ===
+Alias IDs only.
+{{dvt|sprite=Sponge|[[Sponge]]}}
+{{dvt|sprite=Wet Sponge|[[Wet Sponge]]|foot=1}}
+
+=== [[Mushroom Block|Brown and red mushroom blocks]] ===
+Mushroom blocks consist of the same blocks throughout their structure, the data value of each block decides the texture. The default texture on all sides is porous flesh. The cap texture can be either the brown mushroom or red mushroom texture, the textures for porous and stem sides are identical. Although data values 11-13 are unused they have the same texture as data value 0 as placeholders (to keep people from destroying their maps).
+
+{{dvt|spritetype=block|sprite=mushroom-block-pores|Pores on all sides}}
+{{dvt|spritetype=block|sprite=mushroom-blocks|Cap texture on top, west and north}}
+{{dvt|spritetype=block|sprite=mushroom-blocks|Cap texture on top and north}}
+{{dvt|spritetype=block|sprite=mushroom-blocks|Cap texture on top, north and east}}
+{{dvt|spritetype=block|sprite=mushroom-block-pores|Cap texture on top and west}}
+{{dvt|spritetype=block|sprite=mushroom-block-pores|Cap texture on top}}
+{{dvt|spritetype=block|sprite=mushroom-block-pores|Cap texture on top and east}}
+{{dvt|spritetype=block|sprite=mushroom-block-pores|Cap texture on top, south and west}}
+{{dvt|spritetype=block|sprite=mushroom-block-pores|Cap texture on top and south}}
+{{dvt|spritetype=block|sprite=mushroom-block-pores|Cap texture on top, east and south}}
+{{dvt|spritetype=block|sprite=mushroom-stem|Stem texture on all four sides, pores on top and bottom}}
+{{dvt|dv=14|spritetype=block|sprite=mushroom-blocks|Cap texture on all six sides}}
+{{dvt|spritetype=block|sprite=mushroom-stem|Stem texture on all six sides|foot=1}}
+
+=== [[Pumpkin seeds|Pumpkin stem]] and [[Melon seeds|Melon stem]] ===
+{| class="wikitable"
+! Value !! Stage
+|-
+| 0 || Freshly planted stem
+|-
+| 1 || First stage of growth
+|-
+| 2 || Second stage of growth
+|-
+| 3 || Third stage of growth
+|-
+| 4 || Fourth stage of growth
+|-
+| 5 || Fifth stage of growth
+|-
+| 6 || Sixth stage of growth
+|-
+| 7 || Seventh stage of growth<br>In this stage a stem can generate a melon or pumpkin next to<br>it on an empty dirt, grass or farmland block
+|}
+
+=== [[Vines]] ===
+Determines the face against which the vine is anchored. Note that (except for Top) these are testable as bit flags, unlike most of the other directional data for other block types. Multiple sides can contain vines. The "top" attachment is assumed to be present if data is 0 or there is solid block above.
+* 1: south
+* 2: west
+* 4: north
+* 8: east
+
+=== [[Fence Gate]]s ===
+[[File:Fence gate orientation bits.png|thumb|The left circle was opened from the outside, the right one from the inside. Facing directions: Red = North; Green = East; Yellow = South; Blue = West]]
+
+{| class="wikitable"
+! Bits !! Description
+|-
+| 0x1<br>0x2 || Two bits storing a value from 0 to 3 specifying the direction the gate is facing:
+*0: Facing south
+*1: Facing west
+*2: Facing north
+*3: Facing east
+|-
+| 0x4 || 0 if the gate is closed, 1 if open.
+|}
+
+=== [[Nether Wart]] ===
+Like Crops, the data value is related to the size of the Nether Wart. There are three distinct visual stages to Nether Wart's growth (the associated data values are given):
+
+{| class="wikitable"
+! Icon !! Value
+|-
+|{{BlockSprite|nether-wart-1}}|| 0
+|-
+|{{BlockSprite|nether-wart-2}}|| 1-2
+|-
+|{{BlockSprite|nether-wart-3}}|| 3
+|}
+
+=== [[Brewing Stand]] ===
+The bottom three bits are bit flags for which bottle slots actually contain bottles.
+
+{| class="wikitable" data-description="Block data"
+! Bits !! Values
+|-
+| 0x1 || The slot pointing east
+|-
+| 0x2 || The slot pointing northwest
+|-
+| 0x4 || The slot pointing southwest
+|}
+
+=== [[Cauldron]] ===
+The data value stores the amount of water kept in the cauldron, in units of glass bottles that can be filled.
+
+{| class="wikitable"
+! [[Bedrock Edition data values|DV]] !! Description
+|-
+| 0 || Empty
+|-
+| 1 || ⅓ filled
+|-
+| 2 || ⅔ filled
+|-
+| 3 || Fully filled
+|}
+
+=== [[Nether Portal]] ===
+{| class="wikitable"
+! [[Bedrock Edition data values|DV]] !! Orientation
+|-
+| 0 || Automatic
+|-
+| 1 || Facing North/South (obsidian to east and west)
+|-
+| 2 || Facing East/West (obsidian to north and south)
+|}
+
+=== [[End Portal Frame]] ===
+The bottom two bits determine which "side" of the whole portal frame this block is a part of. To make the frame activate, each of the portal frame blocks in the pattern must "face" toward the middle. Since the image is near-symmetrical, it is difficult to tell which direction an individual block is actually facing, but if the block isn't facing in that direction and that is the last frame block where the Eye of Ender is placed, the frame won't activate.
+
+Direction vectors for the blocks are the following:
+* 0: To the south
+* 1: To the west
+* 2: To the north
+* 3: To the east
+
+0x4 is a bit flag: 0 is an "empty" frame block, 1 is a block with an [[Eye of Ender]] inserted.
+
+=== {{Anchor|Cocoa Plants}}[[Cocoa]] ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2 || A two-bit field storing a value from 0 to 4 specifying the direction the pod is attached to:
+* 0: Attached to the north
+* 1: Attached to the east
+* 2: Attached to the south
+* 3: Attached to the west
+|-
+| 0x4<br>0x8 || A two-bit field storing a value from 0 to 3 specifying the stage of growth of the plant:
+* 0: First stage
+* 1: Second stage
+* 2: Final stage 
+|}
+
+=== [[Tripwire Hook]] ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2 || A two-bit field storing a value from 0 to 3:
+* 0: Tripwire hook on block side facing south
+* 1: Tripwire hook on block side facing west
+* 2: Tripwire hook on block side facing north
+* 3: Tripwire hook on block side facing east
+|-
+| 0x4 || If set, the tripwire hook is connected and ready to trip ("middle" position).
+|-
+| 0x8 || If set, the tripwire hook is currently activated ("down" position)
+|}
+
+=== [[Tripwire]] ===
+{| class="wikitable"
+! Bits !! Description
+|-
+| 0x1 || Set if tripwire is activated (an entity is intersecting its collision mask).
+|-
+| 0x2 || ''Unused''
+|-
+| 0x4 || Set if tripwire is attached to a valid tripwire circuit.
+|-
+| 0x8 || Set if tripwire is disarmed.
+|}
+
+=== [[Torch]]es and [[Redstone Torch]]es ===
+{{dvt|dv=0}}
+{{dvt|Facing east (attached to a block to its west)}}
+{{dvt|Facing west (attached to a block to its east)}}
+{{dvt|Facing south (attached to a block to its north)}}
+{{dvt|Facing north (attached to a block to its south)}}
+{{dvt|Facing up (attached to a block beneath it)|foot=1}}
+
+=== [[Anvil]] ===
+{{dvt|spritetype=block|sprite=anvil|Anvil, facing West}}
+{{dvt|spritetype=block|sprite=anvil|Anvil, facing North}}
+{{dvt|spritetype=block|sprite=anvil|Anvil, facing East}}
+{{dvt|spritetype=block|sprite=anvil|Anvil, facing South}}
+{{dvt|sprite=anvil|Chipped Anvil, facing West}}
+{{dvt|sprite=anvil|Chipped Anvil, facing North}}
+{{dvt|sprite=anvil|Chipped Anvil, facing East}}
+{{dvt|sprite=anvil|Chipped Anvil, facing South}}
+{{dvt|sprite=anvil|Damaged Anvil, facing West}}
+{{dvt|sprite=anvil|Damaged Anvil, facing North}}
+{{dvt|sprite=anvil|Damaged Anvil, facing East}}
+{{dvt|sprite=anvil|Damaged Anvil, facing South}}
+{{dvt|sprite=anvil|Deprecated Anvil, facing West}}
+{{dvt|sprite=anvil|Deprecated Anvil, facing North}}
+{{dvt|sprite=anvil|Deprecated Anvil, facing East}}
+{{dvt|sprite=anvil|Deprecated Anvil, facing South|foot=1}}
+
+=== [[Wall]]s ===
+{{dvt|spritetype=block|sprite=cobblestone-wall|Cobblestone Wall}}
+{{dvt|sprite=mossy-cobblestone-wall|Mossy Cobblestone Wall}}
+{{dvt|sprite=granite-wall|Granite Wall}}
+{{dvt|sprite=diorite-wall|Diorite Wall}}
+{{dvt|sprite=andesite-wall|Andesite Wall}}
+{{dvt|sprite=sandstone-wall|Sandstone Wall}}
+{{dvt|sprite=brick-wall|Brick Wall}}
+{{dvt|sprite=stone-brick-wall|Stone Brick Wall}}
+{{dvt|sprite=mossy-stone-brick-wall|Mossy Stone Brick Wall}}
+{{dvt|sprite=nether-brick-wall|Nether Brick Wall}}
+{{dvt|sprite=end-stone-brick-wall|End Stone Brick Wall}}
+{{dvt|sprite=prismarine-wall|Prismarine Wall}}
+{{dvt|sprite=red-sandstone-wall|Red Sandstone Wall}}
+{{dvt|sprite=red-nether-brick-wall|Red Nether Brick Wall|foot=1}}
+
+=== [[Flower Pot]] ===
+{{dvt|spritetype=block|sprite=flower-pot|Empty Flower Pot}}
+{{dvt|sprite=flower-pot|Potted Flower Pot|foot=1}}
+
+=== [[Head]]s ===
+For the block, data values determine the block placement:
+{{dvt}}
+{{dvt|dv=1|spritetype=block|sprite=skeleton-skull|On the floor (rotation is stored in the tile entity)}}
+{{dvt|sprite=skeleton-skull|On a wall, facing north}}
+{{dvt|sprite=skeleton-skull|On a wall, facing south}}
+{{dvt|sprite=skeleton-skull|On a wall, facing west}}
+{{dvt|sprite=skeleton-skull|On a wall, facing east|foot=1}}
+
+For the item and for the tile entity, data values determine the skull type (alias IDs only):
+{{dvt|dv=0|spritetype=block|sprite=skeleton-skull|Skeleton Skull}}
+{{dvt|sprite=wither-skeleton-skull|Wither Skeleton Skull}}
+{{dvt|sprite=zombie-head|Zombie Head}}
+{{dvt|sprite=player-head|Head}}
+{{dvt|sprite=creeper-head|Creeper Head}}
+{{Dvt|Dragon Head|sprite = dragon-head|foot=1}}
+
+=== [[Block of Quartz]] ===
+Alias IDs only.
+{{dvt|spritetype=block|sprite=block-of-quartz|Block of Quartz}}
+{{dvt|sprite=chiseled-quartz-block|Chiseled Quartz Block}}
+{{dvt|sprite=quartz-pillar|Quartz Pillar (vertical)}}
+{{dvt|sprite=quartz-pillar-horizontal|Quartz Pillar (east-west)}}
+{{dvt|sprite=quartz-pillar-top|Quartz Pillar (north-south)|foot=1}}
+
+=== [[Coal]] ===
+Alias IDs only.
+{{dvt|spritetype=item|sprite=coal|Coal}}
+{{dvt|sprite=charcoal|Charcoal|foot=1}}
+
+=== [[Dye]]s ===
+Alias IDs only.
+{| class="wikitable"
+! !! [[Bedrock Edition data values|DV]] !! Description
+|-
+|{{ItemSprite|ink-sac}}|| 0 || [[Ink Sac]]
+|-
+|{{ItemSprite|red-dye}}|| 1 || [[Red Dye]]
+|-
+|{{ItemSprite|green-dye}}|| 2 || [[Green Dye]]
+|-
+|{{ItemSprite|cocoa-beans}}|| 3 || [[Cocoa Beans]]
+|-
+|{{ItemSprite|lapis-lazuli}}|| 4 || [[Lapis Lazuli]]
+|-
+|{{ItemSprite|purple-dye}}|| 5 || [[Purple Dye]]
+|-
+|{{ItemSprite|cyan-dye}}|| 6 || [[Cyan Dye]]
+|-
+|{{ItemSprite|light-gray-dye}}|| 7 || [[Light Gray Dye]]
+|-
+|{{ItemSprite|gray-dye}}|| 8 || [[Gray Dye]]
+|-
+|{{ItemSprite|pink-dye}}|| 9 || [[Pink Dye]]
+|-
+|{{ItemSprite|lime-dye}}|| 10 || [[Lime Dye]]
+|-
+|{{ItemSprite|yellow-dye}}|| 11 || [[Yellow Dye]]
+|-
+|{{ItemSprite|light-blue-dye}}|| 12 || [[Light Blue Dye]]
+|-
+|{{ItemSprite|magenta-dye}}|| 13 || [[Magenta Dye]]
+|-
+|{{ItemSprite|orange-dye}}|| 14 || [[Orange Dye]]
+|-
+|{{ItemSprite|bone-meal}}|| 15 || [[Bone Meal]]
+|}
+
+=== [[Observer]] ===
+{| class="wikitable"
+! Bits !! Values
+|-
+| 0x1<br>0x2<br>0x4 || Three bits storing a value from 0 to 5:
+* 0: Observer facing down
+* 1: Observer facing up
+* 2: Observer facing north
+* 3: Observer facing south
+* 4: Observer facing west
+* 5: Observer facing east
+|-
+| 0x8 || If set, the observer is powered.
+|}
+
+=== [[Bamboo]] ===
+Bamboo shoot:
+{{dvt|spritetype=block|sprite=bamboo-shoot|Newly planted bamboo shoot}}
+{{dvt|sprite=bamboo-shoot|Bamboo shoot that may grow into bamboo|foot=1}}
+
+Bamboo:
+{{dvt|spritetype=block|sprite=bamboo|dv=0|Thin leafless bamboo}}
+{{dvt|sprite=bamboo|Thick leafless bamboo}}
+{{dvt|sprite=bamboo|Thin small-leaved bamboo}}
+{{dvt|sprite=bamboo|Thick small-leaved bamboo}}
+{{dvt|sprite=bamboo|Thin big-leaved bamboo}}
+{{dvt|sprite=bamboo|Thick big-leaved bamboo|foot=1}}
+
+=== [[Basalt]] ===
+{{dvt|spritetype=block|sprite=basalt|Basalt is oriented vertically}}
+{{dvt|sprite=basalt|Basalt is oriented north-south}}
+{{dvt|sprite=basalt|Basalt is oriented east-west|foot=1}}
+
+=== [[Barrel]] ===
+{{dvt|spritetype=block|sprite=barrel|Down facing barrel}}
+{{dvt|sprite=barrel|Up facing barrel}}
+{{dvt|sprite=barrel|East facing barrel}}
+{{dvt|sprite=barrel|West facing barrel}}
+{{dvt|sprite=barrel|South facing barrel}}
+{{dvt|sprite=barrel|North facing barrel|foot=1}}
+
+=== [[Bubble Column]] ===
+{{dvt|spritetype=block|sprite=bubble-column|The bubble column is a whirlpool.}}
+{{dvt|sprite=bubble-column|The bubble column is upwards.|foot=1}}
+
+=== [[Coral]] ===
+{{dvt|spritetype=block|sprite=tube-coral|Tube Coral}}
+{{dvt|sprite=brain-coral|Brain Coral}}
+{{dvt|sprite=bubble-coral|Bubble Coral}}
+{{dvt|sprite=fire-coral|Fire Coral}}
+{{dvt|sprite=horn-coral|Horn Coral}}
+{{dvt|dv=8|sprite=dead-tube-coral|Dead Tube Coral}}
+{{dvt|sprite=dead-brain-coral|Dead Brain Coral}}
+{{dvt|sprite=dead-bubble-coral|Dead Bubble Coral}}
+{{dvt|sprite=dead-fire-coral|Dead Fire Coral}}
+{{dvt|sprite=dead-horn-coral|Dead Horn Coral|foot=1}}
+
+=== [[Coral Block]] ===
+{{dvt|spritetype=block|sprite=tube-coral-block|Tube Coral Block}}
+{{dvt|spritetype=block|sprite=brain-coral-block|Brain Coral Block}}
+{{dvt|spritetype=block|sprite=bubble-coral-block|Bubble Coral Block}}
+{{dvt|spritetype=block|sprite=fire-coral-block|Fire Coral Block}}
+{{dvt|spritetype=block|sprite=horn-coral-block|Horn Coral Block}}
+{{dvt|spritetype=block|sprite=dead-tube-coral-block|Dead Tube Coral Block|dv=8}}
+{{dvt|spritetype=block|sprite=dead-brain-coral-block|Dead Brain Coral Block}}
+{{dvt|spritetype=block|sprite=dead-bubble-coral-block|Dead Bubble Coral Block}}
+{{dvt|spritetype=block|sprite=dead-fire-coral-block|Dead Fire Coral Block}}
+{{dvt|spritetype=block|sprite=dead-horn-coral-block|Dead Horn Coral Block|foot=1}}
+
+=== [[Coral Fan]] ===
+Coral fan:
+{{dvt|spritetype=block|sprite=tube-coral-fan|Tube Coral Fan facing east-west}}
+{{dvt|spritetype=block|sprite=brain-coral-fan|Brain Coral Fan facing east-west}}
+{{dvt|spritetype=block|sprite=bubble-coral-fan|Bubble Coral Fan facing east-west}}
+{{dvt|spritetype=block|sprite=fire-coral-fan|Fire Coral Fan facing east-west}}
+{{dvt|spritetype=block|sprite=horn-coral-fan|Horn Coral Fan facing east-west}}
+{{dvt|dv=8|spritetype=block|sprite=tube-coral-fan|Tube Coral Fan facing north-south}}
+{{dvt|spritetype=block|sprite=brain-coral-fan|Brain Coral Fan facing north-south}}
+{{dvt|spritetype=block|sprite=bubble-coral-fan|Bubble Coral Fan facing north-south}}
+{{dvt|spritetype=block|sprite=fire-coral-fan|Fire Coral Fan facing north-south}}
+{{dvt|spritetype=block|sprite=horn-coral-fan|Horn Coral Fan facing north-south|foot=1}}
+
+Dead coral fan:
+{{dvt|spritetype=block|sprite=dead-tube-coral-fan|Dead Tube Coral Fan facing east-west}}
+{{dvt|spritetype=block|sprite=dead-brain-coral-fan|Dead Brain Coral Fan facing east-west}}
+{{dvt|spritetype=block|sprite=dead-bubble-coral-fan|Dead Bubble Coral Fan facing east-west}}
+{{dvt|spritetype=block|sprite=dead-fire-coral-fan|Dead Fire Coral Fan facing east-west}}
+{{dvt|spritetype=block|sprite=dead-horn-coral-fan|Dead Horn Coral Fan facing east-west}}
+{{dvt|dv=8|spritetype=block|sprite=dead-tube-coral-fan|Dead Tube Coral Fan facing north-south}}
+{{dvt|spritetype=block|sprite=dead-brain-coral-fan|Dead Brain Coral Fan facing north-south}}
+{{dvt|spritetype=block|sprite=dead-bubble-coral-fan|Dead Bubble Coral Fan facing north-south}}
+{{dvt|spritetype=block|sprite=dead-fire-coral-fan|Dead Fire Coral Fan facing north-south}}
+{{dvt|spritetype=block|sprite=dead-horn-coral-fan|Dead Horn Coral Fan facing north-south|foot=1}}
+
+Coral fan (hang):
+{{dvt|spritetype=block|sprite=tube-coral-fan|Tube Coral Wall Fan facing west}}
+{{dvt|spritetype=block|sprite=brain-coral-fan|Brain Coral Wall Fan facing west}}
+{{dvt|spritetype=block|sprite=dead-tube-coral-fan|Dead Tube Coral Wall Fan facing west}}
+{{dvt|spritetype=block|sprite=dead-brain-coral-fan|Dead Brain Coral Wall Fan facing west}}
+{{dvt|spritetype=block|sprite=tube-coral-fan|Tube Coral Wall Fan facing east}}
+{{dvt|spritetype=block|sprite=brain-coral-fan|Brain Coral Wall Fan facing east}}
+{{dvt|spritetype=block|sprite=dead-tube-coral-fan|Dead Tube Coral Wall Fan facing east}}
+{{dvt|spritetype=block|sprite=dead-brain-coral-fan|Dead Brain Coral Wall Fan facing east}}
+{{dvt|spritetype=block|sprite=tube-coral-fan|Tube Coral Wall Fan facing north}}
+{{dvt|spritetype=block|sprite=brain-coral-fan|Brain Coral Wall Fan facing north}}
+{{dvt|spritetype=block|sprite=dead-tube-coral-fan|Dead Tube Coral Wall Fan facing north}}
+{{dvt|spritetype=block|sprite=dead-brain-coral-fan|Dead Brain Coral Wall Fan facing north}}
+{{dvt|spritetype=block|sprite=tube-coral-fan|Tube Coral Wall Fan facing south}}
+{{dvt|spritetype=block|sprite=brain-coral-fan|Brain Coral Wall Fan facing south}}
+{{dvt|spritetype=block|sprite=dead-tube-coral-fan|Dead Tube Coral Wall Fan facing south}}
+{{dvt|spritetype=block|sprite=dead-brain-coral-fan|Dead Brain Coral Wall Fan facing south|foot=1}}
+
+Coral fan (hang 2):
+{{dvt|spritetype=block|sprite=bubble-coral-fan|Bubble Coral Wall Fan facing west}}
+{{dvt|spritetype=block|sprite=fire-coral-fan|Fire Coral Wall Fan facing west}}
+{{dvt|spritetype=block|sprite=dead-bubble-coral-fan|Dead Bubble Coral Wall Fan facing west}}
+{{dvt|spritetype=block|sprite=dead-fire-coral-fan|Dead Fire Coral Wall Fan facing west}}
+{{dvt|spritetype=block|sprite=bubble-coral-fan|Bubble Coral Wall Fan facing east}}
+{{dvt|spritetype=block|sprite=fire-coral-fan|Fire Coral Wall Fan facing east}}
+{{dvt|spritetype=block|sprite=dead-bubble-coral-fan|Dead Bubble Coral Wall Fan facing east}}
+{{dvt|spritetype=block|sprite=dead-fire-coral-fan|Dead Fire Coral Wall Fan facing east}}
+{{dvt|spritetype=block|sprite=bubble-coral-fan|Bubble Coral Wall Fan facing north}}
+{{dvt|spritetype=block|sprite=fire-coral-fan|Fire Coral Wall Fan facing north}}
+{{dvt|spritetype=block|sprite=dead-bubble-coral-fan|Dead Bubble Coral Wall Fan facing north}}
+{{dvt|spritetype=block|sprite=dead-fire-coral-fan|Dead Fire Coral Wall Fan facing north}}
+{{dvt|spritetype=block|sprite=bubble-coral-fan|Bubble Coral Wall Fan facing south}}
+{{dvt|spritetype=block|sprite=fire-coral-fan|Fire Coral Wall Fan facing south}}
+{{dvt|spritetype=block|sprite=dead-bubble-coral-fan|Dead Bubble Coral Wall Fan facing south}}
+{{dvt|spritetype=block|sprite=dead-fire-coral-fan|Dead Fire Coral Wall Fan facing south|foot=1}}
+
+Coral fan (hang 3):
+{{dvt|spritetype=block|sprite=horn-coral-fan|Horn Coral Wall Fan facing west}}
+{{dvt|dv=2|spritetype=block|sprite=dead-horn-coral-fan|Dead Horn Coral Wall Fan facing west}}
+{{dvt|dv=4|spritetype=block|sprite=horn-coral-fan|Horn Coral Wall Fan facing east}}
+{{dvt|dv=6|spritetype=block|sprite=dead-horn-coral-fan|Dead Horn Coral Wall Fan facing east}}
+{{dvt|dv=8|spritetype=block|sprite=horn-coral-fan|Horn Coral Wall Fan facing north}}
+{{dvt|dv=10|spritetype=block|sprite=dead-horn-coral-fan|Dead Horn Coral Wall Fan facing north}}
+{{dvt|dv=12|spritetype=block|sprite=horn-coral-fan|Horn Coral Wall Fan facing south}}
+{{dvt|dv=14|spritetype=block|sprite=dead-horn-coral-fan|Dead Horn Coral Wall Fan facing south|foot=1}}
+
+=== [[Frosted Ice]] ===
+{{dvt|sprite=frosted-ice|New frosted ice}}
+{{dvt|sprite=frosted-ice|Slightly cracked frosted ice}}
+{{dvt|sprite=frosted-ice|Cracked frosted ice}}
+{{dvt|sprite=frosted-ice|Very cracked frosted ice|foot=1}}
+
+=== [[Loom]] ===
+{{dvt|sprite=loom|South facing loom}}
+{{dvt|sprite=loom|West facing loom}}
+{{dvt|sprite=loom|North facing loom}}
+{{dvt|sprite=loom|East facing loom|foot=1}}
+
+=== [[Grindstone]] ===
+{{dvt|sprite=grindstone|East facing standing grindstone}}
+{{dvt|sprite=grindstone|West facing standing grindstone}}
+{{dvt|sprite=grindstone|South facing standing grindstone}}
+{{dvt|sprite=grindstone|North facing standing grindstone}}
+{{dvt|sprite=grindstone|East facing hanging grindstone}}
+{{dvt|sprite=grindstone|West facing hanging grindstone}}
+{{dvt|sprite=grindstone|South facing hanging grindstone}}
+{{dvt|sprite=grindstone|North facing hanging grindstone}}
+{{dvt|sprite=grindstone|East facing side grindstone}}
+{{dvt|sprite=grindstone|West facing side grindstone}}
+{{dvt|sprite=grindstone|South facing side grindstone}}
+{{dvt|sprite=grindstone|North facing side grindstone}}
+{{dvt|sprite=grindstone|East facing "multiple" grindstone (looks identical to data value 0)}}
+{{dvt|sprite=grindstone|West facing "multiple" grindstone (looks identical to data value 1)}}
+{{dvt|sprite=grindstone|South facing "multiple" grindstone (looks identical to data value 2)}}
+{{dvt|sprite=grindstone|North facing "multiple" grindstone (looks identical to data value 3)|foot=1}}
+
+=== [[Item Frame]] ===
+{{dvt|spritetype=entity|sprite=item-frame|East facing item frame}}
+{{dvt|sprite=item-frame|West facing item frame}}
+{{dvt|sprite=item-frame|South facing item frame}}
+{{dvt|sprite=item-frame|North facing item frame}}
+{{dvt|sprite=item-frame|East facing item frame with map}}
+{{dvt|sprite=item-frame|West facing item frame with map}}
+{{dvt|sprite=item-frame|South facing item frame with map}}
+{{dvt|sprite=item-frame|North facing item frame with map}}
+{{dvt|sprite=item-frame|Down facing item frame|foot=1}}
+
+=== [[Lectern]] ===
+{{dvt|spritetype=block|sprite=lectern|South facing lectern}}
+{{dvt|sprite=lectern|West facing lectern}}
+{{dvt|sprite=lectern|North facing lectern}}
+{{dvt|sprite=lectern|East facing lectern}}
+{{dvt|sprite=lectern|South facing lectern that emits power}}
+{{dvt|sprite=lectern|West facing lectern that emits power}}
+{{dvt|sprite=lectern|North facing lectern that emits power}}
+{{dvt|sprite=lectern|East facing lectern that emits power|foot=1}}
+
+=== [[Scaffolding]] ===
+{{dvt|sprite=scaffolding|Unknown}}
+{{dvt|sprite=scaffolding|Unknown}}
+{{dvt|sprite=scaffolding|Unknown}}
+{{dvt|sprite=scaffolding|Unknown}}
+{{dvt|sprite=scaffolding|Unknown}}
+{{dvt|sprite=scaffolding|Unknown}}
+{{dvt|sprite=scaffolding|Unknown}}
+{{dvt|sprite=scaffolding|Scaffolding at distance 0}}
+{{dvt|sprite=scaffolding|Scaffolding at distance 1}}
+{{dvt|sprite=scaffolding|Scaffolding at distance 2}}
+{{dvt|sprite=scaffolding|Scaffolding at distance 3}}
+{{dvt|sprite=scaffolding|Scaffolding at distance 4}}
+{{dvt|sprite=scaffolding|Scaffolding at distance 5}}
+{{dvt|sprite=scaffolding|Scaffolding at distance 6}}
+{{dvt|sprite=scaffolding|Scaffolding at distance 7|foot=1}}
+
+=== [[Seagrass]] ===
+{{dvt|spritetype=block|sprite=seagrass|Seagrass}}
+{{dvt|spritetype=block|sprite=tall-seagrass|Tall Seagrass top}}
+{{dvt|spritetype=block|sprite=tall-seagrass|Tall Seagrass bottom|foot=1}}
+
+=== [[Sea Pickle]] ===
+{{dvt|spritetype=block|sprite=sea-pickle|One Sea Pickle in water}}
+{{dvt|spritetype=block|sprite=sea-pickle|Two Sea Pickles in water}}
+{{dvt|spritetype=block|sprite=sea-pickle|Three Sea Pickles in water}}
+{{dvt|spritetype=block|sprite=sea-pickle|Four Sea Pickles in water}}
+{{dvt|spritetype=block|sprite=sea-pickle|One Sea Pickle out of water}}
+{{dvt|spritetype=block|sprite=sea-pickle|Two Sea Pickles out of water}}
+{{dvt|spritetype=block|sprite=sea-pickle|Three Sea Pickles out of water}}
+{{dvt|spritetype=block|sprite=sea-pickle|Four Sea Pickles out of water|foot=1}}
+
+=== [[Lantern]] ===
+{{dvt|sprite=lantern|Standing lantern}}
+{{dvt|sprite=lantern|Hanging lantern|foot=1}}
+
+=== [[Campfire]] ===
+{{dvt|sprite=campfire|East facing lit campfire}}
+{{dvt|sprite=campfire|West facing lit campfire}}
+{{dvt|sprite=campfire|South facing lit campfire}}
+{{dvt|sprite=campfire|North facing lit campfire}}
+{{dvt|sprite=campfire|East facing unlit campfire}}
+{{dvt|sprite=campfire|West facing unlit campfire}}
+{{dvt|sprite=campfire|South facing unlit campfire}}
+{{dvt|sprite=campfire|North facing unlit campfire|foot=1}}
+
+=== [[Turtle Egg]] ===
+{{dvt|sprite=turtle-egg|spritetype=block|One uncracked egg.}}
+{{dvt|sprite=turtle-egg|Two uncracked eggs.}}
+{{dvt|sprite=turtle-egg|Three uncracked eggs.}}
+{{dvt|sprite=turtle-egg|Four uncracked eggs.}}
+{{dvt|sprite=turtle-egg|One slightly cracked egg.}}
+{{dvt|sprite=turtle-egg|Two slightly cracked eggs.}}
+{{dvt|sprite=turtle-egg|Three slightly cracked eggs.}}
+{{dvt|sprite=turtle-egg|Four slightly cracked eggs.}}
+{{dvt|sprite=turtle-egg|One cracked egg.}}
+{{dvt|sprite=turtle-egg|Two cracked eggs.}}
+{{dvt|sprite=turtle-egg|Three cracked eggs.}}
+{{dvt|sprite=turtle-egg|Four cracked eggs.}}
+{{dvt|sprite=turtle-egg|One uncracked egg.}}
+{{dvt|sprite=turtle-egg|Two uncracked eggs.}}
+{{dvt|sprite=turtle-egg|Three uncracked eggs.}}
+{{dvt|sprite=turtle-egg|Four uncracked eggs.|foot=1}}
+
+=== [[Respawn Anchor]] ===
+{{dvt|sprite=respawn-anchor|Uncharged respawn anchor}}
+{{dvt|sprite=respawn-anchor-side-1|Respawn anchor with one charges}}
+{{dvt|sprite=respawn-anchor-side-2|Respawn anchor with two charges}}
+{{dvt|sprite=respawn-anchor-side-3|Respawn anchor with three charges}}
+{{dvt|sprite=respawn-anchor-side-4|Respawn anchor with four charges|foot=1}}
+
+=== [[Smoker]] ===
+{| class="wikitable"
+! Bits
+! Values
+|-
+| 0x1<br>0x2<br>0x4
+|
+A three-bit field storing a value from 2 to 5:
+* 2: Smoker facing north
+* 3: Smoker facing south
+* 4: Smoker facing west
+* 5: Smoker facing east
+
+Invalid values default to 2.
+|-
+| 0x8
+| Unused.
+|}
+
+=== [[Stonecutter]] ===
+{{dvt|sprite=air|Unused}}
+{{dvt|sprite=air|Unused}}
+{{dvt|sprite=stonecutter|East facing stonecutter}}
+{{dvt|sprite=stonecutter|West facing stonecutter}}
+{{dvt|sprite=stonecutter|South facing stonecutter}}
+{{dvt|sprite=stonecutter|North facing stonecutter|foot=1}}
+
+=== [[Twisting Vines]] ===
+{{dvt|sprite=twisting-vines|Twisting vines with age 0}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 1}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 2}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 3}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 4}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 5}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 6}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 7}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 8}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 9}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 10}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 11}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 12}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 13}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 14}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 15}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 16}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 17}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 18}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 19}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 20}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 21}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 22}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 23}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 24}}
+{{dvt|sprite=twisting-vines|Twisting vines with age 25|foot=1}}
+
+=== [[Weeping Vines]] ===
+{{dvt|sprite=weeping-vines|Weeping vines with age 0}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 1}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 2}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 3}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 4}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 5}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 6}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 7}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 8}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 9}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 10}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 11}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 12}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 13}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 14}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 15}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 16}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 17}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 18}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 19}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 20}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 21}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 22}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 23}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 24}}
+{{dvt|sprite=weeping-vines|Weeping vines with age 25|foot=1}}
+
+=== [[Bell]] ===
+{{dvt|sprite=bell|East facing standing bell}}
+{{dvt|sprite=bell|West facing standing bell}}
+{{dvt|sprite=bell|South facing standing bell}}
+{{dvt|sprite=bell|North facing standing bell}}
+{{dvt|sprite=bell|East facing hanging bell}}
+{{dvt|sprite=bell|West facing hanging bell}}
+{{dvt|sprite=bell|South facing hanging bell}}
+{{dvt|sprite=bell|North facing hanging bell}}
+{{dvt|sprite=bell|East facing side bell (attached to 1 wall)}}
+{{dvt|sprite=bell|West facing side bell (attached to 1 wall)}}
+{{dvt|sprite=bell|South facing side bell (attached to 1 wall)}}
+{{dvt|sprite=bell|North facing side bell (attached to 1 wall)}}
+{{dvt|sprite=bell|East facing "multiple" bell (between 2 walls)}}
+{{dvt|sprite=bell|West facing "multiple" bell (between 2 walls)}}
+{{dvt|sprite=bell|South facing "multiple" bell (between 2 walls)}}
+{{dvt|sprite=bell|North facing "multiple" bell (between 2 walls)}}
+{{dvt|dv=0x16|sprite=bell|Each time the bell is rung, this value toggles between 0 and 1.|foot=1}}
+
+=== [[Blast Furnace]] ===
+{| class="wikitable"
+! Bits
+! Values
+|-
+| 0x1<br>0x2<br>0x4
+|
+A three-bit field storing a value from 2 to 5:
+* 2: Blast furnace facing north
+* 3: Blast furnace facing south
+* 4: Blast furnace facing west
+* 5: Blast furnace facing east
+
+Invalid values default to 2.
+|-
+| 0x8
+| Unused.
+|}
+
+=== [[Bone Block]] ===
+{{dvt|spritetype=block|sprite=bone-block|Bone block facing up/down}}
+{{dvt|Unused}}
+{{dvt|Unused}}
+{{dvt|Unused}}
+{{dvt|spritetype=block|sprite=bone-block|Bone block facing east/west}}
+{{dvt|Unused}}
+{{dvt|Unused}}
+{{dvt|Unused}}
+{{dvt|spritetype=block|sprite=bone-block|Bone block facing north/south|foot=1}}
+
+=== [[Chain]] ===
+{{dvt|sprite=chain|Chain is oriented vertically}}
+{{dvt|sprite=chain|Chain is oriented north-south}}
+{{dvt|sprite=chain|Chain is oriented east-west|foot=1}}
+
+=== [[Colored Torch]] ===
+Colored torch (red/green)
+{{dvt|spritetype=block|sprite=red-torch|Red Torch}}
+{{dvt|spritetype=block|sprite=green-torch|Green Torch|dv=1|foot=1}}
+
+Colored torch (blue/purple)
+{{dvt|spritetype=block|sprite=blue-torch|Blue Torch|dv=0}}
+{{dvt|spritetype=block|sprite=purple-torch|Purple Torch|dv=1|foot=1}}
+
+=== [[Composter]] ===
+{{dvt|sprite=composter|Empty composter}}
+{{dvt|sprite=composter|Composter with 1 successful compost}}
+{{dvt|sprite=composter|Composter with 2 successful composts}}
+{{dvt|sprite=composter|Composter with 3 successful composts}}
+{{dvt|sprite=composter|Composter with 4 successful composts}}
+{{dvt|sprite=composter|Composter with 5 successful composts}}
+{{dvt|sprite=composter|Composter with 6 successful composts}}
+{{dvt|sprite=composter|Composter with 7 successful composts}}
+{{dvt|sprite=composter|Composter ready to provide bone meal|foot=1}}
+
+=== [[Wool]], [[Stained Terracotta]], [[Stained Glass]], [[Concrete]], [[Concrete Powder]], [[Shulker Box]], [[Hardened Stained Glass]], [[Hardened Stained Glass Pane]] and [[Carpet]] ===
+Alias IDs only.
+{{dvt|White}}
+{{dvt|Orange}}
+{{dvt|Magenta}}
+{{dvt|Light Blue}}
+{{dvt|Yellow}}
+{{dvt|Lime}}
+{{dvt|Pink}}
+{{dvt|Gray}}
+{{dvt|Light Gray}}
+{{dvt|Cyan}}
+{{dvt|Purple}}
+{{dvt|Blue}}
+{{dvt|Brown}}
+{{dvt|Green}}
+{{dvt|Red}}
+{{dvt|Black|foot=1}}
+
+=== [[Glow Stick]]s ===
+{{dvt|White}}
+{{dvt|Orange}}
+{{dvt|Magenta}}
+{{dvt|Light Blue}}
+{{dvt|Yellow}}
+{{dvt|Lime}}
+{{dvt|Pink}}
+{{dvt|Gray}}
+{{dvt|Light Gray (unused)}}
+{{dvt|Cyan}}
+{{dvt|Purple}}
+{{dvt|Blue}}
+{{dvt|Brown}}
+{{dvt|Green}}
+{{dvt|Red}}
+{{dvt|Black (unused)|foot=1}}
+
+=== [[Wood]] and [[Stripped Wood]] ===
+{{dvt|spritetype=block|sprite=oak-wood|Oak Wood}}
+{{dvt|spritetype=block|sprite=spruce-wood|Spruce Wood}}
+{{dvt|spritetype=block|sprite=birch-wood|Birch Wood}}
+{{dvt|spritetype=block|sprite=jungle-wood|Jungle Wood}}
+{{dvt|spritetype=block|sprite=acacia-wood|Acacia Wood}}
+{{dvt|spritetype=block|sprite=dark-oak-wood|Dark Oak Wood}}
+{{dvt|spritetype=block|sprite=stripped-oak-wood|Stripped Oak Wood|dv=8}}
+{{dvt|spritetype=block|sprite=stripped-spruce-wood|Stripped Spruce Wood}}
+{{dvt|spritetype=block|sprite=stripped-birch-wood|Stripped Birch Wood}}
+{{dvt|spritetype=block|sprite=stripped-jungle-wood|Stripped Jungle Wood}}
+{{dvt|spritetype=block|sprite=stripped-acacia-wood|Stripped Acacia Wood}}
+{{dvt|spritetype=block|sprite=stripped-dark-oak-wood|Stripped Dark Oak Wood|foot=1}}
+
+=== [[Compound Creator]] ===
+{| class="wikitable"
+!Bits
+!Values
+|-
+|
+0x1<br/>
+0x2
+|
+A two-bit field storing the block's facing:<br/>
+0: north<br/>
+1: east<br/>
+2: south<br/>
+3: west
+|-
+|
+0x4<br/>
+0x8
+|
+A two-bit field storing the type of block:<br/>
+0: {{BlockLink|Compound Creator}}<br/>
+1: {{BlockLink|Material Reducer}}<br/>
+2: {{BlockLink|Element Constructor}}<br/>
+3: {{BlockLink|Lab Table}}
+|}
+
+=== [[Compound]] ===
+{{dvt|spritetype=item|sprite=salt|Salt}}
+{{dvt|sprite=sodium-oxide|Sodium oxide|spritetype=item}}
+{{dvt|sprite=sodium-hydroxide|Sodium hydroxide|spritetype=item}}
+{{dvt|sprite=magnesium-nitrate|Magnesium nitrate|spritetype=item}}
+{{dvt|sprite=iron-sulfide|Iron sulfide}}
+{{dvt|sprite=lithium-hydride|Lithium hydride}}
+{{dvt|sprite=sodium-hydride|Sodium hydride}}
+{{dvt|sprite=calcium-bromide|Calcium bromide}}
+{{dvt|sprite=magnesium-oxide|Magnesium oxide}}
+{{dvt|sprite=sodium-acetate|Sodium acetate}}
+{{dvt|sprite=luminol|Luminol}}
+{{dvt|sprite=black-jar|Charcoal (unused)}}
+{{dvt|sprite=white-jar|item.compound.sugar.name (unused)}}
+{{dvt|sprite=aluminum-oxide|Aluminum oxide}}
+{{dvt|sprite=boron-trioxide|Boron trioxide}}
+{{Dvt|Soap|sprite=soap}}
+{{Dvt|Polyethylene|sprite=polyethylene}}
+{{Dvt|sprite=garbage|Garbage}}
+{{dvt|sprite=white-jar|Magnesium Salts}}
+{{Dvt|item.compound.ink.name (unused)|dv=34|sprite=black-beaker}}
+{{Dvt|item.compound..name (unused)|dv=38|sprite=blue-flask}}
+{{Dvt|item.compound..name (unused)|sprite=air|spritetype=block}}
+{{Dvt|item.compound..name (unused)|sprite=air}}
+{{dvt|sprite=air|item.compound..name (unused)|foot=1|dv=41+}}
+
+=== [[Banner Pattern]] ===
+{{dvt|spritetype=item|sprite=creeper-charge-banner-pattern|Creeper Charge}}
+{{dvt|sprite=skull-charge-banner-pattern|Skull Charge}}
+{{dvt|sprite=flower-charge-banner-pattern|Flower Charge}}
+{{dvt|sprite=thing-banner-pattern|Thing}}
+{{dvt|sprite=field-masoned-banner-pattern|Field Masoned}}
+{{dvt|sprite=bordure-indented-banner-pattern|Bordure Indented}}
+{{dvt|sprite=snout-banner-pattern|Snout}}
+{{dvt|sprite=globe-banner-pattern|Globe|foot=1}}
+
+=== [[Slab]] ===
+{{dvt|spritetype=block|sprite=double-smooth-stone-slab|Double Stone Slab}}
+{{dvt|sprite=sandstone|Double Sandstone Slab}}
+{{dvt|sprite=oak-planks|Double Wooden Slab}}
+{{dvt|sprite=cobblestone|Double Cobblestone Slab}}
+{{dvt|sprite=bricks|Double Brick Slab}}
+{{dvt|sprite=stone-bricks|Double Stone Brick Slab}}
+{{dvt|sprite=block-of-quartz|Double Quartz Slab}}
+{{dvt|sprite=nether-bricks|Double Nether Brick Slab}}
+{{dvt|spritetype=block|sprite=double-smooth-stone-slab|Double Upper Stone Slab}}
+{{dvt|sprite=sandstone|Double Upper Sandstone Slab}}
+{{dvt|sprite=oak-planks|Double Upper Wooden Slab}}
+{{dvt|sprite=cobblestone|Double Upper Cobblestone Slab}}
+{{dvt|sprite=bricks|Double Upper Brick Slab}}
+{{dvt|sprite=stone-bricks|Double Upper Stone Brick Slab}}
+{{dvt|sprite=block-of-quartz|Double Upper Quartz Slab}}
+{{dvt|sprite=nether-bricks|Double Upper Nether Brick Slab|foot=1}}
+
+{{dvt|spritetype=block|sprite=smooth-stone-slab|Smooth Stone Slab}}
+{{dvt|sprite=sandstone-slab|Sandstone Slab}}
+{{dvt|sprite=oak-slab|Wooden Slab}}
+{{dvt|sprite=cobblestone-slab|Cobblestone Slab}}
+{{dvt|sprite=brick-slab|Brick Slab}}
+{{dvt|sprite=stone-brick-slab|Stone Brick Slab}}
+{{dvt|sprite=quartz-slab|Quartz Slab}}
+{{dvt|sprite=nether-brick-slab|Nether Brick Slab}}
+{{dvt|sprite=smooth-stone-slab|Upper Smooth Stone Slab}}
+{{dvt|sprite=sandstone-slab|Upper Sandstone Slab}}
+{{dvt|sprite=oak-slab|Upper Wooden Slab}}
+{{dvt|sprite=cobblestone-slab|Upper Cobblestone Slab}}
+{{dvt|sprite=brick-slab|Upper Brick Slab}}
+{{dvt|sprite=stone-brick-slab|Upper Stone Brick Slab}}
+{{dvt|sprite=quartz-slab|Upper Quartz Slab}}
+{{dvt|sprite=nether-brick-slab|Upper Nether Brick Slab|foot=1}}
+
+{{dvt|spritetype=block|sprite=oak-planks|Double Oak Slab}}
+{{dvt|sprite=spruce-planks|Double Spruce Slab}}
+{{dvt|sprite=birch-planks|Double Birch Slab}}
+{{dvt|sprite=jungle-planks|Double Jungle Slab}}
+{{dvt|sprite=acacia-planks|Double Acacia Slab}}
+{{dvt|sprite=dark-oak-planks|Double Dark Oak Slab}}
+{{dvt|spritetype=block|dv=8|sprite=oak-planks|Double Upper Oak Slab}}
+{{dvt|sprite=spruce-planks|Double Upper Spruce Slab}}
+{{dvt|sprite=birch-planks|Double Upper Birch Slab}}
+{{dvt|sprite=jungle-planks|Double Upper Jungle Slab}}
+{{dvt|sprite=acacia-planks|Double Upper Acacia Slab}}
+{{dvt|sprite=dark-oak-planks|Double Upper Dark Oak Slab|foot=1}}
+
+{{dvt|spritetype=block|sprite=oak-slab|Oak Slab}}
+{{dvt|sprite=spruce-slab|Spruce Slab}}
+{{dvt|sprite=birch-slab|Birch Slab}}
+{{dvt|sprite=jungle-slab|Jungle Slab}}
+{{dvt|sprite=acacia-slab|Acacia Slab}}
+{{dvt|sprite=dark-oak-slab|Dark Oak Slab}}
+{{dvt|dv=8|sprite=oak-slab-top|Upper Oak Slab}}
+{{dvt|sprite=spruce-slab-top|Upper Spruce Slab}}
+{{dvt|sprite=birch-slab-top|Upper Birch Slab}}
+{{dvt|sprite=jungle-slab-top|Upper Jungle Slab}}
+{{dvt|sprite=acacia-slab-top|Upper Acacia Slab}}
+{{dvt|sprite=dark-oak-slab-top|Upper Dark Oak Slab|foot=1}}
+
+{{dvt|spritetype=block|sprite=red-sandstone|Double Red Sandstone Slab}}
+{{dvt|spritetype=block|sprite=purpur-block|Double Purpur Slab}}
+{{dvt|spritetype=block|sprite=prismarine|Double Prismarine Slab}}
+{{dvt|spritetype=block|sprite=prismarine-bricks|Double Prismarine Brick Slab}}
+{{dvt|spritetype=block|sprite=dark-prismarine|Double Dark Prismarine Slab}}
+{{dvt|spritetype=block|sprite=mossy-cobblestone|Double Mossy cobblestone Slab}}
+{{dvt|spritetype=block|sprite=smooth-sandstone|Double Smooth Sandstone Slab}}
+{{dvt|spritetype=block|sprite=red-nether-bricks|Double Red Nether Brick Slab}}
+{{dvt|spritetype=block|sprite=red-sandstone|Double Upper Red Sandstone Slab}}
+{{dvt|spritetype=block|sprite=purpur-block|Double Upper Purpur Slab}}
+{{dvt|spritetype=block|sprite=prismarine|Double Upper Prismarine Slab}}
+{{dvt|spritetype=block|sprite=prismarine-bricks|Double Upper Prismarine Brick Slab}}
+{{dvt|spritetype=block|sprite=dark-prismarine|Double Upper Dark Prismarine Slab}}
+{{dvt|spritetype=block|sprite=mossy-cobblestone|Double Upper Mossy cobblestone Slab}}
+{{dvt|spritetype=block|sprite=smooth-sandstone|Double Upper Smooth Sandstone Slab}}
+{{dvt|spritetype=block|sprite=red-nether-bricks|Double Upper Red Nether Brick Slab|foot=1}}
+
+{{dvt|sprite=red-sandstone-slab|Red Sandstone Slab}}
+{{dvt|sprite=purpur-slab|Purpur Slab}}
+{{dvt|sprite=prismarine-slab|Prismarine Slab}}
+{{dvt|sprite=dark-prismarine-slab|Dark Prismarine Slab}}
+{{dvt|sprite=prismarine-brick-slab|Prismarine Brick Slab}}
+{{dvt|sprite=mossy-cobblestone-slab|Mossy cobblestone Slab}}
+{{dvt|sprite=smooth-sandstone-slab|Smooth Sandstone Slab}}
+{{dvt|sprite=red-nether-brick-slab|Red Nether Brick Slab}}
+{{dvt|sprite=red-sandstone-slab|Upper Red Sandstone Slab}}
+{{dvt|sprite=purpur-slab|Upper Purpur Slab}}
+{{dvt|sprite=prismarine-slab|Upper Prismarine Slab}}
+{{dvt|sprite=dark-prismarine-slab|Upper Dark Prismarine Slab}}
+{{dvt|sprite=prismarine-brick-slab|Upper Prismarine Brick Slab}}
+{{dvt|sprite=mossy-cobblestone-slab|Upper Mossy cobblestone Slab}}
+{{dvt|sprite=smooth-sandstone-slab|Upper Smooth Sandstone Slab}}
+{{dvt|sprite=red-nether-brick-slab|Upper Red Nether Brick Slab|foot=1}}
+
+{{dvt|sprite=end-stone-bricks|Double End Stone Brick Slab}}
+{{dvt|sprite=smooth-red-sandstone|Double Smooth Red Sandstone Slab}}
+{{dvt|sprite=polished-andesite|Double Polished Andesite Slab}}
+{{dvt|sprite=andesite|Double Andesite Slab}}
+{{dvt|sprite=diorite|Double Diorite Slab}}
+{{dvt|sprite=polished-diorite|Double Polished Diorite Slab}}
+{{dvt|sprite=granite|Double Granite Slab}}
+{{dvt|sprite=polished-granite|Double Polished Granite Slab}}
+{{dvt|sprite=end-stone-bricks|Double Upper End Stone Brick Slab}}
+{{dvt|sprite=smooth-red-sandstone|Double Upper Smooth Red Sandstone Slab}}
+{{dvt|sprite=polished-andesite|Double Upper Polished Andesite Slab}}
+{{dvt|sprite=andesite|Double Upper Andesite Slab}}
+{{dvt|sprite=diorite|Double Upper Diorite Slab}}
+{{dvt|sprite=polished-diorite|Double Upper Polished Diorite Slab}}
+{{dvt|sprite=granite|Double Upper Granite Slab}}
+{{dvt|sprite=polished-granite|Double Upper Polished Granite Slab|foot=1}}
+
+{{dvt|sprite=end-stone-brick-slab|End Stone Brick Slab}}
+{{dvt|sprite=smooth-red-sandstone-slab|Smooth Red Sandstone Slab}}
+{{dvt|sprite=polished-andesite-slab|Polished Andesite Slab}}
+{{dvt|sprite=andesite-slab|Andesite Slab}}
+{{dvt|sprite=diorite-slab|Diorite Slab}}
+{{dvt|sprite=polished-diorite-slab|Polished Diorite Slab}}
+{{dvt|sprite=granite-slab|Granite Slab}}
+{{dvt|sprite=polished-granite-slab|Polished Granite Slab}}
+{{dvt|sprite=end-stone-brick-slab|Upper End Stone Brick Slab}}
+{{dvt|sprite=smooth-red-sandstone-slab|Upper Smooth Red Sandstone Slab}}
+{{dvt|sprite=polished-andesite-slab|Upper Polished Andesite Slab}}
+{{dvt|sprite=andesite-slab|Upper Andesite Slab}}
+{{dvt|sprite=diorite-slab|Upper Diorite Slab}}
+{{dvt|sprite=polished-diorite-slab|Upper Polished Diorite Slab}}
+{{dvt|sprite=granite-slab|Upper Granite Slab}}
+{{dvt|sprite=polished-granite-slab|Upper Polished Granite Slab|foot=1}}
+
+{{dvt|sprite=mossy-stone-bricks|Double Mossy Stone Brick Slab}}
+{{dvt|sprite=smooth-quartz|Double Smooth Quartz Slab}}
+{{dvt|sprite=stone|Double Stone Slab}}
+{{dvt|sprite=cut-sandstone|Double Cut Sandstone Slab}}
+{{dvt|sprite=cut-red-sandstone|Double Cut Red Sandstone Slab}}
+{{dvt|sprite=mossy-stone-bricks|dv=8|Double Upper Mossy Stone Brick Slab}}
+{{dvt|sprite=smooth-quartz|Double Upper Smooth Quartz Slab}}
+{{dvt|sprite=stone|Double Upper Stone Slab}}
+{{dvt|sprite=cut-sandstone|Double Upper Cut Sandstone Slab}}
+{{dvt|sprite=cut-red-sandstone|Double Upper Cut Red Sandstone Slab|foot=1}}
+
+{{dvt|sprite=mossy-stone-brick-slab|Mossy Stone Brick Slab}}
+{{dvt|sprite=smooth-quartz-slab|Smooth Quartz Slab}}
+{{dvt|sprite=stone-slab|Stone Slab}}
+{{dvt|sprite=cut-sandstone-slab|Cut Sandstone Slab}}
+{{dvt|sprite=cut-red-sandstone-slab|Cut Red Sandstone Slab}}
+{{dvt|dv=8|sprite=mossy-stone-brick-slab|Upper Mossy Stone Brick Slab}}
+{{dvt|sprite=smooth-quartz-slab|Upper Smooth Quartz Slab}}
+{{dvt|sprite=stone-slab|Upper Stone Slab}}
+{{dvt|sprite=cut-sandstone-slab|Upper Cut Sandstone Slab}}
+{{dvt|sprite=cut-red-sandstone-slab|Upper Cut Red Sandstone Slab|foot=1}}
+
+{{dvt|Bottom slab}}
+{{dvt|Top slab|foot=1}}
+
+[[pt:Valores de dados da Edição Bedrock/Tabela de metadado]]
+[[uk:Значення даних (Bedrock Edition)/Таблиця метаданих]]

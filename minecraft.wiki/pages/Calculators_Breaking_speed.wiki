@@ -1,0 +1,95 @@
+This interactive tool calculates how long it would take to [[destroy]] a block.
+<onlyinclude>{{simplecalc ifenabled|scoped=1|refreshonload=1|enabled=
+<div style="border: 1px solid #ccc;border-radius: 4px; padding: 1em;">
+<div role="radiogroup" aria-labelledby="editionLabel" id="edition">
+{{simplecalc label|codex=1|label=Edition|id=editionLabel}}
+{{Simplecalc codex radio|id=java|name=edition|label=Java Edition|default=1}}
+{{Simplecalc codex radio|id=bedrock|name=edition|label=Bedrock Edition}}
+</div>
+<div role="radiogroup" aria-labelledby="toolLabel" id="tool">
+{{simplecalc label|codex=1|label=Mining tool|description=Speed: {{Simplecalc|type=plain|id=baseSpeed|default=1|formula=or(and(tool1, 1), and(tool1p5, 1.5), and(tool2 +tool2b, 2), and(tool4, 4), and(tool5 +tool5b, 5), and(tool6, 6), and(tool8, 8), and(tool9, 9), and(tool12, 12), and(tool15 +tool15b, 15), and(toolinf, Infinity), toolcv)}}|id=toolLabel}}
+{{Simplecalc codex radio|id=tool1|name=tool|label=Hand or improper tool|default=1}}
+{{Simplecalc codex radio|id=tool2|name=tool|label=Wooden tool}}
+{{Simplecalc codex radio|id=tool4|name=tool|label=Stone tool}}
+{{Simplecalc codex radio|id=tool5|name=tool|label=Copper tool}}
+{{Simplecalc codex radio|id=tool6|name=tool|label=Iron tool}}
+{{Simplecalc codex radio|id=tool8|name=tool|label=Diamond tool}}
+{{Simplecalc codex radio|id=tool9|name=tool|label=Netherite tool}}
+{{Simplecalc codex radio|id=tool12|name=tool|label=Golden tool}}
+{{Simplecalc codex radio|id=tool2b|name=tool|label=Shears}}
+{{Simplecalc codex radio|id=tool5b|name=tool|label=Shears on [[wool]]}}
+{{Simplecalc codex radio|id=tool15|name=tool|label=Shears on [[cobwebs]] and [[leaves]]}}
+{{Simplecalc codex radio|id=tool1p5|name=tool|label=Sword}}
+{{Simplecalc codex radio|id=tool15b|name=tool|label=Sword on [[cobwebs]]}}
+{{Simplecalc codex radio|id=toolinf|name=tool|label=Sword on [[bamboo]] and [[bamboo shoot]]}}
+{{Simplecalc codex radio|id=toolc|name=tool|label=Custom}}
+</div>
+{{simplecalc-hideifzero|block=1|formula=toolc|starthidden=1|1=
+{{simplecalc label|codex=1|Base speed|for=toolcv}} <div class="cdx-text-input">{{Simplecalc|id=toolcv|type=number|default=0|min=0|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+}}
+
+{{simplecalc label|codex=1|[[Efficiency]] level|for=efficiency|description=The player can only obtain up to 5 levels of efficiency in survival mode.}} <div class="cdx-text-input">{{Simplecalc|id=efficiency|type=number|default=0|min=0|max=32768|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+{{simplecalc label|codex=1|[[Aqua Affinity]] level|for=aqua|description=The player can only obtain up to 1 level of aqua affinity in survival mode.}} <div class="cdx-text-input">{{Simplecalc|id=aqua|type=number|default=0|min=0|max=32768|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+{{simplecalc label|codex=1|[[Haste]] or [[Conduit Power]] level (whichever is higher)|for=haste|description=The player can only obtain up to 2 levels of haste and 1 level of conduit power in survival mode.}} <div class="cdx-text-input">{{Simplecalc|id=haste|type=number|default=0|min=0|max=256|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+{{simplecalc label|codex=1|[[Mining Fatigue]] level|for=fatigue|description=The player can only obtain 3 levels of mining fatigue in survival mode.}} <div class="cdx-text-input">{{Simplecalc|id=fatigue|type=number|default=0|min=0|max=256|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+
+<div role="group" aria-labelledby="stateslable" id="states">
+{{simplecalc label|codex=1|for=states|label=States|id=stateslable}}
+{{Simplecalc codex checkbox|id=drop|label=The tool is correct for drop|default=1}}
+{{Simplecalc codex checkbox|id=ground|label=Player on ground|default=1}}
+{{Simplecalc codex checkbox|id=water|label=Head in water}}
+{{simplecalc-hideifzero|block=1|formula=java|{{Simplecalc codex checkbox|id=attributes|label=Custom attributes}}}}
+</div>
+{{simplecalc-hideifzero|block=1|formula=and(java, attributes)|starthidden=1|1=
+{{simplecalc label|codex=1|Submerged Mining Speed|for=Asubmerged|description=submerged_mining_speed, 0-20, default: 0.2}} <div class="cdx-text-input">{{Simplecalc|id=Asubmerged|type=number|default=0.2|min=0|max=20|step=0.1|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+{{simplecalc label|codex=1|Mining Efficiency|for=Aefficiency|description=mining_efficiency, 0-1024, default: 0}} <div class="cdx-text-input">{{Simplecalc|id=Aefficiency|type=number|default=0|min=0|max=1024|step=0.1|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+{{simplecalc label|codex=1|Block Break Speed|for=Aspeed|description=block_break_speed, 0-1024, default: 1}} <div class="cdx-text-input">{{Simplecalc|id=Aspeed|type=number|default=1|min=0|max=1024|step=0.1|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+}}
+
+{{simplecalc label|codex=1|Block hardness|for=hardness}} <div class="cdx-text-input">{{Simplecalc|id=hardness|type=number|default=1.5|min=-1|class-live=cdx-text-input__input|style=max-width:256px}}</div>
+
+{{Simplecalc|type=hidden|id=error|formula=or(
+	ifgreater(0, baseSpeed), ifnan(baseSpeed),
+	efficiency%1, ifless(efficiency, 0), ifgreater(efficiency, 32767), ifnan(efficiency),
+	haste%1, ifless(haste, 0), ifgreater(haste, 256), ifnan(haste),
+	fatigue%1, ifless(fatigue, 0), ifgreater(fatigue, 256), ifnan(fatigue),
+	aqua%1, ifless(aqua, 0), ifgreater(aqua, 32767), ifnan(aqua),
+	and(java, or(
+		ifnan(Asubmerged), ifnan(Aefficiency), ifnan(Aspeed)
+	)),
+	and(ifless(hardness, 0), not(ifequal(hardness, -1))), ifnan(hardness)
+)}}{{Simplecalc|type=hidden|id=damage|formula=
+	ifzero(bedrock,
+		(baseSpeed +ifgreater(baseSpeed, 1, min(1024, max(0,
+				Aefficiency +ifzero(efficiency, 0, 1 +efficiency *efficiency)
+			))))
+			*(1 +0.2*haste)
+			*switch(fatigue, 0, 1, 1, 0.3, 2, 0.09, 3, 0.0027, 0.00081)
+			*ifzero(water, 1, min(20, max(0, Asubmerged *(1 +4 *aqua))))
+			*min(1024, max(0, Aspeed)),
+		(baseSpeed +ifgreater(baseSpeed, 1, ifzero(efficiency, 0, 1 +efficiency *efficiency)))
+			*(1 +0.2*haste)*pow(1.2, haste)
+			*pow(0.21, fatigue)
+			*ifzero(and(water, not(aqua)), 1, 0.2)
+	)/ifzero(ground, 5, 1)/ifzero(drop, 100, 30)
+}}
+----
+{{simplecalc-hideifzero|class=error|element=b|formula=error|starthidden=1|1=
+The input is illegal!
+}}{{simplecalc-hideifzero|formula=not(or(error, iffinite(time)))|starthidden=1|1=
+'''Breaking Time''': Forever
+}}{{simplecalc-hideifzero|block=1|formula=and(not(error), iffinite(time))|1=
+'''Breaking Time''': {{Simplecalc|type=plain|id=time|formula=ifzero(or(ifzero(damage), ifequal(hardness, -1)), max(1, ceil(hardness/damage)), Infinity)}} ticks {{=}} {{Simplecalc|type=plain|id=sec|formula=time/20}} seconds {{simplecalc-hideifzero|starthidden=1|formula=ifequal(time, 1)|(Instant breaking)}}<br>Considering the mining cooldown, you can break {{Simplecalc|type=number|id=blocks|size=8|formula=isec/ifnan(avgsec, 1, avgsec)|decimals=5}} blocks in {{Simplecalc|type=number|id=isec|size=6|formula=blocks*ifnan(avgsec, 1, avgsec)|default=1}} seconds, which takes {{Simplecalc|type=plain|id=avgsec|formula=(iffinite(time, time, NaN) +ifequal(time, 1, 0, 6))/20}} seconds for each block on average.
+}}</div>
+|disabled=Calculator widgets are not supported}}</onlyinclude>
+
+== Navigation ==
+{{Navbox calculators}}
+
+[[fr:Calculateurs/Vitesse de minage]]
+[[ja:計算機/採掘速度]]
+[[pt:Calculadoras/Velocidade de quebra]]
+[[ru:Калькуляторы/Скорость добывания]]
+[[th:เครื่องคำนวณ/ความเร็วการทุบ]]
+[[uk:Калькулятори/Швидкість руйнування]]
+[[zh:计算器/挖掘速度]]

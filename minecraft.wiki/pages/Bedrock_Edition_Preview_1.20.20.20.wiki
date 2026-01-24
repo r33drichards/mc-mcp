@@ -1,0 +1,217 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| image = Bedrock 1.20.20.20 PatchNotes.jpg
+| image2 = Bedrock 1.20.20.20.png
+| build = 16310717
+| editorver = 0.4.0
+| internal = '''Windows''': 1.20.2020.0<br>'''Android, iOS, iPadOS''': 1.20.20.20<br>'''Xbox One''': 1.20.2020.70<br>
+| server = 1.20.20.20
+| versioncode = '''Android''':<br>
+952002020（armeabi-v7a，33）<br>
+962002020（x86，33）<br>
+972002020（arm64-v8a，33）<br>
+982002020（x86_64，33）<br>
+| date = June 28, 2023
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.20.20.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.20.20.zip Linux]
+| parent = 1.20.30
+| prevparent = 1.20.15
+| prev =
+| next = Preview 1.20.20.21
+| nextparent = 1.20.31
+}}<onlyinclude>
+
+'''Beta 1.20.20.20''' (Android) or '''Preview 1.20.20.20''' (Windows, iOS, iPadOS, Xbox) is the first beta/''Preview'' version for [[Bedrock Edition 1.20.30]]{{efn|Bedrock Edition 1.20.20 is not a version of the game and its betas are instead part of [[Bedrock Edition 1.20.30|1.20.30]].<ref>{{tweet|cornerhardmc|1691973191923806387|We're actually going to move all the 1.20.20 changes into 1.20.30. More info to come in an upcoming changelog.|August 16, 2023}}</ref>}}, released on June 28, 2023<ref>https://feedback.minecraft.net/hc/en-us/articles/17151426531085-Minecraft-Beta-Preview-1-20-20-20</ref>, which brings more parity from {{JE}} and fixes bugs.
+
+== Additions ==
+=== Technical ===
+'''[[Add-on]]s'''
+* Added support for the <code>allow_random_seed</code> option in world template manifests.
+
+'''[[JSON]]'''
+* Released the following components out of experimental in JSON formats 1.20.20 and higher:
+** <code>minecraft:hand_equipped</code> item component.
+** <code>minecraft:use_duration</code> item component.
+** <code>minecraft:stacked_by_data</code> item component.
+
+== Changes ==
+=== Blocks ===
+'''[[Leaves|Cherry Leaves]]'''
+* Now generate particle effects at a relatively large distance based on system performance.
+
+'''[[Snow]]'''
+* Different layers of snow have different heights to match {{JE}}.
+
+==== Command format ====
+'''{{cmd|scriptevent}}'''
+* Now is no longer behind the "Beta APIs" experimental toggle.
+
+'''[[Amethyst Cluster]]'''
+* Now uses the <code>minecraft:block_face</code> [[block state]] instead of <code>facing_direction</code>.
+** <code>minecraft:block_face</code> uses six string values <code>["down", "up", "north", "south", "east", "west"]</code>.
+
+'''[[Slab]]s'''
+* Now uses the <code>minecraft:vertical_half</code> [[block state]] instead of <code>top_slot_bit</code>. 
+** <code>minecraft:vertical_half</code> uses two string values <code>["bottom", "top"]</code>.
+
+=== Gameplay ===
+'''[[Sneaking]]'''
+* Now player gets forced out of sneak when riding.
+
+=== General ===
+'''[[Inventory|Creative Inventory]]'''
+* Removed the [[suspicious stew]] from the [[Creative]] inventory.
+
+'''[[Title Screen|Menu screen]]'''
+* Changed the in-game logo for ''[[Minecraft Preview]]''.
+
+'''[[Settings]]'''
+* Changed "Joystick Always Visible" to "Joystick Visibility Option" dropdown.
+* Changed "Sneak Toggle" to "Sneak" dropdown.
+* Moved "Sync Old World" button to the save screen.
+
+'''General'''
+* The ''[[Minecraft Preview]]'' application icon has been changed from a [[grass block]] to [[dirt]].
+
+=== Mobs ===
+'''[[Villager]]'''
+* When killed they no longer drop items held in their hands.
+
+'''[[Wandering Trader]]'''
+* Now can sell 1 [[Sapling|cherry sapling]] for 5 [[emerald]]s.
+
+'''[[Zombie Villager]]'''
+* Now displays their rank in appearance.
+
+=== Non-mob entities ===
+'''[[Falling Block]] '''
+* Now break when falling onto a [[boat]].
+
+=== Technical ===
+'''[[Server]]'''
+* Linux dedicated server: Ubuntu 20.04 LTS (Focal Fossa) is now the minimum supported version of Ubuntu. Ubuntu 18.04 LTS is no longer supported.
+
+'''[[JSON]]'''
+* Deprecate <code>minecraft:creative_category</code> component in JSON formats 1.20.20 and higher.
+* Creative group and command visibility can now be set in the <code>description</code> field in JSON formats 1.20.20 and higher.
+* Changed fire enchant duration used on projectiles from a <code>ShooterItemComponent</code> to match vanilla behavior.
+* Sound definitions now accept both float and integer values for <code>min_distance</code> and <code>max_distance</code>.
+* Render controllers without textures now result in a content error and are ignored.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Crawling", "Recipe Unlocking", and "Beta APIs" experimental toggles.
+=== Changes ===
+==== Command format ====
+'''{{cmd|recipe}}'''
+* Updated the syntax to match {{JE}}.
+** Old syntax:
+*** <code>/recipe <victim: target> give <recipe: string></code>
+*** <code>/recipe <victim: target> take <recipe: string></code>
+** New syntax:
+*** <code>/recipe give <victim: target> <recipe: string></code>
+*** <code>/recipe take <victim: target> <recipe: string></code>
+* Now the recipes are suggested by the [[command]] auto-complete.
+* Now an output message appears after the command is executed.
+
+=== Gameplay ===
+'''[[Crawling]]'''
+* Now player gets forced out of crawl when riding.
+
+'''[[Recipe book]]'''
+* Updated the recipe notification sound to match {{JE}}.
+* Now the duration of the recipe notifications are calculated based on how many recipes got unlocked.
+
+=== General ===
+'''[[Settings]]'''
+* Now is displayed a message when the players presses the camera perspective change button but a particular perspective is already set via the {{cmd|camera}} [[command]].
+
+==== Technical ====
+'''API'''
+* Converted <code>set_block_property</code> to <code>set_block_state</code> for custom blocks.
+* Added <code>defineVector</code> to <code>DynamicPropertiesDefinition</code>.
+* <code>EntityEquipmentInventoryComponent</code>
+** Implemented slot ''validation'' for <code>setEquipment</code>, which now returns a boolean indicating whether the item can be equipped to the specified slot.
+** <code>EntityEquipmentInventoryComponent</code> is currently limited to players only.
+*** Moved <code>getDay</code> to <code>1.4.0</code>.
+*** Moved <code>getTimeOfDay</code> to <code>1.4.0</code>.
+*** Moved <code>setTimeOfDay(timeOfDay: number | TimeOfDay)</code> to <code>1.4.0</code>.
+*** Moved <code>getAbsoluteTime</code> to <code>1.4.0</code>.
+*** Moved <code>setAbsoluteTime(absoluteTime: number)</code> to <code>1.4.0</code>.
+** Moved <code>TimeOfDay</code> to <code>1.4.0</code>.
+*** Added length restrictions to <code>setLore</code> - Up to <code>20</code> lines with up to <code>50</code> characters per line.
+*** Moved function <code>setLore</code> to <code>1.4.0</code>.
+*** Moved function <code>getLore</code> to <code>1.4.0</code>.
+*** Moved class <code>SystemAfterEvents</code> to <code>1.4.0</code>.
+*** Moved class <code>ScriptEventCommandMessageAfterEvent</code> to <code>1.4.0</code>.
+** Moved player <code>onScreenDisplay</code> to <code>1.4.0</code>.
+** Moved <code>titleDisplayOptions</code> to <code>1.4.0</code>.
+** Moved <code>screenDisplay</code> to <code>1.4.0</code>.
+
+'''[[JSON]]'''
+* Removed the <code>minecraft:ignores_permission</code> component.
+* Removed the <code>minecraft:mirrored_art</code> component.
+* Moved the <code>protection</code> field from <code>minecraft:armor</code> component to <code>minecraft:wearable</code> component in JSON formats 1.20.20 and higher. 
+* Deprecate <code>minecraft:armor</code> component in JSON formats 1.20.20 and higher.
+* Removed ''nonfunctional'' and ''redundant'' slot options from <code>minecraft:wearable</code> component, ie. mainhand, hotbar, inventory, enderchest, and equippable.
+* Items with the <code>minecraft:wearable</code> component using the <code>weapon.offhand</code> slot no longer equips when the item is used in the hotbar.
+* Equipping custom wearable items trigger generic equip sound.
+* Custom items with <code>minecraft:wearable</code> component can now be equipped by clicking and dragging in inventory or shift-clicking.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.20.20 Preview
+|;old
+|33139|No anvil step sound.
+|43402|Trident channeling sound is unused.
+|43831|Trident w/loyalty doesn't make the returning sound to the player but the Trident.
+|50609|Missing sounds when a hostile mob shoots arrows or throws trident.
+|60024|Snow layer collision changes only twice.
+|80924|Adult zombie villagers use the farmer texture regardless of their actual profession.
+|94722|Nether portal make no breaking animation or sound when obsidian is broken.
+|123488|Big dripleaf tilting up sounds uses tilt down sounds instead.
+|128117|No sound when conduit deactivates.
+|136484|Respawn anchor ambient sound doesn't play.
+|154378|min_distance / max_distance requires decimal numbers, silently fails with integers.
+|159736|Duplicating stackable armor when equipping from hotbar.
+|162061|See transparent blocks through end portal off a chunk border.
+|163671|Xbox: Mouse movement is jittery / pixel-based / not smooth.
+|164634|My Minecraft world keeps crashing when I approach a specific area.
+|;From v1.20.0
+|170841|Camera speed ​​difference when crawling or using riptide parity.
+|171521|Wandering trader does not trade cherry saplings.
+|;From v1.20.10
+|170870|Crawl mode don't get disabled when riding.
+|170907|When switching to a spectator, the player does not stop sneaking or crawling.
+|170994|Crawl parity issue.
+|171065|{{cmd|recipe}} doesn't send a chat output when correct syntax is entered.
+|171086|Entering {{cmd|recipe}} command doesn't show suggestions.
+|171098|{{cmd|recipe}} command syntax doesn't match {{JE}}.
+|171116|The "Recipe Unlock Toast" sound does not match {{JE}}.
+|171797|The player can enable flight mode while flying the elytra.
+|171800|Pick blocking a decorated pot from the creative inventory gives invalid inventory description.
+|171812|Spectators still adapt to small spaces.
+|otherissuescount=6
+|171225|<nowiki>Players suffocate while crawling at Y=1 and Y=2</nowiki>}}
+'''Others'''
+* Empty maps now emit the appropriate sound when players draw them.
+* The third-person camera no longer clips through terrain when near water or lava.
+* Fixed Creative mode players not being ignited when standing in fire.
+* The player no longer gets forced into sneak or crawl during the riptide animation.
+* Players should no longer accidentally trigger crawling when they shouldn't.
+* Fixed bottom face of portal effect so its color and transparency match the other faces.</onlyinclude>
+
+== Notes ==
+{{fnlist}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.30 betas]]
+[[de:Bedrock Edition beta 1.20.20.20]]
+[[es:Bedrock Edition beta 1.20.20.20]]
+[[ko:Bedrock Edition 프리뷰 1.20.20.20]]
+[[pt:Edição Bedrock Preview 1.20.20.20]]
+[[uk:Preview 1.20.20.20 (Bedrock Edition)]]
+[[zh:基岩版1.20.20.20]]

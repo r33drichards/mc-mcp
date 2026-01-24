@@ -1,0 +1,192 @@
+{{Infobox version
+|title=Minecraft 15w43a
+|edition=Java
+|image=15w43a.png
+|image2=Java Edition 15w43a.png
+|type=Snapshot
+|date=October 21, 2015
+|parent=1.9
+|clienthash=c7869840cb9c9acd152c0b8aafe74bef191a9d44
+|jsonhash=06fddff71f0c2590cbee9b179b076e4c2516c72a
+|serverhash=dfc6b233c097fa377f35972e7c95e3c23c632f3c
+|exehash=41857c07f019f4389e79e63fec46ea057d6bccc2
+|prevparent=1.8.9
+|prev=15w42a
+|next=15w43b
+|nextparent=1.9.1
+}}<onlyinclude>
+
+'''15w43a''' is the thirty-fourth [[snapshot]] for [[Java Edition 1.9]], released on October 21, 2015.<ref>https://web.archive.org/web/20151021161242/https://www.mojang.com/2015/10/minecraft-snapshot-15w43a/</ref> Most notably, Chinese, Japanese and Korean (and likely other IME languages) can now be input into chat thanks to bug {{bug|MC-2781}} being fixed. Igloos were also added in this version.
+
+== Additions ==
+=== World generation ===
+'''{{EnvLink|Igloo}}'''
+* Spawns randomly in [[ice plains]] and [[cold taiga]] (but not the hills variant).
+** Spawning parameters are shared with [[desert pyramid]]s, [[jungle temple]]s, and [[witch hut]]s: the fact of a structure spawn is decided, then the biome determines which structure (if any) is spawned.
+* Created by Searge (as found in the NBT data).
+* An igloo contains: 9 [[white carpet]]s, 3 [[light gray carpet]]s, 2 blocks of [[ice]], a [[redstone torch]], a [[furnace]], [[bed]] and a [[crafting table]].
+* Some igloos have a [[stone brick]] basement, with a [[cauldron]], 2 [[red carpet]]s, a [[brewing stand]], 3 [[spruce stairs]], 2 [[torch]]es and a loot chest, along with a [[villager]] priest and [[zombie villager]] priest behind [[iron bars]]. An [[oak trapdoor]] with [[ladder]]s leads down into the basement. Cracked and mossy stone bricks can also generate.
+** In the loot chest, there is sometimes be a [[golden apple]] in the central spot, hinting that the player needs to cure the zombie.
+** Always spawns with a splash potion of Weakness, hinting the player to use these on the zombie villager to turn it into the same type of villager next to it.
+** The zombie has the <code>PersistenceRequired</code> tag which makes it not despawn.
+** [[Silverfish]] spawn in some stone brick blocks.
+
+=== Command format ===
+'''[[NBT format]]'''
+* Chests/minecart chests
+** {{nbt|string|LootTable}}: Loot table to be used to fill the chest when it is next opened or destroyed. When the chest is part of a double chest, only the half corresponding to the tagged single-chest is affected.
+*** e.g. <code>/setblock ~ ~1 ~ minecraft:chest 0 replace {LootTable:"minecraft:chests/simple_dungeon"}</code>.
+** {{nbt|long|LootTableSeed}}: Seed for generating the loot table. Used in vanilla survival to replicate chest content in new worlds with same seeds. 0 or omitted uses a random seed.
+*** {{command|setblock ''x'' ''y'' ''z'' minecraft:chest 0 replace <nowiki>{LootTable:"chests/simple_dungeon",LootTableSeed:12345}</nowiki>}}.
+* All mobs
+** {{nbt|string|DeathLootTable}} (string): Determines which loot table is used when the mob is killed.
+*** e.g. <code>/summon Creeper ~ ~1 ~ {DeathLootTable:"minecraft:chests/simple_dungeon"}</code>.
+** {{nbt|long|DeathLootTableSeed}} (long): The deterministic seed for grabbing data from the loot table. Used in vanilla survival to replicate chest content in new worlds with same seeds. Must not be 0.
+*** e.g. <code>/summon Creeper ~ ~1 ~ {DeathLootTable:"minecraft:chests/simple_dungeon",DeathLootTableSeed:123l}</code>.
+
+=== General ===
+==== [[Language]] ====
+* Added LOLCAT.
+* Replaced Australian English (Australia) with English (Australia). (Australian English had many jokes/slang, but English (Australia) is a real language.)
+'''[[Loot tables]]'''
+* All loot from mobs, chests etc. is now based on [[loot table]]s, excluding block drops.
+** Can be changed by mapmakers by adding a json file within the "WORLD/data/loot_tables" folder, however, it is broken in 43a.
+
+== Changes ==
+=== Blocks ===
+'''[[Heavy weighted pressure plate]], [[light weighted pressure plate]], [[wooden pressure plate]], [[fence gate]]s, [[iron door]]s, [[wooden door]]s, [[wooden button]]s'''
+* Added new sounds.
+
+'''[[Lily pad]]s'''
+* Can be placed on [[ice]] and [[frosted ice]], but don't stay placed if updated.
+
+'''[[Sugar cane]]'''
+* No longer breaks if its adjacent water is turned to [[frosted ice]].
+
+'''[[Chest]]s'''
+* Changed sounds.
+** Ender chests still use the old sounds, however, due to {{bug|MC-91091}}.
+
+=== Mobs ===
+'''General'''
+* Mobs wearing armor or carrying weapons no longer drop the equipment, i.e. <code>HandDropChances</code> and <code>ArmorDropChances</code> are ignored.
+** See {{bug|MC-91147}}.
+
+'''[[Cave spider]]s & [[spider]]s'''
+* Drop eyes more often (now 50% chance, previously a 33% chance normally and 66%/77%/82.5% with Looting) and the amount is now increased by [[Looting]].
+
+'''[[Chicken]]s'''
+* Now drop more than one meat item when killed with [[Looting]].
+** See {{bug|MC-91074}}.
+
+'''[[Elder guardian]]s'''
+* No longer rarely drop fish as if from fishing.
+** See {{bug|MC-91152}}.
+* Now drop dry sponges on any kill, rather than wet sponges on a player kill.
+* Drop chances for raw fish and prismarine crystals changed. Now it is a 40% chance for fish, 40% for crystals, and 20% of nothing, with the amount increased by Looting. Formerly it was 33% raw fish and 33% of crystals only if the raw fish drop failed, with Looting increasing the chances but not the amount.
+
+'''[[Endermen]]'''
+* No longer drop the held block.
+** See {{bug|MC-91151}}.
+
+'''[[Ghast]]s'''
+* Now drop 0–3 gunpowder and 0–2 ghast tears (up from 0–2 gunpowder and 0–1 tears), incremented as usual with Looting.
+** See in {{bug|MC-91156}}.
+
+'''[[Guardian]]s'''
+* No longer rarely drop fish as if from fishing.
+* Drop chances for raw fish and prismarine crystals changed. Now it is a 40% chance for fish, 40% for crystals, and 20% of nothing, with the amount increased by Looting. Formerly it was 33% raw fish and 33% of crystals only if the raw fish drop failed, with Looting increasing the chances but not the amount.
+** See {{bug|MC-91152}}.
+
+'''[[Horse]]s'''
+* No longer drop leather, bones, or rotten flesh. Saddles, horse armor, chests, and chest contents are still dropped when applicable.
+** See {{bug|MC-91149}}
+
+'''[[Pig]]s'''
+* No longer drop worn saddles.
+** See {{bug|MC-91147}}.
+
+'''[[Rabbit]]s'''
+* Now drop more than one meat item when killed with [[Looting]].
+** See {{bug|MC-91074}}.
+* Rabbits no longer rarely drop [[rabbit's foot|feet]].
+** See {{bug|MC-91098}}.
+
+'''[[Sheep]]'''
+* Sheared sheep now drop wool when killed.
+** See {{bug|MC-91148}}.
+
+'''[[Skeleton]]s'''
+* Now drop 0–3 arrows and 0–3 bones (up from 0–2 of each), incremented as usual with Looting.
+
+'''[[Wither skeleton]]s'''
+* Now drop 0–3 coal and 0–3 bones (up from 0–1 coal with "0" having double chance and 0–2 bones), incremented as usual with Looting.
+
+'''[[Zombie pigman]] '''
+* Now drop 0–2 rotten flesh and 0–2 gold nuggets (up from 0–1 of each), incremented as usual with Looting.
+
+''Note: many changes above were reverted or modified in [[15w43b]] and [[15w43c]], with the exception of the change to the drop chances from [[guardian]]s, the change of elder guardians dropping dry rather than wet sponges, the addition of [[Looting]] affecting [[chicken]] and [[rabbit]] meat drops, and the change to how Looting affects [[spider eye]] drops. Also, as of [[15w34c]] horses again drop their items, but always 1 rather than 0–2.''
+
+=== World generation ===
+'''[[Stronghold]]'''
+* Increased number of strongholds to 128 per world, rather than 3.
+
+=== Command format ===
+'''{{cmd|gamemode}}'''
+* Now displays in chat the gamemode the player switched to.
+
+=== Gameplay ===
+'''[[Brewing]]'''
+* [[Blaze powder]] fuel points reduced from 30 to 20.
+
+'''[[Enchantments]]'''
+* [[Frost Walker]] no longer works on flowing water.
+
+'''[[Trading]]'''
+* Librarians charge double for books with "treasure" enchantments.
+
+=== General ===
+'''[[Debug screen]]'''
+* Is now toggled when the {{key|F3}} key is released, instead of when it is pressed. 
+* Now shows more information.
+** {{keys|F3+Q}} gives help.
+*** Shows all {{key|F3}} + key combinations.
+** {{keys|F3+F}} now increases render distance by 1 (minimum 2, maximum 32).
+** {{keys|F3+shift+F}} now decreases render distance by 1 (minimum 2, maximum 32).
+** Shows if the pie chart and FPS chart are shown on screen.
+** Shows text in chat when you reload chunks, sounds, etc.
+** Does not open the F3 screen when you use a specific key combination like {{keys|F3+N}}, {{keys|F3+B}}, etc.
+** Removed {{keys|F3+S}}, which previously reloaded sounds.
+*** {{keys|F3+T}} now reloads all resource pack content, including sounds.
+
+'''[[Sounds]]'''
+* Added 150+ new sound events.<ref>{{tweet|_grum|657124607099543552|Done with the code for captions, just need data to show now! Btw, you should have 150+ extra soundevents in the last snapshot!|October 22, 2015}}</ref>
+
+== Fixes ==
+{{fixes|fixedin=15w43a|prefix=Minecraft
+|;old
+|1315|When all 3 end portals have failed to spawn there is no way to get to the end.
+|2781|Chinese, Japanese and Korean (and probably other IME entered languages) characters not working.
+|72397|Alex model displays items incorrectly.
+|72839|{{key|F3}} + {{key|A}} will always make you walk left slightly.
+}}</onlyinclude>
+
+== Videos ==
+{{slicedlime|UN929mR1T4E}}
+
+== Trivia ==
+* 15w43a was previously removed from the [[launcher]] for some time, but was added back in September 2018.
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.0}}
+
+[[de:15w43a]]
+[[es:Java Edition 15w43a]]
+[[fr:Édition Java 15w43a]]
+[[ja:Java Edition 15w43a]]
+[[pt:Edição Java 15w43a]]
+[[ru:15w43a (Java Edition)]]
+[[zh:Java版15w43a]]

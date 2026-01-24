@@ -1,0 +1,152 @@
+{{distinguish|Commands/msg|Commands/say}}
+{{about|the command that sends JSON messages|the command to whisper|Commands/tell}}
+{{Infobox command
+|name=tellraw
+|oplevel=
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+}}
+
+Sends a [[Text|JSON message]] to players.
+
+==Syntax==
+
+* '''Java Edition'''
+: <code>tellraw <targets> <message></code>
+
+* '''Bedrock Edition'''
+: <code>tellraw <target: target> <raw json message: json></code>
+
+==Arguments==
+
+{{argument|targets|entity|target: target|CommandSelector<Player>}}
+: Specifies the player(s) to send the message to.
+: {{arg desc|je=entity|amount=multiple|type=players|be=player}}
+
+{{argument|message|component|raw json message: json|Json::Value}}
+: Specifies the message to send.
+: {{arg desc|je=component|be=Json::Value}}
+
+==Result==
+
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|<code>raw json message: json</code> is not a [[raw JSON text]].|N/A|fail}}
+{{Result table|<code>player: target</code> is a target selector that is not in [[Target selectors#Player type and single type|player type]].}}
+{{Result table|<code><targets></code> or <code>player: target</code> fails to resolve to one or more online players.|fail}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On success|1|1|the number of targeted players}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== Examples ==
+{{More images|section=true}}
+{| class="wikitable"
+!
+![[Java Edition]]
+![[Bedrock Edition]]
+!Preview
+|-
+|To send the message "Hello" in chat:
+|<code>/tellraw @a "Hello"</code>
+|<code>/tellraw @a {"rawtext":[{"text":"Hello"}]}</code>
+|[[File:Hello.png|alt=Hello|frameless]]
+|-
+|To send the message "I am blue" colored blue in chat:
+|<code>/tellraw @a {"text":"I am blue","color":"blue"}</code>
+
+<code>/tellraw @a {text:"I am blue",color:blue}</code>
+|<code>/tellraw @a {"rawtext":[{"text":"§bI am blue"}]}</code>
+|[[File:I am blue.png|alt=I am blue (In blue)|frameless]]
+|-
+|To send the message "Hover me!" in chat, which displays the text "Hi!" when hovered over:
+|<code><nowiki>/tellraw @a {text:"Hover me!",hover_event:{action:show_text,value:"Hi!"}}</nowiki></code>
+|
+|[[File:Hover me!.png|alt=Hover me! (Hovered: Hi!)|frameless]]
+|-
+|To send the message-colored dark red in chat:
+|<code>/tellraw @a {text:"Y0U G3T B4CK H3R3 N0W",color:dark_red}</code>
+
+<code>/tellraw @a {"text":"Y0U G3T B4CK H3R3 N0W","color":"dark_red"}</code>
+|<code>/tellraw @a {"rawtext":[{"text":"§4Y0U G3T B4CK H3R3 N0W"}]}</code>
+|[[File:Y0U G3T B4CK H3R3 N0W.png|alt=Y0U G3T B4CK H3R3 N0W (Dark red)|frameless]]
+|-
+|Use '\n' to insert a new line:
+|<code>/tellraw @a {text:"Text1\nText2"}</code>
+
+<code>/tellraw @a {"text":"Text1\nText2"}</code>
+|<code>/tellraw @a {"rawtext":[{"text":"Text1\nText2"}]}</code>
+|[[File:Text1-nText2.png|alt=Text1 (newline) Text2|frameless]]
+|-
+|Use '\uE100' to insert a hunger bar emoji:
+|
+|<code>/tellraw @a {"rawtext":[{"text":"Text1\uE100Text2"}]}</code>
+|
+|-
+|Display a message in the [[Enchanting Table]]'s [[Standard Galactic Alphabet|glyphs]]:
+|<code>/tellraw @a {text:"Hello World",font:alt}</code>
+
+<code>/tellraw @a {"text":"Hello World","font":"alt"}</code>
+|
+|[[File:Hello World.png|alt=⍑ᒷꖎꖎ𝙹 ∴𝙹∷ꖎ↸|frameless]]
+|-
+|Display a message in the [[illager]] [[Dungeons:Illageralt|runes]]:
+|<code>/tellraw @a {"text":"Hello World","font":"illageralt"}</code>
+
+<code>/tellraw @a {text:"Hello World",font:illageralt}</code>
+|
+|[[File:Hello World1.png|alt=Hello World (illager runes)|frameless]]
+|-
+|Display a [[Text component format#Translated Text|translated string]]:
+|<code>/tellraw @p {"translate":"item.minecraft.diamond"}</code>
+
+<code>/tellraw @p {translate:item.minecraft.diamond}</code>
+|<code>/tellraw @s {"rawtext":[{"translate":"item.diamond.name"}]}</code>
+|[[File:Diamond1.png|alt=Diamond|frameless]]
+|-
+|Simulate the output of {{command|say|@p loves Minecraft!}}, run through a [[command block]]:
+|
+|<code>/tellraw @a {"translate":"chat.type.announcement","with":[{"text":"@"},[{"selector":"@p"},{"text":" loves Minecraft!"}]]}</code>
+|
+|}
+
+== History ==
+{{for|changes to the raw JSON text used by this command|Raw JSON text format#History}}
+
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.7.2|dev=13w37a|Added {{cmd|tellraw|link=none}}.}}
+|{{HistoryLine||1.21.5|dev=25w02a|Text Components are now specified with SNBT instead of JSON.}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.9.0|dev=beta 1.9.0.0|Added {{cmd|tellraw|link=none}}.}}
+}}
+
+==See also==
+* {{cmd|say}} — send a plain text message to all players
+* {{cmd|tell}} — send a plain private text message to specific players
+
+== External links ==
+
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/tellraw?view=minecraft-bedrock-stable|title=<code>/tellraw</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/tellraw]]
+[[es:Comandos/tellraw]]
+[[ja:コマンド/tellraw]]
+[[pt:Comandos/tellraw]]
+[[ru:Команды консоли/tellraw]]
+[[zh:命令/tellraw]]

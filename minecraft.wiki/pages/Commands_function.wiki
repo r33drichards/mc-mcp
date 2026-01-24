@@ -1,0 +1,141 @@
+{{Infobox command
+| name = function
+| oplevel = 
+* 2 {{only|java|short=1}}
+* 1 {{only|bedrock|short=1}}
+| others = [[Cheat]] only{{only|bedrock|short=1}}
+}}
+
+Runs commands found in the corresponding function file(s) with command execution context (executor, execution position, angles, etc) of the /function command itself.
+
+== Usage ==
+{{IN|java}}, runs a [[Function (Java Edition)|function]] or all functions in a [[tags|tag]] from a [[data pack]].
+
+{{IN|bedrock}}, runs a [[Function (Bedrock Edition)|function]] from a [[behavior pack]].
+
+{{IN|java}}, the behavior of {{cmd|return run function ...}} (or {{cmd|return run execute ... run function ...}}) is different with a direct call to the {{cmd|link=none|function}} command. If {{cmd|return run function ...}} runs multiple functions, execution stops after first {{cmd|link=none|return}} in any of the functions. If a direct call to the {{cmd|function ...|link=none}} runs multiple functions, all of the functions are executed, and the return values are added up as the <code>result</code> value of the {{cmd|function ...|link=none}} command.
+
+== Syntax ==
+* '''Java Edition'''
+: <code>function <name></code>
+:: Runs a function or functions in a tag.
+: <code>function <name> <arguments></code>
+: <code>function <name> with (block <sourcePos>|entity <source>|storage <source>) [<path>]</code>
+:: Runs a function or functions in a tag, with arguments for [[Function (Java Edition)#Macros|macros]].
+
+* '''Bedrock Edition'''
+: <code>function <name: filepath></code>
+:: Runs a function.
+
+== Arguments ==
+{{argument|name|function|name: filepath|CommandFilePath}}
+: Specifies the function(s) to execute.
+: {{arg desc|je=function|be=commandfilepath}}
+
+{{el|je|short=1}}: {{Argument|arguments|nbt_compound_tag}}
+: Specifies arguments for macro functions in a compound NBT tag.
+: {{Arg desc|je=nbt_compound_tag}}
+
+{{el|je|short=1}}: {{Argument|sourcePos|block_pos}}
+: The position of the target [[block entity]] whose NBT is to be used.
+: {{arg desc|je=block_pos}}
+
+{{el|je|short=1}}: {{Argument|source|entity}} (in <code>entity <target></code> mode)
+: Specifies an entity whose NBT is to be used.
+: {{arg desc|je=entity|amount=single|type=entitie}}
+
+{{el|je|short=1}}: {{Argument|source|resource_location}} (in <code>storage <target></code> mode)
+: Specifies a [[Command storage format|storage]] whose NBT is to be used.
+: {{arg desc|je=resource_location}}
+
+{{el|je|short=1}}: {{Argument|path|nbt_path}}
+: Specifies the NBT path. Should be a path of a single compound tag.
+: {{arg desc|je=nbt_path}}
+
+== Result ==
+{{Result table}}
+{{Result table|The command is incomplete, or any argument is not specified correctly.|unparseable|unparseable}}
+{{Result table|The specified function or function tag does not exist.|fail|fail}}
+{{Result table|There's no function in the function tag.||N/A}}
+{{Result table|cmd=/function <name>|There's any macro line in the function(s).|fail}}
+{{Result table|cmd=/... with block ...|<code><sourcePos></code> is unloaded or out of the world.}}
+{{Result table|The block at <code><sourcePos></code> is not a block entity.}}
+{{Result table|cmd=/... with entity ...|<code><source></code> fails to resolve to an entity (named player must be online).}}
+{{Result table|cmd=/... with ... <path>|There's no tag at <code><path></code>.}}
+{{Result table|More than one tag is selected by <code><path></code>.}}
+{{Result table|The tag at <code><path></code> is not a compound tag.}}
+{{Result table|cmd=/... <arguments><br>/... with ..|With the provided arguments, any macro line in the function(s) becomes an unparseable command.}}
+{{Result table|cmd=|Only one function is specified, and in it there's no {{cmd|return}} command being executed.|[[Commands#Result|Void]]}}
+{{Result table|Only one function is specified, and in it there's a {{cmd|return}} command being executed and returning a failure.|fail}}
+{{Result table|Multiple functions are specified, and in all of the functions, there is no {{cmd|return}} command being executed.|Void}}
+{{Result table|succeed}}
+{{Result table}}
+
+== Output ==
+{{IN|java}}, for {{cmd|return run execute store ... run function ...}}:
+{{Output table}}
+{{Output table|edition=je|On fail|N/A|0|0}}
+{{Output table|On void|N/A|unchanged|unchanged}}
+{{Output table|On success|N/A|1|the return value of the first [[Function_(Java_Edition)#Returning|non-void]] function<br>(Execution stops after first {{cmd|link=none|return}} in any of the specified functions)}}
+{{Output table}}
+{{IN|java}}, otherwise:
+{{Output table}}
+{{Output table|edition=je|On fail|0|0|0}}
+{{Output table|On void|0|unchanged|unchanged}}
+{{Output table|On success|1|1|the sum of the return values of all the [[Function_(Java_Edition)#Return|non-void]] functions}}
+{{Output table}}
+{{IN|be}}:
+{{Output table|onlybe=1}}
+{{Output table|edition=be|On fail|0}}
+{{Output table|On success|1}}
+{{Output table}}
+
+== Examples ==
+* {{IN|java}}: 
+** To run a function located at <code>data/custom/function/example/test.mcfunction</code> in a loaded data pack: {{cmd|function custom:example/test|link=none}}
+** To run all functions in a function [[tags|tag]] located at <code>data/custom/tags/function/example/test.json</code>: {{cmd|function #custom:example/test|link=none}}
+** To run a function if there is a sheep within a radius of 2 blocks: <code>/execute if entity @e[type=sheep,distance=..2] run function custom:example/test</code>
+** To run a function unless the executor is a player: <code>/execute unless entity @s[type=player] run function custom:example/test</code>
+** To run a function macro with arguments a=42, b="example": <code>/function custom:example/test {a: 42, b: "example"}</code>
+** To run a function macro with arguments from storage <code>custom:storage</code>: <code>/function custom:example/test with custom:storage</code>
+
+== History ==
+=== ''Java Edition'' ===
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.12|dev=pre1|Added {{cmd|function|link=none}}.}}
+|{{HistoryLine|||dev=pre4|Added new arguments to the {{cmd|function|link=none}} command: <code>[if{{!}}unless] [selector]</code>}}
+|{{HistoryLine|||dev=pre6|Skipped functions (when a conditional fails) are now considered failures when used in commands.}}
+|{{HistoryLine||1.13|dev=17w49b|{{cmd|function|link=none}} now accept function [[tags]] as the argument.|Removed {{cd|[if{{!}}unless]}} arguments in favor of {{cmd|execute [if{{!}}unless]}}.}}
+|{{HistoryLine||1.20.2|dev=23w31a|Added function macro arguments.}}
+|{{HistoryLine||1.20.3|dev=23w41a|{{cmd|link=none|function}} command no longer returns the number of commands executed to better accommodate new {{cmd|return}} command.}}
+|{{HistoryLine|||dev=23w44a|If {{cmd|link=none|function <''function tag''>}} runs multiple functions in combination with {{cmd|link=none|return run}}, execution stops after first {{cmd|link=none|return}} in any of the functions.|A single call to the {{cmd|link=none|function}} command always returns when run with {{cmd|link=none|return run}}. For example, {{cmd|link=none|return run execute ''[split context]'' run function ''<some function with conditional return>''}} always returns after processing the first context.}}
+|{{HistoryLine||1.20.5|dev=23w51a|Fixed a bug that <code>/function</code> executing a function with <code>/return fail</code> has a <code>success</code> value of 1.<ref>{{bug|MC-267193|||fixed}}</ref><ref>{{bug|MC-268160}}</ref>}}
+}}
+
+=== ''Bedrock Edition'' ===
+{{HistoryTable
+|{{HistoryLine|bedrock}}
+|{{HistoryLine||1.8.0|dev=beta 1.8.0.8|Added {{cmd|function|link=none}}.}}
+}}
+
+== See also ==
+* {{cmd|tag}} – To run function in batch, every tick, or on server (re)load.
+
+== References ==
+{{Reflist}}
+
+== External links ==
+* {{Cite|url=https://learn.microsoft.com/en-us/minecraft/creator/commands/commands/function?view=minecraft-bedrock-stable|title=<code>/function</code> Command|website=Microsoft Learn|date=October 11, 2023}}
+
+== Navigation ==
+{{Navbox commands}}
+
+[[de:Befehl/function]]
+[[es:Comandos/function]]
+[[ja:コマンド/function]]
+[[ko:명령어/function]]
+[[pt:Comandos/function]]
+[[ru:Команды консоли/function]]
+[[uk:Команди консолі/function]]
+[[zh:命令/function]]

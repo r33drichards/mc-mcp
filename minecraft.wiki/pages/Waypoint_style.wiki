@@ -1,0 +1,39 @@
+{{exclusive|java}}
+'''Waypoint styles''' are [[JSON]] files located in [[resource pack]]s that define styling used for changing waypoints' icon and specific distances they appear on the [[locator bar]]. They are used in {{cmd|waypoint modify ... style}} command for specific entities.
+
+== JSON format ==
+Waypoint styles are stored as JSON files on {{cd|assets/''<namespace>''/waypoint_style}} directory.
+
+<div class="treeview">
+* {{nbt|compound}}: The root object.
+** {{nbt|int|near_distance}}: The distance in blocks at which the waypoint icon begins its visual transition between sprites. The first sprite in the {{nbt|list|sprites}} list is always used for any distance less than this value, and for the [[#Sprite selection|0th sprite index]]. Default value is 128.
+** {{nbt|int|far_distance}}: The distance in blocks at which the waypoint icon completes its visual transition. It must be greater than {{nbt|int|near_distance}}. At this distance and beyond, the last sprite in the {{nbt|list|sprites}} list is used. Default value is 332.
+** {{nbt|list|sprites}}: A list of [[sprite]]s which cycle between the {{nbt|int|near_distance}} and {{nbt|int|far_distance}}.
+*** {{nbt|string}}: A sprite identifier, formatted as {{cd|''<namespace>'':''<sprite_id>''}}, which refers to a unique texture located in {{cd|assets/''<namespace>''/textures/gui/sprites/hud/locator_bar_dot/''<sprite_id>''.png}}. Specifying a nonexistent causes the [[missing texture]] to be used, rather than the default waypoint texture.
+</div>
+
+== Sprite selection ==
+
+To determine which sprite is used based on the distances, the game uses {{w|linear interpolation}} on the player's distance between the near and far distance values, getting the index of which sprite is supposed to be shown in the {{nbt|list|sprites}} list. This calculation in the game is roughly equivalent to:
+
+<math>\text{Sprite index} = \lfloor \left( \frac{\text{Player distance} - \text{Near distance}}{\text{Far distance} - \text{Near distance}} \right) \times \text{Size of sprites list} \rfloor</math>
+
+Noticeably, the second sprite does not appear until the first index is calculated, which until then, the game uses the first sprite for the 0th index calculated, and for any distance less than the near distance. This is due to the {{w|zero-based numbering}} for indexing the sprites list.
+
+The distance (in blocks) which a sprite appears between transition can be calculated from:
+
+<math>\text{Sprite distance between transition} = \frac{\text{Far distance} - \text{Near distance}}{\text{Size of sprites list}}</math>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.6|dev=25w17a
+ |Added waypoint style, alongside {{cmd|waypoint modify ... style}} arguments.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|resourcepack}}
+
+[[ja:ウェイポイントのスタイル]]
+[[pt:Estilo do marcador]]
+[[zh:路径点样式]]

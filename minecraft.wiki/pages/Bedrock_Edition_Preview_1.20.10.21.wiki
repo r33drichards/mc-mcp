@@ -1,0 +1,133 @@
+{{Infobox version
+| image =  Bedrock 1.20.10.21 PatchNotes.jpg
+| image2 = Bedrock 1.20.10.21.png
+| edition = bedrock
+| type = Preview
+| editorver = 0.3.6
+| internal = '''Windows''': 1.20.1021.0<br>'''Android, iOS, iPadOS''': 1.20.10.21<br>'''Xbox One''': 1.20.1021.70<br>
+| build = 15791949
+| server = 1.20.10.21
+| versioncode = '''Android''':<br>
+952001021（armeabi-v7a，33）<br>
+962001021（x86，33）<br>
+972001021（arm64-v8a，33）<br>
+982001021（x86_64，33）<br>
+| date = June 1, 2023
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.10.21.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.10.21.zip Linux]
+| parent = 1.20.10
+| prevparent = 1.20.1
+| prev = Preview 1.20.10.20
+| next = Preview 1.20.10.23
+| nextparent = 1.20.12 
+}}<onlyinclude>
+
+'''Beta 1.20.10.21''' (Android) or '''Preview 1.20.10.21''' (Windows, iOS, iPadOS, Xbox) is the second beta/''Preview'' version for [[Bedrock Edition 1.20.10]], released on June 1, 2023<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/16314419988493|title=Minecraft Beta & Preview - 1.20.10.21|website=Minecraft Feedback|date=June 1, 2023}}</ref>, which adds a new [[recipe]] unlocking system, brings more parity from {{JE}}, and fixes bugs.
+
+== Additions ==
+=== General ===
+'''[[Experimental Gameplay|Experiments]]'''
+* Added "Recipe Unlocking" experimental toggle.
+** Enable the new recipe unlocking system and the {{cmd|recipe}} [[command]].
+
+'''[[Splash]]es'''
+* Added a new splash text:
+** Joule is neat too!
+
+=== Technical ===
+'''[[JSON]]'''
+* Released the <code>minecraft:max_stack_size</code> item component out of experimental in JSON formats 1.20.10 and higher.
+* Released the <code>minecraft:block_placer</code> item component out of experimental in JSON formats 1.20.10 and higher.
+* Released the <code>minecraft:record</code> item component out of experimental in JSON formats 1.20.10 and higher.
+
+== Changes ==
+=== General ===
+'''[[Fog]]'''
+* Underwater and fog effects are now based on camera position rather than player position.
+
+=== Items ===
+'''[[Boat|Bamboo Raft]]'''
+* Recipe no longer needs a [[shovel]] to match {{JE}}.
+
+=== Technical ===
+'''[[JSON]]'''
+* Converted "''properties''" to "''states''" for custom blocks.
+* Items with the <code>minecraft:block_placer</code> component will now place blocks with correct orientation.
+* Custom items with <code>minecraft:block_placer</code> will no longer place certain blocks in the wrong location.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Experimental Cameras", "Recipe Unlocking", and "Beta APIs" experimental toggles.
+=== Additions ===
+==== Command format ====
+'''{{cmd|recipe}}'''
+* A new [[command]] that gives or takes (unlocks or locks) [[recipe]]s for a player.
+* Syntax: 
+** <code>/recipe <victim: target> give <recipe: string></code>
+*** Gives (unlocks) a specified recipe to a player.
+** <code>/recipe <victim: target> take <recipe: string></code>
+*** Takes (locks) a specified recipe from a player.
+** If <code>*</code> is specified in <code>recipe: string</code>, it will unlock or lock all recipes for the player.
+
+=== Changes ===
+==== Gameplay ====
+'''[[Recipe book]]'''
+* Recipes are now unlocked when the player collect materials for it.
+** Picking up an item teaches the player how to craft that item.
+* A new notification appears when the player find a new crafting material.
+
+==== Command format ====
+'''{{cmd|camera}}'''
+* Limit free cam JSON to not pitch camera beyond plus or minus <code>90</code> degrees.
+* Rendering of experimental <code>minecraft:free</code> camera no longer affected by player state like night vision.
+
+==== Technical ====
+'''API'''
+* ''System''
+** Replaced <code>events</code> with <code>system.beforeEvents</code> and <code>system.afterEvents</code>.
+** Renamed event <code>beforeWatchdogTerminate</code> to <code>watchdogTerminate</code> and moved it to <code>beforeEvents</code>.
+** Moved <code>scriptEventReceive</code> to <code>afterEvents</code>.
+* <code>MessageReceiveAfterEvent</code>
+** Removed property <code>sourceType</code>.
+* <code>ScriptEventSource</code>
+** Replaced enum <code>MessageSourceTypewith</code> a new enum <code>ScriptEventSource</code>.
+* <code>ScriptEventCommandMessageAfterEvent</code>
+** Changed property <code>sourceType</code> from <code>MessageSourceType</code> to <code>ScriptEventSource</code>.
+** Increased maximum message length from <code>256</code> to <code>2048</code> characters.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.10.21 Preview|otherissuescount=8
+|;old
+|123608|Transparent leaves overlap with opaque leaves.
+|166566|Camels don't play their walking animations when they are damaged.
+|169313|Freshly generated chunks cause boats and chestboats to disappear when riding in them.
+|170208|30 second despawn immunity is broken again.
+|170645|Game crashes when changing a mob's scale would make it collide with blocks.
+|;previous
+|170832|Hand position/size in first-person view are FOV dependent, making them look too small or stretched.
+|170836|Players unable to open trapdoors when being inside of a composter/cauldron.
+|170858|Game crashes when end crystal is placed on bedrock.
+|170882|Player hitbox doesn't update after gliding with an elytra.
+|170896|Bamboo rafts are still crafted with a shovel.
+}}
+'''Others'''
+* The paper doll will now show up properly when crawling.
+* Suspicious blocks now display correctly on maps.
+* Shield no longer clips inside the armor stand model while in the riposte pose.
+* Sniffer can no longer dig up seeds in the air.
+* Fixed a crash that could happen when running the <code>go_and_give_items_to_noteblock</code> goal.
+* Custom items with <code>minecraft:block_placer</code> will no longer place certain blocks in the wrong location.
+* Fixed {{cmd|camerashake}} command to shake camera without also shaking player.
+* Reordered the gamepad tooltips for UI screens so that the buttons align with the same side as a controller.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.10 betas]]
+[[de:Bedrock Edition beta 1.20.10.21]]
+[[es:Bedrock Edition beta 1.20.10.21]]
+[[ko:Bedrock Edition 프리뷰 1.20.10.21]]
+[[pt:Edição Bedrock Preview 1.20.10.21]]
+[[uk:Preview 1.20.10.21 (Bedrock Edition)]]
+[[zh:基岩版1.20.10.21]]

@@ -1,0 +1,136 @@
+{{about|the world type|other uses|Debug}}
+{{exclusive|java}}
+[[File:Debug world preset.png|thumb|300px|The world generation in debug mode]]
+'''Debug mode''' usually refers to a [[world preset]] used to test [[block state]]s, block [[model]]s, and [[Resource pack#Textures|textures]].
+
+Debug mode can also refer to a dimension generator type (<code>minecraft:debug</code>) that generates a block grid, which is used in the "Debug mode" world preset, and can also be used in [[custom dimension]]s.
+
+Debug mode can also refer to a state of a world, if the Overworld uses the "debug" generator, the world goes into the debug mode state. In this state, blocks can't be changed even in creative mode or with commands.
+
+== Debug mode world preset ==
+[[File:DebugModeButton.png|thumb|right|200px|Debug mode selected; note that all of the other world settings are unavailable.]]
+
+To select the debug mode, hold the {{Keys|Alt}} key while clicking the "World Type" button in the world creation menu. Debug mode is the world type directly after [[Single Biome]], and just before the [[World preset|default preset]].
+
+Upon selecting debug mode, the "Bonus Chest", "Generate Structures", "Allow Cheats" and "Data Packs" options are forcibly disabled. The game mode is set to [[Spectator]], [[difficulty]] is locked on Peaceful, and cheats are enabled. The game rule <code>doDaylightCycle</code> is forced to false, while other game rules are forced to default values.
+
+== Debug generator ==
+The <code>minecraft:debug</code> generator contains all [[block]]s, in all of their existing [[block states]], organized in a single world. The world updates automatically to include any new registered [[Java Edition data values|block IDs]] that are added. Therefore, this mode is useful not only to [[Mojang Studios]] developers, but also to creators of [[resource pack]]s and [[mod]]s.
+
+=== Block grid ===
+<gallery style="float:right;">
+File:DebugOverview.png|The entire grid as seen from above. East is up.
+</gallery>
+
+Every block state generates only once. They are sorted in a grid spread across an [[altitude]] of Y=70. The block grid changes its size according to the number of blocks and block states available, roughly resembling a square (as of 1.14.2, 213 in width and 211 eastward), occupying the +X,+Z (southeast) quadrant.<ref>Due to a bug ({{bug|MC-122412|||WF}}), the block grid was not a correct square, and in some versions the blocks in the southernmost and northernmost columns duplicate, and whether duplication occurs is related to the total number of block states.</ref>
+
+A barrier floor at Y=60 also spawns, extending past the grid in all directions to the [[world boundary]]. Other than the barrier floor, the remainder of the map is empty.
+
+==== List of blocks ====
+{{Main|Debug mode/Blocks}}
+
+== Debug mode state ==
+Debug mode can refer to a state of the world. If the Overworld uses the "debug" generator, the world goes into the debug world state.
+
+=== World generation ===
+[[File:Debug World Type hellview 14w27b.png|thumb|View of the Nether debug world]]
+[[File:Debug World Type endview 14w29b.png|thumb|View of the End debug world]]
+
+If a [[Nether portal]] or [[End portal]] is used, or teleported using {{cmd|execute}}, the player enters other dimensions. The sky, light level and other properties remain appropriate to the [[dimension]].
+
+In this state, all the dimensions are forced to use the "debug" generator. The chunk rendering may not update by itself in these dimensions, resulting in the need to right-click a block to render a new chunk.
+
+In the vanilla [[End]], the [[ender dragon]] and its [[End crystal]]s still spawn, although the dragon cannot break or interact with blocks.
+
+=== World behavior ===
+It is impossible to change, place or remove any block, even by the game itself.
+
+Chunk's [[tick#Chunk tick|chunk tick]] (including random ticks) does not execute.
+
+No entity spawns naturally.
+
+Any block whose interactions do not change its [[block state]] can still be {{control|used|use}} (including [[chest]]s, [[bed]]s, [[cake]], etc.). Although a block's state cannot change, its [[block entity]] data can change, either through normal player interaction or with the use of the {{cmd|data}} command.
+
+These unique properties of debug mode can cause certain blocks to behave in unexpected ways, though due to the arrangement of blocks next to one another, not all may be seen in every version:
+
+* [[Water]] and [[lava]] cannot be removed by [[bucket]]s, but still fills an empty bucket in [[Survival]] mode. If the player empties the bucket, the lava or water blocks turn invisible.
+* [[Bell]]s can still be rung.
+* [[Cauldron]]s clean leather [[armor]] and [[banner]]s, but cannot be filled by buckets.
+* Flying through a [[pressure plate]] with powered stated false, or a [[weighted pressure plate]] with power state 0, causes it to produce the pressure plate clicking sound every tick it is pressed.
+* {{Control|Using}} a [[comparator]] in subtract mode causes the block in the direction opposite its <code>facing</code> property to drop as an item.
+** <span style="color: red>'''Warning:'''</span> If that block is a repeater or a comparator, it drops an enormous amount of itself (typically around {{ItemAmount|16|0}} to {{ItemAmount|36|0}}), lagging the game for a few seconds, and likely crashing the game on low-end PCs.
+* Any summoned [[falling block]] drops as an item when it hits another block, rather than converting itself to a block.
+* {{control|Using}} [[fence gate]]s, [[comparator]]s, deactivated [[button]]s, [[lever]]s, deactivated [[pressure plate]]s, [[door]]s, or [[trapdoor]]s does not move or change the block, but the sound still plays.
+* Using a music disc on an empty jukebox does not change its block state but still plays the music normally.
+* {{control|Interacting}} with a [[chiseled bookshelf]] that has a book does not give you a book.
+* [[Copper golem statue]]s can still cycled upon by {{control|Interacting}} with it but it will only visually change to its next state before being updated and reset by clicking it again.
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.8|dev=14w26a|Added Debug Mode world type.
+|Block entity graphics would disappear when a block is hit, door and trapdoor hitboxes were inconsistent with their state, and not all interfaces were accessible.}}
+|{{HistoryLine|||dev=14w27a|Different block states are used instead of metadata.
+|Options are disabled when creating the world, and the only [[game mode]] you can get upon world creation is Spectator Mode.
+|Block states now generate in a square pattern rather than in an infinite repeating grid.}}
+|{{HistoryLine||1.9|dev=15w31a|All interfaces are now accessible.}}
+|{{HistoryLine|||dev=15w37a|Block entity graphics are now regenerated (and set to default), when the block is hit.}}
+|{{HistoryLine|||dev=15w38a|Door and trapdoor hitboxes are now consistent with their state.}}
+|{{HistoryLine||1.16|dev=20w22a|Blocks in the debug world have been changed to be breakable and interactable with, unlike previously where they would regenerate and the world would not be able to be modified.<ref>{{bug|MC-186111}}</ref>}}
+|{{HistoryLine|||dev=Pre-release 1|Blocks now reappear again.}}
+|{{HistoryLine||1.17|dev=20w46a|{{keys|Alt}} is now used instead of {{keys|Shift}} to access debug mode in the world creation menu.}}
+}}
+<gallery>
+File:Debug World Type 14w26b.png|Debug world in version [[14w26b]]
+File:Debug World Type overview 14w26b.png|Large overview (14w26b)
+File:Debug World Type grid view 14w26b.png|Grid overview (14w26b)
+File:Debug World Type overview low ID 14w27b.png|Low block ID overview ([[14w27b]])
+File:Debug World Type Flyover 14w32d.png|Debug world in version [[14w32d]]
+File:Debug World Type grid view 14w27b.png|Grid overview (14w27b)
+File:Debug World Type Overview 14w32d.png|([[14w32d]]–[[Java Edition 1.8.9]])
+File:Debug World Type Overview 15w49a.png|([[15w49a]]–[[Java Edition 1.9.4]])
+File:Debug World Type Overview 16w20a.png|([[16w20a]]–[[Java Edition 1.10.2]])
+File:Debug World Type Overview 16w39b.png|([[16w39b]]–[[Java Edition 1.11.2]])
+File:Debug World Type Overview 17w47a.png|([[17w47a]]-[[Java Edition 1.13]])
+</gallery>
+
+== Issues ==
+{{Hatnote|Note that any bugs relating to using game modes other than spectator are resolved as "Invalid" or "Won't Fix" due to the fact that the world type can be legitimately accessed only in spectator.}}
+{{issue list|projects=MC|-stick|-menu}}
+
+== Trivia ==
+* The set [[biome]] for this mode is [[plains]] by default in the [[Overworld]].
+* The [[sun]] is displayed as if it were the beginning of the day (time 1000), but the [[daylight cycle]] is disabled.
+** Regardless, the time can still be adjusted with the use of the {{cmd|time}} command, and the daylight cycle can be toggled with the use of the {{cmd|gamerule doDaylightCycle}} command. The time can be also advanced from nighttime to sunrise with the use of a bed.
+* Using a [[map]] does not create an accurate map of the blocks in the world.
+* When the world type in the world creation screen is set to Default, clicking on the World Type button with both {{keys|Shift}} and {{keys|Alt}} are held down immediately changes the world type to Debug Mode.
+* Experimental blocks generate even if the corresponding [[experiments]] are disabled.
+** They can be obtained in the hotbar by pressing {{control|pick block}} while in [[Creative]] mode. They are labelled as "Disabled Item", cannot be placed and disappear when dropped.
+* Banners with banner patterns and decorated pots with sherds do not generate in debug mode.
+
+== Gallery ==
+=== Screenshots ===
+<gallery>
+File:Dinnerbone Debug Mode.png|First image of debug mode.
+File:Debug Mode Redstone.png|Redstone and oak stairs in debug mode.
+File:Indebugmode.png|[[Barrier]] [[block]]s in debug mode.
+File:ComparatorDropItemsEng.png|[[Drops|Items]] dropped by [[Redstone Comparator]] crashed the game.
+File:Sculk Shriekers in Debug Mode.png|Triggering [[sculk sensor]]s [[sculk shrieker]]s in debug mode.
+</gallery>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox environment}}
+
+[[de:Debug-Modus]]
+[[es:Modo debug]]
+[[fr:Mode de débogage]]
+[[ja:デバッグモード]]
+[[ko:디버그 모드]]
+[[pl:Tryb debugowania]]
+[[pt:Modo de depuração]]
+[[ru:Режим отладки]]
+[[uk:Режим налагодження]]
+[[zh:调试模式]]

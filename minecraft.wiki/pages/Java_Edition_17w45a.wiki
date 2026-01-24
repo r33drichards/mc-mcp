@@ -1,0 +1,359 @@
+{{Infobox version
+|title=Minecraft 17w45a
+|edition=Java
+|image=17w45a.png
+|image2=Java Edition 17w45a.png
+|type=Snapshot
+|date=November 8, 2017
+|parent=1.13
+|clienthash=42c93d04a82371094d9a4a844c932b8db45d3a40
+|jsonhash=c3a0cc0ba68d054095dc52010b7b71a35b9ab17f
+|serverhash=471b2dfa12e4df234057159ce5ee8320da3c84c1
+|prevparent=1.12.2
+|prev=17w43b
+|next=17w45b
+|nextparent = 1.13.1
+}}<onlyinclude>
+
+'''17w45a''' is the third [[snapshot]] for [[Java Edition 1.13]], released on November 8, 2017<ref>{{snap|17w45a|November 8, 2017}}</ref>, which completely overhauled the command system.
+
+== Additions ==
+=== Command format ===
+'''General'''
+* A command UI when typing commands in the chat.
+** Different components of commands are displayed in different colors.
+** Errors are displayed in red without having to run the command.
+* An <code>nbt</code> argument in target selectors.
+* A new command parsing library called [[Brigadier]].
+
+== Changes ==
+=== Mobs ===
+'''[[Horse]]s'''<br>
+[[File:Black Horse Revision 2.gif|48px]] [[File:Brown Horse Revision 2.gif|48px]] [[File:Chestnut Horse Revision 2.gif|48px]] [[File:Creamy Horse Revision 2.gif|48px]] [[File:Darkbrown Horse Revision 2.gif|48px]] [[File:Gray Horse Revision 2.gif|48px]] [[File:White Horse Revision 2.gif|48px]]<br>
+[[File:Baby Black Horse Revision 2.gif|48px]] [[File:Baby Brown Horse Revision 2.gif|48px]] [[File:Baby Chestnut Horse Revision 2.gif|48px]] [[File:Baby Creamy Horse Revision 2.gif|48px]] [[File:Baby Darkbrown Horse Revision 2.gif|48px]] [[File:Baby Gray Horse Revision 2.gif|48px]] [[File:Baby White Horse Revision 2.gif|48px]]
+* The model has been simplified to be more consistent with other mobs.
+* Some animations like opening its mouth when grazing has been removed from the model as well, and the saddle animation is changed slightly.
+
+=== Command format ===
+'''General'''
+* Commands and functions are much faster and more efficient.
+* Most commands are now more case-sensitive. Lowercase is preferable wherever possible.
+** For example, this is no longer allowed: {{cmd|scoreboard ObJeCtIvEs ...}}
+* The output signal of a command block used to be its "success count", but now is its "result".
+
+'''[[Argument types#minecraft:block_state|Block argument type]]'''
+* Wherever a <code><block></code>, optionally <code><nowiki>[<data>]</nowiki></code> and optionally <code>[<nbt>]</code> was required, it is now a single <code><block></code> argument that looks like this:
+** <code>stone</code>
+** <code>minecraft:redstone_wire[power=15,north=up,south=side]</code>
+** <code>minecraft:jukebox{RecordItem:{...}}</code>
+** <code>minecraft:furnace[facing=north]{BurnTime:200}</code>
+* ID is required (though just as before, if namespace isn't set it defaults to <code>minecraft:</code>).
+* States are inside <code>[]</code>, comma-separated and must be properties/values supported by the blocks. They are optional.
+** <code>minecraft:stone[doesntexist=purpleberry]</code> is a syntax error, because <code>stone</code> does not have <code>doesntexist</code>.
+** <code>minecraft:redstone_wire[power=tuesday]</code> is a syntax error, because <code>redstone_wire</code>'s <code>power</code> is a number between 0 and 15.
+* An optional tag is inside {}, and works just like the [[player]] would expect.
+* In the context of "conditions"/testing for blocks, only the states the player provided are tested.
+** If the player tests <code>redstone_wire[power=15]</code>, it only checks power but ignores other states such as <code>north</code>.
+* In the context of setting blocks, any states the player provided are set but anything missed out defaults depending on the block.
+** If the player set <code>redstone_wire[power=15]</code>, it sets <code>power</code> to 15 but <code>north</code> is a default value (in this case, set to <code>none</code>).
+* There is no such thing as block data value in 1.13, but either a different block or a state.
+
+=== Commands ===
+'''{{cmd|?}}'''
+* Removed in favor of {{cmd|help}}.
+
+'''{{cmd|advancement}}'''
+* Removed {{cmd|advancement test}} in favor of entity selectors.
+
+'''{{cmd|clear}}'''
+* The syntax of {{cmd|clear}} has changed.
+** {{cmd|clear [<target>] [<item>] [<data>] [<count>] [<nbt>]}} becomes {{cmd|clear [<target>] [<item>] [<count>]}}.
+** See the item argument type for more details.
+** <code>[<nowiki><data></nowiki>]</code> has been removed in preparation for the [[1.13/Flattening|flattening]], item data is no longer a thing and item damage values are moved into NBT.
+
+'''{{cmd|clone}}'''
+* The syntax of {{cmd|clone}} has been changed.
+** {{cmd|clone <begin> <end> <destination> filtered [force{{!}}move{{!}}normal] [<block>] [<data>]}} becomes {{cmd|clone <begin> <end> <destination> filtered [<block>] [force{{!}}move{{!}}normal]}}.
+** {{cmd|clone <begin> <end> <destination> [replace{{!}}masked] [force{{!}}move{{!}}normal] [<block>] [<data>]}} becomes {{cmd|clone <begin> <end> <destination> [replace{{!}}masked] [force{{!}}move{{!}}normal]}}.
+
+'''{{cmd|defaultgamemode}} and {{cmd|gamemode}}'''
+* Now only accepts string IDs, not shorthand or numeric.
+** {{cmd|gamemode 2}} becomes {{cmd|gamemode adventure}}.
+** {{cmd|defaultgamemode sp}} is now {{cmd|defaultgamemode spectator}}.
+
+'''{{cmd|difficulty}}'''
+* {{cmd|difficulty [<value>]}} now only accepts string IDs, not shorthand or numeric.
+** {{cmd|difficulty 2}} is now {{cmd|difficulty normal}}.
+** {{cmd|difficulty p}} is now {{cmd|difficulty peaceful}}.
+* The player can now query for the current difficulty by using {{cmd|difficulty}} without any arguments.
+
+'''{{cmd|effect}}'''
+* The syntax of {{cmd|effect}} has been split off, to avoid ambiguity.
+** {{cmd|effect <entity> <effect>}} is now {{cmd|effect give <entity> <effect>}}.
+** {{cmd|effect <entity> clear}} is now {{cmd|effect clear <entity> [<effect>]}}.
+* Giving an effect now fails if it didn't actually do anything.
+** Some mobs are immune (for example an [[ender dragon]]).
+** Stronger existing effects prevent new weaker ones.
+
+'''{{cmd|enchant}}'''
+* Removed from the game, in order to be replaced by the planned {{cmd|modifyitem|link=Commands/item#History}} command (later reverted in [[18w06a]]).
+
+'''{{cmd|execute}}'''
+* The syntax of {{cmd|execute}} has been split off.
+** Modifier sub-commands can change how the command is ran:
+*** {{cmd|execute as <entity> <chained command>}} executes a command using the entity <code><entity></code> (but doesn't change position).
+*** {{cmd|execute at <entity> <chained command>}} executes a command using the position of <code><entity></code> (but doesn't change entity).
+*** {{cmd|execute offset <pos> <chained command>}} executes a command using the position of <code><pos></code>.
+*** {{cmd|execute align <axes> <chained command>}} executes a command after aligning the current position to the block grid (rounding down), <code><axes></code> is any combination of <code>x</code> <code>y</code> and <code>z</code> (for example: <code>x</code>,<code>xz</code>,<code>zyx</code> and <code>yz</code>).
+**** Examples:
+***** <code>x=-1.8,y=2.3,z=5.9</code> using <code>x</code> becomes <code>x=-2,y=2.3,z=5.9</code>.
+***** <code>x=2.4,y=-1.1,z=3.8</code> using <code>yxz</code> becomes <code>x=2,y=-2,z=3</code>.
+** Conditional sub-commands can let the player prevent the command from running at all:
+*** {{cmd|execute (if{{!}}unless) block <pos> <block> <chained command>}} executes a command if (or unless) <code><pos></code> matches <code><block></code>.
+*** {{cmd|execute (if{{!}}unless) blocks <begin> <end> <destination> (all{{!}}masked) <chained command>}} executes a command if (or unless) the region between <code><start></code> and <code><end></code> matches <code><destination></code>.
+*** {{cmd|execute (if{{!}}unless) entity <entity> <chained command>}} executes a command if (or unless) <code><entity></code> exists (returns 1 or more entities).
+*** {{cmd|execute (if{{!}}unless) score <target> <targetObjective> (<nowiki><|<=|=|>=|></nowiki>) <nowiki><source></nowiki> <sourceObjective> <chained command>}} executes a command if (or unless) <code><target></code>'s score relates to <code><nowiki><source></nowiki></code>'s score based on the chosen criterion.
+** As replacement for {{cmd|stats}}, a new sub-command <code>store</code> lets the player store the result or success of a command somewhere:
+*** {{cmd|execute store (result{{!}}success) <name> <objective> <chained command>}}.
+*** <code>result</code> is the result of a command, which replaces these old stats: <code>AffectedBlocks</code>, <code>AffectedEntities</code>, <code>AffectedItems</code>, <code>QueryResult</code>.
+*** <code>success</code> is how many times the command was successful. This is usually <code>0</code> or <code>1</code>, but if the command split up (for example <code>as @a</code>) then it may be more than <code>1</code>. This replaces <code>SuccessCount</code>.
+*** The value is stored into the scoreboard under <code><name></code> and <code><objective></code>.
+*** The <code>objective</code> must exist, but unlike with {{cmd|stats}}, the player doesn't need to set an initial value for <code><name></code>.
+*** The value is stored when the full command has finished executing.
+*** If a command isn't successful (<code>success</code> is <code>0</code>), <code>result</code> is always set to <code>0</code>.
+*** It is made clear what the expected result of each command is.
+** The player can chain all sub-commands together.
+*** After every sub-command, the player needs to write another sub-command.
+*** When the player is done with chaining sub-commands, <code>run</code> lets players write the actual command to be executed.
+**** <code>/</code> is no longer allowed before the command.
+*** {{cmd|execute as somebody at somebody run say hi}}.
+** Example of old commands:
+*** {{cmd|execute @e ~ ~ ~ detect ~ ~ ~ stone 0 say Stone!}} is now {{cmd|execute as @e at @s if block ~ ~ ~ stone run say Stone!}}
+*** {{cmd|execute @e ~ ~ ~ detect ~ ~ ~ grass 0 summon pig}} is now {{cmd|execute at @e if block ~ ~ ~ grass run summon pig}}.
+*** {{cmd|execute @e ~ ~ ~ say Hello!}} is now {{cmd|execute as @e run say Hello!}}
+
+'''{{cmd|experience}}'''
+* {{cmd|xp}} is now an alias for {{cmd|experience}}.
+* Split up into 3 different subcommands:
+** {{cmd|experience add <players> <amount> [points{{!}}levels]}}
+*** Adds <code><amount></code> of either points or levels to the target <code><players></code> (defaults to points).
+*** Adding points can cause players to level up, as usual.
+*** Negative numbers are supported, to subtract points instead.
+*** Subtracting points can cause players to level down.
+** {{cmd|experience set <players> <amount> [points{{!}}levels]}}.
+*** Sets <code><amount></code> of either points or levels on the target <code><players></code> (defaults to points).
+*** The player cannot set more points than their current level allows.
+*** When changing levels, the points stay at the same percentage as the previous level.
+** {{cmd|experience query <player> (points{{!}}levels)}}.
+*** Returns either the number of points or levels on the given <code><player></code>.
+
+'''{{cmd|fill}}'''
+* The syntax of {{cmd|fill}} has been changed.
+** {{cmd|fill <x y z> <xt yt zt> <block> <data> replace [<replaceBlock>] [<replaceData>]}} is now {{cmd|fill <x y z> <xt yt zt> <block> replace [<filter>]}}.
+** {{cmd|fill <x y z> <xt yt zt> <block> [<data>] [destroy{{!}}hollow{{!}}keep{{!}}outline{{!}}replace] [<nbt>]}} is now {{cmd|/fill <x y z> <xt yt zt> <block> [destroy{{!}}hollow{{!}}keep{{!}}outline{{!}}replace]}}.
+
+'''{{cmd|function}}'''
+* {{cmd|function}} no longer accepts <code>[if|unless] <entity></code> arguments.
+** This has been moved into {{cmd|execute}}.
+** {{cmd|function foo if @e}} is now {{cmd|execute if entity @e run function foo}}.
+
+'''{{cmd|gamerule}}'''
+* {{cmd|gamerule}} no longer accepts unknown rules ("custom gamerules").
+** The player can use [[Function (Java Edition)|function]]s or [[scoreboard]]s as replacements, with no loss of functionality.
+** Existing custom gamerules are not accessible. Only built-in rules are available.
+* Values to {{cmd|gamerule}} are now type checked (giving a string if it wants an int is a very obvious error).
+
+'''{{cmd|give}}'''
+* The syntax of {{cmd|give}} has changed.
+** {{cmd|give <players> <item> [<count>] [<data>] [<nbt>]}} is now {{cmd|give <players> <item> [<count>]}}.
+** See the item argument type for more details.
+** <code>[<nowiki><data></nowiki>]</code> has been removed in preparation for the [[1.13/Flattening|flattening]], item data is no longer a thing and item damage values are moved into NBT.
+
+'''{{cmd|kill}}'''
+* A <code>target</code> is now mandatory.
+
+'''{{cmd|locate}}'''
+* The y-coordinate is now returned as <code>64</code> instead of <code>?</code>.
+* The <code>result</code> of the command, used by {{cmd|execute store}}, is the absolute distance to the structure.
+
+'''{{cmd|op}}'''
+* Now allows target selectors besides names.
+
+'''{{cmd|particle}}'''
+* The <code><params></code> argument has been removed, instead the parameters for particles like <code>blockcrack</code> can be specified right after the <code><name></code> argument using the new block argument.
+** {{cmd|particle blockcrack stone <nowiki>[variant=smooth_granite]</nowiki> ~ ~ ~ 0 0 0 0 1}}.
+* The particle names have been converted to lowercase and optionally have a namespace.
+
+'''{{cmd|publish}}'''
+* Added an optional <code>port</code> argument.
+
+'''{{cmd|replaceitem}}'''
+* The syntax of {{cmd|replaceitem}} has changed.
+** {{cmd|replaceitem block <pos> <slot> <item> [<count>] [<data>] [<nbt>]}} is now {{cmd|replaceitem block <pos> <slot> <item> [<count>]}}.
+** {{cmd|replaceitem entity <target> <slot> <item> [<count>] [<data>] [<nbt>]}} is now {{cmd|replaceitem entity <target> <slot> <item> [<count>]}}.
+** See the item argument type for more details.
+** <code>[<nowiki><data></nowiki>]</code> has been removed in preparation for the [[1.13/Flattening|flattening]], item data is no longer a thing and item damage values are moved into NBT.
+* The <code>slot</code> argument no longer requires <code>slot.</code>.
+** For example, <code>slot.hotbar.1</code> now is <code>hotbar.1</code>.
+
+'''{{cmd|scoreboard}}'''
+* {{cmd|scoreboard}} had <code>[<dataTag>]</code> removed from its commands in favor of the <code>nbt</code> argument in entity selectors.
+* {{cmd|scoreboard players tag}} and {{cmd|scoreboard teams}} removed. Replaced by {{cmd|tag}} and {{cmd|team}} respectively.
+* {{cmd|scoreboard players test}} removed in favor of {{cmd|execute (if{{!}}unless) score}}, entity selectors and {{cmd|scoreboard players get <target> <objective>}}.
+
+'''{{cmd|setblock}}'''
+* The syntax of {{cmd|setblock}} has changed.
+** {{cmd|setblock <pos> <block> [<data>] [<mode>] [<nbt>]}} is now {{cmd|setblock <pos> <block> [<mode>]}}.
+** See the block argument type changes above for more details.
+
+'''{{cmd|stats}}'''
+* Removed. Now part of {{cmd|execute}}.
+* The new {{cmd|execute}} one is not a direct replacement, the behavior has changed:
+** It is now per-command, instead of per-entity or per-block.
+** There's only <code>result</code> and <code>success</code>, which covers all the old stat types.
+
+'''{{cmd|stopsound}}'''
+* <code>*</code> can now be used instead of <code>source</code> to stop all sounds with a certain name, across all sources.
+
+'''{{cmd|tag}}'''
+* Replaces {{cmd|scoreboard players tag}}.
+* Keeps the same syntax.
+** {{cmd|tag <players> add <tag>}} to add <code><tag></code> to <code><players></code>.
+** {{cmd|tag <players> remove <tag>}} to remove <code><tag></code> from <code><players></code>.
+** {{cmd|tag <players> list}} to list all tags on <code>players</code>.
+
+'''{{cmd|team}}'''
+* Replaces {{cmd|scoreboard teams}}.
+* Keeps the same syntax.
+** {{cmd|team add <team> [<displayname>]}}
+** {{cmd|team empty <team>}}
+** {{cmd|team join <team> [<members>]}}
+** {{cmd|team leave [<members>]}}
+** {{cmd|team list [<team>]}}
+** {{cmd|team option <team> <option> <value>}}
+
+'''{{cmd|testfor}}, {{cmd|testforblock}} and {{cmd|testforblocks}}'''
+* Removed and now part of {{cmd|execute}}.
+
+'''{{cmd|toggledownfall}}'''
+* Removed in favor of {{cmd|weather}}.
+
+'''{{cmd|tp}} and {{cmd|teleport}}'''
+* {{cmd|tp}} is now an alias of {{cmd|teleport}} (much like {{cmd|w}}, {{cmd|msg}} and {{cmd|tell}}).
+* Coordinates are now relative to the executor, as with all other commands.
+* The syntax of {{cmd|tp}} remains, but with the behavior of {{cmd|teleport}}.
+
+'''{{cmd|trigger}}'''
+* {{cmd|trigger <objective>}} is a new syntax as a shortcut for {{cmd|trigger <objective> add 1}}.
+
+'''{{cmd|weather}}'''
+* If the player doesn't specify a time, it now defaults to 5 minutes (previously random).
+
+'''[[Item]]s'''
+* Wherever an <code><item></code>, optionally <code><nowiki>[<data>]</nowiki></code> and optionally <code>[<nbt>]</code> was required, it is now a single <code><item></code> argument that looks like this:
+** <code>stone</code>
+** <code>minecraft:stick{display:{Name:"Stick of Untruths"}}</code>
+* ID is required (though just as before, if namespace isn't set it defaults to <code>minecraft:</code>).
+* An optional tag is inside {}, and works just like the [[player]] would expect.
+** Any other information is either a separate item or a property in NBT.
+
+'''[[Target selector]]s'''
+* More error handling has been introduced.
+* Arguments may now be quoted.
+** Things like <code>limit=0</code>, <code>level=-10</code>, <code>gamemode=purple</code> are not allowed.
+* There's no longer a "min" and "max" separate values, we instead support ranges.
+** <code>level=10</code> is level 10.
+** <code>level=10..12</code> is level 10, 11 or 12.
+** <code>level=5..</code> is anything level 5 or above.
+** <code>level=..15</code> is anything level 15 or below.
+* The arcane shorthand names have been renamed.
+** <code>m</code> -> <code>gamemode</code>
+** <code>l</code> or <code>lm</code> -> <code>level</code>
+** <code>r</code> or <code>rm</code> -> <code>distance</code>
+** <code>rx</code> or <code>rxm</code> -> <code>x_rotation</code>
+** <code>ry</code> or <code>rym</code> -> <code>y_rotation</code>
+** <code>c</code> -> <code>limit</code>
+* <code>x</code>, <code>y</code>, <code>z</code>, <code>distance</code>, <code>x_rotation</code>, <code>y_rotation</code> are now doubles and allow values like <code>12.34</code>.
+** <code>x</code> and <code>z</code> are no longer center-corrected.
+*** This means <code>x=0</code> no longer equates to <code>x=0.5</code>.
+* <code>gamemode</code> (previously <code>m</code>) no longer allows numerical or shorthand IDs.
+* <code>limit</code> (was <code>c</code>) No longer allows negative values.
+** Use <code>sort=furthest</code> instead.
+* The <code>name</code> argument now supports spaces (as long as it is quoted).
+* Multiple of the same argument in target selectors is now possible.
+** <code>tag=foo,tag=bar,tag=!baz</code> matches someone with <code>foo</code>, <code>bar</code> and not <code>baz</code>.
+** <code>type=!cow,type=!chicken</code> matches something that isn't a cow and isn't a chicken.
+** <code>type=cow,type=chicken</code> isn't allowed, because something cannot both be a cow and chicken.
+* The player can specify the sorting.
+** <code>sort=nearest</code> is the old default, sorting by distance (default for <code>@p</code>).
+** <code>sort=furthest</code> is the reverse of that (previously the player would use <code>c=-5</code> for this).
+** <code>sort=random</code> for random sorting (default for <code>@r</code>).
+** <code>sort=arbitrary</code> is a new option to not sort the result (default for <code>@e</code>, <code>@a</code>).
+* Specifying scores now looks like <code>scores={foo=1,bar=1..5}</code>.
+* The player can test for advancements with <code>advancements={foo=true,bar=false,custom:something={criterion=true}}</code>.
+** <code>true</code> for "they completed the advancement", <code>false</code> for "they have not completed the advancement".
+** Alternatively, pass a block of specific criteria to test for (again, <code>true</code>/<code>false</code>).
+
+== Fixes ==
+{{fixes|fixedin=17w45a|prefix=Minecraft
+|;old
+|32972|{{cmd|summon}} accepts arguments that it will ignore.
+|59511|{{cmd|Tellraw}} has an incomplete error message when key determining text to display is missing.
+|69042|{{cmd|summon}} coordinate syntax should be different.
+|80856|Command syntax inconsistencies.
+|80893|Sender bias (<code>c{{=}}1</code>) applies when sender is not the closest entity to specified x/y/z origin.
+|80928|Player sits too ahead when riding a (skeleton/zombie) horse/donkey/mule.
+|85394|Spawning 'crit' particle with speed >100 causes an extreme lag spike.
+|87365|Incorrect syntax for scoreboard players tag.
+|87559|{{cmd|Gamerule}} missing indicator for affected gamerule.
+|91459|{{cmd|setblock}} at Y{{=}}256 shows unique message compared to using other outside-world setblock commands/Using {{cmd|setblock}} at Y>256 says max building height is 256.
+|101113|{{cmd|playsound}} command is not validating arguments correctly.
+|101135|Confusing error message for relative coordinates with too high numbers.
+|102682|Horseshoes and horse leg separated.
+|105820|Relative decimal coordinates with block related commands are inconsistent.
+|115957|Advancements, loot tables, resource packs and world folders don't require lower case.
+|116045|{{cmd|banlist}} command treats any non "ips" argument as "players".
+|118308|Narrator is toggled when typing in some text fields.
+|118565|Four negative signs in a selector which only has the potential to select one entity will attempt to parse as a UUID and fail.
+|119142|You can't use multiple tags in a selector.
+|122085|Generating server icon leaks encoded data buffer.
+|128561|<code>CommandBase.commandListener</code> retains old server reference, preventing garbage collection.
+|;dev
+|121281|Scrollbar in the creative and server menu isn't working with mouse.
+|121283|Underwater and in lava overlay is missing.
+|121284|Resource pack and world folder buttons don't work.
+|121288|Cinematic camera doesn't work properly.
+|121302|"Direct connect" button enabled/disabled at wrong times.
+|121314|Video settings slider text "FS Resolution" doesn't fit.
+|121328|GUI scales incorrectly.
+|121329|Pressing "chat" key no longer selects search in creative inventory/recipe book.
+|121334|<nowiki>[1-9]</nowiki> in creative inventory search tab sends additional keypress to search bar.
+|121396|WASD keys in a weird order.
+|121418|Crash when trying to paste non-string clipboard content.
+|121419|Click and hover events are offset in chat.
+|121421|Pressing enter in the name or seed field on the create world dialog no longer creates the world.
+|121456|Chunks disappearing after switching windows in fullscreen mode.
+|121468|Statistics can no longer be ordered by clicking icons.
+
+|;previous
+|121517|Fullscreen button will not make game fullscreen.
+|121587|{{cmd|reload}} feedback says it reloaded loot tables, advancements and functions instead of just saying data packs.
+}}</onlyinclude>
+
+== Videos == 
+{{slicedlime|-lWtt3gooB4}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.1x}}
+
+[[de:17w45a]]
+[[es:Java Edition 17w45a]]
+[[fr:Édition Java 17w45a]]
+[[ja:Java Edition 17w45a]]
+[[nl:17w45a]]
+[[pt:Edição Java 17w45a]]
+[[ru:17w45a (Java Edition)]]
+[[zh:Java版17w45a]]

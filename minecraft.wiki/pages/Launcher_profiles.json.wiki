@@ -1,0 +1,60 @@
+{{underscore title|launcher_profiles.json}}
+{{exclusive|java}}
+{{Missing information|the JSON format, which is likely outdated for the latest launcher}}
+'''launcher_profiles.json''' ('''launcher_profiles_microsoft_store.json''' for the Minecraft Launcher installed from Microsoft Store) is a [[JSON]] file located in [[.minecraft]], which contains all of the [[Minecraft Launcher]]'s settings, profiles, selected user/profile as well as the cached user information (email, access token, etc.). This file allows flexible updating from older launcher versions to newer builds and vice versa, without having to worry about things like profiles and login session getting lost.
+
+== JSON format ==
+'''launcher_profiles.json''' uses JSON structures to save and retrieve data. The main JSON keys are explained in the figure below.
+<div class="treeview">
+* {{nbt|compound}} The root object
+** {{nbt|compound|profiles}}: All the launcher profiles and their configurations.
+*** {{nbt|compound|<profile ID>}}
+**** {{nbt|string|name}}: The profile name. Can include characters, numbers, punctuation, and whitespace.
+**** {{nbt|string|type}}: The profile type. Types are '''custom''' (manually created by the user), '''latest-release''' (uses the latest stable release), and '''latest-snapshot''' (uses the latest build of Minecraft).
+**** {{nbt|string|created}}: An [[wikipedia:ISO 8601|ISO 8601]] formatted date which represents the time the profile was created.
+**** {{nbt|string|lastUsed}}: An [[wikipedia:ISO 8601|ISO 8601]] formatted date which represents the last time the profile was used.
+**** {{nbt|string|icon}}: A [[wikipedia:Base64|Base64]]-encoded image which represents the icon of the profile in the profiles menu.
+**** {{nbt|string|lastVersionId}}: The version ID that the profile targets. Version IDs are determined in the version.json in every directory in {{cd|~/versions}}.
+**** {{nbt|string|gameDir}}: The directory that this profile should use to save its content.
+**** {{nbt|string|javaDir}}: The Java directory that the game runs from. This is by default the system's Java directory.
+**** {{nbt|string|javaArgs}}: The start-up arguments for the profile. Those can have tangible experience in the game performance.
+**** {{nbt|string|logConfig}}: The path to the logging configuration for the profile. This can be a XML file if the below setting is true.
+**** {{nbt|boolean|logConfigIsXML}}: Whether the logging configuration is a XML file or not.
+**** {{nbt|compound|resolution}}: The start-up resolution of the game window.
+***** {{nbt|int|height}}: Height of the game window.
+***** {{nbt|int|width}}: Width of the game window.
+** {{nbt|string|clientToken}}: The currently logged in client token.
+** {{nbt|compound|authenticationDatabase}}: All the logged in accounts. Every account in this key contains a UUID-hashed map (which is used to save the selected user) which in turn includes the access token, e-mail, and a profile (which contains the account display name) {{More info|does this still exist with Microsoft accounts?}}
+*** {{nbt|compound|<UUID hashed key>}}
+**** {{nbt|string|accessToken}}: The token which saves the log-in sessions.
+**** {{nbt|string|username}}: The e-mail of the account.
+**** {{nbt|compound|profiles}}: The profile of the account. This map contains the UUID of the account, and contain the display name of it.
+***** {{nbt|string|<UUID>}}: The display name of the account.
+** {{nbt|compound|launcherVersion}}: Contains the current launcher build name, format and profiles format.
+*** {{nbt|string|name}}: The current name of the launcher build.
+*** {{nbt|int|format}}: Format version of file.
+*** {{nbt|int|profilesFormat}}: Format version of profiles section.
+** {{nbt|compound|settings}}: Contains all the launcher settings.
+*** {{nbt|boolean|enableSnapshots}}: Whether or not include version IDs of game snapshots when browsing profiles.
+*** {{nbt|boolean|enableAdvanced}}: Whether or not enable changing advanced Java settings when adding new launch arguments.
+*** {{nbt|boolean|keepLauncherOpen}}: Whether or not keep the launcher open while the game is running.
+*** {{nbt|boolean|showGameLog}}: Whether or not create a separate window which contains all the game logs.
+*** {{nbt|string|locale}}: The selected language for the launcher. Default value is '''en-us'''.
+*** {{nbt|boolean|showMenu}}: Whether or not show the sliding menu under the Minecraft logo (which contains '''News''', '''Skins''', '''Settings''' and '''Launch options''').
+*** {{nbt|boolean|enableHistorical}}: Whether or not enable the usage of historical versions.
+*** {{nbt|string|profileSorting}}: The way profiles are sorted in the profiles menu. There are 2 sorting types: '''byName''' and '''byLastPlayed'''. byName sorts them on the alphabetical order, and byLastPlayed sorts them based on the latest profiles you used.
+*** {{nbt|boolean|crashAssistance}}: Whether or not contact Mojang when a crash occurs.
+*** {{nbt|boolean|enableAnalytics}}: Whether or not enable analyzing the user session or not. This is usually not maintainable/cannot be controlled from the launcher.
+** {{nbt|string|analyticsToken}}: The latest token for tracking analysts. Those are used locally by the launcher for managing and tracking sessions
+** {{nbt|int|analyticsFailcount}}: The fail count for analytics.{{info needed}}
+** {{nbt|compound|selectedUser}}: Contains the UUID-hashed account and the UUID of the currently selected user.
+*** {{nbt|string|account}}: The UUID-hashed key of the currently selected account.
+*** {{nbt|string|profile}}: The UUID of the currently selected player.
+</div>
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[fr:launcher_profiles.json]]
+[[ja:Launcher profiles.json]]
+[[zh:启动器档案文件格式]]

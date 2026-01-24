@@ -1,0 +1,154 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.10021.0<br>'''Android''': 1.21.100.21
+| image = Bedrock 1.21.100.21.png
+| build = 34326197
+| editorver = 1.0.2
+| versioncode = '''Android''':<br />
+952110021 (armeabi-v7a, 34)<br />
+962110021 (x86, 34)<br />
+972110021 (arm64-v8a, 34)<br />
+982110021 (x86_64, 34)
+| date = June 18, 2025
+| server = 1.21.100.21
+| serverdl = '''Server'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.100.21.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.100.21.zip Linux]
+| parent = 1.21.100
+| prevparent = 1.21.94
+| prev = Preview 1.21.100.20
+| next = Preview 1.21.100.22
+| nextparent = 1.21.101
+}}
+<onlyinclude>
+
+'''Beta 1.21.100.21''' (ChromeOS, Android) or '''Preview 1.21.100.21''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the second beta/''Preview'' version for [[Bedrock Edition 1.21.100]], released on June 18, 2025.<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/37453175894669-Minecraft-Beta-Preview-1-21-100-21|title=Minecraft Beta & Preview - 1.21.100.21|website=Minecraft Feedback|date=June 18, 2025}}</ref>
+
+== Additions ==
+=== Command format ===
+'''[[Target selectors]]'''
+*Added the {{cd|@n}} target selector, which returns the single closest entity.
+'''[[Spawn event]]'''
+
+* Added two new spawn events: {{Cd|code=minecraft:entity_spawned_with_default_jockey}} and {{Cd|code=minecraft:entity_spawned_with_biome_specific_jockey}}.
+** Both of them are only executable on spiders and cave spiders.
+** {{Cd|code=minecraft:entity_spawned_with_default_jockey}} lets spiders and cave spiders spawn as a spider jockey with a skeleton rider, if it's nighttime or underground.
+** {{Cd|code=minecraft:entity_spawned_with_biome_specific_jockey}} lets spiders and cave spiders spawn with a skeleton variant rider depending on the biome they spawn in, if it's nighttime and not underground.
+*** It adds a [[Wither Skeleton|wither skeleton]] rider in The Nether.
+*** It adds a [[stray]] rider in snowy biomes.
+*** It adds a [[bogged]] rider in swamp or mangrove swamp biomes.
+*** If executed anywhere else or underground, it adds a regular skeleton rider.
+
+== Changes ==
+=== General ===
+'''[[Settings]]'''
+* Moved the graphics mode and render distance options to the top of video settings for convenience.
+* Added preview sounds for the new audio tab.
+
+=== Graphical ===
+'''[[Vibrant Visuals]]'''
+* Weather events now affect the scene illumination and the color of clouds and sky in Vibrant Visuals.
+* Updated Reflections configurations for "Favor Performance" presets on Xbox platforms with Vibrant Visuals.
+
+=== Mobs ===
+'''[[Enderman]]'''
+* Endermen can now pick up all block types they are able to in {{JE}}.
+'''[[Spider]]'''
+
+* [[File:Spider Jockey (Bogged) BE.png|50px]] When spawning as a spider jockey in swamp or mangrove swamp biomes, it now has an 80% chance to have a bogged rider.
+[[Cave Spider|'''Cave Spider''']]
+* When spawning as a spider jockey in swamp or mangrove swamp biomes, it now has an 80% chance to have a bogged rider.
+
+=== Technical ===
+'''AI Goals'''
+*Added the {{cd|minecraft:behavior.take_block}} AI goal, allows an entity to take blocks from the world with the following options:
+**{{cd|blocks}}: Array of block descriptors that the entity can take, if empty can take any block.
+**{{cd|can_take}}: Entity filters for when the entity can use the goal.
+**{{cd|on_take}}: Trigger ran if the entity does take a block.
+**{{cd|xz_range}}: XZ range from which the entity will try and take blocks from.
+**{{cd|y_range}}: Y range from which the entity will try and take blocks from.
+**{{cd|chance}}: Chance each tick to try and take a block.
+**{{cd|affected_by_griefing_rule}}: If the goal is affected by the mob griefing game rule.
+**{{cd|requires_line_of_sight}}: If the entity requires line of sight on the block it tries to take.
+*Removed the {{cd|minecraft:behavior.enderman_take_block}} AI goal, it upgrades to the above goal.
+*Added the {{cd|minecraft:behavior.place_block}} AI goal, allows an entity to place blocks in the world with the following options:
+**{{cd|placeable_carried_blocks}}: Array of block descriptors that the entity can place if its carried item, if empty can place any block from its carried item.
+**{{cd|randomly_placeable_blocks}}: Array of weighted block descriptors that the entity can randomly place, if empty the entity will try to place the block in its carried item instead.
+**{{cd|can_place}}: Entity filters for when the entity can use the goal.
+**{{cd|on_place}}: Trigger ran if the entity does place a block.
+**{{cd|xz_range}}: X range from which the entity will try and place blocks in.
+**{{cd|y_range}}: Y range from which the entity will try and place blocks in.
+**{{cd|chance}}: Chance each tick to try and place a block.
+**{{cd|affected_by_griefing_rule}}: If the goal is affected by the mob griefing game rule.
+*Removed the {{cd|minecraft:behavior.enderman_leave_block}} AI goal, it upgrades to the above goal.
+
+'''[[API]]'''
+*Removed {{cd|minecraft:destruction_particles}}'s block API from {{cd|beta}}, it was deemed too risky to expose to server scripting API since the component is only being used on client.
+*Moved enum {{cd|MovementType}} from {{cd|beta}} to {{cd|v2.0.0}}.
+*Moved enum {{cd|StickyType}} from {{cd|beta}} to {{cd|v2.0.0}}.
+*Moved class {{cd|BlockMovableComponent}} from {{cd|beta}} to {{cd|v2.0.0}}.
+*Moved {{cd|localizationKey}} property on {{cd|Block}}, {{cd|Entity}}, {{cd|Dimension}}, and {{cd|ItemStack}} from {{cd|beta}} into {{cd|2.1.0}}.
+*Moved {{cd|Container}} methods {{cd|contains}}, {{cd|firstEmptySlot}}, {{cd|firstItem}}, {{cd|find}}, and {{cd|findLast}} from {{cd|beta}} into {{cd|2.1.0}}.
+
+'''[[Block]]'''
+*{{cd|alpha_test_to_opaque}}, {{cd|alpha_test_single_sided_to_opaque}}, and {{cd|blend_to_opaque}} will now shift to {{cd|opaque}} in the distance again when used as render method in {{cd|minecraft:material_instances}}.
+*Removed Upcoming Creator Features toggle requirement from Movable Component.
+
+'''Block Components'''
+*Field {{cd|uv_lock}} no longer requires Upcoming Creator Features experiment to work. JSON {{cd|format_version}} still needs to be >= {{cd|1.21.90}}.
+
+'''Components'''
+*Content warnings will log missing references in Jigsaw Structure, Processor List, Template Pool, and Structure Sets JSON.
+
+'''[[Molang]]'''
+*{{cd|query.is_carrying_block}} is now usable by all entities, not just enderman.
+*{{cd|query.is_carrying_block}} returns 1.0 if the entity is carrying any block, including air.
+
+'''[[Texture]]s'''
+*Modified Json parsing of {{cd|variations}} texture objects in {{cd|terrain_texture.json}} files:
+**{{cd|weight}} field clamped to minimum value of 0.05.
+**{{cd|weight}} field clamped to maximum value of 1000000.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", and "Custom Biomes" [[experimental]] toggles.
+
+=== Additions ===
+==== Technical ====
+'''API'''
+*Added {{cd|runOnFinish}} method to {{cd|GameTest}} which runs after the test is completed, regardless if it passed, failed, or timed out.
+
+=== Changes ===
+==== Technical ====
+'''Gameplay'''
+*When loading a chunk that used a removed custom biome, the removed biome is now replaced with the dimension's default biome, which is ocean in the Overworld.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.100.21 Preview
+|;old
+|96298|Lead attaches to the player's head, partially blocking the screen.
+|153135|The fox automatically places items (armor, mob heads, carved pumpkin, etc.) in armor slots.
+|162613|Endermen can pick up warped or crimson fungus and place it onto any full block
+|164355|Enderman Does Not Replace Items at {{cmd|replaceitem}}.
+|178487|Foxes don’t pick up non-stackable items like swords and totems.
+|180453|Some blocks are not highlighted when Outline Selection is disabled.
+|190952|Trident with the Riptide enchantment sending you back when you. immediately switch to another hotbar slot.
+|191029|Block breaking animations do not stop after pausing the game
+|208094|Vibrant Visuals: End Crystal healing beams texture not animated
+|220579|Vibrant Visuals: Beacon beam texture is broken.
+|221119|Inconsistency: Spider jockeys cannot have a Bogged rider, despite other skeletons spawning as riders.
+|otherissuescount=2}}
+'''Other'''
+*Fixed a bug where the death screen could be shown while the player was alive when certain gamepad buttons where pressed at the same time.
+*Fixed an issue where endermen could take blocks without having line of sight to them.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.100 betas]]
+
+[[de:Bedrock Edition beta 1.21.100.21]]
+[[pt:Edição Bedrock Preview 1.21.100.21]]
+[[uk:Preview 1.21.100.21 (Bedrock Edition)]]
+[[zh:基岩版1.21.100.21]]

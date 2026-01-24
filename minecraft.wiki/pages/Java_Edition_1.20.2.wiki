@@ -1,0 +1,1277 @@
+{{Infobox version
+|title=Minecraft 1.20.2
+|image=1.20.2 banner.jpg
+|image2=Java Edition 1.20.2.png
+|edition=Java
+|date=September 21, 2023
+|jsonhash=b994a7ad16326530c7a67e1b700fcd6fb86e1497
+|clienthash=82d1974e75fc984c5ed4b038e764e50958ac61a0
+|clientmap=5c292ff7d3161977041116698e295083fd5ec8f5
+|serverhash=5b868151bd02b41319f54c8d4061b8cae84e665c
+|servermap=dced504a9b5df367ddd3477adac084cea8024ba4
+|prevparent=1.20
+|prev=1.20.1
+|next=
+|nextparent=1.20.3
+}}
+
+'''1.20.2''' is a minor update to {{JE}}, released on September 21, 2023,<ref>{{Mcnet|minecraft-java-edition-1-20-2|Minecraft Java Edition 1.20.2|September 21, 2023}}</ref> which adds the "[[Villager Trade Rebalance]]" experiment, the {{cmd|random}} command, [[function (Java Edition)|function]] macros, changes diamond generation, and fixes bugs. It is not compatible with [[Java Edition 1.20|1.20]] – [[Java Edition 1.20.1|1.20.1]] servers.
+
+== Additions ==
+=== Command format ===
+'''{{cmd|random}}'''
+* A new command for randomizing values and controlling random sequences.
+** Syntaxes:
+*** {{cmd|link=none|random (value{{!}}roll) <range> [<sequence>]}}: draw a random value.
+*** {{cmd|link=none|random reset (*{{!}}<sequence>) [<seed>] [<includeWorldSeed>] [<includeSequenceId>]}}: control random sequences.
+** Arguments:
+*** {{cd|range}}: A range of values to randomize between, inclusively. For instance, {{cd|1..6}} is a regular D6 roll.
+*** {{cd|sequence}}: The name of a random sequence to sample or reset.
+**** In {{cmd|link=none|random reset}}, {{cd|*}} refers to all random sequences.
+*** {{cd|seed}}: A seed to use for the random sequence after reset.
+*** {{cd|includeWorldSeed}}: A boolean specifying whether to include the world seed when seeding the sequence. Defaults to {{cd|true}}.
+**** When {{cd|false}}, it means the sequence evaluates to the same regardless of which world the command is run in.
+*** {{cd|includeSequenceId}}: A boolean specifying whether to include the sequence ID when seeding the sequence. Defaults to {{cd|true}}.
+**** When {{cd|false}}, it means all sequences evaluate to the same regardless of which name they have.
+** {{cmd|link=none|random (value{{!}}roll)}} notes:
+*** When using {{cd|roll}} rather than {{cd|value}}, the resulting value is also shown in chat for all players.
+*** When {{cd|sequence}} not specified, this command can be executed by players without operator privileges.
+** {{cmd|link=none|random reset}} notes:
+*** By default, all sequences are seeded as {{cd|d=,|0|true|true}}.
+*** Using {{cd|*}} instead of a sequence ID resets all sequences and sets the default parameters.
+*** If no seed is specified, the sequence resets to the default parameters.
+
+=== General ===
+'''[[Attribute]]s'''
+* Added the {{cd|generic.max_absorption}} attribute.
+** Acts similar to {{cd|generic.max_health}}, but instead of being the upper bound for {{cd|Health}}, it is the upper bound for {{cd|AbsorptionAmount}}.
+** The mob effect {{cd|absorption}} increases {{cd|generic.max_absorption}} as well as fills the {{cd|AbsorptionAmount}} to the max when applied.
+
+'''[[Experiments]]'''
+* Added the "[[Villager Trade Rebalance]]" experimental toggle ({{cd|trade_rebalance}} data pack).
+
+'''[[Game rule]]'''
+* Added {{cd|enderPearlsVanishOnDeath}}, controlling whether thrown ender pearls vanish when the player that threw them dies, defaults to {{cd|true}}.
+
+'''[[Loot table]]'''
+* Added {{cd|sequence}} loot function.
+** Contains 1 field:
+*** {{cd|functions}}: an array of sub-functions to run in sequence.
+** Can also be declared as an inline array without a type.
+*** This matches the existing behavior where loot function JSON files can be declared as an array of composite functions.
+* {{cd|all_of}} predicates in loot tables can now be declared implicitly as an inline array without a type.
+** This similarly matches the existing behavior where loot predicate JSON files can be declared as an array of sub-predicates.
+
+'''[[Options]]'''
+* Added "Narrator Hotkey" option to accessibility settings, opened by default.
+** Pressing {{key|Ctrl+B}} doesn't open narrator if it is turned off.
+
+'''<samp>[[options.txt]]</samp>'''
+* Added {{cd|narratorHotkey}}, defaults to {{cd|true}}.
+
+'''[[Social interactions]]'''
+* Player skins and names can now be reported in the social interactions screen.
+** Like chat reports, player skin and name reports are handled by a human.
+** If a skin or name is reported, and found to be violating the Community Standards, following actions can be take by Minecraft moderators:
+*** Ban the skin from being used by any player.
+*** Ban the name from being used by any player.
+*** Suspend the player from online play in the case of repeated offences.
+** When a skin is banned, players with that skin:
+*** Have their skin removed.
+*** Are notified when they launch the game.
+*** Are automatically assigned one of the default skins.
+*** Can still play multiplayer and singleplayer.
+*** Can select a new custom skin at any time.
+** When a player's name is banned, that player:
+*** Needs to choose a new name.
+*** Is notified when they launch the game.
+*** Is not able to play online until they change their name.
+*** Can still play singleplayer.
+** A skin or name that has been banned cannot be used by any player in the future.
+* Added following report category:
+** I want to report them
+*** I'm annoyed with them / they have done something I do not like.
+
+'''[[Tag]]s'''
+* Added the following block tags:
+** {{cd|#camel_sand_step_sound_blocks}}: contains {{cd|d=and|#sand|#concrete_powder}}.
+** {{cd|#concrete_powder}}: contains all types of concrete powders.
+* Added the following damage type tags:
+** {{cd|#always_kills_armor_stands}}: contains {{cd|d=and|arrow|trident|mob_projectile|fireball|wither_skull}}.
+*** Damage types included in this tag should always fully kill an [[armor stand]].
+** {{cd|#no_knockback}}: contains {{cd|d=and|explosion|player_explosion|bad_respawn_point}}.
+*** Causes knockback to not be caused by the damage itself. Used in Vanilla for damage that is caused by events, such as explosions, which apply knockback separately.
+* Added the following entity tag:
+** {{cd|#non_controlling_rider}}: contains {{cd|d=and|slime|magma_cube}}.
+*** Represents entities that don't override their vehicles movement control.
+
+== Changes ==
+=== Blocks ===
+[[File:Barrier (held) JE2 BE2.png|width=32x32]] '''[[Barrier]]'''
+* No longer produces fall particles when entities fall on them.
+* No longer creates particles when a player brushes them.
+* Can now be waterlogged by players in Creative mode.
+** Water cannot be placed in them or taken out by non-direct interactions such as [[dispenser]]s.
+
+[[File:Chorus Flower JE2 BE2.png|width=32x32]] '''[[Chorus Flower]]'''
+* No longer provides support for hanging or standing blocks.
+
+[[File:Decorated Pot (N) JE2 BE2.png|width=32x32]] '''[[Decorated Pot|Decorated Pots]]'''
+* Now have Creative inventory tooltips.
+
+[[File:Enchanting Table.gif|width=32x32]] '''[[Enchanting Table]]'''
+* Reverted the texture of lapis slot to the texture before [[Java Edition 1.18-pre5|1.18-pre5]], to make the consistency with smithing table.
+
+{{Animate|Jukebox JE2 BE2.png;Tripwire Hook (S) JE6 BE2.png|32px}} '''[[Jukebox]] and [[Tripwire Hook]]'''
+* Now uses wood sounds instead of stone.
+
+{{Animate|Wall Lever (S) JE5-L1.png;Redstone Comparator (S) JE4.png;Redstone Repeater (S) JE5 BE2.png|32px}} '''[[Lever]], [[Redstone Comparator]] and [[Redstone Repeater]]'''
+* Now uses stone sounds instead of wood.
+
+[[File:Pink Petals 4 (S) JE2.png|width=32x32]] '''[[Pink Petals]]'''
+* The size of the hitbox now increases with the number of petals.
+
+{{Animate|Sculk Sensor JE1.gif;Calibrated Sculk Sensor JE2.gif|32px}} '''[[Sculk Sensor]] and [[Calibrated Sculk Sensor]]'''
+* Vibrations no longer risk being lost on simulation distance limit.
+* Can now detect the following events:
+** {{cd|block_change}}, with frequency 11:
+*** [[Carrot]]s being eaten by [[rabbit]]s.
+*** [[Chiseled bookshelves]] receiving books from [[hopper]]s.
+*** [[Sweet berries]] being eaten by [[fox]]es.
+*** [[Turtle egg]]s cracking.
+** {{cd|block_destroy}}, with frequency 12:
+*** [[Fire]] being doused by water potion.
+*** Turtle eggs hatching.
+** {{cd|entity_action}} (new), with frequency 4:
+*** [[Camel]]s dashing.
+*** Camels standing up.
+*** Camels sitting down.
+*** [[Turtle]]s clearing away [[sand]].
+*** [[Witch]]es drinking a potion.
+** {{cd|entity_damage}}, with frequency 7:
+*** [[Totems of undying]] activating.
+** {{cd|entity_place}}, with frequency 14:
+*** [[Evoker]]s evoking [[vex]]es or fangs.
+** {{cd|item_interact_finish}}, with frequency 3:
+*** Using [[bone meal]].
+** {{cd|unequip}} (new), with frequency 4:
+*** Unequipping items.
+* [[Camel]]s eating cactus now emits an {{cd|eat}} vibration with frequency 8, instead of {{cd|entity_interact}} vibration with frequency 6.
+
+[[File:Smithing Table JE2 BE2.png|width=32x32]] '''[[Smithing Table]]'''
+* Now in the custom recipes, the upgrade material can be sent to the GUI instantly with the {{key|Shift}} + left click shortcut.
+
+{{Animate|Sponge JE3 BE3.png;Wet Sponge JE2 BE2.png|32px}} '''[[Sponge]] and [[Sponge|Wet Sponge]]'''
+* They now have custom sounds.
+
+{{Animate|Inactive Redstone Wire (NESW) JE4.png;Redstone Repeater (S) JE5 BE2.png;Redstone Comparator (S) JE4.png|32px}} '''[[Redstone wire|Redstone Wire]], [[redstone repeater|Redstone Repeater]]s and [[redstone comparator|Redstone Comparator]]s'''
+* Now check for attachment when receiving [[block update#PP update|PP update]] from beneath.
+
+[[File:Player Head (S) JE2.png|width=32x32]] '''[[Head]]s'''
+* Added {{Cd|powered}} [[block state]].
+* No longer check for redstone signals every game tick.
+
+=== Items ===
+[[File:Chorus Fruit JE2 BE2.png|width=32x32]] '''[[Chorus Fruit]]'''
+* Now resets fall distance when eating it.
+
+[[File:Map (item) JE2 BE2.png|width=32x32]] '''[[Explorer Map]]'''
+* Updated structure icons on explorer maps sold by cartographers.
+
+[[File:Music Disc Pigstep JE1 BE1.png|width=32x32]] '''[[Music Disc Pigstep|Pigstep Music Disc]]'''
+* This music disc is now the last one of the music discs in the Creative inventory.
+
+=== Mobs ===
+[[File:Bee JE1.gif|width=32x32]] '''[[Bee]]'''
+* Can now collect pollen from [[chorus flower]] or [[spore blossom]].
+
+{{Animate|Camel JE1 BE2.png;Temperate Frog JE1 BE1.png;Goat JE1 BE1.png;Sniffer JE1 BE1.png|50px}} '''[[Camel]]s, [[Frog]]s, [[Goat]]s and [[Sniffer]]s'''
+* Now panic when damaged while attached to [[lead]]s.
+
+[[File:Plains Villager Base JE2.png|width=50x50]] '''[[Villager]]s'''
+* The discount for curing a villager is no longer multiplied if the villager is reinfected and cured again.
+* Now attempt to spawn an [[iron golem]] every 30 seconds instead of 35.
+
+'''General'''
+* Changed mob attack reach calculation.
+** In horizontal directions, mobs' attack reach are now their bounding box extended in horizontal directions, instead of using horizontal width to determine.
+*** For example, a ravager won't be able to attack through a few block thick walls.
+** In vertical directions, mobs' attack reach are now the exact vertical range of their bounding box. When there's no overlap between their bounding box and their target's bounding box in vertical direction, they can not attack, in specific:
+*** Riding a medium-sized mob (e.g. horse) can get rid of attacks from short mobs (e.g. baby zombie).
+*** Riding a tall mob (e.g. camel) can get rid of attacks from standard size mobs (e.g. zombie).
+*** Some mob's reaching height now extended (e.g. enderman, safety height changed from 1.5 to 3).
+
+=== Non-mob entities ===
+'''[[Display]] entities'''
+* Display entities now start updating their client-side position and rotation on the first tick after an update.
+** In previous versions, updates were applied in the same tick, causing uneven motion.
+** New behavior is now similar to armor stands, mobs and players.
+* On the server, position and rotation are still updated immediately.
+* Duration of this interpolation is controlled by the field {{cd|teleport_duration}}.
+** {{cd|0}} means that updates are applied immediately.
+** {{cd|1}} means that the display entity moves from current position to the updated one over one tick.
+** Higher values spread the movement over multiple ticks.
+** Please note that this value is clamped to avoid glitches due to periodic position updates.
+** The new value applies only to position and rotation changes made after it changed.
+*** That means any current movement continues unchanged.
+* Note: behavior while riding remains unchanged from previous versions.
+
+=== World generation ===
+'''[[Ore]] distribution'''
+* [[Diamond ore]] is now generated more frequently in the [[deepslate]] layers of the Overworld.
+** Added a new ore blob placement: Uniform distributed, from height -64 to -4, with blob size 8, generation frequency 2 and a 50% chance of discarding when exposed to air.
+** Other existing diamond ore placements remain untouched.
+
+=== Command format ===
+'''[[Function (Java Edition)|Function]]s'''
+* A single backslash {{cd|\}} as the last non-whitespace character of a line now allows a command to be continued on the next line.
+** Leading and trailing whitespace of the following line are stripped before appending.
+* Functions can now contain macro lines, making them function macros.
+** Any line beginning with {{cd|$}} (as the first non-space character) marks a macro line.
+** A macro line also contains one or more substitutions in the form of {{cd|$(variable)}}.
+*** Commands with variable substitutions are re-evaluated after substitution.
+**** Running commands with this type have extra cost compared to pre-parsed functions.
+**** Game attempts to cache the result of certain parameter set being used in a call, to reduce costs when repeatedly calling.
+** When calling a function macro a compound with data for all argument variables must be provided.
+* Numbers used as macro arguments are now always inserted without suffixes, regardless of numeric type.
+
+'''{{cmd|function}}'''
+* Extended command usage, now supported parameters for function macro's variable substitution.
+** New syntax: {{cmd|link=none|function <name> [<arguments>{{!}}with (block <sourcePos>{{!}}entity <sou<nowiki/>rce>{{!}}storage <sou<nowiki/>rce>) [<path>]]}}
+** New arguments:
+*** {{cd|arguments}}: A data compound, enclosed in {{cd|{}}}.
+*** Data source: A data source specification, like what could already be used for {{cmd|data get}}.
+*** {{cd|path}}: An NBT path specification.
+** The data source and {{cd|path}} must specify a compound data entry.
+** The compound must contain one entry for each variable used in the macro.
+** More data may be present in the compound and if so is ignored.
+** Calling a non-macro function with a data compound is silently ignored.
+** When a macro is called, the values provided are substituted in place of the variable specifications and the resulting commands are executed.
+*** In order to improve performance when repeatedly calling with the same parameter, values in the provided compound which are referenced in macro as parameters are cached.
+** Any syntax errors in the lines resulting from variable substitution result in the entire function call being skipped.
+
+'''{{cmd|item}}'''
+* Can now replace items in [[jukebox]]es.
+* Can now remove items in [[chiseled bookshelves]].
+
+'''General'''
+* History of used commands is now saved and accessible across worlds.
+** The last 50 commands that are sent in chat are remembered across game sessions.
+** The command and chat history can be accessed by pressing {{key|UP}} or {{key|DOWN}} in the chat.
+** Regular chat is only persisted within the same game session (leaving a server or world clears them).
+** Recent commands are stored in <samp>[[command_history.txt]]</samp> in the <samp>[[.minecraft]]</samp> folder.
+
+=== Gameplay ===
+'''[[Advancement]]s'''
+* The "Smithing with Style" advancement now grants 150 experience upon completion.
+
+'''[[Recipe book]]s'''
+* Bamboo fence and bamboo fence gate are now grouped with the other ones.
+
+'''[[Trading]]'''
+* When villagers unlock new trades, the order of those trades in the UI is now always random instead of sometimes being deterministic.
+
+=== General ===
+'''[[Chat]]'''
+* Clients no longer disconnect themselves when receiving an invalid chat message.
+** A placeholder message is instead shown in chat.
+
+'''[[Chunk format]]'''
+* Game no longer uses numeric values when storing mob effects to world.
+** For example, {{cd|4}} becomes {{cd|minecraft:mining_fatigue}}.
+** Changed following fields in mob effect instances:
+*** {{cd|Id}} (integer) -> {{cd|id}} (string, resource location)
+*** {{cd|Ambient}} -> {{cd|ambient}}
+*** {{cd|Amplifier}} -> {{cd|amplifier}}
+*** {{cd|Duration}} -> {{cd|duration}}
+*** {{cd|ShowParticles}} -> {{cd|show_particles}}
+*** {{cd|ShowIcon}} -> {{cd|show_icon}}
+*** {{cd|HiddenEffect}} -> {{cd|hidden_effect}}
+**** This field is a mob effect instance, so changes to the parent also applied here, recursively.
+*** {{cd|FactorCalculationData}} -> {{cd|factor_calculation_data}}
+* In NBT format for block entity type {{cd|beacon}}:
+** {{cd|Primary}} (integer) -> {{cd|primary_effect}} (string, resource location)
+** {{cd|Secondary}} (integer) -> {{cd|secondary_effect}} (string, resource location)
+
+'''[[Chunk tick]]'''
+* {{cd|randomTickSpeed}} [[game rule]] now affects the rate of accumulation of [[snow]] and [[ice]] the same way it affects crops and other blocks.
+
+'''[[Data pack]]'''
+* The [[pack format]] version is now {{cd|18}}.
+* Added {{cd|decal}} field to armor trim patterns (default: {{cd|false}}).
+** If {{cd|true}}, the pattern texture is masked based on the underlying armor.
+
+'''[[Debug screen]]'''
+* Values in the {{cd|SH}} row now show up as question marks when playing on a server, instead of wrong values.
+* When hitboxes are displayed through {{key|F3+B}}, entities that have a passenger display the passenger's attachment point.
+* Renamed "Debug" row to "Debug charts", and changed its style.
+** "Pie" chart now called "Profiler" chart.
+* The charts on the debug screen can now be toggled with the key combinations {{key|F3+1}} (profiler chart) and {{key|F3+2}} (FPS and TPS) instead of {{key|Shift+F3}} and {{key|Alt+F3}}.
+* Press key combination {{key|F3+3}} now shows charts for ping and received network traffic.
+* Debug screen no longer be closed while switching charts.
+* Multiple charts now can appears at the same time, unless it's conflict with each other.
+* Current chart layout is kept when debug screen re-enabled.
+
+'''[[Entity format]]'''
+* In NBT format for entity type {{cd|mooshroom}}:
+** Removed {{cd|d=and|EffectId|EffectDuration}}.
+** Added {{cd|stew_effects}}, with the same format as {{cd|effects}} field in {{cd|suspicious_stew}} item format.
+* In NBT format for entity type {{cd|area_effect_cloud}}:
+** Renamed {{cd|Effects}} to {{cd|effects}}.
+* In NBT format for entity type {{cd|arrow}}:
+** Renamed {{cd|CustomPotionEffects}} to {{cd|custom_potion_effects}}.
+* In NBT format for living entities (players, armor stands, and all mobs):
+** Renamed {{cd|ActiveEffects}} to {{cd|active_effects}}.
+
+'''Game events'''
+* Added {{cd|entity_action}} game event, to replace {{cd|d=and|entity_roar|entity_shake}}.
+* Added {{cd|unequip}} game event.
+
+'''Multiplayer and World Selection screens'''
+* Renamed "Cancel" button to "Back".
+
+'''Pack metadata'''
+* New features have been added to datapacks and resource packs to allow creation of packs that are compatible with multiple versions of the game.
+** Pack metadata now includes an optional field {{cd|supported_formats}} which describes a range for pack formats that this pack supports.
+*** Examples: {{cd|16}}, {{cd|[16,17]}}, {{cd|{"min_inclusive": 16, "max_inclusive": 17}}}
+** {{cd|pack_format}} field is still required and its format remains unchanged, to allow older game versions to read pack data.
+*** If {{cd|supported_formats}} is present, it must contain the value declared in {{cd|pack_format}}.
+*** Since this new information is ignored by older versions of the game, they always see a "normal", single-version pack, without any extended compatibility.
+* Packs can now contain overlay directories ("overlays").
+** Overlays are sub-packs applied over the "normal" contents of a pack.
+*** These directories have the same layout as the top-level pack, including the {{cd|assets}} and {{cd|data}} directories.
+*** Overlays can be applied if they support the client's pack format.
+*** Overlays can add and replace files, but not remove them.
+**** For example, if the overlay {{cd|foo}} is applied, the file {{cd|foo/assets/minecraft/textures/bar.png}} replaces contents of {{cd|assets/minecraft/textures/bar.png}}.
+*** {{cd|pack.mcmeta}} and {{cd|pack.png}} are ignored in overlay directories.
+** New section called {{cd|overlays}} have been added to pack metadata.
+*** It contains an {{cd|entries}} field, containing a list of overlays.
+*** Every overlay entry has two fields:
+**** {{cd|formats}} - range of supported formats
+**** {{cd|directory}} - overlay directory (allowed characters: {{cd|d=and|a-z|0-9|_|-}})
+** Order of application: overlays are stacked from the bottom to top of the list.
+*** For example, if a pack has two overlays: {{cd|"entries": [{"directory":"A", ...}, {"directory":"B", ...}]}}, the game first looks in B, then A, and then in the top pack directory.
+
+'''[[player.dat format]]'''
+* In NBT format for item type {{cd|d=and|potion|lingering_potion|splash_potion|tipped_arrow}}:
+** Renamed {{cd|CustomPotionEffects}} to {{cd|custom_potion_effects}}.
+* In NBT format for item type {{cd|suspicious_stew}}:
+** Renamed {{cd|Effects}} to {{cd|effects}}, also changed following fields in this field:
+*** {{cd|EffectId}} (integer) -> {{cd|id}} (string, resource location)
+*** {{cd|EffectDuration}} -> {{cd|duration}}
+
+'''Protocol'''
+* Optimized the way chunks are sent to clients to allow players with low-bandwidth internet connections to play on multiplayer servers.
+** Chunks are no longer sent over the network to the client in one big continuous batch.
+** They are instead sent in smaller batches depending on the available bandwidth. This means that:
+*** Clients with extremely low-bandwidth connections don't time out while loading the world.
+*** Clients with low-bandwidth connections can interact with the world while some chunks are still loading.
+** Only chunks within the client's render distance are now sent.
+** Gameplay packets are now packed into bigger TCP-packets to reduce overhead from TCP-headers, significantly reducing network usage.
+* Changed network protocol to allow for more data-driven content in the future.
+** Configuration phase automatically starts after login phase (i.e. after client account has been verified) and lasts until the player joins the world (play phase).
+** Clients can stay in configuration phase indefinitely - it's up to server to release it to the world.
+** Servers can also request clients to re-enter the configuration phase after it has entered the play phase.
+*** Other players see such clients as disconnected.
+** Users in configuration phase aren't visible on the player list.
+** Actions allowed in configuration phase (moved from play phase).
+*** Configuration of data-driven registries.
+*** Configuration of enabled features.
+** Actions shared between configuration and play phases:
+*** Application of server resource packs.
+*** Update of tags.
+*** Exchange of custom packets.
+*** Ping and keep-alive packets.
+** The server now negotiates resource pack in the configuration phase.
+*** This means that the player is no longer in world when answering prompts and reloading resources.
+* Client options are now sent during the configuration network phase when joining a server.
+
+'''[[Resource pack]]'''
+* The [[pack format]] version is now {{cd|18}}.
+** The process of upgrading a pack can be assisted by using an automated Slicer tool.<ref>https://github.com/Mojang/slicer/releases/tag/v1.1</ref>
+** All textures containing multiple sprites in a sheet for GUI have been split into individual sprites under {{cd|textures/gui/sprites}} (automated by Slicer tool).
+** All textures in the {{cd|realms}} namespace have been moved into the {{cd|minecraft}} namespace (automated by Slicer tool).
+** {{cd|villager2.png}} has been renamed to {{cd|villager.png}} (automated by Slicer tool).
+** {{cd|icon/trial_available}} and {{cd|realm_status/expires_soon}} GUI sprites are animated with {{cd|.mcmeta}} declarations instead of individual sprites (automated by Slicer tool).
+** The bundle tooltip background is now drawn as a nine-sliced sprite.
+** The icons for the "Accessibility", "Language", and "Realms News" buttons have been split from their underlying button texture.
+** The "Realms Invite" button is now drawn as an overlay on the normal button texture.
+*** The highlighted texture state for this button has been removed.
+** The highlighted states for Realms invitation number icons have been removed.
+** The exclamation marks on the {{cd|notification\more.png}} have been removed.
+** The text field background is now a nine-sliced sprite at {{cd|d=and|widget/text_field|widget/text_field_highlighted}}.
+** The scroll bar in lists and text fields is now a nine-sliced sprite at {{cd|widget/scroller}}.
+
+'''[[Scoreboard]]'''
+* The {{cd|belowName}} display slot selector is now {{cd|below_name}}.
+
+'''[[server.properties]]'''
+* Added new {{cd|log-ips}} option (defaults to {{cd|true}}).
+** When set to {{cd|false}}, prevents player IPs from being included in the log when players join the game.
+
+'''[[Social interactions]]'''
+* Changed following reporting categories:
+** Defamation<del class="tc-no">, impersonation, or false information</del>
+*** Someone is damaging <ins class="tc-yes">your or</ins> someone else's reputation, <del class="tc-no">pretending to be someone they're not, or</del> <ins class="tc-yes">for example</ins> sharing false information with the aim to exploit or mislead others.
+** <del class="tc-no">Imminent harm - </del>Self-harm or suicide
+*** Someone is threatening to harm themselves in real life or talking about harming themselves in real life.
+** <del class="tc-no">Imminent harm - </del>Threat <del class="tc-no">to</del> <ins class="tc-yes">of</ins> harm <ins class="tc-yes">to</ins> others
+*** Someone is threatening to harm you or someone else in real life.
+
+'''[[Tag]]s'''
+* Moved all types of concrete powders to newly added block tag {{cd|#concrete_powder}} from {{cd|#mineable/shovel}} block tag, then added {{cd|#concrete_powder}} to {{cd|#mineable/shovel}}.
+* Removed {{cd|d=and|entity_roar|entity_shake}} from {{cd|d=and|#vibrations|#warden_can_listen}} game event tags, then added {{cd|d=and|entity_action|unequip}} to them.
+* Added {{cd|d=and|chorus_flower|spore_blossom}} to {{cd|#flowers}} block and item tags.
+
+'''[[Telemetry]]'''
+* Added a button to the telemetry data collection screen that links to the Microsoft Privacy Statement.
+
+'''General'''
+* The LWJGL library has been upgraded to version 3.3.2.
+* The default Java version shipped with the game has been upgraded to Microsoft OpenJDK 17.0.8.
+* Added validation for symbolic links in datapacks and resource packs, to improve safety.
+** This feature expands on symbolic link validation in worlds added in the previous release.
+** The game now warns users if a pack added via drag and drop contains disallowed symbolic links.
+** Packs containing disallowed symbolic links are not visible in UI and commands.
+** Additionally, directories and files that are not recognized as packs are no longer copied via drag and drop.
+
+== Experimental ==
+These additions and changes only take effect when the "[[Villager Trade Rebalance]]" experimental data pack is enabled.
+
+=== Additions ===
+{{Additions table
+|Jungle Explorer Map
+|Swamp Explorer Map
+|Desert Village Map
+|Plains Village Map
+|Savanna Village Map
+|Snowy Village Map
+|Taiga Village Map
+|title=1.20.2 experimental
+}}
+
+==== General ====
+'''[[Tag]]s'''
+* Added the following structure tags:
+** {{cd|#on_desert_village_maps}}: contains {{cd|village_desert}}.
+** {{cd|#on_jungle_explorer_maps}}: contains {{cd|jungle_pyramid}}.
+** {{cd|#on_plains_village_maps}}: contains {{cd|village_plains}}.
+** {{cd|#on_savanna_village_maps}}: contains {{cd|village_savanna}}.
+** {{cd|#on_snowy_village_maps}}: contains {{cd|village_snowy}}.
+** {{cd|#on_swamp_explorer_maps}}: contains {{cd|swamp_hut}}.
+** {{cd|#on_taiga_village_maps}}: contains {{cd|village_taiga}}.
+
+=== Changes ===
+==== World generation ====
+'''{{EnvLink|Ancient City|Ancient City}}'''
+* Increases the chance of generating enchanted books with [[Mending]].
+
+'''{{EnvLink|Desert Pyramid|Desert Pyramid}}'''
+* Increases the chance of generating enchanted books with [[Unbreaking]] (level I to III).
+
+'''{{EnvLink|Jungle Pyramid|Jungle Pyramid}}'''
+* Increases the chance of generating enchanted books with [[Unbreaking]] (level I to III).
+
+'''{{EnvLink|Mineshaft|Mineshaft}}'''
+* Increases the chance of generating enchanted books with [[Efficiency]] (level I to V).
+
+'''{{EnvLink|Pillager Outpost|Pillager Outpost}}'''
+* Increases the chance of generating enchanted books with [[Quick Charge]] (level I to III).
+
+==== Gameplay ====
+'''[[Trading]]'''
+* Changed the trading mechanism of librarians selling enchanted books.
+** Instead of offering every possible enchanted book, librarians are now offering specific enchanted books depending on which biome they come from.
+*** Jungle and swamp villages do not generate naturally. Thus, players must breed villagers or cure zombie villagers in these biomes to access their trades.
+** All tradable enchanted books now split to special books and normal books.
+*** Special books have a specific enchantment with a fixed level, and are only available from master librarians with full XP.
+*** Normal books have a specific enchantment without a fixed level, just like before.
+** All enchantments used for [[crossbow]], [[fishing rod]], and [[trident]] are removed from trading.
+::{| class="wikitable" style="text-align:center"
+|+ Available tradable enchantments
+|-
+! Category !! Desert !! Plains !! Savanna !! Snow !! Taiga !! Jungle !! Swamp
+|-
+| Special
+| [[Efficiency]] III
+| [[Protection]] III
+| [[Sharpness]] III
+| [[Silk Touch]]
+| [[Fortune]] II
+| [[Unbreaking]] II
+| [[Mending]]
+|-
+| Normal
+| [[Fire Protection]]<br>[[Thorns]]<br>[[Infinity]]
+| [[Punch]]<br>[[Smite]]<br>[[Bane of Arthropods]]
+| [[Knockback]]<br>[[Curse of Binding]]<br>[[Sweeping Edge]]
+| [[Aqua Affinity]]<br>[[Looting]]<br>[[Frost Walker]]
+| [[Blast Protection]]<br>[[Fire Aspect]]<br>[[Flame]]
+| [[Feather Falling]]<br>[[Projectile Protection]]<br>[[Power]]
+| [[Depth Strider]]<br>[[Respiration]]<br>[[Curse of Vanishing]]
+|}
+
+* Added seven new maps which cartographers can sell, depending on the biome they come from.
+** Jungle and swamp villages do not generate naturally. Thus, players must breed villagers or cure zombie villagers in these biomes to access their trades.
+** Village maps points to a village in a specific biome. Jungle explorer map points to a jungle pyramid. Swamp explorer map points to a swamp hut.
+{{anchor|Forementioned}}
+::{| class="wikitable" style="text-align:center"
+|+ Available new tradable maps
+|-
+! !! Desert !! Jungle !! Plains !! Savanna !! Snow !! Swamp !! Taiga
+|-
+! Group 1
+| Savanna Village Map || Savanna Village Map || Savanna Village Map || Desert Village Map || Plains Village Map || Snowy Village Map || Plains Village Map
+|-
+! Group 2
+| Plains Village Map || Desert Village Map || Taiga Village Map || Plains Village Map || Taiga Village Map || Taiga Village Map || Snowy Village Map
+|-
+! Group 3
+| Jungle Explorer Map || Swamp Explorer Map || &ndash; || Jungle Explorer Map || Swamp Explorer Map || Jungle Explorer Map || Swamp Explorer Map
+|}
+::{| class="wikitable" style="text-align:center"
+|+ Current version of trades for cartographer
+|-
+! Level !! Item wanted !! Default quantity !! Price multiplier !! Item given !! Quantity !! Trades until disabled !! XP to villager
+|-
+! rowspan=2 | Novice
+| {{ItemLink|Paper}} || 24 || 0.05 || {{ItemLink|Emerald}} || 1 || 16 || 2
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Empty Map}} || 1 || 12 || 1
+|-
+! rowspan=2 | Apprentice
+| {{BlockLink|Glass Pane}} || 11 || 0.05 || {{ItemLink|Emerald}} || 1 || 16 || 10
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Compass}} || 8<br>1 || 0.2 || ''[[Java_Edition_1.20.2#Forementioned|Biome-dependent maps]]''<ref group=note>Divided into 3 groups, pulled independently.</ref> || 1 || 12 || 5
+|-
+! rowspan=2 | Journeyman
+| {{ItemLink|Compass}} || 1 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 10
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Compass}} || 13<br>1 || 0.2 || {{ItemLink|Ocean Explorer Map}} || 1 || 12 || 10
+|-
+! rowspan=2 | Expert
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Item Frame}} || 1 || 12 || 15
+|-
+| {{ItemLink|Emerald}} || 3 || 0.05 || {{BlockSprite|white-banner}}{{BlockSprite|blue-banner}}{{BlockSprite|light-blue-banner}}{{BlockSprite|red-banner}}{{BlockSprite|pink-banner}}{{BlockSprite|green-banner}}{{BlockSprite|lime-banner}}{{BlockSprite|gray-banner}}<br>{{BlockSprite|black-banner}}{{BlockSprite|purple-banner}}{{BlockSprite|magenta-banner}}{{BlockSprite|cyan-banner}}{{BlockSprite|brown-banner}}{{BlockSprite|yellow-banner}}{{BlockSprite|orange-banner}}{{BlockSprite|light-gray-banner}}<br>Any color blank [[Banner]]<ref group="note" name="colored-offers">The list of possible offers contains individual offers for each color, so multiple colors may be offered by the same villager as separate trades.</ref> || 1 || 12 || 15
+|-
+! rowspan=2 | Master
+| {{ItemLink|Emerald}} || 8 || 0.05 || {{ItemLink|Banner Pattern|Globe Banner Pattern}} || 1 || 12 || 30
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Compass}} || 14<br>1 || 0.2 || {{ItemLink|Woodland Explorer Map}} || 1 || 1 || 30
+|}
+
+* Changed trades of armorers:
+** Buying diamond armor now also requires a small amount of diamonds.
+** Most master-level armorers buy iron blocks and pay 4 emeralds for them.
+** Chainmail armor is exclusively sold by jungle and swamp armorers.
+** The savanna armorer sells cursed diamond armor at reduced prices.
+** The taiga armorer can swap one piece of diamond armor for another.
+::{| class="wikitable" style="text-align:center"
+|+ Current version of trades for desert armorers
+|-
+! Level !! Item wanted !! Default quantity !! Price multiplier !! Item given !! Quantity !! Trades until disabled !! XP to villager
+|-
+! rowspan=2 | Novice
+| {{ItemLink|Coal}} || 15 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+| {{ItemLink|Iron Ingot}} || 5 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+! rowspan=4 | Apprentice
+| {{ItemLink|Emerald}} || 4 || 0.05 || {{ItemLink|Iron Boots}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Iron Helmet}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Iron Leggings}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Iron Chestplate}} || 1 || 12 || 5
+|-
+! rowspan=3 | Journeyman
+| {{ItemLink|Lava Bucket}} || 1 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 20
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Shield}} || 1 || 12 || 10
+|-
+| {{ItemLink|Emerald}} || 36 || 0.2 || {{ItemLink|Bell}} || 1 || 12 || 10
+|-
+! rowspan=4 | Expert
+| {{ItemLink|Emerald}} || 8 || 0.05 || {{ItemLink|Iron Boots}} (Thorns I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Iron Helmet}} (Thorns I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 11 || 0.05 || {{ItemLink|Iron Leggings}} (Thorns I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 13 || 0.05 || {{ItemLink|Iron Chestplate}} (Thorns I) || 1 || 3 || 15
+|-
+! rowspan=3 | Master
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 16<br>4 || 0.05 || {{ItemLink|Diamond Chestplate}} (Thorns I) || 1 || 3 || 30
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 16<br>3 || 0.05 || {{ItemLink|Diamond Leggings}} (Thorns I) || 1 || 3 || 30
+|-
+| {{BlockLink|Block of Iron}} || 1 || 0.05 || {{ItemLink|Emerald}} || 4 || 12 || 30
+|}
+::{| class="wikitable" style="text-align:center"
+|+ Current version of trades for jungle armorers
+|-
+! Level !! Item wanted !! Default quantity !! Price multiplier !! Item given !! Quantity !! Trades until disabled !! XP to villager
+|-
+! rowspan=2 | Novice
+| {{ItemLink|Coal}} || 15 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+| {{ItemLink|Iron Ingot}} || 5 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+! rowspan=4 | Apprentice
+| {{ItemLink|Emerald}} || 4 || 0.05 || {{ItemLink|Chainmail Boots}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Chainmail Helmet}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Chainmail Leggings}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Chainmail Chestplate}} || 1 || 12 || 5
+|-
+! rowspan=3 | Journeyman
+| {{ItemLink|Lava Bucket}} || 1 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 20
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Shield}} || 1 || 12 || 10
+|-
+| {{ItemLink|Emerald}} || 36 || 0.2 || {{ItemLink|Bell}} || 1 || 12 || 10
+|-
+! rowspan=4 | Expert
+| {{ItemLink|Emerald}} || 8 || 0.05 || {{ItemLink|Chainmail Boots}} (Unbreaking I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Chainmail Helmet}} (Unbreaking I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 11 || 0.05 || {{ItemLink|Chainmail Leggings}} (Unbreaking I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 13 || 0.05 || {{ItemLink|Chainmail Chestplate}} (Unbreaking I) || 1 || 3 || 15
+|-
+! rowspan=3 | Master
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Chainmail Helmet}} (Projectile Protection I) || 1 || 3 || 30
+|-
+| {{ItemLink|Emerald}} || 8 || 0.05 || {{ItemLink|Chainmail Boots}} (Feather Falling I) || 1 || 3 || 30
+|-
+| {{BlockLink|Block of Iron}} || 1 || 0.05 || {{ItemLink|Emerald}} || 4 || 12 || 30
+|}
+::{| class="wikitable" style="text-align:center"
+|+ Current version of trades for plains armorers
+|-
+! Level !! Item wanted !! Default quantity !! Price multiplier !! Item given !! Quantity !! Trades until disabled !! XP to villager
+|-
+! rowspan=2 | Novice
+| {{ItemLink|Coal}} || 15 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+| {{ItemLink|Iron Ingot}} || 5 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+! rowspan=4 | Apprentice
+| {{ItemLink|Emerald}} || 4 || 0.05 || {{ItemLink|Iron Boots}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Iron Helmet}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Iron Leggings}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Iron Chestplate}} || 1 || 12 || 5
+|-
+! rowspan=3 | Journeyman
+| {{ItemLink|Lava Bucket}} || 1 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 20
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Shield}} || 1 || 12 || 10
+|-
+| {{ItemLink|Emerald}} || 36 || 0.2 || {{ItemLink|Bell}} || 1 || 12 || 10
+|-
+! rowspan=4 | Expert
+| {{ItemLink|Emerald}} || 8 || 0.05 || {{ItemLink|Iron Boots}} (Protection I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Iron Helmet}} (Protection I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 11 || 0.05 || {{ItemLink|Iron Leggings}} (Protection I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 13 || 0.05 || {{ItemLink|Iron Chestplate}} (Protection I) || 1 || 3 || 15
+|-
+! rowspan=3 | Master
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 16<br>3 || 0.05 || {{ItemLink|Diamond Leggings}} (Protection I) || 1 || 3 || 30
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 16<br>2 || 0.05 || {{ItemLink|Diamond Boots}} (Protection I) || 1 || 3 || 30
+|-
+| {{BlockLink|Block of Iron}} || 1 || 0.05 || {{ItemLink|Emerald}} || 4 || 12 || 30
+|}
+::{| class="wikitable" style="text-align:center"
+|+ Current version of trades for savanna armorers
+|-
+! Level !! Item wanted !! Default quantity !! Price multiplier !! Item given !! Quantity !! Trades until disabled !! XP to villager
+|-
+! rowspan=2 | Novice
+| {{ItemLink|Coal}} || 15 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+| {{ItemLink|Iron Ingot}} || 5 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+! rowspan=4 | Apprentice
+| {{ItemLink|Emerald}} || 4 || 0.05 || {{ItemLink|Iron Boots}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Iron Helmet}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Iron Leggings}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Iron Chestplate}} || 1 || 12 || 5
+|-
+! rowspan=3 | Journeyman
+| {{ItemLink|Lava Bucket}} || 1 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 20
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Shield}} || 1 || 12 || 10
+|-
+| {{ItemLink|Emerald}} || 36 || 0.2 || {{ItemLink|Bell}} || 1 || 12 || 10
+|-
+! rowspan=4 | Expert
+| {{ItemLink|Emerald}} || 2 || 0.05 || {{ItemLink|Iron Boots}} (Curse of Binding) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 3 || 0.05 || {{ItemLink|Iron Helmet}} (Curse of Binding) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Iron Leggings}} (Curse of Binding) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Iron Chestplate}} (Curse of Binding) || 1 || 3 || 15
+|-
+! rowspan=3 | Master
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 6<br>2 || 0.05 || {{ItemLink|Diamond Helmet}} (Curse of Binding) || 1 || 3 || 30
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 8<br>3 || 0.05 || {{ItemLink|Diamond Chestplate}} (Curse of Binding) || 1 || 3 || 30
+|-
+| {{BlockLink|Block of Iron}} || 1 || 0.05 || {{ItemLink|Emerald}} || 4 || 12 || 30
+|}
+::{| class="wikitable" style="text-align:center"
+|+ Current version of trades for snow armorers
+|-
+! Level !! Item wanted !! Default quantity !! Price multiplier !! Item given !! Quantity !! Trades until disabled !! XP to villager
+|-
+! rowspan=2 | Novice
+| {{ItemLink|Coal}} || 15 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+| {{ItemLink|Iron Ingot}} || 5 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+! rowspan=4 | Apprentice
+| {{ItemLink|Emerald}} || 4 || 0.05 || {{ItemLink|Iron Boots}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Iron Helmet}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Iron Leggings}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Iron Chestplate}} || 1 || 12 || 5
+|-
+! rowspan=3 | Journeyman
+| {{ItemLink|Lava Bucket}} || 1 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 20
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Shield}} || 1 || 12 || 10
+|-
+| {{ItemLink|Emerald}} || 36 || 0.2 || {{ItemLink|Bell}} || 1 || 12 || 10
+|-
+! rowspan=2 | Expert
+| {{ItemLink|Emerald}} || 8 || 0.05 || {{ItemLink|Iron Boots}} (Frost Walker I) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Iron Helmet}} (Aqua Affinity) || 1 || 3 || 15
+|-
+! rowspan=3 | Master
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 12<br>2 || 0.05 || {{ItemLink|Diamond Boots}} (Frost Walker I) || 1 || 3 || 30
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 12<br>3 || 0.05 || {{ItemLink|Diamond Helmet}} (Aqua Affinity) || 1 || 3 || 30
+|-
+| {{BlockLink|Block of Iron}} || 1 || 0.05 || {{ItemLink|Emerald}} || 4 || 12 || 30
+|}
+::{| class="wikitable" style="text-align:center"
+|+ Current version of trades for swamp armorers
+|-
+! Level !! Item wanted !! Default quantity !! Price multiplier !! Item given !! Quantity !! Trades until disabled !! XP to villager
+|-
+! rowspan=2 | Novice
+| {{ItemLink|Coal}} || 15 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+| {{ItemLink|Iron Ingot}} || 5 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+! rowspan=4 | Apprentice
+| {{ItemLink|Emerald}} || 4 || 0.05 || {{ItemLink|Chainmail Boots}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Chainmail Helmet}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Chainmail Leggings}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Chainmail Chestplate}} || 1 || 12 || 5
+|-
+! rowspan=3 | Journeyman
+| {{ItemLink|Lava Bucket}} || 1 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 20
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Shield}} || 1 || 12 || 10
+|-
+| {{ItemLink|Emerald}} || 36 || 0.2 || {{ItemLink|Bell}} || 1 || 12 || 10
+|-
+! rowspan=4 | Expert
+| {{ItemLink|Emerald}} || 8 || 0.05 || {{ItemLink|Chainmail Boots}} (Mending) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Chainmail Helmet}} (Mending) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 11 || 0.05 || {{ItemLink|Chainmail Leggings}} (Mending) || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}} || 13 || 0.05 || {{ItemLink|Chainmail Chestplate}} (Mending) || 1 || 3 || 15
+|-
+! rowspan=3 | Master
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Chainmail Helmet}} (Respiration I) || 1 || 3 || 30
+|-
+| {{ItemLink|Emerald}} || 8 || 0.05 || {{ItemLink|Chainmail Boots}} (Depth Strider I) || 1 || 3 || 30
+|-
+| {{BlockLink|Block of Iron}} || 1 || 0.05 || {{ItemLink|Emerald}} || 4 || 12 || 30
+|}
+::{| class="wikitable" style="text-align:center"
+|+ Current version of trades for taiga armorers
+|-
+! Level !! Item wanted !! Default quantity !! Price multiplier !! Item given !! Quantity !! Trades until disabled !! XP to villager
+|-
+! rowspan=2 | Novice
+| {{ItemLink|Coal}} || 15 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+| {{ItemLink|Iron Ingot}} || 5 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 2
+|-
+! rowspan=4 | Apprentice
+| {{ItemLink|Emerald}} || 4 || 0.05 || {{ItemLink|Iron Boots}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Iron Helmet}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 7 || 0.05 || {{ItemLink|Iron Leggings}} || 1 || 12 || 5
+|-
+| {{ItemLink|Emerald}} || 9 || 0.05 || {{ItemLink|Iron Chestplate}} || 1 || 12 || 5
+|-
+! rowspan=3 | Journeyman
+| {{ItemLink|Lava Bucket}} || 1 || 0.05 || {{ItemLink|Emerald}} || 1 || 12 || 20
+|-
+| {{ItemLink|Emerald}} || 5 || 0.05 || {{ItemLink|Shield}} || 1 || 12 || 10
+|-
+| {{ItemLink|Emerald}} || 36 || 0.2 || {{ItemLink|Bell}} || 1 || 12 || 10
+|-
+! rowspan=4 | Expert
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond Boots}} || 4<br>1 || 0.05 || {{ItemLink|Diamond Leggings}} || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond Leggings}} || 4<br>1 || 0.05 || {{ItemLink|Diamond Chestplate}} || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond Helmet}} || 4<br>1 || 0.05 || {{ItemLink|Diamond Boots}} || 1 || 3 || 15
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond Chestplate}} || 2<br>1 || 0.05 || {{ItemLink|Diamond Helmet}} || 1 || 3 || 15
+|-
+! rowspan=3 | Master
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 18<br>4 || 0.05 || {{ItemLink|Diamond Chestplate}} (Blast Protection I) || 1 || 3 || 30
+|-
+| {{ItemLink|Emerald}}<br>{{ItemLink|Diamond}} || 18<br>3 || 0.05 || {{ItemLink|Diamond Leggings}} (Blast Protection I) || 1 || 3 || 30
+|-
+| {{BlockLink|Block of Diamond}} || 1 || 0.05 || {{ItemLink|Emerald}} || 42 || 12 || 30
+|}
+
+* Changed the [[wandering trader]] trades.
+** Trade list now made up by following trades, in order:
+*** Buying trade (new) × 2
+*** Special selling trade × 2
+*** Ordinary selling trade × 5
+** Added new buying trades, some selling trades, and changed some existing selling trades:
+::{| class="wikitable"
+|+ New trades of wandering traders
+! Category !! Item wanted !! Quantity !! Item given !! Quantity !! Trades until disabled
+|-
+| Buying
+| {{ItemLink|Baked Potato}}
+| 4
+| {{ItemLink|Emerald}}
+| 1
+| 1
+|-
+| Buying
+| {{ItemLink|Fermented Spider Eye}}
+| 1
+| {{ItemLink|Emerald}}
+| 3
+| 1
+|-
+| Buying
+| {{BlockLink|Hay Bale}}
+| 1
+| {{ItemLink|Emerald}}
+| 1
+| 1
+|-
+| Buying
+| {{ItemLink|Milk Bucket}}
+| 1
+| {{ItemLink|Emerald}}
+| 2
+| 1
+|-
+| Buying
+| {{ItemLink|Water Bottle}}
+| 1
+| {{ItemLink|Emerald}}
+| 1
+| 1
+|-
+| Buying
+| {{ItemLink|Water Bucket}}
+| 1
+| {{ItemLink|Emerald}}
+| 2
+| 1
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Acacia Log}}
+| 8
+| 4
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Birch Log}}
+| 8
+| 4
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Cherry Log}}
+| 8
+| 4
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Dark Oak Log}}
+| 8
+| 4
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 6-20
+| {{ItemLink|Iron Pickaxe}} (enchanted)
+| 1
+| 1
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Jungle Log}}
+| 8
+| 4
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Oak Log}}
+| 8
+| 4
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 5
+| {{ItemLink|Potion of Invisibility}} (extended)
+| 1
+| 1
+|-
+| Special selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Spruce Log}}
+| 8
+| 4
+|}
+::{| class="wikitable"
+|+ Changed trades of wandering traders
+! Category !! Item wanted !! Quantity !! Item given !! Quantity !! Trades until disabled
+|-
+| Ordinary selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Brown Mushroom}}
+| 1 → 3
+| 12 → 4
+|-
+| Special selling → ordinary selling
+| {{ItemLink|Emerald}}
+| 5 → 3
+| {{ItemLink|Bucket of Pufferfish}}
+| 1
+| 4
+|-
+| Special selling → ordinary selling
+| {{ItemLink|Emerald}}
+| 5 → 3
+| {{ItemLink|Bucket of Tropical Fish}}
+| 1
+| 4
+|-
+| Ordinary selling
+| {{ItemLink|Emerald}}
+| 1
+| {{ItemLink|Gunpowder}}
+| 1 → 4
+| 8 → 2
+|-
+| Ordinary selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Lily Pad}}
+| 2 → 5
+| 5 → 2
+|-
+| Ordinary selling
+| {{ItemLink|Emerald}}
+| 3 → 1
+| {{BlockLink|Packed Ice}}
+| 1
+| 6
+|-
+| Ordinary selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Red Mushroom}}
+| 1 → 3
+| 12 → 4
+|-
+| Ordinary selling
+| {{ItemLink|Emerald}}
+| 1
+| {{BlockLink|Vines}}
+| 1 → 3
+| 12 → 4
+|}
+
+== Fixes ==
+{{fixes|fixedin=23w31a,23w32a,23w33a,23w35a,1.20.2 Pre-release 1,1.20.2 Pre-release 2,1.20.2 Pre-Release 3,1.20.2 Pre-Release 4,1.20.2 Release Candidate 1,1.20.2 Release Candidate 2,1.20.2
+|;From released versions before 1.20
+|1297|You can attack and be attacked through glass panes.
+|2310|Wrong attack radius calculation damages/kills entities through blocks and corners.
+|25088|Health Boost completely reset if applied again.
+|29371|Several buttons and icons use the old tooltip design upon being hovered over.
+|61041|{{cd|d=and|CustomPotionEffects|ActiveEffects|Effects}} NBT tags still use numeral IDs.
+|67532|Bottom 2 rows of pixels in selected hotbar slot texture don't appear in game.
+|69387|The {{cmd|item}} command cannot replace items within jukeboxes.
+|70127|Some block state changes aren't communicated to clients.
+|72721|Chat messages show after death independent of chat setting.
+|80876|Entity riding vehicle has always same offset.
+|80938|Non-default {{cd|BurnTime}}, {{cd|CookTime}} and {{cd|CookTimeTotal}} values of furnace can cause GUI to be displayed incorrectly.
+|82239|Minecarts riding minecarts are unrideable.
+|85582|Entity models in the inventory can render outside the boundaries of the black box.
+|86918|Ender dragon and piglin heads are not activated when powered by comparators.
+|93320|Water freezes even if {{cd|randomTickSpeed}} is 0.
+|93820|Rain filling cauldrons is not affected by {{cd|randomTickSpeed}}.
+|96409|Creepers can't blow up the boat and boat with chest they ride, when it is on the land.
+|103800|Sometimes armor stands won't update their visual rotation.
+|103831|Creepers only deal half a heart of damage to nearby entities when exploding inside of boats.
+|109346|Newly rendered players always look south until they move their head.
+|112133|Eating chorus fruit does not reset fall distance.
+|118616|The sounds of magma cubes and slimes aren't controlled by the "Hostile Creatures" sound slider.
+|119873|The text used for the credits button within the title screen is untranslatable.
+|121772|Can't scroll while holding {{key|SHIFT}} on macOS.
+|121884|Server->Client custom payload packets can leak resources.
+|122296|Horizontal scrolling does not work on Mac [Magic Mouse].
+|122547|Barriers can produce fall particles.
+|122645|Narrator hotkey cannot be customized or disabled.
+|125046|{{cd|RepairCost}} NBT tag is created on any renamed item using anvils which can cause items to not stack properly.
+|131684|Chunk data packet allocates an extra byte for each section using {{cd|GlobalPalette}}.
+|135339|Host's skin is not visible to other players in a LAN world if the host has not opened any world before.
+|140646|Text fields don't scroll while selecting text with {{key|Shift}}.
+|147766|{{key|Shift}} key stays pressed until press any other key.
+|154827|Typo in splash text "Verlet intregration!".
+|164080|Entities riding on Ghast are partially or fully inside it.
+|164176|Player ping indicator uses the same textures as the server list ping indicator.
+|169201|Missing "rolls" in loot tables causes {{cd|NullPointerException}}.
+|169464|Scoreboard slots are not case-sensitive.
+|169530|Player sneaks client-side when riding a pig in a two block high tunnel.
+|173057|Text field can scroll when auto completing, so that you do not see what you auto completed.
+|173643|Zombies don't attack villager when elevated below them.
+|177110|Mob stepping sounds are inconsistently subtitled.
+|177172|Dash in villager/trader UI is hardcoded / untranslatable.
+|178787|Sitting on a pig with a saddle without a carrot on a stick makes the pig stand still.
+|181109|Grindstone adds {{cd|RepairCost: 0}}.
+|181190|The discount for curing a villager is multiplied if the villager is reinfected and cured again.
+|182820|Repeaters and comparators use wood sounds for placing/breaking despite being made mostly of stone.
+|190815|Shulker boxes don't conduct redstone when open, but don't trigger redstone updates when opened.
+|192307|Accessibility icon does not support semi-transparent pixel.
+|193457|Dropper/Dispenser 'Triggered' block state not updating without player interaction.
+|197473|Renamed block entities don't stack properly.
+|200484|Jukeboxes use stone sounds despite being composed predominantly of wood.
+|201166|A summoned minecart can stay visually tilted.
+|202432|Absorption effect does not go away even after the hearts are gone.
+|203232|Endermite's hitbox is so little it doesn't appear above the boat when sitting in one.
+|206182|Cannot tab out of console text field of command block.
+|208909|Axolotl will still be dry on the boat or boat with chest if it's in water when raining.
+|209220|Cursor in Edit Game Rules menu does not blink.
+|209798|Sculk sensors are not activated upon using bone meal.
+|210485|Sculk sensors are not activated upon evokers summoning vexes.
+|214126|Bees don't pollinate themselves with spore blossoms or chorus flowers.
+|215768|Sculk sensors do not detect turtles clearing away sand.
+|217627|Spore blossoms are not part of the {{cd|#minecraft:flowers}} tag.
+|217628|Levers use wood sounds rather than stone.
+|217629|Tripwire hooks use stone sounds, rather than wood.
+|219440|Sculk sensors do not detect fire being put out by a water splash potion.
+|227338|Vindicators have insane range when riding a ravager.
+|228420|World not loading / falling through the world when joining a server / travelling between dimensions / respawning.
+|229121|JVM crash in {{cd|jdk.internal.loader.NativeLibraries.load}}.
+|230732|Minecraft local difficulty setting is calculated/displayed wrongly when running a world in a server.
+|231898|The structure block UI selection outline doesn't highlight the right side of certain focused fields.
+|232840|Baby zombie legs clip through heads of mobs they are riding.
+|235762|Screenshots wider than 16384 pixels causes a crash / {{cd|java.lang.OutOfMemoryError: Out of stack space}}.
+|236966|Audio output setting choices are limited on macOS.
+|237326|Horse flashing heart texture is unused.
+|237333|Cake, banners and paintings cannot be placed on chorus flowers, despite being able to support them.
+|237427|Horse flashing heart background texture is unused.
+|237428|Flashing hunger icon texture is unused.
+|237429|Flashing hunger background texture is unused.
+|238793|Excessive chunks sent to client with low render distance.
+|242076|The skeleton of a spider jockey sits "inside" of spider model rather than on top of the spider.
+|242092|Texture map for magma cube ({{cd|magmacube.png}}) has unused pixels.
+|242385|Inconsistency on the buffer size calculation in the chunk packet data.
+|242395|Texture map for the blaze ({{cd|blaze.png}}) contains unused pixels.
+|242396|Texture map for armor stand ({{cd|wood.png}}) contains unused pixels.
+|242397|Texture maps for cow, red & brown mooshroom ({{cd|red}}/{{cd|brown_mooshroom.png}} & {{cd|cow.png}}) contain unused pixels.
+|242592|Texture map for the polar bear ({{cd|polarbear.png}}) contain unused pixels.
+|245930|GUI texture files have hidden transparent remnants.
+|248778|The item count symbol within shulker box tooltips is untranslatable.
+|248833|The parentheses used before and after the warning label within the language menu are untranslatable.
+|248844|The page indicator symbol within the recipe book GUI is untranslatable.
+|248846|The colon used within the death screen to show the player's score is untranslatable.
+|249109|Sniffers, frogs, goats, and camels don't panic when attached to leads.
+|249355|The hyphen used within the statistics menu to show a null value is untranslatable.
+|249702|Server crash when attempting to start a server with malformatted <samp>banned-ips.json</samp>.
+|249776|Players sneak client-side while riding boat chests under hoppers.
+|249893|{{cd|Authlib: MinecraftSessionService#fillProfileProperties}} doesn't check if server returns an error.
+|250985|Unused recipe book button in crafting and inventory texture.
+|251525|Sculk sensors are not activated upon rabbits eating planted carrots.
+|252231|Warm Frog texture has inconsistent pixels.
+|252295|The word "whilst" within several death messages isn't spelled in American English.
+|252298|Death messages relating to the Thorns enchantment don't contain conjunctions where appropriate.
+|252316|The word "burnt" within some death messages isn't spelled in American English.
+|253137|The game output console is logged with errors regarding missing signatures from property textures when joining LAN worlds.
+|253241|The player count indicator symbol within the multiplayer menu is untranslatable.
+|253269|The advancement progress indicator symbol within the advancements menu is untranslatable.
+|253270|The hyphen used within boss bars for raids is untranslatable.
+|253278|The percentage symbol used within the level loading screen to show the loading progress of the world is untranslatable.
+|253281|Text within filled map tooltips when advanced tooltips are hidden is untranslatable.
+|253283|The percentage and chunk indicator symbols used within the optimize world menu are untranslatable.
+|253638|The symbols used within shulker box tooltips to show random loot table contents are untranslatable.
+|253797|Resource pack rejection prints component instead of username.
+|254100|Iron golem spawn rate decreased.
+|255263|Players' positions are desynced after stopping movement while moving the camera.
+|255418|Vertical redstone dust placed against dropper/dispenser/hopper doesn't visually disappear when the dust above is removed.
+|255829|Villager trades air if it has a totem of undying trade and uses the held totem.
+|255967|Old chunks that would have Deep Dark biomes below Y{{=}}0 if generated newly doesn't completely generate; only Ancient Cities are spawned.
+|256466|Raft entities are named boats.
+|256482|Sculk sensors are not activated upon camels standing up or sitting down.
+|256485|Camels that spawn within villages can spawn inside blocks.
+|256549|Baby camels that aren't moving face in the direction of their adults when pathfinding to players that are tempting them.
+|256641|Bamboo fence and fence gate aren't grouped with the other fences and fence gates in the crafting table.
+|256652|Endermen are almost unable to attack Players on a Camel.
+|256675|Z-fighting occurs between the legs of the camel and the texture of the saddle when it is sitting.
+|256690|Camels attempt to stand up when blocks are placed over them, causing them to take suffocation damage if blocks are at eye level.
+|256696|Player sneaks client-side while riding a camel in a three-block high space.
+|256737|Sniffers, frogs, goats, and camels prioritize pathfinding to their lover when fed over panicking when being damaged.
+|256777|The two characters used within the tab list to show players' health are untranslatable.
+|257342|You get slowed down when riding a camel in a 3 block tall area.
+|257431|Bamboo fence gates utilize the wrong textures.
+|257628|Sculk sensors are not activated upon camels dashing.
+|257909|Zoglins, hoglins, and pandas can still attack players riding camels.
+|258379|Parity issue: The locations of camels' ears differ across platforms.
+|258620|Piglins barter every 121 game ticks instead of every 120 game ticks.
+|259152|Player's model displayed in inventory while sneaking differs between the versions.
+|259382|Message {{cd|Failed to get element}} is logged repeatedly when giving yourself armor with invalid trimming pattern or material.
+|259401|Lapis lazuli icons in enchanting table and smithing table are inconsistent.
+|259452|Baby Camel's laying down/getting up sounds are not sped up.
+|259475|The rotation of controlling passengers on sitting camels is sometimes restricted while adjusting your rotation slowly.
+|259769|Firework explosions no longer deal knockback to entities.
+|259794|Armor enchanted with curse of binding cannot be swapped via right-clicking in creative mode.
+|259860|Sitting camels that have passengers continuously look up and down for other players.
+|259915|Item display position interpolation not working.
+|260054|Pink Petals hitbox does not adjust to contents.
+|260058|Pick Block does not work properly for blank decorated pots.
+|260085|Particles are created when using a brush on a barrier.
+|260096|Decorated pots don't have creative mode tooltips.
+|260485|The {{cmd|item}} command cannot remove items within chiseled bookshelves.
+|260490|Passenger's riding position is too low for non-default-sized mobs.
+|260604|Terrible loudness following consecutive use of {{cmd|fill}}.
+|260675|Decorated pots render blank on the first frame after being placed.
+|260819|The {{cd|death.attack.message_too_long}} string is missing an article before the word "stripped".
+|260844|Right-clicking will select/move worlds in the multiplayer and singleplayer screens.
+|260968|The narrator does not narrate the word "Experimental" in the world selection screen.
+|261119|Accessibility button in the Welcome screen needs its own string.
+|261123|{{cd|item_display}} entity breaks certain mobs' AI when being used as a passenger.
+|261182|Sign color looks different in world and in editing screen.
+|261261|Sculk sensors do not detect when a chiseled bookshelf changes via hoppers and droppers.
+|261411|All Smithing Templates share the same translation key.
+|261420|Sculk sensor and calibrated sculk sensor don't detect a witch drinking a potion.
+|261427|Sculk sensors and calibrated sculk sensors don't detect totem of undying activating.
+|261440|Resizing the window makes it so you can't change names in anvils.
+|261502|Prompting resource pack disappears if player dies before installing or disconnecting.
+|261926|Cannot join a realm because of realms ad.
+|261951|Dragon/piglin head does not move when placed on a jukebox that is playing a record.
+|262132|Pigstep music disc is in wrong location in the creative menu.
+|262295|Warped and Crimson hanging signs uses their respective plank sounds, despite their stripped stems having unique sounds.
+|262442|Camels stand a bit too close to players that are tempting them.
+|262620|Llamas and trader llamas need to be tamed in order to be ridden by the mob which is inconsistent with other rideable mobs.
+|262638|When a {{cd|Size:0}} slime and magma cube rides on some mobs the rendering position is too low.
+|262804|Players' swimming animations are jittery for other players.
+|263133|Inconsistent word usage in Out of Memory screen.
+|263203|Tadpoles riding striders are rendered inside of them.
+|;From 1.20
+|261369|Washed banner does not stack with blank banner.
+|261611|Placing blocks against a waxed sign does not play the block's placement sound.
+|261657|Sculk sensor range is still spherical, creating different outputs from within a given block.
+|261739|Bamboo raft next to visually half blocks z-fights.
+|261965|The "Glow and Behold!" advancement is granted when interacting with empty signs while holding glow ink sacs, despite no glow ink sacs being consumed.
+|262108|Smithing table GUI issue with custom recipes.
+|262436|Copying a pot in creative does not save NBT data.
+|262591|Camels emit mob interaction vibrations instead of item consumption vibrations when eating cactus.
+|262613|Mobs can't control some rideable mobs.
+|262615|Ridden camels need to be equipped with a saddle before they can be moved by mob control which is inconsistent with other rideable mobs.
+|262636|Mobs with passengers that are slimes or magma cubes can't move and don't function correctly.
+|262720|One of the pink petals' stems has an incomplete model.
+|262751|Blank decorated pot's NBT depends on method used to obtain it.
+|262754|Change in {{cd|AbstractScrollWidget}} breaks {{cd|MultiLineEditBox}} click-to-move-cursor behaviour.
+|262766|NBSP is a valid invisible character that can be added into Book titles so that they have blank names.
+|262947|The "Smithing with Style" advancement doesn't grant experience upon completion.
+|263011|Sniffers can sniff out and follow players from incredibly large distances.
+|263049|Camels indefinitely dash while in lava.
+|263126|Sponges no longer make a sound when absorbing water.
+|263200|Entities riding baby sniffers render too high.
+|263283|Loading a 1.12.2 structure block with signs on 1.20 removes the text.
+|263313|You cannot use the {{key|TAB}} key to initially create a realm.
+|263322|When a camel walks on suspicious sand, the sound produced is "camel steps" instead of "camel sands".
+|263387|The chat scroll bar no longer renders.
+|263430|Memory leak in {{cd|TickingTracker}}.
+|;From 1.20.1
+|263588|Unbreakable blocks display the first breaking animation frame in client, when other player attempting to mine them in server.
+|263833|Minecraft is incorrectly assuming it is able to set the window icon on Wayland.
+|263879|Open shulker boxes transmit redstone power.
+|264092|Functions execute commands out of order when containing {{cmd|say}}.
+|264233|Player is shown as Anonymous after dying and respawning.
+|264260|Furnace GUI is displayed incorrectly when modifying block data.
+|264356|Sniffers attached to a lead will dig in the same spot forever, ignoring "explored positions".
+|264467|GUI texture {{cd|villager2.png}} contains unused sections.
+|264468|GUI texture {{cd|legacy_smithing.png}} still present in game files despite not being used anymore.
+|264561|Some new strings introduced in 23w31a are missing articles.
+|264574|symlink does not work for root world folder.
+|264809|Redstone comparators cause redstone dust connection issue.
+|264829|Text Filter on signs doesn't hide if fully filtered.
+|265151|The "(Unknown)" string that's displayed when being banned from a server for an unknown reason is untranslatable.
+}}
+
+== Videos ==
+{{Slicedlime|3L3t25dyiu0|EVLLeopH-us}}
+
+== Notes ==
+{{Notelist}}
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Java Edition versions|1.2x}}
+
+[[de:1.20.2]]
+[[es:Java Edition 1.20.2]]
+[[fr:Édition Java 1.20.2]]
+[[ja:Java Edition 1.20.2]]
+[[ko:Java Edition 1.20.2]]
+[[lzh:爪哇版一點二〇點二]]
+[[pt:Edição Java 1.20.2]]
+[[ru:1.20.2 (Java Edition)]]
+[[tr:Java Sürümü 1.20.2]]
+[[uk:1.20.2 (Java Edition)]]
+[[zh:Java版1.20.2]]

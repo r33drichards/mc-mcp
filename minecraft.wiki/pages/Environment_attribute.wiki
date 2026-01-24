@@ -1,0 +1,552 @@
+{{For|the entity attribute system|Attribute}}
+'''Environment attributes''' control various visual and gameplay features depending on the [[dimension]] and [[biome]].
+
+== Usage ==
+Environment attributes are defined in [[dimension type]]s and [[biome definition]]s. Biomes can modify the value defined by the dimension using attribute modifiers using a map:
+<div class=treeview>
+* {{nbt|compound|attributes}}
+** {{nbt||{{ph|attribute id}}}}: Attribute value depending on the attribute
+**; or
+** {{nbt|compound|{{ph|attribute id}}}}:
+*** {{nbt|string|modifier}}: Modifier type. Available types depend on the value type of the attribute.
+*** {{nbt||argument}}: Argument of the modifier. Valid values depend on the modifier.
+</div>
+
+== List of attributes ==
+{| class="wikitable"
+! Environment attribute
+! Explanation
+! Value type 
+! Modifiers 
+! Default Value
+! Interpolated
+! Resolved at
+|-
+| <code>audio/ambient_sounds</code>
+|colspan=2| Controls ambient sounds that are played around the camera.
+<div class=treeview>
+* {{nbt|compound}}
+** {{more info}}
+</div>
+| <code>override</code> only
+| <code>{}</code>
+| {{tc|no}}
+| Camera position
+|-
+| <code>audio/background_music</code>
+|colspan=2| The background music to play.
+<div class=treeview>
+* {{nbt|compound}}
+** {{more info}}
+</div>
+| <code>override</code> only
+| <code>{}</code>
+| {{tc|no}}
+| Camera position
+|-
+| <code>audio/firefly_bush_sounds</code>
+| Whether a [[firefly bush]] plays ambient sounds when not under an opaque block.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position of the firefly bush
+|-
+| <code>audio/music_volume</code>
+| Volume of the music. Music volume will fade over time to this value.
+| {{nbt|float}} float
+| Float modifiers
+| <code>1.0</code>
+| {{tc|no}}
+| Camera position
+|-
+| <code>gameplay/baby_villager_activity</code>
+|colspan=2| Controls the default AI activity of baby [[villagers]].
+{{nbt|string}}{{cd|core|hide|idle|meet|panic|play|pre_raid|raid|rest|delim=or}}. Other activities are allowed causing the villager to do nothing.
+| <code>override</code> only
+| <code>idle</code>
+| {{tc|no}}
+| Position of the villager
+|-
+| <code>gameplay/bed_rule</code>
+|colspan=2| Controls behavior of interacting with [[bed]]s.
+<div class=treeview>
+* {{nbt|compound}}
+** {{nbt|string|can_sleep}}: When it is possible to sleep. One of:
+*** <code>always</code>
+*** <code>when_dark</code> &mdash; global skylight level is less than 4
+*** <code>never</code>
+** {{nbt|string|can_set_spawn}}: When it is possible to set the spawn point. Same options as {{nbt|string|can_sleep}}.
+** {{nbt|boolean|explodes}}: (Optional, defaults to false) Whether the bed explodes when interacted with.
+** {{nbt|string}}{{nbt|list}}{{nbt|compound|error_message}}: [[Text component]] to display when it is impossible to sleep.
+</div>
+| <code>override</code> only
+| <ref group="a">Default value for <code>gameplay/bed_rule</code>: <syntaxhighlight lang="json">{
+  "can_sleep": "when_dark",
+  "can_set_spawn": "always",
+  "error_message": {
+    "translate": "block.minecraft.bed.no_sleep"
+  }
+}</syntaxhighlight></ref>
+| {{tc|no}}
+| Head position of the bed
+|-
+| <code>gameplay/bees_stay_in_hive</code>
+| When true [[bee]]s will pathfind to [[beehives]] and not exit (except when the Hive is broken or next to fire).
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position of the bee or beehive
+|-
+| <code>gameplay/can_pillager_patrol_spawn</code>
+| Whether [[patrol]]s can spawn when the global skylight is greater than 11.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>true</code>
+| {{tc|no}}
+| Position of the patrol spawn attempt.
+|-
+| <code>gameplay/can_start_raid</code>
+| Whether a player with [[Raid Omen]] can start a [[raid]].
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>true</code>
+| {{tc|no}}
+| Position the raid would start
+|-
+| <code>gameplay/cat_waking_up_gift_chance</code>
+| Chance of a [[cat]] dropping a gift when the player wakes up.
+| {{nbt|float}} float (<code>0</code> to <code>1</code>)
+| Float modifiers
+| <code>0.0</code>
+| {{tc|yes}}
+| Position of the cat
+|-
+| <code>gameplay/creaking_active</code>
+| When true, a [[creaking heart]] will become active. When false, it will become inactive.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position of the creaking heart block
+|-
+| <code>gameplay/eyeblossom_open</code>
+|colspan=2| How [[eyeblossom]]s should behave.
+* {{nbt|boolean}}<code>true</code>: eyeblossoms will open
+* {{nbt|boolean}}<code>false</code>: eyeblossoms will close
+* {{nbt|string}}<code>"default"</code>: eyeblossom will stay in their current state
+| <code>override</code> only
+| <code>"default"</code>
+| {{tc|no}}
+| Position of the eyeblossom
+|-
+| <code>gameplay/fast_lava</code>
+| Whether [[lava]] should spread faster and further, and have a stronger pushing force on entities.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| {{tc|no|Not positional}}
+|-
+| <code>gameplay/increased_fire_burnout</code>
+| Whether [[fire]] should burn out more quickly.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position of the fire block
+|-
+| <code>gameplay/monsters_burn</code>
+| Whether [[monsters]] burn when exposed to the sky.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position of the monster.
+|-
+| <code>gameplay/nether_portal_spawns_piglin</code>
+| Whether a [[nether portal]] can spawn [[piglin]]
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position of a random nether portal block.
+|-
+| <code>gameplay/piglins_zombify</code>
+| Whether [[piglin]]s and [[hoglin]]s zombify.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>true</code>
+| {{tc|no}}
+| Position the piglin or hoglin
+|-
+| <code>gameplay/respawn_anchor_works</code>
+| Whether a [[respawn anchor]] can be used to set spawn. If set to false a [[respawn anchor]] explodes once used.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position the respawn anchor
+|-
+| <code>gameplay/sky_light_level</code>
+| The [[Light#Internal_sky_light|internal sky light]] level (inversely known as the "darkening" sky light level), '''not''' the actual sky light level. This affects mechanics such as [[monster spawning]], [[daylight detector]] power, and [[ice]] melting. The visual effect is controlled by <code>visual/sky_light_factor</code>.
+| {{nbt|float}} float
+| Float modifiers
+| <code>15.0</code>
+| {{tc|yes}}
+| {{tc|no|not positional}}
+|-
+| <code>gameplay/snow_golem_melts</code>
+| Whether [[snow golem]]s should take damage.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position the snow golem.
+|-
+| <code>gameplay/surface_slime_spawn_chance</code>
+| Chance of an additional slime spawn on the surface in biomes in the {{tag link|biome|allows_surface_slime_spawns}} tag. 
+| {{nbt|float}} float (<code>0</code> to <code>1</code>)
+| Float modifiers
+| <code>0.0</code>
+| {{tc|yes}}
+| Position the slime spawn attempt.
+|-
+| <code>gameplay/turtle_egg_hatch_chance</code>
+| Chance for a [[turtle egg]] to progress to its next hatching state on a [[random tick]].
+| {{nbt|float}} float (<code>0</code> to <code>1</code>)
+| Float modifiers
+| <code>0.0</code>
+| {{tc|yes}}
+| Position of the turtle egg
+|-
+| <code>gameplay/villager_activity</code>
+|colspan=2| Controls the default AI activity of [[villagers]].
+{{nbt|string}}{{cd|core|hide|idle|meet|panic|pre_raid|raid|rest|work|delim=or}}. Other activities are allowed causing the villager to do nothing.
+| <code>override</code> only
+| <code>idle</code>
+| {{tc|no}}
+| Position of the villager
+|-
+| <code>gameplay/water_evaporates</code>
+| Whether [[water]] can be placed from a bucket, or by melting [[ice]], or whether [[wet sponge]] will dry out.
+| {{nbt|boolean}} boolean
+| Boolean modifiers
+| <code>false</code>
+| {{tc|no}}
+| Position of the interaction
+|-
+| <code>visual/ambient_light_color</code>{{upcoming|JE 26.1}}
+| Defines both the ambient light tint and brightness
+This light is applied to the world at 0 light level. Block and sky light are added on top of it.
+| RGB color <ref group="a" name="rgb">RGB colors can be represented as:
+* {{nbt|string}} string using <code>#RRGGBB</code>
+* packed {{nbt|int}} converted from hex to decimal
+* a {{nbt|list}} list of 3 {{nbt|float}} floats between 0 and 1.
+</ref>
+| RGB Modifiers
+| {{color|#000000}}
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/ambient_particles</code>
+|colspan="2"| Particles that spawn randomly around the camera
+<div class=treeview>
+* {{nbt|list}} List of particles to spawn
+** {{nbt|compound}}
+*** {{nbt|compound|particle}}: the particle to spawn
+**** {{nbt inherit/particle}}
+*** {{nbt|float|probability}}: the proability to spawn a particle in an empty space
+</div>
+| <code>override</code> only
+| <code>[]</code>
+| {{tc|no}}
+| Camera position
+|-
+| <code>visual/block_light_tint</code>{{upcoming|JE 26.1}}
+| Tint of the block light
+Block light color start as dark grey at low light levels, becomes tinted by this attribute at medium levels and turns white at high levels. By default, it provides the yellowish tint of torches.
+| RGB color <ref group="a" name="rgb">RGB colors can be represented as:
+* {{nbt|string}} string using <code>#RRGGBB</code>
+* packed {{nbt|int}} converted from hex to decimal
+* a {{nbt|list}} list of 3 {{nbt|float}} floats between 0 and 1.
+</ref>
+| RGB Modifiers
+| {{color|#FFD88C}}
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/cloud_color</code>
+| Opacity of the clouds.
+If fully transparent [[Happy Ghast]] do not regenerate health faster when at cloud height.
+| ARGB color <ref group="a" name="argb">ARGB colors can be represented as:
+* {{nbt|string}} string using <code>#AARRGGBB</code>
+* packed {{nbt|int}} converted from hex to decimal, as a signed 64 bit integer.
+* a {{nbt|list}} list of 4 {{nbt|float}} floats between 0 and 1.
+</ref>
+| ARGB modifier
+| {{color|#00000000}}
+(fully transparent)
+| {{tc|yes}}
+| Camera position or [[Happy Ghast]] position
+|-
+| <code>visual/cloud_fog_end_distance</code>
+| Distance in blocks when the fog affecting the clouds reaches maximum density.
+(also affected by cloud distance option)
+| {{nbt|float}} float
+| Float modifiers
+| <code>2048.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/cloud_height</code>
+| Height of the clouds
+| {{nbt|float}} float
+| Float modifiers
+| <code>192.33</code>
+| {{tc|yes}}
+| Camera position or [[Happy Ghast]] position
+|-
+| <code>visual/default_dripstone_particle</code>
+|colspan="2"| The particle generated by downward [[pointed dripstone]] when no liquid is above.
+<div class=treeview>
+* {{nbt|compound}}
+** {{nbt inherit/particle}}
+</div>
+| <code>override</code> only
+| <ref group="a">Default value for <code>visual/default_dripstone_particle</code>:<syntaxhighlight lang="json">{
+  "type": "minecraft:dripping_dripstone_water"
+}</syntaxhighlight></ref>
+| {{tc|no}}
+| Position of the dripstone block
+|-
+| <code>visual/fog_color</code>
+| Color of the fog
+(also affected by time of day, weather, and potion effects)
+| RGB color <ref group="a" name="rgb">RGB colors can be represented as:
+* {{nbt|string}} string using <code>#RRGGBB</code>
+* packed {{nbt|int}} converted from hex to decimal
+* a {{nbt|list}} list of 3 {{nbt|float}} floats between 0 and 1.
+</ref>
+| RGB modifiers
+| {{color|#000000}}
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/fog_end_distance</code>
+| Distance in blocks when the fog reaches maximum density.
+(also affected by [[weather]])
+| {{nbt|float}} float
+| Float modifiers
+| <code>1024.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/fog_start_distance</code>
+| Distance in blocks from where the fog starts to have an effect. If negative, fog already exists at 0 distance.
+| {{nbt|float}} float
+| Float modifiers
+| <code>0.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/moon_angle</code>
+| Position of the moon in degrees from east to west. 0 is directly up. Only used with <code>overworld</code> skybox type.
+| {{nbt|float}} float angle
+| Float modifiers
+| <code>0.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/moon_phase</code>
+|colspan="2"|  Phase of the moon. Only used with <code>overworld</code> skybox type.
+
+{{nbt|string}}<code>full_moon</code>, <code>waning_gibbous</code>, <code>third_quarter</code>, <code>waning_crescent</code>, <code>new_moon</code>, <code>waxing_crescent</code>, <code>first_quarter</code>, or <code>waxing_gibbous</code>
+| <code>override</code> only
+| <code>full_moon</code>
+| {{tc|no}}
+| Camera position
+|-
+| <code>visual/night_vision_color</code>{{upcoming|JE 26.1}}
+| Used similarly to ambient light color
+When the [[night vision]] effect is active, per-component maximum of {{cd|minecraft:visual/night_vision_color}} and {{cd|minecraft:visual/ambient_light_color}} is used as ambient color. [[Night Vision]] is not tinted by default.
+| RGB color <ref group="a" name="rgb">RGB colors can be represented as:
+* {{nbt|string}} string using <code>#RRGGBB</code>
+* packed {{nbt|int}} converted from hex to decimal
+* a {{nbt|list}} list of 3 {{nbt|float}} floats between 0 and 1.
+</ref>
+| RGB Modifiers
+| {{color|#999999}}
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/sky_color</code>
+| Color of the sky
+(also affected by time of day and weather)
+| RGB color <ref group="a" name="rgb" />
+| RGB modifier
+| {{color|#000000}}
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/sky_fog_end_distance</code>
+| Distance in blocks when the fog affecting the sky reaches maximum density.
+(also affected by the render distance)
+| {{nbt|float}} float
+| Float modifiers
+| <code>512.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/sky_light_color</code>
+| Color of the sky light. Has no effect on blocks with a sky light of <code>0</code>. This value is passed to the <code>lightmap.fsh</code> [[shader]] as <code>SkyLightColor</code>
+| RGB color <ref group="a" name="rgb" />
+| RGB modifier
+| {{color|#FFFFFF}}
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/sky_light_factor</code>
+| Visual brightness of the sky light. The sky light color is mulitplied with this value and passed to the <code>lightmap.fsh</code> [[shader]] as <code>SkyFactor</code>
+| {{nbt|float}} float
+| Float modifiers
+| 1.0
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/star_angle</code>
+| Position of the sun in degrees from east to west. Only used with <code>overworld</code> skybox type.
+| {{nbt|float}} float angle
+| Float modifiers
+| <code>0.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/star_brightness</code>
+| Brightness of the stars. <code>0.5</code> is the default night start brightness. Only used with <code>overworld</code> skybox type.
+| {{nbt|float}} float
+| Float modifiers
+| <code>0.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/sun_angle</code>
+| Position of the sun in degrees from east to west. 0 is directly up. Only used with <code>overworld</code> skybox type.
+| {{nbt|float}} float angle
+| Float modifiers
+| <code>0.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/sunrise_sunset_color</code>
+| Color and intensity of sunrise and sunset. Only used with <code>overworld</code> skybox type.
+| ARGB color <ref group="a" name="argb" />
+| ARGB modifiers
+| {{color|#00000000}}
+(fully transparent)
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/water_fog_color</code>
+| Color of the fog when underwater
+(also affected by time of day, weather, and potion effects)
+| RGB color <ref group="a" name="rgb" />
+| RGB modifiers
+| {{color|#050533}}
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/water_fog_end_distance</code>
+| Distance in blocks when the underwater fog reaches maximum density
+(also affected by how long the player has been underwater)
+| {{nbt|float}} float
+| Float modifiers
+| <code>96.0</code>
+| {{tc|yes}}
+| Camera position
+|-
+| <code>visual/water_fog_start_distance</code>
+| Distance in blocks from where the underwater fog starts to have an effect. If negative, fog already exists at 0 distance.
+(also affected by how long the player has been underwater)
+| {{nbt|float}} float
+| Float modifiers
+| <code>-8.0</code>
+| {{tc|yes}}
+| Camera position
+|}
+
+{{reflist|group=a}}
+
+== Modifiers ==
+Environment attribute modifiers are used to modify the value of a environment attribute.
+
+;override
+:Overrides the existing value with a new value. Functions identical to directly specifying the value. This modifier is available for all value types.
+:<div class=treeview>
+:* {{nbt|compound|{{ph|attribute_id}}}}
+:** {{nbt|string|modifier}}: <code>override</code>
+:** {{nbt||argument}}: The new value. The accepted type depends on the value type of the environment attribute.</div>
+
+=== Boolean modifiers ===
+Boolean modifiers are used to modify boolean values. They apply a boolean operator on the old value and a given argument.
+
+<div class=treeview>
+* {{nbt|compound|{{ph|attribute_id}}}}
+** {{nbt|string|modifier}}: {{cd|and|nand|or|nor|xor|xnor|delim=or}}
+** {{nbt|boolean|argument}}: Argument of the modifier.
+</div>
+
+=== Float modifiers ===
+Float modifiers are used to modify float values.
+
+;simple arithmatic
+: Applies a simple arithmatic operation to the old value and a given argument.
+:<div class=treeview>
+:* {{nbt|compound|{{ph|attribute_id}}}}
+:** {{nbt|string|modifier}}: {{cd|add|subtract|multiply|mimimum|maximum|delim=or}}
+:** {{nbt|float|argument}}: Argument of the modifier.</div>
+
+;alpha_blend
+: Applies a alpha blending between the old value and a new value.
+:<div class=treeview>
+:* {{nbt|compound|{{ph|attribute_id}}}}
+:** {{nbt|string|modifier}}: <code>alpha_blend</code>
+:** {{nbt|compound|argument}}: 
+:*** {{nbt|float|value}}: The new value
+:*** {{nbt|float|alpha}}: Optional value between 0 and 1 &mdash; Weight of the new value</div>
+
+=== RGB and ARGB modifiers ===
+RGB and ARGB modifiers are used to modify RGB or ARGB color values.
+
+;component-wise color blending
+: Applies a component-wise additive, subtractive, or multiplicative color blending of the old color and a given argument color.
+:<div class=treeview>
+:* {{nbt|compound|{{ph|attribute_id}}}}
+:** {{nbt|string|modifier}}: {{cd|add|subtract|multiply|delim=or}}
+:** {{nbt|int}}{{nbt|string}}{{nbt|list|argument}}: RGB to blend with. The ARGB <code>multiply</code> modifier also allows a ARGB argument.</div>
+
+;alpha_blend
+: Applies traditional alpha blending between colors
+:<div class=treeview>
+:* {{nbt|compound|{{ph|attribute_id}}}}
+:** {{nbt|string|modifier}}: <code>alpha_blend</code>
+:** {{nbt|int}}{{nbt|string}}{{nbt|list|argument}}: ARGB color to blend with.</div>
+
+== History ==
+{{info needed section|can we use the nbt template to indicate the data type of each of these like in [[Dimension type#History]]?}}
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.21.11|dev=25w42a|Introduced.{{info needed|What attribute types existed in this snapshot?}}}}
+|{{HistoryLine|||dev=25w44a|Added {{cd|minecraft:visual/water_fog_start_distance}}, {{cd|minecraft:visual/fog_start_distance}}, {{cd|minecraft:visual/fog_end_distance}}, {{cd|minecraft:visual/sky_fog_end_distance}}, {{cd|minecraft:visual/cloud_fog_end_distance}}, and {{cd|minecraft:visual/cloud_color}}.|Renamed {{cd|minecraft:visual/water_fog_radius}} to {{cd|minecraft:visual/water_fog_end_distance}}.|Removed {{cd|minecraft:visual/extra_fog}}.|Replaced {{cd|minecraft:visual/cloud_opacity}} with {{cd|minecraft:visual/cloud_color}}.|Added modifiers on ARGB Color Values.}}
+|{{HistoryLine|||dev=25w45a|Added {{cd|minecraft:visual/sunrise_sunset_color}}, {{cd|minecraft:visual/sun_angle}}, {{cd|minecraft:visual/moon_angle}}, {{cd|minecraft:visual/star_angle}}, {{cd|minecraft:visual/moon_phase}}, {{cd|minecraft:visual/star_brightness}}, {{cd|minecraft:visual/sky_light_color}}, {{cd|minecraft:visual/sky_light_factor}}, {{cd|minecraft:audio/firefly_bush_sounds}}, {{cd|minecraft:gameplay/sky_light_level}}, {{cd|minecraft:gameplay/eyeblossom_open}}, {{cd|minecraft:gameplay/turtle_egg_hatch_chance}}, {{cd|minecraft:gameplay/creaking_active}}, {{cd|minecraft:gameplay/surface_slime_spawn_chance}}, {{cd|minecraft:gameplay/cat_waking_up_gift_chance}}, {{cd|minecraft:gameplay/bees_stay_in_hive}}, {{cd|minecraft:gameplay/monsters_burn}}, {{cd|minecraft:gameplay/can_pillager_patrol_spawn}}, {{cd|minecraft:gameplay/villager_activity}}, and {{cd|minecraft:gameplay/baby_villager_activity}}.}}
+|{{HistoryLine|upcoming java}}
+|{{HistoryLine||26.1|dev=snap1|Added {{cd|minecraft:visual/block_light_tint}}, {{cd|minecraft:visual/ambient_light_color}}, and {{cd|minecraft:visual/night_vision_color}}.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|datapack}}
+
+[[de:Umgebungsattribut]]
+[[ja:環境属性]]
+[[zh:环境属性]]

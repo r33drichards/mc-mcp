@@ -1,0 +1,191 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows, Xbox''': 1.21.9021.0<br>'''Android''': 1.21.90.21
+| image = Bedrock 1.21.90.21 PatchNotes.jpeg
+| image2 = Bedrock 1.21.90.21.png
+| build = 32912764
+| editorver = 0.9.7
+| versioncode = '''Android''':<br />
+952109021 (armeabi-v7a, 34)<br />
+962109021 (x86, 34)<br />
+972109021 (arm64-v8a, 34)<br />
+982109021 (x86_64, 34)
+| date = April 29, 2025
+| server = 1.21.90.21-1.21.90.22
+| serverdl = '''Server (1.21.90.21)'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.90.21.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.90.21.zip Linux]<br>'''Server (1.21.90.22)'''<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.21.90.22.zip Windows]<br>[https://www.minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.21.90.22.zip Linux]
+| parent = 1.21.90
+| prevparent = 1.21.84
+| prev = Preview 1.21.90.20
+| next = Preview 1.21.90.23
+| nextparent = 1.21.91
+}}<onlyinclude>
+'''Beta 1.21.90.21''' (ChromeOS, Android), or '''Preview 1.21.90.21''' (Windows, Xbox, PlayStation), or '''Preview 1.21.90.22''' (iOS, iPadOS), is the second beta/''Preview'' version for [[Bedrock Edition 1.21.90]], released on April 29, 2025,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/36203344176269-Minecraft-Beta-Preview-1-21-90-21|title=Minecraft Beta & Preview - 1.21.90.21|website=Minecraft Feedback|date=April 29, 2025}}</ref> which fixes bugs.
+
+== Changes ==
+=== Blocks ===
+'''[[Beacon]]'''
+*Maximum beacon beam height is now 2048.
+
+'''[[Dead Bush]]'''
+*Dead bush ambient sounds now have a slightly increased chance of playing.
+
+'''[[Dried Ghast]]'''
+*The recipe for the dried ghast block has been updated to now require a soul sand block rather than a bone block.
+{{crafting
+|A1 = Ghast Tear
+|B1 = Ghast Tear
+|C1 = Ghast Tear
+|A2 = Ghast Tear
+|B2 = Soul Sand
+|C2 = Ghast Tear
+|A3 = Ghast Tear
+|B3 = Ghast Tear
+|C3 = Ghast Tear
+|Output = Dried Ghast
+|ignoreusage=1
+}}
+
+'''[[Sand]], [[Red Sand]], [[Terracotta]]'''
+*Ambient sand sounds no longer requires [[Light#Sky light|sky access]] to play.
+*Ambient sand sounds now have a slightly decreased chance to play.
+*Ambient sand sounds can now play in all biomes.
+**The frequency and conditions for the sounds are now completely independent of the biome the blocks are in.
+*Sand, red sand, and terracotta blocks no longer make ambient wind sounds ({{code|block.sand.wind}}).
+**They still make sand sounds ({{code|block.sand.idle}}).
+
+'''[[Short Dry Grass]] and [[Tall Dry Grass]]'''
+*Short dry grass and tall dry grass can now make ambient wind sounds ({{code|block.sand.wind}}) when above 2 sand, red sand, terracotta blocks.
+
+=== Items ===
+'''[[Lead]]'''
+*The [[slimeball]] in the recipe has been replaced with a string.
+{{crafting
+|A1=String |B1=String
+|A2=String |B2=String
+|C3=String
+|Output=Lead,2
+|ignoreusage=1}}
+
+=== Mobs ===
+'''[[Blaze]]'''
+*Increased blaze attack sound distance to 32 to match {{JE}}.
+*Blaze's attack distance has been increased from 16 to 48 blocks to match its target detection range.
+
+'''[[Ghastling]]'''
+*Ghastlings can now follow happy ghasts.
+
+'''[[Piglin]]'''
+*Piglins can now give dried ghast blocks when [[bartered]] with.
+
+'''[[Zoglin]]'''
+*Decreased zoglin speed when chasing the player to match {{JE}}.
+
+'''[[Zombified Piglin]]'''
+*Baby zombified piglins can no longer have golden swords equipped.
+*Decreased the speed of zombified piglins when chasing the player to match {{JE}}.
+
+=== Gameplay ===
+'''[[Accessibility]]'''
+*Text to speech will select an appropriate voice if available when changing in-game language on Android, iOS, and Windows 10/11.
+
+=== General ===
+'''[[Multiplayer]]'''
+*Gamertags are used on all platforms to identify players in cross-platform multiplayer games.
+
+'''Graphics'''
+*The local player's vehicle will now always be eligible for rendering, no matter the orientation of the model compared to the render bounding box.
+
+=== Technical ===
+'''[[API]]'''
+:{{cd|@minecraft/server 2.0.0}}
+*Added {{cd|isValid}} property on {{cd|Camera}} from {{cd|beta}} to {{cd|stable}}.
+*Moved {{cd|TicksPerDay}} from {{cd|beta}} to {{cd|stable}}.
+*Moved enum {{cd|ScriptTintMethod}} from {{cd|beta}} to {{cd|stable}}.
+*Moved enum {{cd|ScriptBlockMapColorComponent}} from {{cd|beta}} to {{cd|stable}}.
+
+'''[[Block]]s'''
+*Replaced {{cd|emitter_intensity}} with {{cd|emitter_particle_count}} in {{cd|block_destruction.json}} and {{cd|block_slide.json}}. This is to go in line with the particle count field in the {{cd|BlockDestructionParticlesComponent}}. {{cd|emitter_intensity}} will still be used in the previous versions of these files.
+
+'''Components'''
+*The {{cd|minecraft:input_air_controlled}} component no longer requires {{cd|use_beta_features}}.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Beta APIs", "Upcoming Creator Features" and "Locator Bar" experimental toggles.
+
+=== Additions ===
+==== Technical ====
+'''API'''
+:{{cd|@minecraft/server 2.1.0-beta}}
+*Added enum {{cd|LiquidSettings}} in {{cd|beta}}. 
+*Added optional property {{cd|liquidSettings}} to scripting interfaces {{cd|JigsawPlaceOptions}} and {{cd|JigsawStructurePlaceOptions}} in {{cd|beta}}. Defaults to {{cd|ApplyWaterlogging}}.
+*New {{cd|cheatsRequired}} property on {{cd|CustomCommand}} interface.
+**If undefined or {{cd|true}} (default is {{cd|true}}), custom command execution requires that cheats are enabled. If {{cd|false}}, then the custom command can execute without cheats enabled.
+*Removed {{cd|Player.isOp()}}.
+*Added read-only property {{cd|layerPermissionLevel}} to {{cd|Player}}.
+*Added property {{cd|commandPermissionLevel}} to {{cd|Player}}.
+*Added {{cd|PlayerPermissionLevel}} enum with {{cd|Visitor}}, {{cd|Member}}, {{cd|Operator}} values.
+
+'''Block Components'''
+*Added field {{cd|uv_lock}} to {{cd|minecraft:geometry}} block component behind Upcoming Creator Features experiment.
+**UV locking will allow faces to have the same texture orientations as the default geometry state, regardless of how {{cd|minecraft:transformation}} component rotates the geometry.
+
+'''[[Commands]]'''
+*Added optional property {{cd|liquidSettings}} to {{cmd|place structure}} and {{cmd|place jigsaw}} commands. Defaults to {{cd|apply_waterlogging}}.
+
+'''Components'''
+*The {{cd|BlockDestructionParticles}} component has a new field allowing creators to determine the amount of particles that are generated on the destruction of the block.
+
+'''[[Jigsaw]]'''
+*Added optional property {{cd|liquid_settings}} to {{cd|minecraft:jigsaw}} JSON to allow control over handling liquids when placing structures. Defaults to {{cd|apply_waterlogging}}.
+
+=== Changes ===
+==== Gameplay ====
+'''[[Locator Bar]]'''
+*The distance of players now modifies the size of the locator bar player dot instead of the opacity.
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.21.90.21 Preview
+|;old
+|35647|Blazes attack range too low
+|64477|Can't use various items while looking at interactive blocks while sneaking
+|166103|Piglins, brutes and hoglins of the bastions doesn't drop xp when killed
+|174465|Player is teleported to the void when using an end gateway
+|174826|Sponges can absorb water from waterlogged barriers
+|178295|Lava disappears when placed or dispensed into a waterlogged block
+|185829|Wind Burst now launches much less blocks
+|194838|Frozen Peaks, Jagged Peaks & Snowy Slopes replace all water under Y{{=}}63 with ice
+|200797|Player shadow appears on happy ghast face
+|212398|Vibrant Visuals: Deep black pixels trigger graphical artifacts when the player stops moving if TAAU is enabled
+|216867|You no longer start to swim automatically when you double tab forward button to sprint jump into water
+|otherissuescount=9}}
+'''Other'''
+*Dispensing a lava bucket on a waterlogged Dried Ghast no longer duplicates the Dried Ghast.
+*Fixed an issue where swapping item slots during an attack against a mob would re-select the original item slot used during the attack instead of staying on the new inventory slot item.
+*Fixed a bug in Vibrant Visuals where materials with certain properties rendered black.
+*Mobs will no longer clip through blocks sometimes when viewing them at a distance when they auto step up a block.
+*Pigs saddled by hand no longer drop two saddles when killed. (All pigs saddled by hand between 1.21.70 and now will still drop their duplicated saddles on death.)
+*Fixed a bug with the {{cd|minecraft:geometry}} component where the full block geometry identifier {{cd|minecraft:geometry.full_block}} was being ignored for several behaviors, including:
+**Mob spawning (mobs with custom spawn rules can now spawn on blocks using full block geometry)
+**Chest obstruction (blocks with full block geometry will now obstruct Chests)
+**Grass and Farmland survival (Grass and Farmland will turn into Dirt with a block using full block geometry above them)
+**Nylium survival (Nylium will turn into Netherrack with a block using full block geometry above it)
+**Vine growth (Vines will now spread to blocks using full block geometry)
+**Breathability (Mobs and actors can no longer breathe in blocks using full block geometry)
+*Fixed incorrect warning for using valid entity with event identifier in {{cd|minecraft:entity_placer}} component.
+*Fixed {{cd|query.health}} to work for the Wither to properly reflect the elapsed ticks since it started dying.
+*Jigsaw structures being placed in water no longer replace water incorrectly.</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.21.90 betas]]
+
+[[de:Bedrock Edition beta 1.21.90.21]]
+[[pt:Edição Bedrock Preview 1.21.90.21]]
+[[ru:Preview 1.21.90.21 (Bedrock Edition)]]
+[[uk:Preview 1.21.90.21 (Bedrock Edition)]]
+[[zh:基岩版1.21.90.21]]

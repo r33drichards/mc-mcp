@@ -1,0 +1,44 @@
+{{about|the heightmaps of chunk terrain|the heightmaps controlling three-dimensional textures|Texture set}}
+{{Missing information|Heightmaps {{in|be}}<br><small>Note: Heightmaps do exist {{in|be}}, this is confirmed by feature placement behavior packs which can use <code>"y": "query.heightmap(variable.worldx, variable.worldz)"</code> in the distribution to place a feature on the surface, but no other information about heightmaps has been found.</small>}}
+
+'''Heightmaps''' are maps to store the Y-level of the highest block at each horizontal coordinate. They are stored in chunk files and used for various game calculations.
+
+== Types ==
+Several different heightmaps check and store highest block of different types, and are used for different purposes. {{IN|java}}, there are six heightmap types:
+
+=== WORLD_SURFACE ===
+Stores the Y-level of the highest non-air (all types of air) block.
+
+=== WORLD_SURFACE_WG ===
+Stores the Y-level of the highest non-air (all types of air) block. Used only during world generation, and automatedly deleted after [[carver]]s are generated.
+
+=== OCEAN_FLOOR ===
+Stores the Y-level of the highest block whose [[material]] blocks motion (i.e. has a collision box). One exception is [[carpet]]s, which are considered to not have a collision box to heightmaps. Used only on the server side.
+
+=== OCEAN_FLOOR_WG ===
+Stores the Y-level of the highest block whose material blocks motion (i.e. has a collision box). Used only during world generation, and automatedly deleted after [[carver]]s are generated.
+
+=== MOTION_BLOCKING ===
+Stores the Y-level of the highest block whose material blocks motion (i.e. has a collision box) or blocks that contains a fluid ([[water]], [[lava]], or [[waterlogged]] blocks).
+
+=== MOTION_BLOCKING_NO_LEAVES ===
+Stores the Y-level of the highest block whose material blocks motion (i.e. has a collision box), or blocks that contains a fluid (water, lava, or waterlogged blocks), except various [[leaves]]. Used only on the server side.
+
+== Usage ==
+Heightmaps are used for various in-game calculations. For example, a lightning rod can only be triggered when there is no non-air block above it. Therefore, the game compares the Y-level of lightning rod with heightmap WORLD_SURFACE to know if there are non-air blocks above it.
+
+Heightmaps of both server side and client side can be seen in [[debug screen]]. The "CH" line is the value in client side heightmaps at the player's current X/Z coordinates. The "SH" line is the server side value in heightmaps at the player's current X/Z coordinates. In the two lines:
+* S means WORLD_SURFACE
+* O means OCEAN_FLOOR
+* M means MOTION_BLOCKING
+* ML means MOTION_BLOCKING_NO_LEAVES
+
+{{cmd|execute positioned over}} can change the execution position of the command to one block above the Y-level stored in the specified heightmap. WORLD_SURFACE_WG and OCEAN_FLOOR_WG cannot be used in this command.
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[fr:Champ de hauteur]]
+[[ja:高度マップ]]
+[[pt:Heightmap]]
+[[zh:高度图]]

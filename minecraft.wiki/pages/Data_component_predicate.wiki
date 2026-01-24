@@ -1,0 +1,206 @@
+{{exclusive|java}}
+'''Data component predicate'''s (historically known as '''item sub-predicate'''s) are used to check conditions about [[data component]]s. They are used in <code>minecraft:item_predicate</code> [[argument types|argument type]], [[item modifier]]s, [[Predicate|loot predicate]]s, [[Advancement_definition|advancement criteria]], and entity and block [[predicate]]s. They return a pass or fail result to the invoker, who acts differently based on this result.
+
+== List of data component predicate types ==
+{| class="wikitable sortable mw-collapsible"
+! ID !! Data type and format !! [[Data component]]s to check
+|-
+| attribute_modifiers || {{nbt|compound|Object}}, see [[#attribute_modifiers|below]] || <code>attribute_modifiers</code>
+|-
+| bundle_contents || {{nbt|compound|Object}}, see [[#bundle_contents|below]] || <code>bundle_contents</code>
+|-
+| container || {{nbt|compound|Object}}, see [[#container|below]] || <code>container</code>
+|-
+| custom_data || {{nbt|string|String}} or {{nbt|compound|Object}}, see [[#custom_data|below]] || <code>custom_data</code>
+|-
+| damage || {{nbt|compound|Object}}, see [[#damage|below]] || <code>damage</code> and <code>max_damage</code>
+|-
+| enchantments || {{nbt|list|Array}}, see [[#enchantments|below]] || <code>enchantments</code>
+|-
+| firework_explosion || {{nbt|compound|Object}}, see [[#firework_explosion|below]] || <code>firework_explosion</code>
+|-
+| fireworks || {{nbt|compound|Object}}, see [[#fireworks|below]] || <code>fireworks</code>
+|-
+| jukebox_playable || {{nbt|compound|Object}}，see [[#jukebox_playable|below]] || <code>jukebox_playable</code>
+|-
+| potion_contents || {{nbt|string|String}} or {{nbt|list|Array}}, see [[#potion_contents|below]] || <code>potion_contents</code>
+|-
+| stored_enchantments || {{nbt|list|Array}}, see [[#stored_enchantments|below]] || <code>stored_enchantments</code>
+|-
+| trim || {{nbt|compound|Object}}, see [[#trim|below]] || <code>trim</code>
+|-
+| writable_book_content || {{nbt|compound|Object}}, see [[#writable_book_content|below]] || <code>writable_book_content</code>
+|-
+| written_book_content || {{nbt|compound|Object}}, see [[#written_book_content|below]] ||| <code>written_book_content</code>
+|-
+|}
+
+== Formats ==
+=== attribute_modifiers ===
+Checks modifiers in the <code>[[Data component#attribute_modifiers|attribute_modifiers]]</code> data component.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:attribute_modifiers}}
+** {{nbt|compound|modifiers}}: (Optional) A collection predicate of [[attribute modifier]].
+*** {{:Item_sub-predicate/collection predicate|attribute modifier|attribute modifier}}
+</div>
+
+=== bundle_contents ===
+Checks item stacks in the <code>[[Data component#bundle_contents|bundle_contents]]</code> data component.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:bundle_contents}}
+** {{nbt|compound|items}}: (Optional) A collection predicate of item stack.
+*** {{:Item_sub-predicate/collection predicate|item stack|conditions/item}}
+</div>
+
+=== container ===
+Checks item stacks in the <code>[[Data component#container|container]]</code> data component.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:container}}
+** {{nbt|compound|items}}: (Optional) A collection predicate of item stack.
+*** {{:Item_sub-predicate/collection predicate|item stack|conditions/item}}
+</div>
+
+=== custom_data ===
+Checks <code>[[Data component#custom_data|custom_data]]</code> data component. See {{slink|NBT format|Testing NBT tags}} and {{slink|NBT format|Conversion from JSON}}.
+
+Either as a JSON object or an NBT compound tag, or a string. If a string, it is resolved into an NBT compound tag.
+
+<div class="treeview">
+* {{nbt|string}}{{nbt|compound|minecraft:custom_data}}
+</div>
+
+=== damage ===
+Checks [[durability|remaining durability or damage value]]. Damage value is from the <code>[[Data component#damage|damage]]</code> data component; remaining durability is the value <code>[[Data component#max_damage|max_damage]]</code> data component minus damage value.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:damage}}
+** {{nbt|int|damage}}: (Optional) Checks damage value. Matches an exact {{nbt|int}}value, or checks if the value is between a range.
+** {{nbt|compound|damage}}: (Optional) Another format.
+*** {{nbt|int|max}}: (Optional) The maximum value.
+*** {{nbt|int|min}}: (Optional) The minimum value.
+** {{nbt|int|durability}}: (Optional) Checks remaining durability. Matches an exact {{nbt|int}}value, or checks if the value is between a range.
+** {{nbt|compound|durability}}: (Optional) Another format.
+*** {{nbt|int|max}}: (Optional) The maximum value.
+*** {{nbt|int|min}}: (Optional) The minimum value.
+</div>
+
+=== enchantments ===
+Checks enchantments on the item (enchantments in the <code>[[Data component#enchantments|enchantments]]</code> data component).
+
+<div class="treeview">
+* {{nbt|list|minecraft:enchantments}}: Array of conditions. The sub-predicate succeeds when all the conditions succeed. 
+** {{nbt|compound}}: A condition.
+*** {{nbt|string}}{{nbt|list|enchantments}}: (Optional) {{json ref/enchantment|tag=1}}. If more than one enchantment is specified, succeeds when any one of them is present.
+*** {{nbt|int|levels}}: (Optional) Checks the level of the specified enchantment. Matches an exact {{nbt|int}}value, or checks if the value is between a range. If more than one enchantment is specified, succeeds when any one of them matches the level. If {{nbt|string}}{{nbt|list|enchantment}} is not specified, succeeds when any one of enchantments on the item matches the level.
+*** {{nbt|compound|levels}}: (Optional) Another format.
+**** {{nbt|int|max}}: (Optional) The maximum value.
+**** {{nbt|int|min}}: (Optional) The minimum value.
+</div>
+
+=== firework_explosion ===
+Checks the <code>[[Data component#firework_explosion|firework_explosion]]</code> data component.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:firework_explosion}}
+** {{Nbt inherit/firework predicate}}
+</div>
+
+=== fireworks ===
+Checks explosion effects in the <code>[[Data component#fireworks|fireworks]]</code> data component.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:fireworks}}
+** {{nbt|compound|explosions}}: (Optional) A collection predicate of explosion effect.
+*** {{:Item_sub-predicate/collection predicate|explosion effect|firework predicate}}
+** {{nbt|int|flight_duration}}: (Optional) Checks the flight duration of this firework rocket, i.e. the number of gunpowders used to craft it. Matches an exact {{nbt|int}}value, or checks if the value is between a range.
+** {{nbt|compound|flight_duration}}: (Optional) Another format.
+*** {{nbt|int|max}}: (Optional) The maximum value.
+*** {{nbt|int|min}}: (Optional) The minimum value.
+</div>
+
+=== jukebox_playable ===
+Checks jukebox song in the <code>[[Data component#jukebox_playable|jukebox_playable]]</code> data component.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:jukebox_playable}}
+** {{nbt|string}}{{nbt|list|song}}: (Optional) {{json ref|jukebox song|tag=1}}. If more than one jukebox song is specified, succeeds when any one of them matches the testing song.
+</div>
+
+=== potion_contents ===
+Checks {{nbt|string|potion}} field in the <code>[[Data component#potion_contents|potion_contents]]</code> data component. Fails if there is no {{nbt|string|potion}} field in the component.
+
+<div class="treeview">
+* {{nbt|string}}{{nbt|list|minecraft:potion_contents}}: {{json ref|potion type|Potion#Item_data|tag=1}}. If more than one potion type is specified, succeeds when any one of them matches the testing {{nbt|string|potion}} field.
+</div>
+
+=== stored_enchantments ===
+Checks enchantments on an enchanted book (enchantments in the <code>[[Data component#stored_enchantments|stored_enchantments]]</code> data component).
+
+<div class="treeview">
+* {{nbt|list|minecraft:stored_enchantments}}: Array of conditions. The sub-predicate successes when all the conditions succeed. 
+** {{nbt|compound}}: A condition.
+*** {{nbt|string}}{{nbt|list|enchantments}}: (Optional) {{json ref/enchantment|tag=1}}. If more than one enchantment is specified, succeeds when any one of them is present.
+*** {{nbt|int|levels}}: (Optional) Checks the level of the specified enchantment. Matches an exact {{nbt|int}}value, or checks if the value is between a range. If more than one enchantment is specified, succeeds when any one of them matches the level. If {{nbt|string}}{{nbt|list|enchantment}} is not specified, succeeds when any one of enchantments on the item matches the level.
+*** {{nbt|compound|levels}}: (Optional) Another format.
+**** {{nbt|int|max}}: (Optional) The maximum value.
+**** {{nbt|int|min}}: (Optional) The minimum value.
+</div>
+
+=== trim ===
+Checks the <code>[[Data component#trim|trim]]</code> data component.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:trim}}
+** {{nbt|list}}{{nbt|string|material}}: (Optional) {{json ref|trim material|tag=1}} If more than one trim material is specified, succeeds when any one of them matches the testing trim material.
+** {{nbt|list}}{{nbt|string|pattern}}: (Optional) {{json ref|trim pattern|tag=1}} If more than one trim pattern is specified, succeeds when any one of them matches the testing trim pattern.
+</div>
+
+=== writable_book_content ===
+Checks pages in the <code>[[Data component#writable_book_content|writable_book_content]]</code> data component. Raw texts are checked instead of filtered texts.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:writable_book_content}}
+** {{nbt|compound|pages}}: (Optional) A collection predicate of page.
+*** {{:Item_sub-predicate/collection predicate|page|Matches the full string of a page|string}}
+</div>
+
+=== written_book_content ===
+Checks <code>[[Data component#written_book_content|written_book_content]]</code> data component.
+
+<div class="treeview">
+* {{nbt|compound|minecraft:written_book_content}}
+** {{nbt|compound|pages}}: (Optional) A collection predicate of page. Checks the raw texts of pages instead of filtered texts.
+*** {{:Item_sub-predicate/collection predicate|page|A [[text component]]. Matches the full text of a page|any}}
+** {{nbt|string|author}}: (Optional) Matches the full string of author.
+** {{nbt|string|title}}: (Optional) Matches the full string of title. Checks raw title instead of filtered title.
+** {{nbt|int|generation}}: (Optional) Checks the number of times this written book has been copied. 0 = original, 1 = copy of original, 2 = copy of copy, 3 = tattered. Matches an exact {{nbt|int}}value, or checks if the value is between a range.
+** {{nbt|compound|generation}}: (Optional) Another format.
+*** {{nbt|int|max}}: (Optional) The maximum value.
+*** {{nbt|int|min}}: (Optional) The minimum value.
+** {{nbt|boolean|resolved}}: (Optional) Checks whether the JSON text components have already been resolved (the {{nbt|bool|resolved}} field in the data component is <code>true</code>).
+</div>
+
+== History ==
+{{HistoryTable
+|{{HistoryLine|java}}
+|{{HistoryLine||1.20.5|dev=24w11a|Added item sub-predicates.}}
+|{{HistoryLine|||dev=24w12a|Item sub-predicates can now be used in the <code>minecraft:item_predicate</code> [[argument types|argument type]].
+|<code>custom_data</code> now can be defined as a JSON object or NBT compound tag. Before, it could only be defined as an SNBT string.}}
+|{{HistoryLine|||dev=pre1|Added 8 new item sub-predicate types: {{cd|d=and|container|bundle_contents|firework_explosion|fireworks|writable_book_content|written_book_content|attribute_modifiers|trim}}.}}
+|{{HistoryLine||1.21|dev=24w18a|In <code>enchantments</code> and <code>stored_enchantments</code>, <code>enchantment</code> field is replaced by <code>enchantments</code>, and now can specify multiple enchantments.}}
+|{{HistoryLine|||dev=24w21a|Added a new item sub-predicate type {{cd|jukebox_playable}}.
+|In <code>attribute_modifiers</code>, {{cd|d=and|name|uuid}} fields are replaced by <code>id</code>.}}
+|{{HistoryLine||1.21.5|dev=25w04a|Renamed item sub-predicates to "data component predicates."}}
+|{{HistoryLine|||dev=25w10a|Data component predicates are now usable from block and entity predicates.}}
+}}
+
+== Navigation ==
+{{Navbox Java Edition technical|general}}
+
+[[de:Gegenstands-Unterprädikate]]
+[[fr:Prédicat de composant de données]]
+[[ja:データコンポーネントプレディケート]]
+[[zh:数据组件谓词]]

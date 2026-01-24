@@ -1,0 +1,133 @@
+{{Infobox version
+| edition = bedrock
+| type = Preview
+| internal = '''Windows''': 1.20.7024.0<br>'''Xbox''': 1.20.7024.70<br>'''Android, iOS, iPadOS''': 1.20.70.24
+| image = Bedrock 1.20.70.24 PatchNotes.jpeg
+| image2 = Bedrock 1.20.70.24.png
+| build = 22011192
+| editorver = 0.5.6
+| versioncode = '''Android''':<br>
+952007224（armeabi-v7a，33)<br>
+962007224（x86，33)<br>
+972007224（arm64-v8a，33)<br>
+982007224（x86_64，33)<br>
+| date = February 15, 2024
+| server = 1.20.70.24
+| serverdl = '''Server'''<br>[https://minecraft.net/bedrockdedicatedserver/bin-win-preview/bedrock-server-1.20.70.24.zip Windows]<br>[https://minecraft.net/bedrockdedicatedserver/bin-linux-preview/bedrock-server-1.20.70.24.zip Linux]
+| parent = 1.20.70
+| prevparent = 1.20.62
+| prev = Preview 1.20.70.22
+| next = Preview 1.20.70.25
+| nextparent = 1.20.71
+}}<onlyinclude>
+
+'''Beta 1.20.70.24''' (Android) or '''Preview 1.20.70.24''' (Windows, iOS, iPadOS, Xbox, PlayStation) is the fourth beta/''Preview'' version for [[Bedrock Edition 1.20.70]], released on February 15, 2024,<ref>{{cite|url=https://feedback.minecraft.net/hc/en-us/articles/24139781551117-Minecraft-Beta-Preview-1-20-70-24|title=Minecraft Beta & Preview - 1.20.70.24|website=Minecraft Feedback|date=February 15, 2024}}</ref><ref>{{mcnet|minecraft-preview-1-20-70-24|Minecraft Preview 1.20.70.24|February 15, 2024|Jay Wells}}</ref> which adds the [[bogged]] and the [[wind charge]] item behind an experimental toggle, brings more parity from {{JE}}, and fixes bugs. It is the first Preview version available on PlayStation, with it being open to a limited selection of players.<ref>{{cite|url=https://www.youtube.com/watch?v=5EQY7PaV6ME|title=Minecraft Playstation Preview RELEASED + Minecraft Bedrock 1.20.62 Hotfix Update!|website=ECKOSOLDIER|date=February 16, 2024}}</ref> {{info needed}}
+
+== Additions ==
+=== General ===
+'''[[Realms Stories]]'''
+*Added new loading screen tips for Realms Stories.<ref>In this beta new tips do not work on Android</ref>
+
+== Changes ==
+=== Blocks ===
+'''[[Melon]], [[Redstone Ore]], [[Glowstone]], and [[Nether Wart]]'''
+* Tweaked the loot drop distributions for [[Fortune]] [[enchantment]] to better match {{JE}}.
+
+=== General ===
+'''[[Realms Stories]]'''
+*Changed the Realms Stories Privacy and Online Safety modal on Xbox platforms to display a QR code instead of a link.
+
+'''[[Death screen]]'''
+*The new death screen is now enabled when resource packs are applied to a world.
+
+=== Technical ===
+'''[[API]]'''
+*Blocks using the {{cd|minecraft:material_instances}} component with {{cd|render_method}} = {{cd|alpha_test_single_sided}} display properly when in the player's hand.
+'''[[Marketplace]] Server Driven Layouts'''
+*Added the ability for SDL screens to have non scrollable layouts.
+*Added the ability for layouts to contain vertical fill padding.
+'''[[Character Creator]]'''
+*Added a new model to contain the character creator animation logic.
+*Updated the logic that was done to trigger updating the binds when the animation states have been updated, so we do not run into issues with the binds updating every frame causing a major framerate hit.
+
+== Experimental ==
+These additions and changes are accessible by enabling the "Update 1.21" and "Beta APIs" experimental toggles.
+=== Additions ===
+==== Items ====
+'''[[File:Wind Charge (item).png|32px]] [[Wind Charge]]'''
+*Using a Wind Charge will fire off a Wind Charge projectile similar to the Breeze's.
+*A Wind Charge fired by a player will grant 10% more knockback than a Breeze's.
+*Just like the projectile fired by the Breeze, Wind Charges fired by the player also deal damage if they hit an entity directly.
+*The [[Breeze]] drops between 4-6 Wind Charges when killed.
+*Wind Charges have a max stack size of 64.
+*There is half a second cooldown after each use.
+*Wind Charges can be fired from a [[dispenser]].
+*Players that launch themselves with a Wind Charge only accumulate fall damage below the y-level of where they collided with the wind burst.
+'''[[Spawn Egg]]'''
+* Added bogged spawn egg.
+
+==== Mobs ====
+'''[[File:Bogged.png|16px]] [[Bogged]]'''
+*A new variant of [[skeleton]]s that shoot [[poison]]ous [[arrows]].
+**They're faster to take down with 16 health instead of 20 health.
+**They attack at a slower interval of 3.5 seconds instead of 2 seconds.
+*Has a chance to drop [[Arrow of Poison|arrows of poison]] when killed by [[player]]s.
+*These mossy and mushroom covered Skeletons spawn naturally in [[swamp]]s and [[mangrove swamp]]s.
+**Can also be found spawning from [[trial spawner]]s in some [[trial chambers]].
+
+==== World generation ====
+'''[[Trial Chambers]]'''
+*Trial Chambers now generate at the same world locations as {{JE}}.
+
+==== Technical ====
+'''[[API]]'''
+*Moved {{cd|setDynamicProperty}} from {{cd|beta}} to 1.9.0
+*Moved {{cd|getDynamicProperty}} from {{cd|beta}} to 1.9.0
+*Moved {{cd|getDynamicPropertyIds}} from {{cd|beta}} to 1.9.0
+*Moved {{cd|getDynamicPropertyTotalByteCount}} from {{cd|beta}} to 1.9.0
+*Moved {{cd|clearDynamicProperties}} from {{cd|beta}} to 1.9.0
+*Added {{cd|structureManager}} - A {{cd|StructureManager}} instance that allows you to create, load and place structures in the world
+*{{cd|StructureManager}}
+**Added function {{cd|createEmpty(identifier: string, size: Vector3, saveMode?: StructureSaveMode): StructureTemplate}} - Creates a new empty structure
+**Added function {{cd|createFromWorld(identifier: string, dimension: Dimension, blockVolume: BlockVolume, options?: StructureCreateOptions): StructureTemplate}} - Creates a new structure from blocks in the world
+**Added function {{cd|delete(structure: string | StructureTemplate): boolean}} - Deletes the structure
+**Added function {{cd|get(identifier: string): StructureTemplate | undefined}} - Gets the structure with the specified identifier
+**Added function {{cd|place(structure: string | StructureTemplate, dimension: Dimension, location: Vector3, options?: StructurePlaceOptions)}} - Places a structure in the world
+*{{cd|StructureTemplate}}
+**Added {{cd|read-only}} property {{cd|id: string}} - Returns the name of the structure
+**Moved {{cd|effectAdd}} from {{cd|beta}} to 1.9.0
+**Moved {{cd|effectAdd}} from {{cd|beta}} to 1.9.0
+
+== Fixes ==
+{{fixes|project=MCPE|fixedin=1.20.70.24 Preview
+|;old
+|18880|Fortune works on tall flowers when aiming at the bottom half of the tall flower
+|114029|Command block syntax error remains in last output window even after fixing it
+|126947|No seeds drop from Large Ferns
+|176968|Wind Charge Entity displaying its raw translation string in output
+|178327|Banners obtained from the Creative inventory return to the player's inventory when placed for the first time
+|;previous
+|178560|Mobs no longer counterattack in 1.21 experimental.
+|otherissuescount=6}}
+'''Others'''
+* The Breeze now takes damage when being hit by Wind Charge projectiles.
+* Fixed random crashes when accessing Realms stories after triggering Realms events due to a race condition between adding new story status entries and Clubs feed sorting.
+* Fixed an issue that could cause the game to freeze when changing languages on some platforms.
+* Fixed an issue where the game could softlock while displaying the "Loading resource packs" modal.
+* Fixed vertical fill objects not working in vertical factories within the user interface
+* Implemented a fix for the “One Block Skyblock” Marketplace map generating flat world in the distance on the client if the map was uploaded on Realms</onlyinclude>
+
+== References ==
+{{reflist}}
+
+== Navigation ==
+{{Navbox Bedrock Edition versions|1.2x}}
+
+[[Category:Bedrock Edition 1.20.70 betas]]
+[[de:Bedrock Edition beta 1.20.70.24]]
+[[es:Bedrock Edition beta 1.20.70.24]]
+[[ko:Bedrock Edition 프리뷰 1.20.70.24]]
+[[pt:Edição Bedrock Preview 1.20.70.24]]
+[[ru:Preview 1.20.70.24 (Bedrock Edition)]]
+[[uk:Preview 1.20.70.24 (Bedrock Edition)]]
+[[zh:基岩版1.20.70.24]]
